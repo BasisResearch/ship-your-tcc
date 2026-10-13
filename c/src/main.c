@@ -94,6 +94,8 @@ int _gettimeofday(struct timeval *, void *);
 clock_t _times(struct tms *);
 int mkdir(const char *, mode_t);
 
+void tcc_baremetal_sync_icache(void *beg, void *end);
+
 struct tcc_baremetal_sym { const char *name; void *addr; };
 const struct tcc_baremetal_sym tcc_baremetal_syms[] = {
     { "_read", (void *)_read },
@@ -113,20 +115,25 @@ const struct tcc_baremetal_sym tcc_baremetal_syms[] = {
     { "_gettimeofday", (void *)_gettimeofday },
     { "_times", (void *)_times },
     { "_mkdir", (void *)mkdir },
+    /* see tcc_baremetal_sync_icache */
+    { "__clear_cache", (void *)tcc_baremetal_sync_icache },
     { NULL, NULL },
 };
 
 /* --- the hand-off ------------------------------------------------------- */
 
-/* tccrun.c's protect_pages, once the code is in place. The executable Sail
- * model has no Zifencei (fence.i traps there: c/tests/fencei_probe.S) and
- * fetches instructions from memory directly, so the fence is compiled in
- * only with -DTCC_BM_FENCEI (for hardware). */
+/* tccrun.c's protect_pages calls this once the code is in place, where a
+ * RISC-V system would execute fence.i (BRIEF.md asks for it). The executable
+ * Sail model has no Zifencei: fence.i is an illegal instruction there
+ * (results/isa-probes.json, scripts/probe_sail.py), and it has no
+ * instruction cache, so fetches see the relocated code without it. A plain
+ * `fence` (base RV64I) stands in for it, ordering the stores of the
+ * relocation. The program gets this function as __clear_cache too
+ * (tcc_baremetal_syms), so libtcc1.a's armflush.o, whose __clear_cache
+ * executes fence.i, is never linked. */
 __attribute__((noinline)) void tcc_baremetal_sync_icache(void *beg, void *end) {
     (void)beg; (void)end;
-#ifdef TCC_BM_FENCEI
-    __asm__ volatile (".word 0x0000100f" ::: "memory");   /* fence.i */
-#endif
+    __asm__ volatile ("fence" ::: "memory");
 }
 
 /* The marker: the program starts at this function's first instruction. */

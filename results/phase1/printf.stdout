@@ -1,0 +1,8 @@
+[42] [   42] [42   ] [00042]
+[ff] [FF] [10] [0xff]
+[9223372036854775807] [18446744073709551615]
+[abc] [     right] [left      ] [tru]
+[tcc] [%]
+snprintf-7
+strlen = 10
+no newline at the end

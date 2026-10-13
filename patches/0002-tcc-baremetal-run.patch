@@ -17,6 +17,13 @@ tccelf.c:
 - tcc_add_runtime: -lgcc after the last -lc (libc.a, libtcc1.a and the
   soft-float code call libgcc's helpers).
 
+- tcc_load_object_file: local symbols of loaded objects are added without
+  their names (only relocations reach them).
+
+riscv64-gen.c:
+- gen_clear_cache (__builtin___clear_cache, __riscv64_clear_cache): fence
+  only, no fence.i (an illegal instruction on the Sail model).
+
 tccpp.c:
 - predefines newlib's <stdint.h> type macros (__INT8_TYPE__, ...) with
   gcc's rv64 lp64 values.
@@ -26,7 +33,8 @@ tccrun.c:
   script's __tccrun_start..__tccrun_end (not .bss: nothing zeroes it), in
   place of mmap/VirtualAlloc/malloc; tcc_run_free does not free it.
 - protect_pages: no mprotect (no pages on the bare machine); for the code
-  it calls the image's tcc_baremetal_sync_icache (fence.i where supported).
+  it calls the image's tcc_baremetal_sync_icache (a plain fence: the
+  executable Sail model has no Zifencei and no instruction cache).
   No <sys/mman.h>.
 - tcc_run: before linking, (a) records the size of the program's own code
   (.text so far) and defines __tcc_baremetal_code at its start, (b) adds the
@@ -38,9 +46,24 @@ tccrun.c:
 - the CONFIG_TCC_STATIC dlsym table is empty: every symbol comes from the
   program, the archives or tcc_baremetal_syms.
 
+diff -ruN a/riscv64-gen.c b/riscv64-gen.c
+--- a/riscv64-gen.c	2026-10-13 21:40:09.549233582 +0000
++++ b/riscv64-gen.c	2026-10-13 22:19:16.562536277 +0000
+@@ -1664,6 +1664,11 @@
+     /* Zifencei extension: fence + fence.i for I/D synchronization.
+        Required by RISC-V Linux ABI, present on all Linux-capable cores. */
+     o(0x0ff0000f); // fence iorw, iorw
++#ifndef TCC_BAREMETAL
+     o(0x0000100f); // fence.i
++#endif
++    /* TCC_BAREMETAL: no fence.i. The executable Sail model this image runs
++       on has no Zifencei (fence.i is an illegal instruction there) and no
++       instruction cache, so instruction fetch sees stores without it. */
+ }
+ #endif
 diff -ruN a/tccelf.c b/tccelf.c
 --- a/tccelf.c	2026-10-13 21:40:09.549535874 +0000
-+++ b/tccelf.c	2026-10-13 22:06:28.416070826 +0000
++++ b/tccelf.c	2026-10-13 22:19:16.562222853 +0000
 @@ -268,6 +268,16 @@
      return sec;
  }
@@ -143,7 +166,22 @@ diff -ruN a/tccelf.c b/tccelf.c
          if (sh->sh_addralign < 1)
              sh->sh_addralign = 1;
          /* find corresponding section, if any */
-@@ -3636,6 +3683,91 @@
+@@ -3521,6 +3568,14 @@
+         }
+         /* add symbol */
+         name = strtab + sym->st_name;
++#ifdef TCC_BAREMETAL
++        /* TCC_BAREMETAL: a local symbol of a loaded object is only reached
++           through this file's relocations (old_to_new_syms), never by
++           name, and tcc -run drops locals after relocation anyway; not
++           copying their names saves a strlen and a copy per symbol. */
++        if (ELFW(ST_BIND)(sym->st_info) == STB_LOCAL)
++            name = "";
++#endif
+         sym_index = set_elf_sym(symtab_section, sym->st_value, sym->st_size,
+                                 sym->st_info, sym->st_other,
+                                 sym->st_shndx, name);
+@@ -3636,6 +3691,91 @@
      return len;
  }
  
@@ -235,7 +273,7 @@ diff -ruN a/tccelf.c b/tccelf.c
  /* load only the objects which resolve undefined symbols */
  static int tcc_load_alacarte(TCCState *s1, int fd, int size, int entrysize)
  {
-@@ -3684,6 +3816,7 @@
+@@ -3684,6 +3824,7 @@
      tcc_free(data);
      return ret;
  }

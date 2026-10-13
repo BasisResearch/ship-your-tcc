@@ -153,12 +153,15 @@ run: $(ELF)
 
 # The image and everything tcc links into programs from the file system:
 # no instruction of the M, F, D, A or C extensions, no ecall.
-# tests/isa_check.sh (blacklist: M/A/F/D/C, fence.i, ecall) on all of it, and
+# tests/isa_check.sh (blacklist: M/A/F/D/C, fence.i, ecall) on all of it
+# (fence.i allowed only in libtcc1.a: its armflush.o is never linked, the
+# image supplies __clear_cache), and
 # the codegen lane's whitelist checker scripts/check_isa.sh on the image and
 # the tcc-built files (newlib/libgcc have Zicsr/ebreak words it rejects in
 # members a program does not normally link, see tests/isa_check.sh output).
 isa-check: $(ELF) $(BUILD)/fs/libtcc1.a $(BUILD)/fs/runmain.o
-	sh tests/isa_check.sh $(RISCV_OBJDUMP) -- $(ELF) $(BUILD)/fs/runmain.o $(BUILD)/fs/libtcc1.a $(LIBC) $(LIBM) $(LIBGCC)
+	sh tests/isa_check.sh $(RISCV_OBJDUMP) -- $(ELF) $(BUILD)/fs/runmain.o $(LIBC) $(LIBM) $(LIBGCC)
+	sh tests/isa_check.sh $(RISCV_OBJDUMP) --allow-fencei -- $(BUILD)/fs/libtcc1.a
 	../scripts/check_isa.sh $(ELF) $(BUILD)/fs/runmain.o $(BUILD)/fs/libtcc1.a
 
 clean:

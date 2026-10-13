@@ -1,0 +1,9 @@
+INT_MAX=2147483647 CHAR_BIT=8 i8=-128
+u64=18446744073709551615 sizeof(intptr_t)=8
+toupper=Q isdigit=1
+strtol=-1234 atoi=77
+buf=abcdef cmp=0 chr=def
+malloc=xxxxxxxxxxxxxxx
+sum=10 offsetof=4 ok=1
+longjmp back
+abs=5 labs=6
