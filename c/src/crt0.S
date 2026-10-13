@@ -1,3 +1,7 @@
+/* ship-your-tcc: copied unchanged from ship-your-ocaml c/src/crt0.S (commit
+ * 272e4361; originally ship-your-interpreter's). Here main (main.c) takes
+ * its command line from the .embed section (gen_embed.sh), not from
+ * semihosting. */
 /* Minimal startup for bare-metal RISC-V under qemu-system-riscv64
  * (-machine virt -bios none). Sets up gp/sp, clears .bss, and calls
  * main with argc=0 -- main fetches the real command line over

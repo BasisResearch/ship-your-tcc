@@ -2,3 +2,4 @@ build/
 *.o
 __pycache__/
 .lake/
+c/tcc-riscv-htif.elf

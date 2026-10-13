@@ -1,0 +1,150 @@
+tcc -run as the whole program of a bare-metal RV64 image (ship-your-tcc c/)
+
+Everything is under #ifdef TCC_BAREMETAL (c/src/tcc-config/config.h), so
+the patch changes nothing in other configurations. Applies to tinycc
+43c7708 after patches/0001 (the RV64I soft-float code generator).
+
+tccrun.c:
+- rt_mem: the run memory is a static arena at a fixed address, the linker
+  script's __tccrun_start..__tccrun_end (not .bss: nothing zeroes it), in
+  place of mmap/VirtualAlloc/malloc; tcc_run_free does not free it.
+- protect_pages: no mprotect (no pages on the bare machine); for the code
+  it calls the image's tcc_baremetal_sync_icache (fence.i where supported).
+  No <sys/mman.h>.
+- tcc_run: before linking, (a) records the size of the program's own code
+  (.text so far) and defines __tcc_baremetal_code at its start, (b) adds the
+  image's tcc_baremetal_syms (newlib's system-call layer: _write, _sbrk,
+  _exit, ...) with tcc_add_symbol, so the program's own copy of libc.a,
+  found through the archive loader, runs on the image's HTIF console, file
+  system and heap; then calls the image's tcc_baremetal_run (step markers,
+  optional code dump) in place of prog_main.
+- the CONFIG_TCC_STATIC dlsym table is empty: every symbol comes from the
+  program, the archives or tcc_baremetal_syms.
+
+diff -ruN a/tccrun.c b/tccrun.c
+--- a/tccrun.c	2026-10-13 20:43:26.803244724 +0000
++++ b/tccrun.c	2026-10-13 20:47:33.978138182 +0000
+@@ -75,12 +75,23 @@
+ /* defined when included from lib/bt-exe.c */
+ #ifndef CONFIG_TCC_BACKTRACE_ONLY
+ 
+-#ifndef _WIN32
++#if !defined _WIN32 && !defined TCC_BAREMETAL
+ # include <sys/mman.h>
+ #endif
+ 
+ static int protect_pages(void *ptr, unsigned long length, int mode);
+ static int tcc_relocate_ex(TCCState *s1, void *ptr, unsigned ptr_diff);
++#ifdef TCC_BAREMETAL
++/* TCC_BAREMETAL: tcc -run as the whole program of a bare-metal RV64 image
++   (ship-your-tcc c/src): these are defined by the image, not by tcc. */
++struct tcc_baremetal_sym { const char *name; void *addr; };
++extern const struct tcc_baremetal_sym tcc_baremetal_syms[];
++extern int tcc_baremetal_run(int (*prog_main)(int, char **, char **),
++                             int argc, char **argv, char **envp,
++                             void *code, unsigned long code_size);
++extern void tcc_baremetal_sync_icache(void *beg, void *end);
++static unsigned long bm_code_size;
++#endif
+ static void st_link(TCCState *s1);
+ static void st_unlink(TCCState *s1);
+ #ifdef CONFIG_TCC_BACKTRACE
+@@ -139,6 +150,18 @@
+     ptr = VirtualAlloc(NULL, size, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+     if (!ptr)
+         return tcc_error_noabort("tccrun: could not allocate memory");
++#elif defined TCC_BAREMETAL
++    /* TCC_BAREMETAL: a static code arena at a fixed address (the linker
++       script's __tccrun_start..__tccrun_end, page aligned, not part of
++       .bss, so nothing zeroes it), readable, writable and executable as
++       all memory is on the bare machine: no mmap, no mprotect. */
++    {
++        extern char __tccrun_start[], __tccrun_end[];
++        if (size > __tccrun_end - __tccrun_start)
++            return tcc_error_noabort("tccrun: program needs %d bytes, the code arena has %d",
++                                     size, (int)(__tccrun_end - __tccrun_start));
++        ptr = __tccrun_start;
++    }
+ #else
+     ptr = tcc_malloc(size += PAGESIZE); /* one extra page to align malloc memory */
+ #endif
+@@ -202,6 +225,8 @@
+     munmap(ptr, size);
+ #elif CONFIG_RUNMEM_VIRTUALALLOC
+     VirtualFree(ptr, size, MEM_RELEASE);
++#elif defined TCC_BAREMETAL
++    (void)size; /* the static arena is not freed */
+ #else
+     /* unprotect memory to make it usable for malloc again */
+     protect_pages((void*)PAGEALIGN(ptr), size - PAGESIZE, 2 /*rw*/);
+@@ -232,6 +257,22 @@
+     if ((s1->dflag & 16) && (addr_t)-1 == get_sym_addr(s1, "main", 0, 1))
+         return 0;
+ 
++#ifdef TCC_BAREMETAL
++    /* the end of the program's own code (it starts at offset 0 of .text;
++       runmain.o and the archive members come after it) */
++    bm_code_size = text_section->data_offset;
++    set_elf_sym(symtab_section, 0, 0, ELFW(ST_INFO)(STB_GLOBAL, STT_NOTYPE),
++                0, text_section->sh_num, "__tcc_baremetal_code");
++    /* newlib's porting layer (_write, _sbrk, _exit, ...) for the program's
++       own copy of libc.a: the image's HTIF and file-system functions
++       (c/src/htif.c), defined before libc.a is searched, so the archive
++       loader resolves everything else and nothing goes through dlsym. */
++    {
++        const struct tcc_baremetal_sym *p;
++        for (p = tcc_baremetal_syms; p->name; p++)
++            tcc_add_symbol(s1, p->name, p->addr);
++    }
++#endif
+     tcc_add_symbol(s1, "__rt_exit", rt_exit);
+     s1->run_main = "_runmain", top_sym = "main";
+     if (s1->elf_entryname)
+@@ -261,7 +302,16 @@
+ 
+     ret = tcc_setjmp(s1, main_jb, tcc_get_symbol(s1, top_sym));
+     if (0 == ret) {
++#ifdef TCC_BAREMETAL
++        /* the image's hand-off (c/src/main.c): the step-accounting markers,
++           then the jump into the program (runmain.o's _runmain, which ends
++           in the program's own exit()) */
++        ret = tcc_baremetal_run(prog_main, argc, argv, envp,
++                                (void *)get_sym_addr(s1, "__tcc_baremetal_code", 1, 1),
++                                bm_code_size);
++#else
+         ret = prog_main(argc, argv, envp);
++#endif
+     } else if (RT_EXIT_ZERO == ret) {
+         ret = 0;
+     }
+@@ -470,6 +520,13 @@
+ 
+ static int protect_pages(void *ptr, unsigned long length, int mode)
+ {
++#ifdef TCC_BAREMETAL
++    /* no page protection on the bare machine; after the code is in place,
++       synchronise instruction fetch with it (fence.i: c/src/main.c) */
++    if (mode == 0 || mode == 3)
++        tcc_baremetal_sync_icache(ptr, (char *)ptr + length);
++    return 0;
++#else
+ #ifdef _WIN32
+     static const unsigned char protect[] = {
+         PAGE_EXECUTE_READ,
+@@ -503,6 +560,7 @@
+     }
+ #endif
+     return 0;
++#endif /* TCC_BAREMETAL */
+ }
+ 
+ #ifdef _WIN64
+@@ -1560,7 +1618,7 @@
+ 
+ /* add the symbol you want here if no dynamic linking is done */
+ static TCCSyms tcc_syms[] = {
+-#if !defined(CONFIG_TCCBOOT)
++#if !defined(CONFIG_TCCBOOT) && !defined(TCC_BAREMETAL)
+ #define TCCSYM(a) { #a, &a, },
+     TCCSYM(printf)
+     TCCSYM(fprintf)
