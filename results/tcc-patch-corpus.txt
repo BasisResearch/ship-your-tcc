@@ -1,0 +1,48 @@
+test                   isa   elf-isa tcc=gcc   tcc=host  tcc-steps   gcc-steps   rc
+t01_imul               ok    ok      PASS      PASS      977728      964289      89
+t02_idiv               ok    ok      PASS      PASS      1374453     1360304     125
+t03_udiv               ok    ok      PASS      PASS      810980      805791      113
+t04_ldiv               ok    ok      PASS      PASS      2293778     2275693     0
+t05_muldiv_mixed       ok    ok      PASS      PASS      69128       63147       0
+t06_const_muldiv       ok    ok      PASS      PASS      451529      433652      0
+t07_dbl_arith          ok    ok      PASS      PASS      2591862     2580774     0
+t08_flt_arith          ok    ok      PASS      PASS      2034447     2020412     0
+t09_dbl_cmp            ok    ok      PASS      PASS      166478      163594      15
+t10_flt_cmp            ok    ok      PASS      PASS      80910       79477       0
+t11_cvt_itof           ok    ok      PASS      PASS      818492      818204      0
+t12_cvt_ftoi           ok    ok      PASS      PASS      519333      518985      0
+t13_cvt_ftof           ok    ok      PASS      PASS      648336      648551      0
+t14_bool               ok    ok      PASS      PASS      31117       31024       0
+t15_neg                ok    ok      PASS      PASS      52135       51323       0
+t16_incdec             ok    ok      PASS      PASS      109962      109929      0
+t17_compound           ok    ok      PASS      PASS      113294      113025      0
+t18_varargs            ok    ok      PASS      PASS      264683      263367      0
+t19_struct_float_pass  ok    ok      PASS      PASS      146683      144735      0
+t20_many_args          ok    ok      PASS      PASS      56020       55373       0
+t21_funcptr            ok    ok      PASS      PASS      144132      143831      0
+t22_recursion          ok    ok      PASS      PASS      648211      685527      0
+t23_dbl_array          ok    ok      PASS      PASS      664045      638594      0
+t24_ldouble            ok    ok      PASS      PASS      178250      135896      0
+t25_fconst             ok    ok      PASS      PASS      626257      625071      0
+t26_ternary            ok    ok      PASS      PASS      198178      197922      0
+t27_switch             ok    ok      PASS      PASS      584529      584495      0
+t28_structcopy         ok    ok      PASS      PASS      467667      430686      0
+t29_strings            ok    ok      PASS      PASS      308224      304855      0
+t30_math               ok    ok      PASS      PASS      685997      682861      0
+t31_globals            ok    ok      PASS      PASS      116517      114142      0
+t32_bitfields          ok    ok      PASS      PASS      83192       81626       0
+t33_llong_edge         ok    ok      PASS      PASS      372391      153173      0
+t34_promo              ok    ok      PASS      PASS      86257       85859       0
+t35_sieve              ok    ok      PASS      PASS      757607      718774      46
+t36_mandel             ok    ok      PASS      PASS      17996789    15416838    0
+t37_nbody              ok    ok      PASS      PASS      10124937    8736620     0
+t38_hash               ok    ok      PASS      PASS      434393      243078      5
+t39_matrix_int         ok    ok      PASS      PASS      135728      92789       0
+t40_union_pun          ok    ok      PASS      PASS      57373       56937       0
+t41_oldstyle_ldva      ok    ok      PASS      PASS      36463       36003       0
+t42_builtins           ok    ok      PASS      PASS      107081      95591       0
+t43_ldouble_cvt        ok    ok      PASS      PASS      105143      104505      0
+tcc vs gcc-rv64i (Sail): pass=43 fail=0; tcc vs host gcc: pass=43 fail=0; isa-bad objects=0
+
+tests2: run=104 pass=101 fail=2 build-fail=1 isa-bad=0 skipped=38
+failed: 118_switch(build) 61_integers 83_utf8_in_identifiers
