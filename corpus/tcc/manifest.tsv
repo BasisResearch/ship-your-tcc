@@ -1,0 +1,142 @@
+name	source	status	reason	shrink	expect	externals	native_kinstr	lines
+t_00_assignment	vendor/tinycc/tests/tests2/00_assignment.c	include	ok	-	vendor/tinycc/tests/tests2/00_assignment.expect	printf	113	18
+t_01_comment	vendor/tinycc/tests/tests2/01_comment.c	include	ok	-	vendor/tinycc/tests/tests2/01_comment.expect	printf	112	14
+t_02_printf	vendor/tinycc/tests/tests2/02_printf.c	include	ok	-	vendor/tinycc/tests/tests2/02_printf.expect	printf	120	18
+t_03_struct	vendor/tinycc/tests/tests2/03_struct.c	exclude	constructor/destructor/cleanup attributes	-	vendor/tinycc/tests/tests2/03_struct.expect	-	-	38
+t_04_for	vendor/tinycc/tests/tests2/04_for.c	include	ok	-	vendor/tinycc/tests/tests2/04_for.expect	printf	117	15
+t_05_array	vendor/tinycc/tests/tests2/05_array.c	include	ok	-	vendor/tinycc/tests/tests2/05_array.expect	printf	118	21
+t_06_case	vendor/tinycc/tests/tests2/06_case.c	include	ok	-	vendor/tinycc/tests/tests2/06_case.expect	printf	116	29
+t_07_function	vendor/tinycc/tests/tests2/07_function.c	include	ok	-	vendor/tinycc/tests/tests2/07_function.expect	printf	114	35
+t_08_while	vendor/tinycc/tests/tests2/08_while.c	include	ok	-	vendor/tinycc/tests/tests2/08_while.expect	printf	118	24
+t_09_do_while	vendor/tinycc/tests/tests2/09_do_while.c	include	ok	-	vendor/tinycc/tests/tests2/09_do_while.expect	printf	118	24
+t_100_c99array-decls	vendor/tinycc/tests/tests2/100_c99array-decls.c	exclude	typeof (CompCert rejects)	-	vendor/tinycc/tests/tests2/100_c99array-decls.expect	-	-	54
+t_101_cleanup	vendor/tinycc/tests/tests2/101_cleanup.c	exclude	long double (tcc RV64 = binary128, soft tf helpers; %Lf printing)	-	vendor/tinycc/tests/tests2/101_cleanup.expect	-	-	359
+t_102_alignas	vendor/tinycc/tests/tests2/102_alignas.c	include	ok	-	vendor/tinycc/tests/tests2/102_alignas.expect	printf	113	29
+t_103_implicit_memmove	vendor/tinycc/tests/tests2/103_implicit_memmove.c	include	ok	-	vendor/tinycc/tests/tests2/103_implicit_memmove.expect	memmove	110	20
+t_104_inline	vendor/tinycc/tests/tests2/104_inline.c	exclude	two translation units (104+_inline.c)	-	vendor/tinycc/tests/tests2/104_inline.expect	-	-	-
+t_105_local_extern	vendor/tinycc/tests/tests2/105_local_extern.c	include	ok	-	vendor/tinycc/tests/tests2/105_local_extern.expect	printf	112	12
+t_106_versym	vendor/tinycc/tests/tests2/106_versym.c	exclude	pthread / symbol versioning	-	vendor/tinycc/tests/tests2/106_versym.expect	-	-	-
+t_107_stack_safe	vendor/tinycc/tests/tests2/107_stack_safe.c	include	ok	-	vendor/tinycc/tests/tests2/107_stack_safe.expect	printf	113	13
+t_108_constructor	vendor/tinycc/tests/tests2/108_constructor.c	exclude	constructors (NORUN upstream)	-	vendor/tinycc/tests/tests2/108_constructor.expect	-	-	-
+t_109_float_struct_calling	vendor/tinycc/tests/tests2/109_float_struct_calling.c	include	ok	-	vendor/tinycc/tests/tests2/109_float_struct_calling.expect	printf	113	24
+t_10_pointer	vendor/tinycc/tests/tests2/10_pointer.c	include	ok	-	vendor/tinycc/tests/tests2/10_pointer.expect	printf	117	40
+t_110_average	vendor/tinycc/tests/tests2/110_average.c	include	ok	-	vendor/tinycc/tests/tests2/110_average.expect	printf	114	27
+t_111_conversion	vendor/tinycc/tests/tests2/111_conversion.c	exclude	long double (tcc RV64 = binary128, soft tf helpers; %Lf printing)	-	vendor/tinycc/tests/tests2/111_conversion.expect	-	-	24
+t_112_backtrace	vendor/tinycc/tests/tests2/112_backtrace.c	exclude	bounds checker / backtrace (-b)	-	vendor/tinycc/tests/tests2/112_backtrace.expect	-	-	-
+t_113_btdll	vendor/tinycc/tests/tests2/113_btdll.c	exclude	DLLs	-	vendor/tinycc/tests/tests2/113_btdll.expect	-	-	-
+t_114_bound_signal	vendor/tinycc/tests/tests2/114_bound_signal.c	exclude	bounds checker, signals	-	vendor/tinycc/tests/tests2/114_bound_signal.expect	-	-	-
+t_115_bound_setjmp	vendor/tinycc/tests/tests2/115_bound_setjmp.c	exclude	bounds checker, setjmp	-	vendor/tinycc/tests/tests2/115_bound_setjmp.expect	-	-	-
+t_116_bound_setjmp2	vendor/tinycc/tests/tests2/116_bound_setjmp2.c	exclude	bounds checker, setjmp	-	vendor/tinycc/tests/tests2/116_bound_setjmp2.expect	-	-	-
+t_117_builtins	vendor/tinycc/tests/tests2/117_builtins.c	exclude	tcc builtins, run twice with -b	-	vendor/tinycc/tests/tests2/117_builtins.expect	-	-	-
+t_118_switch	vendor/tinycc/tests/tests2/118_switch.c	include	ok	-	vendor/tinycc/tests/tests2/118_switch.expect	printf	156	75
+t_119_random_stuff	vendor/tinycc/tests/tests2/119_random_stuff.c	exclude	processes/threads/mmap	-	vendor/tinycc/tests/tests2/119_random_stuff.expect	-	-	141
+t_11_precedence	vendor/tinycc/tests/tests2/11_precedence.c	include	ok	-	vendor/tinycc/tests/tests2/11_precedence.expect	printf	121	41
+t_120_alias	vendor/tinycc/tests/tests2/120_alias.c	exclude	two translation units (120+_alias.c)	-	vendor/tinycc/tests/tests2/120_alias.expect	-	-	-
+t_121_struct_return	vendor/tinycc/tests/tests2/121_struct_return.c	exclude	bounds checker (-b) upstream	-	vendor/tinycc/tests/tests2/121_struct_return.expect	-	-	-
+t_122_vla_reuse	vendor/tinycc/tests/tests2/122_vla_reuse.c	exclude	VLA (CompCert rejects), bounds checker	-	vendor/tinycc/tests/tests2/122_vla_reuse.expect	-	-	-
+t_123_vla_bug	vendor/tinycc/tests/tests2/123_vla_bug.c	exclude	VLA (CompCert rejects)	-	vendor/tinycc/tests/tests2/123_vla_bug.expect	-	-	-
+t_124_atomic_counter	vendor/tinycc/tests/tests2/124_atomic_counter.c	exclude	atomics, pthread	-	vendor/tinycc/tests/tests2/124_atomic_counter.expect	-	-	-
+t_125_atomic_misc	vendor/tinycc/tests/tests2/125_atomic_misc.c	exclude	atomics, -dt snippets	-	vendor/tinycc/tests/tests2/125_atomic_misc.expect	-	-	-
+t_126_bound_global	vendor/tinycc/tests/tests2/126_bound_global.c	exclude	bounds checker	-	vendor/tinycc/tests/tests2/126_bound_global.expect	-	-	-
+t_127_asm_goto	vendor/tinycc/tests/tests2/127_asm_goto.c	exclude	x86 asm goto	-	vendor/tinycc/tests/tests2/127_asm_goto.expect	-	-	-
+t_128_run_atexit	vendor/tinycc/tests/tests2/128_run_atexit.c	exclude	atexit with -run, -dt snippets	-	vendor/tinycc/tests/tests2/128_run_atexit.expect	-	-	-
+t_129_scopes	vendor/tinycc/tests/tests2/129_scopes.c	exclude	inline asm	-	vendor/tinycc/tests/tests2/129_scopes.expect	-	-	186
+t_12_hashdefine	vendor/tinycc/tests/tests2/12_hashdefine.c	include	ok	-	vendor/tinycc/tests/tests2/12_hashdefine.expect	printf	113	14
+t_130_large_argument	vendor/tinycc/tests/tests2/130_large_argument.c	include	ok	-	vendor/tinycc/tests/tests2/130_large_argument.expect	printf	118	41
+t_131_return_struct_in_reg	vendor/tinycc/tests/tests2/131_return_struct_in_reg.c	include	ok	-	vendor/tinycc/tests/tests2/131_return_struct_in_reg.expect	printf	142	70
+t_132_bound_test	vendor/tinycc/tests/tests2/132_bound_test.c	exclude	bounds checker	-	vendor/tinycc/tests/tests2/132_bound_test.expect	-	-	-
+t_133_old_func	vendor/tinycc/tests/tests2/133_old_func.c	include	ok	-	vendor/tinycc/tests/tests2/133_old_func.expect	printf	118	41
+t_134_double_to_signed	vendor/tinycc/tests/tests2/134_double_to_signed.c	include	ok	-	vendor/tinycc/tests/tests2/134_double_to_signed.expect	printf	115	17
+t_135_func_arg_struct_compare	vendor/tinycc/tests/tests2/135_func_arg_struct_compare.c	include	ok	-	vendor/tinycc/tests/tests2/135_func_arg_struct_compare.expect	printf	111	23
+t_136_atomic_gcc_style	vendor/tinycc/tests/tests2/136_atomic_gcc_style.c	exclude	atomics	-	vendor/tinycc/tests/tests2/136_atomic_gcc_style.expect	-	-	78
+t_137_funcall_struct_args	vendor/tinycc/tests/tests2/137_funcall_struct_args.c	exclude	host gcc run exits 26	-	vendor/tinycc/tests/tests2/137_funcall_struct_args.expect	printf	116	23
+t_138_arm64_encoding	vendor/tinycc/tests/tests2/138_arm64_encoding.c	exclude	arm64 asm	-	vendor/tinycc/tests/tests2/138_arm64_encoding.expect	-	-	-
+t_139_arm64_errors	vendor/tinycc/tests/tests2/139_arm64_errors.c	exclude	arm64 asm	-	vendor/tinycc/tests/tests2/139_arm64_errors.expect	-	-	-
+t_13_integer_literals	vendor/tinycc/tests/tests2/13_integer_literals.c	include	ok	-	vendor/tinycc/tests/tests2/13_integer_literals.expect	printf	114	20
+t_140_arm64_extasm	vendor/tinycc/tests/tests2/140_arm64_extasm.c	exclude	arm64 asm	-	vendor/tinycc/tests/tests2/140_arm64_extasm.expect	-	-	-
+t_141_riscv_asm	vendor/tinycc/tests/tests2/141_riscv_asm.c	exclude	riscv asm encodings	-	vendor/tinycc/tests/tests2/141_riscv_asm.expect	-	-	-
+t_142_int_conversion	vendor/tinycc/tests/tests2/142_int_conversion.c	exclude	volatile (not covered by the Lean Clight port)	-	vendor/tinycc/tests/tests2/142_int_conversion.expect	-	-	143
+t_143_void_expr	vendor/tinycc/tests/tests2/143_void_expr.c	include	ok	-	vendor/tinycc/tests/tests2/143_void_expr.expect	printf	114	17
+t_144_tls	vendor/tinycc/tests/tests2/144_tls.c	exclude	thread-local storage	-	vendor/tinycc/tests/tests2/144_tls.expect	-	-	-
+t_145_winarm64_interlocked	vendor/tinycc/tests/tests2/145_winarm64_interlocked.c	exclude	Windows arm64	-	vendor/tinycc/tests/tests2/145_winarm64_interlocked.expect	-	-	-
+t_146_tls_extern	vendor/tinycc/tests/tests2/146_tls_extern.c	exclude	thread-local storage, two objects	-	vendor/tinycc/tests/tests2/146_tls_extern.expect	-	-	-
+t_148_linker_symbols	vendor/tinycc/tests/tests2/148_linker_symbols.c	exclude	linker-symbol test, shared objects	-	vendor/tinycc/tests/tests2/148_linker_symbols.expect	-	-	-
+t_149_parameter_qualifier_errors	vendor/tinycc/tests/tests2/149_parameter_qualifier_errors.c	exclude	host gcc rejects: error: assignment of read-only parameter ‘pointer’	-	vendor/tinycc/tests/tests2/149_parameter_qualifier_errors.expect	-	-	11
+t_149_parameter_qualifiers	vendor/tinycc/tests/tests2/149_parameter_qualifiers.c	exclude	volatile (not covered by the Lean Clight port)	-	vendor/tinycc/tests/tests2/149_parameter_qualifiers.expect	-	-	71
+t_14_if	vendor/tinycc/tests/tests2/14_if.c	include	ok	-	vendor/tinycc/tests/tests2/14_if.expect	printf	112	21
+t_150_return_qualifiers	vendor/tinycc/tests/tests2/150_return_qualifiers.c	exclude	typeof (CompCert rejects)	-	vendor/tinycc/tests/tests2/150_return_qualifiers.expect	-	-	30
+t_15_recursion	vendor/tinycc/tests/tests2/15_recursion.c	include	ok	-	vendor/tinycc/tests/tests2/15_recursion.expect	printf	118	21
+t_16_nesting	vendor/tinycc/tests/tests2/16_nesting.c	include	ok	-	vendor/tinycc/tests/tests2/16_nesting.expect	printf	133	21
+t_17_enum	vendor/tinycc/tests/tests2/17_enum.c	include	ok	-	vendor/tinycc/tests/tests2/17_enum.expect	printf	117	72
+t_18_include	vendor/tinycc/tests/tests2/18_include.c	exclude	needs local include files (18_include.h, 18_include2.h, ./18_include2.h, ../tests2/18_include2.h)	-	vendor/tinycc/tests/tests2/18_include.expect	-	-	47
+t_19_pointer_arithmetic	vendor/tinycc/tests/tests2/19_pointer_arithmetic.c	include	ok	-	vendor/tinycc/tests/tests2/19_pointer_arithmetic.expect	printf	114	28
+t_20_pointer_comparison	vendor/tinycc/tests/tests2/20_pointer_comparison.c	include	ok	-	vendor/tinycc/tests/tests2/20_pointer_comparison.expect	printf	115	24
+t_21_char_array	vendor/tinycc/tests/tests2/21_char_array.c	include	ok	-	vendor/tinycc/tests/tests2/21_char_array.expect	printf	117	33
+t_22_floating_point	vendor/tinycc/tests/tests2/22_floating_point.c	exclude	long double (tcc RV64 = binary128, soft tf helpers; %Lf printing)	-	vendor/tinycc/tests/tests2/22_floating_point.expect	-	-	124
+t_23_type_coercion	vendor/tinycc/tests/tests2/23_type_coercion.c	include	ok	-	vendor/tinycc/tests/tests2/23_type_coercion.expect	printf	127	54
+t_24_math_library	vendor/tinycc/tests/tests2/24_math_library.c	include	ok	-	vendor/tinycc/tests/tests2/24_math_library.expect	acos,asin,atan,ceil,cos,cosh,exp,fabs,floor,log,log10,pow,printf,round,sin,sinh,sqrt,tan,tanh	140	30
+t_25_quicksort	vendor/tinycc/tests/tests2/25_quicksort.c	include	ok	-	vendor/tinycc/tests/tests2/25_quicksort.expect	printf	134	83
+t_26_character_constants	vendor/tinycc/tests/tests2/26_character_constants.c	include	ok	-	vendor/tinycc/tests/tests2/26_character_constants.expect	printf	116	17
+t_27_sizeof	vendor/tinycc/tests/tests2/27_sizeof.c	include	ok	-	vendor/tinycc/tests/tests2/27_sizeof.expect	printf	114	18
+t_28_strings	vendor/tinycc/tests/tests2/28_strings.c	include	ok	-	vendor/tinycc/tests/tests2/28_strings.expect	memcmp,memcpy,memset,printf,strcat,strchr,strcmp,strcpy,strlen,strncmp,strncpy,strrchr	125	45
+t_29_array_address	vendor/tinycc/tests/tests2/29_array_address.c	include	ok	-	vendor/tinycc/tests/tests2/29_array_address.expect	printf,strcpy	112	13
+t_30_hanoi	vendor/tinycc/tests/tests2/30_hanoi.c	include	ok	-	vendor/tinycc/tests/tests2/30_hanoi.expect	printf	250	122
+t_31_args	vendor/tinycc/tests/tests2/31_args.c	exclude	needs command-line arguments	-	vendor/tinycc/tests/tests2/31_args.expect	-	-	-
+t_32_led	vendor/tinycc/tests/tests2/32_led.c	include	ok	-	vendor/tinycc/tests/tests2/32_led.expect	printf	114	266
+t_33_ternary_op	vendor/tinycc/tests/tests2/33_ternary_op.c	exclude	typeof (CompCert rejects)	-	vendor/tinycc/tests/tests2/33_ternary_op.expect	-	-	119
+t_34_array_assignment	vendor/tinycc/tests/tests2/34_array_assignment.c	exclude	array assignment (not C; SKIP upstream)	-	vendor/tinycc/tests/tests2/34_array_assignment.expect	-	-	-
+t_35_sizeof	vendor/tinycc/tests/tests2/35_sizeof.c	include	ok	-	vendor/tinycc/tests/tests2/35_sizeof.expect	printf	117	30
+t_36_array_initialisers	vendor/tinycc/tests/tests2/36_array_initialisers.c	include	ok	-	vendor/tinycc/tests/tests2/36_array_initialisers.expect	printf	139	25
+t_37_sprintf	vendor/tinycc/tests/tests2/37_sprintf.c	include	ok	-	vendor/tinycc/tests/tests2/37_sprintf.expect	printf,sprintf	134	17
+t_38_multiple_array_index	vendor/tinycc/tests/tests2/38_multiple_array_index.c	include	ok	-	vendor/tinycc/tests/tests2/38_multiple_array_index.expect	printf	125	32
+t_39_typedef	vendor/tinycc/tests/tests2/39_typedef.c	exclude	typeof (CompCert rejects)	-	vendor/tinycc/tests/tests2/39_typedef.expect	-	-	85
+t_40_stdio	vendor/tinycc/tests/tests2/40_stdio.c	exclude	reads stdin	-	vendor/tinycc/tests/tests2/40_stdio.expect	-	-	52
+t_41_hashif	vendor/tinycc/tests/tests2/41_hashif.c	include	ok	-	vendor/tinycc/tests/tests2/41_hashif.expect	printf	112	85
+t_42_function_pointer	vendor/tinycc/tests/tests2/42_function_pointer.c	exclude	NORUN upstream (does not test the right thing with -run)	-	vendor/tinycc/tests/tests2/42_function_pointer.expect	-	-	-
+t_43_void_param	vendor/tinycc/tests/tests2/43_void_param.c	include	ok	-	vendor/tinycc/tests/tests2/43_void_param.expect	printf	111	15
+t_44_scoped_declarations	vendor/tinycc/tests/tests2/44_scoped_declarations.c	include	ok	-	vendor/tinycc/tests/tests2/44_scoped_declarations.expect	printf	111	17
+t_45_empty_for	vendor/tinycc/tests/tests2/45_empty_for.c	include	ok	-	vendor/tinycc/tests/tests2/45_empty_for.expect	printf	117	18
+t_46_grep	vendor/tinycc/tests/tests2/46_grep.c	exclude	needs command-line arguments and reads a file	-	vendor/tinycc/tests/tests2/46_grep.expect	-	-	-
+t_47_switch_return	vendor/tinycc/tests/tests2/47_switch_return.c	include	ok	-	vendor/tinycc/tests/tests2/47_switch_return.expect	printf	112	24
+t_48_nested_break	vendor/tinycc/tests/tests2/48_nested_break.c	include	ok	-	vendor/tinycc/tests/tests2/48_nested_break.expect	printf	112	26
+t_49_bracket_evaluation	vendor/tinycc/tests/tests2/49_bracket_evaluation.c	include	ok	-	vendor/tinycc/tests/tests2/49_bracket_evaluation.expect	printf	116	23
+t_50_logical_second_arg	vendor/tinycc/tests/tests2/50_logical_second_arg.c	include	ok	-	vendor/tinycc/tests/tests2/50_logical_second_arg.expect	printf	118	29
+t_51_static	vendor/tinycc/tests/tests2/51_static.c	include	ok	-	vendor/tinycc/tests/tests2/51_static.expect	printf	116	30
+t_52_unnamed_enum	vendor/tinycc/tests/tests2/52_unnamed_enum.c	include	ok	-	vendor/tinycc/tests/tests2/52_unnamed_enum.expect	printf	117	27
+t_54_goto	vendor/tinycc/tests/tests2/54_goto.c	include	ok	-	vendor/tinycc/tests/tests2/54_goto.expect	printf	114	56
+t_55_lshift_type	vendor/tinycc/tests/tests2/55_lshift_type.c	include	ok	-	vendor/tinycc/tests/tests2/55_lshift_type.expect	printf	116	52
+t_60_errors_and_warnings	vendor/tinycc/tests/tests2/60_errors_and_warnings.c	exclude	compile-error snippets (-dt)	-	vendor/tinycc/tests/tests2/60_errors_and_warnings.expect	-	-	-
+t_61_integers	vendor/tinycc/tests/tests2/61_integers.c	include	ok	-	vendor/tinycc/tests/tests2/61_integers.expect	printf	151	70
+t_64_macro_nesting	vendor/tinycc/tests/tests2/64_macro_nesting.c	include	ok	-	vendor/tinycc/tests/tests2/64_macro_nesting.expect	printf	112	12
+t_67_macro_concat	vendor/tinycc/tests/tests2/67_macro_concat.c	include	ok	-	vendor/tinycc/tests/tests2/67_macro_concat.expect	printf	113	14
+t_70_floating_point_literals	vendor/tinycc/tests/tests2/70_floating_point_literals.c	exclude	long double (tcc RV64 = binary128, soft tf helpers; %Lf printing)	-	vendor/tinycc/tests/tests2/70_floating_point_literals.expect	-	-	79
+t_71_macro_empty_arg	vendor/tinycc/tests/tests2/71_macro_empty_arg.c	include	ok	-	vendor/tinycc/tests/tests2/71_macro_empty_arg.expect	printf	112	9
+t_72_long_long_constant	vendor/tinycc/tests/tests2/72_long_long_constant.c	include	ok	-	vendor/tinycc/tests/tests2/72_long_long_constant.expect	printf	111	19
+t_73_arm64	vendor/tinycc/tests/tests2/73_arm64.c	exclude	long double (tcc RV64 = binary128, soft tf helpers; %Lf printing)	-	vendor/tinycc/tests/tests2/73_arm64.expect	-	-	553
+t_75_array_in_struct_init	vendor/tinycc/tests/tests2/75_array_in_struct_init.c	include	ok	-	vendor/tinycc/tests/tests2/75_array_in_struct_init.expect	printf	185	33
+t_76_dollars_in_identifiers	vendor/tinycc/tests/tests2/76_dollars_in_identifiers.c	exclude	needs -fdollars-in-identifiers	-	vendor/tinycc/tests/tests2/76_dollars_in_identifiers.expect	-	-	-
+t_77_push_pop_macro	vendor/tinycc/tests/tests2/77_push_pop_macro.c	include	ok	-	vendor/tinycc/tests/tests2/77_push_pop_macro.expect	printf	114	30
+t_78_vla_label	vendor/tinycc/tests/tests2/78_vla_label.c	exclude	VLA (CompCert rejects)	-	vendor/tinycc/tests/tests2/78_vla_label.expect	-	-	-
+t_79_vla_continue	vendor/tinycc/tests/tests2/79_vla_continue.c	exclude	VLA (CompCert rejects)	-	vendor/tinycc/tests/tests2/79_vla_continue.expect	-	-	-
+t_80_flexarray	vendor/tinycc/tests/tests2/80_flexarray.c	include	ok	-	vendor/tinycc/tests/tests2/80_flexarray.expect	printf	111	26
+t_81_types	vendor/tinycc/tests/tests2/81_types.c	include	ok	-	vendor/tinycc/tests/tests2/81_types.expect	none	110	55
+t_82_attribs_position	vendor/tinycc/tests/tests2/82_attribs_position.c	exclude	packed structs	-	vendor/tinycc/tests/tests2/82_attribs_position.expect	-	-	71
+t_83_utf8_in_identifiers	vendor/tinycc/tests/tests2/83_utf8_in_identifiers.c	include	ok	-	vendor/tinycc/tests/tests2/83_utf8_in_identifiers.expect	printf	114	9
+t_84_hex-float	vendor/tinycc/tests/tests2/84_hex-float.c	include	ok	-	vendor/tinycc/tests/tests2/84_hex-float.expect	printf	112	12
+t_85_asm-outside-function	vendor/tinycc/tests/tests2/85_asm-outside-function.c	exclude	x86 asm	-	vendor/tinycc/tests/tests2/85_asm-outside-function.expect	-	-	-
+t_86_memory-model	vendor/tinycc/tests/tests2/86_memory-model.c	include	ok	-	vendor/tinycc/tests/tests2/86_memory-model.expect	printf	111	38
+t_87_dead_code	vendor/tinycc/tests/tests2/87_dead_code.c	exclude	GNU statement expression (CompCert rejects)	-	vendor/tinycc/tests/tests2/87_dead_code.expect	-	-	165
+t_88_codeopt	vendor/tinycc/tests/tests2/88_codeopt.c	exclude	GNU statement expression (CompCert rejects)	-	vendor/tinycc/tests/tests2/88_codeopt.expect	-	-	80
+t_89_nocode_wanted	vendor/tinycc/tests/tests2/89_nocode_wanted.c	exclude	GNU statement expression (CompCert rejects)	-	vendor/tinycc/tests/tests2/89_nocode_wanted.expect	-	-	112
+t_90_struct-init	vendor/tinycc/tests/tests2/90_struct-init.c	exclude	computed goto / label address (CompCert rejects)	-	vendor/tinycc/tests/tests2/90_struct-init.expect	-	-	424
+t_91_ptr_longlong_arith32	vendor/tinycc/tests/tests2/91_ptr_longlong_arith32.c	include	ok	-	vendor/tinycc/tests/tests2/91_ptr_longlong_arith32.expect	printf	112	15
+t_92_enum_bitfield	vendor/tinycc/tests/tests2/92_enum_bitfield.c	include	ok	-	vendor/tinycc/tests/tests2/92_enum_bitfield.expect	printf	111	58
+t_93_integer_promotion	vendor/tinycc/tests/tests2/93_integer_promotion.c	include	ok	-	vendor/tinycc/tests/tests2/93_integer_promotion.expect	printf	167	111
+t_94_generic	vendor/tinycc/tests/tests2/94_generic.c	exclude	GNU statement expression (CompCert rejects)	-	vendor/tinycc/tests/tests2/94_generic.expect	-	-	131
+t_95_bitfields	vendor/tinycc/tests/tests2/95_bitfields.c	exclude	packed structs	-	vendor/tinycc/tests/tests2/95_bitfields.expect	-	-	241
+t_95_bitfields_ms	vendor/tinycc/tests/tests2/95_bitfields_ms.c	exclude	MS bitfield layout (-mms-bitfields)	-	vendor/tinycc/tests/tests2/95_bitfields_ms.expect	-	-	-
+t_96_nodata_wanted	vendor/tinycc/tests/tests2/96_nodata_wanted.c	exclude	compile-time snippets (-dt)	-	vendor/tinycc/tests/tests2/96_nodata_wanted.expect	-	-	-
+t_97_utf8_string_literal	vendor/tinycc/tests/tests2/97_utf8_string_literal.c	include	ok	-	vendor/tinycc/tests/tests2/97_utf8_string_literal.expect	abort,printf,strcmp	127	20
+t_98_al_ax_extend	vendor/tinycc/tests/tests2/98_al_ax_extend.c	exclude	i386 only	-	vendor/tinycc/tests/tests2/98_al_ax_extend.expect	-	-	-
+t_99_fastcall	vendor/tinycc/tests/tests2/99_fastcall.c	exclude	i386 only	-	vendor/tinycc/tests/tests2/99_fastcall.expect	-	-	-
+t_tcctest	vendor/tinycc/tests/tcctest.c	exclude	needs the tcc build tree (config.h, tcclib.h, include-syntax tests); 4.5k lines of GCC extensions compared against gcc, not a single-file program	-	-	-	-	-

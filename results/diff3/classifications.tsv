@@ -1,0 +1,3 @@
+# Classification of diff3 disagreements (read by scripts/diff3.py).
+# corpus<TAB>prog<TAB>pair (e.g. gcc_native/xgcc_sail, or * for every pair)<TAB>category<TAB>note
+# category: tcc bug | Lean-port bug | CompCert-frontend issue | unspecified behaviour | harness bug | unclassified
