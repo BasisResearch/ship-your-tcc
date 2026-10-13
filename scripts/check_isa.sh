@@ -5,8 +5,11 @@
 # RV64I + fence/fence.i (ecall/ebreak are accepted but reported), i.e. any
 # M, A, F, D, Q, Zicsr, compressed (C) or undecodable word, printing each
 # offender. Robustness:
-#   - objdump -d -M no-aliases: every compressed instruction prints with
-#     its real "c." mnemonic, and no alias hides a CSR/FP operation;
+#   - objdump -D -M no-aliases, restricted to the executable (SHF_EXECINSTR)
+#     sections: -D because plain -d dumps bytes covered by an OBJECT symbol
+#     as data (tcc emits C labels whose address is taken, &&lab, as OBJECT
+#     symbols in .text); no-aliases so every compressed instruction prints
+#     with its real "c." mnemonic and no alias hides a CSR/FP operation;
 #   - instructions are checked against a WHITELIST of RV64I mnemonics, so
 #     anything unknown (including Zb*, Zicsr, vector) fails;
 #   - independently, the encoding length is checked: objdump prints 16-bit
@@ -30,8 +33,9 @@ READELF=${READELF:-$XPACK/riscv-none-elf-readelf}
 rc=0
 for f in "$@"; do
   if [ ! -f "$f" ]; then echo "$f: no such file"; rc=1; continue; fi
-  out=$("$OBJDUMP" -d -M no-aliases "$f" 2>&1) || { echo "$f: objdump failed"; echo "$out" | head -3; rc=1; continue; }
-  res=$(awk -v file="$f" '
+  execs=$("$READELF" -SW "$f" 2>/dev/null | awk '/^ *\[ *[0-9]+\]/ { sub(/^ *\[ *[0-9]+\] */, ""); if ($7 ~ /X/) print $1 }' | sort -u | tr '\n' ' ')
+  out=$("$OBJDUMP" -D -M no-aliases "$f" 2>&1) || { echo "$f: objdump failed"; echo "$out" | head -3; rc=1; continue; }
+  res=$(awk -v file="$f" -v execs=" $execs " '
     BEGIN {
       n = split("lui auipc jal jalr beq bne blt bge bltu bgeu lb lh lw lbu lhu lwu ld sb sh sw sd addi slti sltiu xori ori andi slli srli srai add sub sll slt sltu xor srl sra or and addiw slliw srliw sraiw addw subw sllw srlw sraw fence fence.i fence.tso pause", ok, " ")
       for (i = 1; i <= n; i++) allowed[ok[i]] = 1
@@ -42,8 +46,9 @@ for f in "$@"; do
     /^[ \t]*\.\.\.$/ || /^[0-9a-f]+ <.*>:$/ { padok(); next }
     /^In archive / { padok(); next }
     /:[ \t]+file format / { member = $1; sub(/:$/, "", member); next }
-    /^Disassembly of section / { padok(); sect = $4; sub(/:$/, "", sect); next }
+    /^Disassembly of section / { padok(); sect = $4; sub(/:$/, "", sect); insec = index(execs, " " sect " ") > 0; next }
     /^[ \t]*[0-9a-f]+:\t/ {
+      if (!insec) next
       line = $0
       nf = split(line, F, "\t")
       addr = F[1]; gsub(/[ :]/, "", addr)
