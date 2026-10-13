@@ -17,7 +17,7 @@ marks=
 for f in "$@"; do
   a=$(awk -v s="$f" '$2==s{print $1; exit}' "$OUT/syms")
   [ -n "$a" ] || { echo "no symbol $f" >&2; exit 1; }
-  marks="$marks $a"
+  marks="$marks $(printf %x 0x$a)"
 done
 "$EMU" "$ELF" --trace-all 2>&1 >"$OUT/raw" | \
   mawk -F'\t' -v marks="$marks" '

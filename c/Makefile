@@ -49,8 +49,8 @@ ELF     ?= tcc-riscv-htif.elf
 EMU     ?= $(HOME)/Documents/code/ship-your-lua/riscv-lean/lean_emulator/.lake/build/bin/lean_riscv_emulator
 
 PATCHES := $(sort $(wildcard ../patches/*.patch))
-# TCC_RV64I_SOFT (patches/0001, the codegen lane): defined once that patch
-# is present.
+# TCC_RV64I_SOFT (patches/0001, the codegen lane: calls to libgcc instead
+# of M/F/D instructions): defined when that patch is present.
 SOFT    := $(if $(wildcard ../patches/0001-*.patch),-DTCC_RV64I_SOFT,)
 
 all: $(ELF)
@@ -95,18 +95,16 @@ $(BUILD)/fs/runmain.o: src/runmain.c
 	@mkdir -p $(BUILD)/fs
 	$(RISCV_CC) $(RISCV_CFLAGS) -c -o $@ $<
 
-# /lib/tcc/libtcc1.a: tcc's lib/ helpers that apply to riscv64, built with
-# the image's flags: alloca (alloca.S), the __builtin_clz/ctz/popcount/...
-# fallbacks (builtin.c) and the 128-bit long double routines (lib-arm64.c;
-# libgcc.a, searched first, has them too). Not atomic.S (A extension),
-# stdatomic.c, armflush.c (fence.i) or the backtrace/bcheck objects.
-LIBTCC1_SRC := alloca.S builtin.c lib-arm64.c
-$(BUILD)/fs/libtcc1.a: $(TCCSRC)/.stamp
-	@mkdir -p $(BUILD)/fs/libtcc1
-	rm -f $@
-	for f in $(LIBTCC1_SRC); do \
-	  $(RISCV_CC) $(RISCV_CFLAGS) -w -I$(TCCSRC) -c -o $(BUILD)/fs/libtcc1/$${f%.*}.o $(TCCSRC)/lib/$$f || exit 1; done
-	$(RISCV_AR) rcs $@ $(patsubst %,$(BUILD)/fs/libtcc1/%.o,$(basename $(LIBTCC1_SRC)))
+# /lib/tcc/libtcc1.a: the codegen lane's (scripts/build_cross_tcc.sh): tcc's
+# builtin.c, alloca.S, armflush.c and dsohandle.c compiled for rv64i/lp64 by
+# the patched host cross tcc (its comment says what is left out and why).
+CROSS_LIBTCC1 := ../build/cross/riscv64-libtcc1.a
+$(CROSS_LIBTCC1): $(PATCHES) ../scripts/build_cross_tcc.sh
+	../scripts/build_cross_tcc.sh
+
+$(BUILD)/fs/libtcc1.a: $(CROSS_LIBTCC1)
+	@mkdir -p $(BUILD)/fs
+	cp $< $@
 
 # the list of files (/path/in/image=host/file), all but /prog.c
 $(BUILD)/fs.list: $(TCCSRC)/.stamp $(BUILD)/fs/runmain.o $(BUILD)/fs/libtcc1.a Makefile
@@ -139,8 +137,13 @@ run: $(ELF)
 
 # The image and everything tcc links into programs from the file system:
 # no instruction of the M, F, D, A or C extensions, no ecall.
+# tests/isa_check.sh (blacklist: M/A/F/D/C, fence.i, ecall) on all of it, and
+# the codegen lane's whitelist checker scripts/check_isa.sh on the image and
+# the tcc-built files (newlib/libgcc have Zicsr/ebreak words it rejects in
+# members a program does not normally link, see tests/isa_check.sh output).
 isa-check: $(ELF) $(BUILD)/fs/libtcc1.a $(BUILD)/fs/runmain.o
 	sh tests/isa_check.sh $(RISCV_OBJDUMP) -- $(ELF) $(BUILD)/fs/runmain.o $(BUILD)/fs/libtcc1.a $(LIBC) $(LIBM) $(LIBGCC)
+	../scripts/check_isa.sh $(ELF) $(BUILD)/fs/runmain.o $(BUILD)/fs/libtcc1.a
 
 clean:
 	rm -rf build tcc-riscv-htif.elf

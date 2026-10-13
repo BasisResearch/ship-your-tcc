@@ -24,6 +24,3 @@
 #define CONFIG_TCC_LIBPATHS "{B}:/lib"   /* {B}: runmain.o, libtcc1.a */
 #define CONFIG_TCC_CRTPREFIX "/lib"
 #define CONFIG_TCC_ELFINTERP "-"
-/* tcc_add_runtime adds it after -lc: newlib's libc.a calls libgcc's
-   soft-float and mul/div routines, and so does the generated code */
-#define TCC_LIBGCC "/lib/libgcc.a"

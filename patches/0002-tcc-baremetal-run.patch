@@ -10,6 +10,15 @@ tccelf.c:
 - tcc_load_object_file: input sections go where GNU ld puts them
   (.text.* into .text, ...), so linking against -ffunction-sections
   archives does not create a section per function.
+- tcc_load_alacarte: the archive index is hashed once and each pass looks
+  up the undefined symbols in it (upstream looks every index name up in the
+  symbol table each pass); same members, possibly another load order.
+- tcc_add_runtime: -lgcc after the last -lc (libc.a, libtcc1.a and the
+  soft-float code call libgcc's helpers).
+
+tccpp.c:
+- predefines newlib's <stdint.h> type macros (__INT8_TYPE__, ...) with
+  gcc's rv64 lp64 values.
 
 tccrun.c:
 - rt_mem: the run memory is a static arena at a fixed address, the linker
@@ -29,8 +38,8 @@ tccrun.c:
   program, the archives or tcc_baremetal_syms.
 
 diff -ruN a/tccelf.c b/tccelf.c
---- a/tccelf.c	2026-10-13 20:43:26.802410096 +0000
-+++ b/tccelf.c	2026-10-13 21:15:27.607177122 +0000
+--- a/tccelf.c	2026-10-13 21:40:09.549535874 +0000
++++ b/tccelf.c	2026-10-13 21:41:15.349059570 +0000
 @@ -268,6 +268,16 @@
      return sec;
  }
@@ -75,7 +84,19 @@ diff -ruN a/tccelf.c b/tccelf.c
      sym_index = ((int *)hs->data)[2 + h];
      while (sym_index != 0) {
          sym = &((ElfW(Sym) *)s->data)[sym_index];
-@@ -3286,6 +3296,35 @@
+@@ -1877,6 +1887,11 @@
+             tcc_add_support(s1, TCC_LIBTCC1);
+             tcc_add_library(s1, "c");
+         }
++#ifdef TCC_BAREMETAL
++        /* libgcc last: libc.a, libtcc1.a and the RV64I soft-float code
++           (TCC_RV64I_SOFT) call its __muldi3, __adddf3, ... */
++        tcc_add_library(s1, "gcc");
++#endif
+ #ifndef TCC_TARGET_MACHO
+         if (s1->output_type != TCC_OUTPUT_MEMORY)
+             tccelf_add_crtend(s1);
+@@ -3290,6 +3305,35 @@
  
  /* load an object file and merge it with current files */
  /* XXX: handle correctly stab (debug) info */
@@ -111,7 +132,7 @@ diff -ruN a/tccelf.c b/tccelf.c
  ST_FUNC int tcc_load_object_file(TCCState *s1,
                                  int fd, unsigned long file_offset)
  {
-@@ -3391,6 +3430,9 @@
+@@ -3395,6 +3439,9 @@
  
  	sh = &shdr[i];
          sh_name = strsec + sh->sh_name;
@@ -121,9 +142,158 @@ diff -ruN a/tccelf.c b/tccelf.c
          if (sh->sh_addralign < 1)
              sh->sh_addralign = 1;
          /* find corresponding section, if any */
+@@ -3636,6 +3683,87 @@
+     return len;
+ }
+ 
++#ifdef TCC_BAREMETAL
++/* TCC_BAREMETAL: the same job as the loop below, organised for a slow
++   target. Upstream walks the whole archive index each pass and looks every
++   name up in the symbol table (libc.a's index has ~1080 names, so a pass
++   cost ~1080 hash computations and string compares); this hashes the index
++   once and each pass walks the undefined global symbols instead, looking
++   each up in the index (first entry of a name wins, as upstream). The
++   members loaded are the same set; they may be loaded in another order. */
++static int bm_ar_lookup(const char *const *names, const unsigned *tab,
++                        unsigned mask, const char *name)
++{
++    unsigned h = elf_hash((const unsigned char *)name) & mask;
++    for (; tab[h]; h = (h + 1) & mask)
++        if (0 == strcmp(names[tab[h] - 1], name))
++            return tab[h] - 1;
++    return -1;
++}
++
++static int tcc_load_alacarte(TCCState *s1, int fd, int size, int entrysize)
++{
++    int i, nsyms, sym_index, len, bound, ret = -1;
++    unsigned nb, h, *tab = NULL;
++    unsigned long long off;
++    uint8_t *data;
++    const char *ar_names, *p, **names = NULL;
++    const uint8_t *ar_index;
++    ElfW(Sym) *sym;
++    ArchiveHeader hdr;
++
++    data = tcc_malloc(size);
++    if (full_read(fd, data, size) != size)
++        goto invalid;
++    nsyms = get_be(data, entrysize);
++    ar_index = data + entrysize;
++    ar_names = (char *) ar_index + nsyms * entrysize;
++    names = tcc_malloc(nsyms * sizeof *names + 1);
++    for (nb = 1; nb < 2 * (unsigned)nsyms; nb <<= 1)
++        ;
++    tab = tcc_mallocz(nb * sizeof *tab);
++    for (p = ar_names, i = 0; i < nsyms; i++, p += strlen(p) + 1) {
++        names[i] = p;
++        for (h = elf_hash((const unsigned char *)p) & (nb - 1); tab[h]; h = (h + 1) & (nb - 1))
++            ;
++        tab[h] = i + 1;
++    }
++    do {
++        bound = 0;
++        for (sym_index = 1;
++             sym_index < (int)(symtab_section->data_offset / sizeof (ElfW(Sym)));
++             sym_index++) {
++            sym = &((ElfW(Sym) *)symtab_section->data)[sym_index];
++            if (sym->st_shndx != SHN_UNDEF
++                || ELFW(ST_BIND)(sym->st_info) == STB_LOCAL)
++                continue;
++            i = bm_ar_lookup(names, tab, nb - 1,
++                             (char *)symtab_section->link->data + sym->st_name);
++            if (i < 0)
++                continue;
++            off = get_be(ar_index + i * entrysize, entrysize);
++            len = read_ar_header(fd, off, &hdr);
++            if (len <= 0 || memcmp(hdr.ar_fmag, ARFMAG, 2)) {
++        invalid:
++                tcc_error_noabort("invalid archive");
++                goto the_end;
++            }
++            off += len;
++            if (s1->verbose == 2)
++                printf("   -> %s\n", hdr.ar_name);
++            if (tcc_load_object_file(s1, fd, off) < 0)
++                goto the_end;
++            ++bound;
++        }
++    } while (bound);
++    ret = 0;
++ the_end:
++    tcc_free(tab);
++    tcc_free(names);
++    tcc_free(data);
++    return ret;
++}
++#else
+ /* load only the objects which resolve undefined symbols */
+ static int tcc_load_alacarte(TCCState *s1, int fd, int size, int entrysize)
+ {
+@@ -3684,6 +3812,7 @@
+     tcc_free(data);
+     return ret;
+ }
++#endif /* TCC_BAREMETAL */
+ 
+ /* load a '.a' file */
+ ST_FUNC int tcc_load_archive(TCCState *s1, int fd, int alacarte)
+diff -ruN a/tccpp.c b/tccpp.c
+--- a/tccpp.c	2026-10-13 21:40:09.545428172 +0000
++++ b/tccpp.c	2026-10-13 21:40:43.183605408 +0000
+@@ -3582,11 +3582,49 @@
+         putdef(cs, p), p = strchr(p, 0) + 1;
+ }
+ 
++#ifdef TCC_BAREMETAL
++/* TCC_BAREMETAL: the <stdint.h> type macros newlib's headers look for
++   (machine/_default_types.h, sys/_intsup.h), with gcc's values for rv64
++   lp64 (riscv-none-elf-gcc -march=rv64i -mabi=lp64 -dM -E), so that the
++   types are the ones libc.a was compiled with. __INT64_TYPE__ and
++   __U?INTPTR_TYPE__ come from include/tccdefs.h. */
++static const char bm_type_defs[] =
++    "__INT8_TYPE__ signed char\0"
++    "__INT16_TYPE__ short int\0"
++    "__INT32_TYPE__ int\0"
++    "__UINT8_TYPE__ unsigned char\0"
++    "__UINT16_TYPE__ short unsigned int\0"
++    "__UINT32_TYPE__ unsigned int\0"
++    "__UINT64_TYPE__ long unsigned int\0"
++    "__INT_LEAST8_TYPE__ signed char\0"
++    "__INT_LEAST16_TYPE__ short int\0"
++    "__INT_LEAST32_TYPE__ int\0"
++    "__INT_LEAST64_TYPE__ long int\0"
++    "__UINT_LEAST8_TYPE__ unsigned char\0"
++    "__UINT_LEAST16_TYPE__ short unsigned int\0"
++    "__UINT_LEAST32_TYPE__ unsigned int\0"
++    "__UINT_LEAST64_TYPE__ long unsigned int\0"
++    "__INT_FAST8_TYPE__ int\0"
++    "__INT_FAST16_TYPE__ int\0"
++    "__INT_FAST32_TYPE__ int\0"
++    "__INT_FAST64_TYPE__ long int\0"
++    "__UINT_FAST8_TYPE__ unsigned int\0"
++    "__UINT_FAST16_TYPE__ unsigned int\0"
++    "__UINT_FAST32_TYPE__ unsigned int\0"
++    "__UINT_FAST64_TYPE__ long unsigned int\0"
++    "__INTMAX_TYPE__ long int\0"
++    "__UINTMAX_TYPE__ long unsigned int\0"
++    ;
++#endif
++
+ static void tcc_predefs(TCCState *s1, CString *cs, int is_asm)
+ {
+     cstr_printf(cs, "#define __TINYC__ 9%.2s\n", &TCC_VERSION[4]);
+     putdefs(cs, target_machine_defs);
+     putdefs(cs, target_os_defs);
++#ifdef TCC_BAREMETAL
++    putdefs(cs, bm_type_defs);
++#endif
+ 
+ #ifdef TCC_TARGET_ARM
+     if (s1->float_abi == ARM_HARD_FLOAT)
 diff -ruN a/tccrun.c b/tccrun.c
---- a/tccrun.c	2026-10-13 20:43:26.803244724 +0000
-+++ b/tccrun.c	2026-10-13 20:47:33.978138182 +0000
+--- a/tccrun.c	2026-10-13 21:40:09.545580053 +0000
++++ b/tccrun.c	2026-10-13 21:40:09.593666811 +0000
 @@ -75,12 +75,23 @@
  /* defined when included from lib/bt-exe.c */
  #ifndef CONFIG_TCC_BACKTRACE_ONLY

@@ -3,9 +3,10 @@
 # Disassembles every code section of each FILE (ELF executables, objects or
 # archives; with --binary, raw RV64 code loaded at VMA) and fails if any
 # instruction is outside plain RV64I + Zicsr: the M, A, F, D or C
-# extensions, fence.i (Zifencei: the executable Sail model traps on it),
+# extensions,
 # ecall, or a word objdump could not decode. ebreak (__builtin_trap) and
-# unnamed CSR accesses are reported as warnings (isa_filter.awk).
+# unnamed CSR accesses and fence.i (which traps on the executable Sail
+# model) are reported as warnings (isa_filter.awk).
 set -u
 OBJDUMP=$1; shift
 bin=

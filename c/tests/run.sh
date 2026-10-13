@@ -96,11 +96,13 @@ for f in "${files[@]}"; do
   if grep -q '^@@TCCBM code' $OUT/$n.raw; then
     grep '^@@' $OUT/$n.raw | grep -v '^@@TCCBM' | cut -c3- | tr -d '\n' | xxd -r -p > $OUT/$n.code.bin
     $OBJDUMP -D -b binary -m riscv:rv64 --adjust-vma=$caddr $OUT/$n.code.bin > $OUT/$n.code.dis
-    if [ -x ../scripts/check_isa.sh ]; then
-      ../scripts/check_isa.sh $OUT/$n.code.bin > $OUT/$n.isa 2>&1 && isa=ok || isa=FAIL
-    else
-      sh tests/isa_check.sh $OBJDUMP --binary $caddr -- $OUT/$n.code.bin > $OUT/$n.isa 2>&1 && isa=ok || isa=FAIL
-    fi
+    # both checkers: ours on the raw bytes, the codegen lane's whitelist
+    # checker (ELF input) on the bytes wrapped as an executable section
+    $OBJCOPY -I binary -O elf64-littleriscv -B riscv:rv64 \
+      --rename-section .data=.text,alloc,load,readonly,code,contents $OUT/$n.code.bin $OUT/$n.code.elf
+    isa=ok
+    sh tests/isa_check.sh $OBJDUMP --binary $caddr -- $OUT/$n.code.bin > $OUT/$n.isa 2>&1 || isa=FAIL
+    ../scripts/check_isa.sh $OUT/$n.code.elf >> $OUT/$n.isa 2>&1 || isa=FAIL
   fi
   hr=$(cat $OUT/$n.host.rc)
   if [ -n "$sexit" ] && cmp -s $OUT/$n.stdout $OUT/$n.host && [ "$code" = "$hr" ]; then r=PASS; else r=FAIL; fi
