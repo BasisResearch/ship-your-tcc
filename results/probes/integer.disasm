@@ -1,0 +1,49 @@
+
+/data/home/kirancodes/Documents/code/ship-your-tcc/build/probes/integer.elf:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+0000000080000000 <_start>:
+    80000000:	08000117          	auipc	sp,0x8000
+    80000004:	00010113          	mv	sp,sp
+    80000008:	00000297          	auipc	t0,0x0
+    8000000c:	04c28293          	addi	t0,t0,76 # 80000054 <trap>
+    80000010:	30529073          	csrw	mtvec,t0
+    80000014:	000012b7          	lui	t0,0x1
+    80000018:	12d2829b          	addiw	t0,t0,301 # 112d <__stack_size-0x7feed3>
+    8000001c:	3012a073          	csrs	misa,t0
+    80000020:	000062b7          	lui	t0,0x6
+    80000024:	3002a073          	csrs	mstatus,t0
+    80000028:	30102a73          	csrr	s4,misa
+    8000002c:	30002af3          	csrr	s5,mstatus
+    80000030:	00600513          	li	a0,6
+    80000034:	00700593          	li	a1,7
+
+0000000080000038 <probe_instruction>:
+    80000038:	00b50533          	add	a0,a0,a1
+    8000003c:	00d00293          	li	t0,13
+    80000040:	00551663          	bne	a0,t0,8000004c <bad_result>
+    80000044:	00100513          	li	a0,1
+    80000048:	0200006f          	j	80000068 <finish>
+
+000000008000004c <bad_result>:
+    8000004c:	00300513          	li	a0,3
+    80000050:	0180006f          	j	80000068 <finish>
+
+0000000080000054 <trap>:
+    80000054:	34202673          	csrr	a2,mcause
+    80000058:	341026f3          	csrr	a3,mepc
+    8000005c:	34302773          	csrr	a4,mtval
+    80000060:	08500513          	li	a0,133
+
+0000000080000064 <probe_trap_report>:
+    80000064:	0040006f          	j	80000068 <finish>
+
+0000000080000068 <finish>:
+    80000068:	00000297          	auipc	t0,0x0
+    8000006c:	01828293          	addi	t0,t0,24 # 80000080 <tohost>
+
+0000000080000070 <probe_exit>:
+    80000070:	00a2b023          	sd	a0,0(t0)
+    80000074:	0000006f          	j	80000074 <probe_exit+0x4>

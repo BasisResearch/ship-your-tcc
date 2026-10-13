@@ -1,0 +1,71 @@
+
+build/backend.o:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+0000000000000000 <multiply>:
+   0:	fe010113          	addi	sp,sp,-32
+   4:	00113c23          	sd	ra,24(sp)
+   8:	00813823          	sd	s0,16(sp)
+   c:	02010413          	addi	s0,sp,32
+  10:	00000013          	nop
+  14:	fea43423          	sd	a0,-24(s0)
+  18:	feb43023          	sd	a1,-32(s0)
+  1c:	fe843503          	ld	a0,-24(s0)
+  20:	fe043583          	ld	a1,-32(s0)
+  24:	02b50533          	mul	a0,a0,a1
+  28:	00040113          	mv	sp,s0
+  2c:	ff843083          	ld	ra,-8(s0)
+  30:	ff043403          	ld	s0,-16(s0)
+  34:	00008067          	ret
+
+0000000000000038 <divide>:
+  38:	fe010113          	addi	sp,sp,-32
+  3c:	00113c23          	sd	ra,24(sp)
+  40:	00813823          	sd	s0,16(sp)
+  44:	02010413          	addi	s0,sp,32
+  48:	00000013          	nop
+  4c:	fea43423          	sd	a0,-24(s0)
+  50:	feb43023          	sd	a1,-32(s0)
+  54:	fe843503          	ld	a0,-24(s0)
+  58:	fe043583          	ld	a1,-32(s0)
+  5c:	02b54533          	div	a0,a0,a1
+  60:	00040113          	mv	sp,s0
+  64:	ff843083          	ld	ra,-8(s0)
+  68:	ff043403          	ld	s0,-16(s0)
+  6c:	00008067          	ret
+
+0000000000000070 <add_double>:
+  70:	fe010113          	addi	sp,sp,-32
+  74:	00113c23          	sd	ra,24(sp)
+  78:	00813823          	sd	s0,16(sp)
+  7c:	02010413          	addi	s0,sp,32
+  80:	00000013          	nop
+  84:	fea43427          	fsd	fa0,-24(s0)
+  88:	feb43027          	fsd	fa1,-32(s0)
+  8c:	fe843507          	fld	fa0,-24(s0)
+  90:	fe043587          	fld	fa1,-32(s0)
+  94:	02b575d3          	fadd.d	fa1,fa0,fa1
+  98:	22b58553          	fmv.d	fa0,fa1
+  9c:	00040113          	mv	sp,s0
+  a0:	ff843083          	ld	ra,-8(s0)
+  a4:	ff043403          	ld	s0,-16(s0)
+  a8:	00008067          	ret
+
+00000000000000ac <add_float>:
+  ac:	fe010113          	addi	sp,sp,-32
+  b0:	00113c23          	sd	ra,24(sp)
+  b4:	00813823          	sd	s0,16(sp)
+  b8:	02010413          	addi	s0,sp,32
+  bc:	00000013          	nop
+  c0:	fea42427          	fsw	fa0,-24(s0)
+  c4:	feb42027          	fsw	fa1,-32(s0)
+  c8:	fe842507          	flw	fa0,-24(s0)
+  cc:	fe042587          	flw	fa1,-32(s0)
+  d0:	00b575d3          	fadd.s	fa1,fa0,fa1
+  d4:	20b58553          	fmv.s	fa0,fa1
+  d8:	00040113          	mv	sp,s0
+  dc:	ff843083          	ld	ra,-8(s0)
+  e0:	ff043403          	ld	s0,-16(s0)
+  e4:	00008067          	ret
