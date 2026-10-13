@@ -1,0 +1,15 @@
+Binary directory    /usr/local/bin
+TinyCC directory    /usr/local/lib/tcc
+Library directory   /usr/local/lib
+Include directory   /usr/local/include
+Manual directory    /usr/local/share/man
+Info directory      /usr/local/share/info
+Doc directory       /usr/local/share/doc
+Source path         ../../vendor/tinycc
+Build OS            Linux x86_64
+C compiler          gcc (15.2)
+Target OS           Linux
+CPU                 x86_64
+Triplet             x86_64-linux-gnu
+Config              cross backtrace=no bcheck=no
+Creating config.mak and config.h
