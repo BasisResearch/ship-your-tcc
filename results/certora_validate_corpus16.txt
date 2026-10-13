@@ -1,0 +1,17 @@
+prog           interp lean   gcc    interp_ms lean_ms   steps     verdict
+arith          251    251    251    229       8105      42        AGREE
+bitfields      225    225    225    101       1634      59        AGREE
+bitfieldstore  80     80     80     98        1665      54        AGREE
+casts          148    148    148    88        1390      27        AGREE
+floats         174    174    174    126       1505      263       AGREE
+funcs          231    231    231    76        1598      259       AGREE
+globals        206    206    206    86        1255      146       AGREE
+issorted       5      5      5      93        1287      195       AGREE
+longlong       42     42     42     99        1359      42        AGREE
+loops          58     58     58     96        1856      386       AGREE
+mixed          104    104    104    89        841       396       AGREE
+pointers       122    122    122    90        757       122       AGREE
+shifts         238    238    238    100       812       24        AGREE
+signedarith    236    236    236    77        826       75        AGREE
+structs        86     86     86     89        768       94        AGREE
+switchgoto     118    118    118    85        755       116       AGREE

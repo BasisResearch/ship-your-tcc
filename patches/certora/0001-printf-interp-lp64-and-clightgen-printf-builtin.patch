@@ -1,0 +1,179 @@
+diff --git a/cfrontend/C2C.ml b/cfrontend/C2C.ml
+index 3586c71..06ee6f3 100644
+--- a/cfrontend/C2C.ml
++++ b/cfrontend/C2C.ml
+@@ -980,7 +980,7 @@ let rec convertExpr env e =
+       convertExpr env arg1
+ 
+   | C.ECall({edesc = C.EVar {name = "printf"}}, args)
+-    when !Clflags.option_interp ->
++    when !Clflags.option_interp || !Clflags.option_printf_builtin ->
+       let targs = convertTypArgs env [] args
+       and tres = convertTyp env e.etyp in
+       let sg =
+diff --git a/driver/Clflags.ml b/driver/Clflags.ml
+index 391e1ca..4dec8d8 100644
+--- a/driver/Clflags.ml
++++ b/driver/Clflags.ml
+@@ -60,6 +60,10 @@ let option_S = ref false
+ let option_c = ref false
+ let option_v = ref false
+ let option_interp = ref false
++(* ship-your-tcc: clightgen -fprintf-builtin turns printf calls into
++   Sbuiltin(EF_external "printf", <signature of the actual arguments>),
++   exactly as ccomp -interp does (see C2C.ml). *)
++let option_printf_builtin = ref false
+ let option_small_data =
+   ref (if Configuration.arch = "powerpc"
+        && Configuration.abi = "eabi"
+diff --git a/driver/Interp.ml b/driver/Interp.ml
+index 1ea441c..b5952c2 100644
+--- a/driver/Interp.ml
++++ b/driver/Interp.ml
+@@ -281,12 +281,53 @@ let extract_string m blk ofs =
+ 
+ (* All ISO C 99 formats *)
+ 
++(* ship-your-tcc patch: also '*' widths/precisions and %F *)
+ let re_conversion = Str.regexp (
+-  "\\(%[-+0# ]*[0-9]*\\(\\.[0-9]*\\)?\\)" (* group 1: flags, width, precision *)
+-^ "\\(\\|[lhjztL]\\|hh\\|ll\\)"            (* group 3: length modifier *)
+-^ "\\([aAcdeEfgGinopsuxX%]\\)"            (* group 4: conversion specifier *)
++  "\\(%[-+0# ]*\\(\\*\\|[0-9]*\\)\\(\\.\\(\\*\\|[0-9]*\\)\\)?\\)" (* group 1: flags, width, precision *)
++^ "\\(\\|[lhjztL]\\|hh\\|ll\\)"            (* group 5: length modifier *)
++^ "\\([aAcdeEfFgGinopsuxX%]\\)"            (* group 6: conversion specifier *)
+ )
+ 
++(* ship-your-tcc patch: replace each '*' in a conversion's flags/width/precision
++   by the next (int) argument, with C's rules for negative values. *)
++let rec subst_stars flags args =
++  match String.index_opt flags '*' with
++  | None -> Some (flags, args)
++  | Some i ->
++      match args with
++      | Vint n :: args' ->
++          let n = camlint_of_coqint n in
++          let before = String.sub flags 0 i
++          and after = String.sub flags (i + 1) (String.length flags - i - 1) in
++          let is_prec = i > 0 && flags.[i - 1] = '.' in
++          let before, rep =
++            if Int32.compare n 0l >= 0 then (before, Int32.to_string n)
++            else if is_prec then (String.sub before 0 (String.length before - 1), "")
++            else (before ^ "-", Int32.to_string (Int32.neg n)) in
++          subst_stars (before ^ rep ^ after) args'
++      | _ -> None
++
++(* ship-your-tcc patch: width, '-' flag and precision for %s *)
++let format_string_spec flags s =
++  let len = String.length flags in
++  let i = ref 1 and left = ref false in
++  while !i < len && String.contains "-+0# " flags.[!i] do
++    if flags.[!i] = '-' then left := true; incr i
++  done;
++  let j = ref !i in
++  while !j < len && flags.[!j] >= '0' && flags.[!j] <= '9' do incr j done;
++  let width = if !j > !i then int_of_string (String.sub flags !i (!j - !i)) else 0 in
++  let s =
++    if !j < len && flags.[!j] = '.' then begin
++      let p = String.sub flags (!j + 1) (len - !j - 1) in
++      let p = if p = "" then 0 else int_of_string p in
++      if String.length s > p then String.sub s 0 p else s
++    end else s in
++  let pad = width - String.length s in
++  if pad <= 0 then s
++  else if !left then s ^ String.make pad ' '
++  else String.make pad ' ' ^ s
++
+ external format_float: string -> float -> string
+   = "caml_format_float"
+ external format_int32: string -> int32 -> string
+@@ -294,23 +335,37 @@ external format_int32: string -> int32 -> string
+ external format_int64: string -> int64 -> string
+   = "caml_int64_format"
+ 
++(* ship-your-tcc patch: C semantics of the h/hh length modifiers (convert the
++   promoted int back to short/char), and 64-bit l/z/t/j on 64-bit targets
++   (long, size_t, ptrdiff_t, intmax_t are Vlong there). *)
++let trunc_int32 length conv n =
++  let signed = (conv = "d" || conv = "i") in
++  match length with
++  | "hh" -> let b = Int32.logand n 0xFFl in
++            if signed && Int32.compare b 0x80l >= 0 then Int32.sub b 0x100l else b
++  | "h"  -> let b = Int32.logand n 0xFFFFl in
++            if signed && Int32.compare b 0x8000l >= 0 then Int32.sub b 0x10000l else b
++  | _ -> n
++
+ let format_value m flags length conv arg =
+   match conv.[0], length, arg with
++  | ('d'|'i'|'u'|'o'|'x'|'X'), ("l"|"z"|"t"), Vlong i ->
++      format_int64 (flags ^ conv) (camlint64_of_coqint i)
+   | ('d'|'i'|'u'|'o'|'x'|'X'|'c'), (""|"h"|"hh"|"l"|"z"|"t"), Vint i ->
+-      format_int32 (flags ^ conv) (camlint_of_coqint i)
++      format_int32 (flags ^ conv) (trunc_int32 length conv (camlint_of_coqint i))
+   | ('d'|'i'|'u'|'o'|'x'|'X'|'c'), (""|"h"|"hh"|"l"|"z"|"t"), _ ->
+       "<int argument expected>"
+   | ('d'|'i'|'u'|'o'|'x'|'X'), ("ll"|"j"), Vlong i ->
+       format_int64 (flags ^ conv) (camlint64_of_coqint i)
+   | ('d'|'i'|'u'|'o'|'x'|'X'), ("ll"|"j"), _ ->
+       "<long long argument expected"
+-  | ('f'|'e'|'E'|'g'|'G'|'a'), (""|"l"), Vfloat f ->
++  | ('f'|'F'|'e'|'E'|'g'|'G'|'a'|'A'), (""|"l"), Vfloat f ->
+       format_float (flags ^ conv) (camlfloat_of_coqfloat f)
+   | ('f'|'e'|'E'|'g'|'G'|'a'), "", _ ->
+       "<float argument expected"
+   | 's', "", Vptr(blk, ofs) ->
+       begin match extract_string m blk ofs with
+-      | Some s -> s
++      | Some s -> format_string_spec flags s
+       | None -> "<bad string>"
+       end
+   | 's', "", _ ->
+@@ -341,13 +396,18 @@ let do_printf m fmt args =
+     | Some pos1 ->
+         Buffer.add_substring b fmt pos (pos1 - pos);
+         let flags = Str.matched_group 1 fmt
+-        and length = Str.matched_group 3 fmt
+-        and conv = Str.matched_group 4 fmt
++        and length = Str.matched_group 5 fmt
++        and conv = Str.matched_group 6 fmt
+         and pos' = Str.match_end() in
+         if conv = "%" then begin
+           Buffer.add_char b '%';
+           scan pos' args
+-        end else begin
++        end else
++        match subst_stars flags args with
++        | None ->
++            Buffer.add_string b "<bad '*' argument>";
++            scan pos' []
++        | Some (flags, args) -> begin
+           match args with
+           | [] ->
+               Buffer.add_string b "<missing argument>";
+@@ -391,7 +451,13 @@ let do_external_function id sg ge w args m =
+       let len = coqint_of_camlint (Int32.of_int (String.length fmt')) in
+       Format.print_string fmt';
+       flush stdout;
+-      convert_external_args ge args sg.sig_args >>= fun eargs ->
++      (* ship-your-tcc patch: arguments that are not event values (e.g. a
++         pointer to a local buffer for %s) no longer make the call stuck after
++         its output was printed; the event just records no arguments. *)
++      let eargs =
++        match convert_external_args ge args sg.sig_args with
++        | Some eargs -> eargs
++        | None -> [] in
+       Some(((w, [Event_syscall(id, eargs, EVint len)]), Vint len), m)
+   | _ ->
+       None
+diff --git a/export/ExportDriver.ml b/export/ExportDriver.ml
+index f281151..95b809e 100644
+--- a/export/ExportDriver.ml
++++ b/export/ExportDriver.ml
+@@ -176,6 +176,7 @@ let cmdline_actions =
+   Exact "-lean", Set option_lean;
+   Exact "-E", Set option_E;
+   Exact "-normalize", Set option_normalize;
++  Exact "-fprintf-builtin", Set Clflags.option_printf_builtin;
+   Exact "-canonical-idents", Set Camlcoq.use_canonical_atoms;
+   Exact "-short-idents", Unset Camlcoq.use_canonical_atoms;
+   Exact "-o", String(fun s -> option_o := Some s);
