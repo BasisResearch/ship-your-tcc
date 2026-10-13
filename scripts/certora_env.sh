@@ -3,13 +3,14 @@
 # scripts/build_certora_ccomp.sh and scripts/build_certora_lean.sh.
 _certora_here=$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)
 export SYT_ROOT=$(cd "$_certora_here/.." && pwd)
-export CERTORA_DIR="$SYT_ROOT/build/certora"
+# Override CERTORA_DIR / CLIGHT_RUN to use the build of another worktree.
+export CERTORA_DIR="${CERTORA_DIR:-$SYT_ROOT/build/certora}"
 export CERTORA_SRC="$CERTORA_DIR/src"                 # git checkout of Certora/clean
 export CERTORA_COMMIT=123f7f7767e215aceb4821f0d044336d78103ade
 export CCOMP="$CERTORA_DIR/install/bin/ccomp"
 export CLIGHTGEN="$CERTORA_DIR/install/bin/clightgen"
 export CERTORA_LEAN_PROJECT="$CERTORA_SRC/export"     # Lake project: CCLib, Clightdefs
-export CLIGHT_RUN="$SYT_ROOT/lean/ClightRun/.lake/build/bin/clight_run"
+export CLIGHT_RUN="${CLIGHT_RUN:-$SYT_ROOT/lean/ClightRun/.lake/build/bin/clight_run}"
 # clight_run elaborates the clightgen output in-process: it needs Lean 4.32.1's
 # sysroot (Init/Lean .oleans) and the CCLib .oleans.
 export LEAN_SYSROOT="${CERTORA_LEAN_SYSROOT:-$HOME/.elan/toolchains/leanprover--lean4---v4.32.1}"

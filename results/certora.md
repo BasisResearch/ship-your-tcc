@@ -264,3 +264,9 @@ Built under this worktree's `build/` (gitignored):
 - `build/certora/src/export/.lake/build/lib/lean` (CCLib/Clightdefs .oleans)
 - `lean/ClightRun/.lake/build/bin/clight_run`
 - `scripts/certora_env.sh` exports `CCOMP CLIGHTGEN CLIGHT_RUN CERTORA_LEAN_PROJECT LEAN_SYSROOT CLIGHT_LEAN_PATH CERTORA_CFLAGS`.
+
+From another worktree, either call this worktree's scripts directly
+(`/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a39962f25417ac6c6/scripts/run_*.sh`),
+or, after merging the scripts, export
+`CERTORA_DIR=<this worktree>/build/certora` and `CLIGHT_RUN=<this worktree>/lean/ClightRun/.lake/build/bin/clight_run`
+before calling your copy.
