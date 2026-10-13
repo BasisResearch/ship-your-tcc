@@ -1,0 +1,335 @@
+diff --git a/riscv64-gen.c b/riscv64-gen.c
+index 110097b..435a190 100644
+--- a/riscv64-gen.c
++++ b/riscv64-gen.c
+@@ -15,11 +15,19 @@
+ 
+ #define RC_IRET (RC_R(0)) // int return register class
+ #define RC_IRE2 (RC_R(1)) // int 2nd return register class
++#ifdef TCC_RV64I_SOFT
++/* RV64I + lp64 soft-float: no F/D registers.  float/double values live
++   in a0..a7 (which carry both RC_INT and RC_FLOAT), are returned in a0,
++   and all FP arithmetic, comparisons and conversions call libgcc. */
++#define RC_FRET (RC_R(0)) // float return register class
++#define REG_FRET (TREG_R(0)) // float return register number
++#else
+ #define RC_FRET (RC_F(0)) // float return register class
++#define REG_FRET (TREG_F(0)) // float return register number
++#endif
+ 
+ #define REG_IRET (TREG_R(0)) // int return register number
+ #define REG_IRE2 (TREG_R(1)) // int 2nd return register number
+-#define REG_FRET (TREG_F(0)) // float return register number
+ 
+ #define PTR_SIZE 8
+ 
+@@ -47,6 +55,10 @@
+ ST_DATA const char * const target_machine_defs =
+     "__riscv\0"
+     "__riscv_xlen 64\0"
++#ifdef TCC_RV64I_SOFT
++    "__riscv_float_abi_soft\0"
++    ;
++#else
+     "__riscv_flen 64\0"
+     "__riscv_div\0"
+     "__riscv_mul\0"
+@@ -54,21 +66,30 @@ ST_DATA const char * const target_machine_defs =
+     "__riscv_fsqrt\0"
+     "__riscv_float_abi_double\0"
+     ;
++#endif
+ 
+ #define XLEN 8
+ 
+ #define TREG_RA 17
+ #define TREG_SP 18
+ 
++#ifdef TCC_RV64I_SOFT
++# define RC_SOFT RC_FLOAT
++#else
++# define RC_SOFT 0
++#endif
+ ST_DATA const int reg_classes[NB_REGS] = {
+-  RC_INT | RC_R(0),
+-  RC_INT | RC_R(1),
+-  RC_INT | RC_R(2),
+-  RC_INT | RC_R(3),
+-  RC_INT | RC_R(4),
+-  RC_INT | RC_R(5),
+-  RC_INT | RC_R(6),
+-  RC_INT | RC_R(7),
++  RC_INT | RC_SOFT | RC_R(0),
++  RC_INT | RC_SOFT | RC_R(1),
++  RC_INT | RC_SOFT | RC_R(2),
++  RC_INT | RC_SOFT | RC_R(3),
++  RC_INT | RC_SOFT | RC_R(4),
++  RC_INT | RC_SOFT | RC_R(5),
++  RC_INT | RC_SOFT | RC_R(6),
++  RC_INT | RC_SOFT | RC_R(7),
++#ifdef TCC_RV64I_SOFT
++  0, 0, 0, 0, 0, 0, 0, 0, /* f10..f17: never allocated */
++#else
+   RC_FLOAT | RC_F(0),
+   RC_FLOAT | RC_F(1),
+   RC_FLOAT | RC_F(2),
+@@ -77,6 +98,7 @@ ST_DATA const int reg_classes[NB_REGS] = {
+   RC_FLOAT | RC_F(5),
+   RC_FLOAT | RC_F(6),
+   RC_FLOAT | RC_F(7),
++#endif
+   0,
+   1 << TREG_RA,
+   1 << TREG_SP
+@@ -294,6 +316,17 @@ ST_FUNC void load(int r, SValue *sv)
+         EI(opcode, func3, rr, br, fc); // l[bhwd][u] / fl[wd] RR, fc(BR)
+     } else if (v == VT_CONST) {
+         int rb = 0, do32bit = 8, zext = 0;
++#ifdef TCC_RV64I_SOFT
++        if (is_float(sv->type.t) && bt != VT_LDOUBLE) {
++            /* load the bit pattern as an integer constant */
++            SValue v = *sv;
++            v.type.t = bt == VT_DOUBLE ? VT_LLONG : VT_INT;
++            if (bt != VT_DOUBLE)
++                v.c.i = (int32_t)(uint32_t)sv->c.i;
++            load(r, &v);
++            return;
++        }
++#endif
+         if (is_float(sv->type.t) && bt != VT_LDOUBLE) {
+             /* load float/double constant: move bit pattern from int reg */
+             uint64_t val = sv->c.i;
+@@ -412,7 +445,9 @@ ST_FUNC void store(int r, SValue *sv)
+     int fc = sv->c.i;
+     int bt = sv->type.t & VT_BTYPE;
+     int align, size = type_size(&sv->type, &align);
++#ifndef TCC_RV64I_SOFT
+     assert(!is_float(bt) || is_freg(r) || bt == VT_LDOUBLE);
++#endif
+     /* long doubles are in two integer registers, but the load/store
+        primitives only deal with one, so do as if it's one reg.  */
+     if (bt == VT_LDOUBLE)
+@@ -526,16 +561,28 @@ static void gen_bounds_epilog(void)
+     }
+ 
+     /* generate bound check local freeing */
++#ifdef TCC_RV64I_SOFT
++    EI(0x13, 0, 2, 2, -16); // addi sp,sp,-16 (no RVC, no fa0)
++    ES(0x23, 3, 2, 10, 0);  // sd a0,0(sp)
++    ES(0x23, 3, 2, 11, 8);  // sd a1,8(sp)
++#else
+     o(0xe02a1101); /* addi sp,sp,-32  sd   a0,0(sp)   */
+     o(0xa82ae42e); /* sd   a1,8(sp)   fsd  fa0,16(sp) */
++#endif
+     put_extern_sym(&label, cur_text_section, ind, 0);
+     greloca(cur_text_section, sym_data, ind, R_RISCV_GOT_HI20, 0);
+     o(0x17 | (10 << 7));    // auipc a0, 0 %pcrel_hi(sym)+addend
+     greloca(cur_text_section, &label, ind, R_RISCV_PCREL_LO12_I, 0);
+     EI(0x03, 3, 10, 10, 0); // ld a0, 0(a0)
+     gen_bounds_call(TOK___bound_local_delete);
++#ifdef TCC_RV64I_SOFT
++    EI(0x03, 3, 10, 2, 0);  // ld a0,0(sp)
++    EI(0x03, 3, 11, 2, 8);  // ld a1,8(sp)
++    EI(0x13, 0, 2, 2, 16);  // addi sp,sp,16
++#else
+     o(0x65a26502); /* ld   a0,0(sp)   ld   a1,8(sp)   */
+     o(0x61052542); /* fld  fa0,16(sp) addi sp,sp,32   */
++#endif
+ }
+ #endif
+ 
+@@ -575,6 +622,11 @@ static void reg_pass(CType *type, int *prc, int *fieldofs, int named)
+ {
+     prc[0] = 0;
+     reg_pass_rec(type, prc, fieldofs, 0);
++#ifdef TCC_RV64I_SOFT
++    /* lp64: no FP calling convention; everything (float, double, structs
++       of them) is passed by size in integer registers, as varargs are. */
++    named = 0;
++#endif
+     if (prc[0] <= 0 || !named) {
+         int align, size = type_size(type, &align);
+         prc[0] = (size + 7) >> 3;
+@@ -1036,10 +1088,61 @@ ST_FUNC int gjmp_append(int n, int t)
+     return t;
+ }
+ 
++#ifdef TCC_RV64I_SOFT
++/* Call the libgcc routine NAME on the top NARGS stack values (pushed in
++   argument order), leaving its result (a0, or a0:a1 for long double) on
++   the value stack with type T. */
++static void soft_call(const char *name, int nargs, int t)
++{
++    vpush_helper_func(tok_alloc_const(name));
++    vrott(nargs + 1);
++    gfunc_call(nargs);
++    vpushi(0);
++    vtop->type.t = t;
++    vtop->r = REG_IRET;
++    vtop->r2 = (t & VT_BTYPE) == VT_LDOUBLE ? TREG_R(1) : VT_CONST;
++}
++
++/* RV64I has no M extension: multiply, divide and remainder go to libgcc,
++   as gcc -march=rv64i -mabi=lp64 does it: the DI routines for both
++   widths, unsigned 32-bit operands zero-extended first, and a 32-bit
++   result sign-extended (tcc keeps 32-bit values sign-extended). */
++static int gen_opil_soft(int op, int ll)
++{
++    const char *name;
++    int i, r;
++    switch (op) {
++    case '*': name = "__muldi3"; break;
++    case '/': case TOK_PDIV: name = "__divdi3"; break;
++    case '%': name = "__moddi3"; break;
++    case TOK_UDIV: name = "__udivdi3"; break;
++    case TOK_UMOD: name = "__umoddi3"; break;
++    default: return 0;
++    }
++    gv2(RC_INT, RC_INT);
++    for (i = -1; i <= 0; i++) {
++        if (!ll && (op == TOK_UDIV || op == TOK_UMOD)) {
++            r = ireg(vtop[i].r);
++            EI(0x13, 1, r, r, 32); // slli r, r, 32
++            EI(0x13, 5, r, r, 32); // srli r, r, 32
++        }
++        vtop[i].type.t = VT_LLONG;
++    }
++    soft_call(name, 2, VT_LLONG);
++    if (!ll)
++        EI(0x1b, 0, 10, 10, 0); // addiw a0, a0, 0 == sext.w a0, a0
++    return 1;
++}
++#endif
++
+ static void gen_opil(int op, int ll)
+ {
+     int a, b, d;
+     int func3 = 0;
++#ifdef TCC_RV64I_SOFT
++    if (gen_opil_soft(op, ll))
++        return;
++#endif
+     ll = ll ? 0 : 8;
+     if ((vtop->r & (VT_VALMASK | VT_LVAL | VT_SYM)) == VT_CONST) {
+         int fc = vtop->c.i;
+@@ -1212,6 +1315,41 @@ ST_FUNC void gen_opf(int op)
+         return;
+     }
+ 
++#ifdef TCC_RV64I_SOFT
++    {
++        /* float/double: __{add,sub,mul,div}{s,d}f3, and the comparisons
++           __{eq,ne,lt,le,gt,ge}{s,d}f2 with the result tested against 0
++           using the same relation (gcc's lowering: a NaN operand makes
++           ==, <, <=, >, >= false and != true). */
++        char name[16];
++        const char *n;
++        int ar = 1;
++        switch (op) {
++        case '+': n = "add"; break;
++        case '-': n = "sub"; break;
++        case '*': n = "mul"; break;
++        case '/': n = "div"; break;
++        case TOK_EQ: n = "eq"; ar = 0; break;
++        case TOK_NE: n = "ne"; ar = 0; break;
++        case TOK_LT: n = "lt"; ar = 0; break;
++        case TOK_LE: n = "le"; ar = 0; break;
++        case TOK_GT: n = "gt"; ar = 0; break;
++        case TOK_GE: n = "ge"; ar = 0; break;
++        default: tcc_error("implement me: %s(%s)", __FUNCTION__, get_tok_str(op, NULL));
++        }
++        snprintf(name, sizeof name, "__%s%cf%c", n,
++                 (vtop->type.t & VT_BTYPE) == VT_DOUBLE ? 'd' : 's',
++                 ar ? '3' : '2');
++        if (ar) {
++            soft_call(name, 2, vtop->type.t & VT_BTYPE);
++        } else {
++            soft_call(name, 2, VT_LLONG);
++            vpushi(0);
++            gen_opil(op, 1);
++        }
++        return;
++    }
++#endif
+     gv2(RC_FLOAT, RC_FLOAT);
+     assert(vtop->type.t == VT_DOUBLE || vtop->type.t == VT_FLOAT);
+     dbl = vtop->type.t == VT_DOUBLE;
+@@ -1318,6 +1456,18 @@ ST_FUNC void gen_cvt_itof(int t)
+         vtop->r = REG_IRET;
+         vtop->r2 = TREG_R(1);
+     } else {
++#ifdef TCC_RV64I_SOFT
++        /* __float{,un}{si,di}{sf,df}; the operand is already extended
++           to 64 bits in its register (char/short/_Bool/int sign- or
++           zero-extended, unsigned int sign-extended as the ABI wants). */
++        char name[24];
++        (void)rr, (void)dr;
++        snprintf(name, sizeof name, "__float%s%s%s", u ? "un" : "",
++                 l ? "di" : "si", t == VT_DOUBLE ? "df" : "sf");
++        vtop->type.t = l ? VT_LLONG : VT_INT;
++        soft_call(name, 1, t);
++        return;
++#endif
+         vtop--;
+         dr = get_reg(RC_FLOAT);
+         vtop++;
+@@ -1343,6 +1493,13 @@ ST_FUNC void gen_cvt_ftoi(int t)
+         vtop->type.t = t;
+         vtop->r = REG_IRET;
+     } else {
++#ifdef TCC_RV64I_SOFT
++        /* __fix{,uns}{sf,df}{si,di} (truncating, as C wants) */
++        char name[24];
++        snprintf(name, sizeof name, "__fix%s%s%s", u ? "uns" : "",
++                 ft == VT_DOUBLE ? "df" : "sf", l ? "di" : "si");
++        soft_call(name, 1, t);
++#else
+         int rr = freg(gv(RC_FLOAT)), dr;
+         vtop--;
+         dr = get_reg(RC_INT);
+@@ -1350,6 +1507,7 @@ ST_FUNC void gen_cvt_ftoi(int t)
+         vtop->r = dr;
+         dr = ireg(dr);
+         EIu(0x53, 1, dr, rr, ((0x60 | (ft == VT_DOUBLE ? 1 : 0)) << 5) | (u ? 1 : 0) | (l ? 2 : 0)); // fcvt.[wl][u].[sd] rtz
++#endif
+     }
+ }
+ 
+@@ -1359,6 +1517,21 @@ ST_FUNC void gen_cvt_ftof(int dt)
+     dt &= VT_BTYPE;
+     if (st == dt)
+       return;
++#ifdef TCC_RV64I_SOFT
++    {
++        /* __extend{sf,df}{df,tf}2 / __trunc{df,tf}{sf,df}2: operands and
++           results are all in integer registers, so plain gfunc_call works */
++        static const char fk[] = "sdt";
++        char name[24];
++        int si = st == VT_FLOAT ? 0 : st == VT_DOUBLE ? 1 : 2;
++        int di = dt == VT_FLOAT ? 0 : dt == VT_DOUBLE ? 1 : 2;
++        (void)rs, (void)rd;
++        snprintf(name, sizeof name, "__%s%cf%cf2", di > si ? "extend" : "trunc",
++                 fk[si], fk[di]);
++        soft_call(name, 1, dt);
++        return;
++    }
++#endif
+     if (dt == VT_LDOUBLE || st == VT_LDOUBLE) {
+         int func = (dt == VT_LDOUBLE) ?
+             (st == VT_FLOAT ? TOK___extendsftf2 : TOK___extenddftf2) :
+diff --git a/tccelf.c b/tccelf.c
+index 9e2d136..46d6066 100644
+--- a/tccelf.c
++++ b/tccelf.c
+@@ -2715,7 +2715,11 @@ static int tcc_output_elf(TCCState *s1, FILE *f, int phnum, ElfW(Phdr) *phdr)
+     ehdr.e_ident[EI_OSABI] = ELFOSABI_ARM;
+ #elif defined TCC_TARGET_RISCV64
+     /* XXX should be configurable */
++# ifdef TCC_RV64I_SOFT
++    ehdr.e_flags = EF_RISCV_FLOAT_ABI_SOFT; /* lp64, and no RVC flag */
++# else
+     ehdr.e_flags = EF_RISCV_FLOAT_ABI_DOUBLE;
++# endif
+ #endif
+ 
+     if (file_type == TCC_OUTPUT_OBJ) {
