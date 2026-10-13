@@ -1,0 +1,65 @@
+{
+ "corpus": "compcert",
+ "oracles": {
+  "ccomp_interp": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/bench_fft.c",
+   "exit": 126,
+   "meta": {},
+   "outcome": "stuck",
+   "stderr_tail": "/data/home/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/riscv-none-elf/include/stdlib.h:90: warning: unknown attribute '__alloc_size__' ignored [-Wunknown-attributes]\n[run_ccomp_interp] STUCK (undefined behaviour or unsupported external): Stuck state: calling calloc(64LL, 8LL) ERROR: Undefined behavior \n",
+   "stdout": "",
+   "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "version": "213e70752b2d7e90",
+   "wall_s": 0.121
+  },
+  "gcc_native": {
+   "cached": true,
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/bench_fft.c",
+   "exit": 0,
+   "meta": {
+    "stderr_bytes": "0"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "64 points, result OK\n",
+   "stdout_sha": "faf2877790b60fe6c2c6be54a0993bd8dc7d577ef78482320bb817975089d670",
+   "version": "a9e7753b61c98058",
+   "wall_s": 0.23
+  },
+  "lean_clight": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/bench_fft.c",
+   "exit": 126,
+   "meta": {},
+   "outcome": "stuck",
+   "stderr_tail": "[clight_run] STUCK (undefined behaviour or outside the interpreter): call to unsupported external function calloc\n",
+   "stdout": "",
+   "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "version": "7a8543be5896d606",
+   "wall_s": 1.195
+  },
+  "tcc_sail": {
+   "outcome": "absent",
+   "version": "a618d9561cec04d8"
+  },
+  "xgcc_sail": {
+   "cached": true,
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/bench_fft.c",
+   "exit": 0,
+   "meta": {
+    "steps": "3447879",
+    "text_bytes": "77104"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "64 points, result OK\n",
+   "stdout_sha": "faf2877790b60fe6c2c6be54a0993bd8dc7d577ef78482320bb817975089d670",
+   "version": "64cd4e6942fcf57f",
+   "wall_s": 96.314
+  }
+ },
+ "prog": "bench_fft",
+ "sha256": "4993c9cec6ee54eb7e3f747e184436de8a38ea83e574ebd2c9dacf662e1e3bf7",
+ "source": "corpus/compcert/bench_fft.c"
+}

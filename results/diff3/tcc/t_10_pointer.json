@@ -1,0 +1,65 @@
+{
+ "corpus": "tcc",
+ "oracles": {
+  "ccomp_interp": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_10_pointer.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "a = 42\nbolshevic.a = 12\nbolshevic.b = 34\nbolshevic.c = 56\ntsar->a = 12\ntsar->b = 34\ntsar->c = 56\nbolshevic.b = 34\n",
+   "stdout_sha": "444de86aa8132c42bbb0e4258b4d0b3c18531516bc1bc1d0101a0e4c6c5b9d4a",
+   "version": "213e70752b2d7e90",
+   "wall_s": 0.174
+  },
+  "gcc_native": {
+   "cached": true,
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_10_pointer.c",
+   "exit": 0,
+   "meta": {
+    "stderr_bytes": "0"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "a = 42\nbolshevic.a = 12\nbolshevic.b = 34\nbolshevic.c = 56\ntsar->a = 12\ntsar->b = 34\ntsar->c = 56\nbolshevic.b = 34\n",
+   "stdout_sha": "444de86aa8132c42bbb0e4258b4d0b3c18531516bc1bc1d0101a0e4c6c5b9d4a",
+   "version": "a9e7753b61c98058",
+   "wall_s": 0.175
+  },
+  "lean_clight": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_10_pointer.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "a = 42\nbolshevic.a = 12\nbolshevic.b = 34\nbolshevic.c = 56\ntsar->a = 12\ntsar->b = 34\ntsar->c = 56\nbolshevic.b = 34\n",
+   "stdout_sha": "444de86aa8132c42bbb0e4258b4d0b3c18531516bc1bc1d0101a0e4c6c5b9d4a",
+   "version": "7a8543be5896d606",
+   "wall_s": 1.338
+  },
+  "tcc_sail": {
+   "outcome": "absent",
+   "version": "a618d9561cec04d8"
+  },
+  "xgcc_sail": {
+   "cached": true,
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_10_pointer.c",
+   "exit": 0,
+   "meta": {
+    "steps": "16664",
+    "text_bytes": "67116"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "a = 42\nbolshevic.a = 12\nbolshevic.b = 34\nbolshevic.c = 56\ntsar->a = 12\ntsar->b = 34\ntsar->c = 56\nbolshevic.b = 34\n",
+   "stdout_sha": "444de86aa8132c42bbb0e4258b4d0b3c18531516bc1bc1d0101a0e4c6c5b9d4a",
+   "version": "64cd4e6942fcf57f",
+   "wall_s": 1.176
+  }
+ },
+ "prog": "t_10_pointer",
+ "sha256": "ee74611faa9da3329f9d64e595271d139ea68a7e5d83b7b5a20de8b87c65741c",
+ "source": "corpus/tcc/t_10_pointer.c"
+}

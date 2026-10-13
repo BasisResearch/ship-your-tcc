@@ -1,0 +1,65 @@
+{
+ "corpus": "tcc",
+ "oracles": {
+  "ccomp_interp": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_37_sprintf.c",
+   "exit": 126,
+   "meta": {},
+   "outcome": "stuck",
+   "stderr_tail": "[run_ccomp_interp] STUCK (undefined behaviour or unsupported external): Stuck state: in function main, expression   <ptr sprintf>(<ptr Buf>, <ptr __stringlit_1>, 1) Stuck subexpression: <ptr sprintf>(<ptr Buf>, <ptr __stringlit_1>, 1) ERROR: Undefined behavior \n",
+   "stdout": "",
+   "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "version": "213e70752b2d7e90",
+   "wall_s": 0.196
+  },
+  "gcc_native": {
+   "cached": true,
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_37_sprintf.c",
+   "exit": 0,
+   "meta": {
+    "stderr_bytes": "0"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "->01<-\n->02<-\n->03<-\n->04<-\n->05<-\n->06<-\n->07<-\n->08<-\n->09<-\n->10<-\n->11<-\n->12<-\n->13<-\n->14<-\n->15<-\n->16<-\n->17<-\n->18<-\n->19<-\n->20<-\n",
+   "stdout_sha": "d5a5de8e893ff1a58076e95c90ad5e661b7373b81e29464087d03748f809f69e",
+   "version": "a9e7753b61c98058",
+   "wall_s": 0.147
+  },
+  "lean_clight": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_37_sprintf.c",
+   "exit": 126,
+   "meta": {},
+   "outcome": "stuck",
+   "stderr_tail": "[clight_run] STUCK (undefined behaviour or outside the interpreter): stuck at statement Scall\n",
+   "stdout": "",
+   "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "version": "7a8543be5896d606",
+   "wall_s": 1.39
+  },
+  "tcc_sail": {
+   "outcome": "absent",
+   "version": "a618d9561cec04d8"
+  },
+  "xgcc_sail": {
+   "cached": true,
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_37_sprintf.c",
+   "exit": 0,
+   "meta": {
+    "steps": "37138",
+    "text_bytes": "80672"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "->01<-\n->02<-\n->03<-\n->04<-\n->05<-\n->06<-\n->07<-\n->08<-\n->09<-\n->10<-\n->11<-\n->12<-\n->13<-\n->14<-\n->15<-\n->16<-\n->17<-\n->18<-\n->19<-\n->20<-\n",
+   "stdout_sha": "d5a5de8e893ff1a58076e95c90ad5e661b7373b81e29464087d03748f809f69e",
+   "version": "64cd4e6942fcf57f",
+   "wall_s": 1.976
+  }
+ },
+ "prog": "t_37_sprintf",
+ "sha256": "c198d1eac58f6d9474db7faf4d19db6a84c224c05f164fd28427eb2204723222",
+ "source": "corpus/tcc/t_37_sprintf.c"
+}

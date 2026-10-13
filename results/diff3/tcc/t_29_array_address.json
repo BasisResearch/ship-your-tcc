@@ -1,0 +1,65 @@
+{
+ "corpus": "tcc",
+ "oracles": {
+  "ccomp_interp": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_29_array_address.c",
+   "exit": 126,
+   "meta": {},
+   "outcome": "stuck",
+   "stderr_tail": "[run_ccomp_interp] STUCK (undefined behaviour or unsupported external): Stuck state: calling strcpy(<ptr>, <ptr __stringlit_1>) ERROR: Undefined behavior \n",
+   "stdout": "",
+   "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "version": "213e70752b2d7e90",
+   "wall_s": 0.12
+  },
+  "gcc_native": {
+   "cached": true,
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_29_array_address.c",
+   "exit": 0,
+   "meta": {
+    "stderr_bytes": "0"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "bcdef\n",
+   "stdout_sha": "807d910676fa6bd30adeae45f19cae71fe7859346701c36af0bfd3e3580de865",
+   "version": "a9e7753b61c98058",
+   "wall_s": 0.171
+  },
+  "lean_clight": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_29_array_address.c",
+   "exit": 126,
+   "meta": {},
+   "outcome": "stuck",
+   "stderr_tail": "[clight_run] STUCK (undefined behaviour or outside the interpreter): call to unsupported external function strcpy\n",
+   "stdout": "",
+   "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "version": "7a8543be5896d606",
+   "wall_s": 2.069
+  },
+  "tcc_sail": {
+   "outcome": "absent",
+   "version": "a618d9561cec04d8"
+  },
+  "xgcc_sail": {
+   "cached": true,
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_29_array_address.c",
+   "exit": 0,
+   "meta": {
+    "steps": "2649",
+    "text_bytes": "15328"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "bcdef\n",
+   "stdout_sha": "807d910676fa6bd30adeae45f19cae71fe7859346701c36af0bfd3e3580de865",
+   "version": "64cd4e6942fcf57f",
+   "wall_s": 0.535
+  }
+ },
+ "prog": "t_29_array_address",
+ "sha256": "7843d958ea5c982285a2121b75c9bb4cf7a5ac34966106fa8c311d5696d43af1",
+ "source": "corpus/tcc/t_29_array_address.c"
+}

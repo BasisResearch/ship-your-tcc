@@ -1,0 +1,65 @@
+{
+ "corpus": "compcert",
+ "oracles": {
+  "ccomp_interp": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_extern2.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "OK\n",
+   "stdout_sha": "a12b7cb43c9d9134b5bb1b35e9096b66775d9e92e7611d1cc92b02edd6782a87",
+   "version": "213e70752b2d7e90",
+   "wall_s": 0.219
+  },
+  "gcc_native": {
+   "cached": true,
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_extern2.c",
+   "exit": 0,
+   "meta": {
+    "stderr_bytes": "0"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "OK\n",
+   "stdout_sha": "a12b7cb43c9d9134b5bb1b35e9096b66775d9e92e7611d1cc92b02edd6782a87",
+   "version": "a9e7753b61c98058",
+   "wall_s": 0.253
+  },
+  "lean_clight": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_extern2.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "OK\n",
+   "stdout_sha": "a12b7cb43c9d9134b5bb1b35e9096b66775d9e92e7611d1cc92b02edd6782a87",
+   "version": "7a8543be5896d606",
+   "wall_s": 1.919
+  },
+  "tcc_sail": {
+   "outcome": "absent",
+   "version": "a618d9561cec04d8"
+  },
+  "xgcc_sail": {
+   "cached": true,
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_extern2.c",
+   "exit": 0,
+   "meta": {
+    "steps": "2511",
+    "text_bytes": "16144"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "OK\n",
+   "stdout_sha": "a12b7cb43c9d9134b5bb1b35e9096b66775d9e92e7611d1cc92b02edd6782a87",
+   "version": "64cd4e6942fcf57f",
+   "wall_s": 0.627
+  }
+ },
+ "prog": "regr_extern2",
+ "sha256": "9373c1f69ca0e6540487c976308f93280039a6604f3a8f8a8015bcfe05b7a097",
+ "source": "corpus/compcert/regr_extern2.c"
+}

@@ -1,0 +1,65 @@
+{
+ "corpus": "compcert",
+ "oracles": {
+  "ccomp_interp": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_generic.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "1\n-2\n42\n1.23\n4.57\nother\nother\n",
+   "stdout_sha": "3d490b56a9b7135d1ecc5a7efcd7361e8b16f9467fb3a6f40068f01ad9a5e7dc",
+   "version": "213e70752b2d7e90",
+   "wall_s": 0.153
+  },
+  "gcc_native": {
+   "cached": true,
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_generic.c",
+   "exit": 0,
+   "meta": {
+    "stderr_bytes": "0"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "1\n-2\n42\n1.23\n4.57\nother\nother\n",
+   "stdout_sha": "3d490b56a9b7135d1ecc5a7efcd7361e8b16f9467fb3a6f40068f01ad9a5e7dc",
+   "version": "a9e7753b61c98058",
+   "wall_s": 0.182
+  },
+  "lean_clight": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_generic.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "1\n-2\n42\n1.23\n4.57\nother\nother\n",
+   "stdout_sha": "3d490b56a9b7135d1ecc5a7efcd7361e8b16f9467fb3a6f40068f01ad9a5e7dc",
+   "version": "7a8543be5896d606",
+   "wall_s": 2.085
+  },
+  "tcc_sail": {
+   "outcome": "absent",
+   "version": "a618d9561cec04d8"
+  },
+  "xgcc_sail": {
+   "cached": true,
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_generic.c",
+   "exit": 0,
+   "meta": {
+    "steps": "18679",
+    "text_bytes": "67820"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "1\n-2\n42\n1.23\n4.57\nother\nother\n",
+   "stdout_sha": "3d490b56a9b7135d1ecc5a7efcd7361e8b16f9467fb3a6f40068f01ad9a5e7dc",
+   "version": "64cd4e6942fcf57f",
+   "wall_s": 1.423
+  }
+ },
+ "prog": "regr_generic",
+ "sha256": "6f2409a4bf9d128a362cc8ae5cf09d1eb8bf94ca7a29943f2155dfd5fc8b3f1e",
+ "source": "corpus/compcert/regr_generic.c"
+}

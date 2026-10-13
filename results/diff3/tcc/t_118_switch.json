@@ -1,0 +1,65 @@
+{
+ "corpus": "tcc",
+ "oracles": {
+  "ccomp_interp": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_118_switch.c",
+   "exit": 120,
+   "meta": {},
+   "outcome": "n/a",
+   "stderr_tail": "[run_ccomp_interp] ccomp rejected the program: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_118_switch.c:9:14: syntax error after '1LL' and before '...'. Fatal error; compilation aborted. 1 error detected. \n",
+   "stdout": "",
+   "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "version": "213e70752b2d7e90",
+   "wall_s": 0.124
+  },
+  "gcc_native": {
+   "cached": true,
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_118_switch.c",
+   "exit": 0,
+   "meta": {
+    "stderr_bytes": "0"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "1 : 1\n10 : 2\n100 : 3\n1000 : 4\n10000 : 5\n100000 : 6\n1000000 : 7\n10000000 : 8\n100000000 : 9\n1000000000 : 10\n10000000000 : 11\n100000000000 : 12\n1000000000000 : 13\n10000000000000 : 14\n100000000000000 : 15\n1000000000000000 : 16\n10000000000000000 : 17\n100000000000000000 : 18\n1000000000000000000 : 19\n-8446744073709551616 : 20\n1 : 1\n10 : 2\n100 : 3\n1000 : 4\n10000 : 5\n100000 : 6\n1000000 : 7\n10000000 : 8\n100000000 : 9\n1000000000 : 10\n10000000000 : 11\n100000000000 : 12\n1000000000000 : 13\n10000000000000 : 14\n100000000000000 : 15\n1000000000000000 : 16\n10000000000000000 : 17\n100000000000000000 : 18\n1000000000000000000 : 19\n10000000000000000000 : 20\n",
+   "stdout_sha": "ae4e599f4dfbeb3daf5668a2f58e308028274dd18d8776e11562ea9721c08e75",
+   "version": "a9e7753b61c98058",
+   "wall_s": 0.248
+  },
+  "lean_clight": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_118_switch.c",
+   "exit": 120,
+   "meta": {},
+   "outcome": "n/a",
+   "stderr_tail": "[run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.NsM2Vb/prog.c:9:14: syntax error after '1LL' and before '...'. Ill-formed labeled statement. Up to this point, an expression has been recognized: \n",
+   "stdout": "",
+   "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "version": "7a8543be5896d606",
+   "wall_s": 0.122
+  },
+  "tcc_sail": {
+   "outcome": "absent",
+   "version": "a618d9561cec04d8"
+  },
+  "xgcc_sail": {
+   "cached": true,
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_118_switch.c",
+   "exit": 0,
+   "meta": {
+    "steps": "236539",
+    "text_bytes": "68816"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "1 : 1\n10 : 2\n100 : 3\n1000 : 4\n10000 : 5\n100000 : 6\n1000000 : 7\n10000000 : 8\n100000000 : 9\n1000000000 : 10\n10000000000 : 11\n100000000000 : 12\n1000000000000 : 13\n10000000000000 : 14\n100000000000000 : 15\n1000000000000000 : 16\n10000000000000000 : 17\n100000000000000000 : 18\n1000000000000000000 : 19\n-8446744073709551616 : 20\n1 : 1\n10 : 2\n100 : 3\n1000 : 4\n10000 : 5\n100000 : 6\n1000000 : 7\n10000000 : 8\n100000000 : 9\n1000000000 : 10\n10000000000 : 11\n100000000000 : 12\n1000000000000 : 13\n10000000000000 : 14\n100000000000000 : 15\n1000000000000000 : 16\n10000000000000000 : 17\n100000000000000000 : 18\n1000000000000000000 : 19\n10000000000000000000 : 20\n",
+   "stdout_sha": "ae4e599f4dfbeb3daf5668a2f58e308028274dd18d8776e11562ea9721c08e75",
+   "version": "64cd4e6942fcf57f",
+   "wall_s": 7.74
+  }
+ },
+ "prog": "t_118_switch",
+ "sha256": "81e3fecba13b167296291e59f2ba56d82108bee75440dadedb96eb0381f8f37f",
+ "source": "corpus/tcc/t_118_switch.c"
+}

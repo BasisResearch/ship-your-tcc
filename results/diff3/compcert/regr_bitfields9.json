@@ -1,0 +1,65 @@
+{
+ "corpus": "compcert",
+ "oracles": {
+  "ccomp_interp": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_bitfields9.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "glob_s = { a = -12, b = 1 }\nglob_t = { c = 123, d = 1, e = -45 }\nglob_u_u = { u = -3 }\nglob_u_v = { v = 6 }\nloc_s = { a = -12, b = 1 }\nloc_t = { c = 123, d = 1, e = -45 }\nloc_u_u = { u = -3 }\nloc_u_v = { v = 6 }\n",
+   "stdout_sha": "ecae0af94facdb6ddb20df3b8da385c97145f9e029eaa48f585de09730c3f176",
+   "version": "213e70752b2d7e90",
+   "wall_s": 0.235
+  },
+  "gcc_native": {
+   "cached": true,
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_bitfields9.c",
+   "exit": 0,
+   "meta": {
+    "stderr_bytes": "0"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "glob_s = { a = -12, b = 1 }\nglob_t = { c = 123, d = 1, e = -45 }\nglob_u_u = { u = -3 }\nglob_u_v = { v = 6 }\nloc_s = { a = -12, b = 1 }\nloc_t = { c = 123, d = 1, e = -45 }\nloc_u_u = { u = -3 }\nloc_u_v = { v = 6 }\n",
+   "stdout_sha": "ecae0af94facdb6ddb20df3b8da385c97145f9e029eaa48f585de09730c3f176",
+   "version": "a9e7753b61c98058",
+   "wall_s": 0.185
+  },
+  "lean_clight": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_bitfields9.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "glob_s = { a = -12, b = 1 }\nglob_t = { c = 123, d = 1, e = -45 }\nglob_u_u = { u = -3 }\nglob_u_v = { v = 6 }\nloc_s = { a = -12, b = 1 }\nloc_t = { c = 123, d = 1, e = -45 }\nloc_u_u = { u = -3 }\nloc_u_v = { v = 6 }\n",
+   "stdout_sha": "ecae0af94facdb6ddb20df3b8da385c97145f9e029eaa48f585de09730c3f176",
+   "version": "7a8543be5896d606",
+   "wall_s": 4.446
+  },
+  "tcc_sail": {
+   "outcome": "absent",
+   "version": "a618d9561cec04d8"
+  },
+  "xgcc_sail": {
+   "cached": true,
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_bitfields9.c",
+   "exit": 0,
+   "meta": {
+    "steps": "26273",
+    "text_bytes": "67484"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "glob_s = { a = -12, b = 1 }\nglob_t = { c = 123, d = 1, e = -45 }\nglob_u_u = { u = -3 }\nglob_u_v = { v = 6 }\nloc_s = { a = -12, b = 1 }\nloc_t = { c = 123, d = 1, e = -45 }\nloc_u_u = { u = -3 }\nloc_u_v = { v = 6 }\n",
+   "stdout_sha": "ecae0af94facdb6ddb20df3b8da385c97145f9e029eaa48f585de09730c3f176",
+   "version": "64cd4e6942fcf57f",
+   "wall_s": 1.064
+  }
+ },
+ "prog": "regr_bitfields9",
+ "sha256": "2011cdf863bc1d1b6ce1a3c12e3a25a6c0270c499b067cc5d8b1483b06f6132a",
+ "source": "corpus/compcert/regr_bitfields9.c"
+}

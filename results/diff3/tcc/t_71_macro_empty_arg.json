@@ -1,0 +1,65 @@
+{
+ "corpus": "tcc",
+ "oracles": {
+  "ccomp_interp": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_71_macro_empty_arg.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "17",
+   "stdout_sha": "4523540f1504cd17100c4835e85b7eefd49911580f8efff0599a8f283be6b9e3",
+   "version": "213e70752b2d7e90",
+   "wall_s": 0.196
+  },
+  "gcc_native": {
+   "cached": true,
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_71_macro_empty_arg.c",
+   "exit": 0,
+   "meta": {
+    "stderr_bytes": "0"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "17",
+   "stdout_sha": "4523540f1504cd17100c4835e85b7eefd49911580f8efff0599a8f283be6b9e3",
+   "version": "a9e7753b61c98058",
+   "wall_s": 0.183
+  },
+  "lean_clight": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_71_macro_empty_arg.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "17",
+   "stdout_sha": "4523540f1504cd17100c4835e85b7eefd49911580f8efff0599a8f283be6b9e3",
+   "version": "7a8543be5896d606",
+   "wall_s": 1.41
+  },
+  "tcc_sail": {
+   "outcome": "absent",
+   "version": "a618d9561cec04d8"
+  },
+  "xgcc_sail": {
+   "cached": true,
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_71_macro_empty_arg.c",
+   "exit": 0,
+   "meta": {
+    "steps": "2930",
+    "text_bytes": "66872"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "17",
+   "stdout_sha": "4523540f1504cd17100c4835e85b7eefd49911580f8efff0599a8f283be6b9e3",
+   "version": "64cd4e6942fcf57f",
+   "wall_s": 0.646
+  }
+ },
+ "prog": "t_71_macro_empty_arg",
+ "sha256": "17e9703aeb88c4de9f06e99c4fd7190a587be87d351a842edc4a4157b79c508a",
+ "source": "corpus/tcc/t_71_macro_empty_arg.c"
+}

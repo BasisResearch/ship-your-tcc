@@ -34,7 +34,7 @@ meta() { [ -n "${ORACLE_META:-}" ] && echo "$1" >> "$ORACLE_META"; return 0; }
 # declarations / implicit int errors; the corpus is C99/C11 (as ccomp and tcc).
 if ! "$XGCC" -O0 -std=gnu11 -fpermissive -w -march=rv64i -mabi=lp64 -mcmodel=medany \
     ${XGCC_EXTRA:-} -nostartfiles -T "$H/link.ld" -o "$work/prog.elf" \
-    "$H/crt0.S" "$H/htif.c" "$src" -lc -lgcc -lc > "$work/cc.log" 2>&1; then
+    "$H/crt0.S" "$H/htif.c" "$src" -lm -lc -lgcc -lc > "$work/cc.log" 2>&1; then
   echo "xgcc_sail: compile failed" >&2; head -20 "$work/cc.log" >&2; exit 125
 fi
 pc=$("$NM" "$work/prog.elf" | awk '$3=="_exit"{print $1}')
@@ -58,6 +58,16 @@ d = open(sys.argv[1], 'rb').read()
 d = re.sub(rb'\A(PC = 0x[0-9a-fA-F]+\n)?(htif_tohost = 0x[0-9a-fA-F]+\n)?', b'', d)
 d = re.sub(rb'(SUCCESS\n|FAILURE[^\n]*\n)\Z', b'', d)
 d = d.replace(b'TODO: cancel_reservation\n', b'')
+# The emulator collects console bytes in a Lean String, one code point per
+# byte, and prints it UTF-8 encoded: byte 0xfe comes out as C3 BE. Undo
+# that so stdout is the program's bytes (UTF-8 text printed by the program
+# would otherwise be double-encoded and binary output mangled).
+try:
+    t = d.decode('utf-8')
+    if all(ord(c) < 256 for c in t):
+        d = t.encode('latin-1')
+except UnicodeDecodeError:
+    pass
 sys.stdout.buffer.write(d)
 PY
 if grep -q 'TRACE-FUEL-OUT' "$work/trace"; then

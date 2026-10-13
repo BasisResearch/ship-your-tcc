@@ -15,7 +15,8 @@ per-pair agreement, and one row per disagreement with its classification.
 Outcome of one oracle run:
   ok       finished; compared by (stdout, exit code)
   timeout  exit 124 or killed by the wall timeout
-  n/a      exit 125: the oracle cannot run this program
+  n/a      exit 125 (or a code mapped to n/a): the oracle cannot run it
+  stuck    a code mapped to stuck (ccomp/Lean 126): UB or unsupported construct
   absent   the oracle's `requires` file is missing (placeholder)
 Two oracles AGREE when both are ok with identical stdout and exit code,
 DISAGREE when both are ok and differ, and are INCOMPARABLE otherwise.
@@ -130,12 +131,16 @@ def run_oracle(name, o, prog, key, gate, use_cache):
                 meta[k] = v
     finally:
         os.unlink(meta_path)
+    codes = {int(k): v for k, v in o.get('codes', {}).items()}
     if killed or rc == 124:
         outcome = 'timeout'
+    elif rc in codes:
+        outcome = codes[rc]
     elif rc == 125:
         outcome = 'n/a'
     else:
         outcome = 'ok'
+        rc = rc % 256
     r = dict(outcome=outcome, exit=rc, stdout=out.decode('utf-8', 'backslashreplace'),
              stdout_sha=sha(out), stderr_tail=err.decode('utf-8', 'backslashreplace')[-2000:],
              wall_s=round(wall, 3), meta=meta, cmd=cmd)
@@ -254,18 +259,18 @@ def summarise(progs, names):
              f'Programs: {len(recs)} ({", ".join(f"{c}: {sum(1 for r in recs if r["corpus"] == c)}" for c in corpora)}). '
              'Oracles and interface: scripts/oracles.toml.', '',
              '## Oracle outcomes', '',
-             '| corpus | oracle | ok | timeout | n/a | absent | median wall s | median steps |',
-             '|---|---|---|---|---|---|---|---|']
+             '| corpus | oracle | ok | timeout | n/a | stuck | absent | median wall s | median steps |',
+             '|---|---|---|---|---|---|---|---|---|']
     tsv = ['corpus\tprog\tpair\tverdict\tcategory\tnote\tleft\tright']
     for c in corpora:
         rc = [r for r in recs if r['corpus'] == c]
         for n in names:
             os_ = [r['oracles'].get(n, {'outcome': 'absent'}) for r in rc]
-            cnt = {k: sum(1 for o in os_ if o['outcome'] == k) for k in ('ok', 'timeout', 'n/a', 'absent')}
+            cnt = {k: sum(1 for o in os_ if o['outcome'] == k) for k in ('ok', 'timeout', 'n/a', 'stuck', 'absent')}
             walls = sorted(o['wall_s'] for o in os_ if 'wall_s' in o)
             steps = sorted(int(o['meta']['steps']) for o in os_ if o.get('meta', {}).get('steps', '').isdigit())
             med = lambda v: str(v[len(v) // 2]) if v else '-'
-            lines.append(f'| {c} | {n} | {cnt["ok"]} | {cnt["timeout"]} | {cnt["n/a"]} | {cnt["absent"]} | {med(walls)} | {med(steps)} |')
+            lines.append(f'| {c} | {n} | {cnt["ok"]} | {cnt["timeout"]} | {cnt["n/a"]} | {cnt["stuck"]} | {cnt["absent"]} | {med(walls)} | {med(steps)} |')
     lines += ['', '## Pairwise agreement', '',
               '| corpus | pair | agree | disagree | incomparable |', '|---|---|---|---|---|']
     dis = []
@@ -299,7 +304,7 @@ def summarise(progs, names):
     for r in recs:
         for n in names:
             o = r['oracles'].get(n)
-            if o and o['outcome'] in ('timeout', 'n/a'):
+            if o and o['outcome'] in ('timeout', 'n/a', 'stuck'):
                 detail = (o.get('stderr_tail') or '').strip().splitlines()
                 lines.append(f'| {r["corpus"]} | {r["prog"]} | {n} | {o["outcome"]} | {detail[-1][:100] if detail else ""} |')
     os.makedirs(OUT, exist_ok=True)

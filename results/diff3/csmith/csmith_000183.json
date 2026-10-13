@@ -1,0 +1,65 @@
+{
+ "corpus": "csmith",
+ "oracles": {
+  "ccomp_interp": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/csmith/csmith_000183.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/csmith/csmith_000183.c:330: warning: incompatible conversion: assigning to 'int32_t *' from 'uint32_t *'\n",
+   "stdout": "checksum = 7364C1E3\n",
+   "stdout_sha": "17e7d733f31264091440c6efbc51ea196cfc8ff0911989831068b6f4579d35bc",
+   "version": "213e70752b2d7e90",
+   "wall_s": 0.169
+  },
+  "gcc_native": {
+   "cached": true,
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/csmith/csmith_000183.c",
+   "exit": 0,
+   "meta": {
+    "stderr_bytes": "0"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "checksum = 7364C1E3\n",
+   "stdout_sha": "17e7d733f31264091440c6efbc51ea196cfc8ff0911989831068b6f4579d35bc",
+   "version": "a9e7753b61c98058",
+   "wall_s": 0.231
+  },
+  "lean_clight": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/csmith/csmith_000183.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "checksum = 7364C1E3\n",
+   "stdout_sha": "17e7d733f31264091440c6efbc51ea196cfc8ff0911989831068b6f4579d35bc",
+   "version": "7a8543be5896d606",
+   "wall_s": 4.32
+  },
+  "tcc_sail": {
+   "outcome": "absent",
+   "version": "a618d9561cec04d8"
+  },
+  "xgcc_sail": {
+   "cached": true,
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/csmith/csmith_000183.c",
+   "exit": 0,
+   "meta": {
+    "steps": "49797",
+    "text_bytes": "73772"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "checksum = 7364C1E3\n",
+   "stdout_sha": "17e7d733f31264091440c6efbc51ea196cfc8ff0911989831068b6f4579d35bc",
+   "version": "64cd4e6942fcf57f",
+   "wall_s": 2.356
+  }
+ },
+ "prog": "csmith_000183",
+ "sha256": "a77cbb0c7ac1222d3d0dcbf0a17dff607d23bdc0a167f2dc00704e5ef8e067ce",
+ "source": "corpus/csmith/csmith_000183.c"
+}

@@ -1,0 +1,65 @@
+{
+ "corpus": "csmith",
+ "oracles": {
+  "ccomp_interp": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/csmith/csmith_000326.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "checksum = 355A233A\n",
+   "stdout_sha": "e2acfddeb54cecde792da0e717f0a1a4871304ed3494e698bd59afd0220b3501",
+   "version": "213e70752b2d7e90",
+   "wall_s": 0.108
+  },
+  "gcc_native": {
+   "cached": true,
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/csmith/csmith_000326.c",
+   "exit": 0,
+   "meta": {
+    "stderr_bytes": "0"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "checksum = 355A233A\n",
+   "stdout_sha": "e2acfddeb54cecde792da0e717f0a1a4871304ed3494e698bd59afd0220b3501",
+   "version": "a9e7753b61c98058",
+   "wall_s": 0.243
+  },
+  "lean_clight": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/csmith/csmith_000326.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "checksum = 355A233A\n",
+   "stdout_sha": "e2acfddeb54cecde792da0e717f0a1a4871304ed3494e698bd59afd0220b3501",
+   "version": "7a8543be5896d606",
+   "wall_s": 2.913
+  },
+  "tcc_sail": {
+   "outcome": "absent",
+   "version": "a618d9561cec04d8"
+  },
+  "xgcc_sail": {
+   "cached": true,
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/csmith/csmith_000326.c",
+   "exit": 0,
+   "meta": {
+    "steps": "49394",
+    "text_bytes": "71552"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "checksum = 355A233A\n",
+   "stdout_sha": "e2acfddeb54cecde792da0e717f0a1a4871304ed3494e698bd59afd0220b3501",
+   "version": "64cd4e6942fcf57f",
+   "wall_s": 3.191
+  }
+ },
+ "prog": "csmith_000326",
+ "sha256": "2296c63c69b6e65e7f417ef3a1a91f8a9aa247cd14780a43b02c3e519a681033",
+ "source": "corpus/csmith/csmith_000326.c"
+}

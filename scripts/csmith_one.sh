@@ -51,6 +51,8 @@ grep -q '^checksum = [0-9A-F]*$' "$d/o0.out" || reject no-checksum
 
 # (c) ccomp -interp agrees and finds no UB (pluggable: skipped if absent)
 if [ -x "$root/scripts/run_ccomp_interp.sh" ]; then
+  # exit 0 and the same stdout; 120 = ccomp rejects, 126 = stuck (UB or an
+  # unsupported construct, e.g. bitfield locals): dropped
   timeout 120 "$root/scripts/run_ccomp_interp.sh" "$d/prog.c" > "$d/cc.out" 2> "$d/cc.err"; rc=$?
   [ $rc = 0 ] || reject "ccomp-interp-exit-$rc"
   cmp -s "$d/o0.out" "$d/cc.out" || reject ccomp-interp-mismatch

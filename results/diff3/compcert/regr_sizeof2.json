@@ -1,0 +1,65 @@
+{
+ "corpus": "compcert",
+ "oracles": {
+  "ccomp_interp": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_sizeof2.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "5\n5\n",
+   "stdout_sha": "133f46e9df9c594a4bd844a0ad79a12dfa578d0d86f881d0b0d4c016068a4b90",
+   "version": "213e70752b2d7e90",
+   "wall_s": 0.115
+  },
+  "gcc_native": {
+   "cached": true,
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_sizeof2.c",
+   "exit": 0,
+   "meta": {
+    "stderr_bytes": "0"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "5\n5\n",
+   "stdout_sha": "133f46e9df9c594a4bd844a0ad79a12dfa578d0d86f881d0b0d4c016068a4b90",
+   "version": "a9e7753b61c98058",
+   "wall_s": 0.296
+  },
+  "lean_clight": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_sizeof2.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "5\n5\n",
+   "stdout_sha": "133f46e9df9c594a4bd844a0ad79a12dfa578d0d86f881d0b0d4c016068a4b90",
+   "version": "7a8543be5896d606",
+   "wall_s": 1.367
+  },
+  "tcc_sail": {
+   "outcome": "absent",
+   "version": "a618d9561cec04d8"
+  },
+  "xgcc_sail": {
+   "cached": true,
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_sizeof2.c",
+   "exit": 0,
+   "meta": {
+    "steps": "3863",
+    "text_bytes": "66888"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "5\n5\n",
+   "stdout_sha": "133f46e9df9c594a4bd844a0ad79a12dfa578d0d86f881d0b0d4c016068a4b90",
+   "version": "64cd4e6942fcf57f",
+   "wall_s": 0.693
+  }
+ },
+ "prog": "regr_sizeof2",
+ "sha256": "7b2dddc7f2e080208f9cd6e87a1bc8130792dddf48899a62902bbad4c6ad86f3",
+ "source": "corpus/compcert/regr_sizeof2.c"
+}

@@ -1,0 +1,65 @@
+{
+ "corpus": "tcc",
+ "oracles": {
+  "ccomp_interp": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_84_hex-float.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "n+1 = 15\n",
+   "stdout_sha": "88026f9ee6262b919c3ff054dd2921a26f3c9b5dd88ac33a03b68e1b1b1e8300",
+   "version": "213e70752b2d7e90",
+   "wall_s": 0.584
+  },
+  "gcc_native": {
+   "cached": true,
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_84_hex-float.c",
+   "exit": 0,
+   "meta": {
+    "stderr_bytes": "0"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "n+1 = 15\n",
+   "stdout_sha": "88026f9ee6262b919c3ff054dd2921a26f3c9b5dd88ac33a03b68e1b1b1e8300",
+   "version": "a9e7753b61c98058",
+   "wall_s": 0.146
+  },
+  "lean_clight": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_84_hex-float.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "n+1 = 15\n",
+   "stdout_sha": "88026f9ee6262b919c3ff054dd2921a26f3c9b5dd88ac33a03b68e1b1b1e8300",
+   "version": "7a8543be5896d606",
+   "wall_s": 1.507
+  },
+  "tcc_sail": {
+   "outcome": "absent",
+   "version": "a618d9561cec04d8"
+  },
+  "xgcc_sail": {
+   "cached": true,
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_84_hex-float.c",
+   "exit": 0,
+   "meta": {
+    "steps": "3733",
+    "text_bytes": "66892"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "n+1 = 15\n",
+   "stdout_sha": "88026f9ee6262b919c3ff054dd2921a26f3c9b5dd88ac33a03b68e1b1b1e8300",
+   "version": "64cd4e6942fcf57f",
+   "wall_s": 0.631
+  }
+ },
+ "prog": "t_84_hex-float",
+ "sha256": "1ff21cda13b0aa2d8cfc6a8b82bddcc3241d4fa70b63fda1c909fac04c997f54",
+ "source": "corpus/tcc/t_84_hex-float.c"
+}

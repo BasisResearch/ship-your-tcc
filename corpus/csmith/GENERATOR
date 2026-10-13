@@ -5,4 +5,4 @@ n 200
 max_lines 500
 min_lines 120
 sail_budget 3000000
-ccomp_stage skipped
+ccomp_stage on (ccomp 681db62b5e829c02, Certora/clean 123f7f7767e2)

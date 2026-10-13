@@ -66,6 +66,7 @@ EXCLUDE_PATTERNS = [
     (r'\b_Atomic\b|<stdatomic\.h>|\b__atomic_\w+|\b__sync_\w+', 'atomics'),
     (r'\balloca\b', 'alloca'),
     (r'\bvolatile\b', 'volatile (not covered by the Lean Clight port)'),
+    (r'%[-+ #0-9.]*[hlLqjzt]*[pan]', 'printf %p/%a/%n (unspecified, outside the Lean printf model)'),
     (r'__builtin_(?!va_)\w+', 'GCC builtins'),
     (r'#\s*pragma\s+pack|__attribute__\s*\(\(\s*(__)?packed', 'packed structs'),
     (r'__attribute__\s*\(\(\s*(__)?(constructor|destructor|cleanup)', 'constructor/destructor/cleanup attributes'),
@@ -93,6 +94,7 @@ MANUAL_EXCLUDE = {
     'regr_attribs1': 'section/alignment attributes, compiled-only upstream',
     'regr_alignas': '_Alignas layout test, compiled-only upstream',
     # tcc tests2
+    't_27_sizeof': 'printf %d given size_t arguments (format/argument type mismatch, undefined; ccomp -interp prints <int argument expected>, found by diff3)',
     't_31_args': 'needs command-line arguments',
     't_46_grep': 'needs command-line arguments and reads a file',
     't_60_errors_and_warnings': 'compile-error snippets (-dt)',
@@ -146,15 +148,16 @@ SHRINK = {
     'bench_binarytrees': [(r'argc < 2 \? 12 :', 'argc < 2 ? 4 :')],
     'bench_fannkuch': [(r'\(argc>1\) \? atoi\(argv\[1\]\) : 10', '(argc>1) ? atoi(argv[1]) : 6')],
     'bench_fft': [(r'else n = 18;', 'else n = 6;')],
-    'bench_fftsp': [(r'else n = 12;', 'else n = 5;')],
+    'bench_fftsp': [(r'else n = 12;', 'else n = 3;')],
     'bench_nsieve': [(r'argc < 2 \? 9 :', 'argc < 2 ? 1 :')],
-    'bench_spectral': [(r'\(argc == 2\) \? atoi\(argv\[1\]\) : 1000\)', '(argc == 2) ? atoi(argv[1]) : 10)')],
-    'bench_mandelbrot': [(r'w = h = 1000;', 'w = h = 16;')],
+    'bench_spectral': [(r'\(argc == 2\) \? atoi\(argv\[1\]\) : 1000\)', '(argc == 2) ? atoi(argv[1]) : 6)')],
+    'bench_mandelbrot': [(r'w = h = 1000;', 'w = h = 8;')],
     'bench_nbody': [(r'argc < 2 \? 1000000 :', 'argc < 2 ? 20 :')],
     'bench_almabench': [(r'#define TEST_LOOPS 20', '#define TEST_LOOPS 1'), (r'#define TEST_LENGTH 36525', '#define TEST_LENGTH 2')],
     'bench_aes': [(r'do_bench\(1000000\);', 'do_bench(10);')],
     'bench_sha1': [(r'do_bench\(200000\);', 'do_bench(4);')],
-    'bench_bisect': [(r'n = 500;', 'n = 20;')],
+    # n is the matrix size; main prints S[1..19], so the print loop shrinks with it
+    'bench_bisect': [(r'n = 500;', 'n = 8;'), (r'for\(i=1; i<20; i\+\+\)', 'for(i=1; i<8; i++)')],
     'bench_perlin': [(r'x \+= 0\.1\)', 'x += 2.5)'), (r'y \+= 0\.1\)', 'y += 2.5)'), (r'z \+= 0\.1\)', 'z += 2.5)')],
     'bench_vmach': [(r'I\(WCONST, 30, 0, 0\)', 'I(WCONST, 12, 0, 0)'), (r'"fib\(30\)', '"fib(12)'),
                     (r'/\* 0 \*/ I\(WCONST, 6, 0, 0\),\n/\* 1 \*/ I\(WCONST, 12, 0, 0\),\n/\* 2 \*/ I\(WCONST, 18, 0, 0\)',
@@ -275,7 +278,7 @@ def check(cand):
         row['reason'] = 'no main (compile-only test)'
         return row
     for pat, why in EXCLUDE_PATTERNS:
-        if re.search(pat, body if '%l' not in pat else text):
+        if re.search(pat, body if '%' not in pat else text):
             row['reason'] = why
             return row
     with tempfile.TemporaryDirectory() as d:
@@ -373,7 +376,7 @@ def copy():
             assert why is None, row['name']
             hdr = f'/* corpus/{src}/{row["name"]}.c: copied from {row["source"]} by scripts/collect_corpus.py'
             if shrink != '-':
-                hdr += f'; shrunk: {shrink}'
+                hdr += '; shrunk: ' + shrink.replace('*/', '* /').replace('/*', '/ *')
             open(os.path.join(d, row['name'] + '.c'), 'w').write(hdr + ' */\n' + text)
             n += 1
         print(f'{src}: copied {n} programs to corpus/{src}/')

@@ -2,17 +2,17 @@ name	source	status	reason	shrink	expect	externals	native_kinstr	lines
 bench_aes	build/compcert-tests/c/aes.c	include	ok	do_bench(10);	build/compcert-tests/c/Results/aes	memcmp,printf	164	1457
 bench_almabench	build/compcert-tests/c/almabench.c	include	ok	#define TEST_LOOPS 1; #define TEST_LENGTH 2	build/compcert-tests/c/Results/almabench	asin,atan2,cos,fabs,fmod,printf,sin,sqrt	303	351
 bench_binarytrees	build/compcert-tests/c/binarytrees.c	include	ok	argc < 2 ? 4 :	build/compcert-tests/c/Results/binarytrees	atol,free,malloc,pow,printf	3083	164
-bench_bisect	build/compcert-tests/c/bisect.c	include	ok	n = 20;	build/compcert-tests/c/Results/bisect	calloc,exit,fabs,fprintf,fputs,free,malloc,memset,printf,stderr	857	377
+bench_bisect	build/compcert-tests/c/bisect.c	include	ok	n = 8;; for(i=1; i<8; i++)	build/compcert-tests/c/Results/bisect	calloc,exit,fabs,fprintf,fputs,free,malloc,memset,printf,stderr	267	377
 bench_chomp	build/compcert-tests/c/chomp.c	include	ok	ncol = 3;; nrow = 3;	build/compcert-tests/c/Results/chomp	free,malloc,printf,putchar	291	364
 bench_fannkuch	build/compcert-tests/c/fannkuch.c	include	ok	(argc>1) ? atoi(argv[1]) : 6	build/compcert-tests/c/Results/fannkuch	atoi,calloc,printf	453	154
 bench_fft	build/compcert-tests/c/fft.c	include	ok	else n = 6;	build/compcert-tests/c/Results/fft	atoi,calloc,cos,fabs,printf,sin	212	193
-bench_fftsp	build/compcert-tests/c/fftsp.c	include	ok	else n = 5;	build/compcert-tests/c/Results/fftsp	atoi,calloc,cosf,fabsf,printf,sinf	3656	198
+bench_fftsp	build/compcert-tests/c/fftsp.c	include	ok	else n = 3;	build/compcert-tests/c/Results/fftsp	atoi,calloc,cosf,fabsf,printf,sinf	778	198
 bench_fftw	build/compcert-tests/c/fftw.c	include	ok	#define NRUNS 1	build/compcert-tests/c/Results/fftw	printf	170	91
 bench_fib	build/compcert-tests/c/fib.c	include	ok	else n = 15;	build/compcert-tests/c/Results/fib	atoi,printf	146	19
 bench_integr	build/compcert-tests/c/integr.c	include	ok	else n = 1000;	build/compcert-tests/c/Results/integr	atoi,printf	135	32
 bench_knucleotide	build/compcert-tests/c/knucleotide.c	exclude	reads Results/knucleotide-input.txt (file I/O)	-	build/compcert-tests/c/Results/knucleotide	-	-	-
 bench_lists	build/compcert-tests/c/lists.c	include	ok	else n = 100;; else niter = 4;	build/compcert-tests/c/Results/lists	atoi,malloc,printf	165	81
-bench_mandelbrot	build/compcert-tests/c/mandelbrot.c	include	ok	w = h = 16;	build/compcert-tests/c/Results/mandelbrot	atoi,printf,putc,stdout	300	92
+bench_mandelbrot	build/compcert-tests/c/mandelbrot.c	include	ok	w = h = 8;	build/compcert-tests/c/Results/mandelbrot	atoi,printf,putc,stdout	162	92
 bench_nbody	build/compcert-tests/c/nbody.c	include	ok	argc < 2 ? 20 :	build/compcert-tests/c/Results/nbody	atoi,printf,sqrt	173	174
 bench_nsieve	build/compcert-tests/c/nsieve.c	include	ok	argc < 2 ? 1 :	build/compcert-tests/c/Results/nsieve	atoi,free,malloc,memset,printf	2547	63
 bench_nsievebits	build/compcert-tests/c/nsievebits.c	include	ok	#define NITER 1; n = ac < 2 ? 1 :	build/compcert-tests/c/Results/nsievebits	atoi,exit,malloc,memset,printf	2458	79
@@ -21,7 +21,7 @@ bench_qsort	build/compcert-tests/c/qsort.c	include	ok	else n = 500;	build/compce
 bench_sha1	build/compcert-tests/c/sha1.c	include	ok	do_bench(4);	build/compcert-tests/c/Results/sha1	memcmp,memcpy,memset,printf,strlen	151	236
 bench_sha3	build/compcert-tests/c/sha3.c	include	ok	#define DATALEN 1000; #define NITER 1	build/compcert-tests/c/Results/sha3	memcmp,memcpy,memset,printf,strlen	771	223
 bench_siphash24	build/compcert-tests/c/siphash24.c	include	ok	for(i = 0; i < 4; i++) {	build/compcert-tests/c/Results/siphash24	memcmp,printf	168	256
-bench_spectral	build/compcert-tests/c/spectral.c	include	ok	(argc == 2) ? atoi(argv[1]) : 10)	build/compcert-tests/c/Results/spectral	atoi,free,malloc,printf,sqrt	369	81
+bench_spectral	build/compcert-tests/c/spectral.c	include	ok	(argc == 2) ? atoi(argv[1]) : 6)	build/compcert-tests/c/Results/spectral	atoi,free,malloc,printf,sqrt	228	81
 bench_vmach	build/compcert-tests/c/vmach.c	include	ok	I(WCONST, 12, 0, 0); "fib(12); /* 0 */ I(WCONST, 3, 0, 0), /* 1 */ I(WCONST, 6, 0, 0), /* 2 */ I(WCONST, 9, 0, 0); "tak(9, 6, 3)	build/compcert-tests/c/Results/vmach	exit,printf	435	211
 regr_NaNs	build/compcert-tests/regression/NaNs.c	exclude	processor-dependent NaN payloads (no reference output upstream)	-	-	-	-	-
 regr_alias	build/compcert-tests/regression/alias.c	exclude	alias attribute (linker-level), compiled-only upstream	-	build/compcert-tests/regression/Results/alias	-	-	-
@@ -29,7 +29,7 @@ regr_alignas	build/compcert-tests/regression/alignas.c	exclude	_Alignas layout t
 regr_aligned	build/compcert-tests/regression/aligned.c	exclude	alignment attribute test, compiled-only upstream	-	build/compcert-tests/regression/Results/aligned	-	-	-
 regr_annot1	build/compcert-tests/regression/annot1.c	exclude	CompCert __builtin_annot	-	-	-	-	-
 regr_attribs1	build/compcert-tests/regression/attribs1.c	exclude	section/alignment attributes, compiled-only upstream	-	build/compcert-tests/regression/Results/attribs1	-	-	-
-regr_binops	build/compcert-tests/regression/binops.c	include	ok	-	build/compcert-tests/regression/Results/binops	printf	306	65
+regr_binops	build/compcert-tests/regression/binops.c	exclude	printf %p/%a/%n (unspecified, outside the Lean printf model)	-	build/compcert-tests/regression/Results/binops	-	-	65
 regr_bitfields1	build/compcert-tests/regression/bitfields1.c	include	ok	-	build/compcert-tests/regression/Results/bitfields1	printf	115	39
 regr_bitfields10	build/compcert-tests/regression/bitfields10.c	include	ok	-	build/compcert-tests/regression/Results/bitfields10	printf	127	66
 regr_bitfields2	build/compcert-tests/regression/bitfields2.c	include	ok	-	build/compcert-tests/regression/Results/bitfields2	printf	115	32
@@ -69,9 +69,9 @@ regr_expr6	build/compcert-tests/regression/expr6.c	include	ok	-	build/compcert-t
 regr_extasm	build/compcert-tests/regression/extasm.c	exclude	extended inline asm	-	-	-	-	-
 regr_extern1	build/compcert-tests/regression/extern1.c	exclude	no main (compile-only test)	-	-	-	-	8
 regr_extern2	build/compcert-tests/regression/extern2.c	include	ok	-	build/compcert-tests/regression/Results/extern2	printf,ungetc	112	16
-regr_floats-basics	build/compcert-tests/regression/floats-basics.c	include	ok	-	build/compcert-tests/regression/Results/floats-basics	printf	112	79
+regr_floats-basics	build/compcert-tests/regression/floats-basics.c	exclude	printf %p/%a/%n (unspecified, outside the Lean printf model)	-	build/compcert-tests/regression/Results/floats-basics	-	-	79
 regr_floats-lit	build/compcert-tests/regression/floats-lit.c	include	ok	-	build/compcert-tests/regression/Results/floats-lit	printf	122	559
-regr_floats	build/compcert-tests/regression/floats.c	include	ok	-	build/compcert-tests/regression/Results/floats	printf	455	7948
+regr_floats	build/compcert-tests/regression/floats.c	exclude	printf %p/%a/%n (unspecified, outside the Lean printf model)	-	build/compcert-tests/regression/Results/floats	-	-	7948
 regr_for1	build/compcert-tests/regression/for1.c	include	ok	-	build/compcert-tests/regression/Results/for1	printf	122	20
 regr_for2	build/compcert-tests/regression/for2.c	include	ok	-	build/compcert-tests/regression/Results/for2	printf	112	14
 regr_funct1	build/compcert-tests/regression/funct1.c	exclude	known CompCert failure (FAILURES in regression/Makefile)	-	-	-	-	-

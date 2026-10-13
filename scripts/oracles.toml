@@ -13,7 +13,11 @@
 #            such a result is "n/a" and never counts as a disagreement;
 #   * optionally it appends key=value lines to the file named by the
 #     ORACLE_META environment variable (e.g. steps=123456 for Sail runs);
-#   * diff3 also enforces `timeout` (wall seconds; a kill counts as 124).
+#   * diff3 also enforces `timeout` (wall seconds; a kill counts as 124);
+#   * `codes` maps further oracle-specific exit codes to an outcome:
+#     "n/a" (cannot run it), "stuck" (the semantics got stuck: undefined
+#     behaviour or an unsupported construct; never compared, listed apart)
+#     or "timeout". Other exit statuses are compared mod 256.
 #
 # Results are cached under results/diff3/.cache keyed by (sha256 of the
 # program, oracle name, version), where the version hashes `cmd`, `env`,
@@ -59,20 +63,31 @@ version_cmd = "cat build/tcc-image/VERSION 2>/dev/null; true"
 heavy = true
 
 [oracle.ccomp_interp]
-# Lane C: Certora/clean's `ccomp -interp` (CompCert 3.17). The script should
-# exit 125 if ccomp rejects the program or the interpreter gets stuck on an
-# unsupported external call, and a distinct nonzero status (not 124/125,
-# e.g. 126) with "undefined behavior" on stderr when the interpreter reports
-# UB, so diff3 can tell UB from unsupported features.
-cmd = "scripts/run_ccomp_interp.sh {prog}"
+# Certora/clean's `ccomp -interp` (CompCert 3.17), scripts/run_ccomp_interp.sh
+# from the Certora lane. Its own extra exit codes: 120 rejected by ccomp,
+# 126 stuck (undefined behaviour, or an external other than printf).
+# ccomp -interp is slow and memory-hungry on long runs (26.7M steps: 236 s,
+# 5.3 GB), so each run gets its own memory cap; an OOM kill (137) is n/a.
+# CERTORA_DIR / CLIGHT_RUN point at the Certora lane's build (override here).
+cmd = "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh {prog}"
 requires = "scripts/run_ccomp_interp.sh"
-version_files = ["scripts/run_ccomp_interp.sh"]
-version_cmd = "true"
+env = { CERTORA_DIR = "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a39962f25417ac6c6/build/certora" }
+version_files = ["scripts/run_ccomp_interp.sh", "scripts/certora_env.sh"]
+version_cmd = "sha256sum /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a39962f25417ac6c6/build/certora/install/bin/ccomp | cut -c1-16"
+codes = { 120 = "n/a", 125 = "n/a", 126 = "stuck", 137 = "n/a" }
+timeout = 600
+heavy = true
 
 [oracle.lean_clight]
-# Lane C: clightgen -lean + Certora's Lean Clight interpreter (doStep).
-cmd = "scripts/run_lean_clight.sh {prog}"
+# clightgen -lean + Certora's Lean Clight interpreter (scripts/run_lean_clight.sh,
+# Certora lane). Extra exit codes: 120 rejected by clightgen, 124 out of
+# fuel, 125 harness error, 126 stuck (UB or unexecuted construct),
+# 127 outside the printf model (%p, %n, long double, ...). ~500 MB a run.
+cmd = "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh {prog}"
 requires = "scripts/run_lean_clight.sh"
-version_files = ["scripts/run_lean_clight.sh"]
-version_cmd = "true"
+env = { CERTORA_DIR = "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a39962f25417ac6c6/build/certora", CLIGHT_RUN = "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a39962f25417ac6c6/lean/ClightRun/.lake/build/bin/clight_run" }
+version_files = ["scripts/run_lean_clight.sh", "scripts/certora_env.sh"]
+version_cmd = "sha256sum /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a39962f25417ac6c6/lean/ClightRun/.lake/build/bin/clight_run /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a39962f25417ac6c6/build/certora/install/bin/clightgen | cut -c1-16"
+codes = { 120 = "n/a", 125 = "n/a", 126 = "stuck", 127 = "n/a", 137 = "n/a" }
+timeout = 600
 heavy = true

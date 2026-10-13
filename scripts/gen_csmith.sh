@@ -49,6 +49,12 @@ CSMITH_FLAGS=${CSMITH_FLAGS:---ccomp --no-argc --no-volatiles --no-volatile-poin
 --max-array-dim 2 --max-array-len-per-dim 4 --max-struct-fields 4 \
 --max-union-fields 3 --max-pointer-depth 2}
 export CSMITH_FLAGS MAX_LINES MIN_LINES SAIL_BUDGET
+# The ccomp stage uses the Certora lane's build unless this worktree has one
+# (scripts/certora_env.sh honours CERTORA_DIR).
+CERTORA_LANE=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a39962f25417ac6c6
+if [ -z "${CERTORA_DIR:-}" ] && [ ! -x "$root/build/certora/install/bin/ccomp" ] && [ -x "$CERTORA_LANE/build/certora/install/bin/ccomp" ]; then
+  export CERTORA_DIR=$CERTORA_LANE/build/certora
+fi
 work=$root/build/csmith-work
 mkdir -p "$OUT" "$work"
 [ -x "$root/build/csmith/install/bin/csmith" ] || { echo "build Csmith into build/csmith first" >&2; exit 1; }
@@ -87,7 +93,7 @@ done
   echo "max_lines ${MAX_LINES:-500}"
   echo "min_lines ${MIN_LINES:-120}"
   echo "sail_budget ${SAIL_BUDGET:-3000000}"
-  echo "ccomp_stage $([ -x "$root/scripts/run_ccomp_interp.sh" ] && echo on || echo skipped)"
+  echo "ccomp_stage $([ -x "$root/scripts/run_ccomp_interp.sh" ] && echo "on (ccomp $(. "$root/scripts/certora_env.sh"; sha256sum "$CCOMP" | cut -c1-16), Certora/clean $(. "$root/scripts/certora_env.sh"; echo "$CERTORA_COMMIT" | cut -c1-12))" || echo skipped)"
 } > "$OUT/GENERATOR"
 [ -n "${KEEP_WORK:-}" ] || rm -rf "$work"
 echo "kept $N programs in $OUT (seeds $BASE_SEED..$last); rejections: $(tail -n +2 "$OUT/rejected.tsv" | cut -f2 | sort | uniq -c | tr '\n' ';')" >&2

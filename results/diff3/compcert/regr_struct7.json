@@ -1,0 +1,65 @@
+{
+ "corpus": "compcert",
+ "oracles": {
+  "ccomp_interp": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_struct7.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "A2 = { 1234, 3.141590, { 'H', ... , 'o' } }\nA2 = { 1234, 3.141590, { 'H', ... , 'o' } }\nB2 = { 1, ..., 5, ..., 0 }\nB2 = { 1, ..., 5, ..., 0 }\nC2.c = 'z'\nD2.v = { 0, ..., 4, ..., 0 }\nAA[0] = { 1234, 3.141590, { 'H', ... , 'o' } }\n",
+   "stdout_sha": "9a18474c8e1df569ae18c078b075e4fb6327633b2acd89900c1787bf13752f20",
+   "version": "213e70752b2d7e90",
+   "wall_s": 0.125
+  },
+  "gcc_native": {
+   "cached": true,
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_struct7.c",
+   "exit": 0,
+   "meta": {
+    "stderr_bytes": "0"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "A2 = { 1234, 3.141590, { 'H', ... , 'o' } }\nA2 = { 1234, 3.141590, { 'H', ... , 'o' } }\nB2 = { 1, ..., 5, ..., 0 }\nB2 = { 1, ..., 5, ..., 0 }\nC2.c = 'z'\nD2.v = { 0, ..., 4, ..., 0 }\nAA[0] = { 1234, 3.141590, { 'H', ... , 'o' } }\n",
+   "stdout_sha": "9a18474c8e1df569ae18c078b075e4fb6327633b2acd89900c1787bf13752f20",
+   "version": "a9e7753b61c98058",
+   "wall_s": 0.184
+  },
+  "lean_clight": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_struct7.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "A2 = { 1234, 3.141590, { 'H', ... , 'o' } }\nA2 = { 1234, 3.141590, { 'H', ... , 'o' } }\nB2 = { 1, ..., 5, ..., 0 }\nB2 = { 1, ..., 5, ..., 0 }\nC2.c = 'z'\nD2.v = { 0, ..., 4, ..., 0 }\nAA[0] = { 1234, 3.141590, { 'H', ... , 'o' } }\n",
+   "stdout_sha": "9a18474c8e1df569ae18c078b075e4fb6327633b2acd89900c1787bf13752f20",
+   "version": "7a8543be5896d606",
+   "wall_s": 3.685
+  },
+  "tcc_sail": {
+   "outcome": "absent",
+   "version": "a618d9561cec04d8"
+  },
+  "xgcc_sail": {
+   "cached": true,
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_struct7.c",
+   "exit": 0,
+   "meta": {
+    "steps": "52213",
+    "text_bytes": "67568"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "A2 = { 1234, 3.141590, { 'H', ... , 'o' } }\nA2 = { 1234, 3.141590, { 'H', ... , 'o' } }\nB2 = { 1, ..., 5, ..., 0 }\nB2 = { 1, ..., 5, ..., 0 }\nC2.c = 'z'\nD2.v = { 0, ..., 4, ..., 0 }\nAA[0] = { 1234, 3.141590, { 'H', ... , 'o' } }\n",
+   "stdout_sha": "9a18474c8e1df569ae18c078b075e4fb6327633b2acd89900c1787bf13752f20",
+   "version": "64cd4e6942fcf57f",
+   "wall_s": 2.924
+  }
+ },
+ "prog": "regr_struct7",
+ "sha256": "202f081e38e23ab7f618593128b3d31ef0b1fd4f021f3a23b3734e069633faa5",
+ "source": "corpus/compcert/regr_struct7.c"
+}
