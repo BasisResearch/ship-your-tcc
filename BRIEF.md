@@ -51,3 +51,35 @@ You are a Cove termling. Use the cove MCP `status` tool:
 - `needs_you` for decisions only the user can make;
 - `done` at the end of each phase, with a short summary of numbers, what worked and blockers.
 If Phase 1 can't get tcc -run working on Sail after a real effort, stop and report the blocker.
+
+## Update 2026-10-13 (from the user): target RV64I, reuse everything
+
+### Phase 1 blocker and decision
+The shared executable Sail model implements RV64I only (it traps on `mul`; M, F and D exist only in the non-executable model). Decision: **patch tcc's riscv64 code generator to emit calls to libgcc helpers instead of M, F and D instructions.**
+- 64-bit multiply, divide and remainder: `__muldi3`, `__divdi3`, `__moddi3`, `__udivdi3`, `__umoddi3`; 32-bit variants as libgcc names them.
+- Floats and doubles: `__adddf3`, `__subdf3`, `__muldf3`, `__divdf3`, comparisons (`__eqdf2`, `__ledf2`, `__gedf2`, `__unorddf2`), conversions (`__floatsidf`, `__floatdidf`, `__fixdfsi`, `__fixdfdi`, `__extendsfdf2`, `__truncdfsf2`), and the single-float `*sf*` versions.
+- ABI: lp64 soft-float, so floats are passed in integer registers, matching the RV64I newlib/libgcc build the sister projects use.
+- Build tcc itself with `-march=rv64i -mabi=lp64` and the same flags as ship-your-lua's ELF. Assume no C extension and no A extension; check that tcc's output contains no compressed or atomic instructions.
+- Keep the patch small and isolated: a `TCC_RV64I_SOFT` configuration, in `patches/`, applied to the pinned `43c7708`. Add a test that disassembles tcc's output for a corpus and fails on any M, F, D, A or C instruction.
+
+### Reuse: do not rebuild what the sister projects already have
+ship-your-lua (~/Documents/code/ship-your-lua) is the most advanced copy of the ship-your-interpreter machinery. Copy from it with attribution; don't re-derive:
+- **The bare-metal build:** crt0, link.ld, HTIF, newlib, the Sail runner, and the difftest harness. Also take the OCaml project's in-image file system (ship-your-ocaml `OCaml/Os*` and its image generator) for tcc's headers, `libtcc1.a` and `libc.a`.
+- **The exponentiating generator layer:** disassembly → segments → at-lemmas (`scripts/gen_lua_*.py`, `gen_lua_fn.py`, the at-lemma/kit route, A-JOIN rows, callee-context rows) and the CLAUDE.md discipline that comes with it (R16 and the abstraction gate `abstractions/gate.py`, `check.sh` with its axiom stage).
+- **Library proofs the libgcc route reuses directly:**
+  - ship-your-lua has already proved the libgcc soft-float routines equal to its F64 library and to Lean's `Float.Model` (`Lua/Vm/Fn/*`, `SfRef*`, `Divdf3.spec_proved`, `Muldf3`, `__adddf3`/`__subdf3`, the comparisons and conversions);
+  - syi has proved `__muldi3`/`__divdi3`/`__moddi3`;
+  - Lua and syi together cover dlmalloc (`MallocR`/`FreeR`) and newlib stdio (`fwrite`, `fflush`, `__sinit`).
+
+  Prefer the identical newlib/libgcc build, so these proofs apply as they are. Check instruction identity before reusing a proof.
+- **Skills:** `abstraction-discovery`, `theoremproving` and `prover-workflows` are in ~/.claude/skills. Install the gate at the start, not later.
+
+### Speed
+Aim for the shortest path to results:
+1. Commit the existing untracked work (vendor/, c/, results/) first.
+2. Phase 1 on RV64I.
+3. Phase 2's three-way differential, which is the first result worth publishing.
+
+Use parallel subagents in separate worktrees for independent pieces (the tcc patch, the image and file system, the Certora/CompCert build, the Csmith harness). Cap each Lean run at 12 GB, as ship-your-lua does: there were OOM kills on this box on Oct 13.
+
+Report with the cove MCP (`status`, `report`, `add_link`). You're a Claude Code termling, so it's available, unlike for the earlier Codex agent.
