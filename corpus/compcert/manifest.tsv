@@ -1,0 +1,131 @@
+name	source	status	reason	shrink	expect	externals	native_kinstr	lines
+bench_aes	build/compcert-tests/c/aes.c	include	ok	do_bench(10);	build/compcert-tests/c/Results/aes	memcmp,printf	164	1457
+bench_almabench	build/compcert-tests/c/almabench.c	include	ok	#define TEST_LOOPS 1; #define TEST_LENGTH 2	build/compcert-tests/c/Results/almabench	asin,atan2,cos,fabs,fmod,printf,sin,sqrt	303	351
+bench_binarytrees	build/compcert-tests/c/binarytrees.c	include	ok	argc < 2 ? 4 :	build/compcert-tests/c/Results/binarytrees	atol,free,malloc,pow,printf	3083	164
+bench_bisect	build/compcert-tests/c/bisect.c	include	ok	n = 8;; for(i=1; i<8; i++)	build/compcert-tests/c/Results/bisect	calloc,exit,fabs,fprintf,fputs,free,malloc,memset,printf,stderr	267	377
+bench_chomp	build/compcert-tests/c/chomp.c	include	ok	ncol = 3;; nrow = 3;	build/compcert-tests/c/Results/chomp	free,malloc,printf,putchar	291	364
+bench_fannkuch	build/compcert-tests/c/fannkuch.c	include	ok	(argc>1) ? atoi(argv[1]) : 6	build/compcert-tests/c/Results/fannkuch	atoi,calloc,printf	453	154
+bench_fft	build/compcert-tests/c/fft.c	include	ok	else n = 6;	build/compcert-tests/c/Results/fft	atoi,calloc,cos,fabs,printf,sin	212	193
+bench_fftsp	build/compcert-tests/c/fftsp.c	include	ok	else n = 3;	build/compcert-tests/c/Results/fftsp	atoi,calloc,cosf,fabsf,printf,sinf	778	198
+bench_fftw	build/compcert-tests/c/fftw.c	include	ok	#define NRUNS 1	build/compcert-tests/c/Results/fftw	printf	170	91
+bench_fib	build/compcert-tests/c/fib.c	include	ok	else n = 15;	build/compcert-tests/c/Results/fib	atoi,printf	146	19
+bench_integr	build/compcert-tests/c/integr.c	include	ok	else n = 1000;	build/compcert-tests/c/Results/integr	atoi,printf	135	32
+bench_knucleotide	build/compcert-tests/c/knucleotide.c	exclude	reads Results/knucleotide-input.txt (file I/O)	-	build/compcert-tests/c/Results/knucleotide	-	-	-
+bench_lists	build/compcert-tests/c/lists.c	include	ok	else n = 100;; else niter = 4;	build/compcert-tests/c/Results/lists	atoi,malloc,printf	165	81
+bench_mandelbrot	build/compcert-tests/c/mandelbrot.c	include	ok	w = h = 8;	build/compcert-tests/c/Results/mandelbrot	atoi,printf,putc,stdout	162	92
+bench_nbody	build/compcert-tests/c/nbody.c	include	ok	argc < 2 ? 20 :	build/compcert-tests/c/Results/nbody	atoi,printf,sqrt	173	174
+bench_nsieve	build/compcert-tests/c/nsieve.c	include	ok	argc < 2 ? 1 :	build/compcert-tests/c/Results/nsieve	atoi,free,malloc,memset,printf	2547	63
+bench_nsievebits	build/compcert-tests/c/nsievebits.c	include	ok	#define NITER 1; n = ac < 2 ? 1 :	build/compcert-tests/c/Results/nsievebits	atoi,exit,malloc,memset,printf	2458	79
+bench_perlin	build/compcert-tests/c/perlin.c	include	ok	x += 2.5); y += 2.5); z += 2.5)	build/compcert-tests/c/Results/perlin	floor,printf	197	77
+bench_qsort	build/compcert-tests/c/qsort.c	include	ok	else n = 500;	build/compcert-tests/c/Results/qsort	atoi,malloc,printf,qsort,rand	2035	50
+bench_sha1	build/compcert-tests/c/sha1.c	include	ok	do_bench(4);	build/compcert-tests/c/Results/sha1	memcmp,memcpy,memset,printf,strlen	151	236
+bench_sha3	build/compcert-tests/c/sha3.c	include	ok	#define DATALEN 1000; #define NITER 1	build/compcert-tests/c/Results/sha3	memcmp,memcpy,memset,printf,strlen	771	223
+bench_siphash24	build/compcert-tests/c/siphash24.c	include	ok	for(i = 0; i < 4; i++) {	build/compcert-tests/c/Results/siphash24	memcmp,printf	168	256
+bench_spectral	build/compcert-tests/c/spectral.c	include	ok	(argc == 2) ? atoi(argv[1]) : 6)	build/compcert-tests/c/Results/spectral	atoi,free,malloc,printf,sqrt	228	81
+bench_vmach	build/compcert-tests/c/vmach.c	include	ok	I(WCONST, 12, 0, 0); "fib(12); /* 0 */ I(WCONST, 3, 0, 0), /* 1 */ I(WCONST, 6, 0, 0), /* 2 */ I(WCONST, 9, 0, 0); "tak(9, 6, 3)	build/compcert-tests/c/Results/vmach	exit,printf	435	211
+regr_NaNs	build/compcert-tests/regression/NaNs.c	exclude	processor-dependent NaN payloads (no reference output upstream)	-	-	-	-	-
+regr_alias	build/compcert-tests/regression/alias.c	exclude	alias attribute (linker-level), compiled-only upstream	-	build/compcert-tests/regression/Results/alias	-	-	-
+regr_alignas	build/compcert-tests/regression/alignas.c	exclude	_Alignas layout test, compiled-only upstream	-	build/compcert-tests/regression/Results/alignas	-	-	-
+regr_aligned	build/compcert-tests/regression/aligned.c	exclude	alignment attribute test, compiled-only upstream	-	build/compcert-tests/regression/Results/aligned	-	-	-
+regr_annot1	build/compcert-tests/regression/annot1.c	exclude	CompCert __builtin_annot	-	-	-	-	-
+regr_attribs1	build/compcert-tests/regression/attribs1.c	exclude	section/alignment attributes, compiled-only upstream	-	build/compcert-tests/regression/Results/attribs1	-	-	-
+regr_binops	build/compcert-tests/regression/binops.c	exclude	printf %p/%a/%n (unspecified, outside the Lean printf model)	-	build/compcert-tests/regression/Results/binops	-	-	65
+regr_bitfields1	build/compcert-tests/regression/bitfields1.c	include	ok	-	build/compcert-tests/regression/Results/bitfields1	printf	115	39
+regr_bitfields10	build/compcert-tests/regression/bitfields10.c	include	ok	-	build/compcert-tests/regression/Results/bitfields10	printf	127	66
+regr_bitfields2	build/compcert-tests/regression/bitfields2.c	include	ok	-	build/compcert-tests/regression/Results/bitfields2	printf	115	32
+regr_bitfields3	build/compcert-tests/regression/bitfields3.c	include	ok	-	build/compcert-tests/regression/Results/bitfields3	printf	113	15
+regr_bitfields4	build/compcert-tests/regression/bitfields4.c	include	ok	-	build/compcert-tests/regression/Results/bitfields4	printf	121	39
+regr_bitfields5	build/compcert-tests/regression/bitfields5.c	include	ok	-	build/compcert-tests/regression/Results/bitfields5	printf	115	28
+regr_bitfields6	build/compcert-tests/regression/bitfields6.c	include	ok	-	build/compcert-tests/regression/Results/bitfields6	printf	112	18
+regr_bitfields7	build/compcert-tests/regression/bitfields7.c	include	ok	-	build/compcert-tests/regression/Results/bitfields7	printf	112	20
+regr_bitfields8	build/compcert-tests/regression/bitfields8.c	include	ok	-	build/compcert-tests/regression/Results/bitfields8	printf	115	24
+regr_bitfields9	build/compcert-tests/regression/bitfields9.c	include	ok	-	build/compcert-tests/regression/Results/bitfields9	printf	120	70
+regr_bitfields_uint_t	build/compcert-tests/regression/bitfields_uint_t.c	include	ok	-	build/compcert-tests/regression/Results/bitfields_uint_t	printf	113	22
+regr_bool	build/compcert-tests/regression/bool.c	include	ok	-	build/compcert-tests/regression/Results/bool	printf	117	31
+regr_builtins-aarch64	build/compcert-tests/regression/builtins-aarch64.c	exclude	GCC builtins	-	build/compcert-tests/regression/Results/builtins-aarch64	-	-	29
+regr_builtins-arm	build/compcert-tests/regression/builtins-arm.c	exclude	GCC builtins	-	build/compcert-tests/regression/Results/builtins-arm	-	-	35
+regr_builtins-common	build/compcert-tests/regression/builtins-common.c	exclude	GCC builtins	-	build/compcert-tests/regression/Results/builtins-common	-	-	63
+regr_builtins-powerpc	build/compcert-tests/regression/builtins-powerpc.c	exclude	GCC builtins	-	build/compcert-tests/regression/Results/builtins-powerpc	-	-	61
+regr_builtins-riscV	build/compcert-tests/regression/builtins-riscV.c	exclude	GCC builtins	-	build/compcert-tests/regression/Results/builtins-riscV	-	-	21
+regr_builtins-x86	build/compcert-tests/regression/builtins-x86.c	exclude	GCC builtins	-	build/compcert-tests/regression/Results/builtins-x86	-	-	43
+regr_casts1	build/compcert-tests/regression/casts1.c	include	ok	-	build/compcert-tests/regression/Results/casts1	printf	112	8
+regr_casts2	build/compcert-tests/regression/casts2.c	include	ok	-	build/compcert-tests/regression/Results/casts2	printf	112	16
+regr_casts3	build/compcert-tests/regression/casts3.c	include	ok	for (i = 0; i < 1000; i++) {	build/compcert-tests/regression/Results/casts3	fflush,printf,stdout	248	60
+regr_char1	build/compcert-tests/regression/char1.c	include	ok	-	build/compcert-tests/regression/Results/char1	printf	263	16
+regr_charlit	build/compcert-tests/regression/charlit.c	exclude	OS-specific header	-	build/compcert-tests/regression/Results/charlit	-	-	50
+regr_commaprec	build/compcert-tests/regression/commaprec.c	exclude	no main (compile-only test)	-	-	-	-	6
+regr_compar	build/compcert-tests/regression/compar.c	include	ok	-	build/compcert-tests/regression/Results/compar	printf	114	80
+regr_compound	build/compcert-tests/regression/compound.c	include	ok	-	build/compcert-tests/regression/Results/compound	printf	140	146
+regr_consteval	build/compcert-tests/regression/consteval.c	exclude	volatile (not covered by the Lean Clight port)	-	build/compcert-tests/regression/Results/consteval	-	-	39
+regr_decl1	build/compcert-tests/regression/decl1.c	include	ok	-	build/compcert-tests/regression/Results/decl1	printf	112	21
+regr_dollars	build/compcert-tests/regression/dollars.c	include	ok	-	build/compcert-tests/regression/Results/dollars	printf	112	28
+regr_emptydecl	build/compcert-tests/regression/emptydecl.c	exclude	no main (compile-only test)	-	-	-	-	3
+regr_expr1	build/compcert-tests/regression/expr1.c	include	ok	-	build/compcert-tests/regression/Results/expr1	printf	113	17
+regr_expr2	build/compcert-tests/regression/expr2.c	exclude	no main (compile-only test)	-	-	-	-	8
+regr_expr3	build/compcert-tests/regression/expr3.c	exclude	no main (compile-only test)	-	-	-	-	7
+regr_expr4	build/compcert-tests/regression/expr4.c	exclude	no main (compile-only test)	-	-	-	-	5
+regr_expr5	build/compcert-tests/regression/expr5.c	include	ok	-	build/compcert-tests/regression/Results/expr5	printf	112	13
+regr_expr6	build/compcert-tests/regression/expr6.c	include	ok	-	build/compcert-tests/regression/Results/expr6	printf	119	50
+regr_extasm	build/compcert-tests/regression/extasm.c	exclude	extended inline asm	-	-	-	-	-
+regr_extern1	build/compcert-tests/regression/extern1.c	exclude	no main (compile-only test)	-	-	-	-	8
+regr_extern2	build/compcert-tests/regression/extern2.c	include	ok	-	build/compcert-tests/regression/Results/extern2	printf,ungetc	112	16
+regr_floats-basics	build/compcert-tests/regression/floats-basics.c	exclude	printf %p/%a/%n (unspecified, outside the Lean printf model)	-	build/compcert-tests/regression/Results/floats-basics	-	-	79
+regr_floats-lit	build/compcert-tests/regression/floats-lit.c	include	ok	-	build/compcert-tests/regression/Results/floats-lit	printf	122	559
+regr_floats	build/compcert-tests/regression/floats.c	exclude	printf %p/%a/%n (unspecified, outside the Lean printf model)	-	build/compcert-tests/regression/Results/floats	-	-	7948
+regr_for1	build/compcert-tests/regression/for1.c	include	ok	-	build/compcert-tests/regression/Results/for1	printf	122	20
+regr_for2	build/compcert-tests/regression/for2.c	include	ok	-	build/compcert-tests/regression/Results/for2	printf	112	14
+regr_funct1	build/compcert-tests/regression/funct1.c	exclude	known CompCert failure (FAILURES in regression/Makefile)	-	-	-	-	-
+regr_funct2	build/compcert-tests/regression/funct2.c	exclude	no main (compile-only test)	-	-	-	-	4
+regr_funct3	build/compcert-tests/regression/funct3.c	include	ok	-	build/compcert-tests/regression/Results/funct3	printf	112	14
+regr_funptr1	build/compcert-tests/regression/funptr1.c	exclude	no main (compile-only test)	-	-	-	-	10
+regr_funptr2	build/compcert-tests/regression/funptr2.c	include	ok	-	build/compcert-tests/regression/Results/funptr2	printf	113	14
+regr_generic	build/compcert-tests/regression/generic.c	include	ok	-	build/compcert-tests/regression/Results/generic	abort,printf	118	107
+regr_ifconv	build/compcert-tests/regression/ifconv.c	include	ok	-	build/compcert-tests/regression/Results/ifconv	printf	135	149
+regr_init1	build/compcert-tests/regression/init1.c	exclude	no main (compile-only test)	-	-	-	-	3
+regr_init2	build/compcert-tests/regression/init2.c	exclude	no main (compile-only test)	-	-	-	-	8
+regr_init3	build/compcert-tests/regression/init3.c	exclude	no main (compile-only test)	-	-	-	-	9
+regr_init4	build/compcert-tests/regression/init4.c	exclude	no main (compile-only test)	-	-	-	-	13
+regr_initializers	build/compcert-tests/regression/initializers.c	include	ok	-	build/compcert-tests/regression/Results/initializers-64	printf	170	168
+regr_initializers2	build/compcert-tests/regression/initializers2.c	include	ok	-	build/compcert-tests/regression/Results/initializers2	printf	142	92
+regr_initializers3	build/compcert-tests/regression/initializers3.c	include	ok	-	build/compcert-tests/regression/Results/initializers3	printf	141	96
+regr_instrsel	build/compcert-tests/regression/instrsel.c	exclude	GCC builtins	-	build/compcert-tests/regression/Results/instrsel	-	-	140
+regr_int32	build/compcert-tests/regression/int32.c	include	ok	-	build/compcert-tests/regression/Results/int32	printf	3242	120
+regr_int64	build/compcert-tests/regression/int64.c	include	ok	for (i = 0; i < 20; i++) {	build/compcert-tests/regression/Results/int64	printf	3575	136
+regr_krfun	build/compcert-tests/regression/krfun.c	exclude	volatile (not covered by the Lean Clight port)	-	build/compcert-tests/regression/Results/krfun	-	-	37
+regr_packedstruct1	build/compcert-tests/regression/packedstruct1.c	exclude	GCC builtins	-	build/compcert-tests/regression/Results/packedstruct1-64	-	-	162
+regr_packedstruct2	build/compcert-tests/regression/packedstruct2.c	exclude	host gcc rejects: error: expected identifier or ‘(’ before numeric constant	-	build/compcert-tests/regression/Results/packedstruct2	-	-	63
+regr_parsing	build/compcert-tests/regression/parsing.c	exclude	host gcc stdout differs from the reference output (implementation-specific)	-	build/compcert-tests/regression/Results/parsing	printf	122	195
+regr_pragmas	build/compcert-tests/regression/pragmas.c	exclude	no main (compile-only test)	-	-	-	-	56
+regr_ptrs1	build/compcert-tests/regression/ptrs1.c	exclude	no main (compile-only test)	-	-	-	-	1
+regr_ptrs2	build/compcert-tests/regression/ptrs2.c	exclude	no main (compile-only test)	-	-	-	-	26
+regr_ptrs3	build/compcert-tests/regression/ptrs3.c	include	ok	-	build/compcert-tests/regression/Results/ptrs3	printf	113	10
+regr_sections	build/compcert-tests/regression/sections.c	exclude	section/attribute placement test (no runtime behaviour)	-	build/compcert-tests/regression/Results/sections	-	-	-
+regr_seqops	build/compcert-tests/regression/seqops.c	exclude	no main (compile-only test)	-	-	-	-	93
+regr_singlefloats	build/compcert-tests/regression/singlefloats.c	exclude	no main (compile-only test)	-	-	-	-	32
+regr_sizeof1	build/compcert-tests/regression/sizeof1.c	include	ok	-	build/compcert-tests/regression/Results/sizeof1-64	printf	114	43
+regr_sizeof2	build/compcert-tests/regression/sizeof2.c	include	ok	-	build/compcert-tests/regression/Results/sizeof2	printf	112	9
+regr_stringlit	build/compcert-tests/regression/stringlit.c	exclude	OS-specific header	-	build/compcert-tests/regression/Results/stringlit	-	-	41
+regr_struct1	build/compcert-tests/regression/struct1.c	exclude	no main (compile-only test)	-	-	-	-	8
+regr_struct10	build/compcert-tests/regression/struct10.c	exclude	no main (compile-only test)	-	-	-	-	5
+regr_struct11	build/compcert-tests/regression/struct11.c	include	ok	-	build/compcert-tests/regression/Results/struct11	printf	112	39
+regr_struct12	build/compcert-tests/regression/struct12.c	include	ok	-	build/compcert-tests/regression/Results/struct12	printf	116	39
+regr_struct2	build/compcert-tests/regression/struct2.c	exclude	no main (compile-only test)	-	-	-	-	4
+regr_struct3	build/compcert-tests/regression/struct3.c	exclude	no main (compile-only test)	-	-	-	-	17
+regr_struct4	build/compcert-tests/regression/struct4.c	exclude	no main (compile-only test)	-	-	-	-	9
+regr_struct5	build/compcert-tests/regression/struct5.c	exclude	no main (compile-only test)	-	-	-	-	43
+regr_struct6	build/compcert-tests/regression/struct6.c	exclude	no main (compile-only test)	-	-	-	-	17
+regr_struct7	build/compcert-tests/regression/struct7.c	include	ok	-	build/compcert-tests/regression/Results/struct7	printf	123	75
+regr_struct8	build/compcert-tests/regression/struct8.c	include	ok	-	build/compcert-tests/regression/Results/struct8	printf	126	46
+regr_struct9	build/compcert-tests/regression/struct9.c	exclude	no main (compile-only test)	-	-	-	-	13
+regr_switch	build/compcert-tests/regression/switch.c	include	ok	-	build/compcert-tests/regression/Results/switch	printf	133	39
+regr_switch2	build/compcert-tests/regression/switch2.c	include	ok	-	build/compcert-tests/regression/Results/switch2	printf	158	61
+regr_switch3	build/compcert-tests/regression/switch3.c	include	ok	-	build/compcert-tests/regression/Results/switch3	printf,putchar,qsort	137	182
+regr_telescopes	build/compcert-tests/regression/telescopes.c	include	ok	-	build/compcert-tests/regression/Results/telescopes	printf	130	47
+regr_types1	build/compcert-tests/regression/types1.c	exclude	no main (compile-only test)	-	-	-	-	15
+regr_varargs1	build/compcert-tests/regression/varargs1.c	include	ok	-	build/compcert-tests/regression/Results/varargs1	printf	113	25
+regr_varargs2	build/compcert-tests/regression/varargs2.c	include	ok	-	build/compcert-tests/regression/Results/varargs2	printf,putchar,puts,vprintf	178	174
+regr_varargs3	build/compcert-tests/regression/varargs3.c	exclude	volatile (not covered by the Lean Clight port)	-	-	-	-	52
+regr_volatile1	build/compcert-tests/regression/volatile1.c	exclude	volatile (not covered by the Lean Clight port)	-	build/compcert-tests/regression/Results/volatile1	-	-	27
+regr_volatile2	build/compcert-tests/regression/volatile2.c	exclude	volatile (not covered by the Lean Clight port)	-	build/compcert-tests/regression/Results/volatile2	-	-	52
+regr_volatile3	build/compcert-tests/regression/volatile3.c	exclude	volatile (not covered by the Lean Clight port)	-	build/compcert-tests/regression/Results/volatile3	-	-	77
+regr_volatile4	build/compcert-tests/regression/volatile4.c	exclude	volatile (not covered by the Lean Clight port)	-	build/compcert-tests/regression/Results/volatile4	-	-	33

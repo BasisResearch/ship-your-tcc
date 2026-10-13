@@ -1,0 +1,65 @@
+{
+ "corpus": "tcc",
+ "oracles": {
+  "ccomp_interp": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_19_pointer_arithmetic.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "42\nb is not NULL\nc is NULL\n",
+   "stdout_sha": "e86550741a68c744b1d27883472575d594b3e416016a74a1a89526b81bd9046a",
+   "version": "213e70752b2d7e90",
+   "wall_s": 0.119
+  },
+  "gcc_native": {
+   "cached": true,
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_19_pointer_arithmetic.c",
+   "exit": 0,
+   "meta": {
+    "stderr_bytes": "0"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "42\nb is not NULL\nc is NULL\n",
+   "stdout_sha": "e86550741a68c744b1d27883472575d594b3e416016a74a1a89526b81bd9046a",
+   "version": "a9e7753b61c98058",
+   "wall_s": 0.169
+  },
+  "lean_clight": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_19_pointer_arithmetic.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "42\nb is not NULL\nc is NULL\n",
+   "stdout_sha": "e86550741a68c744b1d27883472575d594b3e416016a74a1a89526b81bd9046a",
+   "version": "7a8543be5896d606",
+   "wall_s": 1.268
+  },
+  "tcc_sail": {
+   "outcome": "absent",
+   "version": "a618d9561cec04d8"
+  },
+  "xgcc_sail": {
+   "cached": true,
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_19_pointer_arithmetic.c",
+   "exit": 0,
+   "meta": {
+    "steps": "5009",
+    "text_bytes": "67340"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "42\nb is not NULL\nc is NULL\n",
+   "stdout_sha": "e86550741a68c744b1d27883472575d594b3e416016a74a1a89526b81bd9046a",
+   "version": "64cd4e6942fcf57f",
+   "wall_s": 0.796
+  }
+ },
+ "prog": "t_19_pointer_arithmetic",
+ "sha256": "c881a3f6761f3ef364bef0ad007df1ea8ad4d7aa77da3209b12f4d04f82ced80",
+ "source": "corpus/tcc/t_19_pointer_arithmetic.c"
+}

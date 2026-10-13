@@ -1,0 +1,8 @@
+csmith_rev 0cdc710315cfee9035e22ef4363ca479270d1934 https://github.com/csmith-project/csmith (2026-03-01)
+csmith_flags --ccomp --no-argc --no-volatiles --no-volatile-pointers --no-packed-struct --no-bitfields --no-builtins --no-inline-function --concise --max-funcs 3 --max-block-depth 3 --max-block-size 3 --max-expr-complexity 4 --max-array-dim 2 --max-array-len-per-dim 4 --max-struct-fields 4 --max-union-fields 3 --max-pointer-depth 2
+base_seed 1
+n 200
+max_lines 500
+min_lines 120
+sail_budget 3000000
+ccomp_stage on (ccomp 681db62b5e829c02, Certora/clean 123f7f7767e2)

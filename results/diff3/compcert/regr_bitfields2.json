@@ -1,0 +1,65 @@
+{
+ "corpus": "compcert",
+ "oracles": {
+  "ccomp_interp": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_bitfields2.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "x = { a = 1, b = 2 }\ny = { c = 3, d = 0; e = 5 }\nz = { f = 6, g = 7; h = 8 }\n",
+   "stdout_sha": "333a4f81a4508162cabcb02d197d39ff859ad70bc8cae6ff6ffd87a38ec4d3a7",
+   "version": "213e70752b2d7e90",
+   "wall_s": 0.093
+  },
+  "gcc_native": {
+   "cached": true,
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_bitfields2.c",
+   "exit": 0,
+   "meta": {
+    "stderr_bytes": "0"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "x = { a = 1, b = 2 }\ny = { c = 3, d = 0; e = 5 }\nz = { f = 6, g = 7; h = 8 }\n",
+   "stdout_sha": "333a4f81a4508162cabcb02d197d39ff859ad70bc8cae6ff6ffd87a38ec4d3a7",
+   "version": "a9e7753b61c98058",
+   "wall_s": 0.173
+  },
+  "lean_clight": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_bitfields2.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "x = { a = 1, b = 2 }\ny = { c = 3, d = 0; e = 5 }\nz = { f = 6, g = 7; h = 8 }\n",
+   "stdout_sha": "333a4f81a4508162cabcb02d197d39ff859ad70bc8cae6ff6ffd87a38ec4d3a7",
+   "version": "7a8543be5896d606",
+   "wall_s": 0.877
+  },
+  "tcc_sail": {
+   "outcome": "absent",
+   "version": "a618d9561cec04d8"
+  },
+  "xgcc_sail": {
+   "cached": true,
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_bitfields2.c",
+   "exit": 0,
+   "meta": {
+    "steps": "11020",
+    "text_bytes": "67116"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "x = { a = 1, b = 2 }\ny = { c = 3, d = 0; e = 5 }\nz = { f = 6, g = 7; h = 8 }\n",
+   "stdout_sha": "333a4f81a4508162cabcb02d197d39ff859ad70bc8cae6ff6ffd87a38ec4d3a7",
+   "version": "64cd4e6942fcf57f",
+   "wall_s": 0.73
+  }
+ },
+ "prog": "regr_bitfields2",
+ "sha256": "b163db86016e77e0d22dd4f510e8c51afb6727ddd172c4497d77d1dfb0c4c725",
+ "source": "corpus/compcert/regr_bitfields2.c"
+}

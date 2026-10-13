@@ -1,0 +1,65 @@
+{
+ "corpus": "tcc",
+ "oracles": {
+  "ccomp_interp": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_26_character_constants.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "1\n8\n64\n1\n14\n16\n64\ntest @\n",
+   "stdout_sha": "4facd297600f3593d4e855d3764efc09d6eb492a613c1317607b825f9bb8cbf0",
+   "version": "213e70752b2d7e90",
+   "wall_s": 0.152
+  },
+  "gcc_native": {
+   "cached": true,
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_26_character_constants.c",
+   "exit": 0,
+   "meta": {
+    "stderr_bytes": "0"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "1\n8\n64\n1\n14\n16\n64\ntest @\n",
+   "stdout_sha": "4facd297600f3593d4e855d3764efc09d6eb492a613c1317607b825f9bb8cbf0",
+   "version": "a9e7753b61c98058",
+   "wall_s": 0.188
+  },
+  "lean_clight": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_26_character_constants.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "1\n8\n64\n1\n14\n16\n64\ntest @\n",
+   "stdout_sha": "4facd297600f3593d4e855d3764efc09d6eb492a613c1317607b825f9bb8cbf0",
+   "version": "7a8543be5896d606",
+   "wall_s": 1.23
+  },
+  "tcc_sail": {
+   "outcome": "absent",
+   "version": "a618d9561cec04d8"
+  },
+  "xgcc_sail": {
+   "cached": true,
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_26_character_constants.c",
+   "exit": 0,
+   "meta": {
+    "steps": "9435",
+    "text_bytes": "67348"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "1\n8\n64\n1\n14\n16\n64\ntest @\n",
+   "stdout_sha": "4facd297600f3593d4e855d3764efc09d6eb492a613c1317607b825f9bb8cbf0",
+   "version": "64cd4e6942fcf57f",
+   "wall_s": 1.01
+  }
+ },
+ "prog": "t_26_character_constants",
+ "sha256": "e7b5cf85235332c2be1e24c3c416aa1da0bccf976881b662c5a342a4afe71df7",
+ "source": "corpus/tcc/t_26_character_constants.c"
+}

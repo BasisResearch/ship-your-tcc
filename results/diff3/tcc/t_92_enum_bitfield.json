@@ -1,0 +1,65 @@
+{
+ "corpus": "tcc",
+ "oracles": {
+  "ccomp_interp": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_92_enum_bitfield.c",
+   "exit": 126,
+   "meta": {},
+   "outcome": "stuck",
+   "stderr_tail": "[run_ccomp_interp] STUCK (undefined behaviour or unsupported external): Stuck state: in function main, expression <loc convs+16> = 152 Stuck subexpression: <loc convs+16> = 152 ERROR: Undefined behavior \n",
+   "stdout": "",
+   "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "version": "213e70752b2d7e90",
+   "wall_s": 0.822
+  },
+  "gcc_native": {
+   "cached": true,
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_92_enum_bitfield.c",
+   "exit": 0,
+   "meta": {
+    "stderr_bytes": "0"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "",
+   "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "version": "a9e7753b61c98058",
+   "wall_s": 0.158
+  },
+  "lean_clight": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_92_enum_bitfield.c",
+   "exit": 126,
+   "meta": {},
+   "outcome": "stuck",
+   "stderr_tail": "[clight_run] STUCK (undefined behaviour or outside the interpreter): stuck at statement Sassign\n",
+   "stdout": "",
+   "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "version": "7a8543be5896d606",
+   "wall_s": 1.486
+  },
+  "tcc_sail": {
+   "outcome": "absent",
+   "version": "a618d9561cec04d8"
+  },
+  "xgcc_sail": {
+   "cached": true,
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_92_enum_bitfield.c",
+   "exit": 0,
+   "meta": {
+    "steps": "870",
+    "text_bytes": "15432"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "",
+   "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "version": "64cd4e6942fcf57f",
+   "wall_s": 0.474
+  }
+ },
+ "prog": "t_92_enum_bitfield",
+ "sha256": "c919809ae8c612c3ce0cd0e42c23015c2f2ca295389248ccd8ff4c1e5b9d566f",
+ "source": "corpus/tcc/t_92_enum_bitfield.c"
+}

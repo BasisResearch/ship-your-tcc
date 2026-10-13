@@ -1,0 +1,65 @@
+{
+ "corpus": "compcert",
+ "oracles": {
+  "ccomp_interp": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_funptr2.c",
+   "exit": 126,
+   "meta": {},
+   "outcome": "stuck",
+   "stderr_tail": "[run_ccomp_interp] STUCK (undefined behaviour or unsupported external): Stuck state: in function main, expression                           printf(<ptr __stringlit_3>, <ptr f+2> == <ptr f>) Stuck subexpression: <ptr f+2> == <ptr f> ERROR: Undefined behavior \n",
+   "stdout": "f == f is 1\nf == g is 0\n",
+   "stdout_sha": "68a39c3ec64cc4b4157084d5b865df4e638ce8188559133ed1cdbbf01eab220f",
+   "version": "213e70752b2d7e90",
+   "wall_s": 0.334
+  },
+  "gcc_native": {
+   "cached": true,
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_funptr2.c",
+   "exit": 0,
+   "meta": {
+    "stderr_bytes": "0"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "f == f is 1\nf == g is 0\nf + 2 == f is 0\n",
+   "stdout_sha": "7df7d7912904e4b9f6ad0b90e5d38f2e5a1e3cbdd5ad950095200ffb509f01a7",
+   "version": "a9e7753b61c98058",
+   "wall_s": 0.174
+  },
+  "lean_clight": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_funptr2.c",
+   "exit": 126,
+   "meta": {},
+   "outcome": "stuck",
+   "stderr_tail": "[clight_run] STUCK (undefined behaviour or outside the interpreter): cannot evaluate the arguments of builtin printf\n",
+   "stdout": "f == f is 1\nf == g is 0\n",
+   "stdout_sha": "68a39c3ec64cc4b4157084d5b865df4e638ce8188559133ed1cdbbf01eab220f",
+   "version": "7a8543be5896d606",
+   "wall_s": 1.357
+  },
+  "tcc_sail": {
+   "outcome": "absent",
+   "version": "a618d9561cec04d8"
+  },
+  "xgcc_sail": {
+   "cached": true,
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_funptr2.c",
+   "exit": 0,
+   "meta": {
+    "steps": "7058",
+    "text_bytes": "66992"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "f == f is 1\nf == g is 0\nf + 2 == f is 0\n",
+   "stdout_sha": "7df7d7912904e4b9f6ad0b90e5d38f2e5a1e3cbdd5ad950095200ffb509f01a7",
+   "version": "64cd4e6942fcf57f",
+   "wall_s": 0.606
+  }
+ },
+ "prog": "regr_funptr2",
+ "sha256": "d9b1500c68586a228e6cb53fa8d661a08f56b348800e81d7a72dbd0a55dfc2cb",
+ "source": "corpus/compcert/regr_funptr2.c"
+}

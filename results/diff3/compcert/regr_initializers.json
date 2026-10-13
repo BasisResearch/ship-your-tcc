@@ -1,0 +1,65 @@
+{
+ "corpus": "compcert",
+ "oracles": {
+  "ccomp_interp": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_initializers.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_initializers.c:53: warning: initializer string for array of chars x20 is too long\n/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_initializers.c:74: warning: initializer string for array of wide chars x28 is too long\n",
+   "stdout": "x0 = 0\nx1 = 'x'\nx2 = 12345\nx3 = 3.14159\nx4 = { 'a', 'b', 'c', 'd' }\nx5 = { 1, 2, 3, 0, 0, 0, 0, 0, 0, 0, }\nx6 = { 4, 5 }\nx7 = { 6, 'u' }\nx8 = { 'v', 7 }\nx9 = { { 'a', 'b', 0, 0, 0, 0, 0, 0, 0, }, 2.718 }\nx10 = { { 'v', 7 }, 2.718 }\nx11 = 1.3183101416\nx12 = 1.3183101550\nx13 = { 0, 1 }\nx14 ok\nx15 ok\nx16 ok\nx17[7] = { 'H', 'e', 'l', 'l', 'o', '!', 0, }\nx18 = \"Hello!\"\nx19 = { \"Hello\", \"world!\" }\nx20 = { 'H', 'e', 'l', }\nx21 = { 'H', 'e', 'l', 'l', 'o', '!', 0, 0, 0, 0, }\nx22 ok\nx23 = { hd = 16, tl = ok }\nx24[6] = { '/', '*', 'B', '*', '/', 0, }\nx25[8] = { \"/tmp\" }\nx26[6] = { 'w', 'o', 'r', 'l', 'd', 0, }\nx27[4] = { 'a', 'b', 'c', 0, }\nx28[2] = { 'a', 'b', }\nx29[10] = { 'a', 'b', 'c', 0, 0, 0, 0, 0, 0, 0, }\n",
+   "stdout_sha": "50ef4923841f7d28b381586889f16fc1b081fefe956ed9bb506792325e0c1000",
+   "version": "213e70752b2d7e90",
+   "wall_s": 0.209
+  },
+  "gcc_native": {
+   "cached": true,
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_initializers.c",
+   "exit": 0,
+   "meta": {
+    "stderr_bytes": "0"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "x0 = 0\nx1 = 'x'\nx2 = 12345\nx3 = 3.14159\nx4 = { 'a', 'b', 'c', 'd' }\nx5 = { 1, 2, 3, 0, 0, 0, 0, 0, 0, 0, }\nx6 = { 4, 5 }\nx7 = { 6, 'u' }\nx8 = { 'v', 7 }\nx9 = { { 'a', 'b', 0, 0, 0, 0, 0, 0, 0, }, 2.718 }\nx10 = { { 'v', 7 }, 2.718 }\nx11 = 1.3183101416\nx12 = 1.3183101550\nx13 = { 0, 1 }\nx14 ok\nx15 ok\nx16 ok\nx17[7] = { 'H', 'e', 'l', 'l', 'o', '!', 0, }\nx18 = \"Hello!\"\nx19 = { \"Hello\", \"world!\" }\nx20 = { 'H', 'e', 'l', }\nx21 = { 'H', 'e', 'l', 'l', 'o', '!', 0, 0, 0, 0, }\nx22 ok\nx23 = { hd = 16, tl = ok }\nx24[6] = { '/', '*', 'B', '*', '/', 0, }\nx25[8] = { \"/tmp\" }\nx26[6] = { 'w', 'o', 'r', 'l', 'd', 0, }\nx27[4] = { 'a', 'b', 'c', 0, }\nx28[2] = { 'a', 'b', }\nx29[10] = { 'a', 'b', 'c', 0, 0, 0, 0, 0, 0, 0, }\n",
+   "stdout_sha": "50ef4923841f7d28b381586889f16fc1b081fefe956ed9bb506792325e0c1000",
+   "version": "a9e7753b61c98058",
+   "wall_s": 0.203
+  },
+  "lean_clight": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_initializers.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "x0 = 0\nx1 = 'x'\nx2 = 12345\nx3 = 3.14159\nx4 = { 'a', 'b', 'c', 'd' }\nx5 = { 1, 2, 3, 0, 0, 0, 0, 0, 0, 0, }\nx6 = { 4, 5 }\nx7 = { 6, 'u' }\nx8 = { 'v', 7 }\nx9 = { { 'a', 'b', 0, 0, 0, 0, 0, 0, 0, }, 2.718 }\nx10 = { { 'v', 7 }, 2.718 }\nx11 = 1.3183101416\nx12 = 1.3183101550\nx13 = { 0, 1 }\nx14 ok\nx15 ok\nx16 ok\nx17[7] = { 'H', 'e', 'l', 'l', 'o', '!', 0, }\nx18 = \"Hello!\"\nx19 = { \"Hello\", \"world!\" }\nx20 = { 'H', 'e', 'l', }\nx21 = { 'H', 'e', 'l', 'l', 'o', '!', 0, 0, 0, 0, }\nx22 ok\nx23 = { hd = 16, tl = ok }\nx24[6] = { '/', '*', 'B', '*', '/', 0, }\nx25[8] = { \"/tmp\" }\nx26[6] = { 'w', 'o', 'r', 'l', 'd', 0, }\nx27[4] = { 'a', 'b', 'c', 0, }\nx28[2] = { 'a', 'b', }\nx29[10] = { 'a', 'b', 'c', 0, 0, 0, 0, 0, 0, 0, }\n",
+   "stdout_sha": "50ef4923841f7d28b381586889f16fc1b081fefe956ed9bb506792325e0c1000",
+   "version": "7a8543be5896d606",
+   "wall_s": 3.927
+  },
+  "tcc_sail": {
+   "outcome": "absent",
+   "version": "a618d9561cec04d8"
+  },
+  "xgcc_sail": {
+   "cached": true,
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_initializers.c",
+   "exit": 0,
+   "meta": {
+    "steps": "150716",
+    "text_bytes": "69276"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "x0 = 0\nx1 = 'x'\nx2 = 12345\nx3 = 3.14159\nx4 = { 'a', 'b', 'c', 'd' }\nx5 = { 1, 2, 3, 0, 0, 0, 0, 0, 0, 0, }\nx6 = { 4, 5 }\nx7 = { 6, 'u' }\nx8 = { 'v', 7 }\nx9 = { { 'a', 'b', 0, 0, 0, 0, 0, 0, 0, }, 2.718 }\nx10 = { { 'v', 7 }, 2.718 }\nx11 = 1.3183101416\nx12 = 1.3183101550\nx13 = { 0, 1 }\nx14 ok\nx15 ok\nx16 ok\nx17[7] = { 'H', 'e', 'l', 'l', 'o', '!', 0, }\nx18 = \"Hello!\"\nx19 = { \"Hello\", \"world!\" }\nx20 = { 'H', 'e', 'l', }\nx21 = { 'H', 'e', 'l', 'l', 'o', '!', 0, 0, 0, 0, }\nx22 ok\nx23 = { hd = 16, tl = ok }\nx24[6] = { '/', '*', 'B', '*', '/', 0, }\nx25[8] = { \"/tmp\" }\nx26[6] = { 'w', 'o', 'r', 'l', 'd', 0, }\nx27[4] = { 'a', 'b', 'c', 0, }\nx28[2] = { 'a', 'b', }\nx29[10] = { 'a', 'b', 'c', 0, 0, 0, 0, 0, 0, 0, }\n",
+   "stdout_sha": "50ef4923841f7d28b381586889f16fc1b081fefe956ed9bb506792325e0c1000",
+   "version": "64cd4e6942fcf57f",
+   "wall_s": 6.026
+  }
+ },
+ "prog": "regr_initializers",
+ "sha256": "c42c7df9ebd473663b27de110b2fdd6c35fc9d4ff8aa9efa1da6b03d69966a5b",
+ "source": "corpus/compcert/regr_initializers.c"
+}

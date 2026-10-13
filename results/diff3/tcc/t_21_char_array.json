@@ -1,0 +1,65 @@
+{
+ "corpus": "tcc",
+ "oracles": {
+  "ccomp_interp": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_21_char_array.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "hello\nh: 104\ne: 101\nl: 108\nl: 108\no: 111\ncopied string is hello\n",
+   "stdout_sha": "349e5fcf66dd9f227df96313c658e8a726ab7bd7ceb4eb1f45df47838d6f1502",
+   "version": "213e70752b2d7e90",
+   "wall_s": 0.156
+  },
+  "gcc_native": {
+   "cached": true,
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_21_char_array.c",
+   "exit": 0,
+   "meta": {
+    "stderr_bytes": "0"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "hello\nh: 104\ne: 101\nl: 108\nl: 108\no: 111\ncopied string is hello\n",
+   "stdout_sha": "349e5fcf66dd9f227df96313c658e8a726ab7bd7ceb4eb1f45df47838d6f1502",
+   "version": "a9e7753b61c98058",
+   "wall_s": 0.203
+  },
+  "lean_clight": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_21_char_array.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "hello\nh: 104\ne: 101\nl: 108\nl: 108\no: 111\ncopied string is hello\n",
+   "stdout_sha": "349e5fcf66dd9f227df96313c658e8a726ab7bd7ceb4eb1f45df47838d6f1502",
+   "version": "7a8543be5896d606",
+   "wall_s": 1.371
+  },
+  "tcc_sail": {
+   "outcome": "absent",
+   "version": "a618d9561cec04d8"
+  },
+  "xgcc_sail": {
+   "cached": true,
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_21_char_array.c",
+   "exit": 0,
+   "meta": {
+    "steps": "13215",
+    "text_bytes": "67444"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "hello\nh: 104\ne: 101\nl: 108\nl: 108\no: 111\ncopied string is hello\n",
+   "stdout_sha": "349e5fcf66dd9f227df96313c658e8a726ab7bd7ceb4eb1f45df47838d6f1502",
+   "version": "64cd4e6942fcf57f",
+   "wall_s": 1.388
+  }
+ },
+ "prog": "t_21_char_array",
+ "sha256": "05d7625ee1724cfbc32bec268024e8b32a603c2f3939f649346c4948ad66208a",
+ "source": "corpus/tcc/t_21_char_array.c"
+}

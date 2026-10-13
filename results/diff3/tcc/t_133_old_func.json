@@ -1,0 +1,65 @@
+{
+ "corpus": "tcc",
+ "oracles": {
+  "ccomp_interp": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_133_old_func.c",
+   "exit": 120,
+   "meta": {},
+   "outcome": "n/a",
+   "stderr_tail": "[run_ccomp_interp] ccomp rejected the program: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_133_old_func.c:38: error: redefinition of 'func' with a different type: 'void(float a)' vs 'void(double a)' 1 error detected. \n",
+   "stdout": "",
+   "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "version": "213e70752b2d7e90",
+   "wall_s": 0.232
+  },
+  "gcc_native": {
+   "cached": true,
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_133_old_func.c",
+   "exit": 0,
+   "meta": {
+    "stderr_bytes": "0"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "4 30\n4 30\n1\n",
+   "stdout_sha": "fdae7996372f79d6b3f892ea016961e768963b07b651ff91f8c5a60de8c14318",
+   "version": "a9e7753b61c98058",
+   "wall_s": 0.154
+  },
+  "lean_clight": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_133_old_func.c",
+   "exit": 120,
+   "meta": {},
+   "outcome": "n/a",
+   "stderr_tail": "[run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.DWy05J/prog.c:38: error: redefinition of 'func' with a different type: 'void(float a)' vs 'void(double a)' 1 error detected. \n",
+   "stdout": "",
+   "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "version": "7a8543be5896d606",
+   "wall_s": 0.161
+  },
+  "tcc_sail": {
+   "outcome": "absent",
+   "version": "a618d9561cec04d8"
+  },
+  "xgcc_sail": {
+   "cached": true,
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_133_old_func.c",
+   "exit": 0,
+   "meta": {
+    "steps": "28586",
+    "text_bytes": "70684"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "4 30\n4 30\n1\n",
+   "stdout_sha": "fdae7996372f79d6b3f892ea016961e768963b07b651ff91f8c5a60de8c14318",
+   "version": "64cd4e6942fcf57f",
+   "wall_s": 1.832
+  }
+ },
+ "prog": "t_133_old_func",
+ "sha256": "9d0717aba9c5f83dcb2f303cab3987f9764038c0e9e461774e11deb9015cd5de",
+ "source": "corpus/tcc/t_133_old_func.c"
+}

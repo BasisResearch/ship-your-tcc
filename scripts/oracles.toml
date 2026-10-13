@@ -1,0 +1,93 @@
+# Oracles for scripts/diff3.py.
+#
+# Interface every oracle command must implement:
+#   * it is run as `cmd` with {prog} replaced by the absolute path of ONE
+#     self-contained C file (and {root} by the repo root), cwd = repo root,
+#     stdin = /dev/null;
+#   * its stdout is the program's stdout, byte for byte (anything else the
+#     oracle wants to say goes to stderr, which is saved but not compared);
+#   * its exit code is the program's exit status, except
+#       124  the program did not finish (step budget or timeout),
+#       125  the oracle could not run this program (compile error, feature
+#            or external function it does not support, internal error);
+#            such a result is "n/a" and never counts as a disagreement;
+#   * optionally it appends key=value lines to the file named by the
+#     ORACLE_META environment variable (e.g. steps=123456 for Sail runs);
+#   * diff3 also enforces `timeout` (wall seconds; a kill counts as 124);
+#   * `codes` maps further oracle-specific exit codes to an outcome:
+#     "n/a" (cannot run it), "stuck" (the semantics got stuck: undefined
+#     behaviour or an unsupported construct; never compared, listed apart)
+#     or "timeout". Other exit statuses are compared mod 256.
+#
+# Results are cached under results/diff3/.cache keyed by (sha256 of the
+# program, oracle name, version), where the version hashes `cmd`, `env`,
+# the output of `version_cmd` and the contents of `version_files`; change
+# any of these and the oracle reruns.
+#
+# `requires`: if this path (relative to the repo root) does not exist the
+# oracle is skipped (reported as "absent"), so placeholders can sit here.
+# `heavy = true`: counts against `max_heavy` concurrent runs (Sail runs are
+# ~120 MB each; the shared box allows at most 8 emulators at a time).
+
+[defaults]
+jobs = 8
+max_heavy = 8
+timeout = 1800
+min_free_gb = 25     # wait before starting a heavy run if less memory is available
+
+[oracle.gcc_native]
+cmd = "scripts/run_gcc_native.sh {prog}"
+version_cmd = "gcc --version | head -1"
+version_files = ["scripts/run_gcc_native.sh"]
+timeout = 120
+
+[oracle.xgcc_sail]
+# xpack riscv-none-elf-gcc 15.2 -O0 -march=rv64i -mabi=lp64, newlib + libgcc,
+# c/harness crt0/HTIF, on ship-your-lua's Lean Sail emulator. Same newlib
+# printf as tcc_sail.
+cmd = "scripts/run_xgcc_sail.sh {prog}"
+env = { MAX_STEPS = "60000000" }
+version_cmd = "$HOME/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin/riscv-none-elf-gcc --version | head -1; sha256sum $HOME/Documents/code/ship-your-lua/riscv-lean/lean_emulator/.lake/build/bin/lean_riscv_emulator | cut -c1-16"
+version_files = ["scripts/run_xgcc_sail.sh", "c/harness/crt0.S", "c/harness/htif.c", "c/harness/link.ld"]
+heavy = true
+
+[oracle.tcc_sail]
+# Lane B: the bare-metal tcc image running `tcc -run /prog.c` on Sail.
+# The script must follow the interface above (filter the emulator's
+# console like run_xgcc_sail.sh; report steps=<total> and, if it can,
+# compile_steps=<steps until the jump into the generated code>).
+cmd = "scripts/run_tcc_sail.sh {prog}"
+requires = "scripts/run_tcc_sail.sh"
+version_files = ["scripts/run_tcc_sail.sh"]
+version_cmd = "cat build/tcc-image/VERSION 2>/dev/null; true"
+heavy = true
+
+[oracle.ccomp_interp]
+# Certora/clean's `ccomp -interp` (CompCert 3.17), scripts/run_ccomp_interp.sh
+# from the Certora lane. Its own extra exit codes: 120 rejected by ccomp,
+# 126 stuck (undefined behaviour, or an external other than printf).
+# ccomp -interp is slow and memory-hungry on long runs (26.7M steps: 236 s,
+# 5.3 GB), so each run gets its own memory cap; an OOM kill (137) is n/a.
+# CERTORA_DIR / CLIGHT_RUN point at the Certora lane's build (override here).
+cmd = "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh {prog}"
+requires = "scripts/run_ccomp_interp.sh"
+env = { CERTORA_DIR = "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a39962f25417ac6c6/build/certora" }
+version_files = ["scripts/run_ccomp_interp.sh", "scripts/certora_env.sh"]
+version_cmd = "sha256sum /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a39962f25417ac6c6/build/certora/install/bin/ccomp | cut -c1-16"
+codes = { 120 = "n/a", 125 = "n/a", 126 = "stuck", 137 = "n/a" }
+timeout = 600
+heavy = true
+
+[oracle.lean_clight]
+# clightgen -lean + Certora's Lean Clight interpreter (scripts/run_lean_clight.sh,
+# Certora lane). Extra exit codes: 120 rejected by clightgen, 124 out of
+# fuel, 125 harness error, 126 stuck (UB or unexecuted construct),
+# 127 outside the printf model (%p, %n, long double, ...). ~500 MB a run.
+cmd = "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh {prog}"
+requires = "scripts/run_lean_clight.sh"
+env = { CERTORA_DIR = "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a39962f25417ac6c6/build/certora", CLIGHT_RUN = "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a39962f25417ac6c6/lean/ClightRun/.lake/build/bin/clight_run" }
+version_files = ["scripts/run_lean_clight.sh", "scripts/certora_env.sh"]
+version_cmd = "sha256sum /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a39962f25417ac6c6/lean/ClightRun/.lake/build/bin/clight_run /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a39962f25417ac6c6/build/certora/install/bin/clightgen | cut -c1-16"
+codes = { 120 = "n/a", 125 = "n/a", 126 = "stuck", 127 = "n/a", 137 = "n/a" }
+timeout = 600
+heavy = true

@@ -3,3 +3,8 @@ build/
 __pycache__/
 .lake/
 .claude/
+# copied at run time by scripts/collect_corpus.sh (manifests are committed)
+corpus/compcert/*.c
+corpus/tcc/*.c
+# diff3 cache
+results/diff3/.cache/

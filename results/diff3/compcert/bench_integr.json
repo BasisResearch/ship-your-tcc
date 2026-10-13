@@ -1,0 +1,65 @@
+{
+ "corpus": "compcert",
+ "oracles": {
+  "ccomp_interp": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/bench_integr.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "integr(square, 0.0, 1.0, 1000) = 0.332834\n",
+   "stdout_sha": "0b08c4ebd069551df5f0ce1e7946de8ee4f42cf363c3a88110a4761d32b902dc",
+   "version": "213e70752b2d7e90",
+   "wall_s": 0.3
+  },
+  "gcc_native": {
+   "cached": true,
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/bench_integr.c",
+   "exit": 0,
+   "meta": {
+    "stderr_bytes": "0"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "integr(square, 0.0, 1.0, 1000) = 0.332834\n",
+   "stdout_sha": "0b08c4ebd069551df5f0ce1e7946de8ee4f42cf363c3a88110a4761d32b902dc",
+   "version": "a9e7753b61c98058",
+   "wall_s": 0.093
+  },
+  "lean_clight": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/bench_integr.c",
+   "exit": 0,
+   "meta": {},
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "integr(square, 0.0, 1.0, 1000) = 0.332834\n",
+   "stdout_sha": "0b08c4ebd069551df5f0ce1e7946de8ee4f42cf363c3a88110a4761d32b902dc",
+   "version": "7a8543be5896d606",
+   "wall_s": 0.742
+  },
+  "tcc_sail": {
+   "outcome": "absent",
+   "version": "a618d9561cec04d8"
+  },
+  "xgcc_sail": {
+   "cached": true,
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/bench_integr.c",
+   "exit": 0,
+   "meta": {
+    "steps": "878222",
+    "text_bytes": "67420"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "integr(square, 0.0, 1.0, 1000) = 0.332834\n",
+   "stdout_sha": "0b08c4ebd069551df5f0ce1e7946de8ee4f42cf363c3a88110a4761d32b902dc",
+   "version": "64cd4e6942fcf57f",
+   "wall_s": 28.225
+  }
+ },
+ "prog": "bench_integr",
+ "sha256": "ee80ff4db6be584e4ea804f7d38993728e61014f2e75c468f3f34fb9ef276f36",
+ "source": "corpus/compcert/bench_integr.c"
+}

@@ -14,7 +14,7 @@ See BRIEF.md for the full plan. Status is updated as work lands.
 | item | exit criterion | status |
 |---|---|---|
 | 2.1 Certora/clean | `ccomp -interp`, `clightgen -lean`, Lean CCLib interpreter built | in progress |
-| 2.2 corpus | Csmith (common subset, UB-free per `ccomp -interp`), CompCert test/c, tcc tests2 | in progress |
+| 2.2 corpus | Csmith (common subset, UB-free per `ccomp -interp`), CompCert test/c, tcc tests2 | done: 345 programs, results/corpus.md |
 | 2.3 differential | every program run on tcc/Sail, Lean Clight, `ccomp -interp`, gcc -O0; each disagreement classified and minimised | pending |
 | 2.4 report | DIFFERENTIAL.md | pending |
 

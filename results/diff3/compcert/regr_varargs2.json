@@ -1,0 +1,65 @@
+{
+ "corpus": "compcert",
+ "oracles": {
+  "ccomp_interp": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_varargs2.c",
+   "exit": 126,
+   "meta": {},
+   "outcome": "stuck",
+   "stderr_tail": "[run_ccomp_interp] STUCK (undefined behaviour or unsupported external): Stuck state: in function main, expression   <ptr miniprintf>(<ptr __stringlit_9>, 42) Stuck subexpression: <ptr miniprintf>(<ptr __stringlit_9>, 42) ERROR: Undefined behavior \n",
+   "stdout": "",
+   "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "version": "213e70752b2d7e90",
+   "wall_s": 0.593
+  },
+  "gcc_native": {
+   "cached": true,
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_varargs2.c",
+   "exit": 0,
+   "meta": {
+    "stderr_bytes": "0"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "An int: 42\nA long long: 123456789012345\nA string: Hello world\nA double: 3.141592654\nA small struct: x12\nA bigger struct: (123,456,789)\nA mixture: x & Hello, world! & y2 & 42 & 123456789012345 & 3.141592654 & 2.718281746\nTwice: -1 1.23\nTwice: -1 1.23\nWith va_copy: -1 1.23\nWith va_copy: -1 1.23\nWith extra args: x & Hello, world! & 42 & 123456789012345 & 3.141592654 & 2.718281746\nWith extra FP args: 3.141592654 & 2.718281746 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 42\nva_list compatibility: x & Hello, world! & 42 & 123456789012345 & 3.141592654 & 2.718281746\n",
+   "stdout_sha": "0c902d7be86d4a09028bd67682bcac9da12507414c72368e239e58a10b6f5896",
+   "version": "a9e7753b61c98058",
+   "wall_s": 0.274
+  },
+  "lean_clight": {
+   "cached": false,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_varargs2.c",
+   "exit": 126,
+   "meta": {},
+   "outcome": "stuck",
+   "stderr_tail": "[clight_run] STUCK (undefined behaviour or outside the interpreter): stuck at statement Scall\n",
+   "stdout": "",
+   "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "version": "7a8543be5896d606",
+   "wall_s": 5.455
+  },
+  "tcc_sail": {
+   "outcome": "absent",
+   "version": "a618d9561cec04d8"
+  },
+  "xgcc_sail": {
+   "cached": true,
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_varargs2.c",
+   "exit": 0,
+   "meta": {
+    "steps": "242810",
+    "text_bytes": "71036"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "An int: 42\nA long long: 123456789012345\nA string: Hello world\nA double: 3.141592654\nA small struct: x12\nA bigger struct: (123,456,789)\nA mixture: x & Hello, world! & y2 & 42 & 123456789012345 & 3.141592654 & 2.718281746\nTwice: -1 1.23\nTwice: -1 1.23\nWith va_copy: -1 1.23\nWith va_copy: -1 1.23\nWith extra args: x & Hello, world! & 42 & 123456789012345 & 3.141592654 & 2.718281746\nWith extra FP args: 3.141592654 & 2.718281746 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 42\nva_list compatibility: x & Hello, world! & 42 & 123456789012345 & 3.141592654 & 2.718281746\n",
+   "stdout_sha": "0c902d7be86d4a09028bd67682bcac9da12507414c72368e239e58a10b6f5896",
+   "version": "64cd4e6942fcf57f",
+   "wall_s": 10.073
+  }
+ },
+ "prog": "regr_varargs2",
+ "sha256": "57e14ea6346f9e1a5ecc2f9a95f0022253914966778ae9d5e98633b57e63d59b",
+ "source": "corpus/compcert/regr_varargs2.c"
+}
