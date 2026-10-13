@@ -106,16 +106,32 @@ $(BUILD)/fs/libtcc1.a: $(CROSS_LIBTCC1)
 	@mkdir -p $(BUILD)/fs
 	cp $< $@
 
+# Headers: newlib's (the rv64i/lp64 multilib's include/, without c++/) and
+# tcc's include/, comment-stripped (src/strip_headers.py: every line stays,
+# tokens unchanged; `make check-headers` compares gcc's preprocessing of
+# the tests and of each header with both trees).
+$(BUILD)/fs/include/.stamp: src/strip_headers.py
+	python3 -I src/strip_headers.py $(NEWLIB_INC) $(BUILD)/fs/include
+	touch $@
+
+$(BUILD)/fs/tccinclude/.stamp: src/strip_headers.py $(TCCSRC)/.stamp
+	python3 -I src/strip_headers.py $(TCCSRC)/include $(BUILD)/fs/tccinclude
+	touch $@
+
+check-headers: $(BUILD)/fs/include/.stamp
+	bash tests/check_headers.sh $(RISCV_CC) $(NEWLIB_INC) $(abspath $(BUILD))/fs/include
+
 # the list of files (/path/in/image=host/file), all but /prog.c
-$(BUILD)/fs.list: $(TCCSRC)/.stamp $(BUILD)/fs/runmain.o $(BUILD)/fs/libtcc1.a Makefile
-	( for f in $$(cd $(TCCSRC)/include && ls *.h); do echo "/lib/tcc/include/$$f=$(abspath $(TCCSRC))/include/$$f"; done; \
-	  echo "/lib/tcc/libtcc1.a=$(abspath $(BUILD))/fs/libtcc1.a"; \
-	  echo "/lib/tcc/runmain.o=$(abspath $(BUILD))/fs/runmain.o"; \
+FSDIR := $(abspath $(BUILD))/fs
+$(BUILD)/fs.list: $(BUILD)/fs/include/.stamp $(BUILD)/fs/tccinclude/.stamp $(BUILD)/fs/runmain.o $(BUILD)/fs/libtcc1.a Makefile
+	( for f in $$(cd $(FSDIR)/tccinclude && ls *.h); do echo "/lib/tcc/include/$$f=$(FSDIR)/tccinclude/$$f"; done; \
+	  echo "/lib/tcc/libtcc1.a=$(FSDIR)/libtcc1.a"; \
+	  echo "/lib/tcc/runmain.o=$(FSDIR)/runmain.o"; \
 	  echo "/lib/libc.a=$(LIBC)"; \
 	  echo "/lib/libm.a=$(LIBM)"; \
 	  echo "/lib/libgcc.a=$(LIBGCC)"; \
-	  cd $(NEWLIB_INC) && find . -path ./c++ -prune -o -type f -name '*.h' -print | LC_ALL=C sort | \
-	    sed 's|^\./\(.*\)$$|/include/\1=$(NEWLIB_INC)/\1|' ) > $@
+	  cd $(FSDIR)/include && find . -type f -name '*.h' -print | LC_ALL=C sort | \
+	    sed 's|^\./\(.*\)$$|/include/\1=$(FSDIR)/include/\1|' ) > $@
 
 # --- the embedded program -----------------------------------------------------
 $(BUILD)/embed.S: src/gen_embed.sh $(BUILD)/fs.list $(PROG) FORCE
@@ -149,4 +165,4 @@ clean:
 	rm -rf build tcc-riscv-htif.elf
 
 FORCE:
-.PHONY: all run isa-check clean FORCE
+.PHONY: all run isa-check check-headers clean FORCE

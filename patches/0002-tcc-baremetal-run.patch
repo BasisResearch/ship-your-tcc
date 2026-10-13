@@ -10,9 +10,10 @@ tccelf.c:
 - tcc_load_object_file: input sections go where GNU ld puts them
   (.text.* into .text, ...), so linking against -ffunction-sections
   archives does not create a section per function.
-- tcc_load_alacarte: the archive index is hashed once and each pass looks
-  up the undefined symbols in it (upstream looks every index name up in the
-  symbol table each pass); same members, possibly another load order.
+- tcc_load_alacarte: the archive index is hashed once and one walk of the
+  symbol table looks the undefined symbols up in it (upstream looks every
+  index name up in the symbol table, pass after pass); same members,
+  possibly another load order.
 - tcc_add_runtime: -lgcc after the last -lc (libc.a, libtcc1.a and the
   soft-float code call libgcc's helpers).
 
@@ -39,7 +40,7 @@ tccrun.c:
 
 diff -ruN a/tccelf.c b/tccelf.c
 --- a/tccelf.c	2026-10-13 21:40:09.549535874 +0000
-+++ b/tccelf.c	2026-10-13 21:41:15.349059570 +0000
++++ b/tccelf.c	2026-10-13 22:06:28.416070826 +0000
 @@ -268,6 +268,16 @@
      return sec;
  }
@@ -142,7 +143,7 @@ diff -ruN a/tccelf.c b/tccelf.c
          if (sh->sh_addralign < 1)
              sh->sh_addralign = 1;
          /* find corresponding section, if any */
-@@ -3636,6 +3683,87 @@
+@@ -3636,6 +3683,91 @@
      return len;
  }
  
@@ -151,9 +152,10 @@ diff -ruN a/tccelf.c b/tccelf.c
 +   target. Upstream walks the whole archive index each pass and looks every
 +   name up in the symbol table (libc.a's index has ~1080 names, so a pass
 +   cost ~1080 hash computations and string compares); this hashes the index
-+   once and each pass walks the undefined global symbols instead, looking
-+   each up in the index (first entry of a name wins, as upstream). The
-+   members loaded are the same set; they may be loaded in another order. */
++   once and walks the symbol table once instead, looking each undefined
++   global symbol up in the index (first entry of a name wins, as upstream).
++   The members loaded are the same set; they may be loaded in another
++   order. */
 +static int bm_ar_lookup(const char *const *names, const unsigned *tab,
 +                        unsigned mask, const char *name)
 +{
@@ -166,8 +168,9 @@ diff -ruN a/tccelf.c b/tccelf.c
 +
 +static int tcc_load_alacarte(TCCState *s1, int fd, int size, int entrysize)
 +{
-+    int i, nsyms, sym_index, len, bound, ret = -1;
++    int i, nsyms, len, ret = -1;
 +    unsigned nb, h, *tab = NULL;
++    unsigned long symoff;
 +    unsigned long long off;
 +    uint8_t *data;
 +    const char *ar_names, *p, **names = NULL;
@@ -191,12 +194,15 @@ diff -ruN a/tccelf.c b/tccelf.c
 +            ;
 +        tab[h] = i + 1;
 +    }
-+    do {
-+        bound = 0;
-+        for (sym_index = 1;
-+             sym_index < (int)(symtab_section->data_offset / sizeof (ElfW(Sym)));
-+             sym_index++) {
-+            sym = &((ElfW(Sym) *)symtab_section->data)[sym_index];
++    /* One walk suffices: the symbols a loaded member adds are appended,
++       so the walk (bounded by the live data_offset) reaches them, and a
++       symbol passed over stays as it was (still undefined and not in this
++       index, or defined). Byte offsets: a division by sizeof (ElfW(Sym))
++       per symbol would be a libgcc call on rv64i. */
++    {
++        for (symoff = sizeof (ElfW(Sym)); symoff < symtab_section->data_offset;
++             symoff += sizeof (ElfW(Sym))) {
++            sym = (ElfW(Sym) *)(symtab_section->data + symoff);
 +            if (sym->st_shndx != SHN_UNDEF
 +                || ELFW(ST_BIND)(sym->st_info) == STB_LOCAL)
 +                continue;
@@ -216,9 +222,8 @@ diff -ruN a/tccelf.c b/tccelf.c
 +                printf("   -> %s\n", hdr.ar_name);
 +            if (tcc_load_object_file(s1, fd, off) < 0)
 +                goto the_end;
-+            ++bound;
 +        }
-+    } while (bound);
++    }
 +    ret = 0;
 + the_end:
 +    tcc_free(tab);
@@ -230,7 +235,7 @@ diff -ruN a/tccelf.c b/tccelf.c
  /* load only the objects which resolve undefined symbols */
  static int tcc_load_alacarte(TCCState *s1, int fd, int size, int entrysize)
  {
-@@ -3684,6 +3812,7 @@
+@@ -3684,6 +3816,7 @@
      tcc_free(data);
      return ret;
  }

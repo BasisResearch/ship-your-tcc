@@ -1,6 +1,14 @@
-/* the in-image file system is generic: most of the standard headers, in an
-   order that starts with <limits.h> (newlib's machine/_default_types.h
-   needs tcc's predefined __INT8_TYPE__ & co then) */
+/* the in-image file system is generic: most of the standard headers.
+   <stdio.h> comes first on purpose. tcc does not define __GNUC__, so
+   newlib's machine/_default_types.h (via sys/cdefs.h) includes <limits.h>
+   to define its types; when the program's own first header is <limits.h>,
+   that nested include re-runs limits.h's unguarded tail, which defines
+   ARG_MAX and PATH_MAX as 4096 before sys/syslimits.h defines them
+   (65536, 1024): tcc warns "ARG_MAX redefined" on the console, which is
+   also stdout here, and the values differ from gcc's. With another header
+   first, limits.h is entered whole from _default_types.h and the values
+   are sys/syslimits.h's, as with gcc. */
+#include <stdio.h>
 #include <limits.h>
 #include <assert.h>
 #include <ctype.h>
@@ -14,7 +22,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
