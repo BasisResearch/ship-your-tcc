@@ -8,3 +8,4 @@ corpus/compcert/*.c
 corpus/tcc/*.c
 # diff3 cache
 results/diff3/.cache/
+c/tcc-riscv-htif.elf

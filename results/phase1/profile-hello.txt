@@ -1,0 +1,155 @@
+total 11322678
+
+== phase 0: start .. main: 92707 steps (0.8%)
+       92707 100.00%  _start
+
+== phase 1: main .. tcc_compile: 200519 steps (1.8%)
+       74601  37.20%  new_node
+       43842  21.86%  fs_init.part.0
+       25444  12.69%  strchr
+       20188  10.07%  memcmp
+       11577   5.77%  _malloc_r
+        7431   3.71%  strlen
+        7347   3.66%  memcpy
+        1310   0.65%  memset
+         917   0.46%  _realloc_r
+         618   0.31%  tcc_split_path
+         616   0.31%  new_section
+         539   0.27%  dynarray_add
+         506   0.25%  strcpy
+         486   0.24%  malloc
+         444   0.22%  __malloc_lock
+         444   0.22%  __malloc_unlock
+         424   0.21%  default_reallocator
+         357   0.18%  tcc_parse_args
+         337   0.17%  tcc_set_output_type
+         323   0.16%  section_realloc
+         297   0.15%  _findenv_r
+         260   0.13%  realloc
+         225   0.11%  __retarget_lock_release_recursive
+         225   0.11%  __retarget_lock_acquire_recursive
+         220   0.11%  dwarf_uleb128
+
+== phase 2: tcc_compile .. tcc_run: 5673176 steps (50.1%)
+     1693317  29.85%  next_nomacro
+      655993  11.56%  preprocess
+      303451   5.35%  memcmp
+      275353   4.85%  memset
+      253487   4.47%  next
+      244013   4.30%  tok_str_add2
+      242723   4.28%  macro_subst_tok
+      145084   2.56%  memcpy
+      132984   2.34%  _read
+      125928   2.22%  tal_realloc_impl
+      119573   2.11%  parse_btype
+      103758   1.83%  tok_alloc_new
+       85701   1.51%  macro_subst
+       79204   1.40%  type_decl
+       77742   1.37%  post_type
+       71310   1.26%  tal_free_impl
+       71119   1.25%  sym_push
+       63134   1.11%  tok_alloc
+       60201   1.06%  tcc_compile
+       45044   0.79%  unary
+       41326   0.73%  tok_str_add
+       39952   0.70%  gen_cast
+       39720   0.70%  expr_preprocess
+       38945   0.69%  sym_pop
+       36379   0.64%  decl
+
+== phase 3: tcc_run .. tcc_add_runtime: 34187 steps (0.3%)
+        5415  15.84%  put_elf_sym
+        3927  11.49%  find_elf_sym
+        2894   8.47%  rebuild_hash
+        2891   8.46%  tcc_load_object_file
+        1888   5.52%  memmove
+        1875   5.48%  strcmp
+        1768   5.17%  strlen
+        1405   4.11%  strncmp
+        1300   3.80%  _read
+        1235   3.61%  memset
+        1079   3.16%  memcpy
+         996   2.91%  _malloc_r
+         946   2.77%  set_elf_sym
+         786   2.30%  put_elf_str
+         647   1.89%  _free_r
+         512   1.50%  _realloc_r
+         346   1.01%  _svfprintf_r
+         290   0.85%  strchr
+         288   0.84%  _read_r
+         275   0.80%  resolve
+         274   0.80%  __udivdi3
+         266   0.78%  tcc_run
+         252   0.74%  _lseek
+         247   0.72%  set_global_sym.isra.0
+         245   0.72%  section_realloc
+
+== phase 4: tcc_add_runtime .. build_got_entries: 4080465 steps (36.0%)
+      775926  19.02%  _read
+      646419  15.84%  tcc_load_object_file
+      547566  13.42%  put_elf_sym
+      458136  11.23%  tcc_load_alacarte
+      251901   6.17%  memset
+      194508   4.77%  memmove
+      184181   4.51%  strlen
+      179473   4.40%  strncmp
+      178159   4.37%  strcmp
+      113061   2.77%  find_elf_sym
+       74578   1.83%  set_elf_sym
+       64405   1.58%  memcpy
+       53601   1.31%  resolve_common_syms
+       45916   1.13%  rebuild_hash
+       45844   1.12%  __udivdi3
+       37601   0.92%  _malloc_r
+       32340   0.79%  _free_r
+       32320   0.79%  _read_r
+       28168   0.69%  _lseek
+       16096   0.39%  _lseek_r
+       14792   0.36%  load_data
+       12120   0.30%  read
+       10912   0.27%  _svfprintf_r
+        8920   0.22%  default_reallocator
+        7163   0.18%  put_elf_str
+
+== phase 5: build_got_entries .. tcc_baremetal_run: 1221882 steps (10.8%)
+      394170  32.26%  relocate_sections
+      274252  22.45%  build_got_entries
+      142064  11.63%  rebuild_hash
+      130441  10.68%  relocate_syms
+       67612   5.53%  tcc_relocate_ex.constprop.0
+       62115   5.08%  put_elf_sym
+       28172   2.31%  _free_r
+       24538   2.01%  memcpy
+       21902   1.79%  _malloc_r
+       20986   1.72%  memmove
+       13284   1.09%  strlen
+        8768   0.72%  put_elf_str
+        6384   0.52%  default_reallocator
+        4929   0.40%  dynarray_add
+        3741   0.31%  dynarray_reset
+        2795   0.23%  memset
+        2582   0.21%  _realloc_r
+        1945   0.16%  realloc
+        1644   0.13%  __malloc_lock
+        1644   0.13%  __malloc_unlock
+        1227   0.10%  free
+         825   0.07%  relocate_plt
+         825   0.07%  __retarget_lock_acquire_recursive
+         825   0.07%  __retarget_lock_release_recursive
+         782   0.06%  find_elf_sym
+
+== phase 6: tcc_baremetal_run .. tcc_baremetal_enter: 17380 steps (0.2%)
+        9021  51.90%  _write
+        8324  47.89%  tcc_baremetal_run
+          35   0.20%  memcpy
+
+== phase 7: tcc_baremetal_enter .. end: 2362 steps (0.0%)
+        2044  86.54%  [arena: tcc -run code]
+         113   4.78%  _write
+          72   3.05%  _close
+          55   2.33%  memset
+          30   1.27%  _fstat
+          19   0.80%  _isatty
+          18   0.76%  _sbrk
+           6   0.25%  tcc_baremetal_enter
+           5   0.21%  _exit

@@ -1,0 +1,2 @@
+ok   build/run/loops.code.bin: 294 instructions, all RV64I (0 warnings: )
+OK   build/run/loops.code.elf insns=294 bad=0 notes=0 zero-pad=0

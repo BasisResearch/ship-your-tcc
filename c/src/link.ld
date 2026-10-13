@@ -1,3 +1,8 @@
+/* ship-your-tcc: copied from ship-your-ocaml c/src/link.ld (commit 272e4361).
+ * TCC changes: a 4 MiB code arena for tcc -run (`__tccrun_start` ..
+ * `__tccrun_end`, page aligned, at a fixed address just below `.embed`;
+ * linker symbols only, no section, so crt0 does not zero it and the ELF
+ * carries no bytes for it); the heap now ends at the arena. */
 /* Linker script for bare-metal RISC-V on the QEMU `virt` machine.
  * RAM starts at 0x80000000; QEMU loads the ELF at its link address
  * when started with `-bios none -kernel while-riscv.elf`. */
@@ -61,5 +66,10 @@ SECTIONS
     } > RAM
     ASSERT(. <= __stack_top - __stack_size, "embedded files exceed the 16 MiB .embed region")
 
-    __heap_end = __embed_start;
+    /* TCC: tcc -run's code arena (patches/0002: rt_mem in tccrun.c). */
+    __tccrun_end = __embed_start;
+    __tccrun_start = __tccrun_end - 0x400000;
+    ASSERT(__tccrun_start >= _end, "no room for the 4 MiB tcc -run arena")
+
+    __heap_end = __tccrun_start;
 }

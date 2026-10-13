@@ -1,0 +1,2 @@
+ok   build/run/hello.code.bin: 160 instructions, all RV64I (0 warnings: )
+OK   build/run/hello.code.elf insns=160 bad=0 notes=0 zero-pad=0

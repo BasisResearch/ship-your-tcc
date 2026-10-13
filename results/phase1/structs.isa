@@ -1,0 +1,2 @@
+ok   build/run/structs.code.bin: 346 instructions, all RV64I (0 warnings: )
+OK   build/run/structs.code.elf insns=346 bad=0 notes=0 zero-pad=0
