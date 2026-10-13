@@ -4,6 +4,13 @@ Everything is under #ifdef TCC_BAREMETAL (c/src/tcc-config/config.h), so
 the patch changes nothing in other configurations. Applies to tinycc
 43c7708 after patches/0001 (the RV64I soft-float code generator).
 
+tccelf.c:
+- symbol hash buckets: a mask instead of a libgcc division when the
+  bucket count is a power of two (always, for the tables tcc grows).
+- tcc_load_object_file: input sections go where GNU ld puts them
+  (.text.* into .text, ...), so linking against -ffunction-sections
+  archives does not create a section per function.
+
 tccrun.c:
 - rt_mem: the run memory is a static arena at a fixed address, the linker
   script's __tccrun_start..__tccrun_end (not .bss: nothing zeroes it), in
@@ -21,6 +28,99 @@ tccrun.c:
 - the CONFIG_TCC_STATIC dlsym table is empty: every symbol comes from the
   program, the archives or tcc_baremetal_syms.
 
+diff -ruN a/tccelf.c b/tccelf.c
+--- a/tccelf.c	2026-10-13 20:43:26.802410096 +0000
++++ b/tccelf.c	2026-10-13 21:15:27.607177122 +0000
+@@ -268,6 +268,16 @@
+     return sec;
+ }
+ 
++#ifdef TCC_BAREMETAL
++/* TCC_BAREMETAL: the target (rv64i) has no divide instruction, and every
++   symbol lookup reduced its hash modulo the bucket count with a libgcc
++   division (~400 steps); the counts tcc makes are powers of two (1,
++   doubled by put_elf_sym), so a mask does, and other counts still work. */
++# define HASH_MOD(h, n) (((n) & ((n) - 1)) ? (h) % (n) : (h) & ((n) - 1))
++#else
++# define HASH_MOD(h, n) ((h) % (n))
++#endif
++
+ ST_FUNC void init_symtab(Section *s)
+ {
+     int *ptr, nb_buckets = 1;
+@@ -427,7 +437,7 @@
+     sym = (ElfW(Sym) *)s->data + 1;
+     for(sym_index = 1; sym_index < nb_syms; sym_index++) {
+         if (ELFW(ST_BIND)(sym->st_info) != STB_LOCAL) {
+-            h = elf_hash(strtab + sym->st_name) % nb_buckets;
++            h = HASH_MOD(elf_hash(strtab + sym->st_name), nb_buckets);
+             *ptr = hash[h];
+             hash[h] = sym_index;
+         } else {
+@@ -469,7 +479,7 @@
+         if (ELFW(ST_BIND)(info) != STB_LOCAL) {
+             /* add another hashing entry */
+             nbuckets = base[0];
+-            h = elf_hash((unsigned char *)s->link->data + name_offset) % nbuckets;
++            h = HASH_MOD(elf_hash((unsigned char *)s->link->data + name_offset), nbuckets);
+             *ptr = base[2 + h];
+             base[2 + h] = sym_index;
+             base[1]++;
+@@ -497,7 +507,7 @@
+     if (!hs)
+         return 0;
+     nbuckets = ((int *)hs->data)[0];
+-    h = elf_hash((unsigned char *) name) % nbuckets;
++    h = HASH_MOD(elf_hash((unsigned char *) name), nbuckets);
+     sym_index = ((int *)hs->data)[2 + h];
+     while (sym_index != 0) {
+         sym = &((ElfW(Sym) *)s->data)[sym_index];
+@@ -3286,6 +3296,35 @@
+ 
+ /* load an object file and merge it with current files */
+ /* XXX: handle correctly stab (debug) info */
++#ifdef TCC_BAREMETAL
++/* TCC_BAREMETAL: put input sections where GNU ld's default linker script
++   puts them: .text.X into .text, .rodata.X and .srodata.X into .rodata,
++   .data.X and .sdata.X into .data, .bss.X and .sbss.X into .bss, and their
++   .rela sections alike. newlib and libgcc are built with -ffunction-sections
++   -fdata-sections; without this every function became its own section and
++   matching section names (strcmp over all sections, per input section) was
++   the largest cost of linking a program against libc.a on the target. */
++static const char *bm_output_section(const char *name)
++{
++    static const char *const in[] = {
++        ".text", ".rodata", ".srodata", ".data", ".sdata", ".bss", ".sbss" };
++    static const char *const out[] = {
++        ".text", ".rodata", ".rodata", ".data", ".data", ".bss", ".bss" };
++    static const char *const out_rela[] = {
++        ".rela.text", ".rela.rodata", ".rela.rodata", ".rela.data",
++        ".rela.data", ".rela.bss", ".rela.bss" };
++    int rela = 0 == strncmp(name, ".rela.", 6);
++    const char *n = rela ? name + 5 : name;
++    unsigned i, len;
++    for (i = 0; i < sizeof in / sizeof *in; i++) {
++        len = strlen(in[i]);
++        if (0 == strncmp(n, in[i], len) && (n[len] == 0 || n[len] == '.'))
++            return rela ? out_rela[i] : out[i];
++    }
++    return name;
++}
++#endif
++
+ ST_FUNC int tcc_load_object_file(TCCState *s1,
+                                 int fd, unsigned long file_offset)
+ {
+@@ -3391,6 +3430,9 @@
+ 
+ 	sh = &shdr[i];
+         sh_name = strsec + sh->sh_name;
++#ifdef TCC_BAREMETAL
++        sh_name = (char *)bm_output_section(sh_name);
++#endif
+         if (sh->sh_addralign < 1)
+             sh->sh_addralign = 1;
+         /* find corresponding section, if any */
 diff -ruN a/tccrun.c b/tccrun.c
 --- a/tccrun.c	2026-10-13 20:43:26.803244724 +0000
 +++ b/tccrun.c	2026-10-13 20:47:33.978138182 +0000

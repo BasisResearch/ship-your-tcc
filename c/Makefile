@@ -105,7 +105,7 @@ $(BUILD)/fs/libtcc1.a: $(TCCSRC)/.stamp
 	@mkdir -p $(BUILD)/fs/libtcc1
 	rm -f $@
 	for f in $(LIBTCC1_SRC); do \
-	  $(RISCV_CC) $(RISCV_CFLAGS) -I$(TCCSRC) -c -o $(BUILD)/fs/libtcc1/$${f%.*}.o $(TCCSRC)/lib/$$f || exit 1; done
+	  $(RISCV_CC) $(RISCV_CFLAGS) -w -I$(TCCSRC) -c -o $(BUILD)/fs/libtcc1/$${f%.*}.o $(TCCSRC)/lib/$$f || exit 1; done
 	$(RISCV_AR) rcs $@ $(patsubst %,$(BUILD)/fs/libtcc1/%.o,$(basename $(LIBTCC1_SRC)))
 
 # the list of files (/path/in/image=host/file), all but /prog.c

@@ -1,7 +1,10 @@
 #!/bin/bash
-# Phase 1: tcc -run on the executable Sail model.
+# Phase 1: tcc -run on the executable Sail model. Modelled on ship-your-lua's
+# c/tests/difftest.sh (commit 0a4d80e): the console filter, the host oracle
+# and counting steps up to _exit's tohost store with --trace-pcs.
 #   tests/run.sh [files...]        (default tests/run/*.c)
 #   EMU=... JOBS=8 FLAGS=1 tests/run.sh
+#   NORUN=1 tests/run.sh [files...]   re-summarise the last run
 # For each program: build the image with it embedded as /prog.c (only the
 # .embed section differs: checked by hashing everything else), run it on
 # the Sail Lean emulator with the step markers traced (src/main.c), and
@@ -31,19 +34,23 @@ files=("$@"); [ ${#files[@]} -eq 0 ] && files=(tests/run/*.c)
 
 # everything in the image but .embed: section table and contents
 runtime_sha() {
-  { $READELF -SW "$1" | grep -E '^ +\[ *[0-9]+\]' | grep -v ' \.embed ' | sed 's/^ *\[ *[0-9]*\]//'
-    $OBJCOPY -O binary -R .embed "$1" /dev/stdout; } | sha256sum | cut -c1-16
+  $OBJCOPY -O binary -R .embed "$1" "$1.rt.bin"
+  # allocated sections but .embed: name type addr size flags (not the
+  # file offset, which moves with .embed's size)
+  { $READELF -SW "$1" | sed -n 's/^ *\[ *[0-9]*\] //p' | awk '$7 ~ /A/ && $1 != ".embed" {print $1, $2, $3, $5, $7}'
+    cat "$1.rt.bin"; } | sha256sum | cut -c1-16
+  rm -f "$1.rt.bin"
 }
 
-for f in "${files[@]}"; do
+# NORUN=1: only summarise the last run's outputs
+[ -n "${NORUN:-}" ] || for f in "${files[@]}"; do
   n=$(basename $f .c)
   rm -f $OUT/$n.*
   if ! make -s PROG=$f FLAGS=$FLAGS ELF=$OUT/$n.elf $OUT/$n.elf > $OUT/$n.build 2>&1; then
     echo "$n BUILD-FAIL (see $OUT/$n.build)"; continue
   fi
-  runtime_sha $OUT/$n.elf > $OUT/$n.rtsha
   # markers
-  sym() { $NM $OUT/$n.elf | awk -v s="$1" '$3==s{print "0x"$1}'; }
+  sym() { printf '0x%x' 0x$($NM $OUT/$n.elf | awk -v s="$1" '$3==s{print $1}'); }
   exitsd=$($OBJDUMP -d --disassemble=_exit $OUT/$n.elf | awk '$3=="sd"{sub(":","",$1); print "0x"$1; exit}')
   printf '%s\n' 0x80000000 $(sym tcc_baremetal_run) $(sym tcc_baremetal_enter) $exitsd > $OUT/$n.pcs
   echo "$(sym tcc_baremetal_run) $(sym tcc_baremetal_enter) $exitsd" > $OUT/$n.markers
@@ -73,6 +80,7 @@ printf '%-10s %-6s %-5s %-5s %12s %12s %9s %12s %8s %s\n' prog result exit host 
 for f in "${files[@]}"; do
   n=$(basename $f .c)
   [ -f $OUT/$n.trace ] || continue
+  runtime_sha $OUT/$n.elf > $OUT/$n.rtsha
   read prun penter pexit < $OUT/$n.markers
   # T step pc npc x1..x31: xN is field 4+N
   eval $(awk -F'\t' -v r=$prun -v e=$penter -v x=$pexit '
@@ -81,7 +89,8 @@ for f in "${files[@]}"; do
     $1=="T" && "0x"$3==e { print "senter=" $2 ";" }
     $1=="T" && "0x"$3==x { print "sexit=" $2 "; code=" int(h($19) / 2) % 4294967296 ";" }' $OUT/$n.trace)
   : ${srun:=} ${senter:=} ${sexit:=} ${code:=} ${caddr:=} ${csize:=}
-  grep -vE '^(TODO: cancel_reservation|PC = 0x|htif_tohost = 0x|SUCCESS$|FAILURE)' $OUT/$n.raw | grep -v '^@@' > $OUT/$n.stdout
+  # (sed, not grep: a last line without a newline stays so)
+  sed -E '/^(TODO: cancel_reservation|PC = 0x|htif_tohost = 0x|SUCCESS$|FAILURE|@@)/d' $OUT/$n.raw > $OUT/$n.stdout
   # the generated code (FLAGS bit 0)
   isa=-
   if grep -q '^@@TCCBM code' $OUT/$n.raw; then

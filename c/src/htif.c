@@ -5,6 +5,7 @@
  * - MAX_FILES raised from 64 to 256 for the embedded header tree, newlib's
  *   libc.a/libm.a, libgcc.a and tcc's own files (gen_embed.sh);
  * - opendir/readdir/closedir only under OCAML_HTIF;
+ * - _read copies with copy_out (fast for differently aligned buffers);
  * - each directory keeps a list of its entries (child, dir_empty, nsubdirs,
  *   new_node, unlink_node, rename), so a path lookup no longer scans the
  *   whole node table per component;
@@ -357,6 +358,31 @@ int _close(int fd) {
     return 0;
 }
 
+/* TCC: memcpy, but fast when source and destination are differently
+ * aligned. tcc reads archive members, which sit at 2-byte boundaries in
+ * libc.a, into 8-aligned buffers, and newlib's memcpy copies such data a
+ * byte at a time (5 instructions per byte). This aligns the destination,
+ * then builds each 8-byte word from two aligned source words, never reading
+ * outside the source range; the tail goes through memcpy. */
+static void copy_out(char *d, const char *s, size_t n) {
+    if (n < 32 || (((uintptr_t)d ^ (uintptr_t)s) & 7) == 0) {
+        memcpy(d, s, n);
+        return;
+    }
+    while ((uintptr_t)d & 7) { *d++ = *s++; n--; }
+    unsigned sh = ((uintptr_t)s & 7) * 8;         /* not 0: s is misaligned */
+    const uint64_t *ws = (const uint64_t *)((uintptr_t)s & ~(uintptr_t)7);
+    uint64_t *wd = (uint64_t *)d;
+    uint64_t lo = *ws++;
+    /* the next aligned word ends before s + 15 <= s + n - 1 */
+    while (n >= 16) {
+        uint64_t hi = *ws++;
+        *wd++ = (lo >> sh) | (hi << (64 - sh));
+        lo = hi; s += 8; n -= 8;
+    }
+    memcpy(wd, s, n);
+}
+
 ssize_t _read(int fd, void *buf, size_t len) {
     struct mfd *d = getfd(fd);
     if (!d || d->kind == FD_STDOUT || d->kind == FD_STDERR) { errno = EBADF; return -1; }
@@ -366,7 +392,7 @@ ssize_t _read(int fd, void *buf, size_t len) {
     if (f->dir) { errno = EISDIR; return -1; }
     size_t avail = d->pos < f->size ? f->size - d->pos : 0;
     if (len > avail) len = avail;
-    memcpy(buf, f->data + d->pos, len);
+    copy_out(buf, f->data + d->pos, len);   /* TCC: was memcpy */
     d->pos += len;
     return (ssize_t)len;
 }
