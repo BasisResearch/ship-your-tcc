@@ -1,5 +1,10 @@
 # Phase 3 reuse audit
 
+> Historical: this audit predates the proofs. The root Lake project now
+> proves `Tcc.Prog.Sum.prints` (Clight), `Tcc.Prog.Sum.Machine.sum_halts`
+> (program phase from the cut) and `Tcc.EndToEnd.tcc_run_sum`. Only
+> `CompileCut_Statement` (reset to cut) is open. Current status: PHASES.md.
+
 The measured program `c/tests/p3/sum.c` sums 1 through 10 and prints `55\n`.
 Its current Phase 1 record has 6,632,317 compile steps, 4,189 dump steps and
 2,470 program steps. These measurements establish a candidate, not a theorem.

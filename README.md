@@ -115,19 +115,19 @@ All numbers come from one complete rerun on 2026-10-20, on a single
 harness version and the corrected runtime. Counts, exclusions, harness
 fixes and reproducers are in [DIFFERENTIAL.md](DIFFERENTIAL.md).
 
-## Phase 3: proof work remains open
+## Phase 3: one per-program end-to-end theorem
 
-The selected loop-and-printf program is `c/tests/p3/sum.c`; its measured
-output is `55\n`. This is an execution result. The startup reachability,
-generated-code refinement and printf bridge are unproved. OCaml's captured
-snapshot lemma does not prove reset-to-cut execution. See
-[the proof audit](results/proof-readiness.md) and PHASES.md for the remaining
-obligations, including the Lean toolchain and external-model boundary.
-A `FLAGS=0` native capture now records the full generated arena and all
-defined registers at the handoff after 6,632,342 steps; details and its
-observation-only scope are in [results/capture-cut.md](results/capture-cut.md).
+The program P is `c/tests/p3/sum.c`, a loop and a printf that prints `55\n`.
+For P the end-to-end theorem `Tcc.EndToEnd.tcc_run_sum` is proved with one
+premise left open: `CompileCut_Statement`, which says tcc's compile phase
+on Sail reaches the captured cut. The two sections below cover the Clight
+side and the machine side. Each obligation's status is in PHASES.md. The
+earlier proof audit is in
+[results/proof-readiness.md](results/proof-readiness.md), and the
+independent native capture of the handoff state (6,632,342 steps) is in
+[results/capture-cut.md](results/capture-cut.md).
 
-## Phase 3: per-program theorem (Clight side done)
+### Clight side (done)
 
 For P = `c/tests/p3/sum.c`, `Tcc.Prog.Sum.prints` proves, for every
 external-call semantics `X` with the printf premise `PrintfModel X` and
@@ -140,7 +140,7 @@ Lean formatter (`Tcc/Clight/Printf.lean`). All on Lean 4.34.0 with the root
 `lakefile.toml`; `lake build` takes about 75 s from scratch (the run of
 P is one 21 s `decide +kernel`), under 1.2 GB.
 
-## Phase 3: the machine side (3b proved for P; 3a open)
+### Machine side (3b proved for P; 3a open)
 
 `Tcc.EndToEnd.tcc_run_sum`: for every external-call semantics `X` with
 `PrintfModel X` and `ExtDeterm X`, **given `CompileCut_Statement`**, from
