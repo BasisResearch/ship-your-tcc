@@ -264,6 +264,8 @@ def DecOK (pc w : Nat) : Ins → Prop
       DecodeFactM (mkM pc w .sllw rd rs1 rs2 0)
   | .srlw rd rs1 rs2 => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ rs2 ≤ 31 ∧
       DecodeFactM (mkM pc w .srlw rd rs1 rs2 0)
+  | .fence => ∃ fm : BitVec 4, ∃ rs rd : regidx,
+      ADec w (instruction.FENCE (fm, 0xf#4, 0xf#4, rs, rd))
   | .srai rd rs1 k => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ k < 64 ∧
       DecodeFactM (mkM pc w .srai rd rs1 0 k)
   | .sraiw rd rs1 k => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ k < 32 ∧
@@ -1891,6 +1893,62 @@ theorem sound_sra {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c
     (rX_src σ _ rs1 hrs1 _ (srcPin_pins hrs1 hL)) (rX_src σ _ rs2 hrs2 _ (srcPin_pins hrs2 hL))
     (wX_gpr _ _ rd hrd.1 hrd.2)
 
+/-! ## `fence` (Sail: a barrier, no architectural effect in machine mode) -/
+
+theorem updAt_fldAt (sh n R : Nat) : updAt sh n R (fldAt sh n R) = R := by
+  apply Nat.eq_of_testBit_eq
+  intro j
+  rw [testBit_updAt]
+  split
+  · rw [testBit_fldAt]; simp only [show j - sh < n by omega, decide_true, Bool.true_and]
+    congr 1; omega
+  · rfl
+
+theorem setR_getR (R i : Nat) : setR R i (getR R i) = R := by
+  by_cases h : i = 0
+  · subst h; rfl
+  · rw [setR_ne _ h]; exact updAt_fldAt _ _ _
+
+/-- `fence iorw, iorw` in machine mode: a barrier, no architectural effect. -/
+theorem execute_fence (σ : MState) (fm : BitVec 4) (rs rd : regidx)
+    (h : σ.regs.get? Register.cur_privilege = some Privilege.Machine) :
+    (execute (instruction.FENCE (fm, 0xf#4, 0xf#4, rs, rd))).run σ = .ok RETIRE_SUCCESS σ := by
+  simp only [execute, execute_FENCE, is_fiom_active, EStateM.run, bind, EStateM.bind, readReg,
+    PreSail.readReg, get, getThe, MonadStateOf.get, EStateM.get, h, pure, EStateM.pure]
+  rfl
+
+theorem sound_fence {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w : Nat} (hget : c.table.getW s.pc = some (w, .fence)) :
+    Reaches c cf ⟨(s.pc + 4) % W, s.regs, s.mem⟩ := by
+  obtain ⟨fm, rs, rd, hdec⟩ := (hT _ _ _ hget).dec
+  have := core_sound (rd := 1) (v := getR s.regs 1) hS (hT _ _ _ hget).fetch hget hdec ⟨by decide, by decide⟩
+    (fun σ hG hL => by
+      have hx1 : σ.regs.get? Register.x1 = some (BitVec.ofNat 64 (getR s.regs 1)) := by
+        have := gholds_lookup (pinsOf s.regs) hL (lookupG_pinsOf (R := s.regs) (n := 1) (by decide) (by decide))
+        exact this
+      have hr : (afterNextPC (afterPrelude σ) (BitVec.ofNat 64 s.pc)).regs.insert Register.x1
+          (BitVec.ofNat 64 (getR s.regs 1)) = (afterNextPC (afterPrelude σ) (BitVec.ofNat 64 s.pc)).regs := by
+        apply Std.ExtDHashMap.ext_get?
+        intro k
+        rw [Std.ExtDHashMap.get?_insert]
+        split
+        · rename_i hk
+          have : Register.x1 = k := eq_of_beq hk
+          subst this
+          rw [get?_afterNextPC σ _ _ (by decide) (by decide), hx1]; rfl
+        · rfl
+      have hs : sigma3_alu σ (BitVec.ofNat 64 s.pc) (gprReg 1) (gprRT 1 (BitVec.ofNat 64 (getR s.regs 1))) =
+          afterNextPC (afterPrelude σ) (BitVec.ofNat 64 s.pc) := by
+        show ({(afterNextPC (afterPrelude σ) (BitVec.ofNat 64 s.pc)) with
+          regs := (afterNextPC (afterPrelude σ) (BitVec.ofNat 64 s.pc)).regs.insert Register.x1
+            (BitVec.ofNat 64 (getR s.regs 1))} : MState) = _
+        rw [hr]
+      rw [hs]
+      exact execute_fence _ _ _ _ (by
+        rw [get?_afterNextPC σ _ _ (by decide) (by decide)]
+        exact hG.cur_privilege))
+  rwa [setR_getR] at this
+
 /-! ## The generic theorem -/
 
 /-- **One evaluator step is a Sail step.** Every instruction kind `DecOK`
@@ -1978,6 +2036,8 @@ theorem exec_sound {c : Code} (hT : TableOK c) {s s' : St} {cf : Config} (hS : S
     simp only [exec, alui, wr, next, Option.some.injEq] at hex; subst hex; exact sound_sraiw hT hS hget
   case sra rd rs1 rs2 =>
     simp only [exec, alu, wr, next, Option.some.injEq] at hex; subst hex; exact sound_sra hT hS hget
+  case fence =>
+    simp only [exec, opFence, next, Option.some.injEq] at hex; subst hex; exact sound_fence hT hS hget
   case addi rd rs1 imm =>
     simp only [exec, alui, wr, next, Option.some.injEq] at hex; subst hex; exact sound_addi hT hS hget
   case add rd rs1 rs2 =>
