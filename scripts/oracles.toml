@@ -70,12 +70,12 @@ completion_meta = ["steps", "compile_steps", "program_steps"]
 # 126 stuck (undefined behaviour, or an external other than printf).
 # ccomp -interp is slow and memory-hungry on long runs (26.7M steps: 236 s,
 # 5.3 GB), so each run gets its own memory cap; an OOM kill (137) is n/a.
-# CERTORA_DIR / CLIGHT_RUN point at the Certora lane's build (override here).
+# The Certora build is build/certora (scripts/build_certora_ccomp.sh); `requires`
+# names the binary, so a missing build is "absent", never a column of n/a.
 cmd = "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh {prog}"
-requires = "scripts/run_ccomp_interp.sh"
-env = { CERTORA_DIR = "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a39962f25417ac6c6/build/certora" }
+requires = "build/certora/install/bin/ccomp"
 version_files = ["scripts/run_ccomp_interp.sh", "scripts/certora_env.sh"]
-version_cmd = "sha256sum /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a39962f25417ac6c6/build/certora/install/bin/ccomp | cut -c1-16"
+version_cmd = "sha256sum build/certora/install/bin/ccomp | cut -c1-16"
 codes = { 120 = "n/a", 125 = "n/a", 126 = "stuck", 137 = "n/a" }
 timeout = 600
 heavy = true
@@ -86,10 +86,9 @@ heavy = true
 # fuel, 125 harness error, 126 stuck (UB or unexecuted construct),
 # 127 outside the printf model (%p, %n, long double, ...). ~500 MB a run.
 cmd = "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh {prog}"
-requires = "scripts/run_lean_clight.sh"
-env = { CERTORA_DIR = "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a39962f25417ac6c6/build/certora", CLIGHT_RUN = "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a39962f25417ac6c6/lean/ClightRun/.lake/build/bin/clight_run" }
+requires = "lean/ClightRun/.lake/build/bin/clight_run"
 version_files = ["scripts/run_lean_clight.sh", "scripts/certora_env.sh"]
-version_cmd = "sha256sum /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a39962f25417ac6c6/lean/ClightRun/.lake/build/bin/clight_run /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a39962f25417ac6c6/build/certora/install/bin/clightgen | cut -c1-16"
+version_cmd = "sha256sum lean/ClightRun/.lake/build/bin/clight_run build/certora/install/bin/clightgen | cut -c1-16"
 codes = { 120 = "n/a", 125 = "n/a", 126 = "stuck", 127 = "n/a", 137 = "n/a" }
 timeout = 600
 heavy = true
