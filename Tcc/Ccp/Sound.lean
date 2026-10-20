@@ -2201,4 +2201,127 @@ theorem sim_cut {c : Code} {ab : Nat → Bool} {s : St} {cf : Config} (hS : Sim 
   console := hS.console
   tick := hS.tick
 
+/-! ## From the reset facts to the relation -/
+
+/-- Every known byte of a page tree satisfies `P` (checked page by page). -/
+def MT.allKnown (P : Nat → Nat → Bool) : MT → Bool
+  | .nil => true
+  | .leaf p d m => (List.range 256).all fun j => !(m.testBit j) || P (p * 256 + j) (fldAt (8 * j) 8 d)
+  | .node _ l r => MT.allKnown P l && MT.allKnown P r
+
+theorem MT.allKnown_get {P : Nat → Nat → Bool} : ∀ {M : MT}, MT.allKnown P M = true →
+    ∀ {pg d m : Nat}, M.get pg = some (d, m) → ∀ j, j < 256 → m.testBit j = true →
+      P (pg * 256 + j) (fldAt (8 * j) 8 d) = true
+  | .nil, _, _, _, _, h => nomatch h
+  | .leaf p d0 m0, ha, pg, d, m, h => by
+    simp only [MT.get] at h
+    cases hb : Nat.beq p pg with
+    | false => simp [hb] at h
+    | true =>
+      simp only [hb, Option.some.injEq, Prod.mk.injEq] at h
+      obtain ⟨rfl, rfl⟩ := h
+      have := Nat.eq_of_beq_eq_true hb; subst this
+      intro j hj hm
+      have := List.all_eq_true.mp ha j (List.mem_range.mpr hj)
+      simpa [hm] using this
+  | .node s l r, ha, pg, d, m, h => by
+    simp only [MT.allKnown, Bool.and_eq_true] at ha
+    simp only [MT.get] at h
+    cases hb : Nat.ble s pg with
+    | false => simp only [hb] at h; exact MT.allKnown_get ha.1 h
+    | true => simp only [hb] at h; exact MT.allKnown_get ha.2 h
+
+theorem MT.allKnown_byte {P : Nat → Nat → Bool} {M : MT} (h : MT.allKnown P M = true)
+    {a b : Nat} (hb : M.byte a = some b) : P a b = true := by
+  unfold MT.byte at hb
+  cases hg : M.get (a / 256) with
+  | none => simp [hg] at hb
+  | some dm =>
+    obtain ⟨d, m⟩ := dm
+    simp only [hg] at hb
+    split at hb
+    · rename_i hm
+      cases hb
+      have := MT.allKnown_get h hg (a % 256) (Nat.mod_lt _ (by decide)) hm
+      rwa [Nat.div_add_mod'] at this
+    · simp at hb
+
+/-- A known byte agrees with an image `img` (present there), or, off it on the
+absent bytes `ab`, is zero. -/
+def pinB (ab : Nat → Bool) (img : Nat → Option (BitVec 8)) (a b : Nat) : Bool :=
+  if ab a then b == 0 else img a == some (BitVec.ofNat 8 b)
+
+/-- Every table entry's four bytes are in the image, off the absent bytes. -/
+def CT.allW (P : Nat → Nat → Bool) : CT → Bool
+  | .nil => true
+  | .leaf pc w _ => P pc w
+  | .node _ l r => CT.allW P l && CT.allW P r
+
+theorem CT.allW_getW {P : Nat → Nat → Bool} : ∀ {t : CT}, CT.allW P t = true →
+    ∀ {pc w : Nat} {i : Ins}, t.getW pc = some (w, i) → P pc w = true
+  | .nil, _, _, _, _, h => nomatch h
+  | .leaf p w0 i0, ha, pc, w, i, h => by
+    simp only [CT.getW] at h
+    cases hb : Nat.beq p pc with
+    | false => simp [hb] at h
+    | true =>
+      simp only [hb, Option.some.injEq, Prod.mk.injEq] at h
+      obtain ⟨rfl, rfl⟩ := h
+      have := Nat.eq_of_beq_eq_true hb; subst this; exact ha
+  | .node s l r, ha, pc, w, i, h => by
+    simp only [CT.allW, Bool.and_eq_true] at ha
+    simp only [CT.getW] at h
+    cases hb : Nat.ble s pc with
+    | false => simp only [hb] at h; exact CT.allW_getW ha.1 h
+    | true => simp only [hb] at h; exact CT.allW_getW ha.2 h
+
+def codeB (ab : Nat → Bool) (img : Nat → Option (BitVec 8)) (pc w : Nat) : Bool :=
+  (List.range 4).all fun k => !ab (pc + k) && img (pc + k) == some (wbyte w k)
+
+/-- **Reset**: a machine configuration with the platform invariant, zero GPRs,
+the PC at the evaluator's, an empty console, an idle mailbox, and a memory
+holding the image `img` (absent on `ab`), is related to an evaluator state
+with zero registers whose known bytes and code bytes the image pins. -/
+theorem sim_reset {c : Code} {ab : Nat → Bool} {s : St} {cf : Config}
+    {img : Nat → Option (BitVec 8)}
+    (hG : GoodState cf.σ) (hpc : cf.σ.regs.get? Register.PC = some (BitVec.ofNat 64 s.pc))
+    (hgpr : ∀ n, 1 ≤ n → n < 32 → gprGet cf.σ n = some 0#64) (hR : s.regs = 0)
+    (himg : PartialView cf.σ.mem img) (habs : ∀ a, ab a = true → cf.σ.mem[a]? = none)
+    (hmem : MT.allKnown (pinB ab img) s.mem = true)
+    (hcode : CT.allW (codeB ab img) c.table = true)
+    (hout : output cf.σ = "")
+    (hpay : cf.σ.regs.get? Register.htif_payload_writes = some 0#4) (htick : cf.tick < 2) :
+    Sim c ab s cf where
+  good := hG
+  pc := hpc
+  regs := by
+    apply gholds_of_get
+    intro p hp
+    obtain ⟨h1, h2, h3⟩ := pinsN_mem 31 hp
+    rw [h3, hR]
+    have : getR 0 p.1 = 0 := by simp [getR, fldAt]
+    rw [this]; exact hgpr p.1 h1 (by omega)
+  x0 := by rw [hR]; simp [getR, fldAt]
+  mem := fun a b hb => by
+    have h := MT.allKnown_byte hmem hb
+    unfold pinB at h
+    unfold MemAt
+    split
+    · rename_i hab
+      rw [if_pos hab, beq_iff_eq] at h
+      rw [habs a hab, h]; rfl
+    · rename_i hab
+      rw [if_neg hab, beq_iff_eq] at h
+      exact himg a _ h
+  code := fun pc w i hg => by
+    have h := CT.allW_getW hcode hg
+    have hk : ∀ k, k < 4 → cf.σ.mem[pc + k]? = some (wbyte w k) := fun k hk => by
+      have := List.all_eq_true.mp h k (List.mem_range.mpr hk)
+      simp only [Bool.and_eq_true, Bool.not_eq_true', beq_iff_eq] at this
+      exact himg _ _ this.2
+    exact ⟨by simpa using hk 0 (by omega), hk 1 (by omega), hk 2 (by omega), hk 3 (by omega)⟩
+  console := hout
+  payload := hpay
+  tick := htick
+
 end Tcc.Ccp
