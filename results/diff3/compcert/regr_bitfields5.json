@@ -28,7 +28,7 @@
    "wall_s": 0.229
   },
   "lean_clight": {
-   "cached": true,
+   "cached": false,
    "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_bitfields5.c",
    "exit": 126,
    "meta": {},
@@ -36,8 +36,8 @@
    "stderr_tail": "[clight_run] STUCK (undefined behaviour or outside the interpreter): stuck at statement Sassign\n",
    "stdout": "f0 = 1, f1 = 2, f2 = 3, second = 3\n",
    "stdout_sha": "2a13954f6963eb8f42fe719f81f2fb91b429a0bf01685563afc960626bb13b76",
-   "version": "026fb96670207d7c",
-   "wall_s": 0.86
+   "version": "6cec7c4f7fd090c3",
+   "wall_s": 0.807
   },
   "tcc_sail": {
    "cached": true,

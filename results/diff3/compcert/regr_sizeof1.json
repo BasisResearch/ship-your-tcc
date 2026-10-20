@@ -28,7 +28,7 @@
    "wall_s": 0.234
   },
   "lean_clight": {
-   "cached": true,
+   "cached": false,
    "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_sizeof1.c",
    "exit": 0,
    "meta": {},
@@ -36,8 +36,8 @@
    "stderr_tail": "",
    "stdout": "sizeof(struct s) = 32, sizeof(tbl) = 32\nsizeof(struct bits1) = 1, sizeof(b1) = 1\nsizeof(struct bits2) = 8, sizeof(b2) = 8\n",
    "stdout_sha": "31291f75d5a7939672e8106ccb5ce5a5d4032c8562f9c1a81fb261d3219a46b6",
-   "version": "026fb96670207d7c",
-   "wall_s": 1.198
+   "version": "6cec7c4f7fd090c3",
+   "wall_s": 0.655
   },
   "tcc_sail": {
    "cached": true,

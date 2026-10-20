@@ -28,7 +28,7 @@
    "wall_s": 0.216
   },
   "lean_clight": {
-   "cached": true,
+   "cached": false,
    "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_11_precedence.c",
    "exit": 0,
    "meta": {},
@@ -36,8 +36,8 @@
    "stderr_tail": "",
    "stdout": "134\n134\n0\n1\n1\n1\n1\n46\n1, 0\n0, 1\n1\n1916\n1916\n64\n4\n",
    "stdout_sha": "eb01aed090fb52c9bc1b4eee33c05663921e43290cffb1a954ba25debf48c8fe",
-   "version": "026fb96670207d7c",
-   "wall_s": 1.628
+   "version": "6cec7c4f7fd090c3",
+   "wall_s": 0.683
   },
   "tcc_sail": {
    "cached": true,

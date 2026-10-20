@@ -28,7 +28,7 @@
    "wall_s": 0.185
   },
   "lean_clight": {
-   "cached": true,
+   "cached": false,
    "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_integr.c",
    "exit": 0,
    "meta": {},
@@ -36,8 +36,8 @@
    "stderr_tail": "",
    "stdout": "integr(square, 0.0, 1.0, 1000) = 0.332834\n",
    "stdout_sha": "0b08c4ebd069551df5f0ce1e7946de8ee4f42cf363c3a88110a4761d32b902dc",
-   "version": "026fb96670207d7c",
-   "wall_s": 0.882
+   "version": "6cec7c4f7fd090c3",
+   "wall_s": 0.628
   },
   "tcc_sail": {
    "cached": true,

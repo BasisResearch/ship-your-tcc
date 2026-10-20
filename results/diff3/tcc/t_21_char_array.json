@@ -28,7 +28,7 @@
    "wall_s": 0.209
   },
   "lean_clight": {
-   "cached": true,
+   "cached": false,
    "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_21_char_array.c",
    "exit": 0,
    "meta": {},
@@ -36,8 +36,8 @@
    "stderr_tail": "",
    "stdout": "hello\nh: 104\ne: 101\nl: 108\nl: 108\no: 111\ncopied string is hello\n",
    "stdout_sha": "349e5fcf66dd9f227df96313c658e8a726ab7bd7ceb4eb1f45df47838d6f1502",
-   "version": "026fb96670207d7c",
-   "wall_s": 1.566
+   "version": "6cec7c4f7fd090c3",
+   "wall_s": 0.636
   },
   "tcc_sail": {
    "cached": true,

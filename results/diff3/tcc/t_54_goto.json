@@ -28,7 +28,7 @@
    "wall_s": 0.2
   },
   "lean_clight": {
-   "cached": true,
+   "cached": false,
    "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_54_goto.c",
    "exit": 0,
    "meta": {},
@@ -36,8 +36,8 @@
    "stderr_tail": "",
    "stdout": "In fred()\nAt end\nIn joe()\nc = 1234\ndone\nIn henry()\nb = 1234\ndone\n",
    "stdout_sha": "7902cbdf542d20091a404f2e6c8d64cc9d6df5977e6fd46515e2196175d087a5",
-   "version": "026fb96670207d7c",
-   "wall_s": 1.344
+   "version": "6cec7c4f7fd090c3",
+   "wall_s": 0.734
   },
   "tcc_sail": {
    "cached": true,

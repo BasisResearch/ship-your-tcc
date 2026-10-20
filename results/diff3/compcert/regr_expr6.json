@@ -28,7 +28,7 @@
    "wall_s": 0.232
   },
   "lean_clight": {
-   "cached": true,
+   "cached": false,
    "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_expr6.c",
    "exit": 0,
    "meta": {},
@@ -36,8 +36,8 @@
    "stderr_tail": "",
    "stdout": "f(42) = 42\nf(-1) = 1\ng(1,2,3.14) = 2.00\ng(0,2,3.14) = 3.14\nh(1,2) = true\nh(0,2) = false\nh(1,0) = false\nk(1,2,3.14) = true\nk(0,2,3.14) = true\nk(1,0,3.14) = false\nk(0,2,0.00) = false\n",
    "stdout_sha": "9ffe1005266b42d0f8d59a1a34cefa70e38888e244c3e14ffa78e08f9574d8c0",
-   "version": "026fb96670207d7c",
-   "wall_s": 1.554
+   "version": "6cec7c4f7fd090c3",
+   "wall_s": 1.118
   },
   "tcc_sail": {
    "cached": true,

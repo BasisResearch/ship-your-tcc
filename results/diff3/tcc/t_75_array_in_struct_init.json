@@ -28,7 +28,7 @@
    "wall_s": 0.307
   },
   "lean_clight": {
-   "cached": true,
+   "cached": false,
    "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_75_array_in_struct_init.c",
    "exit": 0,
    "meta": {},
@@ -36,8 +36,8 @@
    "stderr_tail": "",
    "stdout": "cases[0].c[0]=73400320\ncases[0].c[1]=262144\ncases[0].c[2]=805567999\ncases[0].c[3]=-1\ncases[0].b=1\ncases[0].e=2\ncases[0].k=1\n\ncases[1].c[0]=879754751\ncases[1].c[1]=262144\ncases[1].c[2]=262144\ncases[1].c[3]=805567999\ncases[1].b=2\ncases[1].e=3\ncases[1].k=2\n\ncases[2].c[0]=879754751\ncases[2].c[1]=805567999\ncases[2].c[2]=262144\ncases[2].c[3]=805567999\ncases[2].b=1\ncases[2].e=3\ncases[2].k=2\n\ncases[3].c[0]=879754751\ncases[3].c[1]=805830143\ncases[3].c[2]=524288\ncases[3].c[3]=-1\ncases[3].b=1\ncases[3].e=2\ncases[3].k=1\n\ncases[4].c[0]=879754751\ncases[4].c[1]=805830143\ncases[4].c[2]=1048576\ncases[4].c[3]=805830143\ncases[4].b=1\ncases[4].e=3\ncases[4].k=1\n\ncases[5].c[0]=879754751\ncases[5].c[1]=805830143\ncases[5].c[2]=262144\ncases[5].c[3]=262144\ncases[5].b=1\ncases[5].e=3\ncases[5].k=1\n\ncases[6].c[0]=73400320\ncases[6].c[1]=807403007\ncases[6].c[2]=807403007\ncases[6].c[3]=-1\ncases[6].b=1\ncases[6].e=2\ncases[6].k=1\n\ncases[7].c[0]=839122431\ncases[7].c[1]=2097152\ncases[7].c[2]=807403007\ncases[7].c[3]=-1\ncases[7].b=0\ncases[7].e=2\ncases[7].k=1\n\ncases[8].c[0]=67108864\ncases[8].c[1]=807403007\ncases[8].c[2]=134217728\ncases[8].c[3]=-1\ncases[8].b=0\ncases[8].e=2\ncases[8].k=0\n\n",
    "stdout_sha": "a348d1e786d987b0befa864e4e71b1bb03ca713a9131ef01a2c0d53f6b0b1fd7",
-   "version": "026fb96670207d7c",
-   "wall_s": 1.155
+   "version": "6cec7c4f7fd090c3",
+   "wall_s": 0.822
   },
   "tcc_sail": {
    "cached": true,

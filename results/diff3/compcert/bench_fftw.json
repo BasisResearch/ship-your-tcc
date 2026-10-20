@@ -28,7 +28,7 @@
    "wall_s": 0.496
   },
   "lean_clight": {
-   "cached": true,
+   "cached": false,
    "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_fftw.c",
    "exit": 0,
    "meta": {},
@@ -36,8 +36,8 @@
    "stderr_tail": "",
    "stdout": "o[0] = 2.918193e+01\no[1] = -3.230611e+01\no[2] = 1.271687e+01\no[3] = -1.099040e+01\no[4] = 5.728673e+00\no[5] = -4.918940e+00\no[6] = 1.880764e+00\no[7] = -1.292782e+00\no[8] = 1.104073e+02\no[9] = -5.867858e+01\no[10] = 2.768382e+01\no[11] = -2.073843e+01\no[12] = 1.229410e+01\no[13] = -9.195029e+00\no[14] = 4.307537e+00\no[15] = -2.080713e+00\n",
    "stdout_sha": "6438773399d6808cb65ad837cd5fbbb8953b28607038ea7c0da605f817b9824a",
-   "version": "026fb96670207d7c",
-   "wall_s": 1.063
+   "version": "6cec7c4f7fd090c3",
+   "wall_s": 0.966
   },
   "tcc_sail": {
    "cached": true,

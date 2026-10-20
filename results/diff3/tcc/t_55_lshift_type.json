@@ -28,7 +28,7 @@
    "wall_s": 0.305
   },
   "lean_clight": {
-   "cached": true,
+   "cached": false,
    "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_55_lshift_type.c",
    "exit": 0,
    "meta": {},
@@ -36,8 +36,8 @@
    "stderr_tail": "",
    "stdout": "0 test(s) failed\n",
    "stdout_sha": "1fc5b94a7f8a6618da987e06ba308cac66a382d8cd68c52e9d2ce032f3ccc6d2",
-   "version": "026fb96670207d7c",
-   "wall_s": 7.156
+   "version": "6cec7c4f7fd090c3",
+   "wall_s": 5.703
   },
   "tcc_sail": {
    "cached": true,

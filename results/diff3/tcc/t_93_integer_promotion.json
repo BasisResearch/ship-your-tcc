@@ -28,16 +28,16 @@
    "wall_s": 0.202
   },
   "lean_clight": {
-   "cached": true,
+   "cached": false,
    "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_93_integer_promotion.c",
    "exit": 120,
    "meta": {},
    "outcome": "n/a",
-   "stderr_tail": "[run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.MnCIcn/prog.c:13: error: the type of bit-field 'ul31' must be an integer type no bigger than 'int' /Users/kirancodes/tmp/leanclight.MnCIcn/prog.c:14: error: the type of bit-field 'ul32' must be an integer type no bigger than 'int' /Users/kirancodes/tmp/leanclight.MnCIcn/prog.c:15: error: the type of bit-field 'ull31' must be an integer type no bigger than 'int' \n",
+   "stderr_tail": "[run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.49mP9X/prog.c:13: error: the type of bit-field 'ul31' must be an integer type no bigger than 'int' /Users/kirancodes/tmp/leanclight.49mP9X/prog.c:14: error: the type of bit-field 'ul32' must be an integer type no bigger than 'int' /Users/kirancodes/tmp/leanclight.49mP9X/prog.c:15: error: the type of bit-field 'ull31' must be an integer type no bigger than 'int' \n",
    "stdout": "",
    "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-   "version": "026fb96670207d7c",
-   "wall_s": 0.131
+   "version": "6cec7c4f7fd090c3",
+   "wall_s": 0.087
   },
   "tcc_sail": {
    "cached": true,

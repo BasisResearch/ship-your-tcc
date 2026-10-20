@@ -49,10 +49,10 @@ Obligations (each a `def …_Statement : Prop` until proved):
 | `CodeRefinesClight_Statement` (3b) | C refines Certora's Lean Clight of P (syi MachCSL + generators); to be combined with 3.4 through `Terminates`/`traceOut` | for P, as agreement of observables: `Tcc.EndToEnd.tcc_run_sum` (from reset the machine halts with exactly the console bytes and exit code of Clight's P, given `CompileCut_Statement`); a step-level refinement of C against Clight stays open |
 | `PrintfSpec_Statement` | printf machine spec (after ship-your-lua `fwrite`) yielding an `X` with `PrintfModel X ∧ ExtDeterm X`, whose console bytes are `traceOut` | not started (the general route; P's replay runs the relocated printf concretely) |
 
-Gap: the Phase 2 oracle `lean/ClightRun` (Lean 4.32.1) still renders printf
-conversions with the host snprintf, so the differential tests host printf
-against newlib, not `Tcc.Clight.format`. Follow-up: run `format` in the oracle
-(it needs only CCLib's event types) or differential-test it against newlib.
+Closed 2026-10-20: the Phase 2 oracle `lean_clight` prints through
+`Tcc.Clight.format` (now with exact `f F e E g G`), built by the root project
+on the same CCLib, so the differential tests the printf model against
+newlib (xgcc/tcc on Sail) and glibc. The rerun changed no result.
 
 Use `FLAGS=0` (no code dump) for the exact-output theorem: `results/phase1/sum.raw`
 includes the debug dump. The reuse audit is `results/proof-readiness.md`.

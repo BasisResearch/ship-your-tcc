@@ -28,7 +28,7 @@
    "wall_s": 0.265
   },
   "lean_clight": {
-   "cached": true,
+   "cached": false,
    "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_02_printf.c",
    "exit": 0,
    "meta": {},
@@ -36,8 +36,8 @@
    "stderr_tail": "",
    "stdout": "Hello world\nCount = -5\nCount = -4\nCount = -3\nCount = -2\nCount = -1\nCount = 0\nCount = 1\nCount = 2\nCount = 3\nCount = 4\nCount = 5\nString 'hello', 'there' is 'hello', 'there'\nCharacter 'A' is 'A'\nCharacter 'a' is 'a'\n",
    "stdout_sha": "94bc2d2205a289dec962428d3db9e76d50e2d8cb2850a01df4b51a3e707f0e2d",
-   "version": "026fb96670207d7c",
-   "wall_s": 1.539
+   "version": "6cec7c4f7fd090c3",
+   "wall_s": 0.65
   },
   "tcc_sail": {
    "cached": true,

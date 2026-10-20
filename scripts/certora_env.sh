@@ -10,11 +10,12 @@ export CERTORA_COMMIT=123f7f7767e215aceb4821f0d044336d78103ade
 export CCOMP="$CERTORA_DIR/install/bin/ccomp"
 export CLIGHTGEN="$CERTORA_DIR/install/bin/clightgen"
 export CERTORA_LEAN_PROJECT="$CERTORA_SRC/export"     # Lake project: CCLib, Clightdefs
-export CLIGHT_RUN="${CLIGHT_RUN:-$SYT_ROOT/lean/ClightRun/.lake/build/bin/clight_run}"
-# clight_run elaborates the clightgen output in-process: it needs Lean 4.32.1's
-# sysroot (Init/Lean .oleans) and the CCLib .oleans.
-export LEAN_SYSROOT="${CERTORA_LEAN_SYSROOT:-$HOME/.elan/toolchains/leanprover--lean4---v4.32.1}"
-export CLIGHT_LEAN_PATH="$CERTORA_LEAN_PROJECT/.lake/build/lib/lean"
+export CLIGHT_RUN="${CLIGHT_RUN:-$SYT_ROOT/.lake/build/bin/clight_run}"
+# clight_run (the root Lake project's executable, `lake build clight_run`)
+# elaborates the clightgen output in-process: it needs the root toolchain's
+# sysroot (Init/Lean .oleans) and the root project's CCLib .oleans.
+export LEAN_SYSROOT="${CLIGHT_LEAN_SYSROOT:-$HOME/.elan/toolchains/$(sed 's|leanprover/lean4:|leanprover--lean4---|' "$SYT_ROOT/lean-toolchain")}"
+export CLIGHT_LEAN_PATH="$SYT_ROOT/.lake/build/lib/lean"
 export CERTORA_OPAM_SWITCH=certora-clean
 # OCaml/Coq env of the switch (only needed to rebuild ccomp/clightgen)
 certora_opam_env() { eval "$(opam env --switch=$CERTORA_OPAM_SWITCH --set-switch)"; }

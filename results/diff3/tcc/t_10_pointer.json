@@ -28,7 +28,7 @@
    "wall_s": 0.262
   },
   "lean_clight": {
-   "cached": true,
+   "cached": false,
    "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_10_pointer.c",
    "exit": 0,
    "meta": {},
@@ -36,8 +36,8 @@
    "stderr_tail": "",
    "stdout": "a = 42\nbolshevic.a = 12\nbolshevic.b = 34\nbolshevic.c = 56\ntsar->a = 12\ntsar->b = 34\ntsar->c = 56\nbolshevic.b = 34\n",
    "stdout_sha": "444de86aa8132c42bbb0e4258b4d0b3c18531516bc1bc1d0101a0e4c6c5b9d4a",
-   "version": "026fb96670207d7c",
-   "wall_s": 1.518
+   "version": "6cec7c4f7fd090c3",
+   "wall_s": 0.652
   },
   "tcc_sail": {
    "cached": true,

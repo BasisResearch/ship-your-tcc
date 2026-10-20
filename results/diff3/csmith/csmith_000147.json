@@ -28,7 +28,7 @@
    "wall_s": 0.198
   },
   "lean_clight": {
-   "cached": true,
+   "cached": false,
    "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/csmith/csmith_000147.c",
    "exit": 0,
    "meta": {},
@@ -36,8 +36,8 @@
    "stderr_tail": "",
    "stdout": "checksum = 587518D8\n",
    "stdout_sha": "612d1e138b66e831dcdf9fd4b147562e4dac589354c149366d1b17cbd26855b9",
-   "version": "026fb96670207d7c",
-   "wall_s": 2.186
+   "version": "6cec7c4f7fd090c3",
+   "wall_s": 1.216
   },
   "tcc_sail": {
    "cached": true,

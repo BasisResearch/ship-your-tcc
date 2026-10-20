@@ -28,7 +28,7 @@
    "wall_s": 0.197
   },
   "lean_clight": {
-   "cached": true,
+   "cached": false,
    "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_initializers3.c",
    "exit": 0,
    "meta": {},
@@ -36,8 +36,8 @@
    "stderr_tail": "",
    "stdout": "x5 = { 1, 2, 3, 0, 0, 0, 0, 0, 0, 0, }\nx17[7] = { 'H', 'e', 'l', 'l', 'o', '!', 0, }\nx18 = \"Hello!\"\nx19 = { \"Hello\", \"world!\" }\nx20 = { 'H', 'e', 'l', }\nx21 = { 'H', 'e', 'l', 'l', 'o', '!', 0, 0, 0, 0, }\nf(0,42) = 42, f(1,42) = 43, f(2,42) = 44, f(3,42) = 44, f(4,42) = 44\ns1 = { tag = 0, a = {66,77}, u = {0,0} }\ns2 = { tag = 0, a = {0,1}, u = {66,77} }\ns4 = { tag = 0, a = {66,77}, u = {88,99} }\n",
    "stdout_sha": "95791c8a308cb034894b51315d3b89544253e4c1f366a7c8aa4cee0d471c84de",
-   "version": "026fb96670207d7c",
-   "wall_s": 2.555
+   "version": "6cec7c4f7fd090c3",
+   "wall_s": 1.413
   },
   "tcc_sail": {
    "cached": true,

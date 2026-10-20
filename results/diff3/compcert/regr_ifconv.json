@@ -28,7 +28,7 @@
    "wall_s": 0.338
   },
   "lean_clight": {
-   "cached": true,
+   "cached": false,
    "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_ifconv.c",
    "exit": 0,
    "meta": {},
@@ -36,8 +36,8 @@
    "stderr_tail": "",
    "stdout": "test1(0,1,12,34) = 12\ntest1(1,0,45,67) = 67\ntest2(0,1,12,34) = 12\ntest2(1,0,45,67) = 67\ntest3(0,1,12,34) = 12\ntest3(1,0,45,67) = 67\ntest4(0,1,12,34) = 12\ntest4(1,0,45,67) = 67\ntest5(0,1,12) = 13\ntest5(1,0,45) = 44\ntest6(NULL) = 0\ntest6(&i) = 1244\ntest7(1,0) = -1\ntest7(-100,4) = -25\ntest8(0) = 0\ntest8(1) = -72\nltest1(-1, 0, 123LL, 456LL) = 124\nltest1(1, 0, 123LL, 456LL) = 114\ndmax(0.0, 3.14) = 3.140000\ndmax(1.0, -2.718) = 1.000000\ndabs(1.0) = 1.000000\ndabs(-2.718) = 2.718000\nsmin(0.0, 3.14) = 0.000000\nsmin(1.0, -2.718) = -2.718000\nsdoz(1.0, 0.5) = 0.500000\nsdoz(0.0, 3.14) = 0.000000\n",
    "stdout_sha": "41702c18b071f1feb6e793a1c3e722abd7abbde808741531b7f93b5862e9004e",
-   "version": "026fb96670207d7c",
-   "wall_s": 2.224
+   "version": "6cec7c4f7fd090c3",
+   "wall_s": 1.578
   },
   "tcc_sail": {
    "cached": true,

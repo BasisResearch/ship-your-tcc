@@ -28,16 +28,16 @@
    "wall_s": 0.228
   },
   "lean_clight": {
-   "cached": true,
+   "cached": false,
    "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_133_old_func.c",
    "exit": 120,
    "meta": {},
    "outcome": "n/a",
-   "stderr_tail": "[run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.S5yMPM/prog.c:38: error: redefinition of 'func' with a different type: 'void(float a)' vs 'void(double a)' 1 error detected. \n",
+   "stderr_tail": "[run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.TVBzFM/prog.c:38: error: redefinition of 'func' with a different type: 'void(float a)' vs 'void(double a)' 1 error detected. \n",
    "stdout": "",
    "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-   "version": "026fb96670207d7c",
-   "wall_s": 0.144
+   "version": "6cec7c4f7fd090c3",
+   "wall_s": 0.056
   },
   "tcc_sail": {
    "cached": true,

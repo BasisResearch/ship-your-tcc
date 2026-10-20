@@ -28,16 +28,16 @@
    "wall_s": 0.233
   },
   "lean_clight": {
-   "cached": true,
+   "cached": false,
    "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_81_types.c",
    "exit": 120,
    "meta": {},
    "outcome": "n/a",
-   "stderr_tail": "[run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.u9tVo2/prog.c:4: error: unbound enum 'E' \n",
+   "stderr_tail": "[run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.h0BP4n/prog.c:4: error: unbound enum 'E' \n",
    "stdout": "",
    "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-   "version": "026fb96670207d7c",
-   "wall_s": 0.196
+   "version": "6cec7c4f7fd090c3",
+   "wall_s": 0.064
   },
   "tcc_sail": {
    "cached": true,

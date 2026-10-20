@@ -86,9 +86,9 @@ heavy = true
 # fuel, 125 harness error, 126 stuck (UB or unexecuted construct),
 # 127 outside the printf model (%p, %n, long double, ...). ~500 MB a run.
 cmd = "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh {prog}"
-requires = "lean/ClightRun/.lake/build/bin/clight_run"
+requires = ".lake/build/bin/clight_run"
 version_files = ["scripts/run_lean_clight.sh", "scripts/certora_env.sh"]
-version_cmd = "sha256sum lean/ClightRun/.lake/build/bin/clight_run build/certora/install/bin/clightgen | cut -c1-16"
+version_cmd = "sha256sum .lake/build/bin/clight_run build/certora/install/bin/clightgen | cut -c1-16"
 codes = { 120 = "n/a", 125 = "n/a", 126 = "stuck", 127 = "n/a", 137 = "n/a" }
 timeout = 600
 heavy = true

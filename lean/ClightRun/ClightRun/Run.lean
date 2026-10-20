@@ -21,9 +21,14 @@
   actual argument types, which is how `ccomp -interp` sees it too.
   (`ccomp -interp` supports only printf.)  malloc / free / memcpy-builtin are
   already executed by CCLib's own `doExternalCall`.
+
+  printf's output is `Tcc.Clight.format`, the pure formatter of the Phase 3
+  printf premise, so this oracle runs the same printf model the proofs assume.
+  A call outside that model (`%p`, `%n`, `%a`, `*` widths, an argument of the
+  wrong kind or length, ...) ends the run with exit 127.
 -/
 import CCLib
-import ClightRun.Fmt
+import Tcc.Clight.Printf
 
 namespace ClightRun
 open CC
@@ -69,11 +74,7 @@ def readCString (m : Mem) (b : Block) (ofs : Integers.Ptrofs) (lim : Nat := maxS
     | _ => return .error (.ub s!"string read at offset {base + i} of block is not a defined byte")
   return .ok acc
 
-def toU64 (z : Int) : UInt64 := (BitVec.ofInt 64 z).toNat.toUInt64
-
-/-- Integer view of a printf argument at a given width (bits), signed or not.
-    A 32-bit `Vint` used at width 64 is sign-extended, as the RV64 lp64 ABI
-    does for 32-bit values in argument registers. -/
+/-- Integer view of a `putchar`/`exit` argument at a given width (bits). -/
 def intArg (v : Val) (bits : Nat) (signed : Bool) : Option Int :=
   let raw : Option Int := match v with
     | .Vint n => some (Integers.Int.signed n)
@@ -83,123 +84,29 @@ def intArg (v : Val) (bits : Nat) (signed : Bool) : Option Int :=
     let bv := BitVec.ofInt bits z
     if signed then bv.toInt else (bv.toNat : Int)
 
-def isFlag (c : UInt8) : Bool := c == '-'.toUInt8 || c == '+'.toUInt8 || c == ' '.toUInt8 ||
-  c == '#'.toUInt8 || c == '0'.toUInt8
-def isDigit (c : UInt8) : Bool := c ≥ '0'.toUInt8 && c ≤ '9'.toUInt8
+/-- A printf argument as the event value the printf model reads. A pointer
+    becomes `EVptr_global b ofs` naming its block `b` (both are `Positive`),
+    so the model's string reader can read any block, not only globals. -/
+def eventArg : Val → Option EventVal
+  | .Vint n => some (.EVint n)
+  | .Vlong n => some (.EVlong n)
+  | .Vfloat f => some (.EVfloat f)
+  | .Vsingle f => some (.EVsingle f)
+  | .Vptr b ofs => some (.EVptr_global b ofs)
+  | .Vundef => none
 
-def bytesOfString (s : String) : ByteArray := s.toUTF8
-def cstr (s : String) : ByteArray := s.toUTF8.push 0
-
-/-- C `printf`: interpret `fmt` against `args`, returning the bytes produced.
-    Each conversion is rendered by the host snprintf (c/fmt.c). -/
+/-- C `printf`: the pure model `Tcc.Clight.format` (the formatter of the
+    Phase 3 printf premise `PrintfModel`), reading `%s` strings from `m`. -/
 def doPrintf (m : Mem) (fmt : ByteArray) (args : List Val) : Except ExtErr ByteArray := do
-  let n := fmt.size
-  let mut out := ByteArray.empty
-  let mut i := 0
-  let mut args := args
-  let get (i : Nat) : UInt8 := if i < n then fmt.get! i else 0
-  while i < n do
-    let c := get i
-    if c != '%'.toUInt8 then
-      out := out.push c; i := i + 1; continue
-    i := i + 1
-    -- flags
-    let mut flags := ""
-    while isFlag (get i) do
-      flags := flags.push (Char.ofNat (get i).toNat); i := i + 1
-    -- width
-    let mut width : Option Int := none
-    if get i == '*'.toUInt8 then
-      i := i + 1
-      match args with
-      | a :: rest =>
-        args := rest
-        match intArg a 32 true with
-        | some w => width := some w
-        | none => throw (.ub "printf: '*' width argument is not an int")
-      | [] => throw (.ub "printf: missing '*' width argument")
-    else
-      let mut w : Nat := 0
-      let mut any := false
-      while isDigit (get i) do
-        w := w * 10 + ((get i).toNat - '0'.toNat); i := i + 1; any := true
-      if any then width := some w
-    if let some w := width then
-      if w < 0 then flags := flags.push '-'; width := some (-w)
-    -- precision
-    let mut prec : Option Int := none
-    if get i == '.'.toUInt8 then
-      i := i + 1
-      if get i == '*'.toUInt8 then
-        i := i + 1
-        match args with
-        | a :: rest =>
-          args := rest
-          match intArg a 32 true with
-          | some p => prec := if p < 0 then none else some p
-          | none => throw (.ub "printf: '*' precision argument is not an int")
-        | [] => throw (.ub "printf: missing '*' precision argument")
-      else
-        let mut p : Nat := 0
-        while isDigit (get i) do
-          p := p * 10 + ((get i).toNat - '0'.toNat); i := i + 1
-        prec := some p
-    -- length modifier
-    let mut len := ""
-    let c1 := get i
-    if c1 == 'h'.toUInt8 then
-      if get (i+1) == 'h'.toUInt8 then len := "hh"; i := i + 2 else len := "h"; i := i + 1
-    else if c1 == 'l'.toUInt8 then
-      if get (i+1) == 'l'.toUInt8 then len := "ll"; i := i + 2 else len := "l"; i := i + 1
-    else if c1 == 'j'.toUInt8 || c1 == 'z'.toUInt8 || c1 == 't'.toUInt8 then
-      len := "l"; i := i + 1
-    else if c1 == 'L'.toUInt8 then
-      len := "L"; i := i + 1
-    let conv := Char.ofNat (get i).toNat
-    if i ≥ n then throw (.unsupported "printf: format ends inside a conversion")
-    i := i + 1
-    let pre := "%" ++ flags ++ (match width with | some w => toString w | none => "") ++
-      (match prec with | some p => "." ++ toString p | none => "")
-    let bits : Nat := match len with
-      | "hh" => 8 | "h" => 16 | "l" | "ll" => 64 | _ => 32
-    let nextArg : Except ExtErr (Val × List Val) := match args with
-      | a :: rest => .ok (a, rest)
-      | [] => .error (.ub s!"printf: missing argument for %{conv}")
-    match conv with
-    | '%' => out := out.push '%'.toUInt8
-    | 'd' | 'i' =>
-      let (a, rest) ← nextArg; args := rest
-      match intArg a bits true with
-      | some z => out := out ++ fmtSll (cstr (pre ++ "lld")) (toU64 z)
-      | none => throw (.ub s!"printf: %{conv} argument is not an integer")
-    | 'u' | 'o' | 'x' | 'X' =>
-      let (a, rest) ← nextArg; args := rest
-      match intArg a bits false with
-      | some z => out := out ++ fmtUll (cstr (pre ++ "ll" ++ conv.toString)) (toU64 z)
-      | none => throw (.ub s!"printf: %{conv} argument is not an integer")
-    | 'c' =>
-      let (a, rest) ← nextArg; args := rest
-      match intArg a 8 false with
-      | some z => out := out ++ fmtChr (cstr (pre ++ "c")) z.toNat.toUInt32
-      | none => throw (.ub "printf: %c argument is not an integer")
-    | 'f' | 'F' | 'e' | 'E' | 'g' | 'G' | 'a' | 'A' =>
-      if len == "L" then throw (.unsupported "printf: long double conversion")
-      let (a, rest) ← nextArg; args := rest
-      match a with
-      | .Vfloat f => out := out ++ fmtDbl (cstr (pre ++ conv.toString)) f.toNative
-      | _ => throw (.ub s!"printf: %{conv} argument is not a double")
-    | 's' =>
-      let (a, rest) ← nextArg; args := rest
-      match a with
-      | .Vptr b ofs =>
-        let lim := match prec with | some p => p.toNat | none => maxStr
-        let s ← readCString m b ofs lim
-        out := out ++ fmtStr (cstr (pre ++ "s")) (s.push 0)
-      | _ => throw (.ub "printf: %s argument is not a pointer")
-    | 'p' => throw (.unsupported "printf: %p (pointer values are not comparable across implementations)")
-    | 'n' => throw (.unsupported "printf: %n")
-    | _ => throw (.unsupported s!"printf: unknown conversion %{conv}")
-  return out
+  let some evs := args.mapM eventArg
+    | throw (.ub "printf: an argument is undefined")
+  let rd : Tcc.Clight.StrReader := fun b ofs =>
+    match readCString m b ofs with
+    | .ok bs => some bs.toList
+    | .error _ => none
+  match Tcc.Clight.format rd fmt.toList evs with
+  | some out => return ⟨out.toArray⟩
+  | none => throw (.unsupported "printf: outside the printf model (Tcc.Clight.format)")
 
 /-- Result of an external call the model performed. -/
 inductive ExtRes where

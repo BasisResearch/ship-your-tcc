@@ -119,13 +119,14 @@ What -interp supports. It executes **CompCert C** (`Cexec`, one level above Clig
 
 1. `clightgen -lean -normalize -fprintf-builtin $CERTORA_CFLAGS -I<dir> -o Prog.lean prog.c`
    (the source is copied to `prog.c` so that the Lean namespace is always `Prog`);
-2. `lean/ClightRun/.lake/build/bin/clight_run Prog.lean`.
+2. `.lake/build/bin/clight_run Prog.lean` (the root project's executable, `lake build clight_run`).
 
 Exit codes: the program's status, or **120** if clightgen rejected the program, **124** for
 out of fuel (`--fuel N`; the default is unbounded), **125** for a harness error (the
 generated file does not elaborate, ...), **126** for stuck (UB, or an unknown
 external/builtin, volatile access, user varargs), **127** if the program is outside the
-printf model (`%p`, `%n`, long double conversions). A one-line `[clight_run] ...` reason goes
+printf model `Tcc.Clight.format` (`%p`, `%n`, `%a`, `*` widths, long double, an argument
+of the wrong kind or length). A one-line `[clight_run] ...` reason goes
 to stderr. Options: `--stats` (steps, load_ms, run_ms), `--keep`, `--lean FILE` (save the
 generated Lean), `-- extra clightgen flags`.
 
@@ -135,7 +136,9 @@ Their harness (`test/lean/diff_exec.sh` with `export/DiffRun.lean`) compiles eve
 file with `lean -o` and then runs `lean --run DiffRun.lean`, all in the IR interpreter. It
 prints only what `main` returns: their 16 + 500 program corpus has **no printf at all**.
 
-`clight_run` (in `lean/ClightRun`, a Lake project that depends on `export/` by path) is a
+`clight_run` (sources in `lean/ClightRun`, built by the root Lake project on Lean 4.34.0
+against the vendored CCLib, `vendor/certora-export-patched`, the same one Phase 3 uses;
+until 2026-10-20 it was a separate Lean 4.32.1 project on `build/certora/src/export`) is a
 natively compiled executable with `supportInterpreter`. Per program it:
 - imports the prebuilt `Clightdefs`/`CCLib` .oleans;
 - elaborates the generated file in-process (`Lean.Elab.process`; no lake, no .olean written);
@@ -174,16 +177,18 @@ premise linking printf's machine spec to Clight's external-call axiom.
 Modelled externals: `printf`, `putchar`, `puts` (returns 0, like newlib) and `exit`. Of these,
 `ccomp -interp` has only printf, so in the common subset only printf matters.
 
-printf model: the format string and `%s` arguments are read from Clight memory byte by byte
-(`Mem.load Mint8unsigned`; an undefined byte means stuck). Each conversion's flags, width
-(including `*`), precision (including `*`) and length are parsed in Lean, the argument is
-converted to the width the length modifier names, and that single conversion is rendered by
-the host **glibc snprintf** through a 50-line C FFI (`lean/ClightRun/c/fmt.c`):
-- integers: hh/h/none/l/ll/j/z/t map to 8/16/32/64 bits, signed for d/i, unsigned for
-  u/o/x/X; a 32-bit Vint at width 64 is sign-extended, as lp64 registers are;
-- `%c`; `%s` (read up to the precision); `%f %F %e %E %g %G %a %A` with a `Vfloat` argument.
-Unsupported: `%p`, `%n`, `L`. The return value is the byte count. Since -interp also renders
-through host snprintf, the two oracles agree on float formatting by construction.
+printf model: since 2026-10-20 the output is `Tcc.Clight.format` (`Tcc/Clight/Printf.lean`),
+the pure Lean formatter of the Phase 3 premise `PrintfModel`, so the oracle runs the printf
+the proofs assume. The format string and `%s` strings are read from Clight memory byte by
+byte (`Mem.load Mint8unsigned`; an undefined byte means stuck); a pointer argument is passed
+as `EVptr_global b ofs` naming its block, so `%s` reads any block. The model covers `%%`,
+`d i u x X o c s f F e E g G`, flags `- + space # 0`, decimal width and precision, and
+`hh h l ll z j t` (only `l` with the floating conversions). Floating conversions are exact
+(integer arithmetic on the double's `m * 2^k`, rounded half to even, glibc's output).
+Anything else is outside the model (exit 127), including an integer argument whose width
+does not match the length modifier. The return value is the byte count. The rerun of the
+column with this formatter changed no outcome, stdout or exit code of the 345 programs.
+Before, each conversion was rendered by the host glibc `snprintf` through a C FFI.
 
 ## Results
 
@@ -262,11 +267,11 @@ Timings vary by up to 2x with load on the shared box.
 Built under this worktree's `build/` (gitignored):
 - `build/certora/install/bin/ccomp`, `build/certora/install/bin/clightgen` (with `install/share/compcert.ini`)
 - `build/certora/src/export/.lake/build/lib/lean` (CCLib/Clightdefs .oleans)
-- `lean/ClightRun/.lake/build/bin/clight_run`
+- `.lake/build/bin/clight_run` (root project)
 - `scripts/certora_env.sh` exports `CCOMP CLIGHTGEN CLIGHT_RUN CERTORA_LEAN_PROJECT LEAN_SYSROOT CLIGHT_LEAN_PATH CERTORA_CFLAGS`.
 
 From another worktree, either call this worktree's scripts directly
 (`/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a39962f25417ac6c6/scripts/run_*.sh`),
 or, after merging the scripts, export
-`CERTORA_DIR=<this worktree>/build/certora` and `CLIGHT_RUN=<this worktree>/lean/ClightRun/.lake/build/bin/clight_run`
+`CERTORA_DIR=<this worktree>/build/certora` and `CLIGHT_RUN=<this worktree>/.lake/build/bin/clight_run`
 before calling your copy.

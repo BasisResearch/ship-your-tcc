@@ -15,8 +15,12 @@ The primary oracles are bare-metal `tcc -run` on the executable Sail RV64I
 model, Certora's Lean Clight interpreter, and `ccomp -interp`. Native GCC
 and RV64I GCC on Sail supply two sanity checks. TinyCC is pinned to 43c7708
 with this repository's RV64I soft-float and bare-metal patches. Certora/clean
-is pinned to 123f7f7, with the documented printf/export driver patch and
-Lean 4.32.1. See [oracle construction](results/certora.md),
+is pinned to 123f7f7, with the documented printf/export driver patch. The
+Lean Clight oracle runs the vendored CCLib on Lean 4.34.0, the same one
+Phase 3 uses, and prints through `Tcc.Clight.format`, the pure printf model
+of the Phase 3 premise. That column was rerun with this formatter on
+2026-10-20; no outcome, stdout or exit code changed (it previously used the
+host `snprintf`). See [oracle construction](results/certora.md),
 [corpus selection](results/corpus.md), and [configuration](scripts/oracles.toml).
 
 | corpus | attempted | all three complete | three-way agreement | discrepant programs |

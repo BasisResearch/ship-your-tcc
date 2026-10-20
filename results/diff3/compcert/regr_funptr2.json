@@ -28,7 +28,7 @@
    "wall_s": 0.406
   },
   "lean_clight": {
-   "cached": true,
+   "cached": false,
    "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_funptr2.c",
    "exit": 126,
    "meta": {},
@@ -36,8 +36,8 @@
    "stderr_tail": "[clight_run] STUCK (undefined behaviour or outside the interpreter): cannot evaluate the arguments of builtin printf\n",
    "stdout": "f == f is 1\nf == g is 0\n",
    "stdout_sha": "68a39c3ec64cc4b4157084d5b865df4e638ce8188559133ed1cdbbf01eab220f",
-   "version": "026fb96670207d7c",
-   "wall_s": 1.213
+   "version": "6cec7c4f7fd090c3",
+   "wall_s": 0.796
   },
   "tcc_sail": {
    "cached": true,

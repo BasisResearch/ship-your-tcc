@@ -10,17 +10,17 @@ Programs: 345 (csmith: 200, compcert: 72, tcc: 73). Oracles and interface: scrip
 | csmith | xgcc_sail | 200 | 0 | 0 | 0 | 0 | 2.601 | 47640 |
 | csmith | tcc_sail | 200 | 0 | 0 | 0 | 0 | 339.412 | 8134402 |
 | csmith | ccomp_interp | 200 | 0 | 0 | 0 | 0 | 0.193 | - |
-| csmith | lean_clight | 200 | 0 | 0 | 0 | 0 | 2.405 | - |
+| csmith | lean_clight | 200 | 0 | 0 | 0 | 0 | 1.77 | - |
 | compcert | gcc_native | 72 | 0 | 0 | 0 | 0 | 0.244 | - |
 | compcert | xgcc_sail | 72 | 0 | 0 | 0 | 0 | 2.518 | 52213 |
 | compcert | tcc_sail | 72 | 0 | 0 | 0 | 0 | 527.796 | 12011994 |
 | compcert | ccomp_interp | 45 | 0 | 1 | 26 | 0 | 0.166 | - |
-| compcert | lean_clight | 44 | 0 | 2 | 26 | 0 | 1.196 | - |
+| compcert | lean_clight | 44 | 0 | 2 | 26 | 0 | 0.876 | - |
 | tcc | gcc_native | 73 | 0 | 0 | 0 | 0 | 0.248 | - |
 | tcc | xgcc_sail | 73 | 0 | 0 | 0 | 0 | 1.009 | 10635 |
 | tcc | tcc_sail | 73 | 0 | 0 | 0 | 0 | 499.276 | 11372410 |
 | tcc | ccomp_interp | 57 | 0 | 10 | 6 | 0 | 0.185 | - |
-| tcc | lean_clight | 57 | 0 | 10 | 6 | 0 | 1.155 | - |
+| tcc | lean_clight | 57 | 0 | 10 | 6 | 0 | 0.579 | - |
 
 ## Pairwise agreement
 
@@ -124,25 +124,25 @@ Programs: 345 (csmith: 200, compcert: 72, tcc: 73). Oracles and interface: scrip
 | compcert | regr_bitfields6 | lean_clight | stuck | [clight_run] STUCK (undefined behaviour or outside the interpreter): stuck at statement Sassign |
 | compcert | regr_casts3 | ccomp_interp | stuck | [run_ccomp_interp] STUCK (undefined behaviour or unsupported external): Stuck state: in function mai |
 | compcert | regr_casts3 | lean_clight | stuck | [clight_run] STUCK (undefined behaviour or outside the interpreter): stuck at statement Sset |
-| compcert | regr_floats-lit | lean_clight | n/a | /Users/kirancodes/tmp/leanclight.i43zWH/Prog.lean:6153:42: error(lean.unknownIdentifier): Unknown id |
+| compcert | regr_floats-lit | lean_clight | n/a | /Users/kirancodes/tmp/leanclight.FBIK32/Prog.lean:6153:42: error(lean.unknownIdentifier): Unknown id |
 | compcert | regr_funptr2 | ccomp_interp | stuck | [run_ccomp_interp] STUCK (undefined behaviour or unsupported external): Stuck state: in function mai |
 | compcert | regr_funptr2 | lean_clight | stuck | [clight_run] STUCK (undefined behaviour or outside the interpreter): cannot evaluate the arguments o |
 | compcert | regr_switch3 | ccomp_interp | n/a | [run_ccomp_interp] ccomp rejected the program: /data/home/kirancodes/Documents/code/ship-your-tcc/co |
-| compcert | regr_switch3 | lean_clight | n/a | [run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.TZNABD/prog.c:63: |
+| compcert | regr_switch3 | lean_clight | n/a | [run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.9l8rjp/prog.c:63: |
 | compcert | regr_varargs1 | ccomp_interp | stuck | [run_ccomp_interp] STUCK (undefined behaviour or unsupported external): Stuck state: in function mai |
 | compcert | regr_varargs1 | lean_clight | stuck | [clight_run] STUCK (undefined behaviour or outside the interpreter): stuck at statement Scall |
 | compcert | regr_varargs2 | ccomp_interp | stuck | [run_ccomp_interp] STUCK (undefined behaviour or unsupported external): Stuck state: in function mai |
 | compcert | regr_varargs2 | lean_clight | stuck | [clight_run] STUCK (undefined behaviour or outside the interpreter): stuck at statement Scall |
 | tcc | t_102_alignas | ccomp_interp | n/a | [run_ccomp_interp] ccomp rejected the program: /data/home/kirancodes/Documents/code/ship-your-tcc/co |
-| tcc | t_102_alignas | lean_clight | n/a | [run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.VZ09eq/prog.c:5:1 |
+| tcc | t_102_alignas | lean_clight | n/a | [run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.MUZP6C/prog.c:5:1 |
 | tcc | t_118_switch | ccomp_interp | n/a | [run_ccomp_interp] ccomp rejected the program: /data/home/kirancodes/Documents/code/ship-your-tcc/co |
-| tcc | t_118_switch | lean_clight | n/a | [run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.ATdvas/prog.c:9:1 |
+| tcc | t_118_switch | lean_clight | n/a | [run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.x0W35Z/prog.c:9:1 |
 | tcc | t_133_old_func | ccomp_interp | n/a | [run_ccomp_interp] ccomp rejected the program: /data/home/kirancodes/Documents/code/ship-your-tcc/co |
-| tcc | t_133_old_func | lean_clight | n/a | [run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.S5yMPM/prog.c:38: |
+| tcc | t_133_old_func | lean_clight | n/a | [run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.TVBzFM/prog.c:38: |
 | tcc | t_13_integer_literals | ccomp_interp | n/a | [run_ccomp_interp] ccomp rejected the program: /data/home/kirancodes/Documents/code/ship-your-tcc/co |
-| tcc | t_13_integer_literals | lean_clight | n/a | [run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.9LtcdJ/prog.c:10: |
+| tcc | t_13_integer_literals | lean_clight | n/a | [run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.sRsqg7/prog.c:10: |
 | tcc | t_17_enum | ccomp_interp | n/a | [run_ccomp_interp] ccomp rejected the program: /data/home/kirancodes/Documents/code/ship-your-tcc/co |
-| tcc | t_17_enum | lean_clight | n/a | [run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.vIrZzF/prog.c:23: |
+| tcc | t_17_enum | lean_clight | n/a | [run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.NWFPA5/prog.c:23: |
 | tcc | t_24_math_library | ccomp_interp | stuck | [run_ccomp_interp] STUCK (undefined behaviour or unsupported external): Stuck state: calling sin(0.1 |
 | tcc | t_24_math_library | lean_clight | stuck | [clight_run] STUCK (undefined behaviour or outside the interpreter): call to unsupported external fu |
 | tcc | t_28_strings | ccomp_interp | stuck | [run_ccomp_interp] STUCK (undefined behaviour or unsupported external): Stuck state: calling strcpy( |
@@ -150,18 +150,18 @@ Programs: 345 (csmith: 200, compcert: 72, tcc: 73). Oracles and interface: scrip
 | tcc | t_29_array_address | ccomp_interp | stuck | [run_ccomp_interp] STUCK (undefined behaviour or unsupported external): Stuck state: calling strcpy( |
 | tcc | t_29_array_address | lean_clight | stuck | [clight_run] STUCK (undefined behaviour or outside the interpreter): call to unsupported external fu |
 | tcc | t_35_sizeof | ccomp_interp | n/a | [run_ccomp_interp] ccomp rejected the program: /data/home/kirancodes/Documents/code/ship-your-tcc/co |
-| tcc | t_35_sizeof | lean_clight | n/a | [run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.8PbetN/prog.c:12: |
+| tcc | t_35_sizeof | lean_clight | n/a | [run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.xFSoCs/prog.c:12: |
 | tcc | t_37_sprintf | ccomp_interp | stuck | [run_ccomp_interp] STUCK (undefined behaviour or unsupported external): Stuck state: in function mai |
 | tcc | t_37_sprintf | lean_clight | stuck | [clight_run] STUCK (undefined behaviour or outside the interpreter): stuck at statement Scall |
 | tcc | t_80_flexarray | ccomp_interp | n/a | [run_ccomp_interp] ccomp rejected the program: /data/home/kirancodes/Documents/code/ship-your-tcc/co |
-| tcc | t_80_flexarray | lean_clight | n/a | [run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.V3lUdF/prog.c:19: |
+| tcc | t_80_flexarray | lean_clight | n/a | [run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.SMudxR/prog.c:19: |
 | tcc | t_81_types | ccomp_interp | n/a | [run_ccomp_interp] ccomp rejected the program: /data/home/kirancodes/Documents/code/ship-your-tcc/co |
-| tcc | t_81_types | lean_clight | n/a | [run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.u9tVo2/prog.c:4:  |
+| tcc | t_81_types | lean_clight | n/a | [run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.h0BP4n/prog.c:4:  |
 | tcc | t_83_utf8_in_identifiers | ccomp_interp | n/a | [run_ccomp_interp] ccomp rejected the program: /data/home/kirancodes/Documents/code/ship-your-tcc/co |
-| tcc | t_83_utf8_in_identifiers | lean_clight | n/a | [run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.PpUdGh/prog.c:3:  |
+| tcc | t_83_utf8_in_identifiers | lean_clight | n/a | [run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.Pn9CFk/prog.c:3:  |
 | tcc | t_92_enum_bitfield | ccomp_interp | stuck | [run_ccomp_interp] STUCK (undefined behaviour or unsupported external): Stuck state: in function mai |
 | tcc | t_92_enum_bitfield | lean_clight | stuck | [clight_run] STUCK (undefined behaviour or outside the interpreter): stuck at statement Sassign |
 | tcc | t_93_integer_promotion | ccomp_interp | n/a | [run_ccomp_interp] ccomp rejected the program: /data/home/kirancodes/Documents/code/ship-your-tcc/co |
-| tcc | t_93_integer_promotion | lean_clight | n/a | [run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.MnCIcn/prog.c:13: |
+| tcc | t_93_integer_promotion | lean_clight | n/a | [run_lean_clight] clightgen rejected the program: /Users/kirancodes/tmp/leanclight.49mP9X/prog.c:13: |
 | tcc | t_97_utf8_string_literal | ccomp_interp | stuck | [run_ccomp_interp] STUCK (undefined behaviour or unsupported external): Stuck state: calling strcmp( |
 | tcc | t_97_utf8_string_literal | lean_clight | stuck | [clight_run] STUCK (undefined behaviour or outside the interpreter): call to unsupported external fu |

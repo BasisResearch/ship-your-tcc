@@ -6,12 +6,18 @@
   when the call is outside the model: an incomplete or unknown conversion, an
   argument of the wrong kind or a missing one, a flag the standard leaves
   undefined for that conversion (`#` with `d`, `0` with `c`/`s`, ...), `*`
-  widths, `%n`, `%p`, floating conversions. Extra arguments are ignored, as in
+  widths, `%n`, `%p`, `%a`, `long double`. Extra arguments are ignored, as in
   C. `rd` reads the NUL-terminated string an `EVptr_global` names (for `%s`).
 
-  Supported: literal bytes, `%%`, conversions `d i u x X o c s`, flags
-  `- + space # 0`, decimal width and precision, length modifiers
-  `hh h l ll z j t`.
+  Supported: literal bytes, `%%`, conversions `d i u x X o c s f F e E g G`,
+  flags `- + space # 0`, decimal width and precision, length modifiers
+  `hh h l ll z j t` (only `l`, which has no effect, with the floating
+  conversions).
+
+  Floating conversions are exact: the double's bits are read as `m * 2^k`
+  and every digit comes from integer arithmetic on that value, rounded half
+  to even (glibc's output in the default rounding mode). Infinities print
+  `inf`/`INF`, NaNs `nan`/`NAN`, each with the sign bit's `-`.
 
   The loop is structural on the format string (one byte per call), so the
   kernel evaluates it (`decide +kernel` in `Tcc.Prog.*.ClightFacts`).
@@ -76,11 +82,20 @@ abbrev X : UInt8 := 88
 abbrev o : UInt8 := 111
 abbrev c : UInt8 := 99
 abbrev s : UInt8 := 115
+abbrev f : UInt8 := 102
+abbrev F : UInt8 := 70
+abbrev e : UInt8 := 101
+abbrev E : UInt8 := 69
+abbrev g : UInt8 := 103
+abbrev G : UInt8 := 71
 end Ch
+
+def isFloatConv (c : UInt8) : Bool :=
+  c == Ch.f || c == Ch.F || c == Ch.e || c == Ch.E || c == Ch.g || c == Ch.G
 
 def isConvByte (c : UInt8) : Bool :=
   c == Ch.d || c == Ch.i || c == Ch.u || c == Ch.x || c == Ch.X || c == Ch.o ||
-  c == Ch.c || c == Ch.s || c == Ch.pct
+  c == Ch.c || c == Ch.s || c == Ch.pct || isFloatConv c
 
 def isDigitByte (c : UInt8) : Bool := 48 ≤ c && c ≤ 57
 
@@ -179,6 +194,106 @@ def fmtInt (sp : Spec) (conv : UInt8) (neg : Bool) (mag : Nat) : List UInt8 :=
     else []
   pad sp sp.prec.isNone pre ds
 
+/-! ## Floating conversions -/
+
+/-- `a / b` rounded half to even (`b > 0`). -/
+def divEven (a b : Nat) : Nat :=
+  let q := a / b
+  let r := a % b
+  if 2 * r > b then q + 1 else if 2 * r < b then q else if q % 2 = 1 then q + 1 else q
+
+/-- A positive finite double as the exact fraction `num / den`. -/
+structure Ratio where
+  num : Nat
+  den : Nat
+
+/-- `num / den * 10^j`, rounded half to even. -/
+def Ratio.scaled (v : Ratio) (j : Int) : Nat :=
+  if 0 ≤ j then divEven (v.num * 10 ^ j.toNat) v.den
+  else divEven v.num (v.den * 10 ^ j.natAbs)
+
+/-- `t ≥ 1` with `num * 10^t ≥ den`, the least one (fuel: a double is at
+    least 10^-324). -/
+def negExpAux (v : Ratio) : Nat → Nat → Nat
+  | 0, t => t
+  | fuel + 1, t => if v.num * 10 ^ t ≥ v.den then t else negExpAux v fuel (t + 1)
+
+/-- `⌊log10 (num / den)⌋` for `num > 0`. -/
+def Ratio.exp10 (v : Ratio) : Int :=
+  if v.num ≥ v.den then ((digits 10 false (v.num / v.den)).length : Int) - 1
+  else -((negExpAux v 400 1 : Nat) : Int)
+
+/-- The decimal digits of `q`, left-padded with zeros to at least `n`. -/
+def digitsPad (q n : Nat) : List UInt8 :=
+  let ds := digits 10 false q
+  List.replicate (n - ds.length) Ch.zero ++ ds
+
+/-- `%f` body: `q` holds the value times `10^p`. -/
+def fixedBody (hash : Bool) (q p : Nat) : List UInt8 :=
+  let ds := digitsPad q (p + 1)
+  let ip := ds.take (ds.length - p)
+  let fp := ds.drop (ds.length - p)
+  if p = 0 && !hash then ip else ip ++ Ch.dot :: fp
+
+/-- The rounded significand (`p + 1` digits) and decimal exponent of
+    `%.pe`; zero is `(0, 0)`. -/
+def sciParts (v : Ratio) (p : Nat) : Nat × Int :=
+  if v.num = 0 then (0, 0) else
+  let x := v.exp10
+  let q := v.scaled (p - x)
+  if q ≥ 10 ^ (p + 1) then (v.scaled (p - (x + 1)), x + 1) else (q, x)
+
+/-- `%e` body from `sciParts`. -/
+def sciBody (upper hash : Bool) (q p : Nat) (x : Int) : List UInt8 :=
+  let ds := digitsPad q (p + 1)
+  let mant := if p = 0 && !hash then ds.take 1 else ds.take 1 ++ Ch.dot :: ds.drop 1
+  let ex := digitsPad x.natAbs 2
+  mant ++ (if upper then Ch.E else Ch.e) :: (if x < 0 then Ch.minus else Ch.plus) :: ex
+
+/-- `%g` without `#`: drop trailing fraction zeros, then a bare point. -/
+def stripZeros (bs : List UInt8) : List UInt8 :=
+  if bs.contains Ch.dot then
+    let r := (bs.reverse.dropWhile (· == Ch.zero))
+    (if r.head? == some Ch.dot then r.tail else r).reverse
+  else bs
+
+/-- `%g` body: style `e` when the exponent is below -4 or at least the
+    precision, else style `f`; then `stripZeros` unless `#`. -/
+def generalBody (upper hash : Bool) (v : Ratio) (p0 : Nat) : List UInt8 :=
+  let P := if p0 = 0 then 1 else p0
+  let (q, x) := sciParts v (P - 1)
+  let body :=
+    if -4 ≤ x && x < P then fixedBody hash (v.scaled (P - 1 - x)) (P - 1 - x).toNat
+    else sciBody upper hash q (P - 1) x
+  if hash then body
+  else match body.findIdx? (fun b => b == Ch.e || b == Ch.E) with
+    | some i => stripZeros (body.take i) ++ body.drop i
+    | none => stripZeros body
+
+/-- A floating conversion of the double with bits `bits`. -/
+def fmtFloat (sp : Spec) (conv : UInt8) (bits : Nat) : List UInt8 :=
+  let neg : Bool := bits / 2 ^ 63 % 2 = 1
+  let ex : Nat := bits / 2 ^ 52 % 2 ^ 11
+  let frac : Nat := bits % 2 ^ 52
+  let upper := conv == Ch.F || conv == Ch.E || conv == Ch.G
+  let pre : List UInt8 :=
+    if neg then [Ch.minus] else if sp.plus then [Ch.plus] else if sp.space then [Ch.space] else []
+  if ex = 2047 then
+    let w : String := if frac = 0 then (if upper then "INF" else "inf") else (if upper then "NAN" else "nan")
+    pad sp false pre w.toUTF8.toList
+  else
+    let m := if ex = 0 then frac else frac + 2 ^ 52
+    let k : Int := ((if ex = 0 then 1 else ex : Nat) : Int) - 1075
+    let v : Ratio := if 0 ≤ k then ⟨m * 2 ^ k.toNat, 1⟩ else ⟨m, 2 ^ k.natAbs⟩
+    let p := sp.prec.getD 6
+    let body :=
+      if conv == Ch.f || conv == Ch.F then fixedBody sp.hash (v.scaled p) p
+      else if conv == Ch.e || conv == Ch.E then
+        let (q, x) := sciParts v p
+        sciBody upper sp.hash q p x
+      else generalBody upper sp.hash v p
+    pad sp true pre body
+
 /-- `%c`/`%s` admit only `-`, a width and (for `s`) a precision. -/
 def plainFlags (sp : Spec) : Bool :=
   !sp.plus && !sp.space && !sp.hash && !sp.zero && sp.len == .none
@@ -203,6 +318,12 @@ def convert (rd : StrReader) (sp : Spec) (conv : UInt8) :
           if plainFlags sp && sp.prec.isNone then
             match a with
             | .EVint n => some (pad sp false [] [(n.toNat % 256).toUInt8], rest)
+            | _ => none
+          else none
+        else if isFloatConv conv then
+          if sp.len == .none || sp.len == .l then
+            match a with
+            | .EVfloat x => some (fmtFloat sp conv (Floats.Float.toBits x).toNat, rest)
             | _ => none
           else none
         else if conv == Ch.s then
@@ -258,6 +379,22 @@ example : format noStr (b "%hd %hhu") [i32 65537, i32 257] = some (b "1 1") := b
 example : format noStr (b "%d") [] = none := by decide +kernel
 example : format noStr (b "%#d") [i32 1] = none := by decide +kernel
 example : format noStr (b "%f") [i32 1] = none := by decide +kernel
+private def f64 (bits : Nat) : EventVal := .EVfloat ⟨BitVec.ofNat 64 bits⟩
+-- 0.1, 2.5, 1e21, 5e-324, -0.0, 1/3, inf, nan (bit patterns)
+example : format noStr (b "%f %.0f %.0f %.20f") [f64 0x3FB999999999999A, f64 0x4004000000000000,
+    f64 0x400C000000000000, f64 0x3FB999999999999A] =
+    some (b "0.100000 2 4 0.10000000000000000555") := by decide +kernel
+example : format noStr (b "%e %.0E %g %g %g") [f64 0x3FB999999999999A, f64 0x444B1AE4D6E2EF50,
+    f64 0x0000000000000001, f64 0x8000000000000000, f64 0x3FD5555555555555] =
+    some (b "1.000000e-01 1E+21 4.94066e-324 -0 0.333333") := by decide +kernel
+example : format noStr (b "[%8.3f|%-8.2e|%+g|%#g|%08.2f|%G|%f]") [f64 0x400921FB54442D18,
+    f64 0x400921FB54442D18, f64 0x4059000000000000, f64 0x3FF0000000000000,
+    f64 0xC00921FB54442D18, f64 0x7FF0000000000000, f64 0xFFF8000000000000] =
+    some (b "[   3.142|3.14e+00|+100|1.00000|-0003.14|INF|-nan]") := by decide +kernel
+example : format noStr (b "%g %g %g %.3g") [f64 0x412E848000000000, f64 0x4123880000000000,
+    f64 0x3F1A36E2EB1C432D, f64 0x40FE240C9FBE76C9] =
+    some (b "1e+06 640000 0.0001 1.23e+05") := by decide +kernel
+example : format noStr (b "%Lf") [f64 0] = none := by decide +kernel
 example : format noStr (b "%") [] = none := by decide +kernel
 end
 

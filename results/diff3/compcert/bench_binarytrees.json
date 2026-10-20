@@ -28,7 +28,7 @@
    "wall_s": 0.211
   },
   "lean_clight": {
-   "cached": true,
+   "cached": false,
    "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_binarytrees.c",
    "exit": 126,
    "meta": {},
@@ -36,8 +36,8 @@
    "stderr_tail": "[clight_run] STUCK (undefined behaviour or outside the interpreter): call to unsupported external function pow\n",
    "stdout": "stretch tree of depth 7\t check: -1\n",
    "stdout_sha": "751b13afbeeb68339f2bf54dfbf91b836d5078501c08947401e8e39adaf651dd",
-   "version": "026fb96670207d7c",
-   "wall_s": 1.032
+   "version": "6cec7c4f7fd090c3",
+   "wall_s": 0.984
   },
   "tcc_sail": {
    "cached": true,

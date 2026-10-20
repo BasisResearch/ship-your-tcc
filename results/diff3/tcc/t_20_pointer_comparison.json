@@ -28,7 +28,7 @@
    "wall_s": 0.276
   },
   "lean_clight": {
-   "cached": true,
+   "cached": false,
    "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_20_pointer_comparison.c",
    "exit": 0,
    "meta": {},
@@ -36,8 +36,8 @@
    "stderr_tail": "",
    "stdout": "12\n34\n0\n1\n1\n0\n",
    "stdout_sha": "5b9ed181113e7bff9b5acf30506b09ab226f185e9f6fe9f1e3f90a3b8de78b16",
-   "version": "026fb96670207d7c",
-   "wall_s": 1.337
+   "version": "6cec7c4f7fd090c3",
+   "wall_s": 0.51
   },
   "tcc_sail": {
    "cached": true,
