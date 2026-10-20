@@ -1,0 +1,23 @@
+name = "ShipYourTcc"
+defaultTargets = ["Vsa", "TccMachine"]
+
+# --- Machine lane (Phase 3a, the captured cut) -------------------------------
+# The Sail RISC-V model and its emulator, copied from ship-your-lua's
+# riscv-lean/ (ATTRIBUTION.md); built in their own .lake dirs.
+[[require]]
+name = "lean-riscv"
+path = "riscv-lean/lean_emulator"
+
+# The machine layer copied from ship-your-lua (itself ship-your-interpreter's),
+# module names kept so its proofs and generators apply unchanged: the import
+# closure of the segment layer (experiments/port/copied.txt).
+[[lean_lib]]
+name = "Vsa"
+globs = ["Vsa.+"]
+leanOptions.backward.isDefEq.respectTransparency = false
+
+# The tcc image's boot interface and per-program captured cuts.
+[[lean_lib]]
+name = "TccMachine"
+globs = ["Tcc.Boot.+", "Tcc.Capture.+"]
+# --- end machine lane ---------------------------------------------------------
