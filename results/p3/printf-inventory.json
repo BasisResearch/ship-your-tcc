@@ -3,7 +3,7 @@
   52,
   634
  ],
- "printf_call_cost_units": 6775,
+ "printf_call_steps": 1657,
  "executed_distinct_insns": 1251,
  "executed_host_insns": 130,
  "executed_arena_unmatched_ranges": [

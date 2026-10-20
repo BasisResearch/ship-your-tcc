@@ -36,6 +36,7 @@ components keep their own licences.
 | `c/harness/{crt0.S,link.ld,htif.c}` | ship-your-lua `c/src/` | console only, no file system; `main(1, {"prog"})`; `.lua_chunk` dropped |
 | `scripts/run_xgcc_sail.sh`, `scripts/run_tcc_sail.sh` | console filter and step counting after ship-your-lua `c/tests/difftest.sh` | positional noise stripping; UTF-8 → byte decoding of the emulator's console |
 | Sail emulator (used, not copied) | ship-your-lua `riscv-lean/lean_emulator` (the sister projects' executable Sail RISC-V model) | none |
+| ship-your-lua ELF (read, not copied) | ship-your-lua `c/lua-riscv-htif.elf`: `scripts/printf_inventory.py` compares its stdio routines' instruction words with tcc's arena copies (the reuse check; none of its stdio proofs is copied) | none |
 | `c/harness/crt0.S` | ship-your-lua `c/src/crt0.S` | main gets argc=1, argv={"prog",NULL} |
 | `c/harness/link.ld` | ship-your-lua `c/src/link.ld` | `.lua_chunk` region removed |
 | `c/harness/htif.c` | ship-your-lua `c/src/htif.c` | console, exit, sbrk, frozen clock kept; in-image file system dropped; stderr writes dropped |

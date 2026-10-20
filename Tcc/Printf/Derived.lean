@@ -146,12 +146,13 @@ theorem imgMakes_of_spec {p : Program} {L : StdioLayout} {init : List Tcc.Boot.C
     (hentry : PrintfEntry L (a + ofs.toNat) fmt margs c)
     (hroom : ∃ sp, gprGet c.σ 2 = some sp ∧ L.stack ≤ sp.toNat ∧ L.heap.2 ≤ sp.toNat - L.stack)
     (addr : sym id = some a) (enc : rest.mapM (encArg sym) = some margs)
-    (hint : IntArgs rest) (fmtStr : globalString p id ofs = some fmt)
+    (hint : IntArgs rest) (hdig : digitRunOK fmt 0 = true)
+    (fmtStr : globalString p id ofs = some fmt)
     (hout : printfOut p (.EVptr_global id ofs :: rest) = some out)
-    (hstr : format (machReader c.σ sym) fmt rest = some out) :
+    (hstr : format (machReader c.σ sym) fmt rest = some out) (hlen : out.length < 2 ^ 31) :
     ImgMakes p L Img sym ge (.EVptr_global id ofs :: rest) := by
   obtain ⟨c', hcall, _⟩ := hspec c sym (a + ofs.toNat) fmt rest margs out hcode hst hentry hroom
-    enc hint hstr
+    enc hint hdig hstr hlen
   exact ⟨id, ofs, fmt, out, _, rfl, fmtStr, hout,
     .intro id ofs rest out _ a margs c₀ c c' addr enc img reach hcall⟩
 

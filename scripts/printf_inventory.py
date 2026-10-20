@@ -208,7 +208,8 @@ def main():
         else:
             executed.add(it['pc'])
     host_exec = sorted(pc for pc in executed if pc < ARENA)
-    steps = sum(it.get('cost', 1) for it in items[start:end])
+    steps = sum(len(it['body']) + (1 if it.get('term') else 0) if it['kind'] == 'block' else 1
+                for it in items[start:end])
 
     lua, lua_addr = {}, {}
     for line in run([tool('nm'), '-S', str(LUA_ELF)]).splitlines():
@@ -251,7 +252,7 @@ def main():
             ranges.append([pc, pc])
 
     report = {
-        'printf_call_items': [start, end], 'printf_call_cost_units': steps,
+        'printf_call_items': [start, end], 'printf_call_steps': steps,
         'executed_distinct_insns': len(executed), 'executed_host_insns': len(host_exec),
         'executed_arena_unmatched_ranges': [[hex(x), hex(y)] for x, y in ranges],
         'closure': sorted(closure),
@@ -259,7 +260,7 @@ def main():
         'placed': rows,
         'status': 'observation; no proof claim',
     }
-    print(f"printf call: items {start}..{end - 1}, {len(executed)} distinct instructions "
+    print(f"printf call: items {start}..{end - 1}, {steps} steps, {len(executed)} distinct instructions "
           f"({len(host_exec)} host), arena pcs not matched to an archive function: {len(unmatched)}")
     print(f"direct-call closure of printf: {len(closure)} functions, "
           f"{report['closure_insns']} instructions")

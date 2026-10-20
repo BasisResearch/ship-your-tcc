@@ -120,6 +120,13 @@ conversion: those need an `EVfloat`). The proved-route subset. -/
 def IntArgs (evargs : List EventVal) : Prop :=
   ∀ v ∈ evargs, match v with | .EVfloat _ | .EVsingle _ => False | _ => True
 
+/-- No run of more than nine decimal digits (`k`: the digits just seen):
+widths and precisions stay below `2^31`, where newlib's `int` accumulation
+of them cannot overflow. Conservative: digits in the plain text count too. -/
+def digitRunOK : List UInt8 → Nat → Bool
+  | [], _ => true
+  | c :: cs, k => if isDigitByte c then decide (k < 9) && digitRunOK cs (k + 1) else digitRunOK cs 0
+
 /-- The callee-saved registers of the lp64 ABI, with `sp`, `gp`, `tp`. -/
 def calleeSaved : List Nat := [2, 3, 4, 8, 9, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]
 
@@ -193,7 +200,9 @@ inductive StdioReach (L : StdioLayout) (init : List Tcc.Boot.Chunk) (room : MSta
 /-- **PHASES `PrintfSpec_Statement` (open)**: from every entry of `printf`
 with the code present, in a state stdio can be in, with stack room, for every
 format string and arguments of the integer subset (`IntArgs`, at most seven
-variadic words, `%s` strings read from memory), the call returns having
+variadic words, `%s` strings read from memory, widths and precisions of at
+most nine digits, output shorter than `2^31` bytes so the count fits printf's
+`int`), the call returns having
 appended exactly `format` of them to `stdout` and returning its length, its
 writes in its footprint. -/
 def PrintfSpec_Statement (L : StdioLayout) (init : List Tcc.Boot.Chunk) (room : MState → Prop) : Prop :=
@@ -202,8 +211,8 @@ def PrintfSpec_Statement (L : StdioLayout) (init : List Tcc.Boot.Chunk) (room : 
     CodeAt L c.σ → StdioReach L init room c.σ →
     PrintfEntry L fmtAddr fmt margs c →
     (∃ sp, gprGet c.σ 2 = some sp ∧ L.stack ≤ sp.toNat ∧ L.heap.2 ≤ sp.toNat - L.stack) →
-    evargs.mapM (encArg sym) = some margs → IntArgs evargs →
-    format (machReader c.σ sym) fmt evargs = some out →
+    evargs.mapM (encArg sym) = some margs → IntArgs evargs → digitRunOK fmt 0 = true →
+    format (machReader c.σ sym) fmt evargs = some out → out.length < 2 ^ 31 →
     ∃ c', PrintfCall L fmtAddr fmt margs out (Integers.Int.repr out.length) c c' ∧
       PrintfFrame L c c'
 
