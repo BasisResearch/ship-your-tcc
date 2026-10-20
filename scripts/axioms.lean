@@ -11,3 +11,4 @@ import Tcc.Capture.Sum.Cut
 #print axioms Tcc.Capture.Sum.tohostAddr_eq
 #print axioms Vsa.Machine.Halts.deterministic
 #print axioms Vsa.Machine.Diverges.not_halts
+#print axioms Tcc.Capture.Sum.sum_halts_from_reset

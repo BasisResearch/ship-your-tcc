@@ -1,4 +1,5 @@
 import Tcc.Capture.Sum.Witness
+import Vsa.Triple
 
 /-!
 # The captured cut of `tcc -run` for P = `c/tests/p3/sum.c` (PHASES 3a)
@@ -51,5 +52,19 @@ theorem TccSumElf.host {elf : ELF64File} (h : TccSumElf elf) :
 the captured cut. -/
 def CompileCut_Statement : Prop :=
   ∀ elf, TccSumElf elf → ∀ c₀, ElfReset elf c₀ → ∃ c, Steps c₀ c ∧ TccSumCut c
+
+/-- PHASES 3b (machine side), open: from the cut, P's code and the libc it
+calls print `55\n` and exit with status 0. -/
+def SumHalts_Statement : Prop :=
+  ∀ c, TccSumCut c → Halts c "55\n" 0
+
+/-- The machine half of the end-to-end theorem: from reset on the image,
+`tcc -run sum.c` prints `55\n` and exits 0, given the two open statements. -/
+theorem sum_halts_from_reset (hcomp : CompileCut_Statement) (hrun : SumHalts_Statement) :
+    ∀ elf, TccSumElf elf → ∀ c₀, ElfReset elf c₀ → Halts c₀ "55\n" 0 := by
+  intro elf helf c₀ hreset
+  obtain ⟨c, hsteps, hcut⟩ := hcomp elf helf c₀ hreset
+  obtain ⟨c', σf, hs, hh, ho⟩ := hrun c hcut
+  exact ⟨c', σf, Steps.trans hsteps hs, hh, ho⟩
 
 end Tcc.Capture.Sum
