@@ -121,15 +121,17 @@ def main():
     ap.add_argument('--run', action='store_true')
     ap.add_argument('--oracles', default='xgcc,tcc',
                     help='which Sail oracles to run (tcc: about 2 hours for this matrix)')
+    ap.add_argument('--stride', type=int, default=1,
+                    help='keep every k-th case (a smaller program for tcc -run)')
     ap.add_argument('--compare', action='store_true',
                     help='only compare existing tcc.out and lean.out in --out')
     a = ap.parse_args()
     if a.compare:
-        compare(cases(), Path(a.out))
+        compare(cases()[::a.stride], Path(a.out))
         return
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
-    cs = cases()
+    cs = cases()[::a.stride]
     (out / 'matrix.c').write_text(gen_c(cs))
     (out / 'Matrix.lean').write_text(gen_lean(cs))
     print(f'printf_matrix: {len(cs)} cases in {out}')
@@ -188,7 +190,8 @@ def compare(cs, out, rc=None):
         lines.append('|---|---|---|---|---|---|')
         for name, f, ty, v, got, exp in bad_all[:200]:
             lines.append(f'| {name} | `{f}` | {ty} | {v} | `{got!r}` | `{exp!r}` |')
-    (ROOT / 'results/p3/printf-matrix.md').write_text('\n'.join(lines) + '\n')
+    name = 'printf-matrix.md' if len(cs) == len(cases()) else f'printf-matrix-{len(cs)}.md'
+    (ROOT / 'results/p3' / name).write_text('\n'.join(lines) + '\n')
     print('\n'.join(lines))
 
 

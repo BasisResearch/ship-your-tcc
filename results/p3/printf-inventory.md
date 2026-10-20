@@ -99,6 +99,16 @@ in Lean: the replay's rows do not relate base memories across rows); the
 stack bound is 4,096 (static frame sum along printf's call chains 1,216,
 measured 992).
 
+## Is the statement's output claim right?
+
+`scripts/printf_matrix.py`: 7,490 integer-subset formats (every flag set of
+`- + space # 0` with widths and precisions on `d i u x X o`, every length
+modifier with extreme values, `%c`, `%%`, text around conversions), one
+`printf` each, against `Tcc.Clight.format`. `format` is defined on 5,996 (it
+is `none`, so no claim, on e.g. `%#d` or `%+c`); all 5,996 agree in bytes and
+return value under `tcc -run` on Sail (the arena code; 166M compile steps,
+20.5M program steps) and under xgcc on Sail (results/p3/printf-matrix.md).
+
 ## What is proved instead of the general spec
 
 * `Tcc.Printf.Sum.call0`: P's call is a `PrintfCall` of the image's newlib

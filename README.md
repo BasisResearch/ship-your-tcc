@@ -238,7 +238,10 @@ console.
   At `sumX = machX` for this image, `tcc_run_sum_derived` closes P with no
   premise.
 * **Tested**: `scripts/printf_matrix.py` compares `format` with the arena's
-  newlib under `tcc -run` on Sail case by case
+  newlib case by case: of 7,490 integer-subset formats (every flag set, widths,
+  precisions, every length modifier, extreme values), `format` is defined on
+  5,996, and all 5,996 agree in bytes and return value under `tcc -run` on
+  Sail (186.7M steps) and under xgcc on Sail
   ([results/p3/printf-matrix.md](results/p3/printf-matrix.md)).
 
 **Reproducing the image.** The runtime's bytes depend on the build directory:
