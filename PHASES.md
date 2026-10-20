@@ -57,5 +57,21 @@ newlib (xgcc/tcc on Sail) and glibc. The rerun changed no result.
 Use `FLAGS=0` (no code dump) for the exact-output theorem: `results/phase1/sum.raw`
 includes the debug dump. The reuse audit is `results/proof-readiness.md`.
 
-## Phase 4 (stretch)
-Not started.
+## Phase 4: `tcc -run` correct for all of C against CSem (DESIGN-COMPILER.md)
+Approved 2026-10-20. Headline `tcc_run_correct`: ∀ src, `CSem.NoUB cfgTcc src` →
+`Supported src` → `Fits src` → ∀ elf, `TccImage src elf` → ∀ c₀, `ElfReset elf c₀` →
+∀ obs, `Sail.Observes c₀ obs` → `obs ∈ CSem.outcomes cfgTcc src`. With it,
+`tccpp_correct` (phases 1–4) and the witness `tcc_run_correct_witness_sum`.
+Whole compiler; no subset is an end state.
+
+| step | content | exit | status |
+|---|---|---|---|
+| F0 fork in place | cerberus-lean imported in `csem/` at a pin, Lean 4.34.0, built under the root Lake with the 12 GB cap, fork gates kept; `tcc_run_correct` stated as a `_Statement` | fork gates pass on 4.34; statement elaborates | in progress |
+| F1 fork tasks | Lean C grammar; `cfgTcc`; image-FS model (pathleak); allocation oracle; definitional floats; pure seams | Lean parse = menhir parse on all corpora; CSem in `diff3.py` agreeing with tcc on Sail on UB-free programs | waits for F0 |
+| F2 preprocessing | phases 1–4 spec; model of `tccpp`; `tccpp_correct` | spec = `tcc -E` on all corpora; theorem | in progress |
+| F3 executable `TccModel` | whole compiler and `-run` linker, ghost Cabs | byte-identical arena with tcc on Sail on every corpus program + 1,000 generated | in progress |
+| F4 Layer B framework | Core relation and outcome set; memory/value relations; abstract RV64I and lift | framework; first expression forms | not started |
+| F5 Layer B, all of C | per-construct simulation | `model_correct` | not started |
+| F6 Layer A | prefix by evaluator; tccpp, tccgen, riscv64-gen, linker; `TccRepr` | `binary_computes_model` | not started |
+| F7 library | newlib ⊑ CSem for printf (`formatted.lem`), dlmalloc, string functions | per-function theorems | not started |
+| F8 compose | A + B + preprocessor + reset + library; witnesses | `tcc_run_correct`, `tcc_run_correct_witness_sum` | not started |
