@@ -1,7 +1,8 @@
 # Proving `tcc -run` correct against our own C semantics: design (no code yet)
 
-**Status.** Plan for review, 2026-10-20 (third revision). Nothing here is
-built.
+**Status.** Approved by the user 2026-10-20, with three fixes applied in this
+revision (the headline without a refusal disjunct, the preprocessor theorem,
+the non-vacuity witness). Building starts at F0; PHASES.md is the ledger.
 
 **Framing.** This is ship-your-interpreter for C. `tcc -run` takes C source
 and runs it, so it is an interpreter for C, and the theorem has the
@@ -23,12 +24,14 @@ is an end state.
 ```lean
 theorem tcc_run_correct :
   ∀ src : List UInt8,                          -- the bytes of /prog.c
-  CSem.NoUB cfgTcc src →                       -- no allowed execution has UB (and the program is in CSem's domain, §4)
+  CSem.NoUB cfgTcc src →                       -- no allowed execution has UB
+  Supported src →                              -- decidable; excludes only the §5 list
+  Fits src →                                   -- stated resource bound
   ∀ elf, TccImage src elf →                    -- the fixed runtime image, /prog.c = src
   ∀ c₀, ElfReset elf c₀ →
   ∀ obs, Sail.Observes c₀ obs →                -- any machine run's observation: console bytes,
                                               --   exit code, or divergence
-  obs ∈ CSem.outcomes cfgTcc src ∨ obs ∈ TccRefusal src
+  obs ∈ CSem.outcomes cfgTcc src
 ```
 
 * **`CSem.outcomes cfg src`** is the set of observable outcomes our fork's
@@ -36,28 +39,81 @@ theorem tcc_run_correct :
   * **Pipeline:** phases 1–4 → tokens → Cabs (our Lean grammar) → Ail →
     Core → Core execution under the concrete memory model.
   * **Nondeterminism:** every allowed resolution of unsequenced evaluation,
-    unspecified values and allocation addresses (§3.5).
+    unspecified values and allocation addresses (§3.4).
   * **Configuration:** `cfgTcc` fixes the implementation-defined parameters
     to tcc's RV64 lp64 ABI (§3.3).
   * **Observation:** stdout bytes, the exit status, or divergence with the
     output so far.
-* **`TccRefusal src`** is tcc's own refusal: a compile error or a resource
-  limit (arena, heap or vstack exhausted), reported on the console with
-  exit status 1.
-  * It is a fixed, characterised set. The model (§4) refuses exactly where
-    tcc's C code calls `tcc_error`, so refusal can't be used to escape the
-    statement.
-  * A completeness corollary bounds it: tcc refuses only for constructs on
-    the "outside" list of §5 or for stated resource bounds.
-* **Machine resource bounds** are explicit premises, as CompCert's
-  correctness is relative to an unbounded stack:
-  * stack depth: a bound on CSem's call depth times frame size;
-  * heap: allocation success in newlib's dlmalloc arena.
+* **No refusal disjunct.** There is no escape for tcc refusing:
+  * On a `Supported` program that `Fits`, a compile error, a resource abort
+    or any output not in `CSem.outcomes` is a counterexample to the theorem.
+  * A tcc bug that rejects valid C (or miscompiles it) refutes the statement
+    and gets fixed as a patch (§10).
+* **`Supported src`** is decidable on the parsed program (the Cabs from the
+  fork's grammar, §3.1). It holds unless the program contains one of the
+  constructs in §5's explicit, line-referenced list, each of which has no
+  CSem meaning (inline `asm`, computed `goto`, …). Nothing else is excluded.
+  * Optional lemma `unsupported_rejected`: on an unsupported program, tcc
+    stops with a compile error (for the rows where tcc itself refuses) or the
+    construct is reported; proved from the model where tcc's code does so.
+* **`Fits src`** is a stated resource bound, not a loophole. Its parts:
+  * *static* (decidable on `src`): the program's code and data fit tcc's
+    static arena (4 MiB at 0x86400000), and tcc's own compile-time limits
+    hold: the vstack (`VSTACK_SIZE = 512`), the heap tcc compiles in, the
+    include depth, and the macro-expansion depth;
+  * *dynamic* (a Prop over CSem's executions): every allowed execution stays
+    within the machine stack (call depth times tcc's frame size) and within
+    newlib's heap for its own allocations. CompCert's correctness is
+    likewise relative to an unbounded stack; here the bound is explicit.
 
-  Each is phrased as a decidable condition on the CSem run.
+  Each limit is stated as a named field (Law 6), so a reader can see exactly
+  what is assumed.
 * **`Sail.Observes`** is the existing `Halts` (console bytes and exit code)
   extended with divergence: infinitely many steps, with the console as the
   limit of the output.
+
+### 1.1 The preprocessor theorem
+
+Translation phases 1–4 get their own theorem, composed with the main one:
+
+```lean
+theorem tccpp_correct :
+  ∀ src, Fits src →
+  TccModel.preprocess src = CSem.Pre.phases14 cfgTcc.pre src   -- token sequences
+```
+
+* `CSem.Pre.phases14` is the fork's preprocessing spec (§3.2): C11
+  §5.1.1.2 phases 1–4 and §6.10, with tcc's predefined macros and include
+  path as `cfgTcc.pre`.
+* `TccModel.preprocess` is the model of `tccpp` (the token stream
+  `next()` delivers to the parser). Layer A proves the binary computes it, as
+  for the rest of the model.
+* **Composition.** `CSem.outcomes cfg src` is defined as the outcomes of the
+  phase-7 pipeline on `CSem.Pre.phases14 cfg.pre src`. The main proof works
+  over the token sequence, and `tccpp_correct` connects it to raw bytes.
+* **Checked before it is proved** against `tcc -E` and `gcc -E` on every
+  corpus file and Phase 1's header programs (phase F2).
+
+### 1.2 Non-vacuity witness
+
+The premises are shown satisfiable by real programs, and the conclusion is
+shown to be about a machine run that exists:
+
+```lean
+theorem tcc_run_correct_witness_sum :
+  CSem.NoUB cfgTcc sumSrc ∧ Supported sumSrc ∧ Fits sumSrc ∧
+  ∃ c₀ out, ElfReset sumElf c₀ ∧ Halts c₀ out 0 ∧ (.halts out 0) ∈ CSem.outcomes cfgTcc sumSrc
+```
+
+* `sumSrc` is `c/tests/p3/sum.c`; the machine run already exists
+  (`tcc_run_sum_derived`).
+* `NoUB` for `sum.c` is decided by running CSem exhaustively (it has no
+  unsequenced effects, so the ND tree is small); `Supported` and the static
+  half of `Fits` are decidable; the dynamic half is a bounded check on the one
+  execution.
+* More corpus programs are added as witnesses as each phase lands, starting
+  with the Phase 1 programs (`hello`, `loops`, `structs`, `fnptr`, `printf`,
+  `doubles`, `headers`).
 
 ## 2. Where the fork lives
 
@@ -203,8 +259,10 @@ TccModel.compile src  ═══════════  CSem: phases1–4 → C
 
 * **Layer A (tcc's binary computes `TccModel`).**
   * From reset with `/prog.c = src`, the machine reaches the handoff to
-    generated code (or a refusal) in a state whose arena holds exactly
+    generated code in a state whose arena holds exactly
     `TccModel.compileAndLink src`: code, data and relocated libc members.
+    (On any input the binary computes the model, refusals included; on
+    supported, fitting input Layer B shows the model does not refuse.)
   * `TccModel` is a Lean model of tcc, with one Lean function per C function
     in `tccpp`, `tccgen`, `riscv64-gen`, and the parts of
     `tccelf`/`libtcc`/`tccrun` that `-run` executes.
@@ -280,8 +338,8 @@ the model):
 * varargs (`__builtin_va_*` 5955–5999): Cerberus's Core gives variadic
   functions a meaning.
 
-The completeness corollary (§1) says tcc refuses only for the rows above
-or for resource bounds.
+`Supported` (§1) excludes exactly the rows of the first table. Everything
+in the second list is supported, so tcc refusing it is a counterexample.
 
 ## 6. Layer B: the generated code simulates Core
 
@@ -421,13 +479,13 @@ subset. Phases run in parallel where they don't depend on each other.
 |---|---|---|
 | F0 fork in place | import `csem/` at the pin; port to Lean 4.34.0; build under our Lake with the 12 GB cap; keep the fork's differential lanes against the Cerberus OCaml oracle; `tcc_run_correct` stated as a `def …_Statement` over the fork's current pipeline (JSON Cabs) | the fork's own gates pass on 4.34; statement elaborates |
 | F1 fork tasks 3.1, 3.3, 3.4 | Lean grammar; `cfgTcc`; FS model (pathleak fixed properly); allocation oracle; definitional floats; pure seams | Lean parse = menhir parse on all corpora; CSem added to `scripts/diff3.py` as an oracle and agreeing with `tcc -run` on Sail for every UB-free corpus program; differences are classified (tcc bug, fork bug, or parameter) |
-| F2 preprocessing (3.2) | phases 1–4 spec with tcc's predefines | spec = `tcc -E` on all corpora, including Phase 1's header programs |
+| F2 preprocessing (3.2) | phases 1–4 spec with tcc's predefines; the model's `tccpp`; then `tccpp_correct` (§1.1) | spec = `tcc -E` on all corpora, including Phase 1's header programs; then the theorem |
 | F3 executable `TccModel` | the whole compiler and `-run` linker, with ghost Cabs | byte-identical arena with tcc on Sail for every corpus program and 1,000 generated ones |
 | F4 Layer B framework | Core small-step relation and outcome set from the executable semantics; memory and value relations; abstract RV64I and lift; libgcc helper specs | framework proved; first expression forms simulated |
-| F5 Layer B, all of C | parser agreement; expressions (integer, pointer, float); statements and control; functions, ABI, varargs; structs, unions, bit-fields; initialisers; `switch`/`goto`; the GNU desugarings | `model_correct : ∀ src, NoUB → outcomes(asm run of TccModel src) ⊆ CSem.outcomes ∪ refusal` |
+| F5 Layer B, all of C | parser agreement; expressions (integer, pointer, float); statements and control; functions, ABI, varargs; structs, unions, bit-fields; initialisers; `switch`/`goto`; the GNU desugarings | `model_correct : ∀ src, NoUB → Supported → Fits → TccModel.compile src succeeds ∧ outcomes(asm run of it) ⊆ CSem.outcomes` |
 | F6 Layer A | prefix by the evaluator; lexer and preprocessor; parser and codegen; linker; `TccRepr` | `binary_computes_model` for all `src` |
 | F7 library | newlib printf ⊑ `formatted.lem` (retargeted PrintfSpec), dlmalloc ⊑ CSem allocation, string functions; the rest named premises | per-function theorems |
-| F8 compose | A + B + reset + library | `tcc_run_correct`, axioms ⊆ {propext, Classical.choice, Quot.sound} |
+| F8 compose | A + B + preprocessor + reset + library; the witnesses (§1.2) | `tcc_run_correct` and `tcc_run_correct_witness_sum`, axioms ⊆ {propext, Classical.choice, Quot.sound} |
 
 **Order.** F0 → F1 ∥ F3 (no proofs; both are differential-testing gates)
 → F4 pilot (one expression family with spills, measured like the
