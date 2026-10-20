@@ -31,7 +31,7 @@ SEEDS = ['Vsa.Machine', 'Vsa.Elf', 'Vsa.Triple', 'Vsa.Meta.SimpNF', 'Vsa.Densify
          'Vsa.Sim.DeriveCase', 'Vsa.Sim.DeriveCaseRow', 'Vsa.Sim.SegToTripleFramed',
          'Vsa.Sim.StepCount', 'Vsa.Sim.FnSummary', 'Vsa.Sim.HtifStepObs', 'Vsa.Sim.DecodeNF',
          'Vsa.Sim.FrameMeta', 'Vsa.Sim.StepObs', 'Vsa.Sim.TripleCat', 'Vsa.Sim.DeriveCallSeg',
-         'Vsa.Sim.DeriveLoop']
+         'Vsa.Sim.DeriveLoop', 'Vsa.Sim.Generic.ExitStep', 'Vsa.Sim.Muldi3Spec']
 # Copies with a change (ATTRIBUTION.md): InitValues (this image's tohostAddr; the
 # FetchOK/StoreWin windows), and the segment layer generalised to code above
 # `.tohost` (fetch off the HTIF window instead of below it, stores off the
@@ -45,7 +45,7 @@ MODIFIED = {
     'Vsa/Sim/StepStore.lean', 'Vsa/Sim/HtifStepObs.lean', 'Vsa/Sim/MemStore.lean',
     'Vsa/Sim/BlockMem.lean', 'Vsa/Sim/BlockTerm.lean', 'Vsa/Sim/BlockPilot.lean',
     'Vsa/Sim/BlockTactics2.lean', 'Vsa/Sim/ValueSites.lean', 'Vsa/Sim/MemcpySites.lean',
-    'Vsa/Sim/MemcpySpec.lean', 'Vsa/Sim/NegTailSites.lean',
+    'Vsa/Sim/MemcpySpec.lean', 'Vsa/Sim/NegTailSites.lean', 'Vsa/Sim/Generic/ExitStep.lean',
 }
 COPIED = ROOT / 'experiments/port/copied.txt'
 HEADER = """# Lean files copied verbatim from ship-your-lua (Vsa/: the import closure of the

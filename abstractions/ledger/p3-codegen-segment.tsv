@@ -1,4 +1,6 @@
 # case	hand_lines	source  (scripts/gen_tcc_segs.py: generated, no hand lines)
-B0	0	Tcc/Prog/Sum/Machine/Replay.lean
-B1	0	Tcc/Prog/Sum/Machine/Replay.lean
-B2	0	Tcc/Prog/Sum/Machine/Replay.lean
+B0	0	Tcc/Prog/Sum/Machine/Part0.lean
+B1	0	Tcc/Prog/Sum/Machine/Part0.lean
+B2	0	Tcc/Prog/Sum/Machine/Part0.lean
+B3	0	Tcc/Prog/Sum/Machine/Part0.lean
+B4	0	Tcc/Prog/Sum/Machine/Part0.lean
