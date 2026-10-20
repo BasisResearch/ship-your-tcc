@@ -219,6 +219,24 @@ def DecOK (pc w : Nat) : Ins → Prop
       DecodeFactM (mkM pc w .slli rd rs1 0 k)
   | .srli rd rs1 k => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ k < 64 ∧
       DecodeFactM (mkM pc w .srli rd rs1 0 k)
+  | .addiw rd rs1 imm => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ Imm12 imm ∧
+      DecodeFactM (mkM pc w .addiw rd rs1 0 imm)
+  | .addw rd rs1 rs2 => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ rs2 ≤ 31 ∧
+      DecodeFactM (mkM pc w .addw rd rs1 rs2 0)
+  | .subw rd rs1 rs2 => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ rs2 ≤ 31 ∧
+      DecodeFactM (mkM pc w .subw rd rs1 rs2 0)
+  | .slliw rd rs1 k => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ k < 32 ∧
+      (BitVec.ofNat 32 w).extractLsb' 20 5 = BitVec.ofNat 5 k ∧ DecodeFactM (mkM pc w .slliw rd rs1 0 k)
+  | .srliw rd rs1 k => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ k < 32 ∧
+      (BitVec.ofNat 32 w).extractLsb' 20 5 = BitVec.ofNat 5 k ∧ DecodeFactM (mkM pc w .srliw rd rs1 0 k)
+  | .slt rd rs1 rs2 => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ rs2 ≤ 31 ∧
+      DecodeFactM (mkM pc w .slt rd rs1 rs2 0)
+  | .slti rd rs1 imm => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ Imm12 imm ∧ imm < 2 ^ 64 ∧
+      DecodeFactM (mkM pc w .slti rd rs1 0 imm)
+  | .sll rd rs1 rs2 => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ rs2 ≤ 31 ∧
+      DecodeFactM (mkM pc w .sll rd rs1 rs2 0)
+  | .srl rd rs1 rs2 => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ rs2 ≤ 31 ∧
+      DecodeFactM (mkM pc w .srl rd rs1 rs2 0)
   | _ => False
 
 structure EntryOK (c : Code) (pc w : Nat) (i : Ins) : Prop where
@@ -1105,6 +1123,192 @@ theorem sound_srli {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim 
     (Sail.BitVec.extractLsb ((BitVec.ofNat 12 k).extractLsb' 0 6) 5 0)) :: _ = _
   rw [srcVal_pinsOf hS.x0 hrs1, srl_ofNat _ _ (getR_lt _ _) hk]; rfl
 
+/-! ## 32-bit, comparison and register-shift ALU kinds -/
+
+theorem sext32_bv (v : Nat) (hv : v < 2 ^ 32) :
+    sign_extend (m := 64) (BitVec.ofNat 32 v) = BitVec.ofNat 64 (sext32 v) := by
+  apply BitVec.eq_of_toNat_eq
+  simp [sign_extend, Sail.BitVec.signExtend, BitVec.toNat_signExtend, sext32, BitVec.msb_eq_decide]
+  by_cases h : v < 2147483648
+  · simp [h, show ¬ 2147483648 ≤ v % 4294967296 by omega]; omega
+  · simp [h, show 2147483648 ≤ v % 4294967296 by omega, W, W32]; omega
+
+theorem lo32 (z : Nat) : Sail.BitVec.extractLsb (BitVec.ofNat 64 z) 31 0 = BitVec.ofNat 32 (z % W32) := by
+  apply BitVec.eq_of_toNat_eq
+  simp [Sail.BitVec.extractLsb, W32]
+
+theorem mod32_lt (z : Nat) : z % W32 < 2 ^ 32 := Nat.mod_lt _ (by decide)
+
+theorem shamt_reg (y : Nat) (hy : y < 2 ^ 64) :
+    (Sail.BitVec.extractLsb (BitVec.ofNat 64 y) 5 0).toNat = y % 64 := by
+  simp [Sail.BitVec.extractLsb]
+
+theorem shamt_reg32 (y : Nat) :
+    (Sail.BitVec.extractLsb (Sail.BitVec.extractLsb (BitVec.ofNat 64 y) 31 0) 4 0).toNat = y % 32 := by
+  simp [Sail.BitVec.extractLsb]
+
+theorem shl_mod (a b k M : Nat) (h : a % M = b % M) : (a <<< k) % M = (b <<< k) % M := by
+  rw [Nat.shiftLeft_eq, Nat.shiftLeft_eq, Nat.mul_mod, h, ← Nat.mul_mod]
+
+/-- The 32-bit kinds' computed values. -/
+theorem wv_addw (x y : Nat) :
+    sign_extend (m := 64) (Sail.BitVec.extractLsb (BitVec.ofNat 64 x) 31 0 +
+      Sail.BitVec.extractLsb (BitVec.ofNat 64 y) 31 0) = BitVec.ofNat 64 (fAddw x y) := by
+  rw [lo32, lo32, BitVec.ofNat_add_ofNat]
+  rw [show BitVec.ofNat 32 (x % W32 + y % W32) = BitVec.ofNat 32 ((x + y) % W32) by
+    apply BitVec.eq_of_toNat_eq; simp [W32]]
+  exact sext32_bv _ (mod32_lt _)
+
+theorem wv_subw (x y : Nat) :
+    sign_extend (m := 64) (Sail.BitVec.extractLsb (BitVec.ofNat 64 x) 31 0 -
+      Sail.BitVec.extractLsb (BitVec.ofNat 64 y) 31 0) = BitVec.ofNat 64 (fSubw x y) := by
+  rw [lo32, lo32]
+  rw [show BitVec.ofNat 32 (x % W32) - BitVec.ofNat 32 (y % W32) =
+      BitVec.ofNat 32 ((x + (W32 - y % W32)) % W32) by
+    apply BitVec.eq_of_toNat_eq; simp [BitVec.toNat_sub, W32]; omega]
+  exact sext32_bv _ (mod32_lt _)
+
+theorem wv_addiw (x imm : Nat) (himm : Imm12 imm) :
+    sign_extend (m := 64) (Sail.BitVec.extractLsb (BitVec.ofNat 64 x +
+      sign_extend (m := 64) (BitVec.ofNat 12 imm)) 31 0) = BitVec.ofNat 64 (sext32 ((x + imm) % W32)) := by
+  rw [himm, ofNat_add_mod, lo32, show (x + imm) % W % W32 = (x + imm) % W32 by simp [W, W32]]
+  exact sext32_bv _ (mod32_lt _)
+
+theorem wv_slliw (x k : Nat) (hk : k < 32) :
+    sign_extend (m := 64) (shift_bits_left (Sail.BitVec.extractLsb (BitVec.ofNat 64 x) 31 0)
+      (BitVec.ofNat 5 k)) = BitVec.ofNat 64 (fSlliw x k) := by
+  rw [lo32]
+  rw [show shift_bits_left (BitVec.ofNat 32 (x % W32)) (BitVec.ofNat 5 k) =
+      BitVec.ofNat 32 ((x <<< k) % W32) by
+    apply BitVec.eq_of_toNat_eq
+    simp only [shift_bits_left, BitVec.shiftLeft_eq', BitVec.toNat_shiftLeft, BitVec.toNat_ofNat]
+    rw [Nat.mod_eq_of_lt (show k < 2 ^ 5 by omega)]
+    simp only [W32]
+    rw [Nat.mod_eq_of_lt (show x % 4294967296 < 2 ^ 32 by omega),
+      Nat.mod_mod_of_dvd _ (by decide : 2 ^ 32 ∣ 4294967296)]
+    exact shl_mod _ _ _ _ (by simp)]
+  exact sext32_bv _ (mod32_lt _)
+
+theorem wv_srliw (x k : Nat) (hk : k < 32) :
+    sign_extend (m := 64) (shift_bits_right (Sail.BitVec.extractLsb (BitVec.ofNat 64 x) 31 0)
+      (BitVec.ofNat 5 k)) = BitVec.ofNat 64 (fSrliw x k) := by
+  rw [lo32]
+  rw [show shift_bits_right (BitVec.ofNat 32 (x % W32)) (BitVec.ofNat 5 k) =
+      BitVec.ofNat 32 ((x % W32) >>> k) by
+    apply BitVec.eq_of_toNat_eq
+    simp only [shift_bits_right, BitVec.ushiftRight_eq', BitVec.toNat_ushiftRight, BitVec.toNat_ofNat]
+    rw [Nat.mod_eq_of_lt (show k < 2 ^ 5 by omega), Nat.mod_eq_of_lt (mod32_lt x),
+      Nat.mod_eq_of_lt (Nat.lt_of_le_of_lt (Nat.shiftRight_le _ k) (mod32_lt x))]]
+  exact sext32_bv _ (Nat.lt_of_le_of_lt (Nat.shiftRight_le _ k) (mod32_lt x))
+
+theorem zext_bit (b : Bool) :
+    zero_extend (m := 64) (bool_to_bit b) = BitVec.ofNat 64 (if b then 1 else 0) := by
+  cases b <;> rfl
+
+theorem slt_bv (x y : Nat) (hx : x < 2 ^ 64) (hy : y < 2 ^ 64) :
+    zopz0zI_s (BitVec.ofNat 64 x) (BitVec.ofNat 64 y) = slt64 x y := by
+  have := guard_blt x y hx hy; simpa [guardB, bLt] using this
+
+theorem sll_bv (x y : Nat) (hy : y < 2 ^ 64) :
+    shift_bits_left (BitVec.ofNat 64 x) (Sail.BitVec.extractLsb (BitVec.ofNat 64 y) 5 0) =
+      BitVec.ofNat 64 (fSll x y) := by
+  apply BitVec.eq_of_toNat_eq
+  simp only [shift_bits_left, BitVec.shiftLeft_eq', BitVec.toNat_shiftLeft, BitVec.toNat_ofNat,
+    shamt_reg y hy, fSll, W]
+  rw [show (18446744073709551616 : Nat) = 2 ^ 64 from rfl, Nat.mod_mod]
+  exact shl_mod _ _ _ _ (Nat.mod_mod _ _)
+
+theorem srl_bv (x y : Nat) (hx : x < 2 ^ 64) (hy : y < 2 ^ 64) :
+    shift_bits_right (BitVec.ofNat 64 x) (Sail.BitVec.extractLsb (BitVec.ofNat 64 y) 5 0) =
+      BitVec.ofNat 64 (fSrl x y) := by
+  apply BitVec.eq_of_toNat_eq
+  simp only [shift_bits_right, BitVec.ushiftRight_eq', BitVec.toNat_ushiftRight, BitVec.toNat_ofNat,
+    shamt_reg y hy, fSrl, Nat.mod_eq_of_lt hx]
+  rw [Nat.mod_eq_of_lt (Nat.lt_of_le_of_lt (Nat.shiftRight_le _ _) hx)]
+
+theorem sound_addiw {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 imm : Nat} (hget : c.table.getW s.pc = some (w, .addiw rd rs1 imm)) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fAddw (getR s.regs rs1) imm), s.mem⟩ := by
+  obtain ⟨hrd, hrs1, himm, hdec⟩ := (hT _ _ _ hget).dec
+  refine sound_ri hT hS hget hdec hrd ⟨hrd, srcOK_of hrs1⟩ trivial ?_ rfl
+  show (rd, sign_extend (m := 64) (Sail.BitVec.extractLsb (srcVal rs1 (pinsOf s.regs) +
+    sign_extend (m := 64) (BitVec.ofNat 12 imm)) 31 0)) :: _ = _
+  rw [srcVal_pinsOf hS.x0 hrs1, wv_addiw _ _ himm]; rfl
+
+theorem sound_addw {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 rs2 : Nat} (hget : c.table.getW s.pc = some (w, .addw rd rs1 rs2)) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fAddw (getR s.regs rs1) (getR s.regs rs2)), s.mem⟩ := by
+  have hk := (hT _ _ _ hget).dec
+  refine sound_rr hT hS hget hk ⟨hk.1, srcOK_of hk.2.1, srcOK_of hk.2.2.1⟩ trivial ?_ rfl
+  show (rd, sign_extend (m := 64) (Sail.BitVec.extractLsb (srcVal rs1 (pinsOf s.regs)) 31 0 +
+    Sail.BitVec.extractLsb (srcVal rs2 (pinsOf s.regs)) 31 0)) :: _ = _
+  rw [srcVal_pinsOf hS.x0 hk.2.1, srcVal_pinsOf hS.x0 hk.2.2.1, wv_addw]; rfl
+
+theorem sound_subw {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 rs2 : Nat} (hget : c.table.getW s.pc = some (w, .subw rd rs1 rs2)) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fSubw (getR s.regs rs1) (getR s.regs rs2)), s.mem⟩ := by
+  have hk := (hT _ _ _ hget).dec
+  refine sound_rr hT hS hget hk ⟨hk.1, srcOK_of hk.2.1, srcOK_of hk.2.2.1⟩ trivial ?_ rfl
+  show (rd, sign_extend (m := 64) (Sail.BitVec.extractLsb (srcVal rs1 (pinsOf s.regs)) 31 0 -
+    Sail.BitVec.extractLsb (srcVal rs2 (pinsOf s.regs)) 31 0)) :: _ = _
+  rw [srcVal_pinsOf hS.x0 hk.2.1, srcVal_pinsOf hS.x0 hk.2.2.1, wv_subw]; rfl
+
+theorem sound_slliw {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 k : Nat} (hget : c.table.getW s.pc = some (w, .slliw rd rs1 k)) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fSlliw (getR s.regs rs1) k), s.mem⟩ := by
+  obtain ⟨hrd, hrs1, hk, hsh, hdec⟩ := (hT _ _ _ hget).dec
+  refine sound_ri hT hS hget hdec hrd ⟨hrd, srcOK_of hrs1⟩ trivial ?_ rfl
+  show (rd, sign_extend (m := 64) (shift_bits_left (Sail.BitVec.extractLsb (srcVal rs1 (pinsOf s.regs)) 31 0)
+    ((BitVec.ofNat 32 w).extractLsb' 20 5))) :: _ = _
+  rw [hsh, srcVal_pinsOf hS.x0 hrs1, wv_slliw _ _ hk]; rfl
+
+theorem sound_srliw {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 k : Nat} (hget : c.table.getW s.pc = some (w, .srliw rd rs1 k)) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fSrliw (getR s.regs rs1) k), s.mem⟩ := by
+  obtain ⟨hrd, hrs1, hk, hsh, hdec⟩ := (hT _ _ _ hget).dec
+  refine sound_ri hT hS hget hdec hrd ⟨hrd, srcOK_of hrs1⟩ trivial ?_ rfl
+  show (rd, sign_extend (m := 64) (shift_bits_right (Sail.BitVec.extractLsb (srcVal rs1 (pinsOf s.regs)) 31 0)
+    ((BitVec.ofNat 32 w).extractLsb' 20 5))) :: _ = _
+  rw [hsh, srcVal_pinsOf hS.x0 hrs1, wv_srliw _ _ hk]; rfl
+
+theorem sound_slt {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 rs2 : Nat} (hget : c.table.getW s.pc = some (w, .slt rd rs1 rs2)) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fSlt (getR s.regs rs1) (getR s.regs rs2)), s.mem⟩ := by
+  have hk := (hT _ _ _ hget).dec
+  refine sound_rr hT hS hget hk ⟨hk.1, srcOK_of hk.2.1, srcOK_of hk.2.2.1⟩ trivial ?_ rfl
+  show (rd, zero_extend (m := 64) (bool_to_bit (zopz0zI_s (srcVal rs1 (pinsOf s.regs))
+    (srcVal rs2 (pinsOf s.regs))))) :: _ = _
+  rw [srcVal_pinsOf hS.x0 hk.2.1, srcVal_pinsOf hS.x0 hk.2.2.1,
+    slt_bv _ _ (getR_lt _ _) (getR_lt _ _), zext_bit]; rfl
+
+theorem sound_slti {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 imm : Nat} (hget : c.table.getW s.pc = some (w, .slti rd rs1 imm)) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fSlt (getR s.regs rs1) imm), s.mem⟩ := by
+  obtain ⟨hrd, hrs1, himm, hlt, hdec⟩ := (hT _ _ _ hget).dec
+  refine sound_ri hT hS hget hdec hrd ⟨hrd, srcOK_of hrs1⟩ trivial ?_ rfl
+  show (rd, zero_extend (m := 64) (bool_to_bit (zopz0zI_s (srcVal rs1 (pinsOf s.regs))
+    (sign_extend (m := 64) (BitVec.ofNat 12 imm))))) :: _ = _
+  rw [himm, srcVal_pinsOf hS.x0 hrs1, slt_bv _ _ (getR_lt _ _) hlt, zext_bit]; rfl
+
+theorem sound_sll {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 rs2 : Nat} (hget : c.table.getW s.pc = some (w, .sll rd rs1 rs2)) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fSll (getR s.regs rs1) (getR s.regs rs2)), s.mem⟩ := by
+  have hk := (hT _ _ _ hget).dec
+  refine sound_rr hT hS hget hk ⟨hk.1, srcOK_of hk.2.1, srcOK_of hk.2.2.1⟩ trivial ?_ rfl
+  show (rd, shift_bits_left (srcVal rs1 (pinsOf s.regs))
+    (Sail.BitVec.extractLsb (srcVal rs2 (pinsOf s.regs)) 5 0)) :: _ = _
+  rw [srcVal_pinsOf hS.x0 hk.2.1, srcVal_pinsOf hS.x0 hk.2.2.1, sll_bv _ _ (getR_lt _ _)]; rfl
+
+theorem sound_srl {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 rs2 : Nat} (hget : c.table.getW s.pc = some (w, .srl rd rs1 rs2)) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fSrl (getR s.regs rs1) (getR s.regs rs2)), s.mem⟩ := by
+  have hk := (hT _ _ _ hget).dec
+  refine sound_rr hT hS hget hk ⟨hk.1, srcOK_of hk.2.1, srcOK_of hk.2.2.1⟩ trivial ?_ rfl
+  show (rd, shift_bits_right (srcVal rs1 (pinsOf s.regs))
+    (Sail.BitVec.extractLsb (srcVal rs2 (pinsOf s.regs)) 5 0)) :: _ = _
+  rw [srcVal_pinsOf hS.x0 hk.2.1, srcVal_pinsOf hS.x0 hk.2.2.1,
+    srl_bv _ _ (getR_lt _ _) (getR_lt _ _)]; rfl
+
 /-! ## The generic theorem -/
 
 /-- **One evaluator step is a Sail step.** Every instruction kind `DecOK`
@@ -1153,6 +1357,24 @@ theorem exec_sound {c : Code} (hT : TableOK c) {s s' : St} {cf : Config} (hS : S
     simp only [exec, bra, Option.some.injEq] at hex; subst hex; exact sound_br hT hS hget hok guard_bltu
   case bgeu a b tgt =>
     simp only [exec, bra, Option.some.injEq] at hex; subst hex; exact sound_br hT hS hget hok guard_bgeu
+  case addiw rd rs1 imm =>
+    simp only [exec, alui, wr, next, Option.some.injEq] at hex; subst hex; exact sound_addiw hT hS hget
+  case addw rd rs1 rs2 =>
+    simp only [exec, alu, wr, next, Option.some.injEq] at hex; subst hex; exact sound_addw hT hS hget
+  case subw rd rs1 rs2 =>
+    simp only [exec, alu, wr, next, Option.some.injEq] at hex; subst hex; exact sound_subw hT hS hget
+  case slliw rd rs1 k =>
+    simp only [exec, alui, wr, next, Option.some.injEq] at hex; subst hex; exact sound_slliw hT hS hget
+  case srliw rd rs1 k =>
+    simp only [exec, alui, wr, next, Option.some.injEq] at hex; subst hex; exact sound_srliw hT hS hget
+  case slt rd rs1 rs2 =>
+    simp only [exec, alu, wr, next, Option.some.injEq] at hex; subst hex; exact sound_slt hT hS hget
+  case slti rd rs1 imm =>
+    simp only [exec, alui, wr, next, Option.some.injEq] at hex; subst hex; exact sound_slti hT hS hget
+  case sll rd rs1 rs2 =>
+    simp only [exec, alu, wr, next, Option.some.injEq] at hex; subst hex; exact sound_sll hT hS hget
+  case srl rd rs1 rs2 =>
+    simp only [exec, alu, wr, next, Option.some.injEq] at hex; subst hex; exact sound_srl hT hS hget
   case addi rd rs1 imm =>
     simp only [exec, alui, wr, next, Option.some.injEq] at hex; subst hex; exact sound_addi hT hS hget
   case add rd rs1 rs2 =>
