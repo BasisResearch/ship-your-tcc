@@ -35,5 +35,5 @@ leanOptions.backward.isDefEq.respectTransparency = false
 # The tcc image's boot interface and per-program captured cuts.
 [[lean_lib]]
 name = "TccMachine"
-globs = ["Tcc.Boot.+", "Tcc.Capture.+", "Tcc.Prog.Sum.Machine.+", "Tcc.EndToEnd.+"]
+globs = ["Tcc.Boot.+", "Tcc.Capture.+", "Tcc.Prog.Sum.Machine.+", "Tcc.EndToEnd.+", "Tcc.Ccp.+"]
 # --- end machine lane ---------------------------------------------------------
