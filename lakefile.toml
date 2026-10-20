@@ -61,3 +61,16 @@ globs = ["Tcc.Boot.+", "Tcc.Capture.+", "Tcc.Prog.Sum.Machine.+", "Tcc.EndToEnd.
 name = "TccCompileCut"
 globs = ["Tcc.Ccp.Sum.+", "Tcc.Ccp.SumCut", "Tcc.Ccp.EndToEnd"]
 # --- end machine lane ---------------------------------------------------------
+
+# --- Phase 4 / F2: the preprocessing specification ---------------------------
+# CSem.Pre: C11 translation phases 1-4 (Spec/Pre/, DESIGN-COMPILER.md §3.2),
+# to move into the cerberus-lean fork (csem/) later. `pre_spec` is its native
+# driver for the differential against tcc -E / gcc -E (scripts/pre_diff.py).
+[[lean_lib]]
+name = "CSemPre"
+roots = ["Spec.Pre"]
+globs = ["Spec.Pre", "Spec.Pre.+"]
+
+[[lean_exe]]
+name = "pre_spec"
+root = "Spec.PreSpec"
