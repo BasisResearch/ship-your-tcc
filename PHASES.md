@@ -45,9 +45,9 @@ Obligations (each a `def …_Statement : Prop` until proved):
 | obligation | supplies | status |
 |---|---|---|
 | `CompileCut_Statement` (3a, `Tcc/Capture/Sum/Cut.lean`) | `∀ elf, TccSumElf elf → ∀ c₀, ElfReset elf c₀ → ∃ c, Steps c₀ c ∧ TccSumCut c`: tcc's compile phase (6,632,342 steps) reaches the captured cut | stated, open |
-| `SumHalts_Statement` (3b machine side, `Tcc/Capture/Sum/Cut.lean`) | `∀ c, TccSumCut c → Halts c "55\n" 0`: the program phase (2,470 steps) from the cut | stated, open. Replay (`scripts/gen_tcc_segs.py`, `Tcc/Prog/Sum/Machine/Replay.lean`, `Tcc.Boot.row_step`): the first block, `tcc_baremetal_enter` to `_runmain` (6 steps), proved (`replay`). Obstruction for the rest: the copied segment layer requires code below `tohostAddr` and every store above it (`InstrOKM`, `MemFacts`), but P and its libc run from tcc's arena at `0x86400000`, above `.tohost`, and store into it; also no rule for calls (`jal`/`jalr` with a link; ship-your-lua's `BridgeSeg` closure is 632 modules), `addi x0`, `sltiu`/`sltu`/`lb`, or the HTIF `tohost` store and halt |
-| `CodeRefinesClight_Statement` (3b) | C refines Certora's Lean Clight of P (syi MachCSL + generators); to be combined with 3.4 through `Terminates`/`traceOut` | not started |
-| `PrintfSpec_Statement` | printf machine spec (after ship-your-lua `fwrite`) yielding an `X` with `PrintfModel X ∧ ExtDeterm X`, whose console bytes are `traceOut` | not started |
+| `SumHalts_Statement` (3b machine side, `Tcc/Capture/Sum/Cut.lean`) | `∀ c, TccSumCut c → Halts c "55\n" 0`: the program phase (2,470 steps) from the cut | **proved**: `Tcc.Prog.Sum.Machine.sum_halts` (generated replay, 734 items + exit) |
+| `CodeRefinesClight_Statement` (3b) | C refines Certora's Lean Clight of P (syi MachCSL + generators); to be combined with 3.4 through `Terminates`/`traceOut` | for P, as agreement of observables: `Tcc.EndToEnd.tcc_run_sum` (from reset the machine halts with exactly the console bytes and exit code of Clight's P, given `CompileCut_Statement`); a step-level refinement of C against Clight stays open |
+| `PrintfSpec_Statement` | printf machine spec (after ship-your-lua `fwrite`) yielding an `X` with `PrintfModel X ∧ ExtDeterm X`, whose console bytes are `traceOut` | not started (the general route; P's replay runs the relocated printf concretely) |
 
 Gap: the Phase 2 oracle `lean/ClightRun` (Lean 4.32.1) still renders printf
 conversions with the host snprintf, so the differential tests host printf

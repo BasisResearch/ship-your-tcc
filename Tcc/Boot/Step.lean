@@ -234,7 +234,7 @@ theorem row_jalr {v : Nat → Option (BitVec 8)} {pc tgt : BitVec 64} {L L' : GR
   obtain ⟨vm, hmi⟩ := hG.minstret
   obtain ⟨hb0, hb1, hb2, hb3, hdec⟩ := hi.facts hG hv hm
   have hrx1 := rX_src σ pc rs1 hrs1.1 _ (srcPin_srcVal σ L rs1 hrs1.2 hL)
-  have hrdf := gpr_rd_ok rd (by omega) hrd.1
+  obtain ⟨hr1, hr2, hr3, hr4, hr5⟩ := gpr_rd_ok rd (by omega) hrd.1
   have hwx := wX_gpr {(afterNextPC (afterPrelude σ) pc) with
       regs := (afterNextPC (afterPrelude σ) pc).regs.insert Register.nextPC
         (BitVec.update (srcVal rs1 L + sign_extend (m := 64) imm) 0 0#1)}
@@ -243,7 +243,7 @@ theorem row_jalr {v : Nat → Option (BitVec 8)} {pc tgt : BitVec 64} {L L' : GR
     stepObs_jalr σ i u pc vm (srcVal rs1 L) _ imm (gprIdx rs1) (gprIdx rd) (gprReg rd)
       (gprRT rd (BitVec.addInt pc 4)) _ _ _ _ hG hpc hmi hb0 hb1 hb2 hb3 hi.lo hi.fetch
       hi.align hi.notrvc' hi.word (hi.word ▸ hdec) hrx1 (htgt ▸ halign)
-      hrdf.1 hrdf.2.1 hrdf.2.2.1 hrdf.2.2.2.1 hrdf.2.2.2.2 hwx hti
+      hr1 hr2 hr3 hr4 hr5 hwx hti
   -- reads off the post state
   have hfr : ∀ R : Register, NotGpr R → (Register.mcycle == R) = false →
       (Register.mtime == R) = false → (Register.mip == R) = false →
@@ -301,11 +301,11 @@ theorem row_alu_core {v : Nat → Option (BitVec 8)} {pc : BitVec 64} {L L' : GR
   rintro ⟨σ, i, u⟩ ⟨hG, hpc, hL, hk, ⟨m0, hv, hm⟩, hout, hpw, hti⟩
   obtain ⟨vm, hmi⟩ := hG.minstret
   obtain ⟨hb0, hb1, hb2, hb3, hdec⟩ := hi.facts hG hv hm
-  have hrdf := gpr_rd_ok rd (by omega) hrd.1
+  obtain ⟨hr1, hr2, hr3, hr4, hr5⟩ := gpr_rd_ok rd (by omega) hrd.1
   obtain ⟨σ', i', hs, hi', hG', hmem', hobs⟩ :=
     stepObs_alu σ i u pc vm _ ast (gprReg rd) (gprRT rd val) _ _ _ _ hG hpc hmi hi.word
       hi.notrvc' (hi.word ▸ hdec) (hexec σ hG hL)
-      hrdf.1 hrdf.2.1 hrdf.2.2.1 hrdf.2.2.2.1 hrdf.2.2.2.2 hb0 hb1 hb2 hb3 hi.lo hi.fetch
+      hr1 hr2 hr3 hr4 hr5 hb0 hb1 hb2 hb3 hi.lo hi.fetch
       hi.align hti
   have hgpr : ∀ n, 1 ≤ n → n ≤ 31 → n ≠ rd →
       σ'.regs.get? (gprReg n) = σ.regs.get? (gprReg n) := fun n h1 h31 hne =>
@@ -385,5 +385,122 @@ theorem row_nop {v : Nat → Option (BitVec 8)} {pc : BitVec 64} {L : GRegs}
       rw [hr]
     rw [hs]
     exact execute_itype_addi_char _ _ _ _ _ _ (rX_bits_zero _) (wX_bits_zero _ _)) hL hk
+
+/-! ## Calls: `jal rd, imm` -/
+
+/-- A direct call: `jal rd, imm` with `rd ≠ x0`. -/
+theorem row_jal {v : Nat → Option (BitVec 8)} {pc tgt : BitVec 64} {L L' : GRegs}
+    {log : List WEntry} {out : String} {w : BitVec 32} {imm : BitVec 21} {rd : Nat}
+    (hi : InstrAt v log pc w (instruction.JAL (imm, gprIdx rd)))
+    (hrd : 1 ≤ rd ∧ rd ≤ 31)
+    (htgt : pc + sign_extend (m := 64) imm = tgt)
+    (halign : tgt.toNat % 4 = 0)
+    (hL' : ∀ p ∈ L', lookupG p.1 ((rd, BitVec.addInt pc 4) :: eraseG rd L) = some p.2)
+    (hk' : KeysOK (keysG L')) :
+    Leads (RunRow v pc L log out) (RunRow v tgt L' log out) := by
+  rintro ⟨σ, i, u⟩ ⟨hG, hpc, hL, hk, ⟨m0, hv, hm⟩, hout, hpw, hti⟩
+  obtain ⟨vm, hmi⟩ := hG.minstret
+  obtain ⟨hb0, hb1, hb2, hb3, hdec⟩ := hi.facts hG hv hm
+  obtain ⟨hr1, hr2, hr3, hr4, hr5⟩ := gpr_rd_ok rd (by omega) hrd.1
+  have hwx := wX_gpr {(afterNextPC (afterPrelude σ) pc) with
+      regs := (afterNextPC (afterPrelude σ) pc).regs.insert Register.nextPC
+        (pc + sign_extend (m := 64) imm)}
+    (BitVec.addInt pc 4) rd hrd.1 hrd.2
+  obtain ⟨σ', i', hs, hi', hG', hmem', hobs⟩ :=
+    stepObs_jal σ i u pc vm _ imm (gprIdx rd) (gprReg rd) (gprRT rd (BitVec.addInt pc 4))
+      _ _ _ _ hG hpc hmi hb0 hb1 hb2 hb3 hi.lo hi.fetch hi.align hi.notrvc' hi.word
+      (hi.word ▸ hdec) (htgt ▸ halign) hr1 hr2 hr3 hr4 hr5 hwx hti
+  have hgpr : ∀ n, 1 ≤ n → n ≤ 31 → n ≠ rd →
+      σ'.regs.get? (gprReg n) = σ.regs.get? (gprReg n) := fun n h1 h31 hne =>
+    (hobs.1 _ (notGpr_mcycle n) (notGpr_mtime n) (notGpr_mip n)).trans
+      (get?_sigmaPost_jal σ pc vm _ _ _ _ (notGpr_minstret n) (notGpr_PC n)
+        (gprReg_beq_false rd (by omega) n (by omega) hrd.1 h1 (Ne.symm hne))
+        (notGpr_nextPC n) (notGpr_minstret_increment n))
+  have hrdv : σ'.regs.get? (gprReg rd) = some (gprRT rd (BitVec.addInt pc 4)) := by
+    rw [hobs.1 _ (notGpr_mcycle rd) (notGpr_mtime rd) (notGpr_mip rd)]
+    show ((((sigma3_jal σ pc imm (gprReg rd) _).regs.insert Register.PC _).insert
+      Register.minstret _)).get? (gprReg rd) = _
+    rw [Std.ExtDHashMap.get?_insert]
+    simp only [notGpr_minstret rd, dif_neg, reduceCtorEq, not_false_eq_true]
+    rw [Std.ExtDHashMap.get?_insert]
+    simp only [notGpr_PC rd, dif_neg, reduceCtorEq, not_false_eq_true]
+    show ((_ : Std.ExtDHashMap Register RegisterType).insert (gprReg rd) _).get? (gprReg rd) = _
+    rw [Std.ExtDHashMap.get?_insert_self]
+  have hGH : GHolds σ' ((rd, BitVec.addInt pc 4) :: eraseG rd L) :=
+    ⟨gprGet_of_get rd hrd.1 hrd.2 hrdv, gholds_erase_frame rd hgpr L hk hL⟩
+  refine ⟨⟨σ', i', u + 1⟩, Steps.head hs (Steps.refl _), hG', ?_, gholds_of_lookup hGH L' hL',
+    hk', ⟨m0, hv, hmem'.trans hm⟩, ?_, ?_, hi'⟩
+  · rw [hobs.1 _ (by decide) (by decide) (by decide)]
+    show ((((sigma3_jal σ pc imm (gprReg rd) _).regs.insert Register.PC _).insert
+      Register.minstret _)).get? Register.PC = _
+    rw [Std.ExtDHashMap.get?_insert]
+    simp only [show (Register.minstret == Register.PC) = false from by decide, dif_neg,
+      reduceCtorEq, not_false_eq_true]
+    rw [Std.ExtDHashMap.get?_insert_self, htgt]
+  · simp only [output] at hout ⊢; rw [hobs.2]; exact hout
+  · rw [hobs.1 _ (by decide) (by decide) (by decide),
+      get?_sigmaPost_jal σ pc vm _ _ _ _ (by decide) (by decide)
+        (by rw [Bool.beq_comm]; exact notGpr_payload rd) (by decide) (by decide)]
+    exact hpw
+
+/-! ## The HTIF console store -/
+
+theorem output_push (σ σ' : MState) (s : String) (h : σ'.sailOutput = σ.sailOutput.push s) :
+    output σ' = output σ ++ s := by
+  simp only [output, h, Array.toList_push, String.join, List.foldl_append, List.foldl_cons,
+    List.foldl_nil]
+
+/-- `sd rs2, imm(rs1)` to `tohost` with a console-putchar command for the byte
+`c`: one character more on the console, nothing else observable changes. -/
+theorem row_putchar {v : Nat → Option (BitVec 8)} {pc : BitVec 64} {L : GRegs}
+    {log : List WEntry} {out out' : String} {w : BitVec 32} {imm : BitVec 12} {rs1 rs2 : Nat}
+    {c : BitVec 8}
+    (hi : InstrAt v log pc w (instruction.STORE (imm, gprIdx rs2, gprIdx rs1, 8)))
+    (hrs1 : rs1 ≤ 31 ∧ (rs1 = 0 ∨ rs1 ∈ keysG L)) (hrs2 : rs2 ≤ 31 ∧ (rs2 = 0 ∨ rs2 ∈ keysG L))
+    (haddr : srcVal rs1 L + sign_extend (m := 64) imm = BitVec.ofNat 64 tohostAddr)
+    (hputc : srcVal rs2 L = (0x0101000000000000#64) ||| BitVec.zeroExtend 64 c)
+    (hout' : out ++ toString (Char.ofNat c.toNat) = out') :
+    Leads (RunRow v pc L log out) (RunRow v (BitVec.addInt pc 4) L log out') := by
+  rintro ⟨σ, i, u⟩ ⟨hG, hpc, hL, hk, ⟨m0, hv, hm⟩, hout, hpw, hti⟩
+  obtain ⟨vm, hmi⟩ := hG.minstret
+  obtain ⟨th, hth⟩ := hG.htif_tohost
+  obtain ⟨hb0, hb1, hb2, hb3, hdec⟩ := hi.facts hG hv hm
+  have hrx1 := rX_src σ pc rs1 hrs1.1 _ (srcPin_srcVal σ L rs1 hrs1.2 hL)
+  have hrx2 := rX_src σ pc rs2 hrs2.1 _ (srcPin_srcVal σ L rs2 hrs2.2 hL)
+  obtain ⟨σ', i', hs, hi', hG', hmem', hso, hpc', _, hpw', _, hfr⟩ :=
+    stepObs_tohost_putchar σ i u pc vm _ imm (gprIdx rs2) (gprIdx rs1) _ _ _ c th _ _ _ _
+      hG hpc hmi hi.word hi.notrvc' (hi.word ▸ hdec) hrx1 hrx2 haddr rfl hpw hth hputc
+      hb0 hb1 hb2 hb3 hi.lo hi.fetch hi.align hti
+  have hgpr : ∀ n, 1 ≤ n → n ≤ 31 → σ'.regs.get? (gprReg n) = σ.regs.get? (gprReg n) :=
+    fun n _ _ => hfr _ (notGpr_PC n) (notGpr_minstret n) (notGpr_minstret_increment n)
+      (notGpr_nextPC n) (notGpr_cmd n) (notGpr_payload n) (notGpr_tohost n) (notGpr_mip n)
+      (notGpr_mtime n) (notGpr_mcycle n)
+  refine ⟨⟨σ', i', u + 1⟩, Steps.head hs (Steps.refl _), hG', hpc', gholds_frame hgpr L hk hL,
+    hk, ⟨m0, hv, hmem'.trans hm⟩, ?_, hpw', hi'⟩
+  show output σ' = out'
+  rw [output_push σ σ' _ hso, ← hout', ← hout]
+
+/-! ## The HTIF exit store -/
+
+/-- `sd rs2, imm(rs1)` to `tohost` with the exit command `(e <<< 1) ||| 1`: the
+machine halts with code `e`, the console as it is. -/
+theorem row_exit {v : Nat → Option (BitVec 8)} {pc : BitVec 64} {L : GRegs}
+    {log : List WEntry} {out : String} {w : BitVec 32} {imm : BitVec 12} {rs1 rs2 : Nat}
+    {e : BitVec 64}
+    (hi : InstrAt v log pc w (instruction.STORE (imm, gprIdx rs2, gprIdx rs1, 8)))
+    (hrs1 : rs1 ≤ 31 ∧ (rs1 = 0 ∨ rs1 ∈ keysG L)) (hrs2 : rs2 ≤ 31 ∧ (rs2 = 0 ∨ rs2 ∈ keysG L))
+    (haddr : srcVal rs1 L + sign_extend (m := 64) imm = BitVec.ofNat 64 tohostAddr)
+    (hdata : srcVal rs2 L = (e <<< 1) ||| 1#64) (hsmall : e.toNat < 2 ^ 47) :
+    ∀ c, RunRow v pc L log out c → Halts c out e.toNat := by
+  rintro ⟨σ, i, u⟩ ⟨hG, hpc, hL, hk, ⟨m0, hv, hm⟩, hout, hpw, hti⟩
+  obtain ⟨vm, hmi⟩ := hG.minstret
+  obtain ⟨th, hth⟩ := hG.htif_tohost
+  obtain ⟨hb0, hb1, hb2, hb3, hdec⟩ := hi.facts hG hv hm
+  have hrx1 := rX_src σ pc rs1 hrs1.1 _ (srcPin_srcVal σ L rs1 hrs1.2 hL)
+  have hrx2 := rX_src σ pc rs2 hrs2.1 _ (srcPin_srcVal σ L rs2 hrs2.2 hL)
+  have hstep := stepOnce_tohost_G σ i u pc vm _ imm (gprIdx rs2) (gprIdx rs1) _ _ _ e th
+    _ _ _ _ hG hpc hmi hi.word hi.notrvc' (hi.word ▸ hdec) hrx1 hrx2 haddr rfl hpw hth hsmall
+    hdata hb0 hb1 hb2 hb3 hi.lo hi.fetch hi.align
+  exact ⟨⟨σ, i, u⟩, _, Steps.refl _, Halted.mk hstep, hout⟩
 
 end Tcc.Boot

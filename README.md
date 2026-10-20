@@ -135,27 +135,53 @@ Lean formatter (`Tcc/Clight/Printf.lean`). All on Lean 4.34.0 with the root
 `lakefile.toml`; `lake build` takes about 75 s from scratch (the run of
 P is one 21 s `decide +kernel`), under 1.2 GB.
 
-## Phase 3: the captured cut (machine side, 3a stated)
+## Phase 3: the machine side (3b proved for P; 3a open)
 
-`Tcc.Capture.Sum.TccSumCut c` describes the machine at the jump into P's
-generated code: PC = `tcc_baremetal_enter`, every GPR as captured,
-`GoodState`, an idle HTIF mailbox, an empty console, and a partial view of
-the 6,689 bytes the 2,470-step program phase reads before writing them (660
-bytes of host code, checked equal to the ELF's loaded bytes by one kernel
-`decide` per chunk; 6,029 bytes the compile phase stored, P's code, tcc's
-relocated libc members and data, which are observations). It comes from one
-`--trace-all` run of the emulator on the `FLAGS=0` image
-(`scripts/tcc_cut.py`, 7 minutes; memory reconstructed from the ELF and
-every store, checked against every load) and `scripts/gen_tcc_cut.py`; the
-independent native capture (`results/p3/sum-cut/`) agrees on the step
-count, all 31 GPRs and the control registers. `TccSumElf` pins the ELF by
-its entry, `.tohost` and the 701,193 bytes the compile phase reads
-(`Tcc/Capture/Sum/Elf/`, 1.5 MB of generated data, elaborated only). Open:
-`CompileCut_Statement` (reset reaches the cut) and `SumHalts_Statement`
-(the cut halts printing `55\n`); `sum_halts_from_reset` composes them. The
-machine layer is ship-your-lua's `Vsa/` (180 modules, the import closure of
-the segment layer) on its `riscv-lean/`; `lake build` of the whole project
-takes about 6 minutes from scratch, peak 2 GB per Lean process.
+`Tcc.EndToEnd.tcc_run_sum`: for every external-call semantics `X` with
+`PrintfModel X` and `ExtDeterm X`, **given `CompileCut_Statement`**, from
+reset on the tcc image with P embedded, the machine halts with console
+`"55\n"` and exit code 0, Clight's P prints those bytes and returns 0, and the
+codes agree (`Agree`); every halting run of the machine is that one
+(`tcc_run_sum_halts`). The only open premise is the compile phase.
+
+* **The cut** (`Tcc.Capture.Sum.TccSumCut`): PC = `tcc_baremetal_enter`, every
+  GPR as captured, `GoodState`, an idle HTIF mailbox, an empty console, and a
+  partial view of the 6,689 bytes the 2,470-step program phase reads before
+  writing them (660 bytes of host code, checked equal to the ELF's loaded bytes
+  by one kernel `decide` per chunk; 6,029 bytes the compile phase stored: P's
+  code, tcc's relocated libc members and data, which are observations). From
+  one `--trace-all` run of the emulator on the `FLAGS=0` image
+  (`scripts/tcc_cut.py`, 7 minutes; memory reconstructed from the ELF and every
+  store, checked against every load) and `scripts/gen_tcc_cut.py`; the
+  independent native capture (`results/p3/sum-cut/`) agrees on the step count,
+  all 31 GPRs and the control registers. `TccSumElf` pins the ELF by its entry,
+  `.tohost` and the 701,193 bytes the compile phase reads (`Tcc/Capture/Sum/Elf/`,
+  1.5 MB of generated data, elaborated only).
+* **The program phase** (`Tcc.Prog.Sum.Machine.sum_halts : SumHalts_Statement`):
+  a generated replay of all 2,470 steps (`scripts/gen_tcc_segs.py`,
+  `Tcc/Prog/Sum/Machine/`): 734 items between rows `RunRow` (GPR pins, the
+  program phase's write log over the cut's view, the console), straight-line
+  blocks by one `#derive_case` per static block and `Tcc.Boot.row_step`, calls
+  (`row_jalr`, `row_jal`), `sltu`, a nop, the three console stores
+  (`row_putchar`) and the exit store (`row_exit`) by the one-instruction rules of
+  `Tcc/Boot/Step.lean`, every side condition a kernel `decide`. Building it
+  takes about 20 minutes in batches of four parts (`scripts/build_replay.sh`,
+  1–3 GB per Lean process).
+* **The machine layer** is ship-your-lua's `Vsa/` (180 modules, the import
+  closure of the segment layer) on its `riscv-lean/`, generalised for code
+  above `.tohost`: a fetch needs `FetchOK` (RAM, off the HTIF mailbox) instead of
+  `pc + 4 ≤ tohostAddr`, a store `StoreWin` instead of `tohostAddr + 16 ≤ a`, and
+  code pins are on the memory current at each instruction (20 modified files,
+  `scripts/port_closure.py` `MODIFIED`).
+
+**Reproducing the image.** The runtime's bytes depend on the build directory:
+tcc's sources are compiled from `$(BUILD)/tcc-src`, and the `__FILE__` strings
+of its assertions land in `.rodata`, moving every later address (`.tohost`
+included). `make -C c BUILD=build FLAGS=0 PROG=tests/p3/sum.c ELF=…` (the
+relative `build`, as `c/tests/run.sh` and `scripts/run_tcc_sail.sh` use)
+reproduces runtime hash `9e1142dc96d8db10` and `.tohost = 0x8007cec0`; an
+absolute `BUILD` path gives a different image. `scripts/tcc_cut.py` refuses any
+other runtime hash.
 
 ## Layout
 * `vendor/tinycc`: pristine tinycc 43c7708.
@@ -167,8 +193,10 @@ takes about 6 minutes from scratch, peak 2 GB per Lean process.
 * `vendor/certora-export`, `vendor/certora-export-patched`: Certora's CCLib,
   pristine and patched (generated by `scripts/cclib_src.sh`).
 * `Tcc/`: Phase 3 Lean (`Clight/`: printf, runner, premises; `Prog/Sum/`: P;
-  `Audit/`: the patch audit; `Boot/`: the cut interface; `Capture/Sum/`: P's
-  captured cut, generated).
+  `Audit/`: the patch audit; `Boot/`: the cut interface, the replay rows and
+  the one-instruction rules; `Capture/Sum/`: P's captured cut, generated;
+  `Prog/Sum/Machine/`: the replay of P's program phase, generated;
+  `EndToEnd/`: the end-to-end theorem).
 * `Vsa/`, `riscv-lean/`: the machine layer and the Sail model, copied from
   ship-your-lua.
 * `results/`: measurements.

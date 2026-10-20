@@ -31,6 +31,7 @@ CUT = ROOT / 'results/p3/sum-cut.json'
 INPUT = ROOT / 'results/p3/sum-replay.json'
 OUT = ROOT / 'Tcc/Prog/Sum/Machine'
 PER_PART = 40
+CHUNK_MAX = 6  # instructions per block item
 LEDGER = ROOT / 'abstractions/ledger/p3-codegen-segment.tsv'
 TOHOST = 0x8007cec0
 BOP = {0: 'BEQ', 1: 'BNE', 4: 'BLT', 5: 'BGE', 6: 'BLTU', 7: 'BGEU'}
@@ -118,6 +119,8 @@ def rule_kind(w):
     f = fields(w)
     if f['op'] == 0x67 and f['f3'] == 0 and f['rd'] != 0:
         return 'jalr'
+    if f['op'] == 0x6f and f['rd'] != 0:
+        return 'jal'
     if w == 0x00000013:
         return 'nop'
     if f['op'] == 0x33 and f['f3'] == 3 and f['f7'] == 0 and f['rd'] != 0:
@@ -157,10 +160,20 @@ def capture(trace):
         reason = 'no rule for this instruction'
         if bk and r['mem'] and r['mem'][0] == 'S' and TOHOST - 8 < r['mem'][2] < TOHOST + 16:
             bk, reason = None, 'a store into the HTIF mailbox'
+            kind_, width, addr, pre, post = r['mem']
+            rs2 = (w >> 20) & 31
+            data = r['regs'][rs2 - 1] if rs2 else 0
+            if addr == TOHOST and width == 8 and data >> 48 == 0x0101:
+                rk, r['data'] = 'putchar', data
+            elif addr == TOHOST and width == 8 and data & 1 and data >> 47 == 0:
+                rk, r['data'] = 'exit', data
         if rk:
             close(r['pc'])
             items.append({'kind': rk, 'pc': r['pc'], 'regs': r['regs'], 'word': w,
-                          'end': r['npc'], 'stores': [], 'outb': r['outb']})
+                          'end': r['npc'], 'stores': [], 'outb': r['outb'],
+                          'data': r.get('data', 0)})
+            if rk == 'exit':
+                break
             continue
         if cur is None:
             cur = {'kind': 'block', 'pc': r['pc'], 'regs': r['regs'], 'body': [], 'lds': [],
@@ -168,6 +181,11 @@ def capture(trace):
         if tk:
             close(r['npc'], [r['pc'], w, tk, r['npc'] != r['pc'] + 4])
         elif bk:
+            if len(cur['body']) == CHUNK_MAX:
+                # a long body is several items: per-declaration work stays bounded
+                close(r['pc'])
+                cur = {'kind': 'block', 'pc': r['pc'], 'regs': r['regs'], 'body': [], 'lds': [],
+                       'stores': [], 'outb': 256}
             cur['body'].append([r['pc'], w])
             if r['mem']:
                 kind, width, addr, pre, post = r['mem']
@@ -182,7 +200,8 @@ def capture(trace):
             break
     steps = sum(len(i['body']) + (1 if i['term'] else 0) if i['kind'] == 'block' else 1
                 for i in items)
-    inp = {'items': items, 'stop': stop,
+    halted = bool(items) and items[-1]['kind'] == 'exit'
+    inp = {'items': items, 'stop': stop, 'halted': halted,
            'stop_regs': rows[steps]['regs'] if steps < len(rows) else None,
            'steps': steps, 'program_steps': len(rows)}
     INPUT.write_text(json.dumps(inp) + '\n')
@@ -220,22 +239,25 @@ def esc(s):
 
 def render(inp):
     items = inp['items']
+    exit_it = items[-1] if inp.get('halted') else None
+    if exit_it:
+        items = items[:-1]
     n = len(items)
     files = {}
-    rows_pc = [it['pc'] for it in items] + [items[-1]['end']]
-    rows_regs = [it['regs'] for it in items] + [inp['stop_regs']]
+    rows_pc = [it['pc'] for it in items] + [exit_it['pc'] if exit_it else items[-1]['end']]
+    rows_regs = [it['regs'] for it in items] + [exit_it['regs'] if exit_it else inp['stop_regs']]
     outs = ['']
     for it in items:
         o = outs[-1]
-        if it.get('outb', 256) != 256 and it['kind'] in ('putchar',):
-            o = o + chr(it['outb'])
+        if it['kind'] == 'putchar':
+            o = o + chr(it['data'] & 0xff)
         outs.append(o)
     # defs: pins and logs; a row whose pins (a nop) or log (no store) did not
     # change reuses the previous row's name, so consecutive rows unify syntactically
     defs = []
     pname = ['(cutPins Tcc.Capture.Sum.regs)']
     for k in range(1, n + 1):
-        if items[k - 1]['kind'] == 'nop':
+        if items[k - 1]['kind'] in ('nop', 'putchar'):
             pname.append(pname[-1])
         else:
             defs.append(f'@[irreducible] def pins{k} : GRegs := {pins_lit(rows_regs[k])}')
@@ -294,6 +316,25 @@ def render(inp):
                      f'    {INSTR_AT}\n'
                      f'    (by decide) ({DK}) ({DK}) ({DK}) ({DK}) ({DK})')
             what = f'call `jalr x{rd}, {imm}(x{rs1})`'
+        elif it['kind'] == 'jal':
+            w = it['word']
+            rd = (w >> 7) & 31
+            imm = ((w >> 31) & 1) << 20 | ((w >> 12) & 0xff) << 12 | ((w >> 20) & 1) << 11 | ((w >> 21) & 0x3ff) << 1
+            steps = 1
+            proof = (f'row_jal (w := 0x{w:08x}#32) (imm := 0x{imm:06x}#21) (rd := {rd})\n'
+                     f'    {INSTR_AT}\n'
+                     f'    (by decide) ({DK}) ({DK}) ({DK}) ({DK})')
+            what = f'call `jal x{rd}, {imm}`'
+        elif it['kind'] == 'putchar':
+            w = it['word']
+            rs1, rs2 = (w >> 15) & 31, (w >> 20) & 31
+            imm = ((w >> 25) << 5) | ((w >> 7) & 31)
+            steps = 1
+            proof = (f'row_putchar (w := 0x{w:08x}#32) (imm := 0x{imm:03x}#12) (rs1 := {rs1}) '
+                     f'(rs2 := {rs2}) (c := 0x{it["data"] & 0xff:02x}#8)\n'
+                     f'    {INSTR_AT}\n'
+                     f'    (by decide) (by decide) ({DK}) ({DK}) ({DK})')
+            what = f'console byte `{it["data"] & 0xff:#04x}` to `tohost`'
         elif it['kind'] == 'nop':
             steps = 1
             proof = f'row_nop (w := 0x00000013#32)\n    {INSTR_AT}\n    ({DK}) ({DK}) ({DK})'
@@ -338,8 +379,28 @@ def render(inp):
         f'/-- The replayed prefix: from the captured cut, {inp["steps"]} steps to '
         f'`0x{rows_pc[n]:x}`. -/\n'
         f'theorem replay : Leads TccSumCut ({row(n)}) :=\n  fun c h => ({chain}) c h.row\n\n'
+        + (exit_txt(exit_it, row(n), outs[n]) if exit_it else '') +
         f'end {NS}\n')
     return files
+
+
+def exit_txt(it, row_n, out):
+    w = it['word']
+    rs1, rs2 = (w >> 15) & 31, (w >> 20) & 31
+    imm = ((w >> 25) << 5) | ((w >> 7) & 31)
+    e = it['data'] >> 1
+    return (f'/-- The exit store at `0x{it["pc"]:x}`: `tohost := ({e} <<< 1) ||| 1`. -/\n'
+            f'theorem sim_exit : ∀ c, ({row_n}) c → Halts c "{esc(out)}" (0x{e:x}#64).toNat :=\n'
+            f'  row_exit (w := 0x{w:08x}#32) (imm := 0x{imm:03x}#12) (rs1 := {rs1}) (rs2 := {rs2})\n'
+            f'    {INSTR_AT}\n'
+            f'    (by decide) (by decide) ({DK}) ({DK}) ({DK})\n\n'
+            f'/-- **The program phase from the captured cut**: `tcc -run sum.c` prints '
+            f'`{esc(out)}` and exits with status {e}. -/\n'
+            f'theorem sum_halts : SumHalts_Statement := by\n'
+            f'  intro c h\n'
+            f'  obtain ⟨c1, hs1, hr⟩ := replay c h\n'
+            f'  obtain ⟨c2, σf, hs2, hh, ho⟩ := sim_exit c1 hr\n'
+            f'  exact ⟨c2, σf, Steps.trans hs1 hs2, hh, ho⟩\n\n')
 
 
 def ledger(inp):
