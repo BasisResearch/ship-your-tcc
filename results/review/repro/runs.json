@@ -1,0 +1,62 @@
+{
+  "date": "2026-10-20",
+  "note": "Lightweight rerun against current built oracles; outputs recorded individually. Pristine tcc invoked with -Bbuild/pristine-x86 -Ivendor/tinycc/include -run. All exit 0.",
+  "runs": {
+    "lean_long_to_float_rounding": {
+      "gcc": {
+        "exit": 0,
+        "stdout": "utof 5ea59cd7\nstof 5ea59cd7\n",
+        "stderr": ""
+      },
+      "ccomp": {
+        "exit": 0,
+        "stdout": "utof 5ea59cd7\nstof 5ea59cd7\n",
+        "stderr": ""
+      },
+      "lean": {
+        "exit": 0,
+        "stdout": "utof 5ea59cd6\nstof 5ea59cd6\n",
+        "stderr": ""
+      }
+    },
+    "lean_double_to_ulong": {
+      "gcc": {
+        "exit": 0,
+        "stdout": "10000000000000000000\n10000000000000000000\n",
+        "stderr": ""
+      },
+      "ccomp": {
+        "exit": 0,
+        "stdout": "10000000000000000000\n10000000000000000000\n",
+        "stderr": ""
+      },
+      "lean": {
+        "exit": 0,
+        "stdout": "9223372036854775807\n9223372036854775807\n",
+        "stderr": ""
+      }
+    },
+    "tcc_union_designator_override": {
+      "gcc": {
+        "exit": 0,
+        "stdout": "0 0 1 0\n",
+        "stderr": ""
+      },
+      "ccomp": {
+        "exit": 0,
+        "stdout": "0 0 1 0\n",
+        "stderr": ""
+      },
+      "lean": {
+        "exit": 0,
+        "stdout": "0 0 1 0\n",
+        "stderr": ""
+      },
+      "pristine_tcc": {
+        "exit": 0,
+        "stdout": "42 0 1 0\n",
+        "stderr": ""
+      }
+    }
+  }
+}

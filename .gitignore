@@ -10,3 +10,4 @@ corpus/tcc/*.c
 results/diff3/.cache/
 c/tcc-riscv-htif.elf
 c/.build.lock
+results/p3/sum-cut/*.bin

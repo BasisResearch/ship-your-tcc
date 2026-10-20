@@ -9,9 +9,15 @@
 #     declarations, native_decide, bv_decide, ofReduceBool, trustCompiler;
 # (3b) proof discipline (scripts/check_discipline.py, scripts/discipline_rules.tsv);
 # (3c) the abstraction gate (abstractions/gate.py, abstractions/clusters.tsv);
+# (4) generated files are generated: vendor/certora-export-patched = pristine
+#     vendor/certora-export + patches/certora/*-cclib-*.patch (scripts/cclib_src.sh),
+#     Tcc/Prog/*/Clight.lean from clightgen's output (scripts/gen_prog_clight.sh),
+#     Tcc/Audit/StepOrig.lean from the pristine Clight.lean (scripts/gen_cclib_audit.sh);
 # (5) lake build (skipped with --static-only, and until the Lean project exists;
-#     capped at 12 GB as on ship-your-lua);
-# (6) #print axioms of the key theorems ⊆ {propext, Classical.choice, Quot.sound}.
+#     capped at 12 GB as on ship-your-lua, serialised on $SYT_LAKE_LOCK);
+# (6) #print axioms of the key theorems ⊆ {propext, Classical.choice, Quot.sound}
+#     (scripts/axioms.lean); (6b) the patch-0002 audit (scripts/axioms_certora.lean)
+#     may add exactly Certora's four external-call axioms.
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 2
 fail() { echo "check: FAIL: $*"; exit 1; }
@@ -65,22 +71,35 @@ python3 scripts/check_discipline.py || fail "discipline"
 echo "== (3c) abstraction gate"
 python3 abstractions/gate.py || fail "run /abstraction-discovery"
 
+echo "== (4) generated files"
+scripts/cclib_src.sh --check || fail "vendor/certora-export-patched is not pristine + patches"
+scripts/gen_prog_clight.sh --check || fail "Tcc/Prog/*/Clight.lean or c/tests/p3/*.clight.lean stale"
+scripts/gen_cclib_audit.sh --check || fail "Tcc/Audit/StepOrig.lean stale"
+
 [ "${1:-}" = "--static-only" ] && { echo "check: static stages OK"; exit 0; }
 if [ -f lakefile.toml ] || [ -f lakefile.lean ]; then
   echo "== (5) lake build"
-  # serialised with the other lanes' builds on the shared box
-  LOCK=${LAKE_LOCK:-$HOME/Documents/code/ship-your-tcc/build/lake.lock}
-  mkdir -p "$(dirname "$LOCK")"
-  flock "$LOCK" systemd-run --user --scope -q -p MemoryMax=12G lake build || fail "lake build"
+  lock=${SYT_LAKE_LOCK:-build/lake.lock}
+  mkdir -p "$(dirname "$lock")"
+  flock "$lock" systemd-run --user --scope -q -p MemoryMax=12G lake build || fail "lake build"
+  # audit <file> <allowed-axiom-regex>: every #print axioms row within the set
+  audit() {
+    [ -f "$1" ] || fail "$1 missing"
+    if ! out=$(lake env lean "$1" 2>&1); then
+      printf '%s\n' "$out"
+      fail "axiom audit $1 did not elaborate"
+    fi
+    # #print axioms wraps long lists over several lines: join them first
+    rows=$(printf '%s\n' "$out" | tr '\n' ' ' | sed -E "s/ +/ /g; s/ ?'([^' ]+)' /\n'\1' /g" | grep -E "^'[^']+' (depends on axioms:|does not depend on any axioms)" | sed -E 's/ +$//' || true)
+    [ -n "$rows" ] || fail "axiom audit $1 reported no theorems"
+    printf '%s\n' "$rows"
+    printf '%s\n' "$rows" | grep -vE "^'[^']+' (does not depend on any axioms|depends on axioms: \[(($2)(, ($2))*)?\])$" && fail "non-standard axioms in $1"
+    return 0
+  }
+  std='propext|Classical.choice|Quot.sound'
   echo "== (6) axioms"
-  [ -f scripts/axioms.lean ] || fail "scripts/axioms.lean missing"
-  if ! out=$(flock "$LOCK" lake env lean scripts/axioms.lean 2>&1); then
-    printf '%s\n' "$out"
-    fail "axiom audit did not elaborate"
-  fi
-  rows=$(printf '%s\n' "$out" | grep -E "^'[^']+' (depends on axioms:|does not depend on any axioms)" || true)
-  [ -n "$rows" ] || fail "axiom audit reported no theorems"
-  printf '%s\n' "$rows"
-  printf '%s\n' "$rows" | grep -vE "^'[^']+' (does not depend on any axioms|depends on axioms: \[((propext|Classical.choice|Quot.sound)(, (propext|Classical.choice|Quot.sound))*)?\])$" && fail "non-standard axioms"
+  audit scripts/axioms.lean "$std"
+  echo "== (6b) axioms of the patch-0002 audit"
+  audit scripts/axioms_certora.lean "$std|CC.externalFunctionsSem|CC.inlineAssemblySem|CC.externalFunctionsSemDeterm|CC.inlineAssemblySemDeterm"
 else echo "== (5,6) no Lean project yet (Phase 3)"; fi
 echo "check: OK"

@@ -1,0 +1,14 @@
+{
+  "result": "pass",
+  "checks": [
+    "all cut.json file sizes and hashes",
+    "full main bytes equal earlier 136-byte sum code dump",
+    "main byte-presence all present",
+    "empty pre-cut console",
+    "published helper build manifest hash matches"
+  ],
+  "pc": 2147490632,
+  "steps": 6632342,
+  "arena_present_bytes": 77864,
+  "defined_registers": 176
+}

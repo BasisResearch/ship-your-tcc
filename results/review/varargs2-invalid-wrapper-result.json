@@ -1,0 +1,12 @@
+{
+  "cached": false,
+  "cmd": "scripts/run_tcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_varargs2.c",
+  "exit": 2,
+  "meta": {},
+  "outcome": "ok",
+  "stderr_tail": "scripts/run_tcc_sail.sh: line 111: syntax error near unexpected token `('\nscripts/run_tcc_sail.sh: line 111: `  echo \"tcc_sail: tcc did not run the program (exit $erc):\" >&2'\n",
+  "stdout": "",
+  "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "version": "265dc37671943fb0",
+  "wall_s": 357.167
+}

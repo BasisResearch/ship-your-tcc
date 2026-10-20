@@ -1,0 +1,2 @@
+[clight_run] steps=99 load_ms=571 run_ms=1
+[run_lean_clight] clightgen_ms=27 total_ms=694

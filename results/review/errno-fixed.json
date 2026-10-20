@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-20",
+  "runtime_commit": "7a7b2c0ae977fdb5e00af96e84940c12d01b67bc",
+  "source_sha256": "cdea2f13db8a42d16c50f9d5642e61c96de2c59fd0008f3e8d73595c7dae4f08",
+  "command": "ORACLE_META=<meta> MAX_STEPS=30000000 bash scripts/run_tcc_sail.sh c/tests/run/syscall_errno.c",
+  "exit": 0,
+  "meta": {
+    "compile_steps": "11655557",
+    "program_steps": "4000",
+    "steps": "11659582"
+  },
+  "note": "Before fix: wrong errno, exit 2. After raw-slot sharing: ENOENT, exit 0."
+}
