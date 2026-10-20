@@ -107,7 +107,7 @@ theorem try_step_store
       = .ok RETIRE_SUCCESS (sigma3_store σ pc m'))
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0) :
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0) :
     (try_step u true).run σ
       = .ok false
           {(({(sigma3_store σ pc m') with regs := (sigma3_store σ pc m').regs.insert Register.PC (BitVec.addInt pc 4)}) : MState) with
@@ -240,7 +240,7 @@ theorem stepOnce_store_notick
       = .ok RETIRE_SUCCESS (sigma3_store σ pc m'))
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (htick : i + 1 ≠ 2) :
     (stepOnce i u).run σ = .ok (.inr (i + 1, u + 1)) (sigmaPost_store σ pc vminstret m') := by
   have hts := try_step_store σ u pc vminstret w ast m' b0 b1 b2 b3
@@ -294,7 +294,7 @@ theorem stepOnce_store_tick
       = .ok RETIRE_SUCCESS (sigma3_store σ pc m'))
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (htick : i + 1 = 2) :
     (stepOnce i u).run σ
       = .ok (.inr (0, u + 1)) (sigmaTick_store σ pc vminstret m' vmip vmtime vmtimecmp vmcycle) := by
@@ -338,7 +338,7 @@ theorem step_store_notick
       = .ok RETIRE_SUCCESS (sigma3_store σ pc m'))
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (htick : i + 1 ≠ 2) :
     Vsa.Machine.Step ⟨σ, i, u⟩ ⟨sigmaPost_store σ pc vminstret m', i + 1, u + 1⟩
     ∧ GoodState (sigmaPost_store σ pc vminstret m') :=
@@ -370,7 +370,7 @@ theorem step_store_tick
       = .ok RETIRE_SUCCESS (sigma3_store σ pc m'))
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (htick : i + 1 = 2) :
     Vsa.Machine.Step ⟨σ, i, u⟩
       ⟨sigmaTick_store σ pc vminstret m' vmip vmtime vmtimecmp vmcycle, 0, u + 1⟩

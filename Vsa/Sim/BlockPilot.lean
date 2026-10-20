@@ -723,7 +723,7 @@ theorem block_alu_run (is : List AInstr) :
           (gprReg ard) (gprRT ard (srcVal ars1 L + sign_extend (m := 64) aimm))
           ab0 ab1 ab2 ab3 hG hpc hmi hword hnotrvc hdec' hexec
           hrdf.1 hrdf.2.1 hrdf.2.2.1 hrdf.2.2.2.1 hrdf.2.2.2.2
-          hb0 hb1 hb2 hb3 hlo hhi halign hi
+          hb0 hb1 hb2 hb3 hlo (fetchOK_of_le hhi) halign hi
       have hpc1 := obs_alu_pc hobs1
       obtain ⟨vm1, hmi1⟩ := obs_alu_minstret hobs1
       have hout1 : σ1.sailOutput = σ.sailOutput := hobs1.2
@@ -785,7 +785,7 @@ theorem block_alu_run (is : List AInstr) :
           (gprReg ard) (gprRT ard (srcVal ars1 L + srcVal ars2 L))
           ab0 ab1 ab2 ab3 hG hpc hmi hword hnotrvc hdec' hexec
           hrdf.1 hrdf.2.1 hrdf.2.2.1 hrdf.2.2.2.1 hrdf.2.2.2.2
-          hb0 hb1 hb2 hb3 hlo hhi halign hi
+          hb0 hb1 hb2 hb3 hlo (fetchOK_of_le hhi) halign hi
       have hpc1 := obs_alu_pc hobs1
       obtain ⟨vm1, hmi1⟩ := obs_alu_minstret hobs1
       have hout1 : σ1.sailOutput = σ.sailOutput := hobs1.2

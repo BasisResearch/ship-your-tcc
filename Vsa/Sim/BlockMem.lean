@@ -268,7 +268,7 @@ theorem exec_sb_bm (σ : MState) (pc : BitVec 64) (imm : BitVec 12) (rs2 rs1 : r
       = .ok vdata (afterNextPC (afterPrelude σ) pc))
     (hlo : 0x80000000 ≤ (vbase + sign_extend (m := 64) imm).toNat)
     (hhiram : (vbase + sign_extend (m := 64) imm).toNat + 1 ≤ 0x100000000)
-    (hhiwin : tohostAddr + 16 ≤ (vbase + sign_extend (m := 64) imm).toNat) :
+    (hhiwin : StoreWin (vbase + sign_extend (m := 64) imm).toNat) :
     (execute (instruction.STORE (imm, rs2, rs1, 1))).run (afterNextPC (afterPrelude σ) pc)
       = .ok RETIRE_SUCCESS
           (sigma3_store σ pc
@@ -329,7 +329,7 @@ theorem exec_sh_bm (σ : MState) (pc : BitVec 64) (imm : BitVec 12) (rs2 rs1 : r
       = .ok vdata (afterNextPC (afterPrelude σ) pc))
     (hlo : 0x80000000 ≤ (vbase + sign_extend (m := 64) imm).toNat)
     (hhiram : (vbase + sign_extend (m := 64) imm).toNat + 2 ≤ 0x100000000)
-    (hhiwin : tohostAddr + 16 ≤ (vbase + sign_extend (m := 64) imm).toNat)
+    (hhiwin : StoreWin (vbase + sign_extend (m := 64) imm).toNat)
     (halign : (vbase + sign_extend (m := 64) imm).toNat % 2 = 0) :
     (execute (instruction.STORE (imm, rs2, rs1, 2))).run (afterNextPC (afterPrelude σ) pc)
       = .ok RETIRE_SUCCESS
@@ -923,16 +923,16 @@ def MemFacts (m : Std.ExtHashMap Nat (BitVec 8)) (L : GRegs) (bs : List (BitVec 
     (m[(eaddrM a L).toNat + 1]?).getD 0 = bs.getD 1 0#8
   | .sw =>
     0x80000000 ≤ (eaddrM a L).toNat ∧ (eaddrM a L).toNat + 4 ≤ 0x100000000 ∧
-    tohostAddr + 16 ≤ (eaddrM a L).toNat ∧ (eaddrM a L).toNat % 4 = 0
+    StoreWin (eaddrM a L).toNat ∧ (eaddrM a L).toNat % 4 = 0
   | .sd =>
     0x80000000 ≤ (eaddrM a L).toNat ∧ (eaddrM a L).toNat + 8 ≤ 0x100000000 ∧
-    tohostAddr + 16 ≤ (eaddrM a L).toNat ∧ (eaddrM a L).toNat % 8 = 0
+    StoreWin (eaddrM a L).toNat ∧ (eaddrM a L).toNat % 8 = 0
   | .sb =>
     0x80000000 ≤ (eaddrM a L).toNat ∧ (eaddrM a L).toNat + 1 ≤ 0x100000000 ∧
-    tohostAddr + 16 ≤ (eaddrM a L).toNat
+    StoreWin (eaddrM a L).toNat
   | .sh =>
     0x80000000 ≤ (eaddrM a L).toNat ∧ (eaddrM a L).toNat + 2 ≤ 0x100000000 ∧
-    tohostAddr + 16 ≤ (eaddrM a L).toNat ∧ (eaddrM a L).toNat % 2 = 0
+    StoreWin (eaddrM a L).toNat ∧ (eaddrM a L).toNat % 2 = 0
 
 /-- The non-computable per-element obligations, with the register-pin,
 load-data, and memory threads advancing in lockstep with `runGM`/`wlogM`. -/
@@ -940,7 +940,7 @@ def ProgFactsM (mc : Std.ExtHashMap Nat (BitVec 8)) :
     Std.ExtHashMap Nat (BitVec 8) → GRegs → List (List (BitVec 8)) → List MInstr → Prop
   | _, _, _, [] => True
   | m, L, lds, a :: r =>
-    BytePinsM mc a ∧ DecodeFactM a ∧ MemFacts m L (lds.headD []) a ∧
+    BytePinsM m a ∧ DecodeFactM a ∧ MemFacts m L (lds.headD []) a ∧
     ProgFactsM mc (stepMemM m a L) (stepGM a L (lds.headD [])) (stepLdsM a.kind lds) r
 
 /-! ## The computable VC (`BlockOKM`) -/
@@ -1020,7 +1020,7 @@ abbrev InstrOKM (pc0 : BitVec 64) (dom : List Nat) (a : MInstr) : Prop :=
   (Sail.BitVec.extractLsb (((a.b3.append a.b2).append a.b1).append a.b0) 1 0).toNat
     = (0b11#2 : BitVec 2).toNat ∧
   0x80000000 ≤ a.pc.toNat ∧
-  a.pc.toNat + 4 ≤ tohostAddr ∧
+  FetchOK a.pc.toNat ∧
   a.pc.toNat % 4 = 0 ∧
   KindOK dom a.kind a.rd a.rs1 a.rs2
 
@@ -1059,7 +1059,6 @@ theorem block_mem_run (is : List MInstr) :
     σ.regs.get? Register.PC = some pc0 →
     σ.regs.get? Register.minstret = some vm →
     σ.mem = m →
-    (∀ j, j < tohostAddr → m[j]? = mc[j]?) →
     GHolds σ L →
     KeysOK (keysG L) →
     (∀ n ∈ dom, n ∈ keysG L) →
@@ -1077,13 +1076,13 @@ theorem block_mem_run (is : List MInstr) :
         σ'.regs.get? R = σ.regs.get? R) := by
   induction is with
   | nil =>
-    intro σ i u pc0 vm L lds mc m dom hG hpc hmi hmem _ hL _ _ _ _ hi
+    intro σ i u pc0 vm L lds mc m dom hG hpc hmi hmem hL _ _ _ _ hi
     exact ⟨σ, i, Steps.refl _, hi, hG, hmem, rfl, hpc, ⟨vm, hmi⟩, hL, fun R _ _ => rfl⟩
   | cons a r ih =>
-    intro σ i u pc0 vm L lds mc m dom hG hpc hmi hmem hlow hL hkeys hdom hfacts hwf hi
+    intro σ i u pc0 vm L lds mc m dom hG hpc hmi hmem hL hkeys hdom hfacts hwf hi
     subst hmem
     obtain ⟨apc, aword, ab0, ab1, ab2, ab3, akind, ard, ars1, ars2, aimm⟩ := a
-    have hfacts' : BytePinsM mc ⟨apc, aword, ab0, ab1, ab2, ab3, akind, ard, ars1, ars2, aimm⟩ ∧
+    have hfacts' : BytePinsM σ.mem ⟨apc, aword, ab0, ab1, ab2, ab3, akind, ard, ars1, ars2, aimm⟩ ∧
         DecodeFactM ⟨apc, aword, ab0, ab1, ab2, ab3, akind, ard, ars1, ars2, aimm⟩ ∧
         MemFacts σ.mem L (lds.headD [])
           ⟨apc, aword, ab0, ab1, ab2, ab3, akind, ard, ars1, ars2, aimm⟩ ∧
@@ -1103,11 +1102,10 @@ theorem block_mem_run (is : List MInstr) :
       BitVec.eq_of_toNat_eq hwn
     have hnotrvc : Sail.BitVec.extractLsb (((ab3.append ab2).append ab1).append ab0) 1 0
         = (0b11#2 : BitVec 2) := BitVec.eq_of_toNat_eq hrvcn
-    have hhi' : apc.toNat + 4 ≤ tohostAddr := hhi
-    have hb0 : σ.mem[apc.toNat]? = some ab0 := (hlow _ (by omega)).trans hbp.1
-    have hb1 : σ.mem[apc.toNat + 1]? = some ab1 := (hlow _ (by omega)).trans hbp.2.1
-    have hb2 : σ.mem[apc.toNat + 2]? = some ab2 := (hlow _ (by omega)).trans hbp.2.2.1
-    have hb3 : σ.mem[apc.toNat + 3]? = some ab3 := (hlow _ (by omega)).trans hbp.2.2.2
+    have hb0 : σ.mem[apc.toNat]? = some ab0 := hbp.1
+    have hb1 : σ.mem[apc.toNat + 1]? = some ab1 := hbp.2.1
+    have hb2 : σ.mem[apc.toNat + 2]? = some ab2 := hbp.2.2.1
+    have hb3 : σ.mem[apc.toNat + 3]? = some ab3 := hbp.2.2.2
     have hdec' := hdec (afterPrelude σ)
       (by rw [get?_afterPrelude σ _ (by decide)]; exact hG.misa)
       (by rw [get?_afterPrelude σ _ (by decide)]; exact hG.cur_privilege)
@@ -1151,7 +1149,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .addi, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .addi lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -1202,7 +1200,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .add, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .add lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -1253,7 +1251,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .sub, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .sub lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -1304,7 +1302,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .or, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .or lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -1355,7 +1353,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .lw, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .lw lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -1406,7 +1404,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .lwu, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .lwu lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -1457,7 +1455,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .ld, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .ld lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -1508,7 +1506,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .lbu, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .lbu lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -1559,7 +1557,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .lh, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .lh lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -1592,16 +1590,11 @@ theorem block_mem_run (is : List MInstr) :
       have hL1 : GHolds σ1 L := gholds_store hobs1 L hkeys hL
       have hmem1' : σ1.mem = stepMemM σ.mem
           ⟨apc, aword, ab0, ab1, ab2, ab3, .sw, ard, ars1, ars2, aimm⟩ L := hmem1
-      have hlow1 : ∀ j, j < tohostAddr →
-          (stepMemM σ.mem ⟨apc, aword, ab0, ab1, ab2, ab3, .sw, ard, ars1, ars2, aimm⟩ L)[j]?
-            = mc[j]? := by
-        intro j hj
-        exact (writeMap4_low_miss σ.mem _ _ j (by omega)).trans (hlow j hj)
       obtain ⟨σf, i', hsteps, hi', hGf, hmemf, houtf, hpcf, hmif, hGHf, hframef⟩ :=
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1 L
           (stepLdsM .sw lds) mc
           (stepMemM σ.mem ⟨apc, aword, ab0, ab1, ab2, ab3, .sw, ard, ars1, ars2, aimm⟩ L) dom
-          hG1 hpc1 hmi1 hmem1' hlow1 hL1 hkeys hdom hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1' hL1 hkeys hdom hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -1633,16 +1626,11 @@ theorem block_mem_run (is : List MInstr) :
       have hL1 : GHolds σ1 L := gholds_store hobs1 L hkeys hL
       have hmem1' : σ1.mem = stepMemM σ.mem
           ⟨apc, aword, ab0, ab1, ab2, ab3, .sd, ard, ars1, ars2, aimm⟩ L := hmem1
-      have hlow1 : ∀ j, j < tohostAddr →
-          (stepMemM σ.mem ⟨apc, aword, ab0, ab1, ab2, ab3, .sd, ard, ars1, ars2, aimm⟩ L)[j]?
-            = mc[j]? := by
-        intro j hj
-        exact (writeMap8_low_miss σ.mem _ _ j (by omega)).trans (hlow j hj)
       obtain ⟨σf, i', hsteps, hi', hGf, hmemf, houtf, hpcf, hmif, hGHf, hframef⟩ :=
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1 L
           (stepLdsM .sd lds) mc
           (stepMemM σ.mem ⟨apc, aword, ab0, ab1, ab2, ab3, .sd, ard, ars1, ars2, aimm⟩ L) dom
-          hG1 hpc1 hmi1 hmem1' hlow1 hL1 hkeys hdom hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1' hL1 hkeys hdom hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -1674,16 +1662,11 @@ theorem block_mem_run (is : List MInstr) :
       have hL1 : GHolds σ1 L := gholds_store hobs1 L hkeys hL
       have hmem1' : σ1.mem = stepMemM σ.mem
           ⟨apc, aword, ab0, ab1, ab2, ab3, .sb, ard, ars1, ars2, aimm⟩ L := hmem1
-      have hlow1 : ∀ j, j < tohostAddr →
-          (stepMemM σ.mem ⟨apc, aword, ab0, ab1, ab2, ab3, .sb, ard, ars1, ars2, aimm⟩ L)[j]?
-            = mc[j]? := by
-        intro j hj
-        exact (insert_low_miss σ.mem _ _ j (by omega)).trans (hlow j hj)
       obtain ⟨σf, i', hsteps, hi', hGf, hmemf, houtf, hpcf, hmif, hGHf, hframef⟩ :=
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1 L
           (stepLdsM .sb lds) mc
           (stepMemM σ.mem ⟨apc, aword, ab0, ab1, ab2, ab3, .sb, ard, ars1, ars2, aimm⟩ L) dom
-          hG1 hpc1 hmi1 hmem1' hlow1 hL1 hkeys hdom hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1' hL1 hkeys hdom hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -1718,16 +1701,11 @@ theorem block_mem_run (is : List MInstr) :
       have hL1 : GHolds σ1 L := gholds_store hobs1 L hkeys hL
       have hmem1' : σ1.mem = stepMemM σ.mem
           ⟨apc, aword, ab0, ab1, ab2, ab3, .sh, ard, ars1, ars2, aimm⟩ L := hmem1
-      have hlow1 : ∀ j, j < tohostAddr →
-          (stepMemM σ.mem ⟨apc, aword, ab0, ab1, ab2, ab3, .sh, ard, ars1, ars2, aimm⟩ L)[j]?
-            = mc[j]? := by
-        intro j hj
-        exact (writeMap2_low_miss σ.mem _ _ j (by omega)).trans (hlow j hj)
       obtain ⟨σf, i', hsteps, hi', hGf, hmemf, houtf, hpcf, hmif, hGHf, hframef⟩ :=
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1 L
           (stepLdsM .sh lds) mc
           (stepMemM σ.mem ⟨apc, aword, ab0, ab1, ab2, ab3, .sh, ard, ars1, ars2, aimm⟩ L) dom
-          hG1 hpc1 hmi1 hmem1' hlow1 hL1 hkeys hdom hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1' hL1 hkeys hdom hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -1780,7 +1758,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .addiw, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .addiw lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -1838,7 +1816,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .slli, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .slli lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -1896,7 +1874,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .srli, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .srli lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -1950,7 +1928,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .slti, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .slti lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -2000,7 +1978,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .xori, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .xori lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -2050,7 +2028,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .andi, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .andi lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -2112,7 +2090,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .slliw, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .slliw lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -2166,7 +2144,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .slt, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .slt lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -2228,7 +2206,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .subw, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .subw lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -2285,7 +2263,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .auipc, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .auipc lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -2335,7 +2313,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .ori, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .ori lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -2393,7 +2371,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .srai, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .srai lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -2444,7 +2422,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .and, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .and lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -2499,7 +2477,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .srl, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .srl lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -2561,7 +2539,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .addw, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .addw lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -2623,7 +2601,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .srliw, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .srliw lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -2685,7 +2663,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .sraiw, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .sraiw lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -2740,7 +2718,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .lui, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .lui lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -2791,7 +2769,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .lhu, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .lhu lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -2845,7 +2823,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .xor, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .xor lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -2899,7 +2877,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .sll, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .sll lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -2953,7 +2931,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .sllw, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .sllw lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -3007,7 +2985,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .srlw, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .srlw lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -3061,7 +3039,7 @@ theorem block_mem_run (is : List MInstr) :
         ih σ1 i1 (u + 1) (BitVec.addInt apc 4) vm1
           (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, .sraw, ard, ars1, ars2, aimm⟩ L (lds.headD []))
           (stepLdsM .sraw lds) mc σ.mem (ard :: dom)
-          hG1 hpc1 hmi1 hmem1 hlow hL1 hkeys1 hdom1 hfr hwfr hi1
+          hG1 hpc1 hmi1 hmem1 hL1 hkeys1 hdom1 hfr hwfr hi1
       refine ⟨σf, i', ?_, hi', hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have hsteps' : Steps ⟨σ, i, u⟩ ⟨σf, i', u + 1 + r.length⟩ := Steps.head hs1 hsteps
         have e : u + 1 + r.length = u + (r.length + 1) := by omega
@@ -3100,6 +3078,6 @@ theorem block_mem_sound (is : List MInstr) (σ : MState) (i u : Nat)
         (∀ n ∈ wrRegsM is, (gprReg n == R) = false) →
         σ'.regs.get? R = σ.regs.get? R) :=
   block_mem_run is σ i u pc0 vm L lds σ.mem σ.mem (keysG L)
-    hG hpc hmi rfl (fun _ _ => rfl) hL hkeys (fun _ h => h) hfacts hwf hi
+    hG hpc hmi rfl hL hkeys (fun _ h => h) hfacts hwf hi
 
 end Vsa.Sim

@@ -131,4 +131,28 @@ def initPmaRegions : List PMA_Region :=
                      vector_misaligned_atomicity_granule_size_exp := 4 }
      include_in_device_tree := true }]
 
+/-! ## Code and store windows (ship-your-tcc generalisation)
+
+ship-your-interpreter's layer placed every fetched instruction below the HTIF
+mailbox (`pc + 4 ≤ tohostAddr`) and every store above it (`tohostAddr + 16 ≤
+a`). `tcc -run` executes from an arena above `.tohost` and stores below it, so
+the layer takes these two off-window facts instead; the original bounds are
+the special cases `fetchOK_of_le` and `storeWin_of_le`. -/
+
+/-- A fetch address: four bytes of RAM below `2^32`, off the HTIF mailbox. -/
+def FetchOK (a : Nat) : Prop :=
+  a + 4 ≤ 0x100000000 ∧ (a + 4 ≤ tohostAddr ∨ tohostAddr + 16 ≤ a)
+
+instance (a : Nat) : Decidable (FetchOK a) := inferInstanceAs (Decidable (_ ∧ _))
+
+theorem fetchOK_of_le {a : Nat} (h : a + 4 ≤ tohostAddr) : FetchOK a :=
+  ⟨by unfold tohostAddr at h; omega, Or.inl h⟩
+
+/-- A store address (any width up to 8) off the HTIF mailbox. -/
+def StoreWin (a : Nat) : Prop := a + 8 ≤ tohostAddr ∨ tohostAddr + 16 ≤ a
+
+instance (a : Nat) : Decidable (StoreWin a) := inferInstanceAs (Decidable (_ ∨ _))
+
+theorem storeWin_of_le {a : Nat} (h : tohostAddr + 16 ≤ a) : StoreWin a := Or.inr h
+
 end Vsa.Sim

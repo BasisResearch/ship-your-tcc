@@ -152,12 +152,12 @@ theorem within_mmio_readable_ram_false
     (hbase : σ.regs.get? Register.htif_tohost_base
       = some (some (BitVec.ofNat 64 tohostAddr) : RegisterType Register.htif_tohost_base))
     (hlo : 0x80000000 ≤ a.toNat)
-    (hhi : a.toNat + 4 ≤ tohostAddr) :
+    (hhi : FetchOK a.toNat) :
     (within_mmio_readable (physaddr.Physaddr a) 4).run σ = .ok false σ := by
   simp only [within_mmio_readable, within_clint, within_sig, within_htif_readable,
     within_htif_writable, get_config_rvfi, plat_have_clint, plat_have_sig,
     zopz0zI_u, zopz0zK_u, LeanRV64DExecutable.Functions.not]
-  simp only [tohostAddr] at hhi
+  simp only [FetchOK, tohostAddr] at hhi
   have hcb : BitVec.toNat plat_clint_base = 33554432 := by decide
   have hcs : BitVec.toNat plat_clint_size = 786432 := by decide
   have hsb : BitVec.toNat plat_sig_base = 201326592 := by decide
@@ -169,12 +169,7 @@ theorem within_mmio_readable_ram_false
   have hadd : (a + 4#64).toNat = a.toNat + 4 := by
     have h4 : (4#64).toNat = 4 := by decide
     rw [BitVec.toNat_add, h4, Nat.mod_eq_of_lt (by omega)]
-  refine ⟨fun _ => by omega, fun _ => by omega, fun _ => ?_⟩
-  have hle : (a + 4#64).toNat ≤ tohostAddr := by simp only [tohostAddr]; rw [hadd]; omega
-  have hrhs : ((tohostAddr : Nat) : Int) % 18446744073709551616 = ((tohostAddr : Nat) : Int) := by
-    decide
-  simp only [tohostAddr] at hle hrhs
-  rw [hrhs]
+  refine ⟨fun _ => by omega, fun _ => by omega, fun hlt => ?_⟩
   omega
 
 open MemoryRegionType AtomicSupport Reservability misaligned_exception in

@@ -133,13 +133,8 @@ def capture(trace):
         tk = term_kind(w)
         bk = body_kind(w)
         reason = 'no rule for this instruction'
-        if bk and r['mem'] and r['mem'][0] == 'S' and r['mem'][2] < TOHOST + 16:
-            bk, reason = None, 'a store below tohostAddr + 16 (the HTIF window, or code)'
-        if r['pc'] + 4 > TOHOST:
-            tk, bk = None, None
-            reason = ('code above tohostAddr: the segment layer places code below the HTIF '
-                      'mailbox and every store above it (InstrOKM), but tcc runs P from its '
-                      'arena at 0x86400000')
+        if bk and r['mem'] and r['mem'][0] == 'S' and TOHOST - 8 < r['mem'][2] < TOHOST + 16:
+            bk, reason = None, 'a store into the HTIF mailbox (StoreWin)'
         if tk:
             taken = r['npc'] != r['pc'] + 4
             cur['term'] = [r['pc'], w, tk, taken]
@@ -220,13 +215,13 @@ def render(inp):
         name = static[(b['pc'], len(b['body']), tuple(t[2:]) if t else None)]
         (pc0, L0, g0), (pc1, L1, g1) = rows[k], rows[k + 1]
         sims.append(f'''/-- Block {k}: `0x{pc0:x}` to `0x{pc1:x}` ({len(b['body']) + (1 if t else 0)} steps). -/
-theorem sim_B{k} : ∀ c, RunRow view 0x{pc0:x}#64 ({L0}) {g0} c →
-    ∃ c', Steps c c' ∧ RunRow view 0x{pc1:x}#64 {L1} {g1} c' :=
+theorem sim_B{k} :
+    Leads (RunRow view 0x{pc0:x}#64 ({L0}) {g0}) (RunRow view 0x{pc1:x}#64 {L1} {g1}) :=
   row_step {name} {lds_lit(b['lds'])} (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)''')
     chain = 'sim_B0'
     for k in range(1, n):
-        chain = f'RunRow.trans ({chain}) sim_B{k}'
+        chain = f'Leads.trans ({chain}) sim_B{k}'
     stop = inp['stop']
     stop_txt = (f'the instruction `0x{stop["word"]:08x}` at `0x{stop["pc"]:x}` ({stop["reason"]})'
                 if stop else 'the end of the trace')
@@ -242,6 +237,7 @@ The replay of the program phase from the captured cut, one `#derive_case`
 per static block and one `sim_B<k>` per dynamic block, chained: the first
 {steps} of the {inp['program_steps']} steps, up to {stop_txt}. -/
 
+-- discipline: allow(R9-handrolled-fn-assembly) generated, one #derive_case per static block
 namespace Tcc.Prog.Sum.Machine
 
 open LeanRV64DExecutable Vsa Vsa.Machine Vsa.Sim Tcc.Boot Tcc.Capture.Sum
@@ -253,8 +249,8 @@ open LeanRV64DExecutable Vsa Vsa.Machine Vsa.Sim Tcc.Boot Tcc.Capture.Sum
 {(chr(10) * 2).join(sims)}
 
 /-- The replayed prefix: from the captured cut, {steps} steps to `0x{rows[-1][0]:x}`. -/
-theorem replay : ∀ c, TccSumCut c →
-    ∃ c', Steps c c' ∧ RunRow view 0x{rows[-1][0]:x}#64 pins{n} log{n} c' :=
+theorem replay :
+    Leads TccSumCut (RunRow view 0x{rows[-1][0]:x}#64 pins{n} log{n}) :=
   fun c h => ({chain}) c h.row
 
 end Tcc.Prog.Sum.Machine

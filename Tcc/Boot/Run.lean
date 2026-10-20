@@ -130,6 +130,16 @@ macro "tcc_facts " hv:term : tactic => `(tactic| repeat' (first
 
 /-! ## The segment combinator -/
 
+/-- `P` leads to `Q`: every configuration satisfying `P` runs to one
+satisfying `Q`. -/
+def Leads (P Q : Config → Prop) : Prop := ∀ c, P c → ∃ c', Steps c c' ∧ Q c'
+
+theorem Leads.trans {P Q R : Config → Prop} (h1 : Leads P Q) (h2 : Leads Q R) : Leads P R := by
+  intro c hc
+  obtain ⟨c1, s1, q1⟩ := h1 c hc
+  obtain ⟨c2, s2, r2⟩ := h2 c1 q1
+  exact ⟨c2, Steps.trans s1 s2, r2⟩
+
 theorem gholds_of_lookup {σ : MState} {L : GRegs} (hL : GHolds σ L) :
     ∀ (L' : GRegs), (∀ p ∈ L', lookupG p.1 L = some p.2) → GHolds σ L' :=
   fun L' h => gholds_of_get L' fun p hp => gholds_lookup L hL (h p hp)
@@ -144,7 +154,7 @@ theorem row_step {v : Nat → Option (BitVec 8)} (bs : List BBlock) {pc0 pc1 : B
     (hregs : ∀ p ∈ L1, lookupG p.1 (evalBlocks bs (SegEvalState.init L0 lds)).regs = some p.2)
     (hkeys : KeysOK (keysG L1))
     (hlog : log0 ++ (evalBlocks bs (SegEvalState.init L0 lds)).log = log1) :
-    ∀ c, RunRow v pc0 L0 log0 c → ∃ c', Steps c c' ∧ RunRow v pc1 L1 log1 c' := by
+    Leads (RunRow v pc0 L0 log0) (RunRow v pc1 L1 log1) := by
   rintro ⟨σ, i, u⟩ ⟨hG, hpc0, hL, hk, ⟨m0, hv, hm⟩, hout, hi⟩
   obtain ⟨vm, hmi⟩ := hG.minstret
   have hf := hfacts m0 hv
@@ -158,14 +168,5 @@ theorem row_step {v : Nat → Option (BitVec 8)} (bs : List BBlock) {pc0 pc1 : B
     rw [hmem', hm, ← writeLog_append, hlog]
   · simp only [output] at hout ⊢
     rw [hso]; exact hout
-
-theorem RunRow.trans {P Q R : Config → Prop}
-    (h1 : ∀ c, P c → ∃ c', Steps c c' ∧ Q c')
-    (h2 : ∀ c, Q c → ∃ c', Steps c c' ∧ R c') :
-    ∀ c, P c → ∃ c', Steps c c' ∧ R c' := by
-  intro c hc
-  obtain ⟨c1, s1, q1⟩ := h1 c hc
-  obtain ⟨c2, s2, r2⟩ := h2 c1 q1
-  exact ⟨c2, Steps.trans s1 s2, r2⟩
 
 end Tcc.Boot

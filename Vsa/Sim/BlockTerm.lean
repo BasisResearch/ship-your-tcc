@@ -437,7 +437,7 @@ abbrev TermWF (dom : List Nat) (t : TInstr) : Prop :=
   (Sail.BitVec.extractLsb (((t.b3.append t.b2).append t.b1).append t.b0) 1 0).toNat
     = (0b11#2 : BitVec 2).toNat ∧
   0x80000000 ≤ t.pc.toNat ∧
-  t.pc.toNat + 4 ≤ tohostAddr ∧
+  FetchOK t.pc.toNat ∧
   t.pc.toNat % 4 = 0 ∧
   TermKindOK dom t.pc t.rs1 t.rs2 t.imm13 t.imm21 t.kind
 
@@ -716,85 +716,6 @@ theorem keysOK_runGM_bt : ∀ (is : List MInstr) (pc0 : BitVec 64) (dom : List N
     | sb => exact ih _ _ _ _ hwfr hkeys
     | sh => exact ih _ _ _ _ hwfr hkeys
 
-/-- The computed write-log image agrees with the input memory below the HTIF
-window: every logged store lands above `tohostAddr + 16` (its `MemFacts`
-window fact), so the fold misses all low addresses.  This re-exports the
-block-internal code-pin-survival invariant to the *conclusion* side, where the
-terminator fetch (and the next chained block) needs it. -/
-theorem writeLog_wlog_low_bt (mc : Std.ExtHashMap Nat (BitVec 8)) :
-    ∀ (is : List MInstr) (m : Std.ExtHashMap Nat (BitVec 8)) (L : GRegs)
-      (lds : List (List (BitVec 8))),
-    ProgFactsM mc m L lds is →
-    ∀ j, j < tohostAddr → (writeLog m (wlogM is L lds))[j]? = m[j]? := by
-  intro is
-  induction is with
-  | nil => intro m L lds _ j _; rfl
-  | cons a r ih =>
-    intro m L lds hf j hj
-    obtain ⟨apc, aword, ab0, ab1, ab2, ab3, akind, ard, ars1, ars2, aimm⟩ := a
-    have hf' : BytePinsM mc ⟨apc, aword, ab0, ab1, ab2, ab3, akind, ard, ars1, ars2, aimm⟩ ∧
-        DecodeFactM ⟨apc, aword, ab0, ab1, ab2, ab3, akind, ard, ars1, ars2, aimm⟩ ∧
-        MemFacts m L (lds.headD []) ⟨apc, aword, ab0, ab1, ab2, ab3, akind, ard, ars1, ars2, aimm⟩ ∧
-        ProgFactsM mc
-          (stepMemM m ⟨apc, aword, ab0, ab1, ab2, ab3, akind, ard, ars1, ars2, aimm⟩ L)
-          (stepGM ⟨apc, aword, ab0, ab1, ab2, ab3, akind, ard, ars1, ars2, aimm⟩ L (lds.headD []))
-          (stepLdsM akind lds) r := hf
-    obtain ⟨_, _, hmf, hfr⟩ := hf'
-    cases akind with
-    | addi => exact ih m _ _ hfr j hj
-    | add => exact ih m _ _ hfr j hj
-    | sub => exact ih m _ _ hfr j hj
-    | or => exact ih m _ _ hfr j hj
-    | and => exact ih m _ _ hfr j hj
-    | srl => exact ih m _ _ hfr j hj
-    | lw => exact ih m _ _ hfr j hj
-    | lwu => exact ih m _ _ hfr j hj
-    | ld => exact ih m _ _ hfr j hj
-    | lbu => exact ih m _ _ hfr j hj
-    | lh => exact ih m _ _ hfr j hj
-    | lhu => exact ih m _ _ hfr j hj
-    | addiw => exact ih m _ _ hfr j hj
-    | slli => exact ih m _ _ hfr j hj
-    | srli => exact ih m _ _ hfr j hj
-    | srai => exact ih m _ _ hfr j hj
-    | slti => exact ih m _ _ hfr j hj
-    | slt => exact ih m _ _ hfr j hj
-    | subw => exact ih m _ _ hfr j hj
-    | addw => exact ih m _ _ hfr j hj
-    | auipc => exact ih m _ _ hfr j hj
-    | lui => exact ih m _ _ hfr j hj
-    | xori => exact ih m _ _ hfr j hj
-    | andi => exact ih m _ _ hfr j hj
-    | ori => exact ih m _ _ hfr j hj
-    | slliw => exact ih m _ _ hfr j hj
-    | srliw => exact ih m _ _ hfr j hj
-    | sraiw => exact ih m _ _ hfr j hj
-    | xor => exact ih m _ _ hfr j hj
-    | sll => exact ih m _ _ hfr j hj
-    | sllw => exact ih m _ _ hfr j hj
-    | srlw => exact ih m _ _ hfr j hj
-    | sraw => exact ih m _ _ hfr j hj
-    | sw =>
-      have hwin : tohostAddr + 16 ≤
-          (eaddrM ⟨apc, aword, ab0, ab1, ab2, ab3, .sw, ard, ars1, ars2, aimm⟩ L).toNat :=
-        hmf.2.2.1
-      exact (ih _ _ _ hfr j hj).trans (writeMap4_low_miss m _ _ j (by omega))
-    | sd =>
-      have hwin : tohostAddr + 16 ≤
-          (eaddrM ⟨apc, aword, ab0, ab1, ab2, ab3, .sd, ard, ars1, ars2, aimm⟩ L).toNat :=
-        hmf.2.2.1
-      exact (ih _ _ _ hfr j hj).trans (writeMap8_low_miss m _ _ j (by omega))
-    | sb =>
-      have hwin : tohostAddr + 16 ≤
-          (eaddrM ⟨apc, aword, ab0, ab1, ab2, ab3, .sb, ard, ars1, ars2, aimm⟩ L).toNat :=
-        hmf.2.2
-      exact (ih _ _ _ hfr j hj).trans (insert_low_miss m _ _ j (by omega))
-    | sh =>
-      have hwin : tohostAddr + 16 ≤
-          (eaddrM ⟨apc, aword, ab0, ab1, ab2, ab3, .sh, ard, ars1, ars2, aimm⟩ L).toNat :=
-        hmf.2.2.1
-      exact (ih _ _ _ hfr j hj).trans (writeMap2_low_miss m _ _ j (by omega))
-
 /-! ## The basic block -/
 
 /-- A basic block: straight-line body + optional terminator (`none` =
@@ -839,7 +760,7 @@ instance instDecTermOKo (pc0 : BitVec 64) (dom : List Nat) :
 /-- The per-block non-computable obligations. -/
 def BBlockFacts (mc m : Std.ExtHashMap Nat (BitVec 8)) (L : GRegs)
     (lds : List (List (BitVec 8))) (b : BBlock) : Prop :=
-  ProgFactsM mc m L lds b.body ∧ TermPins mc b.term ∧
+  ProgFactsM mc m L lds b.body ∧ TermPins (writeLog m (wlogM b.body L lds)) b.term ∧
   TermFactsO (runGM b.body L lds) b.term
 
 /-- The per-block decidable VC. -/
@@ -858,7 +779,6 @@ theorem bblock_run_bt (b : BBlock) (σ : MState) (i u : Nat) (pc0 vm : BitVec 64
     (hpc : σ.regs.get? Register.PC = some pc0)
     (hmi : σ.regs.get? Register.minstret = some vm)
     (hmem : σ.mem = m)
-    (hlow : ∀ j, j < tohostAddr → m[j]? = mc[j]?)
     (hL : GHolds σ L) (hkeys : KeysOK (keysG L))
     (hdom : ∀ n ∈ dom, n ∈ keysG L)
     (hfacts : BBlockFacts mc m L lds b)
@@ -877,7 +797,7 @@ theorem bblock_run_bt (b : BBlock) (σ : MState) (i u : Nat) (pc0 vm : BitVec 64
   obtain ⟨hbf, htp, htfo⟩ := hfacts
   obtain ⟨hbo, hto⟩ := hwf
   obtain ⟨σ1, i1, hsteps1, hi1, hG1, hmem1, hout1, hpc1, hmi1, hGH1, hframe1⟩ :=
-    block_mem_run body σ i u pc0 vm L lds mc m dom hG hpc hmi hmem hlow hL hkeys hdom hbf hbo hi
+    block_mem_run body σ i u pc0 vm L lds mc m dom hG hpc hmi hmem hL hkeys hdom hbf hbo hi
   cases term with
   | none =>
     exact ⟨σ1, i1, hsteps1, hi1, hG1, hmem1, hout1, hpc1, hmi1, hGH1, hframe1⟩
@@ -885,17 +805,12 @@ theorem bblock_run_bt (b : BBlock) (σ : MState) (i u : Nat) (pc0 vm : BitVec 64
     obtain ⟨hpceq, hwft⟩ :=
       (hto : t.pc.toNat = (endPCM pc0 body).toNat ∧ TermWF (domRunM body dom) t)
     have hpct : t.pc = endPCM pc0 body := BitVec.eq_of_toNat_eq hpceq
-    obtain ⟨htb, htd⟩ := (htp : BytePinsT mc t ∧ DecodeFactT t)
+    obtain ⟨htb, htd⟩ := (htp : BytePinsT (writeLog m (wlogM body L lds)) t ∧ DecodeFactT t)
     obtain ⟨vm1, hmi1'⟩ := hmi1
-    have hlow1 : ∀ j, j < tohostAddr → σ1.mem[j]? = mc[j]? := by
-      intro j hj
-      rw [hmem1]
-      exact (writeLog_wlog_low_bt mc body m L lds hbf j hj).trans (hlow j hj)
-    have hhit : t.pc.toNat + 4 ≤ tohostAddr := hwft.2.2.2.1
-    have hb0 : σ1.mem[t.pc.toNat]? = some t.b0 := (hlow1 _ (by omega)).trans htb.1
-    have hb1 : σ1.mem[t.pc.toNat + 1]? = some t.b1 := (hlow1 _ (by omega)).trans htb.2.1
-    have hb2 : σ1.mem[t.pc.toNat + 2]? = some t.b2 := (hlow1 _ (by omega)).trans htb.2.2.1
-    have hb3 : σ1.mem[t.pc.toNat + 3]? = some t.b3 := (hlow1 _ (by omega)).trans htb.2.2.2
+    have hb0 : σ1.mem[t.pc.toNat]? = some t.b0 := by rw [hmem1]; exact htb.1
+    have hb1 : σ1.mem[t.pc.toNat + 1]? = some t.b1 := by rw [hmem1]; exact htb.2.1
+    have hb2 : σ1.mem[t.pc.toNat + 2]? = some t.b2 := by rw [hmem1]; exact htb.2.2.1
+    have hb3 : σ1.mem[t.pc.toNat + 3]? = some t.b3 := by rw [hmem1]; exact htb.2.2.2
     have hkeys1 : KeysOK (keysG (runGM body L lds)) :=
       keysOK_runGM_bt body pc0 dom L lds hbo hkeys
     have hdom1 : ∀ n ∈ domRunM body dom, n ∈ keysG (runGM body L lds) :=
@@ -941,7 +856,7 @@ theorem bblock_sound_bt (b : BBlock) (σ : MState) (i u : Nat)
         (∀ n ∈ wrRegsM b.body, (gprReg n == R) = false) →
         σ'.regs.get? R = σ.regs.get? R) :=
   bblock_run_bt b σ i u pc0 vm L lds σ.mem σ.mem (keysG L)
-    hG hpc hmi rfl (fun _ _ => rfl) hL hkeys (fun _ h => h) hfacts hwf hi
+    hG hpc hmi rfl hL hkeys (fun _ h => h) hfacts hwf hi
 
 /-! ## Chains of basic blocks -/
 
@@ -1085,7 +1000,6 @@ theorem bblocks_run_bt (bs : List BBlock) :
     σ.regs.get? Register.PC = some pc0 →
     σ.regs.get? Register.minstret = some vm →
     σ.mem = m →
-    (∀ j, j < tohostAddr → m[j]? = mc[j]?) →
     GHolds σ L → KeysOK (keysG L) → (∀ n ∈ dom, n ∈ keysG L) →
     ChainFacts mc m L lds bs → ChainOK pc0 dom bs → i < 2 →
     ∃ (σ' : MState) (i' : Nat),
@@ -1099,10 +1013,10 @@ theorem bblocks_run_bt (bs : List BBlock) :
         σ'.regs.get? R = σ.regs.get? R) := by
   induction bs with
   | nil =>
-    intro σ i u pc0 vm L lds mc m dom hG hpc hmi hmem _ hL _ _ _ _ hi
+    intro σ i u pc0 vm L lds mc m dom hG hpc hmi hmem hL _ _ _ _ hi
     exact ⟨σ, i, Steps.refl _, hi, hG, hmem, rfl, hpc, ⟨vm, hmi⟩, hL, fun R _ _ => rfl⟩
   | cons b bs ih =>
-    intro σ i u pc0 vm L lds mc m dom hG hpc hmi hmem hlow hL hkeys hdom hfacts hwf hi
+    intro σ i u pc0 vm L lds mc m dom hG hpc hmi hmem hL hkeys hdom hfacts hwf hi
     have hfacts' : BBlockFacts mc m L lds b ∧
         ChainFacts mc (writeLog m (wlogM b.body L lds)) (runGM b.body L lds)
           (ldsRunM b.body lds) bs := hfacts
@@ -1111,7 +1025,7 @@ theorem bblocks_run_bt (bs : List BBlock) :
         ChainOK (nextPC0 pc0 b) (domRunM b.body dom) bs := hwf
     obtain ⟨hbo, htc, hco⟩ := hwf'
     obtain ⟨σ1, i1, hsteps1, hi1, hG1, hmem1, hout1, hpc1, hmi1, hGH1, hframe1⟩ :=
-      bblock_run_bt b σ i u pc0 vm L lds mc m dom hG hpc hmi hmem hlow hL hkeys hdom hbf hbo hi
+      bblock_run_bt b σ i u pc0 vm L lds mc m dom hG hpc hmi hmem hL hkeys hdom hbf hbo hi
     cases bs with
     | nil =>
       exact ⟨σ1, i1, hsteps1, hi1, hG1, hmem1, hout1, hpc1, hmi1, hGH1,
@@ -1122,8 +1036,6 @@ theorem bblocks_run_bt (bs : List BBlock) :
       have hpc1' : σ1.regs.get? Register.PC = some (nextPC0 pc0 b) := by
         rw [endPCB_eq_nextPC0_bt b pc0 L lds (htc : TermNotJrO b.term)] at hpc1
         exact hpc1
-      have hlow1 : ∀ j, j < tohostAddr → (writeLog m (wlogM b.body L lds))[j]? = mc[j]? :=
-        fun j hj => (writeLog_wlog_low_bt mc b.body m L lds hbf.1 j hj).trans (hlow j hj)
       have hkeys1 : KeysOK (keysG (runGM b.body L lds)) :=
         keysOK_runGM_bt b.body pc0 dom L lds hbo.1 hkeys
       have hdom1 : ∀ n ∈ domRunM b.body dom, n ∈ keysG (runGM b.body L lds) :=
@@ -1131,7 +1043,7 @@ theorem bblocks_run_bt (bs : List BBlock) :
       obtain ⟨σf, i', hstepsf, hif, hGf, hmemf, houtf, hpcf, hmif, hGHf, hframef⟩ :=
         ih σ1 i1 (u + blenB b) (nextPC0 pc0 b) vm1 (runGM b.body L lds)
           (ldsRunM b.body lds) mc (writeLog m (wlogM b.body L lds)) (domRunM b.body dom)
-          hG1 hpc1' hmi1' hmem1 hlow1 hGH1 hkeys1 hdom1 hcf hco hi1
+          hG1 hpc1' hmi1' hmem1 hGH1 hkeys1 hdom1 hcf hco hi1
       refine ⟨σf, i', ?_, hif, hGf, hmemf, houtf.trans hout1, hpcf, hmif, hGHf, ?_⟩
       · have h := hsteps1.trans hstepsf
         have e : u + blenB b + chainLen (b2 :: rest)
@@ -1171,6 +1083,6 @@ theorem bblocks_sound_bt (bs : List BBlock) (σ : MState) (i u : Nat)
         (∀ n ∈ wrChain bs, (gprReg n == R) = false) →
         σ'.regs.get? R = σ.regs.get? R) :=
   bblocks_run_bt bs σ i u pc0 vm L lds σ.mem σ.mem (keysG L)
-    hG hpc hmi rfl (fun _ _ => rfl) hL hkeys (fun _ h => h) hfacts hwf hi
+    hG hpc hmi rfl hL hkeys (fun _ h => h) hfacts hwf hi
 
 end Vsa.Sim
