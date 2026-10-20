@@ -19,12 +19,29 @@ See BRIEF.md for the full plan. Status is updated as work lands.
 | 2.4 report | DIFFERENTIAL.md | pending |
 
 ## Phase 3: one per-program end-to-end theorem
-Obligations (each a `def …_Statement : Prop` until proved; none yet stated):
+P = `c/tests/p3/sum.c` (prints "55\n", returns 0). The Clight side is proved;
+the end-to-end theorem will combine it with the machine side (3a, 3b).
+
+Clight side (Lean 4.34.0, root lakefile; `#print axioms` ⊆ the standard three,
+scripts/axioms.lean):
+| item | exit criterion | status |
+|---|---|---|
+| 3.1 CCLib vendored | pristine Certora export/ @123f7f7 in `vendor/certora-export` (`vendor/CERTORA_REV`); builds on 4.34.0 | done |
+| 3.2 external calls as a parameter | `patches/certora/0002-cclib-extsem-param.patch`: `StepWith (X : ExtEnv)`, `externalCallWith X`; `Step := StepWith certoraExtEnv`; determinism (`stepWith_determ`, `doStepWith_complete`) under `ExtDeterm X`, soundness (`doStepWith_sound`) for every `X`; `Tcc.Audit.stepOrig_iff` proves the pristine `Step` (regenerated from the pristine file) equivalent to the instance; only the audit depends on Certora's axioms (scripts/axioms_certora.lean); `step_determ`'s `maxHeartbeats 2000000` dropped (fits the default budget on 4.34.0) | done |
+| 3.3 printf model | `Tcc.Clight.format` (pure; `%d %i %u %x %X %o %c %s %%`, flags, width, precision, `hh h l ll z j t`), `traceOut`, premise `PrintfModel X` (pointer arguments via `invert_symbol`); non-vacuity `premises_satisfiable : ∃ X, PrintfModel X ∧ ExtDeterm X` | done |
+| 3.4 P at the Clight level | `Tcc.Prog.Sum.prints : ∀ X, PrintfModel X → ExtDeterm X → Prints X prog [0x35,0x35,0x0a] 0` (one terminating run printing "55\n" with exit code 0, and every terminating run does the same); generic `runPfProgram_prints`, run closed by `decide +kernel` | done |
+
+Machine side. Obligations (each a `def …_Statement : Prop` until proved; none yet stated):
 | obligation | supplies | status |
 |---|---|---|
 | `CompileCut_Statement` (3a) | tcc's compile phase reaches the jump into C at a fixed address with code bytes C (captured-cut witness, after ship-your-ocaml `WhileMin.loaded_fillZero`) | not started |
-| `CodeRefinesClight_Statement` (3b) | C refines Certora's Lean Clight of P (syi MachCSL + generators) | not started |
-| `PrintfSpec_Statement` | printf machine spec linked to Clight's external-call axiom (after ship-your-lua `fwrite`) | not started |
+| `CodeRefinesClight_Statement` (3b) | C refines Certora's Lean Clight of P (syi MachCSL + generators); to be combined with 3.4 through `Terminates`/`traceOut` | not started |
+| `PrintfSpec_Statement` | printf machine spec (after ship-your-lua `fwrite`) yielding an `X` with `PrintfModel X ∧ ExtDeterm X`, whose console bytes are `traceOut` | not started |
+
+Gap: the Phase 2 oracle `lean/ClightRun` (Lean 4.32.1) still renders printf
+conversions with the host snprintf, so the differential tests host printf
+against newlib, not `Tcc.Clight.format`. Follow-up: run `format` in the oracle
+(it needs only CCLib's event types) or differential-test it against newlib.
 
 ## Phase 4 (stretch)
 Not started.
