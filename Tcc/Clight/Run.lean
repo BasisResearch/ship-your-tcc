@@ -149,29 +149,49 @@ def runPf (p : Program) : State → Nat → Option (List UInt8 × Integers.Int)
           | some (evs, s') =>
             (printfOut p evs).bind fun o => (runPf p s' fuel).map fun res => (o ++ res.1, res.2)
 
-theorem runPf_sound {X : ExtEnv} (hP : PrintfModel X) {p : Program} :
+/-- The argument lists of the printf calls `runPf p s fuel` makes, in order. -/
+def runPfCalls (p : Program) : State → Nat → List (List EventVal)
+  | _, 0 => []
+  | s, fuel + 1 =>
+      match finalCode s with
+      | some _ => []
+      | none =>
+        match doStep p.globalenv s with
+        | some ([], s') => runPfCalls p s' fuel
+        | some (_ :: _, _) => []
+        | none =>
+          match printfCall p.globalenv s with
+          | none => []
+          | some (evs, s') => evs :: runPfCalls p s' fuel
+
+/-- `runPf_sound` for a printf that need only step on the calls the run
+makes (`PrintfModelOn Q`, `Q` holding at each of `runPfCalls`). -/
+theorem runPf_soundOn {Q : Senv → List EventVal → Prop} {X : ExtEnv} (hP : PrintfModelOn Q X)
+    {p : Program} :
     ∀ fuel s out r, runPf p s fuel = some (out, r) →
+      (∀ evs ∈ runPfCalls p s fuel, Q p.globalenv.genv_genv.toSenv evs) →
       ∃ t, RunsTo X p s t r ∧ traceOut p t = some out := by
   intro fuel
   induction fuel with
   | zero => intro s out r h; simp [runPf] at h
   | succ n ih =>
-    intro s out r h
+    intro s out r h hQ
     simp only [runPf] at h
+    simp only [runPfCalls] at hQ
     cases hf : finalCode s with
     | some r0 =>
       simp only [hf, Option.some.injEq, Prod.mk.injEq] at h
       obtain ⟨rfl, rfl⟩ := h
       exact ⟨[], .intro s (.refl s) (finalState_of_finalCode hf), rfl⟩
     | none =>
-      simp only [hf] at h
+      simp only [hf] at h hQ
       cases hd : doStep p.globalenv s with
       | some ts =>
         obtain ⟨t1, s1⟩ := ts
         cases t1 with
         | nil =>
-          simp only [hd] at h
-          obtain ⟨t, ⟨sf, hrun, hfin⟩, hout⟩ := ih s1 out r h
+          simp only [hd] at h hQ
+          obtain ⟨t, ⟨sf, hrun, hfin⟩, hout⟩ := ih s1 out r h hQ
           exact ⟨t, .intro sf (.step _ _ _ _ _ _ (doStepWith_sound X _ _ _ _ hd) hrun rfl) hfin,
             hout⟩
         | cons => simp [hd] at h
@@ -180,7 +200,7 @@ theorem runPf_sound {X : ExtEnv} (hP : PrintfModel X) {p : Program} :
         | none => simp [hd, hp] at h
         | some es =>
           obtain ⟨evs, s1⟩ := es
-          simp only [hd, hp] at h
+          simp only [hd, hp] at h hQ
           cases ho : printfOut p evs with
           | none => simp [ho] at h
           | some o =>
@@ -191,10 +211,12 @@ theorem runPf_sound {X : ExtEnv} (hP : PrintfModel X) {p : Program} :
               simp only [ho, hr, Option.bind_some, Option.map_some, Option.some.injEq,
                 Prod.mk.injEq] at h
               obtain ⟨rfl, rfl⟩ := h
-              obtain ⟨t, ⟨sf, hrun, hfin⟩, hout⟩ := ih s1 o' r' hr
+              obtain ⟨t, ⟨sf, hrun, hfin⟩, hout⟩ :=
+                ih s1 o' r' hr fun e he => hQ e (List.mem_cons_of_mem _ he)
               cases isPrintfCall_of_printfCall hp with
               | intro f sg tyargs al k e le m vargs _ heval hconv =>
-                obtain ⟨t1, vres, m', hX⟩ := hP.total sg _ vargs m evs hconv
+                obtain ⟨t1, vres, m', hX⟩ :=
+                  hP.total sg _ vargs m evs hconv (hQ evs (List.mem_cons_self ..))
                 cases hP.shape _ _ _ _ _ _ _ hX with
                 | intro evs' n hconv' =>
                   rw [hconv] at hconv'
@@ -209,7 +231,13 @@ theorem runPf_sound {X : ExtEnv} (hP : PrintfModel X) {p : Program} :
                   rw [traceOut_printfEvent, ho, hout]
                   rfl
 
-theorem runPf_unique {X : ExtEnv} (hP : PrintfModel X) (hD : ExtDeterm X) {p : Program} :
+theorem runPf_sound {X : ExtEnv} (hP : PrintfModel X) {p : Program} :
+    ∀ fuel s out r, runPf p s fuel = some (out, r) →
+      ∃ t, RunsTo X p s t r ∧ traceOut p t = some out :=
+  fun fuel s out r h => runPf_soundOn (hP.on fun _ _ => True) fuel s out r h fun _ _ => trivial
+
+/-- Uniqueness needs only the shape of printf's steps and determinism. -/
+theorem runPf_unique {X : ExtEnv} (hP : PrintfShape X) (hD : ExtDeterm X) {p : Program} :
     ∀ fuel s out r, runPf p s fuel = some (out, r) →
       ∀ t r', RunsTo X p s t r' → traceOut p t = some out ∧ r' = r := by
   intro fuel
@@ -271,7 +299,7 @@ theorem runPf_unique {X : ExtEnv} (hP : PrintfModel X) (hD : ExtDeterm X) {p : P
                     have hv := evalExprlist_determ
                       (doEvalExprlist_sound _ _ _ _ _ _ _ heval) _ hel
                     subst hv
-                    cases hP.shape _ _ _ _ _ _ _ hX with
+                    cases hP _ _ _ _ _ _ _ hX with
                     | intro evs' n hconv' =>
                       rw [hconv] at hconv'
                       cases hconv'
@@ -284,8 +312,8 @@ theorem runPf_unique {X : ExtEnv} (hP : PrintfModel X) (hD : ExtDeterm X) {p : P
 
 /-! ## Whole programs -/
 
-/-- `runPf` from `p`'s initial state (as `CC.runProgram` builds it). -/
-def runPfProgram (p : Program) (fuel : Nat) : Option (List UInt8 × Integers.Int) :=
+/-- `p`'s initial state (as `CC.runProgram` builds it). -/
+def initPf (p : Program) : Option State :=
   match p.initMem with
   | none => none
   | some m0 =>
@@ -296,12 +324,11 @@ def runPfProgram (p : Program) (fuel : Nat) : Option (List UInt8 × Integers.Int
       | none => none
       | some f =>
         if typeOfFundef f = .Tfunction [] type_int32s cc_default
-        then runPf p (.Callstate f [] .Kstop m0) fuel
+        then some (.Callstate f [] .Kstop m0)
         else none
 
-theorem runPfProgram_init {p : Program} {fuel res} (h : runPfProgram p fuel = some res) :
-    ∃ s0, InitialState p s0 ∧ runPf p s0 fuel = some res := by
-  unfold runPfProgram at h
+theorem initPf_init {p : Program} {s0 : State} (h : initPf p = some s0) : InitialState p s0 := by
+  unfold initPf at h
   split at h
   · cases h
   · rename_i m0 hm
@@ -313,22 +340,58 @@ theorem runPfProgram_init {p : Program} {fuel res} (h : runPfProgram p fuel = so
       · rename_i f hfp
         split at h
         · rename_i hty
-          exact ⟨_, .intro b f m0 hm hb hfp hty, h⟩
+          cases h
+          exact .intro b f m0 hm hb hfp hty
         · cases h
+
+/-- `runPf` from `p`'s initial state. -/
+def runPfProgram (p : Program) (fuel : Nat) : Option (List UInt8 × Integers.Int) :=
+  (initPf p).bind fun s0 => runPf p s0 fuel
+
+/-- The printf calls of that run. -/
+def runPfProgramCalls (p : Program) (fuel : Nat) : List (List EventVal) :=
+  match initPf p with
+  | some s0 => runPfCalls p s0 fuel
+  | none => []
+
+theorem runPfProgram_init_calls {p : Program} {fuel res} (h : runPfProgram p fuel = some res) :
+    ∃ s0, InitialState p s0 ∧ runPf p s0 fuel = some res ∧
+      runPfCalls p s0 fuel = runPfProgramCalls p fuel := by
+  unfold runPfProgram at h
+  unfold runPfProgramCalls
+  cases hi : initPf p with
+  | none => simp [hi] at h
+  | some s0 =>
+    simp only [hi, Option.bind_some] at h
+    exact ⟨s0, initPf_init hi, h, rfl⟩
+
+theorem runPfProgram_init {p : Program} {fuel res} (h : runPfProgram p fuel = some res) :
+    ∃ s0, InitialState p s0 ∧ runPf p s0 fuel = some res :=
+  let ⟨s0, hi, hr, _⟩ := runPfProgram_init_calls h
+  ⟨s0, hi, hr⟩
+
+/-- A run of `runPfProgram` is a terminating run under every `X` whose printf
+steps on the calls the run makes. -/
+theorem runPfProgram_terminatesOn {Q : Senv → List EventVal → Prop} {X : ExtEnv}
+    (hP : PrintfModelOn Q X) {p : Program} {fuel : Nat} {out : List UInt8} {r : Integers.Int}
+    (h : runPfProgram p fuel = some (out, r))
+    (hQ : ∀ evs ∈ runPfProgramCalls p fuel, Q p.globalenv.genv_genv.toSenv evs) :
+    ∃ t, Terminates X p t r ∧ traceOut p t = some out := by
+  obtain ⟨s0, hinit, hrun, hcalls⟩ := runPfProgram_init_calls h
+  obtain ⟨t, hrt, hout⟩ := runPf_soundOn hP fuel s0 out r hrun (hcalls ▸ hQ)
+  exact ⟨t, .intro s0 hinit hrt, hout⟩
 
 /-- A run of `runPfProgram` is a terminating run under every `X` with the
     printf premise. -/
 theorem runPfProgram_terminates {X : ExtEnv} (hP : PrintfModel X)
     {p : Program} {fuel : Nat} {out : List UInt8} {r : Integers.Int}
     (h : runPfProgram p fuel = some (out, r)) :
-    ∃ t, Terminates X p t r ∧ traceOut p t = some out := by
-  obtain ⟨s0, hinit, hrun⟩ := runPfProgram_init h
-  obtain ⟨t, hrt, hout⟩ := runPf_sound hP fuel s0 out r hrun
-  exact ⟨t, .intro s0 hinit hrt, hout⟩
+    ∃ t, Terminates X p t r ∧ traceOut p t = some out :=
+  runPfProgram_terminatesOn (hP.on fun _ _ => True) h fun _ _ => trivial
 
 /-- Under printf premise and determinism, every terminating run prints what
     `runPfProgram` printed and exits with its code. -/
-theorem runPfProgram_unique {X : ExtEnv} (hP : PrintfModel X) (hD : ExtDeterm X)
+theorem runPfProgram_unique {X : ExtEnv} (hP : PrintfShape X) (hD : ExtDeterm X)
     {p : Program} {fuel : Nat} {out : List UInt8} {r : Integers.Int}
     (h : runPfProgram p fuel = some (out, r)) {t : Trace} {r' : Integers.Int}
     (ht : Terminates X p t r') : traceOut p t = some out ∧ r' = r := by
@@ -343,6 +406,15 @@ theorem runPfProgram_unique {X : ExtEnv} (hP : PrintfModel X) (hD : ExtDeterm X)
 theorem runPfProgram_prints {X : ExtEnv} (hP : PrintfModel X) (hD : ExtDeterm X)
     {p : Program} {fuel : Nat} {out : List UInt8} {r : Integers.Int}
     (h : runPfProgram p fuel = some (out, r)) : Prints X p out r :=
-  ⟨runPfProgram_terminates hP h, fun _ _ ht => runPfProgram_unique hP hD h ht⟩
+  ⟨runPfProgram_terminates hP h, fun _ _ ht => runPfProgram_unique hP.shape hD h ht⟩
+
+/-- The same for a printf that steps only on the calls the run makes. -/
+theorem runPfProgram_printsOn {Q : Senv → List EventVal → Prop} {X : ExtEnv}
+    (hP : PrintfModelOn Q X) (hD : ExtDeterm X)
+    {p : Program} {fuel : Nat} {out : List UInt8} {r : Integers.Int}
+    (h : runPfProgram p fuel = some (out, r))
+    (hQ : ∀ evs ∈ runPfProgramCalls p fuel, Q p.globalenv.genv_genv.toSenv evs) :
+    Prints X p out r :=
+  ⟨runPfProgram_terminatesOn hP h hQ, fun _ _ ht => runPfProgram_unique hP.shape hD h ht⟩
 
 end Tcc.Clight

@@ -104,6 +104,23 @@ structure PrintfModel (X : ExtEnv) : Prop where
   total : ∀ sg ge vargs m evargs, vargs.mapM (toEventVal ge) = some evargs →
     ∃ t vres m', X.external "printf" sg ge vargs m t vres m'
 
+/-- The shape half of `PrintfModel`: every printf step is a `PrintfStep`. -/
+def PrintfShape (X : ExtEnv) : Prop :=
+  ∀ sg ge vargs m t vres m', X.external "printf" sg ge vargs m t vres m' →
+    PrintfStep ge vargs m t vres m'
+
+/-- `PrintfModel` with totality only on the argument lists `Q` admits: the
+form a printf derived from the machine has (`Tcc.Printf.machX` steps on the
+calls the image makes). -/
+structure PrintfModelOn (Q : Senv → List EventVal → Prop) (X : ExtEnv) : Prop where
+  shape : PrintfShape X
+  total : ∀ sg ge vargs m evargs, vargs.mapM (toEventVal ge) = some evargs → Q ge evargs →
+    ∃ t vres m', X.external "printf" sg ge vargs m t vres m'
+
+theorem PrintfModel.on {X : ExtEnv} (h : PrintfModel X) (Q : Senv → List EventVal → Prop) :
+    PrintfModelOn Q X :=
+  ⟨h.shape, fun sg ge vargs m evargs hc _ => h.total sg ge vargs m evargs hc⟩
+
 /-! ## Non-vacuity -/
 
 /-- A printf that may return any `int` (the result is the world's choice, so
