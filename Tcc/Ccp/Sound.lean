@@ -2145,4 +2145,60 @@ macro_rules
     | (apply Or.inr; ccp_entry; done)
     | (constructor <;> ccp_entry))
 
+/-! ## From the relation to a captured cut -/
+
+theorem get_of_gprGet {σ : MState} {x : BitVec 64} : ∀ n, 1 ≤ n → n ≤ 31 →
+    gprGet σ n = some x → σ.regs.get? (gprReg n) = some (gprRT n x)
+  | 1, _, _, h | 2, _, _, h | 3, _, _, h | 4, _, _, h | 5, _, _, h | 6, _, _, h | 7, _, _, h
+  | 8, _, _, h | 9, _, _, h | 10, _, _, h | 11, _, _, h | 12, _, _, h | 13, _, _, h
+  | 14, _, _, h | 15, _, _, h | 16, _, _, h | 17, _, _, h | 18, _, _, h | 19, _, _, h
+  | 20, _, _, h | 21, _, _, h | 22, _, _, h | 23, _, _, h | 24, _, _, h | 25, _, _, h
+  | 26, _, _, h | 27, _, _, h | 28, _, _, h | 29, _, _, h | 30, _, _, h | 31, _, _, h => h
+  | 0, h, _, _ => absurd h (by omega)
+  | _ + 32, _, h, _ => absurd h (by omega)
+
+/-- The evaluator knows every byte of a chunk, present (off `ab`), with the chunk's value. -/
+def viewOK (ab : Nat → Bool) (M : MT) (ch : Chunk) : Bool :=
+  (List.range ch.len).all fun j =>
+    !ab (ch.base + j) && M.byte (ch.base + j) == some (ch.byte (ch.base + j)).toNat
+
+theorem chunkView_mem : ∀ {cs : List Chunk} {k : Nat} {b : BitVec 8}, chunkView cs k = some b →
+    ∃ ch ∈ cs, ch.covers k = true ∧ ch.byte k = b
+  | [], _, _, h => by simp [chunkView] at h
+  | ch :: cs, k, b, h => by
+    simp only [chunkView] at h
+    split at h
+    · exact ⟨ch, List.mem_cons_self .., by assumption, Option.some.inj h⟩
+    · obtain ⟨ch', hm, hc, hb⟩ := chunkView_mem h
+      exact ⟨ch', List.mem_cons_of_mem _ hm, hc, hb⟩
+
+/-- **The cut**: an evaluator state whose PC, registers and known bytes are the
+captured ones gives a configuration satisfying the captured-cut description. -/
+theorem sim_cut {c : Code} {ab : Nat → Bool} {s : St} {cf : Config} (hS : Sim c ab s cf)
+    {g : Nat → BitVec 64} {pc : BitVec 64} {cs : List Chunk}
+    (hpc : BitVec.ofNat 64 s.pc = pc)
+    (hregs : ∀ i, i < 31 → g (i + 1) = BitVec.ofNat 64 (getR s.regs (i + 1)))
+    (hview : ∀ ch ∈ cs, viewOK ab s.mem ch = true) :
+    CapturedCut g pc (chunkView cs) cf where
+  regs := {
+    good := hS.good
+    pc := hpc ▸ hS.pc
+    payload := hS.payload
+    gpr := fun i hi => by
+      rw [hregs i hi]
+      exact get_of_gprGet _ (by omega) (by omega)
+        (gholds_lookup _ hS.regs (lookupG_pinsOf (by omega) (by omega))) }
+  view := fun k b hk => by
+    obtain ⟨ch, hm, hc, hb⟩ := chunkView_mem hk
+    have hv := hview ch hm
+    simp only [Chunk.covers, decide_eq_true_eq] at hc
+    have := List.all_eq_true.mp hv (k - ch.base) (List.mem_range.mpr (by omega))
+    rw [show ch.base + (k - ch.base) = k by omega] at this
+    simp only [Bool.and_eq_true, Bool.not_eq_true', beq_iff_eq] at this
+    have hma := hS.mem _ _ this.2
+    simp only [MemAt, this.1, Bool.false_eq_true, if_false] at hma
+    rw [hma, BitVec.ofNat_toNat, ← hb]; rfl
+  console := hS.console
+  tick := hS.tick
+
 end Tcc.Ccp
