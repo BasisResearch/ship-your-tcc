@@ -174,6 +174,15 @@ abbrev JalrDec (w rd rs1 imm : Nat) : Prop :=
     (ext_decode (BitVec.ofNat 32 w)).run s =
       .ok (instruction.JALR (BitVec.ofNat 12 imm, gprIdx rs1, gprIdx rd)) s
 
+/-- σ-generic decode fact for an arbitrary instruction. -/
+abbrev ADec (w : Nat) (ast : instruction) : Prop :=
+  ∀ s : SequentialState RegisterType trivialChoiceSource,
+    s.regs.get? Register.misa = some ((Vsa.Sim.initMisa) : RegisterType Register.misa) →
+    s.regs.get? Register.cur_privilege =
+      some ((Privilege.Machine) : RegisterType Register.cur_privilege) →
+    s.regs.get? Register.mseccfg = some ((0#64) : RegisterType Register.mseccfg) →
+    (ext_decode (BitVec.ofNat 32 w)).run s = .ok ast s
+
 /-- Sail decodes the entry's word to the instruction the evaluator runs (per
 kind: register ranges, the immediate's meaning, the decode fact). Kinds
 outside the proved fragment are `False` for now. -/
@@ -186,10 +195,24 @@ def DecOK (pc w : Nat) : Ins → Prop
       DecodeFactM (mkM pc w .ld rd rs1 0 imm)
   | .lbu rd rs1 imm => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ Imm12 imm ∧
       DecodeFactM (mkM pc w .lbu rd rs1 0 imm)
+  | .lw rd rs1 imm => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ Imm12 imm ∧
+      DecodeFactM (mkM pc w .lw rd rs1 0 imm)
+  | .lwu rd rs1 imm => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ Imm12 imm ∧
+      DecodeFactM (mkM pc w .lwu rd rs1 0 imm)
+  | .lh rd rs1 imm => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ Imm12 imm ∧
+      DecodeFactM (mkM pc w .lh rd rs1 0 imm)
+  | .lhu rd rs1 imm => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ Imm12 imm ∧
+      DecodeFactM (mkM pc w .lhu rd rs1 0 imm)
   | .li rd v => (1 ≤ rd ∧ rd ≤ 31) ∧
       ((DecodeFactM (mkM pc w .lui rd 0 0 0) ∧ wvalM (mkM pc w .lui rd 0 0 0) [] [] = BitVec.ofNat 64 v) ∨
        (DecodeFactM (mkM pc w .auipc rd 0 0 0) ∧
          wvalM (mkM pc w .auipc rd 0 0 0) [] [] = BitVec.ofNat 64 v))
+  | .sw rs1 rs2 imm => rs1 ≤ 31 ∧ rs2 ≤ 31 ∧ Imm12 imm ∧
+      DecodeFactM (mkM pc w .sw 0 rs1 rs2 imm)
+  | .sh rs1 rs2 imm => rs1 ≤ 31 ∧ rs2 ≤ 31 ∧ Imm12 imm ∧
+      DecodeFactM (mkM pc w .sh 0 rs1 rs2 imm)
+  | .sb rs1 rs2 imm => rs1 ≤ 31 ∧ rs2 ≤ 31 ∧ Imm12 imm ∧
+      DecodeFactM (mkM pc w .sb 0 rs1 rs2 imm)
   | .sd rs1 rs2 imm => rs1 ≤ 31 ∧ rs2 ≤ 31 ∧ Imm12 imm ∧
       DecodeFactM (mkM pc w .sd 0 rs1 rs2 imm)
   | .jal rd tgt => rd ≤ 31 ∧ tgt < 2 ^ 64 ∧ tgt % 4 = 0 ∧ ∃ off : BitVec 21,
@@ -237,6 +260,20 @@ def DecOK (pc w : Nat) : Ins → Prop
       DecodeFactM (mkM pc w .sll rd rs1 rs2 0)
   | .srl rd rs1 rs2 => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ rs2 ≤ 31 ∧
       DecodeFactM (mkM pc w .srl rd rs1 rs2 0)
+  | .sllw rd rs1 rs2 => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ rs2 ≤ 31 ∧
+      DecodeFactM (mkM pc w .sllw rd rs1 rs2 0)
+  | .srlw rd rs1 rs2 => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ rs2 ≤ 31 ∧
+      DecodeFactM (mkM pc w .srlw rd rs1 rs2 0)
+  | .srai rd rs1 k => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ k < 64 ∧
+      DecodeFactM (mkM pc w .srai rd rs1 0 k)
+  | .sraiw rd rs1 k => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ k < 32 ∧
+      (BitVec.ofNat 32 w).extractLsb' 20 5 = BitVec.ofNat 5 k ∧ DecodeFactM (mkM pc w .sraiw rd rs1 0 k)
+  | .sra rd rs1 rs2 => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ rs2 ≤ 31 ∧
+      ADec w (instruction.RTYPE (gprIdx rs2, gprIdx rs1, gprIdx rd, rop.SRA))
+  | .sltu rd rs1 rs2 => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ rs2 ≤ 31 ∧
+      ADec w (instruction.RTYPE (gprIdx rs2, gprIdx rs1, gprIdx rd, rop.SLTU))
+  | .sltiu rd rs1 imm => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ Imm12 imm ∧ imm < 2 ^ 64 ∧
+      ADec w (instruction.ITYPE (BitVec.ofNat 12 imm, gprIdx rs1, gprIdx rd, iop.SLTIU))
   | _ => False
 
 structure EntryOK (c : Code) (pc w : Nat) (i : Ins) : Prop where
@@ -1309,6 +1346,551 @@ theorem sound_srl {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c
   rw [srcVal_pinsOf hS.x0 hk.2.1, srcVal_pinsOf hS.x0 hk.2.2.1,
     srl_bv _ _ (getR_lt _ _) (getR_lt _ _)]; rfl
 
+/-! ## Loads and stores of every width (generic) -/
+
+theorem bytes4 (v : Nat) :
+    (((vbyte v 3).append (vbyte v 2)).append (vbyte v 1)).append (vbyte v 0) = BitVec.ofNat 32 v := by
+  apply BitVec.eq_of_getElem_eq
+  intro i hi
+  simp only [BitVec.append_eq, BitVec.getElem_append]
+  simp only [BitVec.getElem_eq_testBit_toNat, BitVec.toNat_ofNat, Nat.testBit_mod_two_pow,
+    testBit_fldAt]
+  have hi' : i < 32 := hi
+  repeat' split
+  all_goals first
+    | (simp only [show i - 8 - 8 - 8 < 8 by omega, decide_true, Bool.true_and, hi'];
+       congr 1; omega)
+    | (simp only [decide_eq_true_eq, hi', decide_true, Bool.true_and, *]; congr 1; omega)
+    | omega
+
+theorem bytes2 (v : Nat) : (vbyte v 1).append (vbyte v 0) = BitVec.ofNat 16 v := by
+  apply BitVec.eq_of_getElem_eq
+  intro i hi
+  simp only [BitVec.append_eq, BitVec.getElem_append]
+  simp only [BitVec.getElem_eq_testBit_toNat, BitVec.toNat_ofNat, Nat.testBit_mod_two_pow,
+    testBit_fldAt]
+  have hi' : i < 16 := hi
+  repeat' split
+  all_goals first
+    | (simp only [show i - 8 < 8 by omega, decide_true, Bool.true_and, hi'];
+       congr 1; omega)
+    | (simp only [decide_eq_true_eq, hi', decide_true, Bool.true_and, *]; congr 1; omega)
+    | omega
+
+theorem sext16_bv (v : Nat) (hv : v < 2 ^ 16) :
+    sign_extend (m := 64) (BitVec.ofNat 16 v) = BitVec.ofNat 64 (sextH v) := by
+  apply BitVec.eq_of_toNat_eq
+  simp [sign_extend, Sail.BitVec.signExtend, BitVec.toNat_signExtend, sextH, BitVec.msb_eq_decide]
+  by_cases h : v < 32768
+  · simp [h, show ¬ 32768 ≤ v % 65536 by omega]; omega
+  · simp [h, show 32768 ≤ v % 65536 by omega, W]; omega
+
+theorem zext_bv {n : Nat} (v : Nat) (hv : v < 2 ^ n) (hn : n ≤ 64) :
+    zero_extend (m := 64) (BitVec.ofNat n v) = BitVec.ofNat 64 v := by
+  apply BitVec.eq_of_toNat_eq
+  simp only [zero_extend, Sail.BitVec.zeroExtend, BitVec.toNat_setWidth, BitVec.toNat_ofNat]
+  rw [Nat.mod_eq_of_lt hv, Nat.mod_eq_of_lt (Nat.lt_of_lt_of_le hv (Nat.pow_le_pow_right (by decide) hn))]
+
+/-- A load entry: the evaluator's `ldI` at width `wd` with extension `ext`,
+the Sail value of the loaded bytes, and the kind's `MemFacts` from the
+relation's byte pins. -/
+theorem load_sound {c : Code} (hT : TableOK c) {s s' : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 imm : Nat} {i : Ins} (hget : c.table.getW s.pc = some (w, i)) {k : MKind}
+    {wd : Nat} {ext : Nat → Nat}
+    (hk : (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ Imm12 imm ∧ DecodeFactM (mkM s.pc w k rd rs1 0 imm))
+    (hkind : KindOK (keysG (pinsOf s.regs)) k rd rs1 0)
+    (hex : ldI s rd rs1 imm wd ext = some s')
+    (bsOf : Nat → List (BitVec 8))
+    (hmf : ∀ a v, loadOK a wd = true → (∀ j, j < wd → (cf.σ.mem[a + j]?).getD 0 = vbyte v j) →
+      (eaddrM (mkM s.pc w k rd rs1 0 imm) (pinsOf s.regs)).toNat = a →
+      MemFacts cf.σ.mem (pinsOf s.regs) (bsOf v) (mkM s.pc w k rd rs1 0 imm))
+    (hval : ∀ v, v < 2 ^ (8 * wd) →
+      wvalM (mkM s.pc w k rd rs1 0 imm) (pinsOf s.regs) (bsOf v) = BitVec.ofNat 64 (ext v))
+    (hgm : ∀ bs, runGM [mkM s.pc w k rd rs1 0 imm] (pinsOf s.regs) [bs] =
+      (rd, wvalM (mkM s.pc w k rd rs1 0 imm) (pinsOf s.regs) bs) :: eraseG rd (pinsOf s.regs))
+    (hlog : ∀ bs, wlogM [mkM s.pc w k rd rs1 0 imm] (pinsOf s.regs) [bs] = []) :
+    Reaches c cf s' := by
+  obtain ⟨hrd, hrs1, himm, hdec⟩ := hk
+  have hf := (hT _ _ _ hget).fetch
+  unfold ldI at hex
+  generalize ha : (getR s.regs rs1 + imm) % W = a at hex
+  cases hok : loadOK a wd with
+  | false => simp [hok] at hex
+  | true =>
+    cases hl : load s.mem a wd with
+    | none => simp [hok, hl] at hex
+    | some v =>
+      simp only [hok, hl, Option.some.injEq] at hex
+      subst hex
+      show Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (ext v), s.mem⟩
+      obtain ⟨hv, hbytes⟩ := load_bytes hl
+      have hea := eaddr_mkM (k := k) (pc := s.pc) (w := w) (rd := rd) (rs2 := 0) hS.x0 hrs1 himm
+      rw [ha] at hea
+      have heat : (eaddrM (mkM s.pc w k rd rs1 0 imm) (pinsOf s.regs)).toNat = a := by
+        rw [hea, ← ha, ea_toNat]
+      obtain ⟨σ', t', hs, ht', hG', hmem', hout, hpc', hregs, hpay⟩ :=
+        mstep hS hf rfl rfl ⟨rfl, rfl, rfl, rfl⟩ (hS.code _ _ _ hget) hdec hkind
+          (hmf a v hok (fun j hj => hS.mem _ _ (hbytes j hj)) heat)
+      have hregs' : GHolds σ' ((rd, BitVec.ofNat 64 (ext v)) :: eraseG rd (pinsOf s.regs)) := by
+        rw [hgm, hval v hv] at hregs; exact hregs
+      have hm : σ'.mem = cf.σ.mem := by rw [hmem', hlog]; rfl
+      refine ⟨_, hs, ⟨hG', ?_, ?_, getR_setR_zero _ hS.x0, ?_, ?_, hout, hpay, ht'⟩⟩
+      · rw [hpc']; simp only [mkM]; rw [addInt_ofNat]
+      · have := pins_setR hrd.1 hrd.2 hregs'
+        rwa [BitVec.toNat_ofNat, setR_mod] at this
+      · intro x b hb; rw [hm]; exact hS.mem x b hb
+      · rw [hm]; exact hS.code
+
+/-- The 4-byte pins of `MemFacts` from the relation's. -/
+theorem lpins4_of {m : Std.ExtHashMap Nat (BitVec 8)} {a v : Nat}
+    (h : ∀ j, j < 4 → (m[a + j]?).getD 0 = vbyte v j) :
+    LPins4 m a [vbyte v 0, vbyte v 1, vbyte v 2, vbyte v 3] :=
+  ⟨by simpa using h 0 (by omega), h 1 (by omega), h 2 (by omega), h 3 (by omega)⟩
+
+theorem sound_lw {c : Code} (hT : TableOK c) {s s' : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 imm : Nat} (hget : c.table.getW s.pc = some (w, .lw rd rs1 imm))
+    (hex : exec (.lw rd rs1 imm) c s = some s') : Reaches c cf s' := by
+  have hk := (hT _ _ _ hget).dec
+  refine load_sound hT hS hget (k := .lw) hk ⟨hk.1, srcOK_of hk.2.1⟩ hex
+    (fun v => [vbyte v 0, vbyte v 1, vbyte v 2, vbyte v 3])
+    (fun a v hok hpin heat => by
+      show (_ ∧ _ ∧ _) ∧ LPins4 _ _ _
+      rw [heat]; exact ⟨loadOK_iff hok, lpins4_of hpin⟩)
+    (fun v hv => by
+      show sign_extend (m := 64) _ = _
+      simp only [List.getD, List.getElem?_cons_succ, List.getElem?_cons_zero, Option.getD_some]
+      rw [bytes4]; exact sext32_bv v hv) (fun _ => rfl) (fun _ => rfl)
+
+theorem sound_lwu {c : Code} (hT : TableOK c) {s s' : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 imm : Nat} (hget : c.table.getW s.pc = some (w, .lwu rd rs1 imm))
+    (hex : exec (.lwu rd rs1 imm) c s = some s') : Reaches c cf s' := by
+  have hk := (hT _ _ _ hget).dec
+  refine load_sound hT hS hget (k := .lwu) hk ⟨hk.1, srcOK_of hk.2.1⟩ hex
+    (fun v => [vbyte v 0, vbyte v 1, vbyte v 2, vbyte v 3])
+    (fun a v hok hpin heat => by
+      show (_ ∧ _ ∧ _) ∧ LPins4 _ _ _
+      rw [heat]; exact ⟨loadOK_iff hok, lpins4_of hpin⟩)
+    (fun v hv => by
+      simp only [wvalM, bytesVal, mkM, List.getD, List.getElem?_cons_succ, List.getElem?_cons_zero,
+        Option.getD_some]
+      rw [bytes4]; exact zext_bv v hv (by omega)) (fun _ => rfl) (fun _ => rfl)
+
+theorem sound_lh {c : Code} (hT : TableOK c) {s s' : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 imm : Nat} (hget : c.table.getW s.pc = some (w, .lh rd rs1 imm))
+    (hex : exec (.lh rd rs1 imm) c s = some s') : Reaches c cf s' := by
+  have hk := (hT _ _ _ hget).dec
+  refine load_sound hT hS hget (k := .lh) hk ⟨hk.1, srcOK_of hk.2.1⟩ hex
+    (fun v => [vbyte v 0, vbyte v 1])
+    (fun a v hok hpin heat => by
+      show (_ ∧ _ ∧ _) ∧ _ ∧ _
+      rw [heat]
+      exact ⟨loadOK_iff hok, by simpa using hpin 0 (by omega), hpin 1 (by omega)⟩)
+    (fun v hv => by
+      show sign_extend (m := 64) _ = _
+      simp only [List.getD, List.getElem?_cons_succ, List.getElem?_cons_zero, Option.getD_some]
+      rw [bytes2]; exact sext16_bv v hv) (fun _ => rfl) (fun _ => rfl)
+
+theorem sound_lhu {c : Code} (hT : TableOK c) {s s' : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 imm : Nat} (hget : c.table.getW s.pc = some (w, .lhu rd rs1 imm))
+    (hex : exec (.lhu rd rs1 imm) c s = some s') : Reaches c cf s' := by
+  have hk := (hT _ _ _ hget).dec
+  refine load_sound hT hS hget (k := .lhu) hk ⟨hk.1, srcOK_of hk.2.1⟩ hex
+    (fun v => [vbyte v 0, vbyte v 1])
+    (fun a v hok hpin heat => by
+      show (_ ∧ _ ∧ _) ∧ _ ∧ _
+      rw [heat]
+      exact ⟨loadOK_iff hok, by simpa using hpin 0 (by omega), hpin 1 (by omega)⟩)
+    (fun v hv => by
+      simp only [wvalM, bytesVal, mkM, List.getD, List.getElem?_cons_succ, List.getElem?_cons_zero,
+        Option.getD_some]
+      rw [bytes2]; exact zext_bv v hv (by omega)) (fun _ => rfl) (fun _ => rfl)
+
+theorem low_byte (v j hi : Nat) (hj : 8 * j + 8 ≤ hi + 1) (hhi : hi < 64) :
+    (Sail.BitVec.extractLsb (BitVec.ofNat 64 v) hi 0).extractLsb' (8 * j) 8 =
+      BitVec.ofNat 8 (fldAt (8 * j) 8 v) := by
+  apply BitVec.eq_of_toNat_eq
+  simp only [BitVec.extractLsb'_toNat, Sail.BitVec.extractLsb, BitVec.extractLsb_toNat,
+    BitVec.toNat_ofNat, Nat.shiftRight_zero, Nat.sub_zero]
+  show _ = fldAt (8 * j) 8 v % 2 ^ 8
+  rw [Nat.mod_eq_of_lt (fldAt_lt _ _ _)]
+  have e1 : v % 2 ^ 64 % 2 ^ (hi + 1) = fldAt 0 (hi + 1) v := by
+    simp only [fldAt, Nat.shiftRight_zero]
+    exact Nat.mod_mod_of_dvd _ (Nat.pow_dvd_pow 2 (by omega))
+  rw [e1]
+  show fldAt (8 * j) 8 (fldAt 0 (hi + 1) v) = _
+  rw [fldAt_fldAt v (by omega), Nat.zero_add]
+
+/-- A store entry: the evaluator's `stI` at width `wd`, the kind's `MemFacts`
+from the store window, and the write log's bytes. -/
+theorem store_sound {c : Code} (hT : TableOK c) {s s' : St} {cf : Config} (hS : Sim c s cf)
+    {w rs1 rs2 imm : Nat} {i : Ins} (hget : c.table.getW s.pc = some (w, i)) {k : MKind}
+    {wd : Nat}
+    (hk : rs1 ≤ 31 ∧ rs2 ≤ 31 ∧ Imm12 imm ∧ DecodeFactM (mkM s.pc w k 0 rs1 rs2 imm))
+    (hkind : KindOK (keysG (pinsOf s.regs)) k 0 rs1 rs2)
+    (hex : stI c s rs1 rs2 imm wd = some s')
+    (hmf : ∀ a, storeOK c a wd = true →
+      (eaddrM (mkM s.pc w k 0 rs1 rs2 imm) (pinsOf s.regs)).toNat = a →
+      MemFacts cf.σ.mem (pinsOf s.regs) [] (mkM s.pc w k 0 rs1 rs2 imm))
+    (hlog : wlogM [mkM s.pc w k 0 rs1 rs2 imm] (pinsOf s.regs) [[]] =
+      [((eaddrM (mkM s.pc w k 0 rs1 rs2 imm) (pinsOf s.regs)).toNat, wd, srcVal rs2 (pinsOf s.regs))])
+    (hgm : runGM [mkM s.pc w k 0 rs1 rs2 imm] (pinsOf s.regs) [[]] = pinsOf s.regs)
+    (hin : ∀ a x v, a ≤ x → x < a + wd →
+      entryByte (a, wd, BitVec.ofNat 64 v) x = some (BitVec.ofNat 8 (fldAt (8 * (x - a)) 8 v)))
+    (hout : ∀ a x d, ¬ (a ≤ x ∧ x < a + wd) → entryByte (a, wd, d) x = none) :
+    Reaches c cf s' := by
+  obtain ⟨hrs1, hrs2, himm, hdec⟩ := hk
+  have hf := (hT _ _ _ hget).fetch
+  unfold stI at hex
+  generalize ha : (getR s.regs rs1 + imm) % W = a at hex
+  cases hok : storeOK c a wd with
+  | false => simp [hok] at hex
+  | true =>
+    cases hst : store s.mem a wd (getR s.regs rs2) with
+    | none => simp [hok, hst] at hex
+    | some M' =>
+      simp only [hok, hst, Option.some.injEq] at hex
+      subst hex
+      obtain ⟨_, _, _, _, hoff⟩ := storeOK_iff hok
+      have hea := eaddr_mkM (k := k) (pc := s.pc) (w := w) (rd := 0) (rs2 := rs2) hS.x0 hrs1 himm
+      rw [ha] at hea
+      have heat : (eaddrM (mkM s.pc w k 0 rs1 rs2 imm) (pinsOf s.regs)).toNat = a := by
+        rw [hea, ← ha, ea_toNat]
+      obtain ⟨σ', t', hs, ht', hG', hmem', hout', hpc', hregs, hpay⟩ :=
+        mstep hS hf rfl rfl ⟨rfl, rfl, rfl, rfl⟩ (hS.code _ _ _ hget) hdec hkind (hmf a hok heat)
+      have hm : σ'.mem = applyW cf.σ.mem (a, wd, BitVec.ofNat 64 (getR s.regs rs2)) := by
+        rw [hmem', hlog, heat, srcVal_pinsOf hS.x0 hrs2]; rfl
+      obtain ⟨hmem2, hcode2⟩ := mem_after_store (c := c)
+        (e := (a, wd, BitVec.ofNat 64 (getR s.regs rs2))) hst hS.mem
+        (fun x h1 h2 => hin a x _ h1 h2) (fun x hx => hout a x _ hx) hS.code hoff hT
+      rw [hgm] at hregs
+      refine ⟨_, hs, ⟨hG', ?_, hregs, hS.x0, ?_, ?_, hout', hpay, ht'⟩⟩
+      · rw [hpc']; simp only [mkM]; rw [addInt_ofNat]
+      · rw [hm]; exact hmem2
+      · rw [hm]; exact hcode2
+
+theorem sound_sw {c : Code} (hT : TableOK c) {s s' : St} {cf : Config} (hS : Sim c s cf)
+    {w rs1 rs2 imm : Nat} (hget : c.table.getW s.pc = some (w, .sw rs1 rs2 imm))
+    (hex : exec (.sw rs1 rs2 imm) c s = some s') : Reaches c cf s' := by
+  have hk := (hT _ _ _ hget).dec
+  refine store_sound hT hS hget (k := .sw) hk ⟨srcOK_of hk.1, srcOK_of hk.2.1⟩ hex
+    (fun a hok heat => by
+      obtain ⟨h1, h2, h3, h4, _⟩ := storeOK_iff hok
+      show _ ∧ _ ∧ _ ∧ _
+      rw [heat]; exact ⟨h1, h2, h3, h4⟩) rfl rfl
+    (fun a x v h1 h2 => by
+      show (if a ≤ x ∧ x < a + 4 then some _ else none) = _
+      rw [if_pos ⟨h1, h2⟩]
+      exact congrArg some (low_byte v (x - a) _ (by simp; omega) (by simp)))
+    (fun a x d hx => by
+      show (if a ≤ x ∧ x < a + 4 then some _ else none) = _
+      rw [if_neg hx])
+
+theorem sound_sh {c : Code} (hT : TableOK c) {s s' : St} {cf : Config} (hS : Sim c s cf)
+    {w rs1 rs2 imm : Nat} (hget : c.table.getW s.pc = some (w, .sh rs1 rs2 imm))
+    (hex : exec (.sh rs1 rs2 imm) c s = some s') : Reaches c cf s' := by
+  have hk := (hT _ _ _ hget).dec
+  refine store_sound hT hS hget (k := .sh) hk ⟨srcOK_of hk.1, srcOK_of hk.2.1⟩ hex
+    (fun a hok heat => by
+      obtain ⟨h1, h2, h3, h4, _⟩ := storeOK_iff hok
+      show _ ∧ _ ∧ _ ∧ _
+      rw [heat]; exact ⟨h1, h2, h3, h4⟩) rfl rfl
+    (fun a x v h1 h2 => by
+      show (if x = a then some _ else if x = a + 1 then some _ else none) = _
+      by_cases hx : x = a
+      · subst hx; rw [if_pos rfl]
+        exact congrArg some (by simpa using low_byte v 0 15 (by omega) (by omega))
+      · rw [if_neg hx, if_pos (by omega)]
+        exact congrArg some (by
+          have := low_byte v 1 15 (by omega) (by omega)
+          rw [show x - a = 1 by omega]; simpa using this))
+    (fun a x d hx => by
+      show (if x = a then some _ else if x = a + 1 then some _ else none) = _
+      rw [if_neg (by omega), if_neg (by omega)])
+
+theorem sound_sb {c : Code} (hT : TableOK c) {s s' : St} {cf : Config} (hS : Sim c s cf)
+    {w rs1 rs2 imm : Nat} (hget : c.table.getW s.pc = some (w, .sb rs1 rs2 imm))
+    (hex : exec (.sb rs1 rs2 imm) c s = some s') : Reaches c cf s' := by
+  have hk := (hT _ _ _ hget).dec
+  refine store_sound hT hS hget (k := .sb) hk ⟨srcOK_of hk.1, srcOK_of hk.2.1⟩ hex
+    (fun a hok heat => by
+      obtain ⟨h1, h2, h3, _, _⟩ := storeOK_iff hok
+      show _ ∧ _ ∧ _
+      rw [heat]; exact ⟨h1, h2, h3⟩) rfl rfl
+    (fun a x v h1 h2 => by
+      show (if x = a then some _ else none) = _
+      have hx : x = a := by omega
+      subst hx; rw [if_pos rfl]
+      have := low_byte v 0 7 (by omega) (by omega)
+      simp only [Nat.sub_self]
+      apply congrArg some
+      rw [← this]
+      apply BitVec.eq_of_toNat_eq
+      simp [sbData, Sail.BitVec.extractLsb])
+    (fun a x d hx => by
+      show (if x = a then some _ else none) = _
+      rw [if_neg (by omega)])
+
+/-! ## ALU kinds without a block kind (`stepObs_alu` with an execute characterization) -/
+
+/-- An ALU step whose execute writes `x_rd := v` (`hexec`, from an
+`ExecuteAlu` characterization), from the relation. After `row_alu_core`. -/
+theorem core_sound {c : Code} {s : St} {cf : Config} (hS : Sim c s cf) {w : Nat}
+    (hf : Fetchable c s.pc w) {i : Ins} (hget : c.table.getW s.pc = some (w, i))
+    {ast : instruction} {rd v : Nat}
+    (hdec : ∀ s : SequentialState RegisterType trivialChoiceSource,
+      s.regs.get? Register.misa = some ((Vsa.Sim.initMisa) : RegisterType Register.misa) →
+      s.regs.get? Register.cur_privilege =
+        some ((Privilege.Machine) : RegisterType Register.cur_privilege) →
+      s.regs.get? Register.mseccfg = some ((0#64) : RegisterType Register.mseccfg) →
+      (ext_decode (BitVec.ofNat 32 w)).run s = .ok ast s)
+    (hrd : 1 ≤ rd ∧ rd ≤ 31)
+    (hexec : ∀ σ : MState, GoodState σ → GHolds σ (pinsOf s.regs) →
+      (execute ast).run (afterNextPC (afterPrelude σ) (BitVec.ofNat 64 s.pc))
+        = .ok RETIRE_SUCCESS (sigma3_alu σ (BitVec.ofNat 64 s.pc) (gprReg rd) (gprRT rd (BitVec.ofNat 64 v)))) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd v, s.mem⟩ := by
+  obtain ⟨σ, t, u⟩ := cf
+  obtain ⟨vm, hmi⟩ := hS.good.minstret
+  have hpcn := pc_toNat hf.fetch
+  have hcode := hS.code _ _ _ hget
+  obtain ⟨hr1, hr2, hr3, hr4, hr5⟩ := gpr_rd_ok rd (by omega) hrd.1
+  obtain ⟨σ', i', hs, hi', hG', hmem', hobs⟩ :=
+    stepObs_alu σ t u (BitVec.ofNat 64 s.pc) vm _ ast (gprReg rd) (gprRT rd (BitVec.ofNat 64 v))
+      _ _ _ _ hS.good hS.pc hmi hf.word (by rw [hf.word]; exact hf.rvc) (dec_at hS.good hdec)
+      (hexec σ hS.good hS.regs) hr1 hr2 hr3 hr4 hr5
+      (by rw [hpcn]; exact hcode.1) (by rw [hpcn]; exact hcode.2.1)
+      (by rw [hpcn]; exact hcode.2.2.1) (by rw [hpcn]; exact hcode.2.2.2)
+      (by rw [hpcn]; exact hf.base) (by rw [hpcn]; exact hf.fetch) (by rw [hpcn]; exact hf.align)
+      hS.tick
+  have hgpr : ∀ n, 1 ≤ n → n ≤ 31 → n ≠ rd →
+      σ'.regs.get? (gprReg n) = σ.regs.get? (gprReg n) := fun n h1 h31 hne =>
+    (hobs.1 _ (notGpr_mcycle n) (notGpr_mtime n) (notGpr_mip n)).trans
+      (get?_sigmaPost_alu σ _ vm _ _ _ (notGpr_minstret n) (notGpr_PC n)
+        (gprReg_beq_false rd (by omega) n (by omega) hrd.1 h1 (Ne.symm hne))
+        (notGpr_nextPC n) (notGpr_minstret_increment n))
+  have hrdv : σ'.regs.get? (gprReg rd) = some (gprRT rd (BitVec.ofNat 64 v)) := by
+    rw [hobs.1 _ (notGpr_mcycle rd) (notGpr_mtime rd) (notGpr_mip rd)]
+    show ((((sigma3_alu σ _ (gprReg rd) _).regs.insert Register.PC _).insert
+      Register.minstret _)).get? (gprReg rd) = _
+    rw [Std.ExtDHashMap.get?_insert]
+    simp only [notGpr_minstret rd, dif_neg, reduceCtorEq, not_false_eq_true]
+    rw [Std.ExtDHashMap.get?_insert]
+    simp only [notGpr_PC rd, dif_neg, reduceCtorEq, not_false_eq_true]
+    show ((_ : Std.ExtDHashMap Register RegisterType).insert (gprReg rd) _).get? (gprReg rd) = _
+    rw [Std.ExtDHashMap.get?_insert_self]
+  have hpc' : σ'.regs.get? Register.PC = some (BitVec.ofNat 64 ((s.pc + 4) % W)) := by
+    rw [hobs.1 _ (by decide) (by decide) (by decide)]
+    show ((((sigma3_alu σ _ (gprReg rd) _).regs.insert Register.PC _).insert
+      Register.minstret _)).get? Register.PC = _
+    rw [Std.ExtDHashMap.get?_insert]
+    simp only [show (Register.minstret == Register.PC) = false from by decide, dif_neg,
+      reduceCtorEq, not_false_eq_true]
+    rw [Std.ExtDHashMap.get?_insert_self, addInt_ofNat]
+  have hpay : σ'.regs.get? Register.htif_payload_writes =
+      σ.regs.get? Register.htif_payload_writes := by
+    rw [hobs.1 _ (by decide) (by decide) (by decide),
+      get?_sigmaPost_alu σ _ vm _ _ _ (by decide) (by decide)
+        (by rw [Bool.beq_comm]; exact notGpr_payload rd) (by decide) (by decide)]
+  have := sim_link hS hrd hG' hi' hmem' hpc' hrdv hgpr hobs.2 hpay (u' := u + 1)
+  rw [BitVec.toNat_ofNat, setR_mod] at this
+  exact ⟨_, Steps.head hs (Steps.refl _), this⟩
+
+theorem sltu_bv (x y : Nat) (hx : x < 2 ^ 64) (hy : y < 2 ^ 64) :
+    zero_extend (m := 64) (bool_to_bit (zopz0zI_u (BitVec.ofNat 64 x) (BitVec.ofNat 64 y))) =
+      BitVec.ofNat 64 (fSltu x y) := by
+  have := guard_bltu x y hx hy
+  simp only [guardB, bLtu] at this
+  rw [this, zext_bit]; simp [fSltu]
+
+theorem srcPin_pins {σ : MState} {R n : Nat} (hn : n ≤ 31) (h : GHolds σ (pinsOf R)) :
+    srcPin σ n (srcVal n (pinsOf R)) :=
+  srcPin_srcVal σ (pinsOf R) n (by
+    by_cases h0 : n = 0
+    · exact Or.inl h0
+    · exact Or.inr (mem_keys_pinsOf.2 ⟨by omega, hn⟩)) h
+
+theorem sound_sltu {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 rs2 : Nat} (hget : c.table.getW s.pc = some (w, .sltu rd rs1 rs2)) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fSltu (getR s.regs rs1) (getR s.regs rs2)), s.mem⟩ := by
+  obtain ⟨hrd, hrs1, hrs2, hdec⟩ := (hT _ _ _ hget).dec
+  refine core_sound hS (hT _ _ _ hget).fetch hget hdec hrd (fun σ _ hL => ?_)
+  have hv := sltu_bv _ _ (getR_lt s.regs rs1) (getR_lt s.regs rs2)
+  rw [← srcVal_pinsOf hS.x0 hrs1, ← srcVal_pinsOf hS.x0 hrs2] at hv
+  rw [← hv]
+  exact execute_rtype_sltu_char _ _ _ _ _ _ _
+    (rX_src σ _ rs1 hrs1 _ (srcPin_pins hrs1 hL)) (rX_src σ _ rs2 hrs2 _ (srcPin_pins hrs2 hL))
+    (wX_gpr _ _ rd hrd.1 hrd.2)
+
+theorem sound_sltiu {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 imm : Nat} (hget : c.table.getW s.pc = some (w, .sltiu rd rs1 imm)) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fSltu (getR s.regs rs1) imm), s.mem⟩ := by
+  obtain ⟨hrd, hrs1, himm, hlt, hdec⟩ := (hT _ _ _ hget).dec
+  refine core_sound hS (hT _ _ _ hget).fetch hget hdec hrd (fun σ _ hL => ?_)
+  have hv := sltu_bv _ _ (getR_lt s.regs rs1) hlt
+  rw [← srcVal_pinsOf hS.x0 hrs1, ← himm] at hv
+  rw [← hv]
+  exact execute_itype_sltiu_char _ _ _ _ _ _
+    (rX_src σ _ rs1 hrs1 _ (srcPin_pins hrs1 hL)) (wX_gpr _ _ rd hrd.1 hrd.2)
+
+theorem wv_sllw (x y : Nat) :
+    sign_extend (m := 64) (shift_bits_left (Sail.BitVec.extractLsb (BitVec.ofNat 64 x) 31 0)
+      (Sail.BitVec.extractLsb (Sail.BitVec.extractLsb (BitVec.ofNat 64 y) 31 0) 4 0)) =
+      BitVec.ofNat 64 (fSllw x y) := by
+  have hk : Sail.BitVec.extractLsb (Sail.BitVec.extractLsb (BitVec.ofNat 64 y) 31 0) 4 0 =
+      BitVec.ofNat 5 (y % 32) := by
+    apply BitVec.eq_of_toNat_eq; rw [shamt_reg32]; simp
+  rw [hk]
+  exact wv_slliw x (y % 32) (Nat.mod_lt _ (by decide))
+
+theorem wv_srlw (x y : Nat) :
+    sign_extend (m := 64) (shift_bits_right (Sail.BitVec.extractLsb (BitVec.ofNat 64 x) 31 0)
+      (Sail.BitVec.extractLsb (Sail.BitVec.extractLsb (BitVec.ofNat 64 y) 31 0) 4 0)) =
+      BitVec.ofNat 64 (fSrlw x y) := by
+  have hk : Sail.BitVec.extractLsb (Sail.BitVec.extractLsb (BitVec.ofNat 64 y) 31 0) 4 0 =
+      BitVec.ofNat 5 (y % 32) := by
+    apply BitVec.eq_of_toNat_eq; rw [shamt_reg32]; simp
+  rw [hk]
+  exact wv_srliw x (y % 32) (Nat.mod_lt _ (by decide))
+
+theorem sound_sllw {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 rs2 : Nat} (hget : c.table.getW s.pc = some (w, .sllw rd rs1 rs2)) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fSllw (getR s.regs rs1) (getR s.regs rs2)), s.mem⟩ := by
+  have hk := (hT _ _ _ hget).dec
+  refine sound_rr hT hS hget hk ⟨hk.1, srcOK_of hk.2.1, srcOK_of hk.2.2.1⟩ trivial ?_ rfl
+  show (rd, sign_extend (m := 64) (shift_bits_left (Sail.BitVec.extractLsb (srcVal rs1 (pinsOf s.regs)) 31 0)
+    (Sail.BitVec.extractLsb (Sail.BitVec.extractLsb (srcVal rs2 (pinsOf s.regs)) 31 0) 4 0))) :: _ = _
+  rw [srcVal_pinsOf hS.x0 hk.2.1, srcVal_pinsOf hS.x0 hk.2.2.1, wv_sllw]; rfl
+
+theorem sound_srlw {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 rs2 : Nat} (hget : c.table.getW s.pc = some (w, .srlw rd rs1 rs2)) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fSrlw (getR s.regs rs1) (getR s.regs rs2)), s.mem⟩ := by
+  have hk := (hT _ _ _ hget).dec
+  refine sound_rr hT hS hget hk ⟨hk.1, srcOK_of hk.2.1, srcOK_of hk.2.2.1⟩ trivial ?_ rfl
+  show (rd, sign_extend (m := 64) (shift_bits_right (Sail.BitVec.extractLsb (srcVal rs1 (pinsOf s.regs)) 31 0)
+    (Sail.BitVec.extractLsb (Sail.BitVec.extractLsb (srcVal rs2 (pinsOf s.regs)) 31 0) 4 0))) :: _ = _
+  rw [srcVal_pinsOf hS.x0 hk.2.1, srcVal_pinsOf hS.x0 hk.2.2.1, wv_srlw]; rfl
+
+/-! ## Arithmetic right shifts -/
+
+/-- Complementing, shifting and complementing again is the shift with ones
+shifted in (the arithmetic shift of a negative value). -/
+theorem ashr_compl (x s n : Nat) (hs : s ≤ n) (hx : x < 2 ^ n) :
+    2 ^ n - 1 - (2 ^ n - 1 - x) / 2 ^ s = x / 2 ^ s + (2 ^ n - 2 ^ n / 2 ^ s) := by
+  have hP : 0 < 2 ^ s := Nat.two_pow_pos s
+  have hPQ : 2 ^ s * 2 ^ (n - s) = 2 ^ n := by rw [← Nat.pow_add]; congr 1; omega
+  have hQ : 2 ^ n / 2 ^ s = 2 ^ (n - s) := by
+    rw [← hPQ, Nat.mul_div_cancel_left _ hP]
+  rw [hQ]
+  generalize hq : x / 2 ^ s = q
+  generalize hr : x % 2 ^ s = r
+  have hx' : x = 2 ^ s * q + r := by rw [← hq, ← hr]; exact (Nat.div_add_mod x _).symm
+  have hrP : r < 2 ^ s := by rw [← hr]; exact Nat.mod_lt _ hP
+  have hqQ : q < 2 ^ (n - s) := by
+    rw [← hq]; exact Nat.div_lt_of_lt_mul (by rw [hPQ]; exact hx)
+  have hc : 2 ^ n - 1 - x = 2 ^ s * (2 ^ (n - s) - 1 - q) + (2 ^ s - 1 - r) := by
+    have h1 : 2 ^ s * (2 ^ (n - s) - 1 - q) = 2 ^ s * 2 ^ (n - s) - 2 ^ s - 2 ^ s * q := by
+      rw [Nat.mul_sub, Nat.mul_sub, Nat.mul_one]
+    rw [h1, hPQ, hx']
+    have h2 : 2 ^ s * q + 2 ^ s ≤ 2 ^ n := by
+      rw [← hPQ, ← Nat.mul_succ]; exact Nat.mul_le_mul_left _ hqQ
+    omega
+  rw [hc, Nat.mul_add_div hP, Nat.div_eq_of_lt (by omega)]
+  have h3 : 2 ^ (n - s) ≤ 2 ^ n := by rw [← hPQ]; exact Nat.le_mul_of_pos_left _ hP
+  omega
+
+theorem sra_toNat (x s : Nat) (hx : x < 2 ^ 64) (hs : s < 64) :
+    ((BitVec.ofNat 64 x).sshiftRight s).toNat = sra64 x s := by
+  simp only [BitVec.toNat_sshiftRight, BitVec.toNat_ofNat, Nat.mod_eq_of_lt hx, BitVec.msb_eq_decide, sra64]
+  by_cases h : x < H
+  · have : ¬ 2 ^ (64 - 1) ≤ x := by simp only [H] at h; omega
+    simp [h, this]
+  · have : 2 ^ (64 - 1) ≤ x := by simp only [H] at h; omega
+    simp only [this, decide_true, if_true, h, if_false]
+    rw [Nat.shiftRight_eq_div_pow, Nat.shiftRight_eq_div_pow, Nat.shiftRight_eq_div_pow,
+      ashr_compl x s 64 (by omega) hx]
+
+theorem sra32_toNat (x s : Nat) (hx : x < 2 ^ 32) (hs : s < 32) :
+    ((BitVec.ofNat 32 x).sshiftRight s).toNat = sra32 x s := by
+  simp only [BitVec.toNat_sshiftRight, BitVec.toNat_ofNat, Nat.mod_eq_of_lt hx, BitVec.msb_eq_decide, sra32]
+  by_cases h : x < 2147483648
+  · have : ¬ 2 ^ (32 - 1) ≤ x := by omega
+    simp [h, this]
+  · have : 2 ^ (32 - 1) ≤ x := by omega
+    simp only [this, decide_true, if_true, h, if_false]
+    rw [Nat.shiftRight_eq_div_pow, Nat.shiftRight_eq_div_pow, Nat.shiftRight_eq_div_pow,
+      ashr_compl x s 32 (by omega) hx]
+
+theorem sra_bv (x k : Nat) (hx : x < 2 ^ 64) (hk : k < 64) :
+    shift_bits_right_arith (BitVec.ofNat 64 x) (BitVec.ofNat 6 k) = BitVec.ofNat 64 (sra64 x k) := by
+  have e : shift_bits_right_arith (BitVec.ofNat 64 x) (BitVec.ofNat 6 k) =
+      (BitVec.ofNat 64 x).sshiftRight k := by
+    simp only [shift_bits_right_arith, BitVec.toNatInt, BitVec.toNat_ofNat]
+    rw [Nat.mod_eq_of_lt (show k < 2 ^ 6 by omega)]; rfl
+  rw [e]
+  apply BitVec.eq_of_toNat_eq
+  rw [sra_toNat x k hx hk, BitVec.toNat_ofNat, Nat.mod_eq_of_lt]
+  rw [← sra_toNat x k hx hk]; exact BitVec.isLt _
+
+theorem shamt6 (k : Nat) (hk : k < 64) :
+    Sail.BitVec.extractLsb ((BitVec.ofNat 12 k).extractLsb' 0 6) 5 0 = BitVec.ofNat 6 k := by
+  apply BitVec.eq_of_toNat_eq; simp [Sail.BitVec.extractLsb]
+
+theorem shamt_reg6 (y : Nat) (hy : y < 2 ^ 64) :
+    Sail.BitVec.extractLsb (BitVec.ofNat 64 y) 5 0 = BitVec.ofNat 6 (y % 64) := by
+  apply BitVec.eq_of_toNat_eq; rw [shamt_reg y hy]; simp
+
+theorem wv_sraiw (x k : Nat) (hk : k < 32) :
+    sign_extend (m := 64) (shift_bits_right_arith (Sail.BitVec.extractLsb (BitVec.ofNat 64 x) 31 0)
+      (BitVec.ofNat 5 k)) = BitVec.ofNat 64 (fSraiw x k) := by
+  rw [lo32]
+  have e : shift_bits_right_arith (BitVec.ofNat 32 (x % W32)) (BitVec.ofNat 5 k) =
+      BitVec.ofNat 32 (sra32 (x % W32) k) := by
+    have e1 : shift_bits_right_arith (BitVec.ofNat 32 (x % W32)) (BitVec.ofNat 5 k) =
+        (BitVec.ofNat 32 (x % W32)).sshiftRight k := by
+      simp only [shift_bits_right_arith, BitVec.toNatInt, BitVec.toNat_ofNat]
+      rw [Nat.mod_eq_of_lt (show k < 2 ^ 5 by omega)]; rfl
+    have hlt : sra32 (x % W32) k < 2 ^ 32 := by
+      rw [← sra32_toNat _ k (mod32_lt x) hk]; exact BitVec.isLt _
+    rw [e1]
+    apply BitVec.eq_of_toNat_eq
+    rw [sra32_toNat _ k (mod32_lt x) hk, BitVec.toNat_ofNat, Nat.mod_eq_of_lt hlt]
+  rw [e]
+  have hlt : sra32 (x % W32) k < 2 ^ 32 := by
+    rw [← sra32_toNat _ k (mod32_lt x) hk]; exact BitVec.isLt _
+  exact sext32_bv _ hlt
+
+theorem sound_srai {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 k : Nat} (hget : c.table.getW s.pc = some (w, .srai rd rs1 k)) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fSrai (getR s.regs rs1) k), s.mem⟩ := by
+  obtain ⟨hrd, hrs1, hk, hdec⟩ := (hT _ _ _ hget).dec
+  refine sound_ri hT hS hget hdec hrd ⟨hrd, srcOK_of hrs1⟩ trivial ?_ rfl
+  show (rd, shift_bits_right_arith (srcVal rs1 (pinsOf s.regs))
+    (Sail.BitVec.extractLsb ((BitVec.ofNat 12 k).extractLsb' 0 6) 5 0)) :: _ = _
+  rw [srcVal_pinsOf hS.x0 hrs1, shamt6 k hk, sra_bv _ _ (getR_lt _ _) hk]; rfl
+
+theorem sound_sraiw {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 k : Nat} (hget : c.table.getW s.pc = some (w, .sraiw rd rs1 k)) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fSraiw (getR s.regs rs1) k), s.mem⟩ := by
+  obtain ⟨hrd, hrs1, hk, hsh, hdec⟩ := (hT _ _ _ hget).dec
+  refine sound_ri hT hS hget hdec hrd ⟨hrd, srcOK_of hrs1⟩ trivial ?_ rfl
+  show (rd, sign_extend (m := 64) (shift_bits_right_arith
+    (Sail.BitVec.extractLsb (srcVal rs1 (pinsOf s.regs)) 31 0) ((BitVec.ofNat 32 w).extractLsb' 20 5))) :: _ = _
+  rw [hsh, srcVal_pinsOf hS.x0 hrs1, wv_sraiw _ _ hk]; rfl
+
+theorem sound_sra {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 rs2 : Nat} (hget : c.table.getW s.pc = some (w, .sra rd rs1 rs2)) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fSra (getR s.regs rs1) (getR s.regs rs2)), s.mem⟩ := by
+  obtain ⟨hrd, hrs1, hrs2, hdec⟩ := (hT _ _ _ hget).dec
+  refine core_sound hS (hT _ _ _ hget).fetch hget hdec hrd (fun σ _ hL => ?_)
+  have hv : shift_bits_right_arith (srcVal rs1 (pinsOf s.regs))
+      (Sail.BitVec.extractLsb (srcVal rs2 (pinsOf s.regs)) 5 0) =
+      BitVec.ofNat 64 (fSra (getR s.regs rs1) (getR s.regs rs2)) := by
+    rw [srcVal_pinsOf hS.x0 hrs1, srcVal_pinsOf hS.x0 hrs2, shamt_reg6 _ (getR_lt _ _),
+      sra_bv _ _ (getR_lt _ _) (Nat.mod_lt _ (by decide))]; rfl
+  rw [← hv]
+  exact execute_rtype_sra_char _ _ _ _ _ _ _
+    (rX_src σ _ rs1 hrs1 _ (srcPin_pins hrs1 hL)) (rX_src σ _ rs2 hrs2 _ (srcPin_pins hrs2 hL))
+    (wX_gpr _ _ rd hrd.1 hrd.2)
+
 /-! ## The generic theorem -/
 
 /-- **One evaluator step is a Sail step.** Every instruction kind `DecOK`
@@ -1375,6 +1957,27 @@ theorem exec_sound {c : Code} (hT : TableOK c) {s s' : St} {cf : Config} (hS : S
     simp only [exec, alu, wr, next, Option.some.injEq] at hex; subst hex; exact sound_sll hT hS hget
   case srl rd rs1 rs2 =>
     simp only [exec, alu, wr, next, Option.some.injEq] at hex; subst hex; exact sound_srl hT hS hget
+  case lw rd rs1 imm => exact sound_lw hT hS hget hex
+  case lwu rd rs1 imm => exact sound_lwu hT hS hget hex
+  case lh rd rs1 imm => exact sound_lh hT hS hget hex
+  case lhu rd rs1 imm => exact sound_lhu hT hS hget hex
+  case sw rs1 rs2 imm => exact sound_sw hT hS hget hex
+  case sh rs1 rs2 imm => exact sound_sh hT hS hget hex
+  case sb rs1 rs2 imm => exact sound_sb hT hS hget hex
+  case sltu rd rs1 rs2 =>
+    simp only [exec, alu, wr, next, Option.some.injEq] at hex; subst hex; exact sound_sltu hT hS hget
+  case sltiu rd rs1 imm =>
+    simp only [exec, alui, wr, next, Option.some.injEq] at hex; subst hex; exact sound_sltiu hT hS hget
+  case sllw rd rs1 rs2 =>
+    simp only [exec, alu, wr, next, Option.some.injEq] at hex; subst hex; exact sound_sllw hT hS hget
+  case srlw rd rs1 rs2 =>
+    simp only [exec, alu, wr, next, Option.some.injEq] at hex; subst hex; exact sound_srlw hT hS hget
+  case srai rd rs1 k =>
+    simp only [exec, alui, wr, next, Option.some.injEq] at hex; subst hex; exact sound_srai hT hS hget
+  case sraiw rd rs1 k =>
+    simp only [exec, alui, wr, next, Option.some.injEq] at hex; subst hex; exact sound_sraiw hT hS hget
+  case sra rd rs1 rs2 =>
+    simp only [exec, alu, wr, next, Option.some.injEq] at hex; subst hex; exact sound_sra hT hS hget
   case addi rd rs1 imm =>
     simp only [exec, alui, wr, next, Option.some.injEq] at hex; subst hex; exact sound_addi hT hS hget
   case add rd rs1 rs2 =>
