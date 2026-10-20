@@ -216,7 +216,7 @@ theorem stepObs_alu
     (hrd : NonPinned rd_reg)
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (hi : i < 2) :
     ∃ (σ' : MState) (i' : Nat),
       Vsa.Machine.Step ⟨σ, i, u⟩ ⟨σ', i', u + 1⟩ ∧ i' < 2 ∧ GoodState σ' ∧
@@ -257,7 +257,7 @@ theorem stepObs_branch_taken
       = .ok RETIRE_SUCCESS (sigma3_branch_taken σ pc imm))
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (hi : i < 2) :
     ∃ (σ' : MState) (i' : Nat),
       Vsa.Machine.Step ⟨σ, i, u⟩ ⟨σ', i', u + 1⟩ ∧ i' < 2 ∧ GoodState σ' ∧
@@ -293,7 +293,7 @@ theorem stepObs_branch_nottaken
       = .ok RETIRE_SUCCESS (sigma3_branch_nottaken σ pc))
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (hi : i < 2) :
     ∃ (σ' : MState) (i' : Nat),
       Vsa.Machine.Step ⟨σ, i, u⟩ ⟨σ', i', u + 1⟩ ∧ i' < 2 ∧ GoodState σ' ∧
@@ -325,7 +325,7 @@ theorem stepObs_jr
     (hminstret : σ.regs.get? Register.minstret = some vminstret)
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (hnotrvc : Sail.BitVec.extractLsb (((b3.append b2).append b1).append b0) 1 0 = (0b11#2 : BitVec 2))
     (hword : (((b3.append b2).append b1).append b0) = w)
     (hdec : (ext_decode w).run (afterPrelude σ)
@@ -367,7 +367,7 @@ theorem stepObs_j
     (hminstret : σ.regs.get? Register.minstret = some vminstret)
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (hnotrvc : Sail.BitVec.extractLsb (((b3.append b2).append b1).append b0) 1 0 = (0b11#2 : BitVec 2))
     (hword : (((b3.append b2).append b1).append b0) = w)
     (hdec : (ext_decode w).run (afterPrelude σ)
@@ -423,7 +423,7 @@ theorem stepObs_jal
     (hminstret : σ.regs.get? Register.minstret = some vminstret)
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (hnotrvc : Sail.BitVec.extractLsb (((b3.append b2).append b1).append b0) 1 0 = (0b11#2 : BitVec 2))
     (hword : (((b3.append b2).append b1).append b0) = w)
     (hdec : (ext_decode w).run (afterPrelude σ)
@@ -502,7 +502,7 @@ theorem stepObs_store
       = .ok RETIRE_SUCCESS (sigma3_store σ pc m'))
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (hi : i < 2) :
     ∃ (σ' : MState) (i' : Nat),
       Vsa.Machine.Step ⟨σ, i, u⟩ ⟨σ', i', u + 1⟩ ∧ i' < 2 ∧ GoodState σ' ∧

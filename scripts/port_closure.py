@@ -31,8 +31,22 @@ SEEDS = ['Vsa.Machine', 'Vsa.Elf', 'Vsa.Triple', 'Vsa.Meta.SimpNF', 'Vsa.Densify
          'Vsa.Sim.DeriveCase', 'Vsa.Sim.DeriveCaseRow', 'Vsa.Sim.SegToTripleFramed',
          'Vsa.Sim.StepCount', 'Vsa.Sim.FnSummary', 'Vsa.Sim.HtifStepObs', 'Vsa.Sim.DecodeNF',
          'Vsa.Sim.FrameMeta', 'Vsa.Sim.StepObs', 'Vsa.Sim.TripleCat', 'Vsa.Sim.DeriveCallSeg',
-         'Vsa.Sim.DeriveLoop']
-MODIFIED = {'Vsa/Sim/InitValues.lean'}
+         'Vsa.Sim.DeriveLoop', 'Vsa.Sim.Generic.ExitStep', 'Vsa.Sim.Muldi3Spec']
+# Copies with a change (ATTRIBUTION.md): InitValues (this image's tohostAddr; the
+# FetchOK/StoreWin windows), and the segment layer generalised to code above
+# `.tohost` (fetch off the HTIF window instead of below it, stores off the
+# window instead of above it, code pins on the current memory instead of the
+# entry memory), with the callers that had to pass the new facts. BlockTactics2
+# no longer imports syi's NegBlockProto (a demo the generalisation breaks).
+MODIFIED = {
+    'Vsa/Sim/InitValues.lean', 'Vsa/Sim/Hooks.lean', 'Vsa/Sim/Fetch.lean',
+    'Vsa/Sim/StepObs.lean', 'Vsa/Sim/StepAlu.lean', 'Vsa/Sim/StepAddi.lean',
+    'Vsa/Sim/StepBeq.lean', 'Vsa/Sim/StepBranch.lean', 'Vsa/Sim/StepJump.lean',
+    'Vsa/Sim/StepStore.lean', 'Vsa/Sim/HtifStepObs.lean', 'Vsa/Sim/MemStore.lean',
+    'Vsa/Sim/BlockMem.lean', 'Vsa/Sim/BlockTerm.lean', 'Vsa/Sim/BlockPilot.lean',
+    'Vsa/Sim/BlockTactics2.lean', 'Vsa/Sim/ValueSites.lean', 'Vsa/Sim/MemcpySites.lean',
+    'Vsa/Sim/MemcpySpec.lean', 'Vsa/Sim/NegTailSites.lean', 'Vsa/Sim/Generic/ExitStep.lean',
+}
 COPIED = ROOT / 'experiments/port/copied.txt'
 HEADER = """# Lean files copied verbatim from ship-your-lua (Vsa/: the import closure of the
 # machine lane's seeds, scripts/port_closure.py; source commit in ATTRIBUTION.md).
@@ -61,17 +75,21 @@ def imports(p):
 
 
 def closure(src):
+    """The closure as this checkout imports it (a modified file's imports are
+    its own); a module not here yet is read from the source checkout."""
     seen, stack = set(), list(SEEDS)
     while stack:
         m = stack.pop()
         if m in seen:
             continue
-        p = mpath(src, m)
+        p = mpath(ROOT, m)
         if not p.exists():
-            sys.exit(f'port_closure: {m} not in {src}')
+            p = mpath(src, m)
+        if not p.exists():
+            sys.exit(f'port_closure: {m} in neither checkout')
         seen.add(m)
         stack += [x for x in imports(p) if x.split('.')[0] == 'Vsa']
-    return sorted(str(mpath(src, m).relative_to(src)) for m in seen)
+    return sorted(str(mpath(ROOT, m).relative_to(ROOT)) for m in seen)
 
 
 def main():
@@ -82,7 +100,7 @@ def main():
     a = ap.parse_args()
     src = Path(a.src)
     # without the source checkout the closure is computed here (same imports)
-    files = closure(src if src.exists() else ROOT)
+    files = closure(src)
     if a.copy:
         for rel in files:
             if rel in MODIFIED and (ROOT / rel).exists():

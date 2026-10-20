@@ -101,7 +101,7 @@ theorem try_step_addi
     (hminstret : σ.regs.get? Register.minstret = some vminstret)
     (hb0 : σ.mem[pc.toNat]? = some (0x13#8)) (hb1 : σ.mem[pc.toNat + 1]? = some (0x05#8))
     (hb2 : σ.mem[pc.toNat + 2]? = some (0x00#8)) (hb3 : σ.mem[pc.toNat + 3]? = some (0x00#8))
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0) :
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0) :
     (try_step u true).run σ
       = .ok false
           {(({(sigma3 σ pc) with regs := (sigma3 σ pc).regs.insert Register.PC (BitVec.addInt pc 4)}) : MState) with
@@ -304,7 +304,7 @@ theorem stepOnce_addi_notick
     (hminstret : σ.regs.get? Register.minstret = some vminstret)
     (hb0 : σ.mem[pc.toNat]? = some (0x13#8)) (hb1 : σ.mem[pc.toNat + 1]? = some (0x05#8))
     (hb2 : σ.mem[pc.toNat + 2]? = some (0x00#8)) (hb3 : σ.mem[pc.toNat + 3]? = some (0x00#8))
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (htick : i + 1 ≠ 2) :
     (stepOnce i u).run σ = .ok (.inr (i + 1, u + 1)) (sigmaPost σ pc vminstret) := by
   have hts := try_step_addi σ u pc vminstret hG hpc hminstret hb0 hb1 hb2 hb3 hlo hhi halign
@@ -344,7 +344,7 @@ theorem stepOnce_addi_tick
     (hmcycle : (sigmaPost σ pc vminstret).regs.get? Register.mcycle = some vmcycle)
     (hb0 : σ.mem[pc.toNat]? = some (0x13#8)) (hb1 : σ.mem[pc.toNat + 1]? = some (0x05#8))
     (hb2 : σ.mem[pc.toNat + 2]? = some (0x00#8)) (hb3 : σ.mem[pc.toNat + 3]? = some (0x00#8))
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (htick : i + 1 = 2) :
     (stepOnce i u).run σ
       = .ok (.inr (0, u + 1)) (sigmaTick σ pc vminstret vmip vmtime vmtimecmp vmcycle) := by
@@ -381,7 +381,7 @@ theorem step_addi_notick
     (hminstret : σ.regs.get? Register.minstret = some vminstret)
     (hb0 : σ.mem[pc.toNat]? = some (0x13#8)) (hb1 : σ.mem[pc.toNat + 1]? = some (0x05#8))
     (hb2 : σ.mem[pc.toNat + 2]? = some (0x00#8)) (hb3 : σ.mem[pc.toNat + 3]? = some (0x00#8))
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (htick : i + 1 ≠ 2) :
     Vsa.Machine.Step ⟨σ, i, u⟩ ⟨sigmaPost σ pc vminstret, i + 1, u + 1⟩
     ∧ GoodState (sigmaPost σ pc vminstret) :=
@@ -404,7 +404,7 @@ theorem step_addi_tick
     (hmcycle : (sigmaPost σ pc vminstret).regs.get? Register.mcycle = some vmcycle)
     (hb0 : σ.mem[pc.toNat]? = some (0x13#8)) (hb1 : σ.mem[pc.toNat + 1]? = some (0x05#8))
     (hb2 : σ.mem[pc.toNat + 2]? = some (0x00#8)) (hb3 : σ.mem[pc.toNat + 3]? = some (0x00#8))
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (htick : i + 1 = 2) :
     Vsa.Machine.Step ⟨σ, i, u⟩
       ⟨sigmaTick σ pc vminstret vmip vmtime vmtimecmp vmcycle, 0, u + 1⟩

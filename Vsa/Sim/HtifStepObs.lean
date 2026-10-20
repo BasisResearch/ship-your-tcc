@@ -463,7 +463,7 @@ theorem try_step_tohost_putchar
     (hputc : data = (0x0101000000000000#64) ||| BitVec.zeroExtend 64 c)
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0) :
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0) :
     (try_step u true).run σ = .ok false (sigmaPutcharFinal σ pc (BitVec.addInt pc 4) vminstret data c) := by
   obtain ⟨vmip, hmip⟩ := hG.mip
   obtain ⟨vmeip, hmeip⟩ := hG.sig_meip
@@ -555,7 +555,7 @@ theorem stepOnce_tohost_putchar_notick
     (hputc : data = (0x0101000000000000#64) ||| BitVec.zeroExtend 64 c)
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (htick : i + 1 ≠ 2) :
     (stepOnce i u).run σ
       = .ok (.inr (i + 1, u + 1)) (sigmaPutcharFinal σ pc (BitVec.addInt pc 4) vminstret data c) := by
@@ -647,7 +647,7 @@ theorem stepOnce_tohost_putchar_tick
     (hputc : data = (0x0101000000000000#64) ||| BitVec.zeroExtend 64 c)
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (htick : i + 1 = 2) :
     (stepOnce i u).run σ
       = .ok (.inr (0, u + 1))
@@ -731,7 +731,7 @@ theorem step_tohost_putchar_notick
     (hputc : data = (0x0101000000000000#64) ||| BitVec.zeroExtend 64 c)
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (htick : i + 1 ≠ 2) :
     Vsa.Machine.Step ⟨σ, i, u⟩
       ⟨sigmaPutcharFinal σ pc (BitVec.addInt pc 4) vminstret data c, i + 1, u + 1⟩
@@ -773,7 +773,7 @@ theorem step_tohost_putchar_tick
     (hputc : data = (0x0101000000000000#64) ||| BitVec.zeroExtend 64 c)
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (htick : i + 1 = 2) :
     Vsa.Machine.Step ⟨σ, i, u⟩
       ⟨sigmaTick_putchar σ pc (BitVec.addInt pc 4) vminstret data c vmip vmtime vmtimecmp vmcycle,
@@ -821,7 +821,7 @@ theorem stepObs_tohost_putchar
     (hputc : data = (0x0101000000000000#64) ||| BitVec.zeroExtend 64 c)
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (hi : i < 2) :
     ∃ (σ' : MState) (i' : Nat),
       Vsa.Machine.Step ⟨σ, i, u⟩ ⟨σ', i', u + 1⟩ ∧ i' < 2 ∧

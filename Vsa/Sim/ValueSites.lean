@@ -100,7 +100,7 @@ theorem exec_sw (σ : MState) (pc : BitVec 64) (imm : BitVec 12) (rs2 rs1 : regi
       = .ok vdata (afterNextPC (afterPrelude σ) pc))
     (hlo : 0x80000000 ≤ (vbase + sign_extend (m := 64) imm).toNat)
     (hhiram : (vbase + sign_extend (m := 64) imm).toNat + 4 ≤ 0x100000000)
-    (hhiwin : tohostAddr + 16 ≤ (vbase + sign_extend (m := 64) imm).toNat)
+    (hhiwin : StoreWin (vbase + sign_extend (m := 64) imm).toNat)
     (halign : (vbase + sign_extend (m := 64) imm).toNat % 4 = 0) :
     (execute (instruction.STORE (imm, rs2, rs1, 4))).run (afterNextPC (afterPrelude σ) pc)
       = .ok RETIRE_SUCCESS
@@ -155,7 +155,7 @@ theorem exec_sd_val (σ : MState) (pc : BitVec 64) (imm : BitVec 12) (rs2 rs1 : 
       = .ok vdata (afterNextPC (afterPrelude σ) pc))
     (hlo : 0x80000000 ≤ (vbase + sign_extend (m := 64) imm).toNat)
     (hhiram : (vbase + sign_extend (m := 64) imm).toNat + 8 ≤ 0x100000000)
-    (hhiwin : tohostAddr + 16 ≤ (vbase + sign_extend (m := 64) imm).toNat)
+    (hhiwin : StoreWin (vbase + sign_extend (m := 64) imm).toNat)
     (halign : (vbase + sign_extend (m := 64) imm).toNat % 8 = 0) :
     (execute (instruction.STORE (imm, rs2, rs1, 8))).run (afterNextPC (afterPrelude σ) pc)
       = .ok RETIRE_SUCCESS
@@ -310,7 +310,7 @@ theorem site_800027ec
     (hpcv : pc = (0x800027ec#64 : BitVec 64))
     (halo : 0x80000000 ≤ (vbuf + sign_extend (m := 64) (0x000#12)).toNat)
     (hahiram : (vbuf + sign_extend (m := 64) (0x000#12)).toNat + 4 ≤ 0x100000000)
-    (hahiwin : tohostAddr + 16 ≤ (vbuf + sign_extend (m := 64) (0x000#12)).toNat)
+    (hahiwin : StoreWin (vbuf + sign_extend (m := 64) (0x000#12)).toNat)
     (haalign : (vbuf + sign_extend (m := 64) (0x000#12)).toNat % 4 = 0) (hi : i < 2) :
     ∃ (σ' : MState) (i' : Nat),
       Vsa.Machine.Step ⟨σ, i, u⟩ ⟨σ', i', u + 1⟩ ∧ i' < 2 ∧ GoodState σ' ∧
@@ -348,7 +348,7 @@ theorem site_800027f0
     (hpcv : pc = (0x800027f0#64 : BitVec 64))
     (halo : 0x80000000 ≤ (vbuf + sign_extend (m := 64) (0x008#12)).toNat)
     (hahiram : (vbuf + sign_extend (m := 64) (0x008#12)).toNat + 8 ≤ 0x100000000)
-    (hahiwin : tohostAddr + 16 ≤ (vbuf + sign_extend (m := 64) (0x008#12)).toNat)
+    (hahiwin : StoreWin (vbuf + sign_extend (m := 64) (0x008#12)).toNat)
     (haalign : (vbuf + sign_extend (m := 64) (0x008#12)).toNat % 8 = 0) (hi : i < 2) :
     ∃ (σ' : MState) (i' : Nat),
       Vsa.Machine.Step ⟨σ, i, u⟩ ⟨σ', i', u + 1⟩ ∧ i' < 2 ∧ GoodState σ' ∧
@@ -498,7 +498,7 @@ theorem site_80002800
     (hpcv : pc = (0x80002800#64 : BitVec 64))
     (halo : 0x80000000 ≤ (vbuf + sign_extend (m := 64) (0x008#12)).toNat)
     (hahiram : (vbuf + sign_extend (m := 64) (0x008#12)).toNat + 4 ≤ 0x100000000)
-    (hahiwin : tohostAddr + 16 ≤ (vbuf + sign_extend (m := 64) (0x008#12)).toNat)
+    (hahiwin : StoreWin (vbuf + sign_extend (m := 64) (0x008#12)).toNat)
     (haalign : (vbuf + sign_extend (m := 64) (0x008#12)).toNat % 4 = 0) (hi : i < 2) :
     ∃ (σ' : MState) (i' : Nat),
       Vsa.Machine.Step ⟨σ, i, u⟩ ⟨σ', i', u + 1⟩ ∧ i' < 2 ∧ GoodState σ' ∧
@@ -539,7 +539,7 @@ theorem site_80002804
     (hpcv : pc = (0x80002804#64 : BitVec 64))
     (halo : 0x80000000 ≤ (vbuf + sign_extend (m := 64) (0x000#12)).toNat)
     (hahiram : (vbuf + sign_extend (m := 64) (0x000#12)).toNat + 4 ≤ 0x100000000)
-    (hahiwin : tohostAddr + 16 ≤ (vbuf + sign_extend (m := 64) (0x000#12)).toNat)
+    (hahiwin : StoreWin (vbuf + sign_extend (m := 64) (0x000#12)).toNat)
     (haalign : (vbuf + sign_extend (m := 64) (0x000#12)).toNat % 4 = 0) (hi : i < 2) :
     ∃ (σ' : MState) (i' : Nat),
       Vsa.Machine.Step ⟨σ, i, u⟩ ⟨σ', i', u + 1⟩ ∧ i' < 2 ∧ GoodState σ' ∧
@@ -637,7 +637,7 @@ theorem site_80002810
     (hpcv : pc = (0x80002810#64 : BitVec 64))
     (halo : 0x80000000 ≤ (vbuf + sign_extend (m := 64) (0x008#12)).toNat)
     (hahiram : (vbuf + sign_extend (m := 64) (0x008#12)).toNat + 8 ≤ 0x100000000)
-    (hahiwin : tohostAddr + 16 ≤ (vbuf + sign_extend (m := 64) (0x008#12)).toNat)
+    (hahiwin : StoreWin (vbuf + sign_extend (m := 64) (0x008#12)).toNat)
     (haalign : (vbuf + sign_extend (m := 64) (0x008#12)).toNat % 8 = 0) (hi : i < 2) :
     ∃ (σ' : MState) (i' : Nat),
       Vsa.Machine.Step ⟨σ, i, u⟩ ⟨σ', i', u + 1⟩ ∧ i' < 2 ∧ GoodState σ' ∧
@@ -678,7 +678,7 @@ theorem site_80002814
     (hpcv : pc = (0x80002814#64 : BitVec 64))
     (halo : 0x80000000 ≤ (vbuf + sign_extend (m := 64) (0x000#12)).toNat)
     (hahiram : (vbuf + sign_extend (m := 64) (0x000#12)).toNat + 4 ≤ 0x100000000)
-    (hahiwin : tohostAddr + 16 ≤ (vbuf + sign_extend (m := 64) (0x000#12)).toNat)
+    (hahiwin : StoreWin (vbuf + sign_extend (m := 64) (0x000#12)).toNat)
     (haalign : (vbuf + sign_extend (m := 64) (0x000#12)).toNat % 4 = 0) (hi : i < 2) :
     ∃ (σ' : MState) (i' : Nat),
       Vsa.Machine.Step ⟨σ, i, u⟩ ⟨σ', i', u + 1⟩ ∧ i' < 2 ∧ GoodState σ' ∧
@@ -776,7 +776,7 @@ theorem site_80002820
     (hpcv : pc = (0x80002820#64 : BitVec 64))
     (halo : 0x80000000 ≤ (vbuf + sign_extend (m := 64) (0x008#12)).toNat)
     (hahiram : (vbuf + sign_extend (m := 64) (0x008#12)).toNat + 8 ≤ 0x100000000)
-    (hahiwin : tohostAddr + 16 ≤ (vbuf + sign_extend (m := 64) (0x008#12)).toNat)
+    (hahiwin : StoreWin (vbuf + sign_extend (m := 64) (0x008#12)).toNat)
     (haalign : (vbuf + sign_extend (m := 64) (0x008#12)).toNat % 8 = 0) (hi : i < 2) :
     ∃ (σ' : MState) (i' : Nat),
       Vsa.Machine.Step ⟨σ, i, u⟩ ⟨σ', i', u + 1⟩ ∧ i' < 2 ∧ GoodState σ' ∧
@@ -817,7 +817,7 @@ theorem site_80002824
     (hpcv : pc = (0x80002824#64 : BitVec 64))
     (halo : 0x80000000 ≤ (vbuf + sign_extend (m := 64) (0x000#12)).toNat)
     (hahiram : (vbuf + sign_extend (m := 64) (0x000#12)).toNat + 4 ≤ 0x100000000)
-    (hahiwin : tohostAddr + 16 ≤ (vbuf + sign_extend (m := 64) (0x000#12)).toNat)
+    (hahiwin : StoreWin (vbuf + sign_extend (m := 64) (0x000#12)).toNat)
     (haalign : (vbuf + sign_extend (m := 64) (0x000#12)).toNat % 4 = 0) (hi : i < 2) :
     ∃ (σ' : MState) (i' : Nat),
       Vsa.Machine.Step ⟨σ, i, u⟩ ⟨σ', i', u + 1⟩ ∧ i' < 2 ∧ GoodState σ' ∧

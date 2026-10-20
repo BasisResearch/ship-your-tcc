@@ -85,7 +85,7 @@ theorem checked_mem_read_four
     (hbase : σ.regs.get? Register.htif_tohost_base
       = some (some (BitVec.ofNat 64 tohostAddr) : RegisterType Register.htif_tohost_base))
     (hlo : 0x80000000 ≤ a.toNat)
-    (hhi : a.toNat + 4 ≤ tohostAddr)
+    (hhi : FetchOK a.toNat)
     (halign : a.toNat % 4 = 0)
     (h0 : σ.mem[a.toNat]? = some b0) (h1 : σ.mem[a.toNat + 1]? = some b1)
     (h2 : σ.mem[a.toNat + 2]? = some b2) (h3 : σ.mem[a.toNat + 3]? = some b3) :
@@ -99,7 +99,7 @@ theorem checked_mem_read_four
       (Int.ofNat_tmod _ _).symm
     rw [show (4 : Int) = Int.ofNat 4 from rfl, this, halign]; rfl
   have hhi' : a.toNat + 4 ≤ 0x100000000 := by
-    simp only [tohostAddr] at hhi; omega
+    exact hhi.1
   have hpmaC := pmaCheck_ram_exec σ a hpma hlo hhi' htmod
   have hpmp := pmp_allows σ (physaddr.Physaddr a) 4
     (MemoryAccessType.InstructionFetch ()) vpmpaddr hcfg haddr
@@ -174,7 +174,7 @@ theorem mem_read_four
     (hbase : σ.regs.get? Register.htif_tohost_base
       = some (some (BitVec.ofNat 64 tohostAddr) : RegisterType Register.htif_tohost_base))
     (hlo : 0x80000000 ≤ a.toNat)
-    (hhi : a.toNat + 4 ≤ tohostAddr)
+    (hhi : FetchOK a.toNat)
     (halign : a.toNat % 4 = 0)
     (h0 : σ.mem[a.toNat]? = some b0) (h1 : σ.mem[a.toNat + 1]? = some b1)
     (h2 : σ.mem[a.toNat + 2]? = some b2) (h3 : σ.mem[a.toNat + 3]? = some b3) :
@@ -213,7 +213,7 @@ theorem fetch_bytes_four
     (hbase : σ.regs.get? Register.htif_tohost_base
       = some (some (BitVec.ofNat 64 tohostAddr) : RegisterType Register.htif_tohost_base))
     (hlo : 0x80000000 ≤ pc.toNat)
-    (hhi : pc.toNat + 4 ≤ tohostAddr)
+    (hhi : FetchOK pc.toNat)
     (halign : pc.toNat % 4 = 0)
     (h0 : σ.mem[pc.toNat]? = some b0) (h1 : σ.mem[pc.toNat + 1]? = some b1)
     (h2 : σ.mem[pc.toNat + 2]? = some b2) (h3 : σ.mem[pc.toNat + 3]? = some b3) :
@@ -335,7 +335,7 @@ theorem fetch_F_Base
     (hbase : σ.regs.get? Register.htif_tohost_base
       = some (some (BitVec.ofNat 64 tohostAddr) : RegisterType Register.htif_tohost_base))
     (hlo : 0x80000000 ≤ pc.toNat)
-    (hhi : pc.toNat + 4 ≤ tohostAddr)
+    (hhi : FetchOK pc.toNat)
     (halign : pc.toNat % 4 = 0)
     (h0 : σ.mem[pc.toNat]? = some b0) (h1 : σ.mem[pc.toNat + 1]? = some b1)
     (h2 : σ.mem[pc.toNat + 2]? = some b2) (h3 : σ.mem[pc.toNat + 3]? = some b3)

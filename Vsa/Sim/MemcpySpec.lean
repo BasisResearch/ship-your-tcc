@@ -478,7 +478,7 @@ theorem iterB (g : (R : Register) → Option (RegisterType R)) (i : Nat) (r dst 
     site_80006c54 σ3 i3 (c.steps + 1 + 1 + 1) (0x80006c54#64) vmi3
       (dst + BitVec.ofNat 64 (i + 1)) (zero_extend (m := 64) ((bs i) : BitVec (8*1)))
       hG3 hpc3 hmi3' ha4_3 ha5_3 (by rw [hmem3eq]; exact hloaded) rfl
-      hdlo hdhi hdwin hi3
+      hdlo hdhi (storeWin_of_le hdwin) hi3
   -- the store's post map, simplified
   have hstore_mem : σ4.mem = c.σ.mem.insert (dst.toNat + i) (bs i) := by
     rw [hmem4, mem_afterNextPC, hmem3eq, sbData_zext, hsbeq]

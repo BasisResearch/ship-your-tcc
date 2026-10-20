@@ -82,6 +82,9 @@ if [ -f lakefile.toml ] || [ -f lakefile.lean ]; then
   echo "== (5) lake build"
   lock=${SYT_LAKE_LOCK:-build/lake.lock}
   mkdir -p "$(dirname "$lock")"
+  # the generated replay first, a few parts at a time (each part is a 1-3 GB
+  # Lean process; all of them at once would exceed the 12 GB cap)
+  SYT_LAKE_LOCK="$lock" scripts/build_replay.sh || fail "replay build (scripts/build_replay.sh)"
   flock "$lock" systemd-run --user --scope -q -p MemoryMax=12G lake build || fail "lake build"
   # audit <file> <allowed-axiom-regex>: every #print axioms row within the set
   audit() {

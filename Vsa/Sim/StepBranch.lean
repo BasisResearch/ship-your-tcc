@@ -166,7 +166,7 @@ theorem try_step_branch_taken
       = .ok RETIRE_SUCCESS (sigma3_branch_taken σ pc imm))
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0) :
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0) :
     (try_step u true).run σ
       = .ok false
           {(({(sigma3_branch_taken σ pc imm) with regs := (sigma3_branch_taken σ pc imm).regs.insert Register.PC (pc + sign_extend (m := 64) imm)}) : MState) with
@@ -253,7 +253,7 @@ theorem try_step_branch_nottaken
       = .ok RETIRE_SUCCESS (sigma3_branch_nottaken σ pc))
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0) :
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0) :
     (try_step u true).run σ
       = .ok false
           {(({(sigma3_branch_nottaken σ pc) with regs := (sigma3_branch_nottaken σ pc).regs.insert Register.PC (BitVec.addInt pc 4)}) : MState) with
@@ -399,7 +399,7 @@ theorem stepOnce_branch_taken_notick
       = .ok RETIRE_SUCCESS (sigma3_branch_taken σ pc imm))
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (htick : i + 1 ≠ 2) :
     (stepOnce i u).run σ = .ok (.inr (i + 1, u + 1)) (sigmaPost_branch_taken σ pc vminstret imm) := by
   have hts := try_step_branch_taken σ u pc vminstret imm rs1 rs2 op w b0 b1 b2 b3
@@ -434,7 +434,7 @@ theorem stepOnce_branch_nottaken_notick
       = .ok RETIRE_SUCCESS (sigma3_branch_nottaken σ pc))
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (htick : i + 1 ≠ 2) :
     (stepOnce i u).run σ = .ok (.inr (i + 1, u + 1)) (sigmaPost_branch_nottaken σ pc vminstret) := by
   have hts := try_step_branch_nottaken σ u pc vminstret imm rs1 rs2 op w b0 b1 b2 b3
@@ -498,7 +498,7 @@ theorem stepOnce_branch_taken_tick
       = .ok RETIRE_SUCCESS (sigma3_branch_taken σ pc imm))
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (htick : i + 1 = 2) :
     (stepOnce i u).run σ
       = .ok (.inr (0, u + 1)) (sigmaTick_branch_taken σ pc vminstret imm vmip vmtime vmtimecmp vmcycle) := by
@@ -545,7 +545,7 @@ theorem stepOnce_branch_nottaken_tick
       = .ok RETIRE_SUCCESS (sigma3_branch_nottaken σ pc))
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (htick : i + 1 = 2) :
     (stepOnce i u).run σ
       = .ok (.inr (0, u + 1)) (sigmaTick_branch_nottaken σ pc vminstret vmip vmtime vmtimecmp vmcycle) := by
@@ -590,7 +590,7 @@ theorem step_branch_taken_notick
       = .ok RETIRE_SUCCESS (sigma3_branch_taken σ pc imm))
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (htick : i + 1 ≠ 2) :
     Vsa.Machine.Step ⟨σ, i, u⟩ ⟨sigmaPost_branch_taken σ pc vminstret imm, i + 1, u + 1⟩
     ∧ GoodState (sigmaPost_branch_taken σ pc vminstret imm) :=
@@ -614,7 +614,7 @@ theorem step_branch_nottaken_notick
       = .ok RETIRE_SUCCESS (sigma3_branch_nottaken σ pc))
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (htick : i + 1 ≠ 2) :
     Vsa.Machine.Step ⟨σ, i, u⟩ ⟨sigmaPost_branch_nottaken σ pc vminstret, i + 1, u + 1⟩
     ∧ GoodState (sigmaPost_branch_nottaken σ pc vminstret) :=
@@ -645,7 +645,7 @@ theorem step_branch_taken_tick
       = .ok RETIRE_SUCCESS (sigma3_branch_taken σ pc imm))
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (htick : i + 1 = 2) :
     Vsa.Machine.Step ⟨σ, i, u⟩
       ⟨sigmaTick_branch_taken σ pc vminstret imm vmip vmtime vmtimecmp vmcycle, 0, u + 1⟩
@@ -678,7 +678,7 @@ theorem step_branch_nottaken_tick
       = .ok RETIRE_SUCCESS (sigma3_branch_nottaken σ pc))
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (htick : i + 1 = 2) :
     Vsa.Machine.Step ⟨σ, i, u⟩
       ⟨sigmaTick_branch_nottaken σ pc vminstret vmip vmtime vmtimecmp vmcycle, 0, u + 1⟩

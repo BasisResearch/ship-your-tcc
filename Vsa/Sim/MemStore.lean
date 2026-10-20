@@ -191,12 +191,12 @@ theorem within_mmio_writable_ram_false
       = some (some (BitVec.ofNat 64 tohostAddr) : RegisterType Register.htif_tohost_base))
     (hwle : w ≤ 8)
     (hlo : 0x80000000 ≤ a.toNat)
-    (hhiwin : tohostAddr + 16 ≤ a.toNat) :
+    (hhiwin : StoreWin a.toNat) :
     (within_mmio_writable (physaddr.Physaddr a) w).run σ = .ok false σ := by
   simp only [within_mmio_writable, within_clint, within_sig, within_htif_writable,
     get_config_rvfi, plat_have_clint, plat_have_sig,
     zopz0zI_u, zopz0zK_u, LeanRV64DExecutable.Functions.not]
-  simp only [tohostAddr] at hhiwin
+  simp only [StoreWin, tohostAddr] at hhiwin
   have hcb : BitVec.toNat plat_clint_base = 33554432 := by decide
   have hcs : BitVec.toNat plat_clint_size = 786432 := by decide
   have hsb : BitVec.toNat plat_sig_base = 201326592 := by decide
@@ -318,7 +318,7 @@ theorem checked_mem_write_8
       = some (some (BitVec.ofNat 64 tohostAddr) : RegisterType Register.htif_tohost_base))
     (hlo : 0x80000000 ≤ a.toNat)
     (hhiram : a.toNat + 8 ≤ 0x100000000)
-    (hhiwin : tohostAddr + 16 ≤ a.toNat)
+    (hhiwin : StoreWin a.toNat)
     (halign : a.toNat % 8 = 0) :
     (checked_mem_write (physaddr.Physaddr a) 8 data
         (MemoryAccessType.Store mem_payload.Data)
@@ -414,7 +414,7 @@ theorem checked_mem_write_4
       = some (some (BitVec.ofNat 64 tohostAddr) : RegisterType Register.htif_tohost_base))
     (hlo : 0x80000000 ≤ a.toNat)
     (hhiram : a.toNat + 4 ≤ 0x100000000)
-    (hhiwin : tohostAddr + 16 ≤ a.toNat)
+    (hhiwin : StoreWin a.toNat)
     (halign : a.toNat % 4 = 0) :
     (checked_mem_write (physaddr.Physaddr a) 4 data
         (MemoryAccessType.Store mem_payload.Data)
@@ -502,7 +502,7 @@ theorem checked_mem_write_2
       = some (some (BitVec.ofNat 64 tohostAddr) : RegisterType Register.htif_tohost_base))
     (hlo : 0x80000000 ≤ a.toNat)
     (hhiram : a.toNat + 2 ≤ 0x100000000)
-    (hhiwin : tohostAddr + 16 ≤ a.toNat)
+    (hhiwin : StoreWin a.toNat)
     (halign : a.toNat % 2 = 0) :
     (checked_mem_write (physaddr.Physaddr a) 2 data
         (MemoryAccessType.Store mem_payload.Data)
@@ -586,7 +586,7 @@ theorem checked_mem_write_1
       = some (some (BitVec.ofNat 64 tohostAddr) : RegisterType Register.htif_tohost_base))
     (hlo : 0x80000000 ≤ a.toNat)
     (hhiram : a.toNat + 1 ≤ 0x100000000)
-    (hhiwin : tohostAddr + 16 ≤ a.toNat) :
+    (hhiwin : StoreWin a.toNat) :
     (checked_mem_write (physaddr.Physaddr a) 1 data
         (MemoryAccessType.Store mem_payload.Data)
         page_based_mem_type.PBMT_PMA Privilege.Machine () false false false).run σ
@@ -680,7 +680,7 @@ theorem mem_write_value_8
       = some (some (BitVec.ofNat 64 tohostAddr) : RegisterType Register.htif_tohost_base))
     (hlo : 0x80000000 ≤ a.toNat)
     (hhiram : a.toNat + 8 ≤ 0x100000000)
-    (hhiwin : tohostAddr + 16 ≤ a.toNat)
+    (hhiwin : StoreWin a.toNat)
     (halign : a.toNat % 8 = 0) :
     (mem_write_value (physaddr.Physaddr a) 8 data
         (MemoryAccessType.Store mem_payload.Data)
@@ -725,7 +725,7 @@ theorem mem_write_value_4
       = some (some (BitVec.ofNat 64 tohostAddr) : RegisterType Register.htif_tohost_base))
     (hlo : 0x80000000 ≤ a.toNat)
     (hhiram : a.toNat + 4 ≤ 0x100000000)
-    (hhiwin : tohostAddr + 16 ≤ a.toNat)
+    (hhiwin : StoreWin a.toNat)
     (halign : a.toNat % 4 = 0) :
     (mem_write_value (physaddr.Physaddr a) 4 data
         (MemoryAccessType.Store mem_payload.Data)
@@ -766,7 +766,7 @@ theorem mem_write_value_2
       = some (some (BitVec.ofNat 64 tohostAddr) : RegisterType Register.htif_tohost_base))
     (hlo : 0x80000000 ≤ a.toNat)
     (hhiram : a.toNat + 2 ≤ 0x100000000)
-    (hhiwin : tohostAddr + 16 ≤ a.toNat)
+    (hhiwin : StoreWin a.toNat)
     (halign : a.toNat % 2 = 0) :
     (mem_write_value (physaddr.Physaddr a) 2 data
         (MemoryAccessType.Store mem_payload.Data)
@@ -805,7 +805,7 @@ theorem mem_write_value_1
       = some (some (BitVec.ofNat 64 tohostAddr) : RegisterType Register.htif_tohost_base))
     (hlo : 0x80000000 ≤ a.toNat)
     (hhiram : a.toNat + 1 ≤ 0x100000000)
-    (hhiwin : tohostAddr + 16 ≤ a.toNat) :
+    (hhiwin : StoreWin a.toNat) :
     (mem_write_value (physaddr.Physaddr a) 1 data
         (MemoryAccessType.Store mem_payload.Data)
         page_based_mem_type.PBMT_PMA false false false).run σ
@@ -1158,7 +1158,7 @@ theorem translate_and_write_value_8
       = some (some (BitVec.ofNat 64 tohostAddr) : RegisterType Register.htif_tohost_base))
     (hlo : 0x80000000 ≤ a.toNat)
     (hhiram : a.toNat + 8 ≤ 0x100000000)
-    (hhiwin : tohostAddr + 16 ≤ a.toNat)
+    (hhiwin : StoreWin a.toNat)
     (halign : a.toNat % 8 = 0) :
     (translate_and_write_value (virtaddr.Virtaddr a) 8 data
         (MemoryAccessType.Store mem_payload.Data) false false false).run σ
@@ -1206,7 +1206,7 @@ theorem translate_and_write_value_4
       = some (some (BitVec.ofNat 64 tohostAddr) : RegisterType Register.htif_tohost_base))
     (hlo : 0x80000000 ≤ a.toNat)
     (hhiram : a.toNat + 4 ≤ 0x100000000)
-    (hhiwin : tohostAddr + 16 ≤ a.toNat)
+    (hhiwin : StoreWin a.toNat)
     (halign : a.toNat % 4 = 0) :
     (translate_and_write_value (virtaddr.Virtaddr a) 4 data
         (MemoryAccessType.Store mem_payload.Data) false false false).run σ
@@ -1250,7 +1250,7 @@ theorem translate_and_write_value_2
       = some (some (BitVec.ofNat 64 tohostAddr) : RegisterType Register.htif_tohost_base))
     (hlo : 0x80000000 ≤ a.toNat)
     (hhiram : a.toNat + 2 ≤ 0x100000000)
-    (hhiwin : tohostAddr + 16 ≤ a.toNat)
+    (hhiwin : StoreWin a.toNat)
     (halign : a.toNat % 2 = 0) :
     (translate_and_write_value (virtaddr.Virtaddr a) 2 data
         (MemoryAccessType.Store mem_payload.Data) false false false).run σ
@@ -1292,7 +1292,7 @@ theorem translate_and_write_value_1
       = some (some (BitVec.ofNat 64 tohostAddr) : RegisterType Register.htif_tohost_base))
     (hlo : 0x80000000 ≤ a.toNat)
     (hhiram : a.toNat + 1 ≤ 0x100000000)
-    (hhiwin : tohostAddr + 16 ≤ a.toNat) :
+    (hhiwin : StoreWin a.toNat) :
     (translate_and_write_value (virtaddr.Virtaddr a) 1 data
         (MemoryAccessType.Store mem_payload.Data) false false false).run σ
       = .ok (.Ok true) { σ with mem := σ.mem.insert a.toNat data } := by
@@ -1552,7 +1552,7 @@ theorem vmem_write_addr_8
       = some (some (BitVec.ofNat 64 tohostAddr) : RegisterType Register.htif_tohost_base))
     (hlo : 0x80000000 ≤ a.toNat)
     (hhiram : a.toNat + 8 ≤ 0x100000000)
-    (hhiwin : tohostAddr + 16 ≤ a.toNat)
+    (hhiwin : StoreWin a.toNat)
     (halign : a.toNat % 8 = 0) :
     (vmem_write_addr (virtaddr.Virtaddr a) 8 data
         (MemoryAccessType.Store mem_payload.Data) false false false).run σ
@@ -1655,7 +1655,7 @@ theorem vmem_write_addr_4
       = some (some (BitVec.ofNat 64 tohostAddr) : RegisterType Register.htif_tohost_base))
     (hlo : 0x80000000 ≤ a.toNat)
     (hhiram : a.toNat + 4 ≤ 0x100000000)
-    (hhiwin : tohostAddr + 16 ≤ a.toNat)
+    (hhiwin : StoreWin a.toNat)
     (halign : a.toNat % 4 = 0) :
     (vmem_write_addr (virtaddr.Virtaddr a) 4 data
         (MemoryAccessType.Store mem_payload.Data) false false false).run σ
@@ -1750,7 +1750,7 @@ theorem vmem_write_addr_2
       = some (some (BitVec.ofNat 64 tohostAddr) : RegisterType Register.htif_tohost_base))
     (hlo : 0x80000000 ≤ a.toNat)
     (hhiram : a.toNat + 2 ≤ 0x100000000)
-    (hhiwin : tohostAddr + 16 ≤ a.toNat)
+    (hhiwin : StoreWin a.toNat)
     (halign : a.toNat % 2 = 0) :
     (vmem_write_addr (virtaddr.Virtaddr a) 2 data
         (MemoryAccessType.Store mem_payload.Data) false false false).run σ
@@ -1994,7 +1994,7 @@ theorem vmem_write_addr_1
       = some (some (BitVec.ofNat 64 tohostAddr) : RegisterType Register.htif_tohost_base))
     (hlo : 0x80000000 ≤ a.toNat)
     (hhiram : a.toNat + 1 ≤ 0x100000000)
-    (hhiwin : tohostAddr + 16 ≤ a.toNat) :
+    (hhiwin : StoreWin a.toNat) :
     (vmem_write_addr (virtaddr.Virtaddr a) 1 data
         (MemoryAccessType.Store mem_payload.Data) false false false).run σ
       = .ok (.Ok true)

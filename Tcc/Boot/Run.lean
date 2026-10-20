@@ -23,15 +23,17 @@ namespace Tcc.Boot
 open LeanRV64DExecutable Vsa Vsa.Machine Vsa.Sim
 
 /-- A row of the replay: at `pc`, the GPRs pinned by `L`, memory = a memory
-with the view `v` after the write log `log`, nothing printed. -/
+with the view `v` after the write log `log` (kept newest first: the memory is
+`writeLog m0 log.reverse`), the console holding `out`, the HTIF mailbox idle. -/
 structure RunRow (v : Nat → Option (BitVec 8)) (pc : BitVec 64) (L : GRegs) (log : List WEntry)
-    (c : Config) : Prop where
+    (out : String) (c : Config) : Prop where
   good : GoodState c.σ
   pc : c.σ.regs.get? Register.PC = some pc
   regs : GHolds c.σ L
   keys : KeysOK (keysG L)
-  mem : ∃ m0, PartialView m0 v ∧ c.σ.mem = writeLog m0 log
-  console : output c.σ = ""
+  mem : ∃ m0, PartialView m0 v ∧ c.σ.mem = writeLog m0 log.reverse
+  console : output c.σ = out
+  payload : c.σ.regs.get? Register.htif_payload_writes = some (0#4)
   tick : c.tick < 2
 
 /-- The 31 GPRs of a captured cut as a pin list. -/
@@ -70,13 +72,14 @@ theorem cutPins_keys (g : Nat → BitVec 64) : KeysOK (keysG (cutPins g)) := by
 
 /-- A captured cut is the replay's first row. -/
 theorem CapturedCut.row {g : Nat → BitVec 64} {pc : BitVec 64} {v : Nat → Option (BitVec 8)}
-    {c : Config} (h : CapturedCut g pc v c) : RunRow v pc (cutPins g) [] c where
+    {c : Config} (h : CapturedCut g pc v c) : RunRow v pc (cutPins g) [] "" c where
   good := h.regs.good
   pc := h.regs.pc
   regs := h.regs.gholds
   keys := cutPins_keys g
   mem := ⟨c.σ.mem, h.view, rfl⟩
   console := h.console
+  payload := h.regs.payload
   tick := h.tick
 
 /-! ## Reading pins through the log -/
@@ -113,59 +116,80 @@ elab "tcc_whnf" : tactic => liftMetaTactic fun g => do
   if t == t' then throwError "tcc_whnf: no progress"
   return [← g.replaceTargetDefEq t']
 
+open Lean Elab Tactic Meta in
+/-- Close a byte pin of a memory built from the view by stores and the log:
+only on an equation that reads the memory (`getElem?`, so no other goal meets
+the rewriting and its literal simprocs), rewrite the read through the stores
+and the log (`stepMemM_get`, `writeLog_get`), then `pin_view` for a presence pin
+(`… = some b`) or `pinD_view` for a total-read pin (`(…).getD 0 = b`), chosen by
+the equation's type, and one kernel `decide`. -/
+elab "tcc_pin " hv:term : tactic => do
+  let t ← getMainTarget
+  let some (ty, _, _) := t.eq? | throwError "tcc_pin: not an equation"
+  unless (t.find? (·.isAppOf ``GetElem?.getElem?)).isSome do
+    throwError "tcc_pin: no memory read"
+  evalTactic (← `(tactic| simp only [Tcc.Boot.writeLog_get, Tcc.Boot.logByte_reverse,
+    Tcc.Boot.stepMemM_get, ← Option.or_assoc]))
+  if ty.isAppOf ``Option then
+    evalTactic (← `(tactic| (apply Tcc.Boot.pin_view $hv; decide +kernel)))
+  else
+    evalTactic (← `(tactic| (apply Tcc.Boot.pinD_view $hv; decide +kernel)))
+
 /-- Close a segment's `ChainFacts` from a view hypothesis `hv : PartialView m0 v`
 (memory `writeLog m0 log`): split conjunctions, decode facts by `decodeW`,
-byte pins through the log by `pin_view`/`pinD_view` and one kernel `decide`,
-closed arithmetic by kernel `decide`, unfolding one layer otherwise. -/
+byte pins through the stores and the log (`stepMemM_get`, `writeLog_get`, then
+`tcc_pin`), closed arithmetic by kernel `decide`, unfolding one layer otherwise. -/
 macro "tcc_facts " hv:term : tactic => `(tactic| repeat' (first
   | exact True.intro
   | (refine ⟨?_, ?_⟩)
   | (intro s h1 h2 h3; exact Vsa.Sim.decodeW s h1 h2 h3)
-  | (simp only [Tcc.Boot.writeLog_get, Tcc.Boot.stepMemM_get, ← Option.or_assoc]
-     first
-       | (apply Tcc.Boot.pin_view $hv; decide +kernel)
-       | (apply Tcc.Boot.pinD_view $hv; decide +kernel))
+  | tcc_pin $hv
   | decide +kernel
   | tcc_whnf))
 
 /-! ## The segment combinator -/
 
-theorem gholds_of_lookup {σ : MState} {L : GRegs} (hL : GHolds σ L) :
-    ∀ (L' : GRegs), (∀ p ∈ L', lookupG p.1 L = some p.2) → GHolds σ L' :=
-  fun L' h => gholds_of_get L' fun p hp => gholds_lookup L hL (h p hp)
+/-- `P` leads to `Q`: every configuration satisfying `P` runs to one
+satisfying `Q`. -/
+def Leads (P Q : Config → Prop) : Prop := ∀ c, P c → ∃ c', Steps c c' ∧ Q c'
 
-/-- Run one generated segment `bs` from a row to the next. -/
-theorem row_step {v : Nat → Option (BitVec 8)} (bs : List BBlock) {pc0 pc1 : BitVec 64}
-    {L0 L1 : GRegs} {log0 log1 : List WEntry} (lds : List (List (BitVec 8)))
-    (hwf : ChainOK pc0 (keysG L0) bs)
-    (hfacts : ∀ m0, PartialView m0 v →
-      ChainFacts (writeLog m0 log0) (writeLog m0 log0) L0 lds bs)
-    (hpc : evalBlocksPC pc0 (SegEvalState.init L0 lds) bs = pc1)
-    (hregs : ∀ p ∈ L1, lookupG p.1 (evalBlocks bs (SegEvalState.init L0 lds)).regs = some p.2)
-    (hkeys : KeysOK (keysG L1))
-    (hlog : log0 ++ (evalBlocks bs (SegEvalState.init L0 lds)).log = log1) :
-    ∀ c, RunRow v pc0 L0 log0 c → ∃ c', Steps c c' ∧ RunRow v pc1 L1 log1 c' := by
-  rintro ⟨σ, i, u⟩ ⟨hG, hpc0, hL, hk, ⟨m0, hv, hm⟩, hout, hi⟩
-  obtain ⟨vm, hmi⟩ := hG.minstret
-  have hf := hfacts m0 hv
-  rw [← hm] at hf
-  obtain ⟨σ', i', hs, hi', hG', hmem', hso, hpc', _, hregs', _⟩ :=
-    segEval_sound bs σ i u pc0 vm L0 lds hG hpc0 hmi hL hk hf hwf hi
-  refine ⟨⟨σ', i', u + evalBlocksFuel bs⟩, hs, hG', ?_, gholds_of_lookup hregs' L1 hregs, hkeys,
-    ⟨m0, hv, ?_⟩, ?_, hi'⟩
-  · rw [hpc', hpc]
-  · simp only at hmem' ⊢
-    rw [hmem', hm, ← writeLog_append, hlog]
-  · simp only [output] at hout ⊢
-    rw [hso]; exact hout
-
-theorem RunRow.trans {P Q R : Config → Prop}
-    (h1 : ∀ c, P c → ∃ c', Steps c c' ∧ Q c')
-    (h2 : ∀ c, Q c → ∃ c', Steps c c' ∧ R c') :
-    ∀ c, P c → ∃ c', Steps c c' ∧ R c' := by
+theorem Leads.trans {P Q R : Config → Prop} (h1 : Leads P Q) (h2 : Leads Q R) : Leads P R := by
   intro c hc
   obtain ⟨c1, s1, q1⟩ := h1 c hc
   obtain ⟨c2, s2, r2⟩ := h2 c1 q1
   exact ⟨c2, Steps.trans s1 s2, r2⟩
+
+theorem gholds_of_lookup {σ : MState} {L : GRegs} (hL : GHolds σ L) :
+    ∀ (L' : GRegs), (∀ p ∈ L', lookupG p.1 L = some p.2) → GHolds σ L' :=
+  fun L' h => gholds_of_get L' fun p hp => gholds_lookup L hL (h p hp)
+
+theorem gprReg_ne_payload : ∀ n, (gprReg n == Register.htif_payload_writes) = false := by
+  intro n; unfold gprReg; split <;> decide
+
+/-- Run one generated segment `bs` from a row to the next. -/
+theorem row_step {v : Nat → Option (BitVec 8)} (bs : List BBlock) {pc0 pc1 : BitVec 64}
+    {L0 L1 : GRegs} {log0 log1 : List WEntry} {out : String} (lds : List (List (BitVec 8)))
+    (hwf : ChainOK pc0 (keysG L0) bs)
+    (hfacts : ∀ m0, PartialView m0 v →
+      ChainFacts (writeLog m0 log0.reverse) (writeLog m0 log0.reverse) L0 lds bs)
+    (hpc : evalBlocksPC pc0 (SegEvalState.init L0 lds) bs = pc1)
+    (hregs : ∀ p ∈ L1, lookupG p.1 (evalBlocks bs (SegEvalState.init L0 lds)).regs = some p.2)
+    (hkeys : KeysOK (keysG L1))
+    (hlog : (evalBlocks bs (SegEvalState.init L0 lds)).log.reverse ++ log0 = log1) :
+    Leads (RunRow v pc0 L0 log0 out) (RunRow v pc1 L1 log1 out) := by
+  rintro ⟨σ, i, u⟩ ⟨hG, hpc0, hL, hk, ⟨m0, hv, hm⟩, hout, hpw, hi⟩
+  obtain ⟨vm, hmi⟩ := hG.minstret
+  have hf := hfacts m0 hv
+  rw [← hm] at hf
+  obtain ⟨σ', i', hs, hi', hG', hmem', hso, hpc', _, hregs', hframe⟩ :=
+    segEval_sound bs σ i u pc0 vm L0 lds hG hpc0 hmi hL hk hf hwf hi
+  refine ⟨⟨σ', i', u + evalBlocksFuel bs⟩, hs, hG', ?_, gholds_of_lookup hregs' L1 hregs, hkeys,
+    ⟨m0, hv, ?_⟩, ?_, ?_, hi'⟩
+  · rw [hpc', hpc]
+  · simp only at hmem' ⊢
+    rw [hmem', hm, ← writeLog_append, ← hlog, List.reverse_append, List.reverse_reverse]
+  · simp only [output] at hout ⊢
+    rw [hso]; exact hout
+  · rw [hframe _ (by decide) (fun n _ => gprReg_ne_payload n)]; exact hpw
 
 end Tcc.Boot

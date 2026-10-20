@@ -334,7 +334,7 @@ theorem exec_c54 (σ : MState) (pc : BitVec 64) (v14 v15 : BitVec 64)
     (hx15 : σ.regs.get? Register.x15 = some v15)
     (hlo : 0x80000000 ≤ (sbAddr v14).toNat)
     (hhiram : (sbAddr v14).toNat + 1 ≤ 0x100000000)
-    (hhiwin : tohostAddr + 16 ≤ (sbAddr v14).toNat) :
+    (hhiwin : StoreWin (sbAddr v14).toNat) :
     (execute (instruction.STORE (0xfff#12, regidx.Regidx 0x0f#5, regidx.Regidx 0x0e#5, 1))).run
         (afterNextPC (afterPrelude σ) pc)
       = .ok RETIRE_SUCCESS
@@ -398,7 +398,7 @@ theorem site_80006c54
     (hpcv : pc = (0x80006c54#64 : BitVec 64))
     (halo : 0x80000000 ≤ (sbAddr v14).toNat)
     (hahiram : (sbAddr v14).toNat + 1 ≤ 0x100000000)
-    (hahiwin : tohostAddr + 16 ≤ (sbAddr v14).toNat) (hi : i < 2) :
+    (hahiwin : StoreWin (sbAddr v14).toNat) (hi : i < 2) :
     ∃ (σ' : MState) (i' : Nat),
       Vsa.Machine.Step ⟨σ, i, u⟩ ⟨σ', i', u + 1⟩ ∧ i' < 2 ∧ GoodState σ' ∧
       σ'.mem = (afterNextPC (afterPrelude σ) (0x80006c54#64)).mem.insert (sbAddr v14).toNat (sbData v15) ∧

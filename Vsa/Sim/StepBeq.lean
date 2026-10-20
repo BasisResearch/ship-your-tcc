@@ -203,7 +203,7 @@ theorem try_step_beq_taken
     (hx5 : σ.regs.get? Register.x5 = some v1) (hx6 : σ.regs.get? Register.x6 = some v2)
     (hb0 : σ.mem[pc.toNat]? = some (0x63#8)) (hb1 : σ.mem[pc.toNat + 1]? = some (0xf8#8))
     (hb2 : σ.mem[pc.toNat + 2]? = some (0x62#8)) (hb3 : σ.mem[pc.toNat + 3]? = some (0x00#8))
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (hv : zopz0zKzJ_u v1 v2 = true) :
     (try_step u true).run σ
       = .ok false
@@ -301,7 +301,7 @@ theorem try_step_beq_nottaken
     (hx5 : σ.regs.get? Register.x5 = some v1) (hx6 : σ.regs.get? Register.x6 = some v2)
     (hb0 : σ.mem[pc.toNat]? = some (0x63#8)) (hb1 : σ.mem[pc.toNat + 1]? = some (0xf8#8))
     (hb2 : σ.mem[pc.toNat + 2]? = some (0x62#8)) (hb3 : σ.mem[pc.toNat + 3]? = some (0x00#8))
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (hv : zopz0zKzJ_u v1 v2 = false) :
     (try_step u true).run σ
       = .ok false
@@ -572,7 +572,7 @@ theorem stepOnce_beq_taken_notick
     (hx5 : σ.regs.get? Register.x5 = some v1) (hx6 : σ.regs.get? Register.x6 = some v2)
     (hb0 : σ.mem[pc.toNat]? = some (0x63#8)) (hb1 : σ.mem[pc.toNat + 1]? = some (0xf8#8))
     (hb2 : σ.mem[pc.toNat + 2]? = some (0x62#8)) (hb3 : σ.mem[pc.toNat + 3]? = some (0x00#8))
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (hv : zopz0zKzJ_u v1 v2 = true) (htick : i + 1 ≠ 2) :
     (stepOnce i u).run σ = .ok (.inr (i + 1, u + 1)) (sigmaPost_taken σ pc vminstret) := by
   have hts := try_step_beq_taken σ u pc vminstret v1 v2 hG hpc hminstret hx5 hx6 hb0 hb1 hb2 hb3 hlo hhi halign hv
@@ -599,7 +599,7 @@ theorem stepOnce_beq_nottaken_notick
     (hx5 : σ.regs.get? Register.x5 = some v1) (hx6 : σ.regs.get? Register.x6 = some v2)
     (hb0 : σ.mem[pc.toNat]? = some (0x63#8)) (hb1 : σ.mem[pc.toNat + 1]? = some (0xf8#8))
     (hb2 : σ.mem[pc.toNat + 2]? = some (0x62#8)) (hb3 : σ.mem[pc.toNat + 3]? = some (0x00#8))
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (hv : zopz0zKzJ_u v1 v2 = false) (htick : i + 1 ≠ 2) :
     (stepOnce i u).run σ = .ok (.inr (i + 1, u + 1)) (sigmaPost_nottaken σ pc vminstret) := by
   have hts := try_step_beq_nottaken σ u pc vminstret v1 v2 hG hpc hminstret hx5 hx6 hb0 hb1 hb2 hb3 hlo hhi halign hv
@@ -627,7 +627,7 @@ theorem step_beq_taken_notick
     (hx5 : σ.regs.get? Register.x5 = some v1) (hx6 : σ.regs.get? Register.x6 = some v2)
     (hb0 : σ.mem[pc.toNat]? = some (0x63#8)) (hb1 : σ.mem[pc.toNat + 1]? = some (0xf8#8))
     (hb2 : σ.mem[pc.toNat + 2]? = some (0x62#8)) (hb3 : σ.mem[pc.toNat + 3]? = some (0x00#8))
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (hv : zopz0zKzJ_u v1 v2 = true) (htick : i + 1 ≠ 2) :
     Vsa.Machine.Step ⟨σ, i, u⟩ ⟨sigmaPost_taken σ pc vminstret, i + 1, u + 1⟩
     ∧ GoodState (sigmaPost_taken σ pc vminstret) :=
@@ -644,7 +644,7 @@ theorem step_beq_nottaken_notick
     (hx5 : σ.regs.get? Register.x5 = some v1) (hx6 : σ.regs.get? Register.x6 = some v2)
     (hb0 : σ.mem[pc.toNat]? = some (0x63#8)) (hb1 : σ.mem[pc.toNat + 1]? = some (0xf8#8))
     (hb2 : σ.mem[pc.toNat + 2]? = some (0x62#8)) (hb3 : σ.mem[pc.toNat + 3]? = some (0x00#8))
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (hv : zopz0zKzJ_u v1 v2 = false) (htick : i + 1 ≠ 2) :
     Vsa.Machine.Step ⟨σ, i, u⟩ ⟨sigmaPost_nottaken σ pc vminstret, i + 1, u + 1⟩
     ∧ GoodState (sigmaPost_nottaken σ pc vminstret) :=

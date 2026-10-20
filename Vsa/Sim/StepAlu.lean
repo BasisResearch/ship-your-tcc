@@ -119,7 +119,7 @@ theorem try_step_alu
     (hrd_hart : (rd_reg == Register.hart_state) = false)
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0) :
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0) :
     (try_step u true).run σ
       = .ok false
           {(({(sigma3_alu σ pc rd_reg v) with regs := (sigma3_alu σ pc rd_reg v).regs.insert Register.PC (BitVec.addInt pc 4)}) : MState) with
@@ -253,7 +253,7 @@ theorem stepOnce_alu_notick
     (hrd : NonPinned rd_reg)
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (htick : i + 1 ≠ 2) :
     (stepOnce i u).run σ = .ok (.inr (i + 1, u + 1)) (sigmaPost_alu σ pc vminstret rd_reg v) := by
   have hts := try_step_alu σ u pc vminstret w ast rd_reg v b0 b1 b2 b3
@@ -312,7 +312,7 @@ theorem stepOnce_alu_tick
     (hrd : NonPinned rd_reg)
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (htick : i + 1 = 2) :
     (stepOnce i u).run σ
       = .ok (.inr (0, u + 1)) (sigmaTick_alu σ pc vminstret rd_reg v vmip vmtime vmtimecmp vmcycle) := by
@@ -361,7 +361,7 @@ theorem step_alu_notick
     (hrd : NonPinned rd_reg)
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (htick : i + 1 ≠ 2) :
     Vsa.Machine.Step ⟨σ, i, u⟩ ⟨sigmaPost_alu σ pc vminstret rd_reg v, i + 1, u + 1⟩
     ∧ GoodState (sigmaPost_alu σ pc vminstret rd_reg v) :=
@@ -397,7 +397,7 @@ theorem step_alu_tick
     (hrd : NonPinned rd_reg)
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0)
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0)
     (htick : i + 1 = 2) :
     Vsa.Machine.Step ⟨σ, i, u⟩
       ⟨sigmaTick_alu σ pc vminstret rd_reg v vmip vmtime vmtimecmp vmcycle, 0, u + 1⟩
@@ -439,7 +439,7 @@ theorem try_step_alu_add_x15_x15_x14
       = .ok () (sigma3_alu σ pc Register.x15 (v1 + v2)))
     (hb0 : σ.mem[pc.toNat]? = some b0) (hb1 : σ.mem[pc.toNat + 1]? = some b1)
     (hb2 : σ.mem[pc.toNat + 2]? = some b2) (hb3 : σ.mem[pc.toNat + 3]? = some b3)
-    (hlo : 0x80000000 ≤ pc.toNat) (hhi : pc.toNat + 4 ≤ tohostAddr) (halign : pc.toNat % 4 = 0) :
+    (hlo : 0x80000000 ≤ pc.toNat) (hhi : FetchOK pc.toNat) (halign : pc.toNat % 4 = 0) :
     (try_step u true).run σ
       = .ok false
           {(({(sigma3_alu σ pc Register.x15 (v1 + v2)) with regs := (sigma3_alu σ pc Register.x15 (v1 + v2)).regs.insert Register.PC (BitVec.addInt pc 4)}) : MState) with

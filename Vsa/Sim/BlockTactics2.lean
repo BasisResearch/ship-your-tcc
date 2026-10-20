@@ -1,4 +1,7 @@
-import Vsa.Sim.NegBlockProto
+import Vsa.Sim.BlockTerm
+import Vsa.Sim.BlockDecode
+import Vsa.Sim.BlockTactics
+import Vsa.Sim.NegTailSites
 import Vsa.Sim.RegPins
 import Lean
 import Vsa.Sim.Generic.Abi

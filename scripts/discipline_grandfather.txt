@@ -1,0 +1,22 @@
+# ship-your-interpreter's machine layer, copied from ship-your-lua and then generalised
+# (scripts/port_closure.py MODIFIED): legacy code with a changed hypothesis, not new hand work.
+Vsa/Sim/BlockMem.lean
+Vsa/Sim/BlockPilot.lean
+Vsa/Sim/BlockTactics2.lean
+Vsa/Sim/BlockTerm.lean
+Vsa/Sim/Fetch.lean
+Vsa/Sim/Hooks.lean
+Vsa/Sim/HtifStepObs.lean
+Vsa/Sim/InitValues.lean
+Vsa/Sim/MemStore.lean
+Vsa/Sim/MemcpySites.lean
+Vsa/Sim/MemcpySpec.lean
+Vsa/Sim/NegTailSites.lean
+Vsa/Sim/StepAddi.lean
+Vsa/Sim/StepAlu.lean
+Vsa/Sim/StepBeq.lean
+Vsa/Sim/StepBranch.lean
+Vsa/Sim/StepJump.lean
+Vsa/Sim/StepObs.lean
+Vsa/Sim/StepStore.lean
+Vsa/Sim/ValueSites.lean

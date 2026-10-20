@@ -92,4 +92,25 @@ theorem writeLog_get (m : Std.ExtHashMap Nat (BitVec 8)) (log : List WEntry) (a 
     show (writeLog (applyW m e) log)[a]? = _
     rw [ih, applyW_get, logByte, Option.or_assoc]
 
+/-- The byte the first entry of a newest-first log covering `a` wrote. The
+replay keeps its logs newest first, so that a row's log is its predecessor's
+with entries prepended and the kernel walks it in linear time. -/
+def firstByte : List WEntry → Nat → Option (BitVec 8)
+  | [], _ => none
+  | e :: log, a => (entryByte e a).or (firstByte log a)
+
+theorem logByte_append (l1 l2 : List WEntry) (a : Nat) :
+    logByte (l1 ++ l2) a = (logByte l2 a).or (logByte l1 a) := by
+  induction l1 with
+  | nil => simp [logByte]
+  | cons e l ih => simp only [List.cons_append, logByte, ih, Option.or_assoc]
+
+theorem logByte_reverse (log : List WEntry) (a : Nat) :
+    logByte log.reverse a = firstByte log a := by
+  induction log with
+  | nil => rfl
+  | cons e l ih =>
+    rw [List.reverse_cons, logByte_append, ih]
+    simp [logByte, firstByte]
+
 end Tcc.Boot
