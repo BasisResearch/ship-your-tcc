@@ -239,6 +239,9 @@ def main():
                     help='K:N: checkpoint states every K steps up to N (St/S<i>.lean, each '
                          'a delta on the previous) and one chunk theorem per segment '
                          '(Seg/C<i>.lean), under --out')
+    ap.add_argument('--table-proof', action='store_true',
+                    help='emit Table/T<k>.lean (each block of the code table satisfies EntryOK) '
+                         'and Table/All.lean (TableOK code)')
     ap.add_argument('--form', choices=['rfl', 'beq'], default='rfl',
                     help='chunk statement: run equation by kernel_rfl, or chunkOK by decide')
     a = ap.parse_args()
@@ -276,6 +279,8 @@ def main():
           f'pins {len(pins)}; stores {len(tr.stores)}', file=sys.stderr)
     if a.chain:
         gen_chain(a, tr, pins, universe, pages0, out, mod)
+    if a.table_proof:
+        gen_table_proof(len(items), out, mod)
     for spec in a.chunk:
         s0, s1 = (int(x) for x in spec.split(':'))
         txt = [f'import {mod}.Code\nimport {mod}.Mem0\nimport Tcc.Ccp.KernelRfl\n', HEADER,
@@ -296,6 +301,30 @@ def main():
             txt.append(f'theorem chunk_{s0}_{s1} : run code {s1 - s0} s{s0} = some s{s1} := by\n'
                        f'  kernel_rfl\n\nend {mod}\n')
         (out / f'Chunk{s0}_{s1}.lean').write_text('\n'.join(txt))
+
+
+def gen_table_proof(n, out, mod, block=64):
+    """`TableOK code`, one module per block of 64 entries (each entry: the
+    fetch facts by `decide`, the decode fact by `decodeW`, through `ccp_entry`)
+    and a join following the block tree of `tree_defs`."""
+    (out / 'Table').mkdir(exist_ok=True)
+    nb = (n + block - 1) // block
+    for k in range(nb):
+        (out / 'Table' / f'T{k}.lean').write_text(
+            f'import {mod}.Code\nimport Tcc.Ccp.Sound\n\n' + HEADER + f'\nnamespace {mod}\nopen Tcc.Ccp\n\n'
+            f'theorem table_{k}_ok : CT.All (EntryOK code) table_{k} := by\n'
+            f'  simp only [table_{k}, CT.All]\n  ccp_entry\n\nend {mod}\n')
+    def top(lo, hi):
+        if hi - lo == 1:
+            return f'table_{lo}_ok'
+        mid = (lo + hi) // 2
+        return f'⟨{top(lo, mid)}, {top(mid, hi)}⟩'
+    (out / 'Table' / 'All.lean').write_text(
+        '\n'.join(f'import {mod}.Table.T{k}' for k in range(nb)) + '\n\n' + HEADER +
+        f'\nnamespace {mod}\nopen Tcc.Ccp\n\n'
+        f'/-- Every entry of the code table decodes, under Sail, to what the evaluator runs. -/\n'
+        f'theorem tableOK : TableOK code := tableOK_of_all (by\n'
+        f'  show CT.All (EntryOK code) table\n  simp only [table, CT.All]\n  exact {top(0, nb)})\n\nend {mod}\n')
 
 
 def gen_chain(a, tr, pins, universe, pages0, out, mod):
