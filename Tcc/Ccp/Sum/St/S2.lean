@@ -216,7 +216,7 @@ def st2_d17 : DT :=
  DT.keep))
  DT.keep))
 
-/-- Step 50000: 196 pages changed since step 25000. -/
+/-- Step 50000: 196 pages written since step 25000. -/
 def st2 : St := ⟨0x80000020, 0x800ab01000000000800962700000000000000000000000008007d6d0000000008800000000000000000000000000000000000000,
  st1.mem.overlay (DT.node (DT.node (DT.node (DT.node DT.keep (DT.node DT.keep (DT.node DT.keep (DT.node st2_d14 st2_d15)))) (DT.node (DT.node (DT.node (DT.node st2_d16 st2_d17) DT.keep) DT.keep) DT.keep)) DT.keep) DT.keep)⟩
 

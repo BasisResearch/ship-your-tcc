@@ -299,11 +299,15 @@ def main():
 
 
 def gen_chain(a, tr, pins, universe, pages0, out, mod):
-    """Checkpoint states `st<i>` (step i*K) as deltas on their predecessor, in a
-    chain of light modules, and the chunk theorems `seg<i> : run code K st<i> =
-    some st<i+1>` in modules that only import the two states (built in parallel)."""
+    """Checkpoint states `st<i>` every K steps (the last one at N, which need
+    not be a multiple of K), each a delta on its predecessor, in a chain of
+    light modules `St/S<i>.lean`; the chunk theorems `seg<i> : run code k_i st<i>
+    = some st<i+1>` in `Seg/C<i>.lean`, each importing only its two states (so
+    they build in parallel); and `Seg/Join.lean`, the prefixes `upto<i> : run
+    code (steps to i) st0 = some st<i>` joined by `run_trans`."""
     K, N = (int(x) for x in a.chain.split(':'))
-    assert N % K == 0 and K % 1000 == 0
+    assert K % 1000 == 0 and N in tr.ckpt
+    bounds = list(range(K, N, K)) + [N]
     (out / 'St').mkdir(exist_ok=True)
     (out / 'Seg').mkdir(exist_ok=True)
     pc0, regs0 = tr.ckpt[0]
@@ -311,24 +315,29 @@ def gen_chain(a, tr, pins, universe, pages0, out, mod):
         f'import {mod}.Mem0\n\n' + HEADER + f'\nnamespace {mod}\nopen Tcc.Ccp\n\n'
         f'/-- The evaluator state at reset. -/\n'
         f'def st0 : St := ⟨{pc0:#x}, {regs_nat(regs0):#x}, mem0⟩\n\nend {mod}\n')
-    prev = pages0
-    mem = dict(pins)
+    pk = dict(pages0)
     si = 0
     sizes = []
-    for i in range(1, N // K + 1):
-        k = i * K
+    prevk = 0
+    for i, k in enumerate(bounds, start=1):
+        touched = set()
         while si < len(tr.stores) and tr.stores[si][0] < k:
             step, addr, w, data = tr.stores[si]
             for j in range(w):
-                mem[addr + j] = (data >> (8 * j)) & 0xff
+                x = addr + j
+                d, m = pk.get(x >> PS, (0, 0))
+                off = x & (PB - 1)
+                b = (data >> (8 * j)) & 0xff
+                d = (d & ~(0xff << (8 * off))) | (b << (8 * off))
+                pk[x >> PS] = (d, m | (1 << off))
+                touched.add(x >> PS)
             si += 1
-        pk = pages_of(mem)
-        changed = {p: pk[p] for p in universe if pk.get(p, (0, 0)) != prev.get(p, (0, 0))}
+        changed = {p: pk[p] for p in touched}
         dt, defs = dt_text(f'st{i}_d', universe, changed)
         pc, regs = tr.ckpt[k]
         body = (f'import {mod}.St.S{i - 1}\n\n' + HEADER + f'\nnamespace {mod}\nopen Tcc.Ccp\n\n'
                 + '\n'.join(defs) +
-                f'\n/-- Step {k}: {len(changed)} pages changed since step {k - K}. -/\n'
+                f'\n/-- Step {k}: {len(changed)} pages written since step {prevk}. -/\n'
                 f'def st{i} : St := ⟨{pc:#x}, {regs_nat(regs):#x},\n st{i - 1}.mem.overlay {dt}⟩\n'
                 f'\nend {mod}\n')
         (out / 'St' / f'S{i}.lean').write_text(body)
@@ -336,10 +345,24 @@ def gen_chain(a, tr, pins, universe, pages0, out, mod):
         (out / 'Seg' / f'C{i - 1}.lean').write_text(
             f'import {mod}.Code\nimport {mod}.St.S{i}\nimport Tcc.Ccp.KernelRfl\n\n' + HEADER +
             f'\nnamespace {mod}\nopen Tcc.Ccp\n\n'
-            f'/-- Steps {k - K} to {k}. -/\n'
-            f'theorem seg{i - 1} : run code {K} st{i - 1} = some st{i} := by\n  kernel_rfl\n\nend {mod}\n')
-        prev = pk
-    print(f'chain: {N // K} segments of {K}; state sources {sum(sizes)} bytes '
+            f'/-- Steps {prevk} to {k}. -/\n'
+            f'theorem seg{i - 1} : run code {k - prevk} st{i - 1} = some st{i} := by\n'
+            f'  kernel_rfl\n\nend {mod}\n')
+        prevk = k
+    n = len(bounds)
+    lines = [f'import {mod}.Seg.C{i}' for i in range(n)] + ['import Tcc.Ccp.Lemmas', '', HEADER,
+             f'namespace {mod}', 'open Tcc.Ccp', '',
+             f'theorem upto1 : run code {bounds[0]} st0 = some st1 := seg0', '']
+    for i in range(1, n):
+        lines += [f'theorem upto{i + 1} : run code {bounds[i]} st0 = some st{i + 1} := by',
+                  f'  have h := run_trans upto{i} seg{i}',
+                  f'  rwa [show ({bounds[i - 1]} + {bounds[i] - bounds[i - 1]} : Nat) = {bounds[i]} from rfl] at h',
+                  '']
+    lines += [f'/-- The evaluator runs the {N} steps from reset without a fault to the',
+              f'native trace\'s state at step {N}. -/',
+              f'theorem run_all : run code {N} st0 = some st{n} := upto{n}', '', f'end {mod}', '']
+    (out / 'Seg' / 'Join.lean').write_text('\n'.join(lines))
+    print(f'chain: {n} segments to step {N}; state sources {sum(sizes)} bytes '
           f'(max {max(sizes)})', file=sys.stderr)
 
 

@@ -197,6 +197,28 @@ def DecOK (pc w : Nat) : Ins → Prop
   | .jalr rd rs1 imm => rd ≤ 31 ∧ rs1 ≤ 31 ∧ Imm12 imm ∧ JalrDec w rd rs1 imm
   | .beq a b tgt => BrOK pc w .BEQ a b tgt
   | .bne a b tgt => BrOK pc w .BNE a b tgt
+  | .blt a b tgt => BrOK pc w .BLT a b tgt
+  | .bge a b tgt => BrOK pc w .BGE a b tgt
+  | .bltu a b tgt => BrOK pc w .BLTU a b tgt
+  | .bgeu a b tgt => BrOK pc w .BGEU a b tgt
+  | .sub rd rs1 rs2 => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ rs2 ≤ 31 ∧
+      DecodeFactM (mkM pc w .sub rd rs1 rs2 0)
+  | .and rd rs1 rs2 => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ rs2 ≤ 31 ∧
+      DecodeFactM (mkM pc w .and rd rs1 rs2 0)
+  | .or rd rs1 rs2 => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ rs2 ≤ 31 ∧
+      DecodeFactM (mkM pc w .or rd rs1 rs2 0)
+  | .xor rd rs1 rs2 => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ rs2 ≤ 31 ∧
+      DecodeFactM (mkM pc w .xor rd rs1 rs2 0)
+  | .andi rd rs1 imm => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ Imm12 imm ∧ imm < 2 ^ 64 ∧
+      DecodeFactM (mkM pc w .andi rd rs1 0 imm)
+  | .ori rd rs1 imm => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ Imm12 imm ∧ imm < 2 ^ 64 ∧
+      DecodeFactM (mkM pc w .ori rd rs1 0 imm)
+  | .xori rd rs1 imm => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ Imm12 imm ∧ imm < 2 ^ 64 ∧
+      DecodeFactM (mkM pc w .xori rd rs1 0 imm)
+  | .slli rd rs1 k => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ k < 64 ∧
+      DecodeFactM (mkM pc w .slli rd rs1 0 k)
+  | .srli rd rs1 k => (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ k < 64 ∧
+      DecodeFactM (mkM pc w .srli rd rs1 0 k)
   | _ => False
 
 structure EntryOK (c : Code) (pc w : Nat) (i : Ins) : Prop where
@@ -881,6 +903,208 @@ theorem sound_jalr {c : Code} (hT : TableOK c) {s s' : St} {cf : Config} (hS : S
         simp [W]] at this
       exact ⟨_, Steps.head hs (Steps.refl _), this⟩
 
+/-! ## Arithmetic bridges (Nat evaluator ↔ Sail BitVec) -/
+
+theorem ofNat_sub_mod (x y : Nat) (hy : y < 2 ^ 64) :
+    BitVec.ofNat 64 x - BitVec.ofNat 64 y = BitVec.ofNat 64 ((x + (W - y)) % W) := by
+  apply BitVec.eq_of_toNat_eq
+  simp only [BitVec.toNat_sub, BitVec.toNat_ofNat, W]; omega
+
+theorem ofNat_and (x y : Nat) (hx : x < 2 ^ 64) (hy : y < 2 ^ 64) :
+    BitVec.ofNat 64 x &&& BitVec.ofNat 64 y = BitVec.ofNat 64 (x &&& y) := by
+  apply BitVec.eq_of_toNat_eq
+  simp only [BitVec.toNat_and, BitVec.toNat_ofNat, Nat.mod_eq_of_lt hx, Nat.mod_eq_of_lt hy,
+    Nat.mod_eq_of_lt (Nat.and_lt_two_pow x hy)]
+
+theorem ofNat_or (x y : Nat) (hx : x < 2 ^ 64) (hy : y < 2 ^ 64) :
+    BitVec.ofNat 64 x ||| BitVec.ofNat 64 y = BitVec.ofNat 64 (x ||| y) := by
+  apply BitVec.eq_of_toNat_eq
+  simp only [BitVec.toNat_or, BitVec.toNat_ofNat, Nat.mod_eq_of_lt hx, Nat.mod_eq_of_lt hy,
+    Nat.mod_eq_of_lt (Nat.or_lt_two_pow hx hy)]
+
+theorem ofNat_xor (x y : Nat) (hx : x < 2 ^ 64) (hy : y < 2 ^ 64) :
+    BitVec.ofNat 64 x ^^^ BitVec.ofNat 64 y = BitVec.ofNat 64 (x ^^^ y) := by
+  apply BitVec.eq_of_toNat_eq
+  simp only [BitVec.toNat_xor, BitVec.toNat_ofNat, Nat.mod_eq_of_lt hx, Nat.mod_eq_of_lt hy,
+    Nat.mod_eq_of_lt (Nat.xor_lt_two_pow hx hy)]
+
+theorem shl_ofNat (x k : Nat) (hk : k < 64) :
+    shift_bits_left (BitVec.ofNat 64 x) (Sail.BitVec.extractLsb ((BitVec.ofNat 12 k).extractLsb' 0 6) 5 0)
+      = BitVec.ofNat 64 ((x <<< k) % W) := by
+  apply BitVec.eq_of_toNat_eq
+  simp [shift_bits_left, Sail.BitVec.extractLsb, BitVec.toNat_shiftLeft, W]
+  rw [Nat.mod_eq_of_lt hk, Nat.shiftLeft_eq, Nat.shiftLeft_eq, Nat.mul_mod, Nat.mod_mod, ← Nat.mul_mod]
+
+theorem guard_bltu (x y : Nat) (hx : x < 2 ^ 64) (hy : y < 2 ^ 64) :
+    guardB .BLTU (BitVec.ofNat 64 x) (BitVec.ofNat 64 y) = bLtu x y := by
+  simp [guardB, bLtu, zopz0zI_u, BitVec.toNatInt, Nat.mod_eq_of_lt hx, Nat.mod_eq_of_lt hy]
+
+theorem srl_ofNat (x k : Nat) (hx : x < 2 ^ 64) (hk : k < 64) :
+    shift_bits_right (BitVec.ofNat 64 x) (Sail.BitVec.extractLsb ((BitVec.ofNat 12 k).extractLsb' 0 6) 5 0)
+      = BitVec.ofNat 64 (x >>> k) := by
+  apply BitVec.eq_of_toNat_eq
+  simp [shift_bits_right, Sail.BitVec.extractLsb, BitVec.toNat_ushiftRight]
+  rw [Nat.mod_eq_of_lt hx, Nat.mod_eq_of_lt hk,
+    Nat.mod_eq_of_lt (Nat.lt_of_le_of_lt (Nat.shiftRight_le x k) hx)]
+
+theorem xorH (x : Nat) (hx : x < 2 ^ 64) : x ^^^ H = if x < H then x + H else x - H := by
+  have hH : H = 2 ^ 63 * 1 + 0 := rfl
+  have hx' : x = 2 ^ 63 * (x / 2 ^ 63) + x % 2 ^ 63 := (Nat.div_add_mod x _).symm
+  have hq : x / 2 ^ 63 ≤ 1 := by
+    have : x / 2 ^ 63 < 2 := Nat.div_lt_of_lt_mul (by simpa using hx)
+    omega
+  have hr : x % 2 ^ 63 < 2 ^ 63 := Nat.mod_lt _ (Nat.two_pow_pos 63)
+  apply Nat.eq_of_testBit_eq
+  intro j
+  rw [Nat.testBit_xor]
+  conv => lhs; rw [hx', hH]
+  rw [Nat.testBit_two_pow_mul_add _ hr, Nat.testBit_two_pow_mul_add _ (Nat.two_pow_pos 63)]
+  by_cases hlt : x < H
+  · have hq0 : x / 2 ^ 63 = 0 := by simp only [H] at hlt; omega
+    rw [if_pos hlt, show x + H = 2 ^ 63 * 1 + x % 2 ^ 63 by simp only [H]; omega,
+      Nat.testBit_two_pow_mul_add _ hr, hq0]
+    by_cases hj : j < 63
+    · simp [hj]
+    · simp [hj]
+  · have hq1 : x / 2 ^ 63 = 1 := by simp only [H] at hlt; omega
+    rw [if_neg hlt, show x - H = 2 ^ 63 * 0 + x % 2 ^ 63 by simp only [H]; omega,
+      Nat.testBit_two_pow_mul_add _ hr, hq1]
+    by_cases hj : j < 63
+    · simp [hj]
+    · by_cases h63 : j - 63 = 0
+      · simp [hj, h63]
+      · simp [hj, Nat.testBit_one_eq_true_iff_self_eq_zero, h63]
+
+theorem guard_blt (x y : Nat) (hx : x < 2 ^ 64) (hy : y < 2 ^ 64) :
+    guardB .BLT (BitVec.ofNat 64 x) (BitVec.ofNat 64 y) = bLt x y := by
+  simp [guardB, bLt, slt64, zopz0zI_s, BitVec.toInt, Nat.mod_eq_of_lt hx, Nat.mod_eq_of_lt hy, xorH x hx, xorH y hy]
+  simp only [H]
+  by_cases h1 : x < 9223372036854775808 <;> by_cases h2 : y < 9223372036854775808 <;>
+    simp only [h1, h2, if_true, if_false, show (2 * x < 18446744073709551616) = (x < 9223372036854775808) by
+      apply propext; omega, show (2 * y < 18446744073709551616) = (y < 9223372036854775808) by
+      apply propext; omega] <;> omega
+
+theorem guard_bgeu (x y : Nat) (hx : x < 2 ^ 64) (hy : y < 2 ^ 64) :
+    guardB .BGEU (BitVec.ofNat 64 x) (BitVec.ofNat 64 y) = bGeu x y := by
+  simp [guardB, bGeu, zopz0zKzJ_u, BitVec.toNatInt, Nat.mod_eq_of_lt hx, Nat.mod_eq_of_lt hy]
+  by_cases h : x < y
+  · simp [h, Nat.not_le.2 h]
+  · simp [h, Nat.not_lt.1 h]
+
+theorem guard_bge (x y : Nat) (hx : x < 2 ^ 64) (hy : y < 2 ^ 64) :
+    guardB .BGE (BitVec.ofNat 64 x) (BitVec.ofNat 64 y) = bGe x y := by
+  have h := guard_blt x y hx hy
+  simp only [guardB, bLt] at h
+  simp only [guardB, bGe, ← h, zopz0zKzJ_s, zopz0zI_s]
+  by_cases hc : (BitVec.ofNat 64 x).toInt < (BitVec.ofNat 64 y).toInt
+  · simp [hc, Int.not_le.2 hc]
+  · simp [hc, Int.not_lt.1 hc]
+
+/-! ## More ALU kinds -/
+
+/-- An ALU entry `rd := op(rs1, rs2)` whose Sail value the evaluator computes as `f`. -/
+theorem sound_rr {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 rs2 : Nat} {i : Ins} (hget : c.table.getW s.pc = some (w, i)) {k : MKind}
+    (hk : (1 ≤ rd ∧ rd ≤ 31) ∧ rs1 ≤ 31 ∧ rs2 ≤ 31 ∧ DecodeFactM (mkM s.pc w k rd rs1 rs2 0))
+    (hkind : KindOK (keysG (pinsOf s.regs)) k rd rs1 rs2)
+    (hmf : MemFacts cf.σ.mem (pinsOf s.regs) [] (mkM s.pc w k rd rs1 rs2 0))
+    {f : Nat → Nat → Nat}
+    (hval : stepGM (mkM s.pc w k rd rs1 rs2 0) (pinsOf s.regs) [] =
+      (rd, BitVec.ofNat 64 (f (getR s.regs rs1) (getR s.regs rs2))) :: eraseG rd (pinsOf s.regs))
+    (hlog : wlogM [mkM s.pc w k rd rs1 rs2 0] (pinsOf s.regs) [[]] = []) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (f (getR s.regs rs1) (getR s.regs rs2)), s.mem⟩ :=
+  alu_sound hS (hT _ _ _ hget).fetch hk.2.2.2 hkind hmf hk.1 hval hlog hget
+
+theorem sound_sub {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 rs2 : Nat} (hget : c.table.getW s.pc = some (w, .sub rd rs1 rs2)) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fSub (getR s.regs rs1) (getR s.regs rs2)), s.mem⟩ := by
+  have hk := (hT _ _ _ hget).dec
+  refine sound_rr hT hS hget hk ⟨hk.1, srcOK_of hk.2.1, srcOK_of hk.2.2.1⟩ trivial ?_ rfl
+  show (rd, srcVal rs1 (pinsOf s.regs) - srcVal rs2 (pinsOf s.regs)) :: _ = _
+  rw [srcVal_pinsOf hS.x0 hk.2.1, srcVal_pinsOf hS.x0 hk.2.2.1, ofNat_sub_mod _ _ (getR_lt _ _)]; rfl
+
+theorem sound_and {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 rs2 : Nat} (hget : c.table.getW s.pc = some (w, .and rd rs1 rs2)) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fAnd (getR s.regs rs1) (getR s.regs rs2)), s.mem⟩ := by
+  have hk := (hT _ _ _ hget).dec
+  refine sound_rr hT hS hget hk ⟨hk.1, srcOK_of hk.2.1, srcOK_of hk.2.2.1⟩ trivial ?_ rfl
+  show (rd, srcVal rs1 (pinsOf s.regs) &&& srcVal rs2 (pinsOf s.regs)) :: _ = _
+  rw [srcVal_pinsOf hS.x0 hk.2.1, srcVal_pinsOf hS.x0 hk.2.2.1,
+    ofNat_and _ _ (getR_lt _ _) (getR_lt _ _)]; rfl
+
+theorem sound_or {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 rs2 : Nat} (hget : c.table.getW s.pc = some (w, .or rd rs1 rs2)) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fOr (getR s.regs rs1) (getR s.regs rs2)), s.mem⟩ := by
+  have hk := (hT _ _ _ hget).dec
+  refine sound_rr hT hS hget hk ⟨hk.1, srcOK_of hk.2.1, srcOK_of hk.2.2.1⟩ trivial ?_ rfl
+  show (rd, srcVal rs1 (pinsOf s.regs) ||| srcVal rs2 (pinsOf s.regs)) :: _ = _
+  rw [srcVal_pinsOf hS.x0 hk.2.1, srcVal_pinsOf hS.x0 hk.2.2.1,
+    ofNat_or _ _ (getR_lt _ _) (getR_lt _ _)]; rfl
+
+theorem sound_xor {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 rs2 : Nat} (hget : c.table.getW s.pc = some (w, .xor rd rs1 rs2)) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fXor (getR s.regs rs1) (getR s.regs rs2)), s.mem⟩ := by
+  have hk := (hT _ _ _ hget).dec
+  refine sound_rr hT hS hget hk ⟨hk.1, srcOK_of hk.2.1, srcOK_of hk.2.2.1⟩ trivial ?_ rfl
+  show (rd, srcVal rs1 (pinsOf s.regs) ^^^ srcVal rs2 (pinsOf s.regs)) :: _ = _
+  rw [srcVal_pinsOf hS.x0 hk.2.1, srcVal_pinsOf hS.x0 hk.2.2.1,
+    ofNat_xor _ _ (getR_lt _ _) (getR_lt _ _)]; rfl
+
+/-- An ALU entry `rd := op(rs1, imm)` whose Sail value the evaluator computes as `f`. -/
+theorem sound_ri {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 imm : Nat} {i : Ins} (hget : c.table.getW s.pc = some (w, i)) {k : MKind}
+    (hdec : DecodeFactM (mkM s.pc w k rd rs1 0 imm)) (hrd : 1 ≤ rd ∧ rd ≤ 31)
+    (hkind : KindOK (keysG (pinsOf s.regs)) k rd rs1 0)
+    (hmf : MemFacts cf.σ.mem (pinsOf s.regs) [] (mkM s.pc w k rd rs1 0 imm))
+    {f : Nat → Nat → Nat}
+    (hval : stepGM (mkM s.pc w k rd rs1 0 imm) (pinsOf s.regs) [] =
+      (rd, BitVec.ofNat 64 (f (getR s.regs rs1) imm)) :: eraseG rd (pinsOf s.regs))
+    (hlog : wlogM [mkM s.pc w k rd rs1 0 imm] (pinsOf s.regs) [[]] = []) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (f (getR s.regs rs1) imm), s.mem⟩ :=
+  alu_sound hS (hT _ _ _ hget).fetch hdec hkind hmf hrd hval hlog hget
+
+theorem sound_andi {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 imm : Nat} (hget : c.table.getW s.pc = some (w, .andi rd rs1 imm)) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fAnd (getR s.regs rs1) imm), s.mem⟩ := by
+  obtain ⟨hrd, hrs1, himm, hlt, hdec⟩ := (hT _ _ _ hget).dec
+  refine sound_ri hT hS hget hdec hrd ⟨hrd, srcOK_of hrs1⟩ trivial ?_ rfl
+  show (rd, srcVal rs1 (pinsOf s.regs) &&& sign_extend (m := 64) (BitVec.ofNat 12 imm)) :: _ = _
+  rw [himm, srcVal_pinsOf hS.x0 hrs1, ofNat_and _ _ (getR_lt _ _) hlt]; rfl
+
+theorem sound_ori {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 imm : Nat} (hget : c.table.getW s.pc = some (w, .ori rd rs1 imm)) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fOr (getR s.regs rs1) imm), s.mem⟩ := by
+  obtain ⟨hrd, hrs1, himm, hlt, hdec⟩ := (hT _ _ _ hget).dec
+  refine sound_ri hT hS hget hdec hrd ⟨hrd, srcOK_of hrs1⟩ trivial ?_ rfl
+  show (rd, srcVal rs1 (pinsOf s.regs) ||| sign_extend (m := 64) (BitVec.ofNat 12 imm)) :: _ = _
+  rw [himm, srcVal_pinsOf hS.x0 hrs1, ofNat_or _ _ (getR_lt _ _) hlt]; rfl
+
+theorem sound_xori {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 imm : Nat} (hget : c.table.getW s.pc = some (w, .xori rd rs1 imm)) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fXor (getR s.regs rs1) imm), s.mem⟩ := by
+  obtain ⟨hrd, hrs1, himm, hlt, hdec⟩ := (hT _ _ _ hget).dec
+  refine sound_ri hT hS hget hdec hrd ⟨hrd, srcOK_of hrs1⟩ trivial ?_ rfl
+  show (rd, srcVal rs1 (pinsOf s.regs) ^^^ sign_extend (m := 64) (BitVec.ofNat 12 imm)) :: _ = _
+  rw [himm, srcVal_pinsOf hS.x0 hrs1, ofNat_xor _ _ (getR_lt _ _) hlt]; rfl
+
+theorem sound_slli {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 k : Nat} (hget : c.table.getW s.pc = some (w, .slli rd rs1 k)) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fSlli (getR s.regs rs1) k), s.mem⟩ := by
+  obtain ⟨hrd, hrs1, hk, hdec⟩ := (hT _ _ _ hget).dec
+  refine sound_ri hT hS hget hdec hrd ⟨hrd, srcOK_of hrs1⟩ trivial ?_ rfl
+  show (rd, shift_bits_left (srcVal rs1 (pinsOf s.regs))
+    (Sail.BitVec.extractLsb ((BitVec.ofNat 12 k).extractLsb' 0 6) 5 0)) :: _ = _
+  rw [srcVal_pinsOf hS.x0 hrs1, shl_ofNat _ _ hk]; rfl
+
+theorem sound_srli {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
+    {w rd rs1 k : Nat} (hget : c.table.getW s.pc = some (w, .srli rd rs1 k)) :
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fSrli (getR s.regs rs1) k), s.mem⟩ := by
+  obtain ⟨hrd, hrs1, hk, hdec⟩ := (hT _ _ _ hget).dec
+  refine sound_ri hT hS hget hdec hrd ⟨hrd, srcOK_of hrs1⟩ trivial ?_ rfl
+  show (rd, shift_bits_right (srcVal rs1 (pinsOf s.regs))
+    (Sail.BitVec.extractLsb ((BitVec.ofNat 12 k).extractLsb' 0 6) 5 0)) :: _ = _
+  rw [srcVal_pinsOf hS.x0 hrs1, srl_ofNat _ _ (getR_lt _ _) hk]; rfl
+
 /-! ## The generic theorem -/
 
 /-- **One evaluator step is a Sail step.** Every instruction kind `DecOK`
@@ -903,6 +1127,32 @@ theorem exec_sound {c : Code} (hT : TableOK c) {s s' : St} {cf : Config} (hS : S
   case ld rd rs1 imm => exact sound_ld hT hS hget hex
   case lbu rd rs1 imm => exact sound_lbu hT hS hget hex
   case sd rs1 rs2 imm => exact sound_sd hT hS hget hex
+  case sub rd rs1 rs2 =>
+    simp only [exec, alu, wr, next, Option.some.injEq] at hex; subst hex; exact sound_sub hT hS hget
+  case and rd rs1 rs2 =>
+    simp only [exec, alu, wr, next, Option.some.injEq] at hex; subst hex; exact sound_and hT hS hget
+  case or rd rs1 rs2 =>
+    simp only [exec, alu, wr, next, Option.some.injEq] at hex; subst hex; exact sound_or hT hS hget
+  case xor rd rs1 rs2 =>
+    simp only [exec, alu, wr, next, Option.some.injEq] at hex; subst hex; exact sound_xor hT hS hget
+  case andi rd rs1 imm =>
+    simp only [exec, alui, wr, next, Option.some.injEq] at hex; subst hex; exact sound_andi hT hS hget
+  case ori rd rs1 imm =>
+    simp only [exec, alui, wr, next, Option.some.injEq] at hex; subst hex; exact sound_ori hT hS hget
+  case xori rd rs1 imm =>
+    simp only [exec, alui, wr, next, Option.some.injEq] at hex; subst hex; exact sound_xori hT hS hget
+  case slli rd rs1 k =>
+    simp only [exec, alui, wr, next, Option.some.injEq] at hex; subst hex; exact sound_slli hT hS hget
+  case srli rd rs1 k =>
+    simp only [exec, alui, wr, next, Option.some.injEq] at hex; subst hex; exact sound_srli hT hS hget
+  case blt a b tgt =>
+    simp only [exec, bra, Option.some.injEq] at hex; subst hex; exact sound_br hT hS hget hok guard_blt
+  case bge a b tgt =>
+    simp only [exec, bra, Option.some.injEq] at hex; subst hex; exact sound_br hT hS hget hok guard_bge
+  case bltu a b tgt =>
+    simp only [exec, bra, Option.some.injEq] at hex; subst hex; exact sound_br hT hS hget hok guard_bltu
+  case bgeu a b tgt =>
+    simp only [exec, bra, Option.some.injEq] at hex; subst hex; exact sound_br hT hS hget hok guard_bgeu
   case addi rd rs1 imm =>
     simp only [exec, alui, wr, next, Option.some.injEq] at hex; subst hex; exact sound_addi hT hS hget
   case add rd rs1 rs2 =>

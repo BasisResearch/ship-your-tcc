@@ -215,7 +215,7 @@ def st1_d14 : DT :=
  DT.keep)
  DT.keep))
 
-/-- Step 25000: 197 pages changed since step 0. -/
+/-- Step 25000: 197 pages written since step 0. -/
 def st1 : St := ⟨0x80000020, 0x800ab0100000000080089f200000000000000000000000008007d6d0000000008800000000000000000000000000000000000000,
  st0.mem.overlay (DT.node (DT.node (DT.node (DT.node DT.keep (DT.node (DT.node DT.keep (DT.node DT.keep st1_d11)) (DT.node (DT.node st1_d12 st1_d13) (DT.node st1_d14 DT.keep)))) DT.keep) DT.keep) DT.keep)⟩
 
