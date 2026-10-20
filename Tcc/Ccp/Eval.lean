@@ -35,20 +35,31 @@ abbrev W32 : Nat := 4294967296
 /-- The HTIF mailbox (`Vsa.Sim.tohostAddr`). -/
 abbrev tohost : Nat := 0x8007cec0
 
-/-- log2 of the page size. -/
-abbrev PS : Nat := 8
-abbrev PB : Nat := 256
+-- Pages are 256 bytes (written as literals so `omega` sees them).
+
+/-! ## Packed fields
+
+Registers, page bytes and known-byte masks are all fields of one `Nat`:
+`fldAt sh n R` reads the `n` bits at `sh`, `updAt sh n R v` replaces them
+by `v mod 2^n` (bitwise, so one generic `testBit` lemma serves every use). -/
+
+/-- The `n` bits of `R` from bit `sh`. -/
+@[inline] def fldAt (sh n R : Nat) : Nat := (R >>> sh) % 2 ^ n
+
+/-- `R` with the `n` bits from bit `sh` replaced by `v mod 2^n`. -/
+@[inline] def updAt (sh n R v : Nat) : Nat :=
+  (R ^^^ (R &&& ((2 ^ n - 1) <<< sh))) ||| ((v % 2 ^ n) <<< sh)
 
 /-! ## Registers -/
 
 /-- `x_i` of the packed register file (`x0` reads 0: slot 0 is kept 0). -/
-@[inline] def getR (R : Nat) (i : Nat) : Nat := (R >>> (64 * i)) % W
+@[inline] def getR (R : Nat) (i : Nat) : Nat := fldAt (64 * i) 64 R
 
-/-- Write `x_i := v` (`v < 2^64`); `x0` is not written. -/
+/-- Write `x_i := v mod 2^64`; `x0` is not written. -/
 @[inline] def setR (R : Nat) (i : Nat) (v : Nat) : Nat :=
-  if i == 0 then R else
-    let sh := 64 * i
-    R - (((R >>> sh) % W) <<< sh) + (v <<< sh)
+  match Nat.beq i 0 with
+  | true => R
+  | false => updAt (64 * i) 64 R v
 
 /-! ## Memory -/
 
@@ -63,45 +74,63 @@ inductive MT where
 /-- The page `pg` as `(data, mask)`. -/
 def MT.get : MT → Nat → Option (Nat × Nat)
   | .nil, _ => none
-  | .leaf p d m, pg => if p == pg then some (d, m) else none
-  | .node s l r, pg => if pg < s then l.get pg else r.get pg
+  | .leaf p d m, pg => match Nat.beq p pg with | true => some (d, m) | false => none
+  | .node s l r, pg => match Nat.ble s pg with | true => r.get pg | false => l.get pg
 
 /-- Replace page `pg` (which must exist; else the tree is unchanged). -/
 def MT.set : MT → Nat → Nat → Nat → MT
   | .nil, _, _, _ => .nil
-  | .leaf p d m, pg, d', m' => if p == pg then .leaf p d' m' else .leaf p d m
-  | .node s l r, pg, d', m' => if pg < s then .node s (l.set pg d' m') r else .node s l (r.set pg d' m')
+  | .leaf p d m, pg, d', m' => match Nat.beq p pg with | true => .leaf p d' m' | false => .leaf p d m
+  | .node s l r, pg, d', m' => match Nat.ble s pg with
+    | true => .node s l (r.set pg d' m')
+    | false => .node s (l.set pg d' m') r
 
-/-- Overwrite pages (a checkpoint's delta against an anchor memory). -/
-def patch (M : MT) : List (Nat × Nat × Nat) → MT
-  | [] => M
-  | (p, d, m) :: r => patch (M.set p d m) r
+/-- A memory delta of the same shape as a page tree: `keep` leaves a subtree
+as it is, `leaf` replaces a page's contents. A checkpoint's memory is its
+anchor's `overlay`ed with a delta, a structural recursion of the tree's depth
+(no chain of updates for the kernel to unwind). -/
+inductive DT where
+  | keep : DT
+  | leaf (data : Nat) (mask : Nat) : DT
+  | node (l r : DT) : DT
+  deriving Inhabited, Repr
+
+def MT.overlay : MT → DT → MT
+  | t, .keep => t
+  | .leaf p _ _, .leaf d m => .leaf p d m
+  | .node s l r, .node dl dr => .node s (l.overlay dl) (r.overlay dr)
+  | t, _ => t
 
 /-- Little-endian load of `w` bytes at `a` (all in one page, all known). -/
 def load (M : MT) (a w : Nat) : Option Nat :=
-  let off := a % PB
-  if off + w ≤ PB then
-    match M.get (a >>> PS) with
+  let off := a % 256
+  match Nat.ble (off + w) 256 with
+  | true =>
+    match M.get (a >>> 8) with
     | some (d, m) =>
-      let full := 2 ^ w - 1
-      if (m >>> off) &&& full == full then some ((d >>> (8 * off)) % 2 ^ (8 * w)) else none
+      match Nat.beq (fldAt off w m) (2 ^ w - 1) with
+      | true => some (fldAt (8 * off) (8 * w) d)
+      | false => none
     | none => none
-  else none
+  | false => none
 
 /-- Store the low `w` bytes of `v` at `a` (one page, which must exist). -/
 def store (M : MT) (a w v : Nat) : Option MT :=
-  let off := a % PB
-  if off + w ≤ PB then
-    let pg := a >>> PS
+  let off := a % 256
+  match Nat.ble (off + w) 256 with
+  | true =>
+    let pg := a >>> 8
     match M.get pg with
     | some (d, m) =>
-      let sh := 8 * off
-      let lim := 2 ^ (8 * w)
-      let d' := d - (((d >>> sh) % lim) <<< sh) + ((v % lim) <<< sh)
-      let m' := m ||| ((2 ^ w - 1) <<< off)
-      some (M.set pg d' m')
+      let d' := updAt (8 * off) (8 * w) d v
+      let m' := updAt off w m (2 ^ w - 1)
+      -- always `true`; forces `d'` and `m'` so no chain of unevaluated page
+      -- updates builds up in the kernel between loads
+      match Nat.beq ((d' >>> 2048) + (m' >>> 256)) 0 with
+      | true => some (M.set pg d' m')
+      | false => none
     | none => none
-  else none
+  | false => none
 
 /-! ## Instructions -/
 
@@ -133,14 +162,14 @@ inductive Ins where
 /-- The code table: leaves carry their PC. -/
 inductive CT where
   | nil : CT
-  | leaf (pc : Nat) (i : Ins) : CT
+  | leaf (pc : Nat) (word : Nat) (i : Ins) : CT
   | node (split : Nat) (l r : CT) : CT
   deriving Inhabited, Repr
 
 def CT.get : CT → Nat → Option Ins
   | .nil, _ => none
-  | .leaf p i, pc => if p == pc then some i else none
-  | .node s l r, pc => if pc < s then l.get pc else r.get pc
+  | .leaf p _ i, pc => match Nat.beq p pc with | true => some i | false => none
+  | .node s l r, pc => match Nat.ble s pc with | true => r.get pc | false => l.get pc
 
 /-! ## Arithmetic on `Nat` mod `2^64` -/
 
@@ -185,19 +214,21 @@ and off the code. -/
 
 @[inline] def ldI (s : St) (rd rs1 imm w : Nat) (ext : Nat → Nat) : Option St :=
   let a := (getR s.regs rs1 + imm) % W
-  if loadOK a w then
+  match loadOK a w with
+  | true =>
     match load s.mem a w with
     | some v => some (wr s rd (ext v))
     | none => none
-  else none
+  | false => none
 
 @[inline] def stI (c : Code) (s : St) (rs1 rs2 imm w : Nat) : Option St :=
   let a := (getR s.regs rs1 + imm) % W
-  if storeOK c a w then
+  match storeOK c a w with
+  | true =>
     match store s.mem a w (getR s.regs rs2) with
     | some m => some ⟨(s.pc + 4) % W, s.regs, m⟩
     | none => none
-  else none
+  | false => none
 
 /-! Each instruction is a top-level operation of the decoded fields, the
 code and the state: `exec` dispatches on the instruction alone, so unfolding
@@ -262,7 +293,7 @@ def exec : Ins → Code → St → Option St
   | .bge a b t => bra bGe a b t
   | .bltu a b t => bra bLtu a b t
   | .bgeu a b t => bra bGeu a b t
-  | .lb rd rs1 imm => opLd 1 sextB rd rs1 imm
+  | .lb _ _ _ => fun _ _ => none
   | .lh rd rs1 imm => opLd 2 sextH rd rs1 imm
   | .lw rd rs1 imm => opLd 4 sext32 rd rs1 imm
   | .ld rd rs1 imm => opLd 8 id rd rs1 imm
