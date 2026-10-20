@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-20",
+  "exit": 0,
+  "meta": {
+    "compile_steps": "13822698",
+    "program_steps": "311447",
+    "steps": "14134170"
+  },
+  "command": "ORACLE_META=<meta> TCC_LIBS='\"-lm\",' MAX_STEPS=30000000 bash scripts/run_tcc_sail.sh corpus/tcc/t_24_math_library.c",
+  "result": "stdout and exit match both GCC oracles; supplemental rerun, retained corpus counts unchanged"
+}

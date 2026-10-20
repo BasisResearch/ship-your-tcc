@@ -41,3 +41,4 @@ components keep their own licences.
 | `scripts/check_discipline.py` | ship-your-lua (from ship-your-interpreter) | scan root `Tcc` |
 | `scripts/discipline_rules.tsv` | ship-your-lua | the language-agnostic rules only (Lua-specific R16–R18 dropped) |
 | `scripts/check.sh` | after ship-your-lua `scripts/check.sh` | rewritten for this repository's stages |
+| `scripts/gen_capture_cut.py`, `scripts/capture_cut.py` | ship-your-ocaml `scripts/gen_boot_dump.py` / `scripts/boot_dump.lean` @7222d01e; ship-your-lua frozen `Vsa/Elf.lean` API and prebuilt emulator dependencies @ab205a6 | generated complete register enumeration and unchanged setup/step loop; stop at first pre-instruction tcc handoff; export arena bytes/presence and host hashes; native observation only, no startup certificate; all build outputs local |

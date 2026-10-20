@@ -21,6 +21,10 @@ cd "$(dirname "$0")/.."
 EMU=${EMU:-$HOME/Documents/code/ship-your-lua/riscv-lean/lean_emulator/.lake/build/bin/lean_riscv_emulator}
 JOBS=${JOBS:-8}
 FLAGS=${FLAGS:-1}
+MAX_STEPS=${MAX_STEPS:-30000000}
+if ! [[ "$JOBS" =~ ^[0-9]+$ ]] || (( JOBS < 1 || JOBS > 8 )); then
+  echo 'JOBS must be between 1 and 8 on the shared box' >&2; exit 1
+fi
 HOSTCC=${HOSTCC:-cc}
 XB=${XB:-$(ls -d $HOME/toolchains/xpack-riscv-none-elf-gcc-15.2.0-*/bin | head -1)}
 NM=$XB/riscv-none-elf-nm
@@ -72,13 +76,13 @@ run1() {
   n=$1
   [ -f $OUT/$n.elf ] || return
   s=$(date +%s.%N)
-  $EMU $OUT/$n.elf --trace-pcs $OUT/$n.pcs > $OUT/$n.raw 2> $OUT/$n.trace
+  $EMU $OUT/$n.elf --trace-pcs $OUT/$n.pcs --max-steps "$MAX_STEPS" > $OUT/$n.raw 2> $OUT/$n.trace
   echo $? > $OUT/$n.emu.rc
   e=$(date +%s.%N)
   echo "$e - $s" | bc > $OUT/$n.wall
   return 0
 }
-export -f run1; export OUT EMU
+export -f run1; export OUT EMU MAX_STEPS
 if [ -z "${NORUN:-}" ] && [ ${#built[@]} -gt 0 ]; then
   printf '%s\n' "${built[@]}" | xargs -P $JOBS -I{} bash -c 'run1 {}' || failed=1
 fi
@@ -152,7 +156,10 @@ for f in "${files[@]}"; do
   wall=$(printf '%.1f' $(cat $OUT/$n.wall))
   printf '%-10s %-6s %-5s %-5s %12s %12s %9s %12s %8s %s\n' $n $r "${code:--}" $hr $total $comp $dump $prog $wall $isa
   printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' $n $r "${code:--}" $hr $total $comp $dump $prog $wall "${caddr:--}" "${csize:--}" $isa $(cat $OUT/$n.rtsha) >> $TSV
-  for x in stdout host raw code.bin code.dis isa; do [ -f $OUT/$n.$x ] && cp $OUT/$n.$x $RES/$n.$x; done
+  sha256sum $OUT/$n.elf > $RES/$n.elf.sha256
+  for x in stdout host raw code.bin code.dis isa trace markers pcs emu.rc host.rc wall rtsha; do
+    [ -f $OUT/$n.$x ] && cp $OUT/$n.$x $RES/$n.$x
+  done
   unset sstart srun senter sexit code caddr csize
 done
 echo "runtime (all but .embed) sha256 prefixes: $(cat $(for f in "${files[@]}"; do echo $OUT/$(basename $f .c).rtsha; done) 2>/dev/null | sort | uniq -c | tr -s ' ' | tr '\n' ' ')"

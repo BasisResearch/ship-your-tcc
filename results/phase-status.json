@@ -1,0 +1,57 @@
+{
+  "report_date": "2026-10-20",
+  "delivery": {
+    "requested_connector": "cove MCP status/report/add_link",
+    "available": false,
+    "sent": false,
+    "reason": "No Cove MCP tool is exposed in this Codex session. These records are a local handoff, not delivered tool calls."
+  },
+  "phases": [
+    {
+      "phase": 1,
+      "requested_status": "done",
+      "summary": "RV64I target per BRIEF update. Seven of seven programs match host stdout and exit; generated ISA checks and identical runtime hash pass. Errno regression and explicit libm test pass.",
+      "runtime_sha_prefix": "9e1142dc96d8db10",
+      "hello": {
+        "compile_steps": 11278132,
+        "program_steps": 2358,
+        "total_steps": 11297870
+      },
+      "evidence": [
+        "README.md",
+        "results/phase1.tsv",
+        "results/review/phase1-fixed.log"
+      ]
+    },
+    {
+      "phase": 2,
+      "requested_status": "done",
+      "summary": "345 programs attempted; 301 common completed cases, 298 agreement, two Lean conversion discrepancies and one TinyCC initializer discrepancy, all reduced. All five oracles agree on 200 Csmith programs. Mixed harness versions and exclusions documented.",
+      "evidence": [
+        "DIFFERENTIAL.md",
+        "results/diff3/summary.md",
+        "results/review/phase2-snapshot.json"
+      ],
+      "publishing": {
+        "approval": "explicit user approval 2026-10-20",
+        "repository": "https://github.com/BasisResearch/ship-your-tcc"
+      }
+    },
+    {
+      "phase": 3,
+      "state": "open",
+      "summary": "Native FLAGS=0 cut capture validated: 6632342 steps, 176 defined registers, 77864 present bytes in 4 MiB arena. No end-to-end theorem. Reachability, Clight compatibility/external model, library proof and heap/stack snapshot obligations remain open.",
+      "evidence": [
+        "PHASES.md",
+        "results/proof-readiness.md",
+        "results/capture-cut.md"
+      ],
+      "native_capture": {
+        "steps": 6632342,
+        "defined_registers": 176,
+        "arena_present_bytes": 77864,
+        "artifact": "results/p3/sum-cut/cut.json"
+      }
+    }
+  ]
+}

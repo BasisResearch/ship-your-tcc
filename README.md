@@ -26,9 +26,10 @@ F, D and `fence.i` all trap as illegal instructions (`results/isa-probes.json`,
   `-march=rv64i -mabi=lp64 -mcmodel=medany -O2`.
 * No `fence.i` after relocation, unlike the brief: the model traps on it and
   has no instruction cache. The post-relocation sync is a plain `fence`.
-* `scripts/check_isa.sh` fails on any M, F, D, Q, A or C instruction. Clean on
-  146 tcc objects, `libtcc1.a`, the tcc image (107,059 instructions; no ecall,
-  no fence.i) and the generated code of every Phase 1 program.
+* `scripts/check_isa.sh` fails on any M, F, D, Q, A or C instruction. Initial
+  checks covered 146 tcc objects and `libtcc1.a`. The corrected image has
+  107,042 instructions; its image checks and every Phase 1 generated-code
+  check pass, with no ecall or fence.i.
 
 ## Phase 1: `tcc -run` on Sail (done)
 
@@ -40,17 +41,21 @@ in a fixed-address `.embed` region. Symbols resolve through tcc's archive
 loader, with no dlsym; only newlib's system-call layer is supplied by
 `tcc_add_symbol`. Generated code goes in a static 4 MiB arena at 0x86400000.
 Everything except `.embed` is byte-identical for every program (runtime hash
-`ed7b4811aaf2d9d0`).
+`9e1142dc96d8db10` for the corrected runtime).
+
+All seven programs were rerun on 2026-10-20 after fixing syscall errno
+propagation. The earlier measurements are retained in
+`results/review/phase1-before-runtime-fix.tsv`.
 
 | program | result | compile-phase steps | program steps | total steps |
 |---|---|---|---|---|
-| hello | match | 11,302,936 | 2,362 | 11,322,678 |
-| loops | match (exit 6) | 11,482,402 | 14,194 | 11,528,081 |
-| structs | match | 12,034,957 | 10,744 | 12,082,689 |
-| fnptr | match | 12,545,182 | 17,475 | 12,603,754 |
-| printf | match (exit 3) | 12,456,606 | 41,164 | 12,526,348 |
-| doubles | match | 11,881,662 | 60,086 | 11,977,246 |
-| headers (18 standard headers) | match | 18,898,002 | 38,211 | 18,989,756 |
+| hello | match | 11,278,132 | 2,358 | 11,297,870 |
+| loops | match (exit 6) | 11,458,907 | 14,190 | 11,504,582 |
+| structs | match | 12,004,798 | 10,740 | 12,052,526 |
+| fnptr | match | 12,520,169 | 17,471 | 12,578,737 |
+| printf | match (exit 3) | 12,391,341 | 41,160 | 12,461,079 |
+| doubles | match | 11,856,735 | 60,082 | 11,952,315 |
+| headers (18 standard headers) | match | 18,874,501 | 38,207 | 18,966,251 |
 
 * "match" means stdout and exit code are identical to the same program built
   by the host cc (`c/tests/run.sh`, `results/phase1.tsv`, `results/phase1/`).
@@ -59,6 +64,10 @@ Everything except `.embed` is byte-identical for every program (runtime hash
   tohost store in `_exit`. Total also counts the optional code dump between
   the two.
 * The emulator runs at about 30–47k steps/s, so hello takes about 6 minutes.
+  The three-job rerun took 431 seconds for hello on the shared box.
+* The syscall regression now returns `ENOENT` for a missing file (previously
+  wrong errno): 11,655,557 compile steps and 4,000 program steps. The raw
+  newlib syscall errno slot is shared; each libc retains its own `_reent`.
 * Where hello's compile phase goes: 50% compiling (mostly lexing the stdio.h
   header chain), 36% loading about 87 libc/libgcc archive members, 11%
   relocation, 2% init. Profiling cut it from 24.5M to 11.3M steps; details in
@@ -69,7 +78,7 @@ programs give the same stdout and exit code as xPack gcc -O0 rv64i on Sail and
 as host gcc. tcc's tests2: 101/104 match `.expect`; none of the three failures
 comes from the code generator (`results/tcc-patch.md`).
 
-## Phase 2: three-way differential (in progress)
+## Phase 2: three-way differential (measured report)
 
 Oracles (`scripts/oracles.toml`, runner `scripts/diff3.py`):
 
@@ -85,14 +94,33 @@ Oracles (`scripts/oracles.toml`, runner `scripts/diff3.py`):
   newlib headers (`results/certora.md`).
 * Corpus: 200 Csmith programs (common subset, UB-checked; `results/corpus.md`),
   72 CompCert test programs and 73 tcc tests2 programs.
-* Before tcc was plugged in, all four other oracles agreed on all 200 Csmith
-  programs. Two Lean-port bugs turned up, reduced to UBSan-clean reproducers
-  in `results/repro/`:
+* All five oracles agree on all 200 Csmith programs. Across the full corpus,
+  301 programs finish on all three primary oracles: 298 agree and three
+  disagree. Forty-four are outside the common executed subset.
+* Two Lean-port discrepancies have small reproducers in `results/repro/`:
   * converting a 64-bit integer to `float` rounds twice, through double;
   * converting `double` to `unsigned long` saturates as if signed:
     `(unsigned long)1e19` gives 9223372036854775807.
 
-The results go in DIFFERENTIAL.md.
+* One TinyCC union-designator discrepancy also reproduces on pristine
+  native TinyCC; it is outside the new RV64I backend.
+
+Counts, exclusions, harness fixes, measurement provenance and reproducers
+are in [DIFFERENTIAL.md](DIFFERENTIAL.md). The retained corpus measurements
+span multiple harness versions; the complete corpus has not been rerun
+after the runtime errno fix. Publication was approved on 2026-10-20.
+
+## Phase 3: proof work remains open
+
+The selected loop-and-printf program is `c/tests/p3/sum.c`; its measured
+output is `55\n`. This is an execution result. The startup reachability,
+generated-code refinement and printf bridge are unproved. OCaml's captured
+snapshot lemma does not prove reset-to-cut execution. See
+[the proof audit](results/proof-readiness.md) and PHASES.md for the remaining
+obligations, including the Lean toolchain and external-model boundary.
+A `FLAGS=0` native capture now records the full generated arena and all
+defined registers at the handoff after 6,632,342 steps; details and its
+observation-only scope are in [results/capture-cut.md](results/capture-cut.md).
 
 ## Layout
 * `vendor/tinycc`: pristine tinycc 43c7708.

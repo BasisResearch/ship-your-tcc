@@ -1,0 +1,5 @@
+prog       result exit  host         total      compile      dump      program     wall isa
+hello      PASS   0     0         11297870     11278132     17380         2358    430.7 ok
+loops      PASS   6     6         11504582     11458907     31485        14190    431.4 ok
+structs    PASS   0     0         12052526     12004798     36988        10740    455.6 ok
+runtime (all but .embed) sha256 prefixes:  3 9e1142dc96d8db10 

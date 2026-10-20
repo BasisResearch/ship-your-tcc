@@ -1,0 +1,16 @@
+== (1) ISA
+NOTE c/build/base.elf(c/build/base.elf) .text 8001ef2c: 00100073 ebreak 
+NOTE c/build/base.elf(c/build/base.elf) .text 80021b9c: 00100073 ebreak 
+NOTE c/build/base.elf(c/build/base.elf) .text 8002a278: 00100073 ebreak 
+NOTE c/build/base.elf(c/build/base.elf) .text 8003b5dc: 00100073 ebreak 
+NOTE c/build/base.elf(c/build/base.elf) .text 8003c450: 00100073 ebreak 
+OK   c/build/base.elf insns=107042 bad=0 notes=5 zero-pad=0
+== (2) forbidden tokens
+== (3b) discipline
+discipline: OK (8 rules, 0 files scanned)
+== (3c) abstraction gate
+p3-codegen-segment: 0 cases — ok
+p3-capture-witness: 0 cases — ok
+p3-libc-spec: 0 cases — ok
+abstraction gate: ok
+check: static stages OK
