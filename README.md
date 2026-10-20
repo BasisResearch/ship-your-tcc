@@ -218,12 +218,14 @@ other runtime hash.
 
 ## Next: compiler correctness (plan)
 
-[DESIGN-COMPILER.md](DESIGN-COMPILER.md) plans a proof that tcc's compiler is
-correct for a C subset: for every program P in the subset, the code tcc's
-RV64I binary emits refines Certora's Lean Clight of P. It uses two layers:
-Layer A, tcc's binary computes a Lean model of tccpp, tccgen and
-riscv64-gen; Layer B, that model's code simulates Clight. The plan is for
-review; nothing is built yet.
+[DESIGN-COMPILER.md](DESIGN-COMPILER.md) plans the general theorem. For
+every C source P with no undefined behaviour under CSem, `tcc -run` on Sail
+behaves as one of CSem(P)'s allowed outcomes. CSem is our fork of
+cerberus-lean (Cabs → Ail → Core in Lean), with a Lean C grammar,
+preprocessing semantics and tcc's RV64 lp64 parameters. The proof has two
+layers: tcc's binary computes a Lean model of tcc (Layer A), and that model's
+code simulates Core (Layer B). Certora's Clight and CompCert become testing
+oracles. The plan is for review; nothing is built yet.
 
 ## Layout
 * `vendor/tinycc`: pristine tinycc 43c7708.
