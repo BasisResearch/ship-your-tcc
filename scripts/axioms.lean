@@ -3,6 +3,7 @@ import Tcc
 import Tcc.Capture.Sum.Cut
 import Tcc.Prog.Sum.Machine.Replay
 import Tcc.EndToEnd.Sum
+import Tcc.Ccp.Sound
 
 -- Phase 3, Clight side (P = c/tests/p3/sum.c)
 #print axioms Tcc.Prog.Sum.prints
@@ -45,3 +46,11 @@ import Tcc.EndToEnd.Sum
 #print axioms Tcc.Boot.row_exit
 #print axioms Tcc.Boot.row_step
 #print axioms Tcc.Boot.writeLog_get
+-- CompileCut pilot: the generic evaluator-to-Sail soundness (Tcc/Ccp)
+#print axioms Tcc.Ccp.run_sound
+#print axioms Tcc.Ccp.exec_sound
+#print axioms Tcc.Ccp.sim_cut
+#print axioms Tcc.Ccp.tableOK_of_all
+#print axioms Tcc.Ccp.run_trans
+#print axioms Tcc.Ccp.store_bytes
+#print axioms Tcc.Ccp.load_bytes

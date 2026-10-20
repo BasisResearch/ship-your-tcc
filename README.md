@@ -127,6 +127,22 @@ earlier proof audit is in
 independent native capture of the handoff state (6,632,342 steps) is in
 [results/capture-cut.md](results/capture-cut.md).
 
+`CompileCut_Statement` is reduced to three smaller statements, all about
+reset: `Tcc.Ccp.Sum.compileCut_of`, in the `TccCompileCut` library. The
+reduction has three parts:
+
+* a first-order RV64I evaluator (`Tcc/Ccp/Eval.lean`) runs the whole
+  compile phase inside the kernel, in 266 generated segments of 25,000 steps
+  each, at about 1.5 ms per step. Building it takes about 2.5 CPU-hours
+  (`scripts/build_ccp.sh`), from 16 MB of generated source;
+* one generic theorem, `Tcc.Ccp.run_sound`, turns an evaluator run into
+  Sail `Steps`. It is proved for every instruction kind the run executes;
+* a generated proof that the code table decodes, under Sail, as the
+  evaluator runs it.
+
+The pilot's measurements and what remains are in
+[results/p3/compile-cut-pilot.md](results/p3/compile-cut-pilot.md).
+
 ### Clight side (done)
 
 For P = `c/tests/p3/sum.c`, `Tcc.Prog.Sum.prints` proves, for every

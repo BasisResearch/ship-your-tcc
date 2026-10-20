@@ -49,5 +49,15 @@ leanOptions.backward.isDefEq.respectTransparency = false
 # The tcc image's boot interface and per-program captured cuts.
 [[lean_lib]]
 name = "TccMachine"
-globs = ["Tcc.Boot.+", "Tcc.Capture.+", "Tcc.Prog.Sum.Machine.+", "Tcc.EndToEnd.+"]
+globs = ["Tcc.Boot.+", "Tcc.Capture.+", "Tcc.Prog.Sum.Machine.+", "Tcc.EndToEnd.+",
+  "Tcc.Ccp.Eval", "Tcc.Ccp.Lemmas", "Tcc.Ccp.KernelRfl", "Tcc.Ccp.Sound"]
+
+# The CompileCut pilot's generated run of tcc's compile phase on the evaluator
+# (scripts/gen_ccp.py): code table, reset memory, 267 checkpoint states and 266
+# kernel-checked 25,000-step segments, joined in Tcc.Ccp.Sum.run_all. Not a
+# default target (about 3 CPU-hours; build the segments one at a time, each
+# needs ~7 GB: results/p3/compile-cut-pilot.md).
+[[lean_lib]]
+name = "TccCompileCut"
+globs = ["Tcc.Ccp.Sum.+", "Tcc.Ccp.SumCut"]
 # --- end machine lane ---------------------------------------------------------
