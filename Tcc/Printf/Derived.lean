@@ -143,16 +143,17 @@ theorem imgMakes_of_spec {p : Program} {L : StdioLayout} {init : List Tcc.Boot.C
     {id : Ident} {ofs : Integers.Ptrofs} {rest : List EventVal} {fmt : List UInt8}
     {a : Nat} {margs : List (BitVec 64)} {out : List UInt8} (ge : Senv)
     (hcode : CodeAt L c.σ) (hst : StdioReach L init room c.σ)
-    (hentry : PrintfEntry L (a + ofs.toNat) fmt margs c)
-    (hroom : ∃ sp, gprGet c.σ 2 = some sp ∧ L.stack ≤ sp.toNat ∧ L.heap.2 ≤ sp.toNat - L.stack)
+    (hentry : PrintfEntry L (a + ofs.toNat) fmt margs c) {sp : BitVec 64}
+    (hroom : StackRoom L c sp)
     (addr : sym id = some a) (enc : rest.mapM (encArg sym) = some margs)
     (hint : IntArgs rest) (hdig : digitRunOK fmt 0 = true)
+    (hapart : ArgsApart L c sp sym (a + ofs.toNat) fmt rest)
     (fmtStr : globalString p id ofs = some fmt)
     (hout : printfOut p (.EVptr_global id ofs :: rest) = some out)
     (hstr : format (machReader c.σ sym) fmt rest = some out) (hlen : out.length < 2 ^ 31) :
     ImgMakes p L Img sym ge (.EVptr_global id ofs :: rest) := by
-  obtain ⟨c', hcall, _⟩ := hspec c sym (a + ofs.toNat) fmt rest margs out hcode hst hentry hroom
-    enc hint hdig hstr hlen
+  obtain ⟨c', hcall, _⟩ := hspec c sp sym (a + ofs.toNat) fmt rest margs out hcode hst hentry hroom
+    enc hint hdig hapart hstr hlen
   exact ⟨id, ofs, fmt, out, _, rfl, fmtStr, hout,
     .intro id ofs rest out _ a margs c₀ c c' addr enc img reach hcall⟩
 

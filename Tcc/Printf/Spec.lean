@@ -197,21 +197,40 @@ inductive StdioReach (L : StdioLayout) (init : List Tcc.Boot.Chunk) (room : MSta
         σ'.mem[a]? = σ.mem[a]?) →
       StdioReach L init room σ'
 
+/-- Stack room at `sp` (`c`'s `x2`): the `stack` bytes below it, 16-byte
+aligned, apart from the code, the static data and the heap. -/
+structure StackRoom (L : StdioLayout) (c : Config) (sp : BitVec 64) : Prop where
+  reg : gprGet c.σ 2 = some sp
+  big : L.stack ≤ sp.toNat
+  align : sp.toNat % 16 = 0
+  apart : ∀ a, sp.toNat - L.stack ≤ a → a < sp.toNat →
+    inRanges L.statics a = false ∧ (∀ ch ∈ L.code, ch.covers a = false) ∧
+      ¬ (L.heap.1 ≤ a ∧ a < L.heap.2)
+
+/-- The bytes printf reads through its arguments (the format string with its
+NUL, and every `%s` string a pointer argument names) lie outside its
+footprint, so its own writes do not change them. -/
+structure ArgsApart (L : StdioLayout) (c : Config) (sp : BitVec 64) (sym : Ident → Option Nat)
+    (fmtAddr : Nat) (fmt : List UInt8) (evargs : List EventVal) : Prop where
+  fmt : ∀ i ≤ fmt.length, ¬ Footprint L sp.toNat (fmtAddr + i)
+  strs : ∀ id ofs s a, EventVal.EVptr_global id ofs ∈ evargs → sym id = some a →
+    machReader c.σ sym id ofs = some s → ∀ i ≤ s.length, ¬ Footprint L sp.toNat (a + ofs.toNat + i)
+
 /-- **PHASES `PrintfSpec_Statement` (open)**: from every entry of `printf`
 with the code present, in a state stdio can be in, with stack room, for every
 format string and arguments of the integer subset (`IntArgs`, at most seven
 variadic words, `%s` strings read from memory, widths and precisions of at
 most nine digits, output shorter than `2^31` bytes so the count fits printf's
-`int`), the call returns having
+`int`), the strings it reads outside its footprint, the call returns having
 appended exactly `format` of them to `stdout` and returning its length, its
 writes in its footprint. -/
 def PrintfSpec_Statement (L : StdioLayout) (init : List Tcc.Boot.Chunk) (room : MState → Prop) : Prop :=
-  ∀ (c : Config) (sym : Ident → Option Nat) (fmtAddr : Nat) (fmt : List UInt8)
+  ∀ (c : Config) (sp : BitVec 64) (sym : Ident → Option Nat) (fmtAddr : Nat) (fmt : List UInt8)
     (evargs : List EventVal) (margs : List (BitVec 64)) (out : List UInt8),
     CodeAt L c.σ → StdioReach L init room c.σ →
-    PrintfEntry L fmtAddr fmt margs c →
-    (∃ sp, gprGet c.σ 2 = some sp ∧ L.stack ≤ sp.toNat ∧ L.heap.2 ≤ sp.toNat - L.stack) →
+    PrintfEntry L fmtAddr fmt margs c → StackRoom L c sp →
     evargs.mapM (encArg sym) = some margs → IntArgs evargs → digitRunOK fmt 0 = true →
+    ArgsApart L c sp sym fmtAddr fmt evargs →
     format (machReader c.σ sym) fmt evargs = some out → out.length < 2 ^ 31 →
     ∃ c', PrintfCall L fmtAddr fmt margs out (Integers.Int.repr out.length) c c' ∧
       PrintfFrame L c c'
