@@ -12,6 +12,9 @@
 # errors. With TCC_LIBS unset, a program that fails to link with an
 # unresolved reference is retried with -lm, as run_tcc_sail.sh does.
 # Env: MAX_STEPS (default 400000000), TCC_ARGS (default '"-w",'),
+#      TCC_LIBS (libraries after /prog.c, as gen_embed.sh --largs),
+#      EXTRA_FILES (more embedded files, space-separated /path=hostfile
+#      specs, e.g. EXTRA_FILES='/prog.o=x.o' TCC_ARGS='"-w","/prog.o",'),
 #      ELF_OUT (keep the per-program ELF there).
 set -u
 src=$(readlink -f "$1"); out=$2; console=${3:-/dev/null}
@@ -35,8 +38,10 @@ RT="$C/build/crt0.o $C/build/htif.o $C/build/main.o $C/build/tcc.o"
 attempt() {
   local largs=()
   [ -n "${1:-}" ] && largs=(--largs "$1")
+  local extra=()
+  [ -n "${EXTRA_FILES:-}" ] && read -r -a extra <<< "$EXTRA_FILES"
   sh "$C/src/gen_embed.sh" --cargs "$TCC_ARGS" "${largs[@]}" --flags 0 --list "$C/build/fs.list" \
-      "/prog.c=$src" > "$work/embed.S" &&
+      "/prog.c=$src" "${extra[@]}" > "$work/embed.S" &&
   "$XGCC" $CFLAGS -c -o "$work/embed.o" "$work/embed.S" &&
   "$XGCC" $CFLAGS -nostartfiles -T "$C/src/link.ld" -o "$work/prog.elf" \
       $RT "$work/embed.o" -lm > "$work/ld.log" 2>&1 ||
