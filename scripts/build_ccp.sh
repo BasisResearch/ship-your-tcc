@@ -25,6 +25,10 @@ lb() {  # one lake build, timed
   if [ "$rc" != 0 ]; then cp build/ccp/mod_last.log "build/ccp/fail_${1##*.}.log"; status=1; fi
   return $rc
 }
+# everything up to date (traces checked, nothing built): nothing to do
+if flock "$LOCK" lake build --no-build Tcc.Ccp.EndToEnd > /dev/null 2>&1; then
+  echo "build_ccp: TccCompileCut up to date"; exit 0
+fi
 N=$(ls Tcc/Ccp/Sum/Seg/C*.lean | wc -l)
 lb "Tcc.Ccp.Sum.St.S$N" Tcc.Ccp.Sum.Code Tcc.Ccp.KernelRfl Tcc.Ccp.Lemmas Tcc.Ccp.Sound Tcc.Capture.Sum.Elf \
   || exit 1
