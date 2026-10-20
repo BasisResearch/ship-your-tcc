@@ -118,6 +118,10 @@ def rule_kind(w):
     f = fields(w)
     if f['op'] == 0x67 and f['f3'] == 0 and f['rd'] != 0:
         return 'jalr'
+    if w == 0x00000013:
+        return 'nop'
+    if f['op'] == 0x33 and f['f3'] == 3 and f['f7'] == 0 and f['rd'] != 0:
+        return 'sltu'
     return None
 
 
@@ -226,17 +230,26 @@ def render(inp):
         if it.get('outb', 256) != 256 and it['kind'] in ('putchar',):
             o = o + chr(it['outb'])
         outs.append(o)
-    # defs: pins and logs
+    # defs: pins and logs; a row whose pins (a nop) or log (no store) did not
+    # change reuses the previous row's name, so consecutive rows unify syntactically
     defs = []
+    pname = ['(cutPins Tcc.Capture.Sum.regs)']
     for k in range(1, n + 1):
-        defs.append(f'def pins{k} : GRegs := {pins_lit(rows_regs[k])}')
-    defs.append('def log0 : List WEntry := []')
+        if items[k - 1]['kind'] == 'nop':
+            pname.append(pname[-1])
+        else:
+            defs.append(f'@[irreducible] def pins{k} : GRegs := {pins_lit(rows_regs[k])}')
+            pname.append(f'pins{k}')
+    lname = ['([] : List WEntry)']
     for k, it in enumerate(items):
         if it['stores']:
-            defs.append(f'def log{k + 1} : List WEntry := log{k} ++ {entries_lit(it["stores"])}')
+            defs.append(f'@[irreducible] def log{k + 1} : List WEntry := '
+                        f'{lname[-1]} ++ {entries_lit(it["stores"])}')
+            lname.append(f'log{k + 1}')
         else:
-            defs.append(f'def log{k + 1} : List WEntry := log{k}')
-    files['Defs.lean'] = (hdr('The replay rows: pin lists and write logs.', ['Tcc.Boot.Run', 'Tcc.Capture.Sum.View']) +
+            lname.append(lname[-1])
+    files['Defs.lean'] = (hdr('The replay rows: pin lists and write logs, irreducible so that '
+                              'unification never unfolds them (the kernel `decide`s do).', ['Tcc.Boot.Run', 'Tcc.Capture.Sum.View']) +
                           f'namespace {NS}\n\n{OPENS}\n\n' + '\n'.join(defs) + f'\n\nend {NS}\n')
     # static blocks
     static = {}
@@ -261,11 +274,8 @@ def render(inp):
         '-- discipline: allow(R9-handrolled-fn-assembly) generated, one #derive_case per static block\n' +
         f'namespace {NS}\n\n{OPENS}\n\n' + '\n\n'.join(derive) + f'\n\nend {NS}\n')
 
-    def pins(k):
-        return '(cutPins Tcc.Capture.Sum.regs)' if k == 0 else f'pins{k}'
-
     def row(k):
-        return f'RunRow view 0x{rows_pc[k]:x}#64 {pins(k)} log{k} "{esc(outs[k])}"'
+        return f'RunRow view 0x{rows_pc[k]:x}#64 {pname[k]} {lname[k]} "{esc(outs[k])}"'
 
     sims = []
     for k, it in enumerate(items):
@@ -284,6 +294,18 @@ def render(inp):
                      f'    {INSTR_AT}\n'
                      f'    (by decide) ({DK}) ({DK}) ({DK}) ({DK}) ({DK})')
             what = f'call `jalr x{rd}, {imm}(x{rs1})`'
+        elif it['kind'] == 'nop':
+            steps = 1
+            proof = f'row_nop (w := 0x00000013#32)\n    {INSTR_AT}\n    ({DK}) ({DK}) ({DK})'
+            what = 'nop'
+        elif it['kind'] == 'sltu':
+            w = it['word']
+            rd, rs1, rs2 = (w >> 7) & 31, (w >> 15) & 31, (w >> 20) & 31
+            steps = 1
+            proof = (f'row_sltu (w := 0x{w:08x}#32) (rd := {rd}) (rs1 := {rs1}) (rs2 := {rs2})\n'
+                     f'    {INSTR_AT}\n'
+                     f'    (by decide) ({DK}) ({DK}) ({DK}) ({DK})')
+            what = f'`sltu x{rd}, x{rs1}, x{rs2}`'
         sims.append((k, f'/-- Item {k}: {what}, `0x{rows_pc[k]:x}` to `0x{rows_pc[k + 1]:x}` '
                         f'({steps} steps). -/\n'
                         f'theorem sim_B{k} : Leads ({row(k)}) ({row(k + 1)}) :=\n  {proof}'))

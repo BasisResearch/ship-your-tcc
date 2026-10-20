@@ -116,18 +116,33 @@ elab "tcc_whnf" : tactic => liftMetaTactic fun g => do
   if t == t' then throwError "tcc_whnf: no progress"
   return [← g.replaceTargetDefEq t']
 
+open Lean Elab Tactic Meta in
+/-- Close a byte pin of a memory built from the view by stores and the log:
+only on an equation that reads the memory (`getElem?`, so no other goal meets
+the rewriting and its literal simprocs), rewrite the read through the stores
+and the log (`stepMemM_get`, `writeLog_get`), then `pin_view` for a presence pin
+(`… = some b`) or `pinD_view` for a total-read pin (`(…).getD 0 = b`), chosen by
+the equation's type, and one kernel `decide`. -/
+elab "tcc_pin " hv:term : tactic => do
+  let t ← getMainTarget
+  let some (ty, _, _) := t.eq? | throwError "tcc_pin: not an equation"
+  unless (t.find? (·.isAppOf ``GetElem?.getElem?)).isSome do
+    throwError "tcc_pin: no memory read"
+  evalTactic (← `(tactic| simp only [Tcc.Boot.writeLog_get, Tcc.Boot.stepMemM_get, ← Option.or_assoc]))
+  if ty.isAppOf ``Option then
+    evalTactic (← `(tactic| (apply Tcc.Boot.pin_view $hv; decide +kernel)))
+  else
+    evalTactic (← `(tactic| (apply Tcc.Boot.pinD_view $hv; decide +kernel)))
+
 /-- Close a segment's `ChainFacts` from a view hypothesis `hv : PartialView m0 v`
 (memory `writeLog m0 log`): split conjunctions, decode facts by `decodeW`,
-byte pins through the log by `pin_view`/`pinD_view` and one kernel `decide`,
-closed arithmetic by kernel `decide`, unfolding one layer otherwise. -/
+byte pins through the stores and the log (`stepMemM_get`, `writeLog_get`, then
+`tcc_pin`), closed arithmetic by kernel `decide`, unfolding one layer otherwise. -/
 macro "tcc_facts " hv:term : tactic => `(tactic| repeat' (first
   | exact True.intro
   | (refine ⟨?_, ?_⟩)
   | (intro s h1 h2 h3; exact Vsa.Sim.decodeW s h1 h2 h3)
-  | (simp only [Tcc.Boot.writeLog_get, Tcc.Boot.stepMemM_get, ← Option.or_assoc]
-     first
-       | (apply Tcc.Boot.pin_view $hv; decide +kernel)
-       | (apply Tcc.Boot.pinD_view $hv; decide +kernel))
+  | tcc_pin $hv
   | decide +kernel
   | tcc_whnf))
 

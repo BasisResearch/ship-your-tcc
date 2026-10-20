@@ -284,4 +284,106 @@ theorem row_jalr {v : Nat → Option (BitVec 8)} {pc tgt : BitVec 64} {L L' : GR
       (by decide) (by decide)]
     exact hpw
 
+/-! ## One ALU instruction writing `rd ≠ x0` -/
+
+/-- The core of the one-instruction ALU rules: an instruction whose execute
+writes `rd := val` (`hexec`, proved per kind below). -/
+theorem row_alu_core {v : Nat → Option (BitVec 8)} {pc : BitVec 64} {L L' : GRegs}
+    {log : List WEntry} {out : String} {w : BitVec 32} {ast : instruction} {rd : Nat}
+    {val : BitVec 64}
+    (hi : InstrAt v log pc w ast) (hrd : 1 ≤ rd ∧ rd ≤ 31)
+    (hexec : ∀ σ : MState, GoodState σ → GHolds σ L →
+      (execute ast).run (afterNextPC (afterPrelude σ) pc)
+        = .ok RETIRE_SUCCESS (sigma3_alu σ pc (gprReg rd) (gprRT rd val)))
+    (hL' : ∀ p ∈ L', lookupG p.1 ((rd, val) :: eraseG rd L) = some p.2)
+    (hk' : KeysOK (keysG L')) :
+    Leads (RunRow v pc L log out) (RunRow v (BitVec.addInt pc 4) L' log out) := by
+  rintro ⟨σ, i, u⟩ ⟨hG, hpc, hL, hk, ⟨m0, hv, hm⟩, hout, hpw, hti⟩
+  obtain ⟨vm, hmi⟩ := hG.minstret
+  obtain ⟨hb0, hb1, hb2, hb3, hdec⟩ := hi.facts hG hv hm
+  have hrdf := gpr_rd_ok rd (by omega) hrd.1
+  obtain ⟨σ', i', hs, hi', hG', hmem', hobs⟩ :=
+    stepObs_alu σ i u pc vm _ ast (gprReg rd) (gprRT rd val) _ _ _ _ hG hpc hmi hi.word
+      hi.notrvc' (hi.word ▸ hdec) (hexec σ hG hL)
+      hrdf.1 hrdf.2.1 hrdf.2.2.1 hrdf.2.2.2.1 hrdf.2.2.2.2 hb0 hb1 hb2 hb3 hi.lo hi.fetch
+      hi.align hti
+  have hgpr : ∀ n, 1 ≤ n → n ≤ 31 → n ≠ rd →
+      σ'.regs.get? (gprReg n) = σ.regs.get? (gprReg n) := fun n h1 h31 hne =>
+    (hobs.1 _ (notGpr_mcycle n) (notGpr_mtime n) (notGpr_mip n)).trans
+      (get?_sigmaPost_alu σ pc vm _ _ _ (notGpr_minstret n) (notGpr_PC n)
+        (gprReg_beq_false rd (by omega) n (by omega) hrd.1 h1 (Ne.symm hne))
+        (notGpr_nextPC n) (notGpr_minstret_increment n))
+  have hrdv : σ'.regs.get? (gprReg rd) = some (gprRT rd val) := by
+    rw [hobs.1 _ (notGpr_mcycle rd) (notGpr_mtime rd) (notGpr_mip rd)]
+    show ((((sigma3_alu σ pc (gprReg rd) _).regs.insert Register.PC _).insert
+      Register.minstret _)).get? (gprReg rd) = _
+    rw [Std.ExtDHashMap.get?_insert]
+    simp only [notGpr_minstret rd, dif_neg, reduceCtorEq, not_false_eq_true]
+    rw [Std.ExtDHashMap.get?_insert]
+    simp only [notGpr_PC rd, dif_neg, reduceCtorEq, not_false_eq_true]
+    show ((_ : Std.ExtDHashMap Register RegisterType).insert (gprReg rd) _).get? (gprReg rd) = _
+    rw [Std.ExtDHashMap.get?_insert_self]
+  have hGH : GHolds σ' ((rd, val) :: eraseG rd L) :=
+    ⟨gprGet_of_get rd hrd.1 hrd.2 hrdv, gholds_erase_frame rd hgpr L hk hL⟩
+  refine ⟨⟨σ', i', u + 1⟩, Steps.head hs (Steps.refl _), hG', ?_, gholds_of_lookup hGH L' hL',
+    hk', ⟨m0, hv, hmem'.trans hm⟩, ?_, ?_, hi'⟩
+  · rw [hobs.1 _ (by decide) (by decide) (by decide)]
+    show ((((sigma3_alu σ pc (gprReg rd) _).regs.insert Register.PC _).insert
+      Register.minstret _)).get? Register.PC = _
+    rw [Std.ExtDHashMap.get?_insert]
+    simp only [show (Register.minstret == Register.PC) = false from by decide, dif_neg,
+      reduceCtorEq, not_false_eq_true]
+    rw [Std.ExtDHashMap.get?_insert_self]
+  · simp only [output] at hout ⊢; rw [hobs.2]; exact hout
+  · rw [hobs.1 _ (by decide) (by decide) (by decide),
+      get?_sigmaPost_alu σ pc vm _ _ _ (by decide) (by decide)
+        (by rw [Bool.beq_comm]; exact notGpr_payload rd) (by decide) (by decide)]
+    exact hpw
+
+/-- `sltu rd, rs1, rs2`. -/
+theorem row_sltu {v : Nat → Option (BitVec 8)} {pc : BitVec 64} {L L' : GRegs}
+    {log : List WEntry} {out : String} {w : BitVec 32} {rd rs1 rs2 : Nat}
+    (hi : InstrAt v log pc w (instruction.RTYPE (gprIdx rs2, gprIdx rs1, gprIdx rd, rop.SLTU)))
+    (hrd : 1 ≤ rd ∧ rd ≤ 31) (hrs1 : rs1 ≤ 31 ∧ (rs1 = 0 ∨ rs1 ∈ keysG L))
+    (hrs2 : rs2 ≤ 31 ∧ (rs2 = 0 ∨ rs2 ∈ keysG L))
+    (hL' : ∀ p ∈ L', lookupG p.1 ((rd, zero_extend (m := 64)
+      (bool_to_bit (zopz0zI_u (srcVal rs1 L) (srcVal rs2 L)))) :: eraseG rd L) = some p.2)
+    (hk' : KeysOK (keysG L')) :
+    Leads (RunRow v pc L log out) (RunRow v (BitVec.addInt pc 4) L' log out) :=
+  row_alu_core hi hrd (fun σ _ hL =>
+    execute_rtype_sltu_char _ _ _ _ _ _ _
+      (rX_src σ pc rs1 hrs1.1 _ (srcPin_srcVal σ L rs1 hrs1.2 hL))
+      (rX_src σ pc rs2 hrs2.1 _ (srcPin_srcVal σ L rs2 hrs2.2 hL))
+      (wX_gpr _ _ rd hrd.1 hrd.2)) hL' hk'
+
+/-- `addi x0, x0, 0` (nop): seen as rewriting `x1` with its own value. -/
+theorem row_nop {v : Nat → Option (BitVec 8)} {pc : BitVec 64} {L : GRegs}
+    {log : List WEntry} {out : String} {w : BitVec 32}
+    (hi : InstrAt v log pc w (instruction.ITYPE (0#12, gprIdx 0, gprIdx 0, iop.ADDI)))
+    (h1 : 1 ∈ keysG L)
+    (hL : ∀ p ∈ L, lookupG p.1 ((1, srcVal 1 L) :: eraseG 1 L) = some p.2)
+    (hk : KeysOK (keysG L)) :
+    Leads (RunRow v pc L log out) (RunRow v (BitVec.addInt pc 4) L log out) :=
+  row_alu_core hi ⟨by decide, by decide⟩ (fun σ _ hLs => by
+    have hx1 : σ.regs.get? Register.x1 = some (srcVal 1 L) :=
+      srcPin_srcVal σ L 1 (Or.inr h1) hLs
+    have hr : (afterNextPC (afterPrelude σ) pc).regs.insert Register.x1 (srcVal 1 L) =
+        (afterNextPC (afterPrelude σ) pc).regs := by
+      apply Std.ExtDHashMap.ext_get?
+      intro k
+      rw [Std.ExtDHashMap.get?_insert]
+      split
+      · rename_i hk
+        have : Register.x1 = k := eq_of_beq hk
+        subst this
+        rw [get?_afterNextPC σ pc _ (by decide) (by decide), hx1]; rfl
+      · rfl
+    have hs : sigma3_alu σ pc (gprReg 1) (gprRT 1 (srcVal 1 L)) =
+        afterNextPC (afterPrelude σ) pc := by
+      show ({(afterNextPC (afterPrelude σ) pc) with
+        regs := (afterNextPC (afterPrelude σ) pc).regs.insert Register.x1 (srcVal 1 L)} : MState) = _
+      rw [hr]
+    rw [hs]
+    exact execute_itype_addi_char _ _ _ _ _ _ (rX_bits_zero _) (wX_bits_zero _ _)) hL hk
+
 end Tcc.Boot
