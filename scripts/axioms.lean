@@ -4,6 +4,7 @@ import Tcc.Capture.Sum.Cut
 import Tcc.Prog.Sum.Machine.Replay
 import Tcc.EndToEnd.Sum
 import Tcc.Ccp.Sound
+import Tcc.Printf.Sum.Model
 
 -- Phase 3, Clight side (P = c/tests/p3/sum.c)
 #print axioms Tcc.Prog.Sum.prints
@@ -54,3 +55,16 @@ import Tcc.Ccp.Sound
 #print axioms Tcc.Ccp.run_trans
 #print axioms Tcc.Ccp.store_bytes
 #print axioms Tcc.Ccp.load_bytes
+-- PrintfSpec: the printf read off the image (Tcc/Printf)
+#print axioms Tcc.Clight.runPf_soundOn
+#print axioms Tcc.Clight.runPfProgram_printsOn
+#print axioms Tcc.Printf.machX_shape
+#print axioms Tcc.Printf.machX_extDeterm
+#print axioms Tcc.Printf.machX_model
+#print axioms Tcc.Printf.machX_out
+#print axioms Tcc.Printf.imgMakes_of_spec
+#print axioms Tcc.Printf.Sum.entry0
+#print axioms Tcc.Printf.Sum.ret0
+#print axioms Tcc.Printf.Sum.call0
+#print axioms Tcc.Printf.Sum.imgMakes0
+#print axioms Tcc.Printf.Sum.prints_sumX

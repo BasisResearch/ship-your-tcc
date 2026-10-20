@@ -66,6 +66,8 @@ python3 scripts/port_closure.py --check || fail "copied Vsa/ layer drifted (scri
 # (Elf*.lean only when the captured ELF is at build/p3/sum.elf)
 python3 scripts/gen_tcc_cut.py --check || fail "generated Tcc/Capture/Sum drifted (scripts/gen_tcc_cut.py)"
 python3 scripts/gen_tcc_segs.py --check || fail "generated replay drifted (scripts/gen_tcc_segs.py)"
+# printf's layout in the arena, from results/p3/sum-arena.tsv (and the ELF, when at build/p3/sum.elf)
+python3 scripts/gen_printf_layout.py --check || fail "generated Tcc/Printf/Sum drifted (scripts/gen_printf_layout.py)"
 # the CompileCut chain, table and pin proofs are regenerated from the committed
 # trace digest results/p3/ccp-digest.json (the checkpoint states by hash)
 python3 scripts/gen_ccp.py --check || fail "generated Tcc/Ccp/Sum drifted (scripts/gen_ccp.py)"

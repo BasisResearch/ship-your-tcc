@@ -116,6 +116,23 @@ class Image:
         return None
 
 
+def write_arena(path, mem):
+    """The arena bytes as runs of consecutive addresses: `base<TAB>hex bytes`
+    (at most 64 bytes a line)."""
+    with open(path, 'w') as fh:
+        fh.write('# base\tbytes: the arena bytes the compile phase stored, at the cut\n')
+        run, base = [], None
+        for addr in sorted(mem):
+            if run and (addr != base + len(run) or len(run) == 64):
+                fh.write(f'{base:x}\t{bytes(run).hex()}\n')
+                run = []
+            if not run:
+                base = addr
+            run.append(mem[addr])
+        if run:
+            fh.write(f'{base:x}\t{bytes(run).hex()}\n')
+
+
 def le_bytes(word_hex, n):
     w = int(word_hex, 16)
     return [(w >> (8 * j)) & 0xff for j in range(n)]
@@ -191,10 +208,8 @@ def main():
         pc = int(f[2], 16)
         if cut is None and pc == enter:
             if a.arena:
-                with open(out / 'arena.tsv', 'w') as fh:
-                    fh.write('# addr\tbyte: the arena bytes stored by the compile phase, at the cut\n')
-                    for addr in sorted(x for x in written if ARENA <= x < ARENA + ARENA_SIZE):
-                        fh.write(f'{addr:x}\t{written[addr]:02x}\n')
+                write_arena(out / 'arena.tsv',
+                            {x: b for x, b in written.items() if ARENA <= x < ARENA + ARENA_SIZE})
             regs = [int(x, 16) for x in f[4:35]]
             oi = f.index('O')
             cut = {'step': step, 'pc': pc, 'regs': regs, 'console_chunks': int(f[oi + 1])}

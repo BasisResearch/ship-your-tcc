@@ -17,7 +17,9 @@ register; `addi x0` (nop); a store below `tohostAddr + 16`; an opcode
 outside `Vsa.Sim.decodeM`), and reports it.
 
 Writes results/p3/sum-replay.json (the committed input: the replayed rows),
-Tcc/Prog/Sum/Machine/Replay.lean (GENERATED) and the ledger
+Tcc/Prog/Sum/Machine/Replay.lean (GENERATED), Calls.lean (the replay cut at
+each call of a `CALLS` routine: from the cut to its entry, and from its entry
+to its return) and the ledger
 abstractions/ledger/p3-codegen-segment.tsv (each generated case's hand
 cost: 0 lines).
 """
@@ -36,6 +38,9 @@ PIN_MAX = 28   # byte pins (4 per fetch, the width per load) per block item
 LEDGER = ROOT / 'abstractions/ledger/p3-codegen-segment.tsv'
 TOHOST = 0x8007cec0
 BOP = {0: 'BEQ', 1: 'BNE', 4: 'BLT', 5: 'BGE', 6: 'BLTU', 7: 'BGEU'}
+# library calls the replay is also cut at (Calls.lean): entry pc of each
+# callee, as placed in tcc's arena by its archive bytes (scripts/printf_inventory.py)
+CALLS = {'printf': 0x86400148}
 
 
 def fields(w):
@@ -371,6 +376,49 @@ def render(inp):
     chain = part_thms[0]
     for t in part_thms[1:]:
         chain = f'Leads.trans ({chain}) {t}'
+    # the replay cut at each call of a CALLS routine
+    def chain_of(k0, k1):
+        # Leads (row k0) (row k1) from the sims and the whole parts
+        terms = []
+        k = k0
+        while k < k1:
+            if k % PER_PART == 0 and k + PER_PART <= k1 and k // PER_PART < len(parts) \
+                    and parts[k // PER_PART][-1][0] + 1 == k + PER_PART:
+                terms.append(f'part{k // PER_PART}')
+                k += PER_PART
+            else:
+                terms.append(f'sim_B{k}')
+                k += 1
+        c = terms[0]
+        for t in terms[1:]:
+            c = f'Leads.trans ({c}) {t}'
+        return c
+    calls_txt = []
+    for fname, entry in CALLS.items():
+        ks = [k for k in range(n) if rows_pc[k] == entry]
+        for j, k0 in enumerate(ks):
+            ra = rows_regs[k0][0]
+            k1 = next(k for k in range(k0 + 1, n + 1) if rows_pc[k] == ra)
+            reach = f'fun c h => ({chain_of(0, k0)}) c h.row' if k0 > 0 else 'fun c h => ⟨c, .refl c, h.row⟩'
+            calls_txt.append(
+                f'/-- Call {j} of `{fname}` (replay item {k0}): its entry row. -/\n'
+                f'abbrev {fname}Entry{j} : Config → Prop := {row(k0)}\n\n'
+                f'/-- The row it returns to (item {k1}, `0x{ra:x}`). -/\n'
+                f'abbrev {fname}Ret{j} : Config → Prop := {row(k1)}\n\n'
+                f'@[reducible] def {fname}EntryPins{j} : GRegs := {pname[k0]}\n'
+                f'@[reducible] def {fname}EntryLog{j} : List WEntry := {lname[k0]}\n'
+                f'@[reducible] def {fname}RetPins{j} : GRegs := {pname[k1]}\n'
+                f'@[reducible] def {fname}RetLog{j} : List WEntry := {lname[k1]}\n\n'
+                f'/-- From the captured cut to the entry of call {j} of `{fname}`. -/\n'
+                f'theorem {fname}_reach{j} : Leads TccSumCut {fname}Entry{j} :=\n  {reach}\n\n'
+                f'/-- Call {j} of `{fname}`, from its entry to its return. -/\n'
+                f'theorem {fname}_call{j} : Leads {fname}Entry{j} {fname}Ret{j} :=\n  {chain_of(k0, k1)}\n')
+    files['Calls.lean'] = (
+        hdr('The replay cut at the library calls `CALLS` names: per call, the rows at its entry '
+            'and at its return, and the replay from the cut to the entry and from the entry to '
+            'the return (the same item theorems, chained differently).',
+            [f'{NS}.Part{p}' for p in range(len(parts))] + ['Tcc.Capture.Sum.Cut']) +
+        f'namespace {NS}\n\n{OPENS}\n\n' + '\n'.join(calls_txt) + f'\nend {NS}\n')
     stop = inp['stop']
     stop_txt = (f'the instruction `0x{stop["word"]:08x}` at `0x{stop["pc"]:x}` ({stop["reason"]})'
                 if stop else 'the end of the trace')

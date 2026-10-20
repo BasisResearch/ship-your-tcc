@@ -68,7 +68,8 @@ def parse_objdump(path):
             continue
         m = re.match(r'^\s+([0-9a-f]+):\s+([0-9a-f]{8})\s', line)
         if m:
-            funcs[cur].append([int(m.group(2), 16), False, None])
+            # word, relocated, call target, jalr of a call pair, relocations
+            funcs[cur].append([int(m.group(2), 16), False, None, False, []])
             continue
         m = re.match(r'^\s+([0-9a-f]+):\s+(R_RISCV_\S+)\s+(\S+)', line)
         if m and funcs[cur]:
@@ -76,10 +77,11 @@ def parse_objdump(path):
             if kind in ('R_RISCV_RELAX',):
                 continue
             funcs[cur][-1][1] = True
+            funcs[cur][-1][4].append((kind, sym))
             if kind in ('R_RISCV_CALL', 'R_RISCV_CALL_PLT'):
                 funcs[cur][-1][2] = sym.split('+')[0]
                 # the jalr of the pair is relocated too
-                funcs[cur][-1].append('call')
+                funcs[cur][-1][3] = True
     return funcs
 
 
@@ -90,12 +92,15 @@ def extract(archive, into):
 
 
 def load_arena(path):
+    """`scripts/tcc_cut.py --arena`'s runs: `base<TAB>hex bytes`."""
     mem = {}
     for line in open(path):
         if line.startswith('#'):
             continue
         a, b = line.split()
-        mem[int(a, 16)] = int(b, 16)
+        base = int(a, 16)
+        for j, x in enumerate(bytes.fromhex(b)):
+            mem[base + j] = x
     return mem
 
 
@@ -106,15 +111,9 @@ def word_at(mem, a):
     return bs[0] | bs[1] << 8 | bs[2] << 16 | bs[3] << 24
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument('--arena', required=True)
-    ap.add_argument('--replay', default=str(ROOT / 'results/p3/sum-replay.json'))
-    ap.add_argument('--out', default=None)
-    ap.add_argument('--all', action='store_true', help='list functions P does not execute too')
-    a = ap.parse_args()
-
-    mem = load_arena(a.arena)
+def place(arena_path):
+    """Words of the arena, archive functions, and their placement in the arena."""
+    mem = load_arena(arena_path)
     words = {}
     for addr in range(ARENA, ARENA + (4 << 20), 4):
         w = word_at(mem, addr)
@@ -147,7 +146,7 @@ def main():
                 if w is None:
                     ok = False
                     break
-                relocated = x[1] or (i > 0 and len(body[i - 1]) > 3)
+                relocated = x[1] or (i > 0 and body[i - 1][3])
                 if relocated:
                     if (w & 0x7f) != (x[0] & 0x7f):
                         ok = False
@@ -172,6 +171,17 @@ def main():
         main = 'printf' if 'printf' in keep else keep[0]
         placement[main] = (addr, funcs[main][0], best)
         aliases[main] = [n for n in keep if n != main]
+    return mem, words, funcs, placement, aliases, tmp
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--arena', required=True)
+    ap.add_argument('--replay', default=str(ROOT / 'results/p3/sum-replay.json'))
+    ap.add_argument('--out', default=None)
+    ap.add_argument('--all', action='store_true', help='list functions P does not execute too')
+    a = ap.parse_args()
+    mem, words, funcs, placement, aliases, tmp = place(a.arena)
 
     # closure from printf over direct calls
     calls = {n: sorted({x[2] for x in body if x[2]}) for n, (_, body) in funcs.items()}
