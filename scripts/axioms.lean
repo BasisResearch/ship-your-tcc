@@ -1,6 +1,7 @@
 -- check.sh stage 6: each must depend on at most propext, Classical.choice, Quot.sound.
 import Tcc
 import Tcc.Capture.Sum.Cut
+import Tcc.Prog.Sum.Machine.Replay
 
 -- Phase 3, Clight side (P = c/tests/p3/sum.c)
 #print axioms Tcc.Prog.Sum.prints
@@ -33,3 +34,7 @@ import Tcc.Capture.Sum.Cut
 #print axioms Tcc.Capture.Sum.sum_halts_from_reset
 #print axioms Vsa.Machine.Halts.deterministic
 #print axioms Vsa.Machine.Diverges.not_halts
+#print axioms Tcc.Prog.Sum.Machine.sim_B0
+#print axioms Tcc.Prog.Sum.Machine.replay
+#print axioms Tcc.Boot.row_step
+#print axioms Tcc.Boot.writeLog_get

@@ -45,7 +45,7 @@ Obligations (each a `def …_Statement : Prop` until proved):
 | obligation | supplies | status |
 |---|---|---|
 | `CompileCut_Statement` (3a, `Tcc/Capture/Sum/Cut.lean`) | `∀ elf, TccSumElf elf → ∀ c₀, ElfReset elf c₀ → ∃ c, Steps c₀ c ∧ TccSumCut c`: tcc's compile phase (6,632,342 steps) reaches the captured cut | stated, open |
-| `SumHalts_Statement` (3b machine side, `Tcc/Capture/Sum/Cut.lean`) | `∀ c, TccSumCut c → Halts c "55\n" 0`: the program phase (2,470 steps) from the cut | stated, open |
+| `SumHalts_Statement` (3b machine side, `Tcc/Capture/Sum/Cut.lean`) | `∀ c, TccSumCut c → Halts c "55\n" 0`: the program phase (2,470 steps) from the cut | stated, open. Replay (`scripts/gen_tcc_segs.py`, `Tcc/Prog/Sum/Machine/Replay.lean`, `Tcc.Boot.row_step`): the first block, `tcc_baremetal_enter` to `_runmain` (6 steps), proved (`replay`). Obstruction for the rest: the copied segment layer requires code below `tohostAddr` and every store above it (`InstrOKM`, `MemFacts`), but P and its libc run from tcc's arena at `0x86400000`, above `.tohost`, and store into it; also no rule for calls (`jal`/`jalr` with a link; ship-your-lua's `BridgeSeg` closure is 632 modules), `addi x0`, `sltiu`/`sltu`/`lb`, or the HTIF `tohost` store and halt |
 | `CodeRefinesClight_Statement` (3b) | C refines Certora's Lean Clight of P (syi MachCSL + generators); to be combined with 3.4 through `Terminates`/`traceOut` | not started |
 | `PrintfSpec_Statement` | printf machine spec (after ship-your-lua `fwrite`) yielding an `X` with `PrintfModel X ∧ ExtDeterm X`, whose console bytes are `traceOut` | not started |
 

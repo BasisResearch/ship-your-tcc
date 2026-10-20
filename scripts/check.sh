@@ -65,6 +65,7 @@ python3 scripts/port_closure.py --check || fail "copied Vsa/ layer drifted (scri
 # the captured cut's Lean files are regenerated from results/p3/sum-cut.json
 # (Elf*.lean only when the captured ELF is at build/p3/sum.elf)
 python3 scripts/gen_tcc_cut.py --check || fail "generated Tcc/Capture/Sum drifted (scripts/gen_tcc_cut.py)"
+python3 scripts/gen_tcc_segs.py --check || fail "generated replay drifted (scripts/gen_tcc_segs.py)"
 
 echo "== (3b) discipline"
 python3 scripts/check_discipline.py || fail "discipline"
