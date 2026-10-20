@@ -13,3 +13,6 @@ import Tcc.Ccp.EndToEnd
 -- the end-to-end theorem for P with no machine premise
 #print axioms Tcc.EndToEnd.tcc_run_sum_closed
 #print axioms Tcc.EndToEnd.tcc_run_sum_halts_closed
+-- the end-to-end theorem for P with the printf read off the image: no premise
+#print axioms Tcc.EndToEnd.tcc_run_sum_derived
+#print axioms Tcc.EndToEnd.tcc_run_sum_halts_derived

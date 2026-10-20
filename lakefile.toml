@@ -49,7 +49,7 @@ leanOptions.backward.isDefEq.respectTransparency = false
 # The tcc image's boot interface and per-program captured cuts.
 [[lean_lib]]
 name = "TccMachine"
-globs = ["Tcc.Boot.+", "Tcc.Capture.+", "Tcc.Prog.Sum.Machine.+", "Tcc.EndToEnd.+",
+globs = ["Tcc.Boot.+", "Tcc.Capture.+", "Tcc.Prog.Sum.Machine.+", "Tcc.EndToEnd.+", "Tcc.Printf.+",
   "Tcc.Ccp.Eval", "Tcc.Ccp.Lemmas", "Tcc.Ccp.KernelRfl", "Tcc.Ccp.Sound"]
 
 # The CompileCut pilot's generated run of tcc's compile phase on the evaluator

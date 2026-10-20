@@ -41,6 +41,8 @@ XB = Path.home() / 'toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin'
 EMU = Path.home() / 'Documents/code/ship-your-lua/riscv-lean/lean_emulator/.lake/build/bin/lean_riscv_emulator'
 # everything but .embed (c/tests/run.sh runtime_sha): the image after the errno fix
 RUNTIME_SHA = '9e1142dc96d8db10'
+# tcc's static code arena (c/src/link.ld `__tccrun`)
+ARENA, ARENA_SIZE = 0x86400000, 4 << 20
 
 
 def tool(name):
@@ -114,6 +116,23 @@ class Image:
         return None
 
 
+def write_arena(path, mem):
+    """The arena bytes as runs of consecutive addresses: `base<TAB>hex bytes`
+    (at most 64 bytes a line)."""
+    with open(path, 'w') as fh:
+        fh.write('# base\tbytes: the arena bytes the compile phase stored, at the cut\n')
+        run, base = [], None
+        for addr in sorted(mem):
+            if run and (addr != base + len(run) or len(run) == 64):
+                fh.write(f'{base:x}\t{bytes(run).hex()}\n')
+                run = []
+            if not run:
+                base = addr
+            run.append(mem[addr])
+        if run:
+            fh.write(f'{base:x}\t{bytes(run).hex()}\n')
+
+
 def le_bytes(word_hex, n):
     w = int(word_hex, 16)
     return [(w >> (8 * j)) & 0xff for j in range(n)]
@@ -126,6 +145,9 @@ def main():
     ap.add_argument('--emu', default=str(EMU))
     ap.add_argument('--max-steps', type=int, default=20_000_000)
     ap.add_argument('--force', action='store_true')
+    ap.add_argument('--arena', action='store_true',
+                    help='also write arena.tsv: every byte of the 4 MiB code arena '
+                         '(0x86400000) the compile phase stored, at the cut')
     a = ap.parse_args()
     elf = Path(a.elf).resolve()
     out = Path(a.out)
@@ -185,6 +207,9 @@ def main():
         step = int(f[1])
         pc = int(f[2], 16)
         if cut is None and pc == enter:
+            if a.arena:
+                write_arena(out / 'arena.tsv',
+                            {x: b for x, b in written.items() if ARENA <= x < ARENA + ARENA_SIZE})
             regs = [int(x, 16) for x in f[4:35]]
             oi = f.index('O')
             cut = {'step': step, 'pc': pc, 'regs': regs, 'console_chunks': int(f[oi + 1])}
