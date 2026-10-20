@@ -27,10 +27,10 @@ open Vsa Vsa.Machine Vsa.Sim
 view `v` and log `log`: every field is closed (`decide`, or `decodeW`). -/
 structure InstrAt (v : Nat → Option (BitVec 8)) (log : List WEntry) (pc : BitVec 64)
     (w : BitVec 32) (ast : instruction) : Prop where
-  b0 : (logByte log pc.toNat).or (v pc.toNat) = some (w.extractLsb' 0 8)
-  b1 : (logByte log (pc.toNat + 1)).or (v (pc.toNat + 1)) = some (w.extractLsb' 8 8)
-  b2 : (logByte log (pc.toNat + 2)).or (v (pc.toNat + 2)) = some (w.extractLsb' 16 8)
-  b3 : (logByte log (pc.toNat + 3)).or (v (pc.toNat + 3)) = some (w.extractLsb' 24 8)
+  b0 : (firstByte log pc.toNat).or (v pc.toNat) = some (w.extractLsb' 0 8)
+  b1 : (firstByte log (pc.toNat + 1)).or (v (pc.toNat + 1)) = some (w.extractLsb' 8 8)
+  b2 : (firstByte log (pc.toNat + 2)).or (v (pc.toNat + 2)) = some (w.extractLsb' 16 8)
+  b3 : (firstByte log (pc.toNat + 3)).or (v (pc.toNat + 3)) = some (w.extractLsb' 24 8)
   word : (((w.extractLsb' 24 8).append (w.extractLsb' 16 8)).append
     (w.extractLsb' 8 8)).append (w.extractLsb' 0 8) = w
   notrvc : Sail.BitVec.extractLsb w 1 0 = 0b11#2
@@ -46,15 +46,15 @@ structure InstrAt (v : Nat → Option (BitVec 8)) (log : List WEntry) (pc : BitV
 
 theorem pin_log {m0 : Std.ExtHashMap Nat (BitVec 8)} {v : Nat → Option (BitVec 8)}
     (hv : PartialView m0 v) {log : List WEntry} {a : Nat} {b : BitVec 8}
-    (h : (logByte log a).or (v a) = some b) : (writeLog m0 log)[a]? = some b := by
-  rw [writeLog_get]; exact pin_view hv h
+    (h : (firstByte log a).or (v a) = some b) : (writeLog m0 log.reverse)[a]? = some b := by
+  rw [writeLog_get, logByte_reverse]; exact pin_view hv h
 
 /-- The code pins, the decode fact at `afterPrelude σ`, and the word/RVC facts
 of an `InstrAt` at a machine state whose memory is the row's. -/
 theorem InstrAt.facts {v : Nat → Option (BitVec 8)} {log : List WEntry} {pc : BitVec 64}
     {w : BitVec 32} {ast : instruction} (hi : InstrAt v log pc w ast) {σ : MState}
     (hG : GoodState σ) {m0 : Std.ExtHashMap Nat (BitVec 8)} (hv : PartialView m0 v)
-    (hm : σ.mem = writeLog m0 log) :
+    (hm : σ.mem = writeLog m0 log.reverse) :
     σ.mem[pc.toNat]? = some (w.extractLsb' 0 8) ∧
     σ.mem[pc.toNat + 1]? = some (w.extractLsb' 8 8) ∧
     σ.mem[pc.toNat + 2]? = some (w.extractLsb' 16 8) ∧

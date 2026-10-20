@@ -45,7 +45,7 @@ Obligations (each a `def …_Statement : Prop` until proved):
 | obligation | supplies | status |
 |---|---|---|
 | `CompileCut_Statement` (3a, `Tcc/Capture/Sum/Cut.lean`) | `∀ elf, TccSumElf elf → ∀ c₀, ElfReset elf c₀ → ∃ c, Steps c₀ c ∧ TccSumCut c`: tcc's compile phase (6,632,342 steps) reaches the captured cut | stated, open |
-| `SumHalts_Statement` (3b machine side, `Tcc/Capture/Sum/Cut.lean`) | `∀ c, TccSumCut c → Halts c "55\n" 0`: the program phase (2,470 steps) from the cut | **proved**: `Tcc.Prog.Sum.Machine.sum_halts` (generated replay, 734 items + exit) |
+| `SumHalts_Statement` (3b machine side, `Tcc/Capture/Sum/Cut.lean`) | `∀ c, TccSumCut c → Halts c "55\n" 0`: the program phase (2,470 steps) from the cut | **proved**: `Tcc.Prog.Sum.Machine.sum_halts` (generated replay, 877 items + exit) |
 | `CodeRefinesClight_Statement` (3b) | C refines Certora's Lean Clight of P (syi MachCSL + generators); to be combined with 3.4 through `Terminates`/`traceOut` | for P, as agreement of observables: `Tcc.EndToEnd.tcc_run_sum` (from reset the machine halts with exactly the console bytes and exit code of Clight's P, given `CompileCut_Statement`); a step-level refinement of C against Clight stays open |
 | `PrintfSpec_Statement` | printf machine spec (after ship-your-lua `fwrite`) yielding an `X` with `PrintfModel X ∧ ExtDeterm X`, whose console bytes are `traceOut` | not started (the general route; P's replay runs the relocated printf concretely) |
 

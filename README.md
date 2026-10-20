@@ -159,9 +159,9 @@ codes agree (`Agree`); every halting run of the machine is that one
   1.5 MB of generated data, elaborated only).
 * **The program phase** (`Tcc.Prog.Sum.Machine.sum_halts : SumHalts_Statement`):
   a generated replay of all 2,470 steps (`scripts/gen_tcc_segs.py`,
-  `Tcc/Prog/Sum/Machine/`): 734 items between rows `RunRow` (GPR pins, the
+  `Tcc/Prog/Sum/Machine/`): 877 items between rows `RunRow` (GPR pins, the
   program phase's write log over the cut's view, the console), straight-line
-  blocks by one `#derive_case` per static block and `Tcc.Boot.row_step`, calls
+  blocks (at most 6 instructions, 28 byte pins each) by one `#derive_case` per static block and `Tcc.Boot.row_step`, calls
   (`row_jalr`, `row_jal`), `sltu`, a nop, the three console stores
   (`row_putchar`) and the exit store (`row_exit`) by the one-instruction rules of
   `Tcc/Boot/Step.lean`, every side condition a kernel `decide`. Building it

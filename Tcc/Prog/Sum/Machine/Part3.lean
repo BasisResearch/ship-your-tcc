@@ -13,213 +13,211 @@ namespace Tcc.Prog.Sum.Machine
 
 open LeanRV64DExecutable Vsa Vsa.Machine Vsa.Sim Tcc.Boot Tcc.Capture.Sum
 
-/-- Item 120: block `blk_864041dc_30`, `0x864041dc` to `0x864041f4` (6 steps). -/
-theorem sim_B120 : Leads (RunRow view 0x864041dc#64 pins120 log117 "") (RunRow view 0x864041f4#64 pins121 log121 "") :=
-  row_step blk_864041dc_30 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 120: block `blk_86404170_30`, `0x86404170` to `0x864041ac` (3 steps). -/
+theorem sim_B120 : Leads (RunRow view 0x86404170#64 pins120 log119 "") (RunRow view 0x864041ac#64 pins121 log119 "") :=
+  row_step blk_86404170_30 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 121: block `blk_864041f4_31`, `0x864041f4` to `0x86403d94` (3 steps). -/
-theorem sim_B121 : Leads (RunRow view 0x864041f4#64 pins121 log121 "") (RunRow view 0x86403d94#64 pins122 log122 "") :=
-  row_step blk_864041f4_31 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 121: block `blk_864041ac_31`, `0x864041ac` to `0x864041dc` (5 steps). -/
+theorem sim_B121 : Leads (RunRow view 0x864041ac#64 pins121 log119 "") (RunRow view 0x864041dc#64 pins122 log119 "") :=
+  row_step blk_864041ac_31 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 122: block `blk_86403d94_59`, `0x86403d94` to `0x86403dac` (6 steps). -/
-theorem sim_B122 : Leads (RunRow view 0x86403d94#64 pins122 log122 "") (RunRow view 0x86403dac#64 pins123 log123 "") :=
-  row_step blk_86403d94_59 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 122: block `blk_864041dc_32`, `0x864041dc` to `0x864041f4` (6 steps). -/
+theorem sim_B122 : Leads (RunRow view 0x864041dc#64 pins122 log119 "") (RunRow view 0x864041f4#64 pins123 log123 "") :=
+  row_step blk_864041dc_32 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 123: block `blk_86403dac_60`, `0x86403dac` to `0x86403dc4` (6 steps). -/
-theorem sim_B123 : Leads (RunRow view 0x86403dac#64 pins123 log123 "") (RunRow view 0x86403dc4#64 pins124 log124 "") :=
-  row_step blk_86403dac_60 [[0x78#8, 0x1b#8, 0x41#8, 0x86#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8], [0xc8#8, 0x3f#8, 0x40#8, 0x86#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8], [0x01#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8], [0xb8#8, 0x0e#8, 0x80#8, 0x86#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8], [0xc8#8, 0x0e#8, 0x80#8, 0x86#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 123: block `blk_864041f4_33`, `0x864041f4` to `0x86403d94` (3 steps). -/
+theorem sim_B123 : Leads (RunRow view 0x864041f4#64 pins123 log123 "") (RunRow view 0x86403d94#64 pins124 log124 "") :=
+  row_step blk_864041f4_33 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 124: block `blk_86403dc4_61`, `0x86403dc4` to `0x86405738` (6 steps). -/
-theorem sim_B124 : Leads (RunRow view 0x86403dc4#64 pins124 log124 "") (RunRow view 0x86405738#64 pins125 log124 "") :=
-  row_step blk_86403dc4_61 [[0xa8#8, 0x28#8, 0x41#8, 0x86#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 124: block `blk_86403d94_61`, `0x86403d94` to `0x86403dac` (6 steps). -/
+theorem sim_B124 : Leads (RunRow view 0x86403d94#64 pins124 log124 "") (RunRow view 0x86403dac#64 pins125 log125 "") :=
+  row_step blk_86403d94_61 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 125: block `blk_86405738_50`, `0x86405738` to `0x86403fc8` (1 steps). -/
-theorem sim_B125 : Leads (RunRow view 0x86405738#64 pins125 log124 "") (RunRow view 0x86403fc8#64 pins126 log124 "") :=
-  row_step blk_86405738_50 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 125: block `blk_86403dac_62`, `0x86403dac` to `0x86403db8` (3 steps). -/
+theorem sim_B125 : Leads (RunRow view 0x86403dac#64 pins125 log125 "") (RunRow view 0x86403db8#64 pins126 log126 "") :=
+  row_step blk_86403dac_62 [[0x78#8, 0x1b#8, 0x41#8, 0x86#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8], [0xc8#8, 0x3f#8, 0x40#8, 0x86#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 126: block `blk_86403fc8_62`, `0x86403fc8` to `0x86405760` (7 steps). -/
-theorem sim_B126 : Leads (RunRow view 0x86403fc8#64 pins126 log124 "") (RunRow view 0x86405760#64 pins127 log124 "") :=
-  row_step blk_86403fc8_62 [[0x78#8, 0x1b#8, 0x41#8, 0x86#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8], [0x84#8, 0x22#8, 0x40#8, 0x86#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 126: block `blk_86403db8_63`, `0x86403db8` to `0x86403dc0` (2 steps). -/
+theorem sim_B126 : Leads (RunRow view 0x86403db8#64 pins126 log126 "") (RunRow view 0x86403dc0#64 pins127 log126 "") :=
+  row_step blk_86403db8_63 [[0x01#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8], [0xb8#8, 0x0e#8, 0x80#8, 0x86#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 127: block `blk_86405760_63`, `0x86405760` to `0x86402284` (1 steps). -/
-theorem sim_B127 : Leads (RunRow view 0x86405760#64 pins127 log124 "") (RunRow view 0x86402284#64 pins128 log124 "") :=
-  row_step blk_86405760_63 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 127: block `blk_86403dc0_64`, `0x86403dc0` to `0x86403dcc` (3 steps). -/
+theorem sim_B127 : Leads (RunRow view 0x86403dc0#64 pins127 log126 "") (RunRow view 0x86403dcc#64 pins128 log126 "") :=
+  row_step blk_86403dc0_64 [[0xc8#8, 0x0e#8, 0x80#8, 0x86#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8], [0xa8#8, 0x28#8, 0x41#8, 0x86#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 128: block `blk_86402284_64`, `0x86402284` to `0x8640023c` (1 steps). -/
-theorem sim_B128 : Leads (RunRow view 0x86402284#64 pins128 log124 "") (RunRow view 0x8640023c#64 pins129 log124 "") :=
-  row_step blk_86402284_64 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 128: block `blk_86403dcc_65`, `0x86403dcc` to `0x86405738` (4 steps). -/
+theorem sim_B128 : Leads (RunRow view 0x86403dcc#64 pins128 log126 "") (RunRow view 0x86405738#64 pins129 log126 "") :=
+  row_step blk_86403dcc_65 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 129: block `blk_8640023c_65`, `0x8640023c` to `0x86400660` (4 steps). -/
-theorem sim_B129 : Leads (RunRow view 0x8640023c#64 pins129 log124 "") (RunRow view 0x86400660#64 pins130 log124 "") :=
-  row_step blk_8640023c_65 [[0x00#8, 0x00#8, 0x00#8, 0x00#8], [0x09#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 129: block `blk_86405738_52`, `0x86405738` to `0x86403fc8` (1 steps). -/
+theorem sim_B129 : Leads (RunRow view 0x86405738#64 pins129 log126 "") (RunRow view 0x86403fc8#64 pins130 log126 "") :=
+  row_step blk_86405738_52 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 130: block `blk_86400660_66`, `0x86400660` to `0x864008d4` (2 steps). -/
-theorem sim_B130 : Leads (RunRow view 0x86400660#64 pins130 log124 "") (RunRow view 0x864008d4#64 pins131 log124 "") :=
-  row_step blk_86400660_66 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 130: block `blk_86403fc8_66`, `0x86403fc8` to `0x86403fd4` (3 steps). -/
+theorem sim_B130 : Leads (RunRow view 0x86403fc8#64 pins130 log126 "") (RunRow view 0x86403fd4#64 pins131 log126 "") :=
+  row_step blk_86403fc8_66 [[0x78#8, 0x1b#8, 0x41#8, 0x86#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8], [0x84#8, 0x22#8, 0x40#8, 0x86#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 131: block `blk_864008d4_67`, `0x864008d4` to `0x864008dc` (2 steps). -/
-theorem sim_B131 : Leads (RunRow view 0x864008d4#64 pins131 log124 "") (RunRow view 0x864008dc#64 pins132 log124 "") :=
-  row_step blk_864008d4_67 [[0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 131: block `blk_86403fd4_67`, `0x86403fd4` to `0x86405760` (4 steps). -/
+theorem sim_B131 : Leads (RunRow view 0x86403fd4#64 pins131 log126 "") (RunRow view 0x86405760#64 pins132 log126 "") :=
+  row_step blk_86403fd4_67 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 132: call `jalr x1, 3696(x1)`, `0x864008dc` to `0x86405748` (1 steps). -/
-theorem sim_B132 : Leads (RunRow view 0x864008dc#64 pins132 log124 "") (RunRow view 0x86405748#64 pins133 log124 "") :=
+/-- Item 132: block `blk_86405760_68`, `0x86405760` to `0x86402284` (1 steps). -/
+theorem sim_B132 : Leads (RunRow view 0x86405760#64 pins132 log126 "") (RunRow view 0x86402284#64 pins133 log126 "") :=
+  row_step blk_86405760_68 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
+
+/-- Item 133: block `blk_86402284_69`, `0x86402284` to `0x8640023c` (1 steps). -/
+theorem sim_B133 : Leads (RunRow view 0x86402284#64 pins133 log126 "") (RunRow view 0x8640023c#64 pins134 log126 "") :=
+  row_step blk_86402284_69 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
+
+/-- Item 134: block `blk_8640023c_70`, `0x8640023c` to `0x86400660` (4 steps). -/
+theorem sim_B134 : Leads (RunRow view 0x8640023c#64 pins134 log126 "") (RunRow view 0x86400660#64 pins135 log126 "") :=
+  row_step blk_8640023c_70 [[0x00#8, 0x00#8, 0x00#8, 0x00#8], [0x09#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
+
+/-- Item 135: block `blk_86400660_71`, `0x86400660` to `0x864008d4` (2 steps). -/
+theorem sim_B135 : Leads (RunRow view 0x86400660#64 pins135 log126 "") (RunRow view 0x864008d4#64 pins136 log126 "") :=
+  row_step blk_86400660_71 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
+
+/-- Item 136: block `blk_864008d4_72`, `0x864008d4` to `0x864008dc` (2 steps). -/
+theorem sim_B136 : Leads (RunRow view 0x864008d4#64 pins136 log126 "") (RunRow view 0x864008dc#64 pins137 log126 "") :=
+  row_step blk_864008d4_72 [[0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
+
+/-- Item 137: call `jalr x1, 3696(x1)`, `0x864008dc` to `0x86405748` (1 steps). -/
+theorem sim_B137 : Leads (RunRow view 0x864008dc#64 pins137 log126 "") (RunRow view 0x86405748#64 pins138 log126 "") :=
   row_jalr (w := 0xe70080e7#32) (imm := 0xe70#12) (rd := 1) (rs1 := 1)
     ⟨by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, fun s h1 h2 h3 => Vsa.Sim.decodeW s h1 h2 h3⟩
     (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 133: block `blk_86405748_38`, `0x86405748` to `0x864008e0` (1 steps). -/
-theorem sim_B133 : Leads (RunRow view 0x86405748#64 pins133 log124 "") (RunRow view 0x864008e0#64 pins134 log124 "") :=
-  row_step blk_86405748_38 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 138: block `blk_86405748_40`, `0x86405748` to `0x864008e0` (1 steps). -/
+theorem sim_B138 : Leads (RunRow view 0x86405748#64 pins138 log126 "") (RunRow view 0x864008e0#64 pins139 log126 "") :=
+  row_step blk_86405748_40 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 134: block `blk_864008e0_68`, `0x864008e0` to `0x864008f0` (4 steps). -/
-theorem sim_B134 : Leads (RunRow view 0x864008e0#64 pins134 log124 "") (RunRow view 0x864008f0#64 pins135 log124 "") :=
-  row_step blk_864008e0_68 [[0x09#8, 0x00#8], [0x00#8, 0x00#8, 0x00#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 139: block `blk_864008e0_73`, `0x864008e0` to `0x864008f0` (4 steps). -/
+theorem sim_B139 : Leads (RunRow view 0x864008e0#64 pins139 log126 "") (RunRow view 0x864008f0#64 pins140 log126 "") :=
+  row_step blk_864008e0_73 [[0x09#8, 0x00#8], [0x00#8, 0x00#8, 0x00#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 135: block `blk_864008f0_69`, `0x864008f0` to `0x86400258` (1 steps). -/
-theorem sim_B135 : Leads (RunRow view 0x864008f0#64 pins135 log124 "") (RunRow view 0x86400258#64 pins136 log124 "") :=
-  row_step blk_864008f0_69 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 140: block `blk_864008f0_74`, `0x864008f0` to `0x86400258` (1 steps). -/
+theorem sim_B140 : Leads (RunRow view 0x864008f0#64 pins140 log126 "") (RunRow view 0x86400258#64 pins141 log126 "") :=
+  row_step blk_864008f0_74 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 136: block `blk_86400258_70`, `0x86400258` to `0x86400270` (6 steps). -/
-theorem sim_B136 : Leads (RunRow view 0x86400258#64 pins136 log124 "") (RunRow view 0x86400270#64 pins137 log137 "") :=
-  row_step blk_86400258_70 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 141: block `blk_86400258_75`, `0x86400258` to `0x86400270` (6 steps). -/
+theorem sim_B141 : Leads (RunRow view 0x86400258#64 pins141 log126 "") (RunRow view 0x86400270#64 pins142 log142 "") :=
+  row_step blk_86400258_75 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 137: block `blk_86400270_71`, `0x86400270` to `0x86400280` (3 steps). -/
-theorem sim_B137 : Leads (RunRow view 0x86400270#64 pins137 log137 "") (RunRow view 0x86400280#64 pins138 log138 "") :=
-  row_step blk_86400270_71 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 142: block `blk_86400270_76`, `0x86400270` to `0x86400280` (3 steps). -/
+theorem sim_B142 : Leads (RunRow view 0x86400270#64 pins142 log142 "") (RunRow view 0x86400280#64 pins143 log143 "") :=
+  row_step blk_86400270_76 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 138: block `blk_86400280_72`, `0x86400280` to `0x8640028c` (3 steps). -/
-theorem sim_B138 : Leads (RunRow view 0x86400280#64 pins138 log138 "") (RunRow view 0x8640028c#64 pins139 log138 "") :=
-  row_step blk_86400280_72 [[0x09#8, 0x20#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 143: block `blk_86400280_77`, `0x86400280` to `0x8640028c` (3 steps). -/
+theorem sim_B143 : Leads (RunRow view 0x86400280#64 pins143 log143 "") (RunRow view 0x8640028c#64 pins144 log143 "") :=
+  row_step blk_86400280_77 [[0x09#8, 0x20#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 139: block `blk_8640028c_73`, `0x8640028c` to `0x86400534` (2 steps). -/
-theorem sim_B139 : Leads (RunRow view 0x8640028c#64 pins139 log138 "") (RunRow view 0x86400534#64 pins140 log138 "") :=
-  row_step blk_8640028c_73 [[0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 144: block `blk_8640028c_78`, `0x8640028c` to `0x86400534` (2 steps). -/
+theorem sim_B144 : Leads (RunRow view 0x8640028c#64 pins144 log143 "") (RunRow view 0x86400534#64 pins145 log143 "") :=
+  row_step blk_8640028c_78 [[0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 140: block `blk_86400534_74`, `0x86400534` to `0x86400540` (3 steps). -/
-theorem sim_B140 : Leads (RunRow view 0x86400534#64 pins140 log138 "") (RunRow view 0x86400540#64 pins141 log138 "") :=
-  row_step blk_86400534_74 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 145: block `blk_86400534_79`, `0x86400534` to `0x86400540` (3 steps). -/
+theorem sim_B145 : Leads (RunRow view 0x86400534#64 pins145 log143 "") (RunRow view 0x86400540#64 pins146 log143 "") :=
+  row_step blk_86400534_79 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 141: call `jalr x1, 68(x1)`, `0x86400540` to `0x86405580` (1 steps). -/
-theorem sim_B141 : Leads (RunRow view 0x86400540#64 pins141 log138 "") (RunRow view 0x86405580#64 pins142 log138 "") :=
+/-- Item 146: call `jalr x1, 68(x1)`, `0x86400540` to `0x86405580` (1 steps). -/
+theorem sim_B146 : Leads (RunRow view 0x86400540#64 pins146 log143 "") (RunRow view 0x86405580#64 pins147 log143 "") :=
   row_jalr (w := 0x044080e7#32) (imm := 0x044#12) (rd := 1) (rs1 := 1)
     ⟨by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, fun s h1 h2 h3 => Vsa.Sim.decodeW s h1 h2 h3⟩
     (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 142: block `blk_86405580_75`, `0x86405580` to `0x8640559c` (7 steps). -/
-theorem sim_B142 : Leads (RunRow view 0x86405580#64 pins142 log138 "") (RunRow view 0x8640559c#64 pins143 log143 "") :=
-  row_step blk_86405580_75 [[0x78#8, 0x1b#8, 0x41#8, 0x86#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 147: block `blk_86405580_80`, `0x86405580` to `0x86405594` (5 steps). -/
+theorem sim_B147 : Leads (RunRow view 0x86405580#64 pins147 log143 "") (RunRow view 0x86405594#64 pins148 log148 "") :=
+  row_step blk_86405580_80 [[0x78#8, 0x1b#8, 0x41#8, 0x86#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 143: block `blk_8640559c_76`, `0x8640559c` to `0x864055a4` (2 steps). -/
-theorem sim_B143 : Leads (RunRow view 0x8640559c#64 pins143 log143 "") (RunRow view 0x864055a4#64 pins144 log143 "") :=
-  row_step blk_8640559c_76 [[0x3c#8, 0x3b#8, 0x40#8, 0x86#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 148: block `blk_86405594_81`, `0x86405594` to `0x8640559c` (2 steps). -/
+theorem sim_B148 : Leads (RunRow view 0x86405594#64 pins148 log148 "") (RunRow view 0x8640559c#64 pins149 log148 "") :=
+  row_step blk_86405594_81 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 144: block `blk_864055a4_77`, `0x864055a4` to `0x864055b0` (3 steps). -/
-theorem sim_B144 : Leads (RunRow view 0x864055a4#64 pins144 log143 "") (RunRow view 0x864055b0#64 pins145 log143 "") :=
-  row_step blk_864055a4_77 [[0x09#8, 0x20#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 149: block `blk_8640559c_82`, `0x8640559c` to `0x864055a4` (2 steps). -/
+theorem sim_B149 : Leads (RunRow view 0x8640559c#64 pins149 log148 "") (RunRow view 0x864055a4#64 pins150 log148 "") :=
+  row_step blk_8640559c_82 [[0x3c#8, 0x3b#8, 0x40#8, 0x86#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 145: block `blk_864055b0_78`, `0x864055b0` to `0x86405608` (2 steps). -/
-theorem sim_B145 : Leads (RunRow view 0x864055b0#64 pins145 log143 "") (RunRow view 0x86405608#64 pins146 log143 "") :=
-  row_step blk_864055b0_78 [[0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 150: block `blk_864055a4_83`, `0x864055a4` to `0x864055b0` (3 steps). -/
+theorem sim_B150 : Leads (RunRow view 0x864055a4#64 pins150 log148 "") (RunRow view 0x864055b0#64 pins151 log148 "") :=
+  row_step blk_864055a4_83 [[0x09#8, 0x20#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 146: block `blk_86405608_79`, `0x86405608` to `0x86405618` (4 steps). -/
-theorem sim_B146 : Leads (RunRow view 0x86405608#64 pins146 log143 "") (RunRow view 0x86405618#64 pins147 log143 "") :=
-  row_step blk_86405608_79 [[0x09#8, 0x20#8, 0x01#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 151: block `blk_864055b0_84`, `0x864055b0` to `0x86405608` (2 steps). -/
+theorem sim_B151 : Leads (RunRow view 0x864055b0#64 pins151 log148 "") (RunRow view 0x86405608#64 pins152 log148 "") :=
+  row_step blk_864055b0_84 [[0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 147: block `blk_86405618_80`, `0x86405618` to `0x86405628` (4 steps). -/
-theorem sim_B147 : Leads (RunRow view 0x86405618#64 pins147 log143 "") (RunRow view 0x86405628#64 pins148 log148 "") :=
-  row_step blk_86405618_80 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 152: block `blk_86405608_85`, `0x86405608` to `0x86405618` (4 steps). -/
+theorem sim_B152 : Leads (RunRow view 0x86405608#64 pins152 log148 "") (RunRow view 0x86405618#64 pins153 log148 "") :=
+  row_step blk_86405608_85 [[0x09#8, 0x20#8, 0x01#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 148: call `jalr x1, 2368(x1)`, `0x86405628` to `0x86409f64` (1 steps). -/
-theorem sim_B148 : Leads (RunRow view 0x86405628#64 pins148 log148 "") (RunRow view 0x86409f64#64 pins149 log148 "") :=
+/-- Item 153: block `blk_86405618_86`, `0x86405618` to `0x86405628` (4 steps). -/
+theorem sim_B153 : Leads (RunRow view 0x86405618#64 pins153 log148 "") (RunRow view 0x86405628#64 pins154 log154 "") :=
+  row_step blk_86405618_86 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
+
+/-- Item 154: call `jalr x1, 2368(x1)`, `0x86405628` to `0x86409f64` (1 steps). -/
+theorem sim_B154 : Leads (RunRow view 0x86405628#64 pins154 log154 "") (RunRow view 0x86409f64#64 pins155 log154 "") :=
   row_jalr (w := 0x940080e7#32) (imm := 0x940#12) (rd := 1) (rs1 := 1)
     ⟨by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, fun s h1 h2 h3 => Vsa.Sim.decodeW s h1 h2 h3⟩
     (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 149: block `blk_86409f64_81`, `0x86409f64` to `0x86409f88` (3 steps). -/
-theorem sim_B149 : Leads (RunRow view 0x86409f64#64 pins149 log148 "") (RunRow view 0x86409f88#64 pins150 log148 "") :=
-  row_step blk_86409f64_81 [[0x09#8, 0x20#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 155: block `blk_86409f64_87`, `0x86409f64` to `0x86409f88` (3 steps). -/
+theorem sim_B155 : Leads (RunRow view 0x86409f64#64 pins155 log154 "") (RunRow view 0x86409f88#64 pins156 log154 "") :=
+  row_step blk_86409f64_87 [[0x09#8, 0x20#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 150: block `blk_86409f88_82`, `0x86409f88` to `0x86409fa4` (7 steps). -/
-theorem sim_B150 : Leads (RunRow view 0x86409f88#64 pins150 log148 "") (RunRow view 0x86409fa4#64 pins151 log151 "") :=
-  row_step blk_86409f88_82 [[0x01#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 156: block `blk_86409f88_88`, `0x86409f88` to `0x86409fa4` (7 steps). -/
+theorem sim_B156 : Leads (RunRow view 0x86409f88#64 pins156 log154 "") (RunRow view 0x86409fa4#64 pins157 log157 "") :=
+  row_step blk_86409f88_88 [[0x01#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 151: block `blk_86409fa4_83`, `0x86409fa4` to `0x86409fb0` (3 steps). -/
-theorem sim_B151 : Leads (RunRow view 0x86409fa4#64 pins151 log151 "") (RunRow view 0x86409fb0#64 pins152 log152 "") :=
-  row_step blk_86409fa4_83 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 157: block `blk_86409fa4_89`, `0x86409fa4` to `0x86409fb0` (3 steps). -/
+theorem sim_B157 : Leads (RunRow view 0x86409fa4#64 pins157 log157 "") (RunRow view 0x86409fb0#64 pins158 log158 "") :=
+  row_step blk_86409fa4_89 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 152: call `jalr x1, 636(x1)`, `0x86409fb0` to `0x8640c228` (1 steps). -/
-theorem sim_B152 : Leads (RunRow view 0x86409fb0#64 pins152 log152 "") (RunRow view 0x8640c228#64 pins153 log152 "") :=
+/-- Item 158: call `jalr x1, 636(x1)`, `0x86409fb0` to `0x8640c228` (1 steps). -/
+theorem sim_B158 : Leads (RunRow view 0x86409fb0#64 pins158 log158 "") (RunRow view 0x8640c228#64 pins159 log158 "") :=
   row_jalr (w := 0x27c080e7#32) (imm := 0x27c#12) (rd := 1) (rs1 := 1)
     ⟨by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, fun s h1 h2 h3 => Vsa.Sim.decodeW s h1 h2 h3⟩
     (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 153: block `blk_8640c228_84`, `0x8640c228` to `0x8640c240` (6 steps). -/
-theorem sim_B153 : Leads (RunRow view 0x8640c228#64 pins153 log152 "") (RunRow view 0x8640c240#64 pins154 log154 "") :=
-  row_step blk_8640c228_84 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
+/-- Item 159: block `blk_8640c228_90`, `0x8640c228` to `0x8640c240` (6 steps). -/
+theorem sim_B159 : Leads (RunRow view 0x8640c228#64 pins159 log158 "") (RunRow view 0x8640c240#64 pins160 log160 "") :=
+  row_step blk_8640c228_90 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
     (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Item 154: block `blk_8640c240_85`, `0x8640c240` to `0x8640c250` (4 steps). -/
-theorem sim_B154 : Leads (RunRow view 0x8640c240#64 pins154 log154 "") (RunRow view 0x8640c250#64 pins155 log155 "") :=
-  row_step blk_8640c240_85 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
-    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-
-/-- Item 155: call `jalr x1, 2268(x1)`, `0x8640c250` to `0x86410b28` (1 steps). -/
-theorem sim_B155 : Leads (RunRow view 0x8640c250#64 pins155 log155 "") (RunRow view 0x86410b28#64 pins156 log155 "") :=
-  row_jalr (w := 0x8dc080e7#32) (imm := 0x8dc#12) (rd := 1) (rs1 := 1)
-    ⟨by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, fun s h1 h2 h3 => Vsa.Sim.decodeW s h1 h2 h3⟩
-    (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-
-/-- Item 156: block `blk_86410b28_86`, `0x86410b28` to `0x86410b30` (2 steps). -/
-theorem sim_B156 : Leads (RunRow view 0x86410b28#64 pins156 log155 "") (RunRow view 0x86410b30#64 pins157 log155 "") :=
-  row_step blk_86410b28_86 [[0x90#8, 0x11#8, 0x00#8, 0x80#8, 0x00#8, 0x00#8, 0x00#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
-    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-
-/-- Item 157: call `jalr x6, 0(x28)`, `0x86410b30` to `0x80001190` (1 steps). -/
-theorem sim_B157 : Leads (RunRow view 0x86410b30#64 pins157 log155 "") (RunRow view 0x80001190#64 pins158 log155 "") :=
-  row_jalr (w := 0x000e0367#32) (imm := 0x000#12) (rd := 6) (rs1 := 28)
-    ⟨by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, by decide +kernel, fun s h1 h2 h3 => Vsa.Sim.decodeW s h1 h2 h3⟩
-    (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-
-/-- Item 158: block `blk_80001190_87`, `0x80001190` to `0x800011b4` (6 steps). -/
-theorem sim_B158 : Leads (RunRow view 0x80001190#64 pins158 log155 "") (RunRow view 0x800011b4#64 pins159 log159 "") :=
-  row_step blk_80001190_87 [[0x01#8, 0x00#8, 0x00#8, 0x00#8]] (by decide +kernel) (fun _ hv => by tcc_facts hv)
-    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-
-/-- Item 159: block `blk_800011b4_88`, `0x800011b4` to `0x800011bc` (2 steps). -/
-theorem sim_B159 : Leads (RunRow view 0x800011b4#64 pins159 log159 "") (RunRow view 0x800011bc#64 pins160 log159 "") :=
-  row_step blk_800011b4_88 [] (by decide +kernel) (fun _ hv => by tcc_facts hv)
-    (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-
-theorem part3 : Leads (RunRow view 0x864041dc#64 pins120 log117 "") (RunRow view 0x800011bc#64 pins160 log159 "") :=
+theorem part3 : Leads (RunRow view 0x86404170#64 pins120 log119 "") (RunRow view 0x8640c240#64 pins160 log160 "") :=
   Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (Leads.trans (sim_B120) sim_B121) sim_B122) sim_B123) sim_B124) sim_B125) sim_B126) sim_B127) sim_B128) sim_B129) sim_B130) sim_B131) sim_B132) sim_B133) sim_B134) sim_B135) sim_B136) sim_B137) sim_B138) sim_B139) sim_B140) sim_B141) sim_B142) sim_B143) sim_B144) sim_B145) sim_B146) sim_B147) sim_B148) sim_B149) sim_B150) sim_B151) sim_B152) sim_B153) sim_B154) sim_B155) sim_B156) sim_B157) sim_B158) sim_B159
 
 end Tcc.Prog.Sum.Machine

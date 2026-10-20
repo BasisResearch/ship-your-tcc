@@ -32,6 +32,7 @@ INPUT = ROOT / 'results/p3/sum-replay.json'
 OUT = ROOT / 'Tcc/Prog/Sum/Machine'
 PER_PART = 40
 CHUNK_MAX = 6  # instructions per block item
+PIN_MAX = 28   # byte pins (4 per fetch, the width per load) per block item
 LEDGER = ROOT / 'abstractions/ledger/p3-codegen-segment.tsv'
 TOHOST = 0x8007cec0
 BOP = {0: 'BEQ', 1: 'BNE', 4: 'BLT', 5: 'BGE', 6: 'BLTU', 7: 'BGEU'}
@@ -181,12 +182,14 @@ def capture(trace):
         if tk:
             close(r['npc'], [r['pc'], w, tk, r['npc'] != r['pc'] + 4])
         elif bk:
-            if len(cur['body']) == CHUNK_MAX:
+            cost = 4 + (r['mem'][1] if r['mem'] and r['mem'][0] == 'L' else 0)
+            if len(cur['body']) == CHUNK_MAX or cur.get('cost', 0) + cost > PIN_MAX:
                 # a long body is several items: per-declaration work stays bounded
                 close(r['pc'])
                 cur = {'kind': 'block', 'pc': r['pc'], 'regs': r['regs'], 'body': [], 'lds': [],
                        'stores': [], 'outb': 256}
             cur['body'].append([r['pc'], w])
+            cur['cost'] = cur.get('cost', 0) + cost
             if r['mem']:
                 kind, width, addr, pre, post = r['mem']
                 if kind == 'L':
@@ -265,8 +268,9 @@ def render(inp):
     lname = ['([] : List WEntry)']
     for k, it in enumerate(items):
         if it['stores']:
+            # newest first: this item's stores, last store first, before the older log
             defs.append(f'@[irreducible] def log{k + 1} : List WEntry := '
-                        f'{lname[-1]} ++ {entries_lit(it["stores"])}')
+                        f'{entries_lit(it["stores"][::-1])} ++ {lname[-1]}')
             lname.append(f'log{k + 1}')
         else:
             lname.append(lname[-1])
@@ -333,7 +337,7 @@ def render(inp):
             proof = (f'row_putchar (w := 0x{w:08x}#32) (imm := 0x{imm:03x}#12) (rs1 := {rs1}) '
                      f'(rs2 := {rs2}) (c := 0x{it["data"] & 0xff:02x}#8)\n'
                      f'    {INSTR_AT}\n'
-                     f'    (by decide) (by decide) ({DK}) ({DK}) ({DK})')
+                     f'    ({DK}) ({DK}) ({DK}) ({DK}) ({DK})')
             what = f'console byte `{it["data"] & 0xff:#04x}` to `tohost`'
         elif it['kind'] == 'nop':
             steps = 1
@@ -393,7 +397,7 @@ def exit_txt(it, row_n, out):
             f'theorem sim_exit : ∀ c, ({row_n}) c → Halts c "{esc(out)}" (0x{e:x}#64).toNat :=\n'
             f'  row_exit (w := 0x{w:08x}#32) (imm := 0x{imm:03x}#12) (rs1 := {rs1}) (rs2 := {rs2})\n'
             f'    {INSTR_AT}\n'
-            f'    (by decide) (by decide) ({DK}) ({DK}) ({DK})\n\n'
+            f'    ({DK}) ({DK}) ({DK}) ({DK}) ({DK})\n\n'
             f'/-- **The program phase from the captured cut**: `tcc -run sum.c` prints '
             f'`{esc(out)}` and exits with status {e}. -/\n'
             f'theorem sum_halts : SumHalts_Statement := by\n'

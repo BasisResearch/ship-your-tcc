@@ -23,15 +23,15 @@ namespace Tcc.Boot
 open LeanRV64DExecutable Vsa Vsa.Machine Vsa.Sim
 
 /-- A row of the replay: at `pc`, the GPRs pinned by `L`, memory = a memory
-with the view `v` after the write log `log`, the console holding `out`, the
-HTIF mailbox idle. -/
+with the view `v` after the write log `log` (kept newest first: the memory is
+`writeLog m0 log.reverse`), the console holding `out`, the HTIF mailbox idle. -/
 structure RunRow (v : Nat → Option (BitVec 8)) (pc : BitVec 64) (L : GRegs) (log : List WEntry)
     (out : String) (c : Config) : Prop where
   good : GoodState c.σ
   pc : c.σ.regs.get? Register.PC = some pc
   regs : GHolds c.σ L
   keys : KeysOK (keysG L)
-  mem : ∃ m0, PartialView m0 v ∧ c.σ.mem = writeLog m0 log
+  mem : ∃ m0, PartialView m0 v ∧ c.σ.mem = writeLog m0 log.reverse
   console : output c.σ = out
   payload : c.σ.regs.get? Register.htif_payload_writes = some (0#4)
   tick : c.tick < 2
@@ -128,7 +128,8 @@ elab "tcc_pin " hv:term : tactic => do
   let some (ty, _, _) := t.eq? | throwError "tcc_pin: not an equation"
   unless (t.find? (·.isAppOf ``GetElem?.getElem?)).isSome do
     throwError "tcc_pin: no memory read"
-  evalTactic (← `(tactic| simp only [Tcc.Boot.writeLog_get, Tcc.Boot.stepMemM_get, ← Option.or_assoc]))
+  evalTactic (← `(tactic| simp only [Tcc.Boot.writeLog_get, Tcc.Boot.logByte_reverse,
+    Tcc.Boot.stepMemM_get, ← Option.or_assoc]))
   if ty.isAppOf ``Option then
     evalTactic (← `(tactic| (apply Tcc.Boot.pin_view $hv; decide +kernel)))
   else
@@ -170,11 +171,11 @@ theorem row_step {v : Nat → Option (BitVec 8)} (bs : List BBlock) {pc0 pc1 : B
     {L0 L1 : GRegs} {log0 log1 : List WEntry} {out : String} (lds : List (List (BitVec 8)))
     (hwf : ChainOK pc0 (keysG L0) bs)
     (hfacts : ∀ m0, PartialView m0 v →
-      ChainFacts (writeLog m0 log0) (writeLog m0 log0) L0 lds bs)
+      ChainFacts (writeLog m0 log0.reverse) (writeLog m0 log0.reverse) L0 lds bs)
     (hpc : evalBlocksPC pc0 (SegEvalState.init L0 lds) bs = pc1)
     (hregs : ∀ p ∈ L1, lookupG p.1 (evalBlocks bs (SegEvalState.init L0 lds)).regs = some p.2)
     (hkeys : KeysOK (keysG L1))
-    (hlog : log0 ++ (evalBlocks bs (SegEvalState.init L0 lds)).log = log1) :
+    (hlog : (evalBlocks bs (SegEvalState.init L0 lds)).log.reverse ++ log0 = log1) :
     Leads (RunRow v pc0 L0 log0 out) (RunRow v pc1 L1 log1 out) := by
   rintro ⟨σ, i, u⟩ ⟨hG, hpc0, hL, hk, ⟨m0, hv, hm⟩, hout, hpw, hi⟩
   obtain ⟨vm, hmi⟩ := hG.minstret
@@ -186,7 +187,7 @@ theorem row_step {v : Nat → Option (BitVec 8)} (bs : List BBlock) {pc0 pc1 : B
     ⟨m0, hv, ?_⟩, ?_, ?_, hi'⟩
   · rw [hpc', hpc]
   · simp only at hmem' ⊢
-    rw [hmem', hm, ← writeLog_append, hlog]
+    rw [hmem', hm, ← writeLog_append, ← hlog, List.reverse_append, List.reverse_reverse]
   · simp only [output] at hout ⊢
     rw [hso]; exact hout
   · rw [hframe _ (by decide) (fun n _ => gprReg_ne_payload n)]; exact hpw
