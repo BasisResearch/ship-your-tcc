@@ -20,6 +20,10 @@ def main():
             write('scripts/' + name, (source / 'scripts' / name).read_text())
         write('scripts/check_discipline.py', 'print("discipline: fixture")\n')
         write('abstractions/gate.py', 'print("abstraction: fixture")\n')
+        for name in ['port_closure.py', 'gen_tcc_cut.py', 'gen_tcc_segs.py']:
+            write('scripts/' + name, 'print("generator: fixture")\n')
+        for name in ['cclib_src.sh', 'gen_prog_clight.sh', 'gen_cclib_audit.sh', 'build_replay.sh']:
+            write('scripts/' + name, '#!/bin/bash\nexit 0\n')
         write('scripts/check_isa.sh', '''#!/bin/bash
         for f in "$@"; do
           case "$f" in
@@ -87,6 +91,7 @@ def main():
         # Exercise stage 6 with fake Lake/systemd commands; no Lean build runs.
         write('lakefile.toml', '')
         write('scripts/axioms.lean', '-- fixture\n')
+        write('scripts/axioms_certora.lean', '-- fixture\n')
         write('tools/systemd-run', '#!/bin/bash\nexit 0\n')
         write('tools/lake', '''#!/bin/bash
         case "${STUB_AXIOMS:-standard}" in

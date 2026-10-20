@@ -9,9 +9,10 @@ scripts/minimise.sh's interestingness test.
 """
 import os
 import sys
+import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from diff3 import ROOT, load_config, oracle_outcome, run_process  # noqa: E402
+from diff3 import ROOT, load_config, missing_completion_meta, oracle_outcome, run_process  # noqa: E402
 
 
 def main():
@@ -24,12 +25,22 @@ def main():
         print(f'oracle {name} is absent ({o["requires"]})', file=sys.stderr)
         sys.exit(125)
     cmd = o['cmd'].replace('{prog}', prog).replace('{root}', ROOT)
-    env = dict(os.environ, **{k: str(v) for k, v in o['env'].items()})
-    rc, _, _, killed = run_process(cmd, env, o['timeout'], capture_output=False)
+    # The reducer must enforce the same guest-completion contract as diff3.
+    with tempfile.TemporaryDirectory(prefix='tcc-oracle-') as work:
+        meta_path = os.path.join(work, 'oracle.meta')
+        env = dict(os.environ, ORACLE_META=meta_path, **{k: str(v) for k, v in o['env'].items()})
+        rc, _, _, killed = run_process(cmd, env, o['timeout'], capture_output=False)
+        meta = {}
+        if os.path.exists(meta_path):
+            with open(meta_path) as source:
+                for line in source:
+                    if '=' in line:
+                        key, value = line.rstrip('\n').split('=', 1)
+                        meta[key] = value
     outcome = oracle_outcome(rc, o, killed)
     if outcome == 'timeout':
         sys.exit(124)
-    if rc < 0 or (require_ok and outcome != 'ok'):
+    if rc < 0 or (outcome == 'ok' and missing_completion_meta(o, meta)) or (require_ok and outcome != 'ok'):
         sys.exit(125)
     sys.exit(rc)
 

@@ -125,6 +125,11 @@ def oracle_outcome(rc, o, killed=False):
     return codes.get(rc, 'n/a' if rc == 125 else 'ok')
 
 
+def missing_completion_meta(o, meta):
+    return [k for k in o.get('completion_meta', [])
+            if not meta.get(k, '').isdigit() or int(meta[k]) <= 0]
+
+
 class Gate:
     """Concurrency limit for heavy (emulator) runs plus a free-memory check."""
 
@@ -175,8 +180,7 @@ def run_oracle(name, o, prog, key, gate, use_cache):
         os.unlink(meta_path)
     outcome = oracle_outcome(rc, o, killed)
     if outcome == 'ok':
-        missing = [k for k in o.get('completion_meta', [])
-                   if not meta.get(k, '').isdigit() or int(meta[k]) <= 0]
+        missing = missing_completion_meta(o, meta)
         if missing:
             outcome = 'n/a'
             err += ('\ndiff3: oracle missing completion metadata: ' +

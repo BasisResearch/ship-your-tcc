@@ -44,6 +44,13 @@ class OracleRegression(unittest.TestCase):
         encoded = raw.decode('latin-1').encode('utf-8')
         self.assertEqual(console.decode_console(encoded), raw)
 
+    def test_code_dump_preserves_subsequent_at_lines_and_rejects_truncation(self):
+        output = b'@@13000000\nSUCCESS\n\xff'
+        raw = b'@@TCCBM code 0x86400000 00000004\n@@13000000\n' + output
+        self.assertEqual(console.split_code_dump(raw), (bytes.fromhex('13000000'), output))
+        with self.assertRaises(ValueError):
+            console.split_code_dump(b'@@TCCBM code 0x86400000 00000008\n@@13000000\n')
+
     def test_signal_is_incomparable_but_nonzero_main_return_is_ok(self):
         failed = diff3.run_oracle('signal', self.oracle('kill -TERM $$'),
                                  'unused', 'signal', diff3._Null(), False)
@@ -113,6 +120,14 @@ class OracleRegression(unittest.TestCase):
                                   '--require-ok', 'test', 'unused.c'], env=env)
         self.assertEqual(default.returncode, 126)
         self.assertEqual(checked.returncode, 125)
+
+    def test_reducer_cli_requires_guest_completion(self):
+        config = self.root / 'oracle.toml'
+        config.write_text('[oracle.test]\ncmd = "exit 2"\ncompletion_meta = ["steps"]\n')
+        result = subprocess.run([sys.executable, str(SCRIPTS / 'oracle.py'),
+                                 '--require-ok', 'test', 'unused.c'],
+                                env=dict(os.environ, ORACLES_TOML=str(config)))
+        self.assertEqual(result.returncode, 125)
 
 
 if __name__ == '__main__':
