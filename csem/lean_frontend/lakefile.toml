@@ -1,0 +1,398 @@
+name = "CerberusLean"
+defaultTargets = ["CerberusLean", "cerberus-lean"]
+moreLeanArgs = ["-DautoImplicit=false"]
+
+# LemLib is the Lem runtime library for Lean, from the lem-lean fork
+# (repo migrated septract -> OathTech 2026-08 [USER 2026-09-02]; the offline
+# redirect in deps/gitconfig covers both spellings, so resolution is unchanged).
+# arc-8 close: pinned to the MERGED mdd/lean-backend head (arc-8 pin dance;
+# DAEMON/DAEMON1/legacy failwith removed from LemLib in this lineage);
+# arc-10 S2: bumped to the arc/robustness lem head (Sum BEq/Ord, R1 +
+# comparison derivation backend); re-pin to the merged head at arc close.
+# effect-retirement C1: bumped to the arc/effect-retirement lem head
+# (L0 fix-first + L1 supply/reader_consumer/fuel-budget features +
+# audit response); C2: bumped to the L2 deletion head (runEffectful
+# axiom + effectful mechanism retired — LemLib declares ZERO axioms);
+# re-pin to the merged head at arc close (pin dance).
+# pin-bump 2026-09-03: bumped to the merged mdd/lean-backend head 3c88f0d
+# (the parity-fix arc: OCaml-order derived Ord, Pset/Pmap verbatim ports,
+# right-to-left draw order, lem* deep-list rewrites, division-by-zero
+# panics; lem-lean doc/lean-backend/2026-09-03_parity-fix-record.md).
+# fuel-parameter C1 2026-09-04: bumped to the merged mdd/lean-backend head
+# 742506d (the fuel-parameter + structural + fuel-measure arcs: fuel is the
+# `[LemFuel]` class instance, `lemDefaultFuel` and the numeric budget form
+# deleted, generated `_lemFuel_zero` lemmas, `fuel_consumer`/`structural`/
+# `fuel_measure` declares; lem-lean doc/lean-backend/2026-09-04_fuel-
+# parameter-record.md; this repo: docs/2026-09-04_fuel-parameter-C1-record.md).
+# … then to the merged head ecf75b4 (the D2 enablers: backend-derived
+# `t.lemSize` structural sizes, `lemSize x` fuel measures, fuel-lifted
+# `inductive R [LemFuel]` for indreln premises; lem-lean doc/lean-backend/
+# 2026-09-04_d2-enablers-record.md) — the pin at which the real tree generates.
+# fuel-parameter C3 2026-09-05: bumped to the merged head d4ba548 (the
+# tails-and-pmap-laws slice: a measured/structural definition's trailing
+# lambda binders are hoisted into the head on the Lean target — `lemTail`
+# for a `function` scrutinee — so the six point-free tails can carry a
+# `fuel_measure`; `LemLibPmapLaws`; the reserved-name capture check on
+# target_rep text; lem-lean doc/lean-backend/2026-09-05_tails-and-pmap-laws-
+# record.md; this repo: docs/2026-09-05_fuel-parameter-C3-record.md).
+# fuel-parameter C4 2026-09-05: bumped to f6542f8 (the measure-hypothesis
+# slice: `declare {lean} fuel_measure val f = `μ` assuming `H`` — the
+# obligation gains the reserved `lemHyp : H` binder immediately before
+# `lemFuel`, the wrapper stays fuel-free; the UTF-8 letter-like tokenizer
+# and the projection-on-non-parameter refusal in the measure renderer;
+# lem-lean doc/lean-backend/2026-09-05_measure-hypothesis-record.md; this
+# repo: docs/2026-09-05_fuel-parameter-C4-record.md).
+# program-data-parameters S0.5 2026-09-19: bumped to 4307dc5 (N-ary
+# `reader_seed`: with N declared readers a seed def's first N parameters
+# seed them, positionally in the global sorted reader order; the "exactly
+# one declared reader" guard deleted; lean-lib/ byte-identical to f6542f8;
+# lem-lean doc/lean-backend/2026-09-19_nary-reader-seed-record.md; this
+# repo: docs/2026-09-19_program-data-parameters-S0.5-record.md).
+# program-data-parameters S1.5 2026-09-20: bumped to 38f87d5 (fuel'd
+# TRULY-MUTUAL blocks compose with reader lifting: the a618b9c scope-cut
+# guard "'declare {lean} fuel val' in a mutual block combined with reader
+# lifting" deleted — workers, wrappers, `fuel_measure` obligations and
+# `_zero` lemmas of a lifted mutual block carry the reader binders as the
+# single-def case does; supply x mutual and seed x mutual stay refused;
+# lean-lib/ byte-identical to 4307dc5; the cerberus trees byte-identical at
+# this pin (no fuel'd mutual block is reader-lifted at the current .lem);
+# lem-lean doc/lean-backend/2026-09-20_fuel-mutual-reader-record.md; this
+# repo: docs/2026-09-20_program-data-parameters-S1.5-record.md).
+# Public-readiness M1/M4/M8, 2026-09-24: initial MUST checkpoint pin.
+# Backend refusal and local test wrapper; runtime notice comments only.
+# Evidence: docs/2026-09-24_public-readiness-remediation.md.
+# Closure F1/F3, 2026-09-24: one further pin after the Lem closure;
+# substituted-type sorry refusal and recursive-rep fixture restored.
+# Evidence: docs/2026-09-24_public-readiness-closure.md.
+# lem-lean arc/linksem re-pin, 2026-09-30 ([USER 2026-09-30] approved the
+# merge and re-pin): Lean-backend/LemLib fixes, LemLib on Lean 4.32.2;
+# generated OCaml byte-identical. Evidence: docs/2026-09-30_lem-repin-77ad4fa-record.md.
+# lem-lean re-pin to 4e70bb5, 2026-10-04 ([USER 2026-10-04] approved the merge and
+# asked for a look at lem-lean's quality-of-life improvements next): output
+# niceness (layout, comments, mutual records as structures), backend hardening A/C,
+# the BEq instance lattice; generated OCaml byte-identical.
+# Evidence: docs/2026-10-04_lem-repin-4e70bb5-record.md.
+# PNVI arc S1, 2026-10-05: PROVISIONAL pin to fc8fbef, the UNMERGED lem-lean
+# branch arc/pnvi-switches (the same-name branch pair; S0 instance-implicit
+# readers); LemLib (lean-lib/) byte-identical to 4e70bb5; generated OCaml
+# byte-identical. The orchestrator re-points it if lem's commit changes after
+# review. Evidence: docs/2026-10-05_pnvi-s1-switch-parameter-record.md.
+# Re-pointed 2026-10-05 fc8fbef -> 2d3a492 (still PROVISIONAL; lem-lean S0 review
+# fix round F1-F7: generation-time refusals, printer spacing, test gate, docs);
+# LemLib (lean-lib/) unchanged; both generated trees byte-identical. Evidence:
+# docs/2026-10-05_pnvi-s1-switch-parameter-record.md §11.
+# MERGE ORDER (pre-merge audit L2, 2026-10-06): DO NOT MERGE this branch until
+# lem-lean `2d3a492` is on `mdd/lean-backend` and `deps/lem-pinned` plus the
+# shared opam lem are moved to it (the two-repo pin dance); a re-gate in the
+# standard environment must then be green.
+[[require]]
+name = "LemLib"
+git = "https://github.com/OathTech/lem-lean"
+rev = "2d3a492758cb23dc4e417f2961983d25b36ce130"
+subDir = "lean-lib"
+
+[[lean_lib]]
+name = "CerberusLean"
+srcDir = "generated"
+
+roots = [
+  "AilSyntax", "AilSyntax_auxiliary",
+  "AilSyntaxAux", "AilSyntaxAux_auxiliary",
+  "AilTypesAux", "AilTypesAux_auxiliary",
+  "AilTyping", "AilTyping_auxiliary",
+  "AilWf", "AilWf_auxiliary",
+  "Annot", "Annot_auxiliary",
+  "Any", "Any_auxiliary",
+  "Bimap", "Bimap_auxiliary",
+  "Boot", "Boot_auxiliary",
+  "Builtins", "Builtins_auxiliary",
+  "Cabs", "Cabs_auxiliary",
+  "Cabs_to_ail", "Cabs_to_ail_aux", "Cabs_to_ail_aux_auxiliary",
+  "Cabs_to_ail_auxiliary", "Cabs_to_ail_effect", "Cabs_to_ail_effect_auxiliary",
+  "Cerb_attributes", "Cerb_attributes_auxiliary",
+  "Cmm_aux", "Cmm_aux_auxiliary",
+  "Cmm_csem", "Cmm_csem_auxiliary",
+  "Cmm_op", "Cmm_op_auxiliary",
+  "Cn", "Cn_auxiliary",
+  "Cn_desugaring", "Cn_desugaring_auxiliary",
+  "Constraint", "Constraint_auxiliary",
+  "Core", "Core_aux", "Core_aux_auxiliary", "Core_auxiliary",
+  "Core_eval", "Core_eval_auxiliary",
+  "Core_indet", "Core_indet_auxiliary",
+  "Core_linking", "Core_linking_auxiliary",
+  "Core_reduction", "Core_reduction_aux", "Core_reduction_aux_auxiliary", "Core_reduction_auxiliary",
+  "Core_rewrite", "Core_rewrite_auxiliary",
+  "Core_run", "Core_run_aux", "Core_run_aux_auxiliary", "Core_run_auxiliary",
+  "Core_sequentialise", "Core_sequentialise_auxiliary",
+  "Core_typing", "Core_typing_aux", "Core_typing_aux_auxiliary", "Core_typing_auxiliary",
+  "Core_typing_effect", "Core_typing_effect_auxiliary",
+  "Ctype", "Ctype_aux", "Ctype_aux_auxiliary", "Ctype_auxiliary",
+  "Debug", "Debug_auxiliary",
+  "Decode", "Decode_auxiliary",
+  "Defacto_memory", "Defacto_memory_aux", "Defacto_memory_aux_auxiliary", "Defacto_memory_auxiliary",
+  "Defacto_memory_types", "Defacto_memory_types_auxiliary",
+  "Desugaring_init", "Desugaring_init_auxiliary",
+  "Dlist", "Dlist_auxiliary",
+  "Driver", "Driver_auxiliary",
+  "Enum", "Enum_auxiliary",
+  "ErrorMonad", "ErrorMonad_auxiliary",
+  "Errors", "Errors_auxiliary",
+  "Exception", "Exception_auxiliary",
+  "Exception_undefined", "Exception_undefined_auxiliary",
+  "Float", "Float_auxiliary",
+  "Formatted", "Formatted_auxiliary",
+  "Fs", "Fs_auxiliary",
+  "GenTypes", "GenTypes_auxiliary",
+  "GenTypesAux", "GenTypesAux_auxiliary",
+  "GenTyping", "GenTyping_auxiliary",
+  "Global", "Global_auxiliary",
+  "Implementation", "Implementation_auxiliary",
+  "Lean_switches", "Lean_switches_auxiliary",
+  "IntegerImpl", "IntegerImpl_auxiliary",
+  "IntegerType", "IntegerType_auxiliary",
+  "Linux", "Linux_auxiliary",
+  "Loc", "Loc_auxiliary",
+  "Mem", "Mem_aux", "Mem_aux_auxiliary", "Mem_auxiliary",
+  "Mem_common", "Mem_common_auxiliary",
+  "Mini_pipeline", "Mini_pipeline_auxiliary",
+  "Monadic_parsing", "Monadic_parsing_auxiliary",
+  "Multiset", "Multiset_auxiliary",
+  "Nondeterminism", "Nondeterminism_auxiliary",
+  "Pp", "Pp_auxiliary",
+  "Product", "Product_auxiliary",
+  "Range", "Range_auxiliary",
+  "Scope_table", "Scope_table_auxiliary",
+  "State", "State_auxiliary",
+  "State_exception", "State_exception_auxiliary",
+  "State_exception_undefined", "State_exception_undefined_auxiliary",
+  "Lem_Std", "Lem_Std_auxiliary",
+  "Symbol", "Symbol_auxiliary",
+  "Trace_event", "Trace_event_auxiliary",
+  "Translation", "Translation_aux", "Translation_aux_auxiliary", "Translation_auxiliary",
+  "Translation_effect", "Translation_effect_auxiliary",
+  "TypingError", "TypingError_auxiliary",
+  "Undefined", "Undefined_auxiliary",
+  "Utils", "Utils_auxiliary",
+  "CerberusImpl",
+  "CerbLocation",
+  "CerberusFresh",
+  "CerbGlobal",
+  "CerbFloat",
+  "CerbUtils",
+  "CerbPP",
+  "CerbMem",
+  "CerbMemAllocatorProofs",
+  "CerbMemDefaultFacts",
+  "CerbMemAccessFacts",
+  "CerbFS",
+  "CerbFuel",
+  "CerbFail",
+  "CerbFailProofs",
+  "CerbNDFuelProofs", "CerbEscape",
+  "CerbConcurrency",
+  "CerbCtypeInstances",
+  "CerbStepInstances",
+  "CerbFunMapInstances",
+  "CerbCabsInstances",
+  "CerbTags",
+  "CerbTagsWf",
+  "CerbCoreShape",
+  "CerbCoreMeasure",
+  "CerbCtypeMeasure",
+  "CerbParserProgress",
+  "CerbDebug",
+  "CerbDecode",
+  "CabsImport",
+  "CoreParser",
+  "CerbND",
+  "CerbCall",
+  # fuel_measure obligation proofs (fuel-parameter arc C1 / D2 enablers): the
+  # hand-written <Module>_lemMeasureProofs modules the generated
+  # <Module>_auxiliary.lean obligation shells import (build fails without them)
+  "Ctype_lemMeasureProofs",
+  "Ctype_aux_lemMeasureProofs",
+  "Core_lemMeasureProofs",
+  "Defacto_memory_aux_lemMeasureProofs",
+  "Utils_lemMeasureProofs",
+  "CerbMeasureLemmas",
+  "CerbMem_lemMeasureProofs",
+  "Core_run_aux_lemMeasureProofs",
+  "Core_reduction_lemMeasureProofs",
+  "Defacto_memory_lemMeasureProofs",
+  "Core_aux_lemMeasureProofs",
+  "Core_eval_lemMeasureProofs",
+  "AilTypesAux_lemMeasureProofs",
+  "Translation_lemMeasureProofs",
+  "Formatted_lemMeasureProofs",
+  "Driver_lemMeasureProofs",
+  "Monadic_parsing_lemMeasureProofs",
+]
+
+[[lean_exe]]
+name = "cerberus-lean"
+root = "Main"
+moreLinkArgs = ["native/md5.o"]
+
+# Test library: tests live under lean_frontend/test/ and import from
+# the main CerberusLean lib. Each test exe has root "Unit.<Name>Test".
+[[lean_lib]]
+name = "CerberusLeanTest"
+srcDir = "test"
+globs = ["Unit.+"]
+
+[[lean_exe]]
+name = "core-parser-test"
+srcDir = "test"
+root = "Unit.CoreParserTest"
+moreLinkArgs = ["native/md5.o"]
+
+[[lean_exe]]
+name = "effects-proof-test"
+srcDir = "test"
+root = "Unit.EffectsProofTest"
+moreLinkArgs = ["native/md5.o"]
+
+[[lean_exe]]
+name = "totality-proof-test"
+srcDir = "test"
+root = "Unit.TotalityProofTest"
+moreLinkArgs = ["native/md5.o"]
+
+[[lean_exe]]
+name = "fresh-int-test"
+srcDir = "test"
+root = "Unit.FreshIntTest"
+moreLinkArgs = ["native/md5.o"]
+
+# arc-10 S3: pretty-printer mirrors vs recorded oracle outputs (OCaml
+# string_of_float / %.*f transcript + Pp_core_ctype / pp_value shapes).
+[[lean_exe]]
+name = "pp-test"
+srcDir = "test"
+root = "Unit.PPTest"
+moreLinkArgs = ["native/md5.o"]
+
+# FUEL arc (2026-09-03): the consumer-shaped exemplar theorem over the
+# shipped fuel-parametric pipeline (CerbND.drive_lemFuel), kernel-checked
+# at compile time; main reports success. Design:
+# docs/2026-09-02_fuel-arc-design.md §1.4/§6.
+[[lean_exe]]
+name = "fuel-exemplar-test"
+srcDir = "test"
+root = "Unit.FuelExemplar"
+moreLinkArgs = ["native/md5.o"]
+
+# FUEL arc C2 (2026-09-04): the (A)/(B)/(C) classifier of every fuel'd worker
+# (test/Unit/FuelFormsTool.lean) — a RUNTIME instrument over the compiled
+# environment (importModules), driven by scripts/check_fuel_forms.sh, which is
+# the policy + plants (test_unit.sh runs it). Not a compile-time proof exe.
+[[lean_exe]]
+name = "fuel-forms-tool"
+srcDir = "test"
+root = "Unit.FuelFormsTool"
+supportInterpreter = true
+
+# C-TF1: kernel propagation contracts and concrete memory-arm witnesses.
+[[lean_exe]]
+name = "monadic-failstop-test"
+srcDir = "test"
+root = "Unit.MonadicFailstop"
+moreLinkArgs = ["native/md5.o"]
+
+# allocator soundness (upstream-tray draft 44, remedy 1 landed 2026-09-16): the
+# four draft-44 states evaluated on the ACTUAL CerbMem.allocator — a RUNTIME
+# witness (exit code); imports CerbMemAllocatorProofs so the GENERAL kernel
+# theorem allocator_active_sound is compiled on every test_unit.sh run.
+[[lean_exe]]
+name = "allocator-soundness-test"
+srcDir = "test"
+root = "Unit.AllocatorSoundnessTest"
+moreLinkArgs = ["native/md5.o"]
+
+
+# semantics-audit repairs D1 (2026-09-11): CerbFloat.of_string bit-pattern pins
+[[lean_exe]]
+name = "float-literal-test"
+srcDir = "test"
+root = "Unit.FloatLiteralTest"
+
+# semantics-audit repairs D3 (2026-09-11): Ctype_aux.are_compatible array-bound arm pins (finding 5)
+[[lean_exe]]
+name = "are-compatible-test"
+srcDir = "test"
+root = "Unit.AreCompatibleTest"
+
+# parser-progress-measure D4.2 (2026-09-15): the many/many1 restatement's equivalence theorems
+[[lean_exe]]
+name = "many-restatement-test"
+srcDir = "test"
+root = "Unit.ManyRestatementTest"
+
+# seam-hygiene H1 (2026-09-18): the hand-written seams' failure leaves are LemLib's opaque
+# `failwithI` — `#guard_msgs` on the orchestrator's two FAILING `rfl` probes (a transparent
+# leaf would make them succeed and the build RED), `failwithI` opaque in the environment,
+# default arms still reduce; H2: `CerbGlobal.has_switch … = false` by rfl for the ported arms
+[[lean_exe]]
+name = "opaque-failure-test"
+srcDir = "test"
+root = "Unit.OpaqueFailureTest"
+moreLinkArgs = ["native/md5.o"]
+
+# PNVI arc S2 (2026-10-07): the default-mode compatibility wrappers `CerbMem.reconstructValue(_lemFuel)`
+# equal the pre-S2 text (a verbatim legacy copy, kernel equality); the mem-scale C1 index-slicing
+# reference form and its equalities, retired here from CerbMem.lean (design record §B.7)
+[[lean_exe]]
+name = "reconstruct-legacy-test"
+srcDir = "test"
+root = "Unit.ReconstructLegacyTest"
+moreLinkArgs = ["native/md5.o"]
+
+# PNVI arc S3 (2026-10-07, docs/2026-10-07_pnvi-s3-arms-record.md): the PNVI-ae-udi
+# arms' runtime witnesses under <[.PNVI .AE_UDI]> with default-instance controls, and
+# the compile-time refusal pins (R-PNVI-nn). Takes the caller-selected fuel.
+[[lean_exe]]
+name = "pnvi-arms-test"
+srcDir = "test"
+root = "Unit.PnviArmsTest"
+moreLinkArgs = ["native/md5.o"]
+
+# program-data parameters E-A (2026-09-20): the enum's compatible type is program data — the
+# design note §4 kernel pins (normalise/sizeof/alignof at a registered enum by rfl given the map,
+# GCC's rule in lem, register_enum = true) + #guard_msgs that the retired registry names are gone
+[[lean_exe]]
+name = "enum-data-test"
+srcDir = "test"
+root = "Unit.EnumDataTest"
+
+# D-S: explicit run digest, consumer acceptance equations and entry/fixture pins.
+[[lean_exe]]
+name = "run-digest-test"
+srcDir = "test"
+root = "Unit.RunDigestTest"
+moreLinkArgs = ["native/md5.o"]
+
+# Cabs JSON position import (2026-10-16, cerberus-caesium filing 2): the position
+# object carries the lexing (preprocessed-file) position beside the source one —
+# all five fields imported fail-closed, printers/library-location input unchanged,
+# equality over all five (the OCaml structural-equality mirror), the committed
+# fixture current.
+[[lean_exe]]
+name = "cabs-import-test"
+srcDir = "test"
+root = "Unit.CabsImportTest"
+
+# match-pattern-arity (2026-09-20, cerberus-sl hidden-state note item 7): match_pattern
+# and typecheck_pattern fail CLOSED on a tuple-arity mismatch — T1–T3 the consumer's
+# acceptance facts by rfl (none on mismatch, select_case continues, bindings + order
+# kept), T4 the negative control, T5 the typechecker's guard (runtime: partial def)
+[[lean_exe]]
+name = "match-pattern-arity-test"
+srcDir = "test"
+root = "Unit.MatchPatternArityTest"
+moreLinkArgs = ["native/md5.o"]
+
+# SC WP0: passive primitive diagnostic; fuel selected by the caller.
+[[lean_exe]]
+name = "memory-access-test"
+srcDir = "test"
+root = "Unit.MemoryAccess"

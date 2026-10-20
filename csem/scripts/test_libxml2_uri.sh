@@ -1,0 +1,257 @@
+#!/bin/bash
+# test_libxml2_uri.sh — arc-6 S4 GATE (charter success condition 1;
+# formerly the arc-5 S3 stretch harness / arc-6 S1 reporting baseline).
+#
+# The arc-5 libxml2 probe's execution datapoint — xmlParseURISafe run as a
+# 4-TU program through both implementations (the probe note itself is in no
+# commit; this lane is its committed successor) — extended to a
+# 16-URI corpus (tests/libxml2/uri_harness.c: valid / invalid / edge cases;
+# arc-6 S4 grew it 10 → 16 with RFC 3986 edge classes — IPv6 literal,
+# empty components, scheme-only, lone fragment, pct-encoded reserved chars,
+# empty authority) and run against FOUR lanes, each recorded in the
+# committed baseline (tests/libxml2/uri_baseline.txt):
+#
+#   ORACLE_LIBC   : OCaml cerberus WITH its C libc (the probe's invocation;
+#                   no --nolibc). Executes the full corpus — the hard
+#                   ceiling. Single-trace default --mode=random.
+#   OCAML_NOLIBC  : OCaml cerberus --nolibc. Fails at exec: uri.c's closure
+#                   needs memset (via the libc .core), which --nolibc
+#                   excludes.
+#   LEAN_NOLIBC   : cerberus-lean --batch --first over the 5 cabs-jsons,
+#                   no C library (only the core stdlib). Mirrors
+#                   OCAML_NOLIBC: identical Symbol(118, SD_Id("memset"))
+#                   unknown-procedure failure — kept as the recorded
+#                   mirrored-failure pair documenting that the --nolibc
+#                   surfaces still agree. (--first returns
+#                   branch-index-0's trace; see CerbND.runND1.)
+#   LEAN_LIBC     : arc-6 S1 — cerberus-lean --batch --first with the C
+#                   library loaded (--libc <pinned tests/libc/libc.core>
+#                   + the 12 metadata TU cabs-jsons from
+#                   libc_prep.sh --jsons; see Main.loadLibc for the
+#                   bodies/metadata split and citations). Differential
+#                   against ORACLE_LIBC: byte-for-byte agreement on the
+#                   full N-URI corpus is the arc-6 exit criterion.
+#
+# GATING (arc-6 S4, charter success condition 1) — fail-closed, exit 1 on
+# ANY of:
+#   * lane-expectation violation (each lane's expectation is PINNED in
+#     this script, independent of the baseline file):
+#       ORACLE_LIBC   exit 0, Defined/Specified verdict, corpus-size pin
+#                     ("uri_harness n=16 h=" in its stdout)
+#       OCAML_NOLIBC  exit 1, unknown-procedure memset failure
+#       LEAN_NOLIBC   exit 1, unknown-procedure memset failure (the
+#                     mirrored-failure pair: both --nolibc surfaces must
+#                     KEEP agreeing that memset is the missing symbol)
+#       LEAN_LIBC     exit 0 AND verdict line byte-identical to
+#                     ORACLE_LIBC (the 16/16 differential bar)
+#   * drift from the committed baseline in EITHER direction (a regression
+#     or an unrecorded improvement both demand a baseline update with
+#     justification).
+#   The lane expectations are enforced in --record-baseline mode too — a
+#   re-record cannot launder a broken lane.
+#
+# Usage: ./scripts/test_libxml2_uri.sh [--record-baseline]
+# Environment: TIMEOUT_SECS (default 300), LIBXML2_DIR (see libxml2_prep.sh)
+set -uo pipefail
+source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
+
+TIMEOUT_SECS="${TIMEOUT_SECS:-300}"
+# Per-test memory cap: `scripts/capped` at CERB_TEST_MEM_MAX (default 4G,
+# cgroup RSS; common.sh CAPPED_TEST) — mem-scale S2 (2026-09-02, Q2 [USER
+# 2026-09-02]) replacing the arc-5 `ulimit -v 4000000`; exit 137 = killed
+# (rc_label below), a lane FAIL.
+N_URIS=16   # corpus-size pin: must match NTESTS in tests/libxml2/uri_harness.c
+
+RECORD_BASELINE=false
+[[ "${1:-}" == "--record-baseline" ]] && RECORD_BASELINE=true
+
+command -v timeout &>/dev/null || { echo "Error: 'timeout' not found" >&2; exit 1; }
+
+BASELINE="$PROJECT_ROOT/tests/libxml2/uri_baseline.txt"
+HARNESS="$PROJECT_ROOT/tests/libxml2/uri_harness.c"
+
+fail() { echo "FAIL: $*" >&2; exit 1; }
+
+build_cerberus
+build_lean
+
+RUNTIME_DIR="$PROJECT_ROOT/_build/install/default"
+[[ -d "$RUNTIME_DIR" ]] || fail "runtime dir not found: $RUNTIME_DIR"
+[[ -f "$HARNESS" ]] || fail "harness not found: $HARNESS"
+$RECORD_BASELINE || [[ -f "$BASELINE" ]] || fail "baseline not found: $BASELINE"
+
+mkdir -p "$OBSERVATION_RUN_DIR" || fail "cannot create raw evidence directory"
+OUTPUT_DIR=$(mktemp -d "$OBSERVATION_RUN_DIR/libxml2-uri.XXXXXXXXXX") || fail "mktemp failed"
+cd "$PROJECT_ROOT" || fail "cannot cd to $PROJECT_ROOT"
+
+echo ""
+echo "libxml2 uri 5-TU harness (arc-6 S4 GATE, $N_URIS-URI corpus)"
+echo "=================================================="
+
+# NOTE: not `mapfile -t X < <(cmd) || fail` — mapfile succeeds even when
+# the process-substituted cmd fails, so that guard is dead (arc-6 S5f
+# audit fix; S2-arc-5 pattern: capture rc explicitly, then split).
+prep_out=$("$PROJECT_ROOT/scripts/libxml2_prep.sh" uri.c) \
+    || fail "libxml2_prep.sh failed"
+[[ -n "$prep_out" ]] || fail "libxml2_prep.sh emitted no args"
+mapfile -t PREP <<< "$prep_out"
+URI_TU="${PREP[${#PREP[@]}-1]}"
+FLAGS=("${PREP[@]:0:${#PREP[@]}-1}")
+LIBXML2_ROOT="$(dirname "$URI_TU")"
+TUS=("$HARNESS" "$URI_TU" "$LIBXML2_ROOT/xmlstring.c" "$LIBXML2_ROOT/xmlmemory.c" "$LIBXML2_ROOT/globals.c")
+for t in "${TUS[@]}"; do [[ -f "$t" ]] || fail "missing TU: $t"; done
+echo "[prep] pins verified; 5 TUs"
+
+run_capped() { # <out> <err> <cmd...>
+    local out="$1" err="$2"; shift 2
+    local rc=0
+    ( "${CAPPED_TEST[@]}" timeout "${TIMEOUT_SECS}s" /usr/bin/time -v "$@" \
+        > "$out" 2> "$err" ) || rc=$?
+    printf '%s\n' "$rc" > "$out.status"
+    # The caller attributes timeout/crash/cap status before verdict decoding.
+    # Raw streams remain intact; no abnormal completion reaches comparison.
+    [[ $rc -lt 124 ]] || return "$rc"
+    # Preserve the complete observation before any lane-specific projection.
+    python3 "$OBSERVATION_CODEC" tokens --stdout "$out" --stderr "$err" \
+        --status "$rc" > "$out.tokens" || fail "incomplete batch observation: $out (exit $rc)"
+    return $rc
+}
+
+# Honest rc>=124 labeling (2026-08-22 hotfix, diagnosis §6.3): cerberus
+# uses exit 125 for INTERNAL ERRORS (uncaught exception, e.g. the
+# startup Failure("file libc.co not found")), which collides with the
+# `timeout`-tool convention (124 = timed out, 125 = timeout itself
+# failed) the old blanket "timeout/crash" label assumed. Distinguish so
+# a startup failwith is never reported as a timeout.
+rc_label() { # <rc>
+    case "$1" in
+        124) echo "timeout after ${TIMEOUT_SECS}s (exit 124)" ;;
+        125) echo "internal error (exit 125 — cerberus's uncaught-exception exit, NOT a timeout; check the lane's stderr)" ;;
+        137) echo "killed by SIGKILL (exit 137 — the per-test cgroup memory cap CERB_TEST_MEM_MAX=$TEST_MEM_MAX if the lane's stderr carries capped's OOM-KILLED witness banner, otherwise an external SIGKILL)" ;;
+        *)   echo "crash (exit $1)" ;;
+    esac
+}
+
+: > "$OUTPUT_DIR/baseline.new"
+record() { echo "$1: $2" >> "$OUTPUT_DIR/baseline.new"; }
+
+# --- ORACLE_LIBC ------------------------------------------------------------
+# arc-13: plain invocation. The arc-12 grandfather mode this lane carried
+# (uri.c was beyond the F-D margin, 252 live collisions) is DISSOLVED —
+# under the single-supply renumbering (D1, scheme R-B) the oracle
+# elaborates uri.c collision-free and byte-identical to un-forked
+# upstream; the G3 register entry's mover executed.
+rc=0
+run_capped "$OUTPUT_DIR/oracle.out" "$OUTPUT_DIR/oracle.err" \
+    "$CERBERUS_BIN" --runtime="$RUNTIME_DIR" --exec --batch \
+    "${FLAGS[@]}" "${TUS[@]}" || rc=$?
+[[ $rc -lt 124 ]] || fail "ORACLE_LIBC $(rc_label $rc): $(tail -2 "$OUTPUT_DIR/oracle.err" | tr '\n' ' ')"
+record "ORACLE_LIBC exit" "$rc"
+record "ORACLE_LIBC" "$(cat "$OUTPUT_DIR/oracle.out")"
+echo "[oracle+libc] exit=$rc wall=$(grep -oE 'Elapsed.*' "$OUTPUT_DIR/oracle.err" | awk '{print $NF}') maxRSS=$(grep 'Maximum resident' "$OUTPUT_DIR/oracle.err" | awk '{print $NF}')kB"
+# Lane expectation (pinned): successful Defined/Specified run over the full
+# pinned corpus size.
+oracle_line=$(cat "$OUTPUT_DIR/oracle.out")
+[[ $rc -eq 0 ]] || fail "GATE: ORACLE_LIBC expected exit 0, got $rc"
+[[ "$oracle_line" == 'Defined {value: "Specified('* ]] \
+    || fail "GATE: ORACLE_LIBC verdict is not Defined/Specified: ${oracle_line:0:120}"
+[[ "$oracle_line" == *"uri_harness n=$N_URIS h="* ]] \
+    || fail "GATE: ORACLE_LIBC corpus-size pin violated (expected uri_harness n=$N_URIS in stdout)"
+
+# --- OCAML_NOLIBC -----------------------------------------------------------
+# arc-13: plain invocation (grandfather dissolved, as above). The
+# mirrored-failure PAIR (this lane + LEAN_NOLIBC both pinning
+# unknown-procedure memset) remains the lane's validation.
+rc=0
+run_capped "$OUTPUT_DIR/nolibc.out" "$OUTPUT_DIR/nolibc.err" \
+    "$CERBERUS_BIN" --runtime="$RUNTIME_DIR" --nolibc --exec --batch \
+    "${FLAGS[@]}" "${TUS[@]}" || rc=$?
+[[ $rc -lt 124 ]] || fail "OCAML_NOLIBC $(rc_label $rc): $(tail -2 "$OUTPUT_DIR/nolibc.err" | tr '\n' ' ')"
+record "OCAML_NOLIBC exit" "$rc"
+record "OCAML_NOLIBC" "$(cat "$OUTPUT_DIR/nolibc.out")"
+echo "[ocaml-nolibc] exit=$rc: $(head -c 100 "$OUTPUT_DIR/nolibc.out")"
+# Lane expectation (pinned): the recorded --nolibc failure mode — memset is
+# the closure's missing symbol.
+ocaml_nolibc_line=$(cat "$OUTPUT_DIR/nolibc.out")
+[[ $rc -eq 1 ]] || fail "GATE: OCAML_NOLIBC expected exit 1, got $rc"
+[[ "$ocaml_nolibc_line" == *'unknown procedure'* && "$ocaml_nolibc_line" == *'memset'* ]] \
+    || fail "GATE: OCAML_NOLIBC expected unknown-procedure memset failure, got: ${ocaml_nolibc_line:0:120}"
+
+# --- LEAN_NOLIBC ------------------------------------------------------------
+declare -a JSONS=()
+for t in "${TUS[@]}"; do
+    j="$OUTPUT_DIR/$(basename "$t" .c).json"
+    rc=0
+    ( "${CAPPED_TEST[@]}" timeout "${TIMEOUT_SECS}s" \
+        "$CERBERUS_BIN" --runtime="$RUNTIME_DIR" --cabs-json "${FLAGS[@]}" "$t" \
+        > "$j" 2> "$OUTPUT_DIR/json.err" ) || rc=$?
+    [[ $rc -eq 0 && -s "$j" ]] || fail "cabs-json failed for $(basename "$t") (exit $rc)"
+    JSONS+=("$j")
+done
+rc=0
+run_capped "$OUTPUT_DIR/lean.out" "$OUTPUT_DIR/lean.err" \
+    env LEAN_ABORT_ON_PANIC=1 "$CERBERUS_LEAN_BIN" --batch --first "${JSONS[@]}" || rc=$?
+[[ $rc -lt 124 ]] || fail "LEAN_NOLIBC $(rc_label $rc): $(tail -2 "$OUTPUT_DIR/lean.err" | tr '\n' ' ')"
+record "LEAN_NOLIBC exit" "$rc"
+record "LEAN_NOLIBC" "$(cat "$OUTPUT_DIR/lean.out")"
+echo "[lean-nolibc] exit=$rc wall=$(grep -oE 'Elapsed.*' "$OUTPUT_DIR/lean.err" | awk '{print $NF}') maxRSS=$(grep 'Maximum resident' "$OUTPUT_DIR/lean.err" | awk '{print $NF}')kB: $(head -c 100 "$OUTPUT_DIR/lean.out")"
+# Lane expectation (pinned): the MIRRORED-FAILURE PAIR — the Lean --nolibc
+# surface must keep agreeing with OCAML_NOLIBC that memset is the missing
+# symbol.
+lean_nolibc_line=$(cat "$OUTPUT_DIR/lean.out")
+[[ $rc -eq 1 ]] || fail "GATE: LEAN_NOLIBC expected exit 1, got $rc"
+[[ "$lean_nolibc_line" == *'unknown procedure'* && "$lean_nolibc_line" == *'memset'* ]] \
+    || fail "GATE: LEAN_NOLIBC expected unknown-procedure memset failure (mirroring OCAML_NOLIBC), got: ${lean_nolibc_line:0:120}"
+
+# --- LEAN_LIBC (arc-6 S1) ---------------------------------------------------
+# The pinned libc dump (drift-checked by libc_prep.sh) + the 12 metadata
+# TU cabs-jsons, linked BEFORE the user TUs (Main.loadLibc / runPipeline;
+# mirrors main.ml:150-156 core_libraries-first order).
+# (rc captured explicitly — see the prep_out note above; a dead
+# `mapfile < <(cmd) || fail` guard never sees cmd's failure)
+libc_jsons_out=$("$PROJECT_ROOT/scripts/libc_prep.sh" --jsons "$OUTPUT_DIR/libcjson") \
+    || fail "libc_prep.sh --jsons failed (pin drift or oracle missing)"
+[[ -n "$libc_jsons_out" ]] || fail "libc_prep.sh --jsons emitted no paths"
+mapfile -t LIBC_JSONS <<< "$libc_jsons_out"
+[[ ${#LIBC_JSONS[@]} -eq 12 ]] || fail "expected 12 libc metadata jsons, got ${#LIBC_JSONS[@]}"
+LIBC_ARGS=(--libc "$PROJECT_ROOT/tests/libc/libc.core")
+for j in "${LIBC_JSONS[@]}"; do LIBC_ARGS+=(--libc-tu "$j"); done
+rc=0
+run_capped "$OUTPUT_DIR/lean_libc.out" "$OUTPUT_DIR/lean_libc.err" \
+    env LEAN_ABORT_ON_PANIC=1 "$CERBERUS_LEAN_BIN" --batch --first "${LIBC_ARGS[@]}" "${JSONS[@]}" || rc=$?
+[[ $rc -lt 124 ]] || fail "LEAN_LIBC $(rc_label $rc): $(tail -2 "$OUTPUT_DIR/lean_libc.err" | tr '\n' ' ')"
+record "LEAN_LIBC exit" "$rc"
+record "LEAN_LIBC" "$(cat "$OUTPUT_DIR/lean_libc.out")"
+echo "[lean+libc] exit=$rc wall=$(grep -oE 'Elapsed.*' "$OUTPUT_DIR/lean_libc.err" | awk '{print $NF}') maxRSS=$(grep 'Maximum resident' "$OUTPUT_DIR/lean_libc.err" | awk '{print $NF}')kB: $(head -c 100 "$OUTPUT_DIR/lean_libc.out")"
+# Lane expectation (pinned): THE GATE — byte-identical verdict line vs
+# ORACLE_LIBC over the full corpus (charter success condition 1).
+lean_libc_line=$(cat "$OUTPUT_DIR/lean_libc.out")
+[[ $rc -eq 0 ]] || fail "GATE: LEAN_LIBC expected exit 0, got $rc"
+if [[ "$lean_libc_line" == "$oracle_line" ]]; then
+    echo "[lean+libc] EXACT MATCH with ORACLE_LIBC ($N_URIS/$N_URIS URI corpus)"
+else
+    echo "[lean+libc] MISMATCH with ORACLE_LIBC:" >&2
+    echo "  oracle: ${oracle_line:0:200}" >&2
+    echo "  lean:   ${lean_libc_line:0:200}" >&2
+    fail "GATE: LEAN_LIBC differential mismatch vs ORACLE_LIBC"
+fi
+
+# --- compare against the committed baseline (gate leg 2: drift) -------------
+# All pinned lane expectations passed above (they run in --record-baseline
+# mode too — a re-record cannot launder a broken lane).
+echo ""
+if $RECORD_BASELINE; then
+    mv "$OUTPUT_DIR/baseline.new" "$BASELINE"
+    echo "BASELINE RECORDED: $BASELINE"
+    cat "$BASELINE"
+    exit 0
+fi
+if diff -u "$BASELINE" "$OUTPUT_DIR/baseline.new" > "$OUTPUT_DIR/baseline.diff"; then
+    echo "=================================================="
+    echo "GATE PASS: all lane expectations pinned-green + baseline unchanged ($N_URIS/$N_URIS)"
+    exit 0
+else
+    echo "GATE FAIL: drift from committed baseline (regression OR unrecorded improvement):"
+    cat "$OUTPUT_DIR/baseline.diff"
+    exit 1
+fi

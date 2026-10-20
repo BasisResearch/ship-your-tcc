@@ -1,0 +1,102 @@
+import CerbFailProofs
+
+/- Executable witnesses, not kernel evaluation. The fuel is supplied by
+   test_unit.sh. Kernel propagation contracts live in CerbFailProofs. -/
+namespace MonadicFailstop
+open CerbMem CerbFail
+set_option autoImplicit true
+
+def stops (m : CerbMem.memM a) (s : MemState) (msg : String) : Bool :=
+  match step m s with
+  | (NDkilled (Error0 loc text), _) => loc == modelFailStopLoc && text == msg
+  | _ => false
+
+def active (m : CerbMem.memM a) (s : MemState) : Bool :=
+  match step m s with | (NDactive _, _) => true | _ => false
+
+/-- The address-space top of the witnesses' base state — a TEST-CHOSEN value (address-space-
+    bound slice, 2026-09-17); the fail-stops under test never read the cursor. -/
+def testAddressSpaceTop : Int := 0x10000
+
+def checks (fuel : Nat) : List (String × Bool) := Id.run do
+  letI := LemFuel.mk fuel
+  -- the default switch set (PNVI arc S1): the witnesses run the default-mode arms
+  letI : CerbGlobal.Switches := ⟨CerbGlobal.defaultSwitches⟩
+  let st0 := initialMemState testAddressSpaceTop
+  let tags : CerbTags.TagDefsMap := default
+  let loc := CerbLocation.unknown
+  let iv := IntegerValue.IV .Prov_none
+  let ptr := PointerValue.PV (.Prov_some 7) (.PVconcrete none 100)
+  let alloc : Allocation := { base := 100, size := 1 }
+  let st : MemState := { st0 with
+    allocations := st0.allocations.insert 7 alloc
+    lastUsed := some 99 }
+  let dead := { st with deadAllocations := [7], dynamicAddrs := [100] }
+  let va := { st with varargs := [(4, (1, []))] }
+  let memcmpStop := memcmpM fmapEmpty tags ptr ptr (iv 1)
+  let cmpMsg := "Concrete.memcmp: non-integer byte (impl_mem.ml:2658-2659 assert false)"
+  let liveByte := writeBytesTo st 100 [{ prov := .Prov_none, copyOffset := none, value := some 42 }]
+  let boolTy := Ctype [] (.Basic (.Integer .Bool0))
+  let boolState (byte : Option UInt8) := writeBytesTo st 100
+    [{ prov := .Prov_none, copyOffset := none, value := byte }]
+  let boolLoad := loadM fmapEmpty tags loc boolTy ptr
+  let traps (s : MemState) := match step boolLoad s with
+    | (NDkilled reason, s') => reason == failReason (MerrTrapRepresentation LoadAccess) loc &&
+        s'.lastUsed == some 7
+    | _ => false
+  return [
+    ("Bool trap retains completed read state", traps (boolState (some 2))),
+    ("unspecified Bool trap retains completed read state", traps (boolState none)),
+    ("valid Bool zero", match step boolLoad (boolState (some 0)) with
+      | (NDactive (_, .MVinteger _ (.IV _ n)), s') => n == 0 && s'.lastUsed == some 7
+      | _ => false),
+    ("valid Bool one", match step boolLoad (boolState (some 1)) with
+      | (NDactive (_, .MVinteger _ (.IV _ n)), s') => n == 1 && s'.lastUsed == some 7
+      | _ => false),
+    ("rejected Bool pointer has no completed read", match step
+        (loadM fmapEmpty tags loc boolTy (.PV .Prov_none (.PVnull boolTy))) st with
+      | (NDkilled _, s') => s'.lastUsed == some 99
+      | _ => false),
+    ("allocator zero alignment remains a refusal", stops (allocator 0 0) st
+      "CerbMem.allocator: alignment 0 has no meaning in the model (impl_mem.ml:1258 quomod raises Division_by_zero — mirrored as a fail-stop; docs/2026-10-03_total-arith-and-bookkeeping-record.md)"),
+    ("allocator ordinary alignment", active (allocator 1 1) st),
+    ("requested address", stops (allocateObject fmapEmpty tags 0 (PrefOther "test") (iv 1) unsigned_char (some 100) none) st
+      "TODO: cerb::with_address() is yet implemented"),
+    ("ordinary allocation", active (allocateObject fmapEmpty tags 0 (PrefOther "test") (iv 1) unsigned_char none none) st),
+    ("dead static allocation", stops (killM loc false ptr) dead "Concrete: FREE was called on a dead allocation"),
+    ("live static allocation", active (killM loc false ptr) st),
+    ("dead dynamic allocation remains UB", match step (killM loc true ptr) dead with
+      | (NDkilled (Undef0 _ _), _) => true | _ => false),
+    ("function pointer shift", stops (effArrayShiftPtrval fmapEmpty tags loc (.PV .Prov_none (.PVfunction default)) unsigned_char (iv 1)) st
+      "Concrete.eff_array_shift_ptrval, PVfunction"),
+    ("ordinary pointer shift", active (effArrayShiftPtrval fmapEmpty tags loc ptr unsigned_char (iv 1)) st),
+    ("unspecified memcmp byte", stops memcmpStop st cmpMsg),
+    ("memcmp retains load's updated state", (step memcmpStop st).2.lastUsed == some 7),
+    ("specified memcmp byte", match step (memcmpM fmapEmpty tags ptr ptr (iv 1)) liveByte with
+      | (NDactive (.IV _ value), _) => value == 0 | _ => false),
+    ("noninitial va_list", stops (vaList 4) va "va_list: assert (n = 0) failed (impl_mem.ml:2760)"),
+    ("initial va_list", active (vaList 4) { va with varargs := [(4, (0, []))] }),
+    ("CHERI intrinsic", stops (callIntrinsic loc "test" []) st
+      "assert false (* CHERI only *): Concrete.call_intrinsic (impl_mem.ml:2190-2191)"),
+    ("ordinary model errors remain Other", match step (memFail (MerrOther cmpMsg) : CerbMem.memM Unit) st with
+      | (NDkilled (Other _), _) => true | _ => false),
+    ("continuation cannot revive failure or overwrite its state",
+      stops (nd_bind memcmpStop (fun _ => memReturn ())) st cmpMsg &&
+        (step (nd_bind memcmpStop (fun _ => ND fun _ => (NDactive (), st0))) st).2.lastUsed == some 7),
+    ("UTF-8 and control bytes are escaped", batchRecord "a\n\"\\—" ==
+      "ModelFailure {msg: \"a\\n\\\"\\\\\\226\\128\\148\"}")]
+
+end MonadicFailstop
+
+def main (args : List String) : IO UInt32 := do
+  if args.isEmpty then
+    IO.eprintln "monadic-failstop-test requires caller-selected fuel (at least 2)"
+    return 2
+  let mut failed := false
+  for arg in args do
+    let some fuel := arg.toNat? | return 2
+    if fuel < 2 then return 2
+    for (name, ok) in MonadicFailstop.checks fuel do
+      IO.println s!"{if ok then "PASS" else "FAIL"} [{fuel}] {name}"
+      failed := failed || !ok
+  return if failed then 1 else 0

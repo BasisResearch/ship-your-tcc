@@ -1,0 +1,74 @@
+# handwritten_copy.manifest — THE authoritative list of hand-written
+# lean_frontend/*.lean files that `make lean-prelude-src` copies into
+# lean_frontend/generated/ (Lake compiles from generated/ — lakefile.toml
+# srcDir — NOT from lean_frontend/). One basename per line; lines
+# starting with '#' and blank lines are ignored.
+#
+# Read by (single point of truth; nothing else enumerates this set):
+#   Makefile               LEAN_HANDWRITTEN (the copy recipe itself)
+#   tools/check_handwritten_sync.sh   the byte-identity gate, wired into
+#                          tools/check_driver_fresh.sh (--record-lean /
+#                          --check[-lean]), scripts/common.sh build_lean
+#                          (precondition) and scripts/test_unit.sh.
+# The gate ALSO fails if a lean_frontend/*.lean exists that is not listed
+# here (an unlisted hand-written file would never be propagated), so the
+# manifest cannot silently drift from the tree. An empty manifest is a
+# FAIL, not a vacuous pass.
+#
+# Origin: hotfix fix/freshness-copy-gap (2026-09-02) — the driver-
+# freshness stamp hashed both the hand-written file and its generated/
+# copy but never compared them, so a build_lean without lean-prelude-src
+# recorded a green stamp over a binary built from a stale copy
+# (lean_frontend/docs/2026-09-02_freshness-copy-gap.md).
+CabsImport.lean
+CerbCabsInstances.lean
+CerbCall.lean
+CerbConcurrency.lean
+CerbCtypeInstances.lean
+CerbDebug.lean
+CerbDecode.lean
+CerbEscape.lean
+CerberusFresh.lean
+CerberusImpl.lean
+CerbFloat.lean
+CerbFS.lean
+CerbFuel.lean
+CerbFunMapInstances.lean
+CerbGlobal.lean
+CerbLocation.lean
+CerbMem.lean
+CerbMemAllocatorProofs.lean
+CerbMemDefaultFacts.lean
+CerbMemAccessFacts.lean
+CerbND.lean
+CerbPP.lean
+CerbStepInstances.lean
+CerbTags.lean
+CerbTagsWf.lean
+CerbCoreShape.lean
+CerbCoreMeasure.lean
+CerbCtypeMeasure.lean
+CerbParserProgress.lean
+CerbUtils.lean
+CoreParser.lean
+Core_lemMeasureProofs.lean
+Ctype_lemMeasureProofs.lean
+Ctype_aux_lemMeasureProofs.lean
+Defacto_memory_aux_lemMeasureProofs.lean
+Main.lean
+Utils_lemMeasureProofs.lean
+Core_eval_lemMeasureProofs.lean
+Core_aux_lemMeasureProofs.lean
+Defacto_memory_lemMeasureProofs.lean
+Core_reduction_lemMeasureProofs.lean
+Core_run_aux_lemMeasureProofs.lean
+CerbMeasureLemmas.lean
+CerbMem_lemMeasureProofs.lean
+AilTypesAux_lemMeasureProofs.lean
+Formatted_lemMeasureProofs.lean
+Driver_lemMeasureProofs.lean
+Monadic_parsing_lemMeasureProofs.lean
+CerbFail.lean
+CerbFailProofs.lean
+CerbNDFuelProofs.lean
+Translation_lemMeasureProofs.lean

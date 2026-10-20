@@ -1,0 +1,847 @@
+open import Pervasives Utils
+import AilSyntax Ctype IntegerImpl
+
+val max_alignment: nat
+val sizeof_fty: Ctype.floatingType -> maybe nat
+val alignof_fty: Ctype.floatingType -> maybe nat
+
+declare ocaml target_rep function max_alignment = `(Ocaml_implementation.get()).max_alignment`
+declare lean target_rep function max_alignment = `CerberusImpl.max_alignment`
+declare ocaml target_rep function sizeof_fty = `(Ocaml_implementation.get()).sizeof_fty`
+declare lean target_rep function sizeof_fty = `CerberusImpl.sizeof_fty`
+declare ocaml target_rep function alignof_fty = `(Ocaml_implementation.get()).alignof_fty`
+declare lean target_rep function alignof_fty = `CerberusImpl.alignof_fty`
+
+(* ---- The enum's compatible type as PROGRAM DATA (program-data parameters
+   E-A, 2026-09-20; lean_frontend/docs/2026-09-20_program-data-parameters-EA-DA-record.md).
+
+   OCaml (the oracle, unchanged): DefaultImpl keeps its mutable registry
+   (ocaml_frontend/ocaml_implementation.ml:124-150) — `register_enum` decides
+   the compatible type and pushes, `typeof_enum` looks it up; the layout
+   functions normalise through it.  `enum_definitions ()` is that registry
+   read as a map (Ocaml_implementation.enum_definitions).
+   Lean: `enum_definitions` is an ambient READER — every def that
+   (transitively) reads it takes the per-program map as a leading parameter
+   (`_lemReader_enum_definitions`, sorted-name order enum_definitions,
+   tagDefs; digest is run-state data, not a reader); the desugarer records the decided type in the sigma
+   (A.enum_definitions), the elaborator carries it into the Core file
+   (C.enumDefs), linking merges it, and the entries seed the reader from the
+   program — the same information the OCaml registry holds, as data.
+   `register_enum` on Lean is the pure `true` (the redefinition case is caught
+   by the `tag_definitions` check just before it, cabs_to_ail_effect.lem
+   register_tag_definition). *)
+
+(* GCC's rule — ocaml_implementation.ml:130-136 (no -fshort-enums): the
+   compatible type is `signed int` iff an enumerator is negative, else
+   `unsigned int`.  SHARED body: both engines compute it. *)
+val enum_compatible_type: list integer -> Ctype.integerType
+let enum_compatible_type ns =
+  if List.any (fun n -> n < 0) ns then Ctype.Signed Ctype.Int_ else Ctype.Unsigned Ctype.Int_
+
+val enum_definitions: unit -> map Symbol.sym Ctype.integerType
+declare ocaml target_rep function enum_definitions = `Ocaml_implementation.enum_definitions`
+(* target-coverage stub only: the reader mechanism rewrites every applied
+   `enum_definitions ()` site to the reader parameter (as CerbTags.tagDefsUnreachable) *)
+declare lean target_rep function enum_definitions u = `CerberusImpl.enumDefinitionsUnreachable` u
+declare {lean} reader val enum_definitions
+
+val register_enum: Symbol.sym -> list integer -> bool
+declare ocaml target_rep function register_enum = `(Ocaml_implementation.get()).register_enum`
+declare lean target_rep function register_enum = `CerberusImpl.register_enum`
+
+(* the named lookup — SHARED body over the reader; the OCaml failure text is
+   ocaml_implementation.ml:146-149's (no lem caller today: ailTypesAux.lem's
+   uses are commented out; it stays as the named lookup) *)
+val typeof_enum: Symbol.sym -> Ctype.integerType
+let typeof_enum tag_sym =
+  match Map.lookup tag_sym (enum_definitions ()) with
+    | Just ity -> ity
+    | Nothing ->
+        Assert_extra.failwith ("Ocaml_implementation.typeof_enum: '" ^ show tag_sym ^ "' was not registered")
+  end
+
+(* normalise FIRST, one consumer (record D2): the Lean rep
+   CerberusImpl.normalise_integerType takes the readers in sorted order —
+   (enumDefs) (tagDefs) — and its Enum arm is the lookup in enumDefs
+   (failing with the OCaml text on a miss); the OCaml rep is unchanged. *)
+val normalise_integerType: Ctype.integerType -> Ctype.integerType
+declare ocaml target_rep function normalise_integerType = `Ocaml_implementation.normalise_integerType (Ocaml_implementation.get())`
+declare lean target_rep function normalise_integerType = `CerberusImpl.normalise_integerType`
+declare {lean} reader_consumer val normalise_integerType
+
+(* The four layout vals are SHARED one-line wrappers: normalise, then the
+   `*_norm` rep on the normalised type.  The reps carry the previous
+   target_reps unchanged — OCaml `(Ocaml_implementation.get()).sizeof_ity`
+   re-normalises an already-normalised type (idempotent: Common.
+   normalise_integerType_ ocaml_implementation.ml:37-66 maps resolved
+   Signed/Unsigned through the alias table to themselves, the four named
+   types to fixed points, and never sees an Enum after the first pass);
+   Lean `CerberusImpl.sizeof_ity` etc. are functions of the (normalised)
+   type alone — an un-normalised Enum reaching them is the UNREACHABLE-BY-
+   INVARIANT leaf. *)
+val is_signed_ity_norm: Ctype.integerType -> bool
+val sizeof_ity_norm: Ctype.integerType -> maybe nat
+val precision_ity_norm: Ctype.integerType -> maybe nat
+val alignof_ity_norm: Ctype.integerType -> maybe nat
+declare ocaml target_rep function is_signed_ity_norm = `(Ocaml_implementation.get()).is_signed_ity`
+declare lean target_rep function is_signed_ity_norm = `CerberusImpl.is_signed_ity`
+declare ocaml target_rep function sizeof_ity_norm = `(Ocaml_implementation.get()).sizeof_ity`
+declare lean target_rep function sizeof_ity_norm = `CerberusImpl.sizeof_ity`
+declare ocaml target_rep function precision_ity_norm = `(Ocaml_implementation.get()).precision_ity`
+declare lean target_rep function precision_ity_norm = `CerberusImpl.precision_ity`
+declare ocaml target_rep function alignof_ity_norm = `(Ocaml_implementation.get()).alignof_ity`
+declare lean target_rep function alignof_ity_norm = `CerberusImpl.alignof_ity`
+
+(* On the OCaml target the four wrappers keep their previous reps (the
+   with_tagDefs precedent, ctype_aux.lem): the lem body is Lean-only, so the
+   generated OCaml layout path is byte-identical to before and no generated
+   definition named is_signed_ity/sizeof_ity/... appears in implementation.ml
+   — lem's OCaml renamer would otherwise rename ailTypesAux.lem's alias
+   `let is_signed_ity = Implementation.is_signed_ity` to is_signed_ity0 and
+   break the non-generated callers memory/{concrete,vip}/impl_mem.ml. *)
+(* resolve_enum: an Enum through the map, every other constructor untouched —
+   the `match ity with Enum tag_sym -> typeof_enum tag_sym | _ -> ity` step
+   OCaml's Common.is_signed_ity performs BEFORE reading the constructor
+   (ocaml_implementation.ml:79-85). SHARED body. *)
+val resolve_enum: Ctype.integerType -> Ctype.integerType
+let resolve_enum ity =
+  match ity with
+    | Ctype.Enum tag_sym -> typeof_enum tag_sym
+    | _ -> ity
+  end
+
+(* is_signed_ity resolves ONLY an enum (pre-merge audit E4, 2026-09-20; charter
+   D2 erratum W20): OCaml's Common.is_signed_ity (ocaml_implementation.ml:79-94)
+   never consults the width-alias table — `Signed (IntN_t 128)` is `true`
+   there, where full normalisation would hit the alias table's Option.get.
+   sizeof_ity/alignof_ity/precision_ity below DO normalise fully, because
+   OCaml's own do: DefaultImpl.sizeof_ity (:172-174) and alignof_ity (:214-216)
+   match on Common.normalise_integerType_'s result, and Common.precision_ity
+   (:68-70) calls sizeof_ity first. *)
+val is_signed_ity: Ctype.integerType -> bool
+let is_signed_ity ity = is_signed_ity_norm (resolve_enum ity)
+declare ocaml target_rep function is_signed_ity = `(Ocaml_implementation.get()).is_signed_ity`
+val sizeof_ity: Ctype.integerType -> maybe nat
+let sizeof_ity ity = sizeof_ity_norm (normalise_integerType ity)
+declare ocaml target_rep function sizeof_ity = `(Ocaml_implementation.get()).sizeof_ity`
+val precision_ity: Ctype.integerType -> maybe nat
+let precision_ity ity = precision_ity_norm (normalise_integerType ity)
+declare ocaml target_rep function precision_ity = `(Ocaml_implementation.get()).precision_ity`
+val alignof_ity: Ctype.integerType -> maybe nat
+let alignof_ity ity = alignof_ity_norm (normalise_integerType ity)
+declare ocaml target_rep function alignof_ity = `(Ocaml_implementation.get()).alignof_ity`
+
+(* alignof_ty (the desugarer's _Alignas/redeclaration alignment check,
+   cabs_to_ail_effect.lem get_alignof): its OCaml rep `alignof` normalises
+   integer member types through `(get ()).alignof_ity` — i.e. through the
+   enum registry — so the Lean rep needs the map: a reader consumer too
+   (charter erratum, record §0). *)
+val alignof_ty: map AilSyntax.ail_identifier (list (maybe Ctype.alignment * Ctype.ctype)) ->  Ctype.ctype -> maybe nat
+declare ocaml target_rep function alignof_ty = `Ocaml_implementation.alignof_proxy`
+declare lean target_rep function alignof_ty = `CerberusImpl.alignof_ty`
+declare {lean} reader_consumer val alignof_ty
+
+val integerImpl: unit -> IntegerImpl.implementation
+let integerImpl () =
+  IntegerImpl.make_implementation
+    IntegerImpl.Two'sComplement
+    is_signed_ity
+    (fun ity ->
+      match precision_ity ity with
+        | Just n -> n
+        | Nothing -> error "Implemetation.integerImpl, is_precision_ity Nothing"
+      end
+    )
+    (Ctype.Size_t)
+    (Ctype.Ptrdiff_t)
+    (Ctype.Ptraddr_t)
+
+type implementation_constant =
+  (* J.3.2 Environment *)
+  (* The mapping between physical source file multibyte characters and the source character set in
+     translation phase 1 (5.1.1.2). *)
+  (* TODO: don't care about that (only for now?) *)
+  
+  (* The name and type of the function called at program startup in a freestanding environment (5.1.2.1). *)
+  | Environment__startup_name
+  | Environment__startup_type
+  
+  (* The effect of program termination in a freestanding environment (5.1.2.1). *)
+  (* TODO: don't care for now *)
+  
+  (* An alternative manner in which the main function may be defined (5.1.2.2.1). *)
+  (* TODO: don't care for now *)  
+  
+  (* The values given to the strings pointed to by the argv argument to main (5.1.2.2.1). *)
+  (* TODO: don't care for now *)
+  
+  (* What constitutes an interactive device (5.1.2.3). *)
+  (* TODO: don't care for now *)
+  
+  (* Whether a program can have more than one thread of execution in a freestanding environment
+     (5.1.2.4). *)
+  (* TODO: don't care for now *)
+  
+  (* The set of signals, their semantics, and their default handling (7.14). *)
+  (* TODO: don't care for now *)
+  
+  (* Signal values other than SIGFPE, SIGILL, and SIGSEGV that correspond to a computational
+     exception (7.14.1.1). *)
+  (* TODO: don't care for now *)
+  
+  (* Signals for which the equivalent of signal(sig, SIG_IGN); is executed at program startup
+     (7.14.1.1). *)
+  (* TODO: don't care for now *)
+  
+  (* The set of environment names and the method for altering the environment list used by the
+     getenv function (7.22.4.6).  *)
+  (* TODO: don't care for now *)
+  
+  (* The manner of execution of the string by the system function (7.22.4.8). *)
+  (* TODO: don't care for now *)  
+  
+  (* J.3.3 Identifiers *)
+  (* Which additional multibyte characters may appear in identifiers and their correspondence to
+     universal character names (6.4.2). *)
+  (* TODO: don't care for now *)  
+  
+  (* The number of significant initial characters in an identifier (5.2.4.1, 6.4.2). *)
+  (* TODO: don't care for now *)  
+  
+  (* J.3.4 Characters *)
+  (* The number of bits in a byte (3.6). *)
+  | Characters__bits_in_byte
+  
+  (* The values of the members of the execution character set (5.2.1). *)
+  | Characters__execution_character_set_values
+  
+  (* The unique value of the member of the execution character set produced for
+     each of the standard alphabetic escape sequences (5.2.2). *)
+  | Characters__TODO1
+  
+  (* The value of a char object into which has been stored any character other
+     than a member of the basic execution character set (6.2.5). *)
+  | Characters__TODO2
+  
+  (* Which of signed char or unsigned char has the same range, representation, and
+     behavior as ‘‘plain’’ char (6.2.5, 6.3.1.1). *)
+  | Characters__plain_char_is_signed
+    (* TODO: others *)
+  
+  (* The mapping of members of the source character set (in character constants
+     and string literals) to members of the execution character set
+     (6.4.4.4, 5.1.1.2). *)
+  | Characters__TODO3
+  
+  (* The value of an integer character constant containing more than one character
+     or containing a character or escape sequence that does not map to a
+     single-byte execution character (6.4.4.4). *)
+  | Characters__TODO4
+  
+  (* The value of a wide character constant containing more than one multibyte
+     character or a single multibyte character that maps to multiple members of
+     the extended execution character set, or containing a multibyte character or
+     escape sequence not represented in the extended execution character set
+     (6.4.4.4). *)
+  | Characters__TODO5
+  
+  (* The current locale used to convert a wide character constant consisting of a
+     single multibyte character that maps to a member of the extended execution
+     character set into a corresponding wide character code (6.4.4.4). *)
+  | Characters__TODO6
+  
+  (* Whether differently-prefixed wide string literal tokens can be concatenated
+     and, if so, the treatment of the resulting multibyte character sequence
+     (6.4.5). *)
+  | Characters__TODO7
+  
+  (* The current locale used to convert a wide string literal into corresponding
+     wide character codes (6.4.5). *)
+  | Characters__TODO8
+  
+  (* The value of a string literal containing a multibyte character or escape
+     sequence not represented in the execution character set (6.4.5). *)
+  | Characters__TODO9
+  
+  (* The encoding of any of wchar_t, char16_t, and char32_t where the
+     corresponding standard encoding macro (__STDC_ISO_10646__, __STDC_UTF_16__,
+     or__STDC_UTF_32__) is not defined (6.10.8.2). *)
+  | Characters__TODO10
+  
+  (* J.3.5 Integers *)
+  (* Any extended integer types that exist in the implementation (6.2.5). *)
+  (* TODO: don't have extended types for now, GCC doesn't have any *)
+  
+  (* Whether signed integer types are represented using sign and magnitude, two’s complement, or
+     ones’ complement, and whether the extraordinary value is a trap representation or an ordinary
+     value (6.2.6.2). *)
+  (* TODO: I guess this is going to be flag of the memory model, but never used in a Core.Eimpl *)
+  (* TODO: we may not use these anymore once we use a real memory model *)
+  | Integer__encode (* function taking an integer type and an integer and returning a non-negative integer
+                       modeling the proper binary representation *)
+  | Integer__decode (* the other way around *)
+
+  
+  (* The rank of any extended integer type relative to another extended integer type with the same
+     precision (6.3.1.1). *)
+  (* TODO: don't have extended types for now, GCC doesn't have any *)
+  
+  (* The result of, or the signal raised by, converting an integer to a signed integer type when the
+     value cannot be represented in an object of that type (6.3.1.3). *)
+  | Integer__conv_nonrepresentable_signed_integer
+  
+  (* The results of some bitwise operations on signed integers (6.5). *)
+  (* TODO: will have several Ctors *)
+  | Sizeof
+  | Alignof
+  | SHR_signed_negative
+  | Bitwise_complement
+  
+  
+  (* J.3.6 Floating_point*)
+  (* TODO: we don't do floating points *)
+  
+  (* J.3.7 Array_pointers *)
+  (* TODO: these are in memory.lem for now *)
+  
+  (* J.3.8 Hints *)
+  (* TODO: will probably never care about these *)
+  
+  (* J.3.9 Structure_unions_enumerations_bitfields *)
+  (* Whether a ‘‘plain’’ int bit-field is treated as a signed int bit-field or
+     as an unsigned int bit-field (6.7.2, 6.7.2.1). *)
+  | Plain_bitfield_sign
+  
+  (* Allowable bit-field types other than _Bool, signed int, and unsigned int
+     (6.7.2.1). *)
+  | Bitfield_other_types
+  
+  (* Whether atomic types are permitted for bit-fields (6.7.2.1). *)
+  |  Atomic_bitfield_permitted
+  
+  (* Whether a bit-field can straddle a storage-unit boundary (6.7.2.1). *)
+  (* TODO *)
+  
+  (* The order of allocation of bit-fields within a unit (6.7.2.1). *)
+  (* TODO: ARRRGG *)
+  
+  (* The alignment of non-bit-field members of structures (6.7.2.1). This should
+     present no problem unless binary data written by one implementation is read
+     by another. *)
+  (* TODO: ARRRGG *)
+  
+  (* The integer type compatible with each enumerated type (6.7.2.2). *)
+  (* TODO: ARRRGG *)
+  
+  (* J.3.10 Qualifiers *)
+  (* What constitutes an access to an object that has volatile-qualified type (6.7.3). *)
+  (* TODO *)
+  
+  (* J.3.12 Library_functions*)
+  (* TODOS *)
+  
+  (* J.3.13 Architecture *)
+  (* TODOS *)
+
+
+(* TODO: PRESENT BETTER *)
+  | Ctype_min
+  | Ctype_max
+  
+  (* Builtin functions *)
+  | BuiltinFunction of string
+
+val implementation_constant_to_nat : implementation_constant -> nat
+let implementation_constant_to_nat x =
+  match x with
+    | Environment__startup_name -> 0
+    | Environment__startup_type -> 1
+    | Characters__bits_in_byte -> 2
+    | Characters__execution_character_set_values -> 3
+    | Characters__TODO1 -> 4
+    | Characters__TODO2 -> 5
+    | Characters__plain_char_is_signed -> 6
+    | Characters__TODO3 -> 7
+    | Characters__TODO4 -> 8
+    | Characters__TODO5 -> 9
+    | Characters__TODO6 -> 10
+    | Characters__TODO7 -> 11
+    | Characters__TODO8 -> 12
+    | Characters__TODO9 -> 13
+    | Characters__TODO10 -> 14
+    | Integer__encode -> 15
+    | Integer__decode -> 16
+    | Integer__conv_nonrepresentable_signed_integer -> 17
+    | Sizeof -> 18
+    | Alignof -> 19
+    | SHR_signed_negative -> 20
+    | Bitwise_complement -> 21
+    | Plain_bitfield_sign -> 22
+    | Bitfield_other_types -> 23
+    | Atomic_bitfield_permitted -> 24
+    | Ctype_min -> 25
+    | Ctype_max -> 26
+    | BuiltinFunction _ -> 27
+  end
+
+let implementation_constant_equal x y =
+  match (x, y) with
+    | (BuiltinFunction name1, BuiltinFunction name2) -> (name1 = name2)
+    | _ -> (implementation_constant_to_nat x = implementation_constant_to_nat y)
+  end
+
+instance (Eq implementation_constant)
+  let (=) = implementation_constant_equal
+  let (<>) x y = not (implementation_constant_equal x y)
+end
+
+let ~{hol} implementation_constant_compare x y =
+  match (x, y) with
+    | (BuiltinFunction name1, BuiltinFunction name2) -> setElemCompare name1 name2
+    | _ -> setElemCompare (implementation_constant_to_nat x) (implementation_constant_to_nat y)
+  end 
+
+instance (SetType implementation_constant)
+  let setElemCompare = implementation_constant_compare
+end
+
+(* TODO: this is for the parsing (a bit disgusting to do it that way *)
+let impl_map =
+  foldl (fun acc (k, v) -> Map.insert k v acc) Map.empty
+  [
+    ("<Environment.startup_name>"                     , Environment__startup_name);
+    ("<Environment.startup_type>"                     , Environment__startup_type);
+    ("<Characters.bits_in_byte>"                      , Characters__bits_in_byte);
+    ("<Characters.execution_character_set_values>"    , Characters__execution_character_set_values);
+    ("<Characters.TODO1>"                             , Characters__TODO1);
+    ("<Characters.TODO2>"                             , Characters__TODO2);
+    ("<Characters.plain_char_is_signed>"              , Characters__plain_char_is_signed);
+    ("<Characters.TODO3>"                             , Characters__TODO3);
+    ("<Characters.TODO4>"                             , Characters__TODO4);
+    ("<Characters.TODO5>"                             , Characters__TODO5);
+    ("<Characters.TODO6>"                             , Characters__TODO5);
+    ("<Characters.TODO7>"                             , Characters__TODO6);
+    ("<Characters.TODO8>"                             , Characters__TODO8);
+    ("<Characters.TODO9>"                             , Characters__TODO9);
+    ("<Characters.TODO10>"                            , Characters__TODO10);
+    ("<Integer.encode>"                               , Integer__encode);
+    ("<Integer.decode>"                               , Integer__decode);
+    ("<Integer.conv_nonrepresentable_signed_integer>" , Integer__conv_nonrepresentable_signed_integer);
+    ("<sizeof>"                                       , Sizeof);
+    ("<alignof>"                                      , Alignof);
+    ("<bits_in_byte>"                                 , Characters__bits_in_byte);
+    ("<SHR_signed_negative>"                          , SHR_signed_negative);
+    ("<Bitwise_complement>"                           , Bitwise_complement);
+    ("<Plain_bitfield_sign>"                          , Plain_bitfield_sign);
+    ("<Bitfield_other_types>"                         , Bitfield_other_types);
+    ("<Atomic_bitfield_permitted>"                    , Atomic_bitfield_permitted);
+    ("<Ctype.min>"                                    , Ctype_min);
+    ("<Ctype.max>"                                    , Ctype_max);
+  ]
+
+
+let string_of_implementation_constant = function
+  | Environment__startup_name ->
+      "Environment.startup_name"
+  | Environment__startup_type ->
+      "Environment.startup_type"
+  | Characters__bits_in_byte ->
+      "Characters.bits_in_byte"
+  | Characters__execution_character_set_values ->
+      "Characters.execution_character_set_values"
+  | Characters__TODO1 ->
+      "Characters.TODO1"
+  | Characters__TODO2 ->
+      "Characters.TODO2"
+  | Characters__plain_char_is_signed ->
+      "Characters.plain_char_is_signed"
+  | Characters__TODO3 ->
+      "Characters.TODO3"
+  | Characters__TODO4 ->
+      "Characters.TODO4"
+  | Characters__TODO5 ->
+      "Characters.TODO5"
+  | Characters__TODO6 ->
+      "Characters.TODO6"
+  | Characters__TODO7 ->
+      "Characters.TODO7"
+  | Characters__TODO8 ->
+      "Characters.TODO8"
+  | Characters__TODO9 ->
+      "Characters.TODO9"
+  | Characters__TODO10 ->
+      "Characters.TODO10"
+  | Integer__encode ->
+      "Integer.encode"
+  | Integer__decode ->
+      "Integer.decode"
+  | Integer__conv_nonrepresentable_signed_integer ->
+      "Integer.conv_nonrepresentable_signed_integer"
+  | Sizeof ->
+      "sizeof"
+  | Alignof ->
+      "alignof"
+  | SHR_signed_negative ->
+      "SHR_signed_negative"
+  | Bitwise_complement ->
+      "Bitwise_complement"
+  | Plain_bitfield_sign ->
+      "Plain_bitfield_sign"
+  | Bitfield_other_types ->
+      "Bitfield_other_types"
+  |  Atomic_bitfield_permitted ->
+      "Atomic_bitfield_permitted"
+  | Ctype_min ->
+      "ctype_min"
+  | Ctype_max ->
+      "ctype_max"
+  | BuiltinFunction fname ->
+       "builtin_" ^ fname
+end
+
+
+
+
+
+(*
+
+(* TODO: would love to have signatures *)
+
+(* Fixing a dummy implementation for now *)
+
+
+(* Listing of implementation defined behaviours *)
+
+
+
+type sign =
+  | Signed
+  | Unsigned
+
+
+
+(* J.3.1 *)
+(*
+module Translation = struct
+  (*How a diagnostic is identified (3.10, 5.1.1.3). *)
+  (* TODO: don't care about that (probably forever) *)
+  
+  (* Whether each nonempty sequence of white-space characters other than new-line is retained or
+     replaced by one space character in translation phase 3 (5.1.1.2). *)
+  (* TODO: don't care about that (probably forever) *)
+end
+*)
+
+
+(* J.3.2 *)
+module Environment = struct
+  val todo: num
+(*  let todo = Boot.assert_false "TODO" *)
+  
+  (* The mapping between physical source file multibyte characters and the source character set in
+     translation phase 1 (5.1.1.2). *)
+  (* TODO: don't care about that (only for now?) *)
+  
+  (* The name and type of the function called at program startup in a freestanding environment
+     (5.1.2.1). *)
+  val startup_name: string
+  val startup_type: Ail.ctype
+  let startup_name = "main"
+(*  let startup_type = Boot.assert_false "TODO" *)
+  
+  (* The effect of program termination in a freestanding environment (5.1.2.1). *)
+  (* TODO: don't care for now *)
+  
+  (* An alternative manner in which the main function may be defined (5.1.2.2.1). *)
+  (* TODO: don't care for now *)  
+  
+  (* The values given to the strings pointed to by the argv argument to main (5.1.2.2.1). *)
+  (* TODO: don't care for now *)
+  
+  (* What constitutes an interactive device (5.1.2.3). *)
+  (* TODO: don't care for now *)
+  
+  (* Whether a program can have more than one thread of execution in a freestanding environment
+     (5.1.2.4). *)
+  (* TODO: don't care for now *)
+  
+  (* The set of signals, their semantics, and their default handling (7.14). *)
+  (* TODO: don't care for now *)
+  
+  (* Signal values other than SIGFPE, SIGILL, and SIGSEGV that correspond to a computational
+     exception (7.14.1.1). *)
+  (* TODO: don't care for now *)
+  
+  (* Signals for which the equivalent of signal(sig, SIG_IGN); is executed at program startup
+     (7.14.1.1). *)
+  (* TODO: don't care for now *)
+  
+  (* The set of environment names and the method for altering the environment list used by the
+     getenv function (7.22.4.6).  *)
+  (* TODO: don't care for now *)
+  
+  (* The manner of execution of the string by the system function (7.22.4.8). *)
+  (* TODO: don't care for now *)  
+end
+
+
+(*
+(* J.3.3 *)
+module Identifiers = struct
+  (* Which additional multibyte characters may appear in identifiers and their correspondence to
+     universal character names (6.4.2). *)
+  (* TODO: don't care for now *)  
+  
+  (* The number of significant initial characters in an identifier (5.2.4.1, 6.4.2). *)
+  (* TODO: don't care for now *)  
+end
+*)
+
+
+(* J.3.4 *)
+module Characters = struct
+  (* The number of bits in a byte (3.6). *)
+  val bits_in_byte: num
+  let bits_in_byte = 8
+  
+  (* The values of the members of the execution character set (5.2.1). *)
+  val execution_character_set_values: Pmap.map string num
+  let execution_character_set_values = Pmap.empty (* TODO *)
+  
+  (* The unique value of the member of the execution character set produced for
+     each of the standard alphabetic escape sequences (5.2.2). *)
+  
+  (* The value of a char object into which has been stored any character other
+     than a member of the basic execution character set (6.2.5). *)
+  
+  (* Which of signed char or unsigned char has the same range, representation, and
+     behavior as ‘‘plain’’ char (6.2.5, 6.3.1.1). *)
+  val plain_char_sign: sign (* TODO: maybe have a specified twoc-ctor type *)
+  let plain_char_sign = Unsigned
+  
+  (* The mapping of members of the source character set (in character constants
+     and string literals) to members of the execution character set
+     (6.4.4.4, 5.1.1.2). *)
+  
+  (* The value of an integer character constant containing more than one character
+     or containing a character or escape sequence that does not map to a
+     single-byte execution character (6.4.4.4). *)
+  
+  (* The value of a wide character constant containing more than one multibyte
+     character or a single multibyte character that maps to multiple members of
+     the extended execution character set, or containing a multibyte character or
+     escape sequence not represented in the extended execution character set
+     (6.4.4.4). *)
+  
+  (* The current locale used to convert a wide character constant consisting of a
+     single multibyte character that maps to a member of the extended execution
+     character set into a corresponding wide character code (6.4.4.4). *)
+  
+  (* Whether differently-prefixed wide string literal tokens can be concatenated
+     and, if so, the treatment of the resulting multibyte character sequence
+     (6.4.5). *)
+  
+  (* The current locale used to convert a wide string literal into corresponding
+     wide character codes (6.4.5). *)
+  
+  (* The value of a string literal containing a multibyte character or escape
+     sequence not represented in the execution character set (6.4.5). *)
+  
+  (* The encoding of any of wchar_t, char16_t, and char32_t where the
+     corresponding standard encoding macro (__STDC_ISO_10646__, __STDC_UTF_16__,
+     or__STDC_UTF_32__) is not defined (6.10.8.2). *)
+
+
+end
+
+
+(* J.3.5 *)
+(*
+module Integers = struct
+  (* Any extended integer types that exist in the implementation (6.2.5). *)
+  (* TODO: don't have extended types for now, GCC doesn't have any *)
+  
+  (* Whether signed integer types are represented using sign and magnitude, two’s complement, or
+     ones’ complement, and whether the extraordinary value is a trap representation or an ordinary
+     value (6.2.6.2). *)
+  (* TODO: not sure how to do it for now (inside Core?) *)
+  
+  (* The rank of any extended integer type relative to another extended integer type with the same
+     precision (6.3.1.1). *)
+  (* TODO: don't have extended types for now, GCC doesn't have any *)
+  
+  (* The result of, or the signal raised by, converting an integer to a signed integer type when the
+     value cannot be represented in an object of that type (6.3.1.3). *)
+  (* TODO: not sure how to do it for now (inside Core?) *)
+
+  
+  (* The results of some bitwise operations on signed integers (6.5). *)
+  (* TODO: hacked away in Core for now *)
+end
+*)
+
+
+(* J.3.6 *)
+(*
+module Floating_point = struct
+  val todo: num
+(*  let todo = Boot.assert_false "TODO" *)
+
+end
+*)
+
+
+(* J.3.7 *)
+(* TODO: these are in memory.lem for now *)
+(*
+module Arrays_pointers = struct
+end
+*)
+
+
+(* J.3.8 *)
+(* TODO: will probably never care about these *)
+(*
+module Hints = struct
+end
+*)
+
+
+(* J.3.9 *)
+module Structure_unions_enumerations_bitfields = struct
+  (* Whether a ‘‘plain’’ int bit-field is treated as a signed int bit-field or
+     as an unsigned int bit-field (6.7.2, 6.7.2.1). *)
+  val plain_bitfield_sign: sign
+  let plain_bitfield_sign = Signed (* following GCC *)
+  
+  (* Allowable bit-field types other than _Bool, signed int, and unsigned int
+     (6.7.2.1). *)
+  val bitfield_other_types: list Ail.ctype
+  let bitfield_other_types = []  (* following GCC in `strictly conforming mode' *)
+  
+  (* Whether atomic types are permitted for bit-fields (6.7.2.1). *)
+  val atomic_bitfield_permitted: bool
+  let atomic_bitfield_permitted = false (* TODO: check what GCC does *)
+  
+  (* Whether a bit-field can straddle a storage-unit boundary (6.7.2.1). *)
+  
+  
+  (* The order of allocation of bit-fields within a unit (6.7.2.1). *)
+  (* ARRGGG *)
+  
+  (* The alignment of non-bit-field members of structures (6.7.2.1). This should
+     present no problem unless binary data written by one implementation is read
+     by another. *)
+  
+  
+  (* The integer type compatible with each enumerated type (6.7.2.2). *)
+  (* AARRG *)
+end
+
+
+(* J.3.10 *)
+(*
+module Qualifiers = struct
+  (* What constitutes an access to an object that has volatile-qualified type (6.7.3). *)
+end
+*)
+
+
+(* J.3.12 *)
+(*
+module Library_functions = struct
+end
+*)
+
+
+(*
+(* J.3.13 *)
+module Architecture = struct
+  val todo: num
+  let todo = Boot.assert_false "TODO"
+end
+*)
+
+*)
+open Ctype
+let rec normalise_ctype (Ctype annots ty_) =
+  Ctype annots match ty_ with
+    | Void ->
+        ty_
+    | Basic (Integer ity) ->
+        (* replacing alias type or Enum with the implementtion-defined corresponding integer type *)
+        Basic (Integer (normalise_integerType ity))
+    | Basic (Floating _) ->
+        ty_
+    | Array elem_ty n_opt ->
+        Array (normalise_ctype elem_ty) n_opt
+
+    | Function (qs, ret_ty) params is_variadic  ->
+        Function (qs, normalise_ctype ret_ty)
+          (List.map (fun (qs, ty, b) -> (qs, normalise_ctype ty, b)) params)
+          is_variadic
+    | FunctionNoParams (qs, ret_ty) ->
+        FunctionNoParams (qs, normalise_ctype ret_ty)
+    | Pointer qs ref_ty ->
+        Pointer qs (normalise_ctype ref_ty)
+    | Atomic atom_ty ->
+        Atomic (normalise_ctype atom_ty)
+    | Struct _ ->
+        ty_
+    | Union _ ->
+        ty_
+    | Byte ->
+        ty_
+  end
+
+
+let is_compatible_with_size_t ity =
+  match (sizeof_ity ity, sizeof_ity Size_t) with
+    | (Just sz1, Just sz2) ->
+        sz1 = sz2 && not (is_signed_ity ity)
+    | _ ->
+        (* the Implementation is not sufficiently specified *)
+        error "Implementation.is_compatible_with_size_t"
+  end
+
+let is_compatible_with_ptrdiff_t ity =
+  match (sizeof_ity ity, sizeof_ity Ptrdiff_t) with
+    | (Just sz1, Just sz2) ->
+        sz1 = sz2 && is_signed_ity ity
+    | _ ->
+        (* the Implementation is not sufficiently specified *)
+        error "Implementation.is_compatible_with_ptrdiff_t"
+  end
+
+  (* val is_signed_ity: Ctype.integerType -> bool
+val sizeof_ity: Ctype.integerType -> maybe nat *)
+
+let is_signed_or_unsigned_aux ibty =
+  fun (Ctype _ ty_) ->
+    match ty_ with
+      | Basic (Integer Char) ->
+          error "TODO: Implementation.is_signed_or_unsigned Char" (* ibty = Ichar *)
+      | Basic (Integer Bool) ->
+          error "TODO: Implementation.is_signed_or_unsigned Bool" 
+      | Basic (Integer (Signed ibty')) ->
+          ibty' = ibty
+      | Basic (Integer (Unsigned ibty')) ->
+          ibty' = ibty
+      | Basic (Integer (Enum tag_sym)) ->
+          (* this should not be possible*)
+          error "Implementation.is_signed_or_unsigned_aux: Enum"
+      | Basic (Integer Wchar_t) ->
+          error "TODO: Implementation.is_signed_or_unsigned Wchar_t" 
+      | Basic (Integer Wint_t) ->
+          error "TODO: Implementation.is_signed_or_unsigned Wint_t" 
+      | Basic (Integer Size_t) ->
+          is_compatible_with_size_t (Unsigned ibty)
+      | Basic (Integer Ptrdiff_t) ->
+          is_compatible_with_ptrdiff_t (Signed ibty)
+      | _ ->
+          false
+    end
+
+val is_signed_or_unsigned: integerBaseType -> ctype -> bool
+let is_signed_or_unsigned ibty =
+  fun ty -> is_signed_or_unsigned_aux ibty (normalise_ctype ty)

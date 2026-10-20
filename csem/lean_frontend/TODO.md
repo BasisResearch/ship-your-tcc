@@ -1,0 +1,823 @@
+# TODO — semantics roadmap and backlog
+
+Grouped by horizon. One line per item; depth lives in the pointed-at
+records. (Verification-layer work is out of scope for this branch —
+the semantics is the product here; a verification layer consumes it
+downstream.)
+
+Current-state reconciliation: 2026-09-25 at Cerberus
+`bb487dda7c56981e76d67f53ae16e874cfe5ed61` and Lem
+`67ec5de70e02e280bb348a4ba826696b76116732` (the Lem pin has since moved to `2d3a492758cb23dc4e417f2961983d25b36ce130` by functional re-pins (via `77ad4fa` and `4e70bb5`, both merged; the current pin `2d3a492` is on `mdd/lean-backend` since the 2026-10-07 re-pin, landing note `47348c07e`), generated OCaml byte-identical at each: [re-pin record](docs/2026-10-04_lem-repin-4e70bb5-record.md), [PNVI S1 record](docs/2026-10-05_pnvi-s1-switch-parameter-record.md)). The September 5 master plan
+and subsequent delivery records are historical plans and evidence.
+The current supported product is [SUPPORTED.md](SUPPORTED.md).
+Concurrency is excluded: [USER 2026-09-24] concluded that the concurrency branch prototype had failed, reported working on a remediation, and ruled that dependency dead for now.
+The SC prototype and feature branches are parked records; no cleanup,
+announcement or current consumer depends on their integration. The
+replacement is governed by the [SC concurrency master plan](../SC-CONCURRENCY.md)
+(live status, acceptance criteria and landing policy); the older
+[SC integration charter](docs/2026-09-06_concurrency-integration-charter.md)
+is superseded by it. The separately owned legacy csmith run stays out
+of this work's scope.
+
+## Delivered program data: run digest and enum map
+
+- Runtime minting takes `core_run_state.sym_digest`, seeded explicitly by the
+  driver entry from the last program Cabs TU (empty for an empty Cabs list).
+  Other input paths carry their actual entry digest: OCaml Core text sets it,
+  while Core objects preserve the current global. The frontend digest seam
+  remains. The acceptance facts, validation evidence and combined
+  E-A/D-S consumer re-pin note are in
+  [the D-S record](docs/2026-09-22_run-digest-as-state-record.md).
+- The E-A/D-S adoption instructions for cerberus-sl are: carry `Program.digest`,
+  add the run-state invariant, and remove `MintDigestC` and its pin. The
+  [independent review](docs/2026-09-22_run-digest-audit.md) found no implementation
+  blocker; its documentation corrections and authorized landing are recorded
+  [here](docs/2026-09-22_run-digest-review-fixes.md). The consumer's proof/corpus
+  checks are downstream work; the operator reported acceptance on September 24
+  (SUPPORTED.md), without a new independently measured downstream pin.
+
+## Queued larger work
+
+- **SC concurrency** — excluded from this release; built from current mainline
+  under the [SC master plan](../SC-CONCURRENCY.md). The failed prototype is a
+  quarry, not a candidate awaiting integration. WP0 (passive memory receipts)
+  has landed; current status and later milestones live in the plan.
+- **The implementation as a parameter: `char` signedness first** — filed
+  2026-10-16 from the consumer cerberus-caesium's plan (its addendum of
+  2026-10-16, filing 1; [USER 2026-10-16] agreed to file it). C11 §6.2.5#15
+  makes `char` behave as either `signed char` or `unsigned char`, the choice
+  implementation-defined (J.3.4). Upstream Cerberus carries both choices:
+  `DefaultImpl` (x86-64 gcc) has `~char_is_signed:true` and `HafniumImpl`
+  (AArch64, the Hafnium hypervisor) `~char_is_signed:false`
+  (`ocaml_frontend/ocaml_implementation.ml:257` and `:357-378`); RefinedC's
+  frontend builds on `hafniumIntImpl`, so Caesium's `char` is unsigned and
+  `case '\377':` reads 255 there and -1 here. Neither engine is wrong; the
+  Lean seam hard-codes the default (`CerberusImpl.is_signed_ity`,
+  `lean_frontend/CerberusImpl.lean:112`, `Char0 => true`) and the oracle
+  driver never calls `Ocaml_implementation.set` except for Morello
+  (`backend/driver/main.ml:135`). The work: (i) make `char_is_signed` (or the
+  implementation record) a parameter of the semantics in the shape of the
+  switch set — an instance-implicit reader, every transitive reader binding
+  it; (ii) a fork driver flag selecting `HafniumImpl.impl` on the oracle, the
+  Morello line as precedent; (iii) a differential lane with both engines
+  under the Hafnium implementation. Price M: generated-code churn across the
+  exec cone and consumer proofs that unfold through the reader. Design pass
+  with the operator first; sequenced with the next functional re-pin, not a
+  re-pin for this alone (the consumer's own ask).
+- **A-road polish basket** — backend/semantics cleanups (pure-render
+  emission split, remaining audit L-slice gaps, ott finish);
+  itemized with prices in
+  `docs/2026-08-31_semantics-forward-assessment.md` (the F-axes);
+  deliberately parked behind the substantive track.
+
+## Semantics-audit repairs (2026-09-11) — RESOLVED findings and the rows they leave
+
+Record `docs/2026-09-11_semantics-audit-repairs-record.md`; charter
+`docs/2026-09-11_codex-charter-semantics-audit-repairs.md` (§6–§8 carry the
+resumption rulings and errata). Branch `arc/semantics-audit-repairs`.
+
+- ~~**Finding 4 — C floating literals not correctly rounded**~~ — RESOLVED (D1,
+  `c807ce603`): `CerbFloat.of_string` parses to an exact rational and rounds ONCE
+  in `Nat` to binary64 (`roundToBinary64Bits`, `Float.ofBits`; no `Float`
+  arithmetic before assembly); battery `tests/float/081–105` + unit exe
+  `float-literal-test` (42 bit-pattern pins). The oracle's own defect — OCaml's
+  `caml_float_of_hex` double-rounds a >53-bit mantissa to a subnormal — is
+  ISO-fix register **R5** (D1b, `146179d24`; VALIDATION §2; immaculate pin
+  `r5-hex-subnormal-double-rounding` DIFF; trays `40`, `ocaml/01`).
+- ~~**Finding 3 — raw bytes ≥ 0x80 in string literals / character constants
+  broke the Cabs JSON bridge**~~ — RESOLVED (D2, `a43abba65`): `json_of_bytes`
+  at the three byte sites of `cabs_json.ml`, fail-closed `getByteStr` importer
+  (code point ≥ 256 = a carrier violation, an `Except` error), bridge probe
+  `scripts/test_cabs_bytes_probe.py` in `test_parse.sh`; pins
+  `tests/minimal/107–111`, `tests/immaculate/nolibc/f3-*`. RESIDUAL (VALIDATION
+  §3(b) row, 2026-09-15): TEXT fields (`EDecl_magic` text, attribute-argument
+  strings — whole strings, `c_parser.mly:1771-1775`) still copy raw bytes, so a
+  non-UTF-8 byte in SOURCE TEXT makes the bridge REFUSE loudly where the oracle
+  proceeds. Mover: a text-field encoder decision in a separate slice.
+- **Finding 5 + draft 38 — cross-TU struct-value compatibility** — PARTLY REVERTED
+  2026-10-03 (branch `fix/mirror-upstream-d38-alignas`, record
+  `docs/2026-10-03_mirror-upstream-d38-alignas-record.md`; [USER 2026-10-03] ruled the general
+  rule: no innovation relative to Cerberus-upstream unless something is very obviously a bug;
+  otherwise fall back to loudly rejecting, as unsupported or matching upstream; cerberus-sl
+  confirmed it does not rely on cross-TU `PEmemberof`). KEPT from D3 (`dbe633ec5` + `83dc6ba00`):
+  `ctype_aux.lem` array arm `(n1_opt, n2_opt)` (draft 39), unit exe `are-compatible-test`, corpus
+  `tests/multi_tu_tray/` (LADDER Tier A row 6b). REVERTED: the `PEmemberof(struct)`
+  `are_compatible` consult; `core_eval.lem` again carries upstream's exact-tag guard (byte-equal to
+  upstream at :940-958; fork-drift `core_eval.ml` row removed). Every cross-TU struct value
+  returned and member-selected is rejected loudly (`ill-formed program: … mismatched tags`), as
+  on pristine. Draft 38 stays an upstream report; fork status updated there.
+- ~~**Union twin**~~ — DROPPED 2026-10-03 (next-phase plan P2d-1 dropped under the same
+  [USER 2026-10-03] ruling): with the struct consult reverted, the union arm's exact-tag
+  identity (`core_eval.lem` `PEmemberof(union)`, `core_aux.lem:204-208`) already mirrors
+  upstream. No work.
+- **Failure-text symbol projection** — IMPLEMENTED for LADDER Tier A row 6b ONLY
+  (`observations.py --projection failure-class`; `test_multi_tu.sh
+  --failure-class-projection`; charter §8 item 2): `Symbol(<digits>, ` → `Symbol(_, `
+  in Error/Undefined payloads, nothing else; plant-tested. Every other lane row
+  keeps `full`; any wider use is a separate operator decision (the general
+  projection was parked at the 2026-09-11 landing).
+- **Argument-path compatibility — OBSERVED MODELLING LIMIT** (charter §8 item 1):
+  in the default switch set a by-value struct argument crosses the TU boundary as
+  a pointer to a caller temporary (`core_run.lem:962-970`) and no compatibility is
+  consulted (`arr-1-2-arg`, even `{int a}` vs `{int b}`, → `Specified(7)` on every
+  engine); under `--switches=inner_arg_temps` the store-side consult rejects with an
+  uncaught `Failure` (exit 125), not a diagnostic. Pinned as behaviour
+  (`tests/multi_tu_tray/arr-*-arg`); the upstream question rides in draft 39.
+- **FAM vs sized array** — `struct S {int n; int a[];}` vs `{int n; int a[2];}` is
+  INCOMPATIBLE on all three engines (member COUNT; the FAM lives outside the member
+  list); gcc runs it. Draft 41 (question); no change.
+- **Unary minus on a floating zero** — `-x` elaborates as `0.0 - x`
+  (`translation.lem:1530-1551`), so `-(+0.0)` is `+0` where IEEE/Annex F give `-0`;
+  both fork engines and upstream agree. Draft 42 (question); no port change.
+- **Doc residuals outside the slice's fence** (for the orchestrator):
+  `docs/2026-09-05_observation-contract.md`'s comparison matrix lacks a row for row
+  6b's labelled projection; `docs/upstream-tray/README.md` §4's triage table stops
+  before draft 36; `scripts/test_immaculate.sh`'s header comment (`:22-27`) lists
+  R1–R3 only (its OK message line names R5 since 2026-09-15); VALIDATION §2's R4
+  paragraph says "today the markers are `CerbDecode.lean` R1/R2" (R5's marker is in
+  `CerbFloat.lean`).
+
+- **Pre-merge audit follow-ups (2026-09-15, `docs/2026-09-15_semantics-audit-repairs-premerge-audit.md`; F1/F2/F4/F5 fixed at landing):**
+  (a) F3 — WON'T FIX (mirror upstream), 2026-10-03: [USER 2026-10-03] agreed to keep only the
+  completeness check and mirror upstream on alignment compatibility (Cerberus TODO cases are not
+  resolved unless the answer is extremely obvious). `are_compatible_aux` keeps upstream's
+  `(*TODO alignment*)` placeholders. The member-alignment comparison written on the record branch
+  `fix/alignas-p2d3` (`cf4af48f8`, and the refusal variant `b1c7831e4`) stays a record and is not
+  merged. With draft 38's consult reverted (same date), the gap is no longer observable through
+  `PEmemberof`: every cross-TU struct value is rejected by tag. It remains reachable only through the
+  store-side consult (`memValueFromValue`). History:
+  F3 — `Ctype_aux.are_compatible_aux` ignores member ALIGNMENT specifiers
+  (`ctype_aux.lem:141` `(*TODO alignment*)`); C11 §6.2.7#1 requires equivalent
+  alignment specifiers on corresponding members. Pre-existing upstream gap, newly
+  observable through the `PEmemberof` consult (`_Alignas(16) int x` vs `int x`:
+  fork/Lean 7, upstream rejects by tag, gcc 7; no wrong read inside Cerberus).
+  Tray candidate (noted in draft 39's related observations); a shared-model fix is
+  the same class as the array-bound typo and needs the same operator sign-off.
+  (b) F6 — latent, C-unreachable seam divergences in `CerbFloat.of_string`: the
+  trailing-suffix strip runs before the `0x` check (a hex FLOAT literal always
+  carries a `p` exponent, so `0x1f`-shaped text cannot reach it from C); OCaml's
+  `float_of_string` also accepts `_` separators and `inf`/`nan` spellings the seam
+  panics on (never produced by the C lexer). Documentary; tighten if the CoreParser
+  path ever feeds such text.
+  (c) The pristine lane's reviewed-diagnostic pins hash the FULL fork stderr,
+  including OCaml backtrace line numbers of generated files, so any `.lem` body
+  growth moves them (the `minimal/097` re-pin at landing, record "Orchestrator
+  external review"). Question for the lane: normalise `line N, characters A-B`
+  in backtrace frames before hashing, keeping the message text exact.
+  (d) Hand-maintained counts in `scripts/LADDER.md` / `VALIDATION.md` §5 go stale
+  with every corpus addition (audit F1/F4): consider deriving them from the
+  baseline files at release time.
+
+## Fuel-parameter arc — C2 follow-ups (record `docs/2026-09-04_fuel-parameter-C2-record.md` §9)
+
+- **Translation expression/statement measures (2026-10-18).** The four
+  structural helpers are MEASURED; `translate_expression` and `translate_stmt`
+  retain AMBIENT fuel outside the gate's drive dependency closure. A future
+  joint measure needs to account for logical-operator desugaring and the
+  statement-expression callback's use of its translator. No sufficiency
+  theorem is currently claimed for these two. Their zero arms directly
+  refuse through opaque `failwithI`, including plain `runStateM` callers; see
+  `docs/2026-10-18_translation-fuel-record.md` and the consumer note.
+- **Constant-expression mini-run execution fuel (2026-10-19).** Exhaustion
+  inside the mini-run reaches `mini_pipeline.lem:216`'s generic `error`
+  arm (`TODO error: the driver found less/more than one active execution`)
+  and is classified LEAN_CRASH rather than FUEL. This pre-existing execution
+  failure is separate from the translation zero-arm fix; give it an
+  attributed fuel refusal in a later slice. See
+  `docs/2026-10-19_translation-fuel-premerge-audit.md`.
+- ~~**Point-free `function` tails (6 PENDING rows; lem-lean TODO 17)**~~ —
+  RESOLVED at C3 (2026-09-05, `docs/2026-09-05_fuel-parameter-C3-record.md`):
+  lem d4ba548 hoists the scrutinee as `lemTail`; the six declares + proofs
+  landed (`AilTypesAux_lemMeasureProofs`, `Core_reduction_lemMeasureProofs`),
+  register 21 → 15. Residual: none of the six (the mutual blocks' measures are
+  the derived sizes of the whole walked structure, proved sufficient).
+- ~~**Compatibility trio (three pending workers)**~~ — RESOLVED 2026-09-10
+  (are-compatible-assumed-set slice, `docs/2026-09-10_are-compatible-assumed-set-record.md`;
+  [USER 2026-09-10] ruled for the lem BODY change): `are_compatible_aux` threads a
+  path-local assumed-compatible list of tag pairs (C11 §6.2.7#1's device for
+  recursive types), the block is total, and the three workers are MEASURED WITHOUT
+  a hypothesis (`lean_frontend/CerbCtypeMeasure.lean`, proofs in
+  `Ctype_aux_lemMeasureProofs.lean`). Register 5 → 2 (`many`/`many1` only). The
+  fork's OCaml oracle changes identically (fork-drift `[expected-semantic]`
+  `ctype_aux.ml` pin moved; upstream-tray draft 37 carries the patch, now with a
+  "Fork status" section). Residual: the reproducer now exposes the NEXT cross-TU
+  limitation — `core_eval.lem:946` `PEmemberof(struct)` exact-tag identity on a
+  struct value that crossed the TU boundary (both fork engines: `ill-formed
+  program … mismatched tags`, agreeing up to symbol numbering; upstream still
+  rc=124) — tray draft 38 (`docs/upstream-tray/38-…tag-identity.md`); its fix is a
+  separate shared-model change (operator decision, same class as this one). Taken at D3
+  (2026-09-15), REVERTED 2026-10-03 (mirror-upstream ruling; see "Finding 5 + draft 38" above):
+  this residual is again the fork's behaviour, by decision.
+- ~~**`to_pure`/`to_pures`**~~ and ~~**`hack`**~~ — RESOLVED at the fuel-pending
+  close-out (2026-09-08, `docs/2026-09-08_fuel-pending-closeout-record.md`, option C
+  of the reachability census): MEASURED under the arena SHAPE hypothesis
+  (`CerbCoreShape.IsValuePexpr` / `IsPureExpr` / `AllPureExprs`; one hop at
+  `finalize`/`driver_globals` by `prepare_exit`, driver.lem:1309-1316 — the census's
+  Q4 cite corrected in the record §2.1). The hypotheses are cited invariants, not
+  theorems: a theorem about `drive`'s final state discharges them from
+  `prepare_exit`'s definition (consumer-side; not done). Register 8 → 5.
+- ~~**`many`/`many1`**~~ — RESOLVED 2026-09-15 (parser-progress-measure slice,
+  `docs/2026-09-11_parser-progress-measure-record.md`; [USER 2026-09-11] ruled for
+  the shared lem BODY change, approving D3): `many`/`many1` are restated as
+  input-indexed recursion — two mutually recursive RUN functions `many_run`/`many1_run`
+  on the input (monadic_parsing.lem:119-132), extensionally the same parsers on every
+  input for every `p` (D1 argument; kernel theorems relating the old and new workers,
+  `test/Unit/ManyRestatementTest.lean`) — and the two workers are MEASURED under the
+  progress hypothesis `CerbParserProgress.Consumes p` (measures `2 * List.length cs + 2` /
+  `+ 1`; proofs `Monadic_parsing_lemMeasureProofs.lean`), discharged as a THEOREM at
+  every printf call site (`CerbParserProgress.callSites_consume`). Register 2 → 0:
+  `scripts/fuel_forms_pending.txt` is EMPTY (header-only); the printf parser family
+  lost its ambient `[LemFuel]`; upstream-tray draft 43 carries the restatement as a
+  proposal. The close-out record's "what remains" pointer for this pair is closed here.
+  Residual: none (the fuel-pending register is closed; a new reachable ambient worker
+  is RED by the gate).
+- **Fuel-forms instrument repair** — P0 checked the exact worker/argument
+  correspondence and zero-case shapes; its decoy plants now reject. Keep
+  general propagation and completion proofs distinct from this instrument.
+- **Fuel propagation/monotonicity for the 13 zero-case rows (Lem TODO 13)** —
+  `arc/nd-fuel-stability` supplies completed-observation stability for the
+  three CerbND runners and `nd_bind`/`liftND`/`liftAction`, with fixed operands
+  and independently quantified worker/observer budgets (record
+  `docs/2026-09-08_nd-fuel-stability-record.md`; full A+B green,
+  adversarial audit PASS with its documentation finding resolved,
+  external review pending; audit
+  `docs/2026-09-09_nd-fuel-stability-adversarial-audit.md`).
+  The other seven rows retain their obligations: `eval_pexpr_aux2`,
+  `eval_pexpr_aux_broken` (outside the drive cone), `full_eval_pexpr`,
+  `print_eval_conv_aux`, `drive_nonmemory_steps_aux2`, `driver2`, and
+  `load_character_array_aux`. Increasing ambient fuel captured in callees
+  needs separate composition proofs. The fuel-forms classifier still means
+  kill-at-zero only; it does not certify stability or general propagation.
+- **The defacto memory model is unreachable from `drive` (F-C2-4)** — 12
+  fuel'd rows (9 measured) are dead code for the exec pipeline; decide
+  whether they leave the exec-cone module lists (D-C2-7). S.
+
+## Pure-failure correspondence — PARKED design, its tripwire (2026-09-08)
+
+- **The F1 twin design is PARKED** (`docs/2026-09-07_pure-failure-correspondence-design.md`;
+  the census `docs/2026-09-07_pure-failure-reachability-census.md` found 0
+  DISCARDABLE among the 231 pure exec-closure sites; [USER 2026-09-07] chose option C).
+  Its TRIPWIRE is the failure-reach register gate (`scripts/check_failure_reach.sh`,
+  `scripts/failure_reach_register.txt`; test_unit.sh + LADDER Tier B row 11): flip
+  conditions = a DISCARDABLE site that is REACHABLE (the gate's DISCARDABLE verdict on
+  a generated dead let-binding, or the lem probe suite
+  `tests/failure-probes/discarded_failures.lem`), a REACHABLE step-level site where the
+  oracle SUCCEEDS (today 0 — the 36 one-sided rows are all `CerbFS`), growth of the
+  well-typed-UB-free reachable set beyond 4, or an operator ruling for the logical
+  property. The 17 UNKNOWN rows of the register (cross-TU compatibility ×4,
+  sequential-fragment progress ×8, memory well-formedness ×4, one Eunseq shape) move
+  only by a witness or an invariant, through `--emit`/`--reseal` in a commit. S per row.
+
+## Risk-map baseline audit follow-ups (record `docs/2026-09-07_risk-map-baseline.md`, 2026-09-07)
+
+All six surfaces MOVED-WITH-RULING, no MOVED-UNRULED. Documentary and
+hygiene items the audit confirmed (each re-verified by the orchestrator):
+
+- **R3 has no `-- ISO-fix register R3` code marker in `CerbMem.lean`** (audit
+  §4; VALIDATION §2 already acknowledges it) — the existing C-Z4 item "R3
+  marker + register/marker bijection gate" closes it; no new task.
+- **`scripts/fuel_hypotheses.txt:43-46` and `CerbTagsWf.lean:19-40` state
+  "Acyclic holds for every program the frontend ACCEPTS CORRECTLY" as a
+  guarantee** (audit §3) — it is a CONJECTURE about the frontend with a known
+  counterexample (F-A2), not a theorem; restate both as "conjectured frontend
+  invariant; consumers discharge `Acyclic` at their entry (cerberus-sl
+  does, FUEL.md)". Docs/comment only.
+- **`CerbGlobal.lean:17` header comment "every read already returned these
+  values"** is overbroad (audit §3; erratum in the cerbglobal record):
+  `backend_name` moved `"cerberus-lean"` → `"Driver"` (mirror of `main.ml:124`).
+  Fix the comment; state the non-Cn/non-Bmc argument as the execution-
+  equivalence reason. Hand-written seam comment → rides the next seam slice.
+- **Stale counts in comments/tables** (audit §5): ~~`lean_frontend/test/Unit/TotalityProofTest.lean:21`
+  "(64 at C1; 22 at C4)" is fine as history but the caller comment the
+  audit read should say the CURRENT ambient pin count (22)~~ — DONE 2026-09-15
+  (parser-progress-measure D3: the header carries the history through 14 and states
+  "CURRENT count: 14");
+  `scripts/unsafebaseio_allowlist.txt:41` "66 -> 37 PIN" describes a later
+  checkpoint (the tooling-inclusive count is 38: B 61 − 29 + 5 + 1, audit §4);
+  `scripts/LADDER.md` Tier B row 9 cites a 90-case timing where the lane
+  now reports `91/91`. Comment/table fixes; ride the next instrument slice.
+- **`2026-09-06_csmith-sweep-post-p0.md` "12 TIMEOUT rows"** → 9 data rows
+  (erratum appended to that record).
+- Open obligations the audit lists as residual, all already carried: fuel
+  monotonicity/propagation (lem TODO 13), native/logical correspondence
+  (frontend digest only since D-S; F7 — `beqMemValueSafe`'s obligation CLOSED 2026-09-19: `BEq MemValue`
+  is the structural `beqMemValue`, seam-hygiene H3), the pure-failure correspondence design
+  (master plan step 2), C-P1 timing, consumer proof-check at the current
+  pin (their step 6). Repeat risk map = master plan step 7.
+
+## Fuel-parameter arc — C3 follow-ups (record `docs/2026-09-05_fuel-parameter-C3-record.md` §7–§8)
+
+- **Eager `get_ctx` measure cost — resolved in the fuel-measure-cost worktree;
+  remaining performance bar re-scoped.** The operator's standing price
+  [USER 2026-09-05]: the cost is accepted so long as it is truly under 10% CPU,
+  and changing the trust surface is a high bar. The full 1,669-row before/after
+  CPU instrument and pre-arc comparison are recorded in
+  [the fuel-measure-cost record](docs/2026-09-07_fuel-measure-cost-record.md).
+  Code `6ce040f06` replaces the full arena-size traversal with a proved
+  conservative context-call bound; the obligation shape and trust cone stay.
+  Landed 2026-09-08 (orchestrator review F1) as the NAMED structural
+  definition `CerbCoreMeasure.getCtxBound` in the seam
+  `lean_frontend/CerbCoreMeasure.lean`; the Lean `macro` D3 used to pass lem's
+  FM-free validator is deleted and `CerbTagsWf.lean` is back to its mainline
+  text (record, "Landing improvements").
+  On 369/371, visible measure cost falls from about 45%/39% to 4.3%/4.6%;
+  paired total CPU overhead versus pre-arc is 7.50%/7.29%.
+  D4's 287-row paired table has one ratio exception, `sia_csmith_078.c`:
+  +30.77% initially, +13.80% with all six runs retained, +5.14% in the fixed
+  four follow-ups. The CPU spike is unreproduced; its exact cause is unresolved.
+  `sa_csmith_419.c` remains TIMEOUT at 15 seconds (completed mean 15.62 s,
+  pre-arc 14.50 s). The all-program property is not certified. Broader measure
+  scope, a Lem fuel-scheme change, representation work or a revision bisect
+  remain operator decisions; none is implemented here.
+
+## Fuel-parameter arc — C4 follow-ups (record `docs/2026-09-05_fuel-parameter-C4-record.md` §7–§8)
+
+- **The dead `[LemFuel]` binders of the layout oracle's callers (work-list
+  item 2, second half).** The five layout wrappers, `reconstructValue` and
+  `memValueToBytes` are fuel-free since C4, but the ~20 `CerbMem` functions
+  that took `[LemFuel]` only to reach them (`sizeofIval`, `alignofIval`,
+  `offsetofIval`, `loadM`, `storeM`, `arrayShiftPtrval`, … — `grep -c
+  '\[LemFuel\]' lean_frontend/CerbMem.lean` = 23) still carry the binder,
+  and mem.lem's `declare {lean} fuel_consumer val` rows (allocate_object,
+  load, store, ne_ptrval, …) make their generated callers carry it too.
+  Removing them is a Lean-only cascade (the declares are Lean-target lines;
+  OCaml byte-identical by construction) that touches many generated heads —
+  its own slice, with the generated-tree diff enumerated in a manifest for
+  cerberus-sl. Until then the binders are dead (nothing reads the
+  ambient fuel below them). S.
+- ~~**F-C4-1**~~ — RESOLVED 2026-09-10 by the lem body change (assumed-compatible list;
+  see the C2 block's compatibility-trio entry and `docs/2026-09-10_are-compatible-assumed-set-record.md`).
+  History: **F-C4-1 — `Ctype_aux.are_compatible_aux` recurses through pointers and
+  function types (STD §6.2.7#1 structural compatibility): a cross-TU pair of
+  same-named self-referential structs (`struct node { struct node *next; }`
+  in each translation unit, reached via `memValueFromValue` on a struct
+  value crossing TUs) makes BOTH oracles recurse forever (rc=124 at 60 s)
+  and the Lean driver fail loudly by NATIVE STACK OVERFLOW (rc=134, ~3 s —
+  the recursion is not tail-recursive; the fuel is never reached; C4 audit
+  §5.1/F-A7).** At that historical checkpoint the three ctype_aux rows were PENDING.
+  They left the register on 2026-09-10; the current register is empty. Reproduced by the
+  pre-merge audit (its `node_a.c`/`node_b.c`); the upstream-tray draft is
+  WRITTEN (close-out D3, 2026-09-08: draft 37 + `tests/failure-probes/
+  cross_tu_node/`; TRUE BUG: the standard's rule needs an "assumed compatible"
+  set for recursive types). Operator decision (filing; a lem body change).
+- ~~**F-A2 (C4 audit)**~~ — RESOLVED 2026-10-03 (branch `fix/mirror-upstream-d38-alignas`, record
+  `docs/2026-10-03_mirror-upstream-d38-alignas-record.md` §2): `desugar_alignment_specifier` applies
+  §6.5.3.4#1 via §6.7.5#5 (`AlignofInvalidApplication`). Both fork engines refuse tray 47's three
+  reproducers at the oracle's location (`tests/coverage/alignas/`, three pristine-register rows). Only
+  this completeness half of P2d-3 was taken; see F3 above for the alignment-compatibility half. History:
+  **F-A2 (C4 audit) — frontend GAP, upstream TRUE-BUG tray candidate:**
+  `_Alignas(type)` on a CHARACTER-typed member bypasses the completeness
+  check (`ailTypesAux.lem:1291-1292` `Just LT` → `cabs_to_ail.lem:2882-2883`
+  stores `AlignType al_ty` unexamined), so `struct A { _Alignas(struct A) char
+  c; }` (ISO §6.5.3.4#1 constraint violation; gcc rejects) is ACCEPTED; its
+  table has a by-value self-edge, `CerbTagsWf.Acyclic` is false, both oracles
+  hang, Lean gives the loud `CerbMem.memberAlign: fuel exhausted`. The
+  hypothesis is honest and the register header says "for programs the
+  frontend accepts correctly". Tray draft WRITTEN 2026-09-27: `docs/upstream-tray/47-alignas-incomplete-type-not-diagnosed.md`
+  (widened: a forward-declared struct or a non-character member crashes both oracles with `Not_found`).
+  Fork fix RULED [USER 2026-09-27]: a constraint violation, and it goes in the tray if not there
+  already — next-phase plan P2d-3.
+- **Stack overflow vs fuel (C4 audit F-A7), for the mem-scale/stack-ceiling
+  backlog:** deep NON-tail recursion in a fuel'd worker dies on the 8 MB
+  native stack (rc=134 `Stack overflow detected. Aborting.`) long before the
+  default fuel is consumed — the fuel is not the operative bound there; the
+  harness reads it as a crash-class death, not FUEL. Cross-reference the
+  mem-scale S0 survey's `STACK_OVERFLOW` item. M.
+- **F-A8 (C4 audit NOTE):** `cerberus-lean --batch --fuel N a.json b.json`
+  (two JSON inputs) is refused as `unknown flag` while the single-input form
+  accepts `--fuel <N>` (`Main.lean` parses `--fuel` only on the single-input
+  path); either the multi-TU form takes `--fuel` or the refusal says why. S.
+- **A decidable acyclicity check as a load-time Tier C instrument.**
+  `CerbTagsWf.Acyclic` is an existential over ranks (the natural hypothesis
+  for the consumer); a bounded traversal computing ranks (or "definition
+  order is a rank" on `fmapElements`, if the spine order is definition order
+  — it is key order today) would let the differential lanes assert the
+  invariant on every loaded program, with a theorem `check = true → Acyclic`.
+  S–M.
+- **Two csmith corpus rows MATCH→TIMEOUT — RESOLVED at 15 seconds in
+  `arc/fuel-measure-cost`, code `6ce040f06`, instrument `5f14f0702`; landed
+  2026-09-08 (`arc/fuel-measure-cost-land`).**
+  `sa_csmith_369.c` and `sa_csmith_371.c` both read MATCH in the full
+  HEAD-after lane (CPU 12.07 / 10.06 s) and the separate shard-2/6 check
+  (11.48 / 9.64 s). Their baseline rows remain unchanged MATCH. The full
+  lane reports `0 regression(s), 1 improvement(s)`: `sia_csmith_169.c`
+  completed at 14.93 s CPU / 14.94 s wall against the 15 s budget. D3's
+  dedicated instrument commit re-recorded it TIMEOUT → MATCH; the landing
+  REVERTED that row (orchestrator review F2): no margin — a MATCH pin that
+  times out under load is a FATAL regression, a TIMEOUT pin that completes is
+  a non-fatal reported improvement — so it stays TIMEOUT, class-(b) pending,
+  with the completion evidence in the record (LADDER load caveat). No other
+  baseline row moved. The nine baseline TIMEOUT rows are still pending
+  completions, including `sa_csmith_419.c`, which completed pre-arc and
+  remains the measured budget exception.
+- **Environment-measure eager cost — measured, remedy deferred.**
+  `CerbTagsWf.envBound ambient ty` still traverses the tag environment on
+  layout/reconstruction calls. The full-corpus instrument and D2/D3/D4
+  profiles are in the same record: environment measures contribute at most
+  0.25% on the final 369/371 profiles and 0.20% on the residual 419/078
+  profiles. They do not explain the known regressions or provide a measured
+  remedy for 419's remaining 15-second miss. All six wrappers and hypotheses
+  are unchanged. The `refsOf ty = []` guarded bound remains a future
+  candidate requiring a kernel-checked sufficiency proof and workload
+  evidence; it is not implemented or claimed proved here. The measured
+  subset does not establish an environment-cost bound for every program.
+
+## Small items (independent; can ride along with any fix batch)
+
+- **`match_pattern`/`typecheck_pattern` fail CLOSED on tuple-arity mismatch — LANDED
+  (2026-09-20, `fix/match-pattern-arity`, record
+  `docs/2026-09-20_match-pattern-arity-record.md`; cerberus-sl hidden-state note item 7,
+  [USER 2026-09-20 via cerberus-sl] asked for it immediately).** Both shared-model
+  zips (`core_aux.lem` matcher, `core_typing.lem` typing rule) guard the arity like upstream's
+  own `simpl_match_pattern` (`core_rewrite.lem:1287-1300`); kernel facts T1–T4 + typing pin T5
+  in `test/Unit/MatchPatternArityTest.lean` (`match-pattern-arity-test`). Left: (i) upstream-tray
+  draft 45 UNFILED (operator network window); (ii) `subst_pattern_val`/`subst_pattern_pexpr`
+  still zip — reachable only after a successful match, so equal lengths on every call (stated,
+  not changed); (iii) the consumer's selector equality (`SelectAgreesC`) is theirs to discharge
+  at the one re-pin (their §4 Q4) — T1–T3 are its matcher-level premises.
+  **Closure round (2026-09-22, record §12; audit R1/R2):** (ii) above was FALSE — the helpers are
+  reached without the matcher; every tuple-binding helper now guards its arity (one loud leaf
+  `Core_aux.tuple_arity_error`, a `failure_reach_register` row), Core_run's `Elet`/`Ewseq`/`Esseq`
+  check the matcher (Illformed_program = the PElet route), the typechecker's tuple-EXPRESSION
+  arms (`PEctor Ctuple`, `Eunseq`, `Epar`) fail closed instead of deleting operands, and (round 2)
+  the `maybe`-returning `subst_pattern` DECLINES (`Nothing`, fit-tested by `match_pattern`) so
+  `--rewrite` = default = `Illformed_program` — the loud leaf is the backstop (no executing route). (iv) ~~the
+  OTHER truncating `List.zip`s of `core_typing.lem` are CALL-arity checks … out of this slice's rulings; a
+  charter of their own~~ — DONE in closure round 3 (2026-09-23, record §15; second-round audit R3/R4 rolled in
+  [USER 2026-09-23]): the seven argument-list arms of `core_typing.lem` (`PEcall` inference + checking, `Ememop`,
+  `Eccall` fixed + the fixed prefix of a variadic call, `Eproc`, `Erun`) guard the count before zipping, both
+  directions, with the existing `MismatchExpected` (`CoreTyping_TODO` at the two `Eccall` arms, the site's own
+  constructor); AND — which the deferral did not list — `Erun` at RUNTIME in both engines
+  (`core_reduction.lem` `step_ctx`'s `Erun`, the driver's; `core_run.lem`'s) checks the argument count before
+  evaluation/substitution and raises `Illformed_program` (pre-fix a surplus `error(...)` was never evaluated and a
+  shortage kept the parameter's OLD binding). Fitting inputs preserve every argument (pinned structurally). The guard's own
+  finding: the shipped stdlib's `builtin pread`/`pwrite` declarations had THREE formals against four-argument
+  call sites and four-value runtime arms (`std.core:618-619`, `std_inner_arg_temps.core:574-575`) — FIXED in both
+  files ([USER 2026-09-23] ruled that unambiguous bugs get fixes), tray 45 subsection. Left
+  from the audit's inspection, reported without a live counterexample: `equalInferred`'s tuple zip
+  (`core_typing_aux.lem`), `to_pure`'s `Ecase` and `Esave` traversals. (v) `Core_reduction` — THE engine the driver steps with — had its six let-form sites guarded
+  too (the audit cited `core_run.lem`, the second engine); `update_env_aux`'s loud leaf is the backstop;
+  (vi) `VALIDATION.md` §3 and `LADDER.md` row 1's exe count were outside both fences.
+- **C-TF1 landed (2026-09-08, `docs/2026-09-08_monadic-failstop-record.md`) — follow-ups.**
+  (a) Byte/text escaping is separated in `arc/batch-diagnostic-bytes`
+  (`docs/2026-09-09_batch-diagnostic-bytes-record.md`, full Tier A+B and
+  adversarial audit passed; external review pending):
+  `CerbEscape` shares byte escaping, with distinct byte-carrier and UTF-8
+  text adapters. The earlier instruction to unify on UTF-8 was incorrect
+  for model stdout/stderr; their FF and C3 A9 pins must stay byte-exact.
+  (b) Reasoning-artifact
+  lens: `CerbFuel.fuelExhaustedLoc` and `CerbFail.modelFailStopLoc` are
+  `opaque`s (boundary census 16); consumers cannot prove them different from
+  any location. A transparent `def` (`Loc.other "…"`, kernel-decidable
+  against every program location) would remove two boundary rows and let
+  theorems case on the kill kind — operator decision (deviates from the C1
+  Option-C precedent). (c) The immaculate pin label `L=CRASH` now also covers
+  the typed fail-stop (exit 1) — rename to `L=FAILSTOP` in a re-record with
+  justification if the coarse label becomes misleading.
+
+
+- **Byte representation and printer producer contracts (M)** — corrected
+  2026-09-06 after audit VF-07. `Main.batchEscape` handles the execution IO
+  path's byte-carrier Chars: `driver_fs_step.update_stdout/update_stderr`
+  append `String.ofList out_chars`, with one model byte per Char. Existing
+  `tests/immaculate` libc fixtures already print bytes C3 A9 and FF and agree with
+  OCaml's `String.escaped`. Converting these carriers to UTF-8 would corrupt
+  that behavior (FF would become C3 BF). Keep those byte-preserving pins.
+  Bridge parse failures, libc-loading diagnostics, and ModelFailure messages
+  are Unicode text: `arc/batch-diagnostic-bytes` routes them through UTF-8
+  escaping, with actual producer probes and all-byte printer controls
+  (record above). The generic Lem String/Char representation debt, model
+  producer byte-domain invariants, and two Lem String XFAILs remain open.
+  No blanket printer conversion is justified. See the
+  [observation contract](docs/2026-09-05_observation-contract.md#mainbatchescape-producer-trace)
+  and [audit repair record](docs/2026-09-06_validation-foundations-audit-repairs.md).
+
+- **Driver-freshness stamp: the oracle `bin` hash is not source-
+  determined, and the switch's lem libraries are an uncovered link
+  input (S)** — registered 2026-09-05 (pre-merge audit
+  `docs/2026-09-05_cerbglobal-defs-audit-premerge.md` F3/§2.5; slice
+  record `docs/2026-09-05_cerbglobal-defs-record.md` §5.3).
+  (a) `ocaml_frontend/dune:12-18`'s `version.ml` rule (`(deps
+  (universe))`, `tools/gen_version.ml` `git describe --dirty --always`
+  + commit date) is linked into `main.exe` via `Version.version`
+  (`backend/driver/main.ml:558`, `backend/common/pipeline.ml:659`), so
+  the stamped `bin` hash moves with HEAD and the dirty flag at an
+  unchanged `src` hash (three hashes at one `src` during the CerbGlobal
+  slice) — a permanent reproducibility nuisance: either exclude
+  `Version` from the oracle link (the string is printed by `--version`,
+  never consumed) or document it in `tools/check_driver_fresh.sh`'s
+  header. (b) The oracle links the switch-installed `lem`, `lem_num`,
+  `lem_zarith` (`ocaml_frontend/dune:10`, transitively from
+  `backend/driver/dune`); a lem RUNTIME change would relink the oracle
+  at an unchanged `src` and could change behaviour invisibly to the
+  stamp — today governed only by the pin invariant (branch heads = opam
+  pin = Lake pin). Cheap extra leg: record `git -C deps/lem-pinned
+  rev-parse HEAD` in the oracle stamp and compare on `--check`; at
+  minimum name `lem*` explicitly in the header's non-goals. Neither
+  blocked the CerbGlobal merge.
+
+- **core_linking.lem's dangling `set_fold` declare (S)** — registered
+  2026-09-03 (pin-bump record §8): `frontend/model/core_linking.lem:61-63`
+  declares an UNUSED `val set_fold` with an OCaml rep `Pset.fold` and a
+  Lean rep `CerbUtils.set_fold`; the Lean def was deleted at the 3c88f0d
+  pin bump (dead, and its "sets are sorted lists" premise false). Remove
+  the three lines in a slice allowed to touch the `.lem` (expected OCaml
+  rendering delta: none — a target_rep'd val emits no definition — but
+  the lem-sync source hash moves and the fork-drift review must re-run).
+- **Lem-side record errata to carry to lem-lean (S, operator/orchestrator)**
+  — from the 3c88f0d pin bump (record §7/§8): `doc/lean-backend/
+  2026-09-03_parity-fix-record.md` §5's `CerbMem.lean:1352` "returns 0
+  where the oracle RAISES" claim is false (impl_mem.ml:2479-2480 has the
+  same zero guard); "CerbMem.lean (22) now render through lemNatDiv/…"
+  is inaccurate (hand-written, not re-rendered); the impact list missed
+  the transitive `Std.Data.TreeMap` import and proof-term dependence on
+  `List.foldr` reduction (`test/Unit/FuelExemplar.lean`); `Utils.default0`
+  did not revert to `default`.
+- Step-runner execution ceiling — SURFACING NOTE (pin bump 3c88f0d,
+  2026-09-03, record §5.4): `d_loop_1000000.c` lean-first now parks in
+  the Lean runtime's stack-overflow handler (exit 124, `HANG(cpu 36.66s
+  of 600.08s wall)`) instead of `Stack overflow detected. Aborting.`
+  (exit 134) — reproduced 2+2 against the old-pin binary; same ceiling,
+  same (b) class, different failure surfacing (the handler deadlock
+  VALIDATION.md documents for the >7 M aggregates). `e_memcpy_1000000`
+  still aborts (134, `STACK_OVERFLOW;`). The rest of this item is as
+  measured at the FUEL arc:
+  the PROCESS-STACK ceiling is BINDING
+  AGAIN (measured 2026-09-03, FUEL arc record §6): at the coupled driver
+  family's budget `CerbFuel.driverFuel` = 10^8 (the FUEL arc's budget
+  commit; since the fuel-parameter arc C1 that budget is the `--fuel`
+  default `Main.lean` `defaultFuel`, the same value), `tests/mem-scale-probes/probes/d_loop_1000000.c` and
+  `e_memcpy_1000000.c` die with `Stack overflow detected. Aborting.`
+  (exit 134, after 44.6 s / 99.8 s) while `d_loop_100000`/
+  `e_memcpy_100000` complete with the oracle's values — onset between
+  10^5 and 10^6 loop iterations for loop shapes. The 2026-08-30 re-
+  characterisation ("the old process-stack overflow no longer
+  reproduces; the binding ceiling is the fuel budget") described the
+  10^6-fuel regime, where fuel exhaustion (~1.7e4 plain loop iterations
+  / ~6e4 C-recursion depth) masked the stack. Harness reading: LEAN_CRASH
+  (exit ≥ 128, `(no PANIC line captured)`), measure.sh note
+  `STACK_OVERFLOW;` — fatal, never agreement, never FUEL. NEVER a stack-
+  size knob (registered-defect shape); the structural fix is the
+  stack-ceiling design's route: `docs/2026-08-31_stack-ceiling-design.md`;
+  history: `docs/2026-08-19_arc6-s0-survey.md`. Fuel exhaustion itself
+  is a TYPED outcome since the FUEL arc (`CerbND.fuelExhaustedKill`, the
+  harness FUEL class; `docs/2026-09-02_fuel-arc-design.md`).
+- Front-end `mkListN` ceiling (FUEL arc record §5, 2026-09-03): a zero-
+  initialised local aggregate of 10^6 elements
+  (`tests/mem-scale-probes/probes/b_zero_local_1000000.c`, and
+  `_10000000`) dies in the FRONT END — `mkListN_aux_lemFuel` (called from
+  `constructValue_aux` ← `wip_desugar_initializer`, symbolised from the
+  panic backtrace) exhausts the fuel — `lemDefaultFuel` = 10^6 at the
+  time; the ambient `--fuel` (default 10^8) since the fuel-parameter arc
+  C1 — building the
+  n-element list — as a pure-return-worker PANIC (exit 134, harness
+  `FUEL(panic)`), unchanged by the driver-family budget (it is outside
+  the coupled six; Q4). Evidence for a per-declaration budget declare on
+  `mkListN_aux` (an operand-bounded measure: n elements) — a ruling item,
+  not applied.
+- **`finalize`/`hack` boundary** — the existing fixture lemma reduces
+  finalization under singleton-thread/value-arena hypotheses. Since the
+  fuel-pending close-out (2026-09-08) the value-arena hypothesis is NAMED
+  (`CerbCoreShape.IsValuePexpr`/`IsPureExpr`) and its invariant CITED
+  (`prepare_exit`, driver.lem:1309-1316, the only exit of `driver2`); `hack`,
+  `to_pure`, `to_pures` are fuel-free under it. Still open: PROVE the hypothesis
+  for `drive`'s final state (a theorem from `prepare_exit`'s definition; the
+  singleton-thread part likewise), or implement the reviewed strict
+  failure/completion design. No blanket "cheap closure" or unconditional fuel
+  independence is established.
+
+- Comment-only `.lem` cleanup (fuel-parameter C1, pre-merge audit N3):
+  `frontend/model/defacto_memory.lem:2678`, `formatted.lem:327`,
+  `monadic_parsing.lem:113` still name the deleted `lemDefaultFuel` in
+  COMMENTS. Left deliberately: lem copies comments into the generated
+  OCaml text, so fixing them moves `ocaml_frontend/generated` and breaks
+  the C1 byte-identity invariant. Do it at the next `.lem`-touching
+  upstream-facing change (or as a comment-only delta with the lem-sync
+  stamp re-recorded, by operator ruling).
+- Cross-block fuel threading in the lem backend (FUEL arc follow-up,
+  design note §1.6 route iii): a caller's fuel passed into callee
+  workers across `let rec` blocks (today the L1 mechanism threads fuel
+  through self/block-member calls only — lean_backend.ml:2852-2863,
+  :4088-4097 — which is why `drive_lemFuel` was a hand-written mirror
+  until the fuel-parameter arc C1 made the generated `drive [LemFuel]`
+  the fuel-parametric pipeline itself; the mirror is deleted).
+  Motivation: the coupled-family analysis (stack-ceiling design
+  :139-146). Class 0 (Lean emission only) but it changes every budget
+  and consumer side condition in the call graph → next-lem-arc
+  candidate, own design pass.
+- **Backend `sorry` target representations — CLOSED** in the September 24
+  MUST cleanup and closure (Lem `6b20bfd02de924d078725efa96c6675115b8b17a`):
+  generation refuses bare `sorry`, including type representations. The
+  excluded CMM declarations use `LemUnsupported` markers; concurrency remains
+  outside the supported profile. See the two public-readiness closure records.
+- KNOWN HANG — FRONT-END stack-depth ceiling with a SILENT overflow
+  (found 2026-09-01, arc/mem-scale P0; re-scoped R1 2026-09-02;
+  profile `docs/2026-09-01_mem-scale-profile.md` §6.2-6.3): the Lean
+  driver neither completes nor fails on a zero-initialised static
+  aggregate of more than ~7-8 million ELEMENTS
+  (`tests/mem-scale-probes/probes/a_zero_global_10000000.c`;
+  `char g[8000000]` hangs, `char g[7000000]` and `int g[2500000]`
+  complete; `--pp-core` ALONE hangs, so it is the front end, not
+  CerbMem). strace: the working thread takes SIGSEGV SEGV_ACCERR
+  (stack guard page of the runtime thread's 1 GiB stack) and then
+  blocks forever in `futex(FUTEX_WAIT_PRIVATE)` inside the handler —
+  no "Stack overflow detected. Aborting." Prime candidate:
+  `cabs_to_ail_aux.lem:124` N-element ConstantArray →
+  `ail/genTyping.lem:484` `E.mapM` → `ail/errorMonad.lem:86-92`
+  non-tail `ailErr_mapM` (`generated/ErrorMonad.lean:121`, partial
+  def; same shape `state_exception.lem:79` foldrM, `Undefined.lean:
+  1390` sequence0). Oracle contrast: `OCAMLRUNPARAM=l=200000` fails
+  LOUDLY in 0.03 s (exit 125). Three items: (a) fix = .lem
+  accumulate-and-reverse (tray) or lem-backend tail rendering — a
+  TWO-REPO slice; no equality theorem possible (partial def), gate =
+  completion + battery; (b) Lean upstream bug report (signal-handler
+  deadlock after guard-page SIGSEGV) with the strace excerpt; (c)
+  interim LOUDNESS: HANG classification (exit 124 with CPU/wall <
+  0.1) — DONE in S0 (2026-09-02): `scripts/common.sh classify_exit124`
+  shared by `scripts/test_exec.sh` (status `HANG`, fatal) and
+  `scripts/test_ci_sweep.sh` (`LEAN_HANG`/`CERB_HANG`); plant
+  `scripts/test_hang_plant.sh` (sleep→HANG, busy→TIMEOUT, both lanes);
+  the 10 M probe reads `HANG(cpu 3.29s of 400.12s wall)` in
+  test_exec.sh; no committed row changed class. Item (b) drafted:
+  `docs/upstream-tray/lean4/01-stack-overflow-handler-deadlock.md`.
+  Never a stack-size knob (charter C9, `docs/2026-09-01_mem-scale-design.md`).
+  RULED [AGENT 2026-09-02, orchestrator, operator-informed] (Q5): fix
+  at source in the cerberus `.lem` (accumulate-and-reverse mapM; NOT a
+  lem-backend change unless the completion gate shows the tail call
+  is not realised — charter §6.0/§6.3); plant-tested completion gate
+  = a_zero_global_10000000 Lean --first completes with the oracle's
+  verdict, asserted as status, never timing.
+  OUTCOME (mem-scale S1', 2026-09-02; record
+  `docs/2026-09-02_mem-scale-record.md` §S1'): the `.lem`
+  accumulate-and-reverse rewrite was built and measured — it moved the
+  onset (8 M elements now COMPLETE with the oracle's verdict; 10 M
+  still hang) — and then REVERTED per [USER 2026-09-02] (poor return on
+  investment for a change to the trust surface). Mechanism
+  located first-hand: our emitted C is tail-shaped (`jmp lean_apply_*`),
+  but the Lean 4.32.2 RUNTIME's `lean_apply_1/2` enter the closure by
+  indirect CALL on 22 of 24 arity paths, so every per-element closure
+  application in a function-typed monad's run loop costs one
+  `lean_apply_*` frame (~110 B/element; 1 GiB thread stack ⇒ ~8 M
+  elements). STANDING CEILING, now LOUD (S0 HANG class); registered in
+  VALIDATION.md §5. FALLBACK CANDIDATE for the next lem arc (class 0,
+  Lean-emission-only, needs its own ruling): a lem-backend RUN-LOOP
+  rendering of the monadic list combinators (`mapM`/`sequence`/`foldrM`)
+  for function-typed monads — interpret the list inside the `run`
+  function directly, no per-element closure application — so the
+  OCaml text is untouched and the Lean side stops paying the runtime
+  frame. Companion (runtime-side, upstream): make `lean_apply_*`'s
+  exact-arity paths tail calls — noted in
+  `docs/upstream-tray/lean4/01-stack-overflow-handler-deadlock.md`.
+  Upstream-facing source fix drafted regardless: tray draft 18.
+- ~~Harness memory limits use `ulimit -v`~~ — DONE (mem-scale S2,
+  2026-09-02: `e02d4105a` migration of all 20 code sites + 2 header
+  comments to per-test `scripts/capped` at `CERB_TEST_MEM_MAX=4G`;
+  `e866357c6` OOM-witness classification; `de574fbc8` baseline
+  instrument; record `docs/2026-09-02_mem-scale-record.md` §S2). The
+  original item, for the record: `ulimit -v` (virtual address space) in
+  SEVEN harnesses: `scripts/test_ci_sweep.sh:222,252,258`,
+  `scripts/test_libc_exec.sh:82,90,97`, `tests/parity-probes/
+  run_probe.sh:43,51,56`, `scripts/test_gcc_oracle.sh:361,368`,
+  `scripts/test_libxml2.sh:141,159,191,201`, `scripts/
+  test_libxml2_uri.sh:104,174`, `scripts/test_immaculate.sh:116,123,
+  131` — and `scripts/LADDER.md:73` makes it normative (operator
+  directive, arc 5). Lean's virtual footprint is ~2-3.6x its RSS, so
+  a 4 GB `-v` kills Lean at ~1.7 GB RSS while the oracle runs to
+  3.1 GB — the detective's two "OOM" rows were this artefact (profile
+  §2); the libxml2 lanes are biased against Lean today. RULED [USER
+  2026-09-02] (Q2 agreed): superseded by per-test `scripts/capped`
+  with `CERB_MEM_MAX=4G`; LADDER.md:73 text updated; migration of the
+  seven harnesses + dedicated baseline-instrument commit = mem-scale
+  S2 (charter §6.4); then re-run the class-(b) rows.
+- **Tier-C CI re-record — measured 2026-09-06**: all 2,186 rows across
+  15 suites were remeasured on repaired functional candidate `de9f6d361`.
+  [Current results and the separate original history](docs/2026-09-06_ci-reporting-results.md)
+  retain 1,359 agreements, one libc UB-location defect, three filesystem
+  refusals and three Lean timeouts. The sole movement from `1066d89ee` is
+  `pr63209.c`: CERB_TIMEOUT to LEAN_TIMEOUT at the unchanged 15-second budget.
+  Fresh TSVs and both runs' raw records are retained in the evidence archives;
+  the original 56 historical movements and default scoreboards remain unchanged.
+  Remaining work
+  is the registered semantic/completion obligations and remeasurement after
+  relevant changes, not another run of this completed candidate measurement.
+- **Bit-level float representation (L)** — queued 2026-09-29 ([USER 2026-09-29] agreed to queue it as
+  proposed); the mover of named deviation N2 (VALIDATION §2b). `CerbMem` stores floats through `Float.toBits`,
+  which canonicalizes NaNs, so a stored NaN loses its sign and payload. Proposal: represent C floating values as bit
+  patterns with IEEE arithmetic written in Lean, following x86 NaN rules (the oracle's platform), validated against
+  the oracle and the gcc lane, with the performance cost measured; floats would also become kernel-evaluable. A
+  design pass is scoped with the operator before any briefing.
+- **libc without a lossy text vehicle (M-L)** — queued 2026-09-30 ([USER 2026-09-30] left (1) or (2) as possible
+  later work); the mover of named deviation N3 (VALIDATION §2b). Lean loads libc from `tests/libc/libc.core`, a text
+  dump printed with `%.12g`, which rounds `0x1p64` (N3) and carries no source locations (Z1-A1). Two routes, to be
+  scoped with the operator: (1) a round-tripping Core float printer everywhere (fixes N3 only; moves the Lean
+  printer mirror, pp-test transcripts and possibly the batch float rendering, which must stay the oracle's); (2)
+  build libc in Lean from `runtime/libc/src` through the validated front end and link it as the oracle does (fixes
+  N3 and Z1-A1, retires the dump pin; needs speed and oracle-equivalence measurement). No special printing mode for
+  the dump ([USER 2026-09-30], no single-situation special-case fixes).
+- **Discrepancy bug hunt (M)** — queued 2026-09-28 ([USER 2026-09-28] directed a fan-out of multiple agents on a
+  discrepancy bug hunt, looking for anything in cerberus-lean that might produce bugs like the one reported the
+  day before): parallel hunters for pathleak-class defects (hand-written seams answering without a
+  faithful model, in places no lane exercises). Scope agreed with the operator before briefing; inputs: the
+  2026-09-28 served-surface audit, test-depth map and thin-surface tests record. Includes the `CerbMem` file-wide
+  `impl_mem.ml` line-cite drift found by the pre-merge audit.
+- **CerbFS: a SibylFS-faithful filesystem model (M-L)** — registered
+  2026-09-02, rescoped 2026-09-28. Since contract D2 ([USER 2026-09-28]
+  chose refusal as the safer option) every CerbFS operation refuses
+  (`docs/2026-09-28_cerbfs-refuse-all-record.md`); the earlier served
+  subset had thin positive coverage and served a wrong answer on path
+  spellings (the pathleak report). The mover, if the filesystem becomes
+  worth supporting: a model that mirrors SibylFS (path resolution
+  included), with a probe family written from the contract, not from the
+  corpora. Until then the refusal is the contract.
+- **Clean Lake packaging (M)** — forward-assessment F4.1
+  (`docs/2026-08-31_semantics-forward-assessment.md`): a stable,
+  documented exec-facing module surface, consumer-facing lakefile
+  targets that do not drag the test exes, version tags, a one-page API
+  doc. The current reasoning consumer is `cerberus-sl`;
+  `refined-cerberus` was retired on 2026-09-16 (SUPPORTED.md).
+  Registered here 2026-09-02 so the item has a home in the backlog.
+- **Regeneration recipe: wipe the generated dir first (S)** — registered
+  2026-09-02. `make lean-prelude-src` / `make prelude-src` regenerate
+  INTO the existing `lean_frontend/generated/` / `ocaml_frontend/
+  generated/` without clearing them; a file left behind by a removed
+  `.lem` module lingers (the recipe hand-`rm -f`s the two known names
+  from C1, `Core_unstruct*.lean`) and — because the lem-sync stamp is
+  recorded over whatever the directory holds after the recipe — would be
+  STAMPED as legitimate output (fail-open shape). Wanted: wipe-then-
+  regenerate (hand-written copies re-copied by the same recipe), so the
+  stamp covers exactly the recipe's output. Companion: Lake's
+  `.lake/build` keeps orphaned artifacts too (the 2026-09-02 prune record found
+  pre-split ones) — a clean-build leg at boundaries.
+- Speclab leak checks' oracle-differential leg: wire the new oracle
+  `--batch-alloc-census` line (landed 2026-09-01,
+  `docs/2026-09-01_s-basket.md`) into the speclab lanes.
+- Upstream-tray candidate (found 2026-09-01, S-basket item 1): the
+  sizeof/alignof Union arms read the Tags GLOBAL (impl_mem.ml:173,
+  :255) while the rest of the layout family threads ~tagDefs —
+  elaboration-time offsetof over a union-containing struct crashes
+  upstream (probed, exit 125); pinned as a crash pair
+  (tests/immaculate/nolibc/offsetof-union-member.c). NO TRAY DRAFT
+  YET (stated explicitly 2026-09-02): drafting is S — repro from the
+  pinned pair + the impl_mem.ml cites — mover: the next tray-drafting
+  pass (`docs/upstream-tray/INDEX.md` filing checklist).
+
+(2026-09-01: the pr44468 offsetof panic, the CoreParser `enum TAG`
+arm, the `--args` flag, the allocation-census line, the DivMod
+canonicity consolidation, the printf/Monadic_parsing totalization
+tail, and the Lean-side lem-sync freshness stamp all closed in the
+S-basket slice — `docs/2026-09-01_s-basket.md`.)
+
+## Needs maintainer action or network access
+
+- **Upstream filing tray** — drafted bug reports and prepared PR
+  branches from the differential campaigns (several oracle-wrong
+  findings pinned Lean-right), maintained operator-side and filed as
+  network windows allow.
+- **Residual effect axiom — CLOSED.** `runEffectful` is deleted, fresh supply
+  is explicit, and the axiom census covers the consumed LemLib (VALIDATION).
+  D-S made the execution digest run-state data; the frontend/native digest
+  seam remains. E-A made enum definitions explicit readers, so the old enum
+  registry is no longer a pending temporal seam. Configuration parameterization
+  remains separate work; the parked concurrency branch is not its delivery plan.
+
+- **Pin the Lake dependency SET** (C2 audit follow-up, registered
+  2026-09-01): no gate asserts the lake-manifest package set, so a
+  future `require` would join the built surface outside every census
+  (the C2 ratchet scans the LemLib copy because it KNOWS about it);
+  relatedly, `.lake/packages` can carry stale non-manifest package
+  dirs (worktree-priming leftovers) that a path-glob gate could
+  mistake for consumed code. Wanted: a leg that reads
+  `lake-manifest.json` (ALL THREE packages — `lean_frontend/`,
+  `lean_frontend/speclab/`, and the measurement package
+  `tests/mem-scale-probes/micro/`, added 2026-09-02 to this item: it
+  requires CerberusLean by path and shares the workspace package
+  store), asserts the package set is exactly the reviewed list, and
+  fails on non-manifest directories in the shared packagesDir.
+- **Raw-string awareness for the census stripper** (C2 delta-audit
+  note, registered 2026-09-01): the shared comment/string stripper in
+  `check_theorem_axioms.sh` does not know Lean raw string literals
+  (`r#"..."#`) — a banned token inside one would be treated as code
+  (over-trip, safe) but a `"` inside one could desync the string
+  lexer. Zero raw strings exist on the scanned surface today
+  (grep-verified at registration). Wanted: stripper hardening, or a
+  cheap raw-string ban probe (`r#"` fails until the stripper learns
+  the form).
+
+- **Whole-project trust-surface risk map** [USER 2026-09-05 asked that a
+  whole-project risk map be scheduled at the end of this, stating whether
+  the trust surface has moved: the surgery under way is all reasonable, but
+  it must not disturb the core Cerberus correctness properties] — an
+  INDEPENDENT pass (fresh auditor) after Z4 and the fuel close-out, BEFORE
+  the fresh-noodler exit test; baseline = the 2026-08-31 semantics-first
+  split. Surfaces: the oracle (`.lem` changes = Lean-only declares only;
+  OCaml generated tree byte-identical at every merge; fork-drift
+  manifest); execution behaviour (the battery re-run from scratch on the
+  final head, every movement one of the ruled ones); the definitions
+  consumers reason about (fuel parameter, measured wrappers, absorbing
+  payloads, deleted wrappers — each claimed zero-execution-effect: evidence
+  vs argument); the trust base (axiom census 0, kernel-only ban, opaque
+  boundary rows moved and why, ISO-fix register still 3, exception
+  classes unchanged); the gates (added/changed/weakened, plant evidence);
+  the consumer surface (what cerberus-sl depends on, what became
+  provisional). Output per surface: moved/unmoved · evidence · residual
+  risk · named mover. Price M.

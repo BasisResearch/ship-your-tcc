@@ -11,3 +11,8 @@ results/diff3/.cache/
 c/tcc-riscv-htif.elf
 c/.build.lock
 results/p3/sum-cut/*.bin
+# CSem (csem/): build outputs, lem logs, lane scratch
+csem/lean_frontend/lem.log
+csem/lean_frontend/native/*.o
+csem/.tmp/
+csem/driver_fresh.*.sha256

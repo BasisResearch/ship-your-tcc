@@ -1,0 +1,274 @@
+# DESIGN — how cerberus-lean works
+
+**Documentation check, 2026-09-25:** implementation `bb487dda7c56981e76d67f53ae16e874cfe5ed61`;
+baseline inventories and cleanup gate measurements are in
+[the remediation record](docs/2026-09-24_public-readiness-remediation.md).
+Older dated measurements below remain historical evidence.
+
+This document explains the architecture for a newcomer. It states what
+each piece is and why the load-bearing choices were made. It is not a
+history; the dated records in `docs/` carry the how-we-got-here.
+
+## 1. One semantics, two implementations
+
+Cerberus defines the C semantics in [Lem](https://github.com/rems-project/lem),
+a specification language that compiles to executable code. Upstream
+Cerberus compiles the Lem model to OCaml. This fork adds a **Lean
+backend to Lem** (in the sibling `lem-lean` repository) and compiles
+the *same model* to Lean 4.
+
+Why: hand-porting a semantics of this size would create a second
+semantics that drifts from the first. Generating both sides from one
+source makes the intended correspondence structurally reviewable. The
+remaining questions include (a) whether the Lean backend preserves the
+reference behavior and (b) whether the hand-written parts are equivalent.
+Both questions are attacked by differential testing (§5) and, where the artifacts are both in Lean,
+by theorems rather than tests.
+
+The generated code lives in `generated/` and is never edited by hand.
+The content-hash gate (`lem-sync`), handwritten-copy gate and artifact
+freshness checks reject stale inputs on the guarded build/test paths.
+The final release report records the actual source and binary identities;
+source generation alone is not a proof of semantic correspondence.
+
+## 2. The pipeline and the Cabs JSON boundary
+
+```
+            OCaml (upstream code)          Lean (this port)
+ C source ──► C parser (menhir) ──JSON──► CabsImport.lean
+                                          desugar (Cabs → Ail)
+                                          GenTyping (Ail typing)
+                                          Translation (Ail → Core)
+                                          Driver (Core execution)
+```
+
+The **boundary is Cabs**, the parsed C abstract syntax tree: OCaml
+parses C and serializes Cabs to JSON; Lean deserializes it and runs
+the entire semantic pipeline — desugaring, typing, elaboration to the
+Core intermediate language, and execution.
+
+Why the parser stays in OCaml: parsing C is semantically shallow
+(nothing about program *meaning* lives there) and mechanically deep
+(preprocessor, grammar hacks). Reusing the upstream parser keeps the
+Lean surface focused on semantics while the JSON boundary keeps the
+interface auditable. Core text files (`.core`, the standard library)
+are parsed by a hand-written Lean parser (`CoreParser.lean`), mirrored
+line-by-line against the OCaml Core lexer/parser.
+
+## 3. Hand-written seams and the mirror-OCaml discipline
+
+Some parts of the semantics cannot be generated from Lem because
+upstream implements them directly in OCaml: the concrete memory model
+(`CerbMem.lean`), implementation-defined behaviour for LP64
+(`CerberusImpl.lean`), constant decoding (`CerbDecode.lean`), floats,
+the filesystem model, mutable tag-definition state, and similar. These
+"seam" files are hand-written Lean, and they follow a strict
+discipline: **gratuitous divergence from the OCaml implementation is a
+defect even if no test exposes it.** Every seam function either
+mirrors its OCaml counterpart (with `file:line` citations in
+comments) or documents, in code, why it deliberately differs. Audits
+check the citations against the cited code.
+
+Why: differential testing can only sample behaviour. Structural
+mirroring makes equivalence reviewable where it cannot be proved, and
+exposes the intended correspondence for review. Shared source and passing
+tests do not prove preservation of evaluation order, deliberate failure,
+byte representations, or native implementations of opaque declarations.
+
+## 4. Executing C: nondeterminism, effects, totality
+
+**Nondeterminism.** C leaves evaluation order and allocation addresses
+underdetermined, and Cerberus's Core execution is explicitly
+nondeterministic. The Lean runner (`CerbND.lean`) can enumerate the
+nondeterministic branch structure exhaustively or follow a single
+trace; verdicts (defined result / undefined behaviour / error) are
+compared across the whole enumeration in differential runs.
+
+**Effects.** The OCaml model uses mutable references for ambient state
+(fresh-name counters, tag definitions, debug output). The Lean port
+threads fresh supply and tag state explicitly. The effect-retirement arc
+(2026-08/09, `docs/2026-08-31_effect-retirement-design.md`) ended the
+effect-erasure era: the fresh-symbol counter is an explicit threaded
+SUPPLY (lem's `declare {lean} supply` state-passing transform for the
+first-order region + supply fields in the desugar/elaboration monads
+the model already threads; one stream, seeded by the driver); the tag
+table is passed by value (reader lifting + `reader_consumer`); debug
+output returns values, the driver prints. `LemLib.runEffectful` — the
+old effect-projection axiom — is DELETED, and lem refuses
+`declare {lean} effectful` outright. Zero `axiom` declarations exist
+in this repository OR in LemLib (gate-enforced recursively; see
+VALIDATION.md §3). The surviving pure-signature runtime seam — the
+frontend per-TU digest read — remains an opaque declaration with an ambient native
+implementation on the declared `@[implemented_by]`/`@[extern]` boundary,
+machine-pinned in `scripts/unsafebaseio_allowlist.txt`. The enum registry
+LEFT that boundary on 2026-09-20 (program-data parameters E-A,
+`docs/2026-09-20_program-data-parameters-EA-DA-record.md`): the enum's
+compatible type is program data — the lem reader `enum_definitions`,
+carried in the sigma and the Core file and passed to every lifted def as a
+leading parameter — so the layout of an enum type is a function of the
+program the kernel can see. The default
+configuration switches became transparent definitions on 2026-09-05.
+Pinning the remaining boundary population does not prove agreement between
+its logical and native behavior. The execution digest is explicit run-state data
+since D-S (2026-09-22): `core_run_state.sym_digest`, seeded from the last
+program TU by `initial_driver_state sup top digest file fs`. Frontend
+digest selection and native MD5 remain on the declared boundary.
+
+**Totality.** The checked execution slice contains no `partial`
+definitions. Structural and measured functions are total; remaining
+recursive workers use an explicit fuel parameter. That does not establish
+that every input completes, or that every exhaustion/failure is absorbing.
+The pending fuel register is empty; the current measured/ambient inventory
+is in VALIDATION.md §7. Zero-case kill lemmas do not prove propagation
+through all successor cases. Pure failure/sentinel values and runtime
+overrides remain a separate correspondence obligation. The translation
+module also has kernel equations for all six former partial workers:
+four structural helpers are measured without hypotheses; expression and
+statement elaboration use ambient fuel with an opaque `failwithI` refusal
+at zero. This has no data-level error channel and does not depend on
+`runStateM_errors`: constant-expression translation in `Mini_pipeline`
+uses plain `runStateM`. Whole-frontend totality remains outside this claim.
+See the [translation consumer note](docs/2026-10-18_consumer-note-cerberus-caesium-translation-fuel.md)
+and the [failure census](docs/2026-09-06_failure-census-and-correspondence.md).
+
+**No magic values.** [USER 2026-09-03]: a fuel budget, a bound, a
+default, or any "magical" choice among nondeterministic alternatives
+that upstream Cerberus does not fix is forbidden outright and is
+by definition a bug. Every such choice is a
+QUANTIFIED PARAMETER of the semantics, threaded from the entry point
+(`drive fuel …`), so a consumer's theorem can range over it; a numeral
+may live only in the binary's command-line default (`--fuel`), never in
+a definition. The general form [USER 2026-09-03]: any value that a
+context or theorem can quantify over is fine, as are defaults chosen in
+test suites and the like; any hardcoded magic value that cannot be
+quantified over is by definition a bug, unless it mirrors a lem or ISO-C
+design choice — for this
+repository the mirrored source is upstream Cerberus's OCaml. The aim, stated by the operator the same day, is to forbid values that
+limit the semantics or limit the ways the customer can reason about the
+semantics. So a bound CHOSEN inside a definition is forbidden (it limits
+both), while structural recursion on a measure that IS the data (the AVL
+height stored in a node) is admissible — nothing is chosen, nothing is
+bounded, and a proof can unfold it; a caller-passed parameter or a
+termination proof are the other admissible forms.
+The fuel story satisfies this since the fuel-parameter arc's C1 slice
+(2026-09-04): fuel is the LemLib `[LemFuel]` instance every fuel'd
+function reads, instantiated once from `--fuel N` at the executable's
+entry (`Main.lean` `defaultFuel`, the one permitted numeral) and
+quantified by theorems (`∀ n, @f ⟨n⟩ = f_lemFuel n`); `driverFuel`,
+`ndDefaultFuel`, `lemDefaultFuel` and the numeric budget declares are
+deleted, gate-enforced by `scripts/check_no_fuel_numerals.sh`. Records:
+lem-lean `doc/lean-backend/2026-09-03_fuel-parameter-design.md` (R1–R3),
+`docs/2026-09-04_fuel-parameter-C1-record.md`.
+
+**The address-space top joins fuel** (address-space-bound slice, 2026-09-17;
+[USER 2026-09-16] ruled that the semantics be quantified over such bounds, so
+that in principle it could run on a tiny machine with a tiny amount of memory
+to allocate, with the reasoning quantifying over the bound). The concrete
+allocator's initial cursor — upstream's `last_address = 0xFFFFFFFFFFFF`, a
+literal inside `memory/concrete/impl_mem.ml` and a structure-field default in
+`CerbMem.lean` until the slice — is an explicit PARAMETER of the shared model:
+`Mem.initial_mem_state : integer -> mem_state` (`CerbMem.initialMemState top`;
+`MemState.lastAddress` has no default), threaded to the TWO places the model
+builds a memory state — the execution entry `initial_driver_state sup top digest file
+fs` (`initial_driver_state_given sup top digest file fs` for the const-expr mini-run)
+and the desugar state (`Cabs_to_ail.desugar sup top …` seeds
+`Cabs_to_ail_effect.state.address_space_top`, which the desugarer's
+integer-constant-expression mini-run reads to build ITS driver state,
+`mini_pipeline.lem evalConstantExpressionAux`) — from ONE command-line default on
+each engine: `Main.lean` `defaultAddressSpaceTop` (`--address-space-top N`; the
+one address-space numeral, gate-enforced by `scripts/check_no_fuel_numerals.sh`'s
+A-shapes) and the fork's `Driver_ocaml.address_space_top_default` (filled into
+both `Pipeline.configuration` and `Driver_ocaml.driver_conf` by the driver). A
+consumer theorem therefore quantifies `∀ top` over `initial_driver_state`/`drive`
+— under the parameter's DOMAIN `0 < top < 2^64` (an address fits an LP64
+pointer: `2^(8 · sizeof_pointer)` with `CerberusImpl.sizeof_pointer = some 8`,
+the bound both CLIs derive and refuse outside of with one mirrored sentence;
+the consumer's `MemWF.la_wf` needs `lastAddress ≤ 2^64`) and, for the driver's
+setup to reach `main`, the room hypothesis `8 ≤ top` (the errno `int` is the
+first object; below it the run is the out-of-memory kill before `main`);
+matched mode instantiates upstream's value, so no baseline moves. Not a reader
+constant (the rejected route: a leading binder on every `reader_consumer` seam),
+not a literal in any definition. Record:
+`docs/2026-09-17_address-space-bound-part-two-record.md`.
+
+## 5. Differential validation: the oracle, lanes, baselines, plants
+
+The compiled OCaml implementation is the reference oracle. This project
+has no formal correspondence proof for its compiler/runtime, so that link
+remains an external reference boundary supported by differential evidence.
+The [supported profile](docs/2026-09-06_supported-profile.md) states the
+distinct logical, executable and consumer claims.
+
+- **Lanes.** Each corpus has a lane script (`scripts/test_*.sh`) that
+  runs every program through both pipelines and compares full verdict
+  sequences (values, undefined-behaviour codes, exit codes; stdout
+  where applicable). Current lanes cover the upstream test suites
+  (incl. a 2,186-file CI sweep and a 1,669-program csmith corpus),
+  libc-linked execution, multi-translation-unit linking, libxml2
+  slices, the CN test corpus (213 programs), and the spec lab's
+  harness families. See `scripts/LADDER.md` for the normative tiers.
+- **Baselines.** Lanes are pinned to committed baselines and fail
+  closed in both directions: a regression fails, and an unexplained
+  improvement also fails (silent movement is how errors hide).
+- **Plants.** Gates and specs are themselves tested by deliberate
+  sabotage: break the thing the gate should catch, confirm the gate
+  goes red, revert, rebuild, confirm green. A gate that has never
+  caught a plant is treated as untested code.
+- **Three-way differential.** An un-forked upstream checkout
+  (`deps/cerberus-upstream`) separates "our fork's behaviour" from
+  "upstream's behaviour", so fork regressions and upstream bugs are
+  attributed, not conflated. A fork-drift gate pins the fork's
+  oracle-side surface to a reviewed manifest.
+
+## 6. Package structure
+
+The Lean build is organized as Lake packages with a strictly one-way
+dependency:
+
+- the **semantics package** (this directory's root build): generated
+  model + seams + the executable driver, including the `--call` entry
+  the fixture lanes use (`CerbCall.lean`, a hand-written seam: `drive`
+  started at a named function with injected arguments). The Cerberus
+  operational semantics is the ONLY semantics this repository carries
+  ([USER 2026-09-02]); the reasoning-era relational presentation
+  (`RelSemCore`) was removed from mainline on 2026-09-02 and lives on
+  the park branch (`docs/2026-09-02_relsem-prune-record.md`);
+- **`speclab/`**: the harness-family differential-lane package
+  (models, codecs, the `mkHarness` renderer, and the lane gate exes —
+  see `speclab/README.md`), consuming the semantics one-way.
+
+Nothing under the semantics surface may reference speclab. Any
+verification layer built on this semantics is intended to live
+downstream, pinning this repository like any dependency (per-target
+example repositories, including GPL-licensed ones, likewise);
+anything that would make that consumption harder is treated as a
+defect.
+
+## 7. Offline, pinning, reproducibility
+
+The [public build recipe](README.md) uses public Git URLs, a local opam
+switch and the pinned Lean toolchain. Its first run needs access to those
+dependencies. An offline build is possible with preinstalled toolchains
+and cached dependencies; local Git `insteadOf` redirects are an optional
+operator setup, not a repository prerequisite. The cleanup's offline
+substitutions are recorded separately from the public verification still
+owed (M9, 2026-09-24 remediation record).
+
+The fork Lem executable and Lake's LemLib must use the same immutable
+commit. Update the owned local opam pin, Lake revision/manifests and drift
+metadata together, regenerate both source trees, and re-run the gates.
+No container-specific `deps/` path is required by that contract.
+
+Two operational rules exist because they were each earned the hard
+way (records in `docs/`): every `lake`/`lean` invocation runs under a
+cgroup memory cap (`scripts/capped`), and validation of anything that
+affects build rules runs cache-disabled from freshly re-derived
+generated trees.
+
+## 8. Where to read more
+
+- The trust story (differential validation + gates): [VALIDATION.md](VALIDATION.md)
+- Agent-facing operating manual (build mechanics, gates, gotchas):
+  [CLAUDE.md](CLAUDE.md)
+- Dated design records and results: `docs/` (start with the most
+  recent `*-results.md`)

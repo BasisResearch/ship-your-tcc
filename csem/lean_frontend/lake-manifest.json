@@ -1,0 +1,16 @@
+{"version": "1.2.0",
+ "packagesDir": ".lake/packages",
+ "packages":
+ [{"url": "https://github.com/OathTech/lem-lean",
+   "type": "git",
+   "subDir": "lean-lib",
+   "scope": "",
+   "rev": "2d3a492758cb23dc4e417f2961983d25b36ce130",
+   "name": "LemLib",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "2d3a492758cb23dc4e417f2961983d25b36ce130",
+   "inherited": false,
+   "configFile": "lakefile.lean"}],
+ "name": "CerberusLean",
+ "lakeDir": ".lake",
+ "fixedToolchain": false}

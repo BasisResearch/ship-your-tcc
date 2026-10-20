@@ -1,0 +1,8 @@
+cerberus-lean e7e9bb427a514b6053865c303c4af512907da75b
+lem-lean 2d3a492758cb23dc4e417f2961983d25b36ce130
+# cerberus-lean: https://github.com/OathTech/cerberus-lean branch mdd/cerberus-lean
+#   (head on 2026-10-20: e7e9bb4 "landing note ... translation fuel slice"), imported
+#   into csem/ by scripts/csem_import.sh; our changes are commits on top.
+# lem-lean: https://github.com/OathTech/lem-lean (on mdd/lean-backend), the LemLib
+#   revision of the fork's lean_frontend/lakefile.toml and the lem generator
+#   revision (opam pin) used by scripts/csem_regen.sh; lean-lib/ vendored in csem/lemlib.
