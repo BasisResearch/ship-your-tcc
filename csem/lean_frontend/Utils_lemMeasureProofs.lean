@@ -40,7 +40,7 @@ theorem mkListN_aux_stable_aux (k : Nat) : ∀ (n i : Int) (acc : List Int) (f g
       | zero => omega
       | succ g =>
         simp only [mkListN_aux_lemFuel, intLtb]
-        split
+        refine ite_congr rfl (fun _ => ?_) (fun _ => ?_)  -- 4.34: `split` no longer closes this ite (csem/PORT-4.34.md)
         · rename_i h
           have h' := of_decide_eq_true h
           exact ih n (i + 1) (i :: acc) f g (by omega) (by omega) (by omega)
@@ -67,7 +67,7 @@ theorem mkListFromTo_aux_stable_aux (k : Nat) : ∀ (i max2 : Int) (acc : List I
       | zero => omega
       | succ g =>
         simp only [mkListFromTo_aux_lemFuel, intLteb]
-        split
+        refine ite_congr rfl (fun _ => ?_) (fun _ => ?_)  -- 4.34: `split` no longer closes this ite (csem/PORT-4.34.md)
         · rename_i h
           have h' := of_decide_eq_true h
           exact ih (i + 1) max2 (i :: acc) f g (by omega) (by omega) (by omega)
@@ -94,7 +94,7 @@ theorem replicate_list__stable_aux {a : Type} (k : Nat) : ∀ (x : a) (n : Nat) 
       | zero => omega
       | succ g =>
         simp only [replicate_list__lemFuel, natGtb]
-        split
+        refine ite_congr rfl (fun _ => ?_) (fun _ => ?_)  -- 4.34: `split` no longer closes this ite (csem/PORT-4.34.md)
         · rename_i h
           have h' := of_decide_eq_true h
           exact ih x (n - 1) (x :: acc) f g (by omega) (by omega) (by omega)

@@ -1498,7 +1498,7 @@ def refuseSwitchesParseCore (tok : String) (next? : Option String) : IO Unit := 
   IO.eprintln s!"cerberus-lean: refused — {flag}: --parse-core runs only the Core text parser, which reads no switch set; the switch would be silently ignored (see CONTRACT.md §2)"
   IO.Process.exit 2
 
-def main (args : List String) : IO Unit := do
+def cerbMain (args : List String) : IO Unit := do
   -- Zero-discrepancy Z2-FL-03 (Z2 audit @ 9e86fe67c; fail-closed hygiene):
   -- a Lean `panic!` — this port's fail-stop mirror of every OCaml
   -- failwith/assert/uncaught exception (CerbFloat.truncToInt, CerbMem.killM

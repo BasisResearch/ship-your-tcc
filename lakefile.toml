@@ -61,3 +61,292 @@ globs = ["Tcc.Boot.+", "Tcc.Capture.+", "Tcc.Prog.Sum.Machine.+", "Tcc.EndToEnd.
 name = "TccCompileCut"
 globs = ["Tcc.Ccp.Sum.+", "Tcc.Ccp.SumCut", "Tcc.Ccp.EndToEnd"]
 # --- end machine lane ---------------------------------------------------------
+
+# --- CSem: our fork of cerberus-lean (DESIGN-COMPILER.md §2, phase F0) --------
+# csem/ is OathTech/cerberus-lean at vendor/CSEM_REV plus our commits
+# (csem/PORT-4.34.md). The libraries below are the fork's own
+# (csem/lean_frontend/lakefile.toml, kept for reference), ported to this
+# project's Lean 4.34.0. None is a default target: `scripts/check.sh --csem`
+# builds and gates them (results/csem/f0-validation.md has the cost).
+
+# LemLib, the Lem runtime for Lean (lem-lean lean-lib/ at vendor/CSEM_REV),
+# vendored in csem/lemlib.
+[[lean_lib]]
+name = "LemLib"
+srcDir = "csem/lemlib"
+globs = ["LemLib", "LemLib.+"]
+
+[[lean_lib]]
+name = "LemLibTests"
+srcDir = "csem/lemlib"
+roots = ["LemLibTest", "LemLibTheorems", "LemLibPmapLaws"]
+
+# The fork's native digest support (csem/lean_frontend/native/md5.c) as a Lake
+# extern_lib; a path package because lakefile.toml cannot declare one.
+[[require]]
+name = "CSemNative"
+path = "csem/native-lake"
+
+# The semantics: the Lem-generated model and the hand-written seams, both
+# compiled from csem/lean_frontend/generated (scripts/csem_regen.sh); the
+# fork's flag -DautoImplicit=false.
+[[lean_lib]]
+name = "CerberusLean"
+srcDir = "csem/lean_frontend/generated"
+leanOptions = { autoImplicit = false }
+roots = [
+  "CerbDriver",
+  "AilSyntax", "AilSyntax_auxiliary",
+  "AilSyntaxAux", "AilSyntaxAux_auxiliary",
+  "AilTypesAux", "AilTypesAux_auxiliary",
+  "AilTyping", "AilTyping_auxiliary",
+  "AilWf", "AilWf_auxiliary",
+  "Annot", "Annot_auxiliary",
+  "Any", "Any_auxiliary",
+  "Bimap", "Bimap_auxiliary",
+  "Boot", "Boot_auxiliary",
+  "Builtins", "Builtins_auxiliary",
+  "Cabs", "Cabs_auxiliary",
+  "Cabs_to_ail", "Cabs_to_ail_aux", "Cabs_to_ail_aux_auxiliary",
+  "Cabs_to_ail_auxiliary", "Cabs_to_ail_effect", "Cabs_to_ail_effect_auxiliary",
+  "Cerb_attributes", "Cerb_attributes_auxiliary",
+  "Cmm_aux", "Cmm_aux_auxiliary",
+  "Cmm_csem", "Cmm_csem_auxiliary",
+  "Cmm_op", "Cmm_op_auxiliary",
+  "Cn", "Cn_auxiliary",
+  "Cn_desugaring", "Cn_desugaring_auxiliary",
+  "Constraint", "Constraint_auxiliary",
+  "Core", "Core_aux", "Core_aux_auxiliary", "Core_auxiliary",
+  "Core_eval", "Core_eval_auxiliary",
+  "Core_indet", "Core_indet_auxiliary",
+  "Core_linking", "Core_linking_auxiliary",
+  "Core_reduction", "Core_reduction_aux", "Core_reduction_aux_auxiliary", "Core_reduction_auxiliary",
+  "Core_rewrite", "Core_rewrite_auxiliary",
+  "Core_run", "Core_run_aux", "Core_run_aux_auxiliary", "Core_run_auxiliary",
+  "Core_sequentialise", "Core_sequentialise_auxiliary",
+  "Core_typing", "Core_typing_aux", "Core_typing_aux_auxiliary", "Core_typing_auxiliary",
+  "Core_typing_effect", "Core_typing_effect_auxiliary",
+  "Ctype", "Ctype_aux", "Ctype_aux_auxiliary", "Ctype_auxiliary",
+  "Debug", "Debug_auxiliary",
+  "Decode", "Decode_auxiliary",
+  "Defacto_memory", "Defacto_memory_aux", "Defacto_memory_aux_auxiliary", "Defacto_memory_auxiliary",
+  "Defacto_memory_types", "Defacto_memory_types_auxiliary",
+  "Desugaring_init", "Desugaring_init_auxiliary",
+  "Dlist", "Dlist_auxiliary",
+  "Driver", "Driver_auxiliary",
+  "Enum", "Enum_auxiliary",
+  "ErrorMonad", "ErrorMonad_auxiliary",
+  "Errors", "Errors_auxiliary",
+  "Exception", "Exception_auxiliary",
+  "Exception_undefined", "Exception_undefined_auxiliary",
+  "Float", "Float_auxiliary",
+  "Formatted", "Formatted_auxiliary",
+  "Fs", "Fs_auxiliary",
+  "GenTypes", "GenTypes_auxiliary",
+  "GenTypesAux", "GenTypesAux_auxiliary",
+  "GenTyping", "GenTyping_auxiliary",
+  "Global", "Global_auxiliary",
+  "Implementation", "Implementation_auxiliary",
+  "Lean_switches", "Lean_switches_auxiliary",
+  "IntegerImpl", "IntegerImpl_auxiliary",
+  "IntegerType", "IntegerType_auxiliary",
+  "Linux", "Linux_auxiliary",
+  "Loc", "Loc_auxiliary",
+  "Mem", "Mem_aux", "Mem_aux_auxiliary", "Mem_auxiliary",
+  "Mem_common", "Mem_common_auxiliary",
+  "Mini_pipeline", "Mini_pipeline_auxiliary",
+  "Monadic_parsing", "Monadic_parsing_auxiliary",
+  "Multiset", "Multiset_auxiliary",
+  "Nondeterminism", "Nondeterminism_auxiliary",
+  "Pp", "Pp_auxiliary",
+  "Product", "Product_auxiliary",
+  "Range", "Range_auxiliary",
+  "Scope_table", "Scope_table_auxiliary",
+  "State", "State_auxiliary",
+  "State_exception", "State_exception_auxiliary",
+  "State_exception_undefined", "State_exception_undefined_auxiliary",
+  "Lem_Std", "Lem_Std_auxiliary",
+  "Symbol", "Symbol_auxiliary",
+  "Trace_event", "Trace_event_auxiliary",
+  "Translation", "Translation_aux", "Translation_aux_auxiliary", "Translation_auxiliary",
+  "Translation_effect", "Translation_effect_auxiliary",
+  "TypingError", "TypingError_auxiliary",
+  "Undefined", "Undefined_auxiliary",
+  "Utils", "Utils_auxiliary",
+  "CerberusImpl",
+  "CerbLocation",
+  "CerberusFresh",
+  "CerbGlobal",
+  "CerbFloat",
+  "CerbUtils",
+  "CerbPP",
+  "CerbMem",
+  "CerbMemAllocatorProofs",
+  "CerbMemDefaultFacts",
+  "CerbMemAccessFacts",
+  "CerbFS",
+  "CerbFuel",
+  "CerbFail",
+  "CerbFailProofs",
+  "CerbNDFuelProofs", "CerbEscape",
+  "CerbConcurrency",
+  "CerbCtypeInstances",
+  "CerbStepInstances",
+  "CerbFunMapInstances",
+  "CerbCabsInstances",
+  "CerbTags",
+  "CerbTagsWf",
+  "CerbCoreShape",
+  "CerbCoreMeasure",
+  "CerbCtypeMeasure",
+  "CerbParserProgress",
+  "CerbDebug",
+  "CerbDecode",
+  "CabsImport",
+  "CoreParser",
+  "CerbND",
+  "CerbCall",
+  # fuel_measure obligation proofs (fuel-parameter arc C1 / D2 enablers): the
+  # hand-written <Module>_lemMeasureProofs modules the generated
+  # <Module>_auxiliary.lean obligation shells import (build fails without them)
+  "Ctype_lemMeasureProofs",
+  "Ctype_aux_lemMeasureProofs",
+  "Core_lemMeasureProofs",
+  "Defacto_memory_aux_lemMeasureProofs",
+  "Utils_lemMeasureProofs",
+  "CerbMeasureLemmas",
+  "CerbMem_lemMeasureProofs",
+  "Core_run_aux_lemMeasureProofs",
+  "Core_reduction_lemMeasureProofs",
+  "Defacto_memory_lemMeasureProofs",
+  "Core_aux_lemMeasureProofs",
+  "Core_eval_lemMeasureProofs",
+  "AilTypesAux_lemMeasureProofs",
+  "Translation_lemMeasureProofs",
+  "Formatted_lemMeasureProofs",
+  "Driver_lemMeasureProofs",
+  "Monadic_parsing_lemMeasureProofs",
+]
+
+# The fork's unit tests and gate executables (csem/lean_frontend/test).
+[[lean_lib]]
+name = "CerberusLeanTest"
+srcDir = "csem/lean_frontend/test"
+globs = ["Unit.+"]
+leanOptions = { autoImplicit = false }
+
+# csem_run: the CSem oracle (C file -> cerberus --cabs-json -> Lean pipeline),
+# and with a non-.c argument the fork's `cerberus-lean` driver verbatim.
+[[lean_exe]]
+name = "csem_run"
+srcDir = "csem/lean_frontend/generated"
+root = "CSemRun"
+
+[[lean_exe]]
+name = "core-parser-test"
+srcDir = "csem/lean_frontend/test"
+root = "Unit.CoreParserTest"
+
+[[lean_exe]]
+name = "effects-proof-test"
+srcDir = "csem/lean_frontend/test"
+root = "Unit.EffectsProofTest"
+
+[[lean_exe]]
+name = "totality-proof-test"
+srcDir = "csem/lean_frontend/test"
+root = "Unit.TotalityProofTest"
+
+[[lean_exe]]
+name = "fresh-int-test"
+srcDir = "csem/lean_frontend/test"
+root = "Unit.FreshIntTest"
+
+[[lean_exe]]
+name = "pp-test"
+srcDir = "csem/lean_frontend/test"
+root = "Unit.PPTest"
+
+[[lean_exe]]
+name = "fuel-exemplar-test"
+srcDir = "csem/lean_frontend/test"
+root = "Unit.FuelExemplar"
+
+[[lean_exe]]
+name = "fuel-forms-tool"
+srcDir = "csem/lean_frontend/test"
+root = "Unit.FuelFormsTool"
+supportInterpreter = true
+
+[[lean_exe]]
+name = "monadic-failstop-test"
+srcDir = "csem/lean_frontend/test"
+root = "Unit.MonadicFailstop"
+
+[[lean_exe]]
+name = "allocator-soundness-test"
+srcDir = "csem/lean_frontend/test"
+root = "Unit.AllocatorSoundnessTest"
+
+[[lean_exe]]
+name = "float-literal-test"
+srcDir = "csem/lean_frontend/test"
+root = "Unit.FloatLiteralTest"
+
+[[lean_exe]]
+name = "are-compatible-test"
+srcDir = "csem/lean_frontend/test"
+root = "Unit.AreCompatibleTest"
+
+[[lean_exe]]
+name = "many-restatement-test"
+srcDir = "csem/lean_frontend/test"
+root = "Unit.ManyRestatementTest"
+
+[[lean_exe]]
+name = "opaque-failure-test"
+srcDir = "csem/lean_frontend/test"
+root = "Unit.OpaqueFailureTest"
+
+[[lean_exe]]
+name = "reconstruct-legacy-test"
+srcDir = "csem/lean_frontend/test"
+root = "Unit.ReconstructLegacyTest"
+
+[[lean_exe]]
+name = "pnvi-arms-test"
+srcDir = "csem/lean_frontend/test"
+root = "Unit.PnviArmsTest"
+
+[[lean_exe]]
+name = "enum-data-test"
+srcDir = "csem/lean_frontend/test"
+root = "Unit.EnumDataTest"
+
+[[lean_exe]]
+name = "run-digest-test"
+srcDir = "csem/lean_frontend/test"
+root = "Unit.RunDigestTest"
+
+[[lean_exe]]
+name = "cabs-import-test"
+srcDir = "csem/lean_frontend/test"
+root = "Unit.CabsImportTest"
+
+[[lean_exe]]
+name = "match-pattern-arity-test"
+srcDir = "csem/lean_frontend/test"
+root = "Unit.MatchPatternArityTest"
+
+[[lean_exe]]
+name = "memory-access-test"
+srcDir = "csem/lean_frontend/test"
+root = "Unit.MemoryAccess"
+
+# The F0 statement of `tcc_run_correct` over CSem (Tcc/CSem/: Supported,
+# Statement); needs CerberusLean, so it is built only under --csem.
+[[lean_lib]]
+name = "TccCSem"
+globs = ["Tcc.CSem.+"]
+
+# --- end CSem -----------------------------------------------------------------

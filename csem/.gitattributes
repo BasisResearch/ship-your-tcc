@@ -1,0 +1,3 @@
+# Lem output (scripts/csem_regen.sh); never edit by hand (Law 7)
+lean_frontend/generated/** linguist-generated=true
+lean_frontend/lem_sync.sha256 linguist-generated=true

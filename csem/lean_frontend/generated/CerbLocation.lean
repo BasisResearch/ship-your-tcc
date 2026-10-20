@@ -1,0 +1,335 @@
+import LemLib
+/-
+  Source location tracking.
+  Corresponds to: util/cerb_location.ml and util/cerb_position.mli
+
+  This is the Lean equivalent of Cerb_location.t — a real implementation,
+  not a unit stub. Tracks file, line, column, and region information.
+-/
+
+namespace CerbLocation
+
+/-- Source position. Corresponds to: `Cerb_position.t` (util/cerb_position.ml:7-11),
+    a record of the LEXING position `file : Lexing.position` — the position in
+    the preprocessed stream the C lexer read; its `pos_fname` is the input path
+    handed to the lexer (parsers/c/c_parser_driver.ml:155), constant across a
+    translation unit — and the SOURCE file and line after
+    cpp's `#line` mapping (`source_file`/`source_line`, set by
+    `Cerb_position.set_source` from the lexer's `LineMap`, parsers/c/c_lexer.mll:42-45).
+
+    - `file`/`line` are the SOURCE values (`Cerb_position.file`/`line`, :18-19);
+      `col` is `Cerb_position.column` (:23-25): `1 + pos_cnum - pos_bol` of the
+      lexing position, 1-based — one column for both views.
+    - `lexingFile`/`lexingLine` are the lexing position's `pos_fname`/`pos_lnum`
+      (`Cerb_position.to_file_lexing`, :27). Since 2026-10-16 (cerberus-caesium
+      filing 2; `docs/2026-10-16_consumer-note-cerberus-caesium-cabs-json-pp-position.md`)
+      the Cabs JSON exporter emits them beside the source triple
+      (`backend/lean_export/cabs_json.ml` `json_of_pos`: `{"file", "line", "col",
+      "lexing_file", "lexing_line"}`) and `CabsImport.jsonToPos` requires them.
+      Positions the Core parser stamps mirror `Cerb_position.from_lexing`
+      (parsers/core/core_lexer.mll:205, core_parser.mly:18): lexing = source.
+
+    Every printer in this file reads the source triple only, as the OCaml's do
+    (`location_to_string` cerb_location.ml:188-237, `simple_location` :476-491,
+    `get_filename`). The order `posLt` reads the source triple too, which is the
+    DECLARED divergence Z2-L-02 from the OCaml `pos_lt` (:109-114 compares the
+    lexing `pos_cnum` on equal source lines) — see `posLt`; closing it with the
+    lexing pair now carried is a possible follow-up, not done here. Adding the
+    lexing pair changes no printed text and no order.
+
+    Equality: the derived `BEq` compares all five fields. This MIRRORS the OCaml:
+    lem's `Loc.t` declares no `Eq` instance (frontend/model/loc.lem), so lem `=` on
+    a location is OCaml's structural `(=)` over the whole `Cerb_position.t`
+    record, lexing position included. For positions of one lexing run of a
+    preprocessed file the lexing (file, line) plus the column determine
+    `pos_bol`/`pos_cnum`, so two `Pos` are now equal iff the OCaml positions are.
+    (Before 2026-10-16 Lean identified positions that differ only in their
+    preprocessed line — one source line reached through two `#line` regions —
+    which the OCaml distinguishes.) The derived `Ord` compares in field order
+    (source triple, then the lexing pair); OCaml's `compare` orders by the lexing
+    position first — that field-order difference is part of the declared cosmetic
+    `Ord Loc` divergence below (no differential output enumerates a Loc-keyed set). -/
+structure Pos where
+  file : String
+  line : Nat
+  col : Nat
+  lexingFile : String
+  lexingLine : Nat
+  deriving BEq, Ord, Inhabited, Repr
+
+/-- Cursor within a location region.
+    Corresponds to: Cerb_location.cursor -/
+inductive Cursor where
+  | noCursor : Cursor
+  | pointCursor : Pos → Cursor
+  | regionCursor : Pos → Pos → Cursor
+  deriving BEq, Ord, Inhabited, Repr
+
+/-- Source location.
+    Corresponds to: Cerb_location.t -/
+inductive Loc where
+  | unknown : Loc
+  | other : String → Loc
+  | point : Pos → Loc
+  | region : Pos → Pos → Cursor → Loc
+  | regions : List (Pos × Pos) → Cursor → Loc
+  deriving BEq, Inhabited, Repr
+
+-- Ord Loc (needed by generated code — e.g. Undefined.lean uses Loc in
+-- sets). Arc-14 S1 F4 (sem:S3): a real structural lexicographic order
+-- (by constructor rank, then fields via the existing Ord Pos/Cursor),
+-- replacing the previous `compare (repr a).pretty (repr b).pretty` —
+-- which was both unlawful as a stable key discipline (lexicographic on
+-- pretty-printed Repr text: "line 10" < "line 9") and O(n·|repr|) per
+-- comparison. Total, lawful, structural; it does not mirror OCaml's
+-- Cerb_location compare (locations are cosmetic on the batch path — no
+-- differential output enumerates a Loc-keyed set), a deliberate
+-- proof-friendliness divergence, documented. `Ord (List (Pos × Pos))`
+-- is not auto-derived, so the region list is compared element-wise here.
+private def cmpPosPairList : List (Pos × Pos) → List (Pos × Pos) → Ordering
+  | [], [] => .eq
+  | [], _ => .lt
+  | _, [] => .gt
+  | (a1, b1) :: xs, (a2, b2) :: ys =>
+    match compare a1 a2 with
+    | .eq => match compare b1 b2 with
+      | .eq => cmpPosPairList xs ys
+      | o => o
+    | o => o
+
+private def locRank : Loc → Nat
+  | .unknown => 0 | .other _ => 1 | .point _ => 2
+  | .region _ _ _ => 3 | .regions _ _ => 4
+
+instance : Ord Loc where
+  compare a b := match a, b with
+    | .unknown, .unknown => .eq
+    | .other s1, .other s2 => compare s1 s2
+    | .point p1, .point p2 => compare p1 p2
+    | .region a1 b1 c1, .region a2 b2 c2 =>
+      match compare a1 a2 with
+      | .eq => match compare b1 b2 with | .eq => compare c1 c2 | o => o
+      | o => o
+    | .regions l1 c1, .regions l2 c2 =>
+      match cmpPosPairList l1 l2 with | .eq => compare c1 c2 | o => o
+    | _, _ => compare (locRank a) (locRank b)
+
+/-! ## Constructors -/
+
+def unknown : Loc := .unknown
+
+def other (s : String) : Loc := .other s
+
+/-! ## Cursor operations
+    Corresponds to: cerb_location.ml:41-54 -/
+
+def withCursor : Loc → Loc
+  | .unknown | .other _ => .unknown
+  | .regions [] .noCursor => .unknown
+  | .point z | .region _ _ (.pointCursor z)
+  | .region z _ .noCursor
+  | .regions _ (.pointCursor z)
+  | .regions ((z, _) :: _) .noCursor => .point z
+  | .region _ _ (.regionCursor b e)
+  | .regions _ (.regionCursor b e) => .region b e .noCursor
+
+/-- Corresponds to: cerb_location.ml:59-90 -/
+def withCursorFrom (loc1 loc2 : Loc) : Loc :=
+  let cursor := match loc2 with
+    | .unknown | .other _ => Cursor.noCursor
+    | .point z => .pointCursor z
+    | .region s e .noCursor => .regionCursor s e
+    | .region _ _ cur => cur
+    | .regions _ z => z
+  match loc1 with
+  | .unknown => match cursor with
+    | .noCursor => .unknown
+    | .pointCursor pos => .point pos
+    | .regionCursor b e => .region b e .noCursor
+  | .other str => .other str
+  | .point z => .region z z cursor
+  | .region b e _ => .region b e cursor
+  | .regions rs _ => .regions rs cursor
+
+/-! ## Bounding box
+    Corresponds to: cerb_location.ml:103-149 -/
+
+/-- `pos_lt` — cerb_location.ml:109-114: same line → compare `pos_cnum`
+    (the ABSOLUTE byte offset), else the line. DECLARED (zero-discrepancy
+    Z2-L-02): `Pos` carries the column, not `pos_cnum`; the two orders
+    coincide unless two positions share a `source_line` from different
+    PREPROCESSED lines (a `#line`-remapped pair) — cosmetic (bounding boxes
+    feed `location_to_string`, an EXC(a) text channel), no verdict path. -/
+private def posLt (p1 p2 : Pos) : Bool :=
+  if p1.line == p2.line then p1.col < p2.col
+  else p1.line < p2.line
+
+/-- `outer_bbox` — cerb_location.ml:105-118: `[] -> assert false` (:109-110),
+    mirrored as a fail-stop (zero-discrepancy Z2-L-02: this answered
+    `(default, default)`); unreachable — `regions [] _` is refused at
+    construction on both sides (`Cerb_location.regions` failwith :33-36;
+    `CabsImport.jsonToLoc` rejects an empty `Loc_regions` list). -/
+private def outerBbox (xs : List (Pos × Pos)) : Pos × Pos :=
+  match xs with
+  | [] => failwithI "Cerb_location.outer_bbox: [] (cerb_location.ml:109-110 assert false)"
+  | (b0, e0) :: rest =>
+    rest.foldl (fun (bAcc, eAcc) (b, e) =>
+      ((if posLt b bAcc then b else bAcc), (if posLt e eAcc then eAcc else e))
+    ) (b0, e0)
+
+def bboxLocation (xs : List Loc) : Loc :=
+  let (defLoc, acc) := xs.foldl (fun (defLoc, acc) loc =>
+    match loc with
+    | .unknown => (defLoc, acc)
+    | .other _ => (loc, acc)
+    | .point pos => (defLoc, (pos, pos) :: acc)
+    | .region p1 p2 _ => (defLoc, (p1, p2) :: acc)
+    | .regions rs _ => (defLoc, rs ++ acc)
+  ) (Loc.unknown, [])
+  match acc with
+  | [] => defLoc
+  | _ =>
+    let (b, e) := outerBbox acc
+    .region b e .noCursor
+
+/-- Corresponds to: cerb_location.ml:152-171 -/
+def withRegionsAndCursor (locs : List Loc) (locOpt : Option Loc) : Loc :=
+  let cursorOpt := match locOpt with
+    | some (.point z) => Cursor.pointCursor z
+    | some (.region _ _ z) | some (.regions _ z) => z
+    | _ => .noCursor
+  let posOfRegion : Loc → Option (Pos × Pos)
+    | .point p => some (p, p)
+    | .region p1 p2 _ => some (p1, p2)
+    | _ => none
+  let rec collectAll (acc : List (Pos × Pos)) : List (Option (Pos × Pos)) → Option (List (Pos × Pos))
+    | some x :: xs => collectAll (x :: acc) xs
+    | [] => some acc
+    | none :: _ => none
+  match collectAll [] (locs.map posOfRegion) with
+  | some regs => .regions regs cursorOpt
+  | none => .unknown
+
+/-! ## Queries -/
+
+def getFilename : Loc → Option String
+  | .unknown | .regions [] _ => none
+  | .other _ => some "<internal>"
+  | .point pos | .region pos _ _ | .regions ((pos, _) :: _) _ => some pos.file
+
+/-- OCaml `Filename.dirname` (Unix): strip trailing slashes, then drop the
+    last component; a bare name gives "."; a root-level name gives "/".
+    Public since the bug-hunt fixes S2 (2026-09-29): `Main.lean`'s import-time
+    library-location check applies the oracle's EXACT test with it. -/
+def dirname (p : String) : String :=
+  let trimmed := (p.dropRightWhile (· == '/'))
+  if trimmed.isEmpty then (if p.isEmpty then "." else "/")
+  else
+    let dir := (trimmed.dropRightWhile (· != '/')).dropRightWhile (· == '/')
+    if !trimmed.contains '/' then "." else if dir.isEmpty then "/" else dir
+
+/-- The three library directories of `util/cerb_location.ml:512-520`,
+    runtime-relative: `Cerb_runtime.in_runtime "libc/include"`, `… "libcore"`,
+    `… "libcore/impls"`, where the runtime is `<prefix>/lib/cerberus-lib/runtime`
+    (`util/cerb_runtime.ml:47`; `Main.resolveRuntime` builds the same string).
+    Written here with the runtime's own last component, `runtime/`, so that
+    every EXACT library directory ends with one of them (see
+    `isLibraryLocation`). -/
+def libraryDirs : List String :=
+  ["runtime/libc/include", "runtime/libcore", "runtime/libcore/impls"]
+
+/-- The SUFFIX test `isLibraryLocation` applies to a file path: its
+    `Filename.dirname` equals one of `libraryDirs` or ends with `/` + one. -/
+def isLibraryPathSuffix (path : String) : Bool :=
+  let dir := dirname path
+  libraryDirs.any (fun d => dir == d || dir.endsWith ("/" ++ d))
+
+/-- is_library_location — util/cerb_location.ml:512-523: the location is
+    "library" iff `Filename.dirname path` IS one of the three runtime
+    directories `<runtime>/libc/include`, `<runtime>/libcore`,
+    `<runtime>/libcore/impls` (an exact string test on the oracle).
+    Behaviour-bearing on every UB-location path: `core_eval.lem:602` and
+    `core_run.lem:477` substitute the enclosing C location for a
+    library-located UB, and `core_run.lem:782` refuses to overwrite a
+    thread's `current_loc` with a library location.
+
+    This function is a pure `target_rep` called from generated code, and the
+    runtime root is a property of the driver invocation, so the function
+    tests the directory SUFFIX (`isLibraryPathSuffix`) instead of the exact
+    directory. The two tests agree on every input the driver ACCEPTS (bug
+    hunt BUG-3, `docs/2026-09-29_discrepancy-bug-hunt.md`; fixed 2026-09-29,
+    record `docs/2026-09-29_bug-hunt-fixes-record.md` §S2):
+    - exact ⇒ suffix: the runtime `Main.resolveRuntime` builds always ends in
+      `/runtime` (`<prefix>/lib/cerberus-lib/runtime`), so each exact
+      directory ends with `/` + a `libraryDirs` entry;
+    - suffix ⇒ exact on accepted inputs: `Main.lean` refuses the run
+      (`refuseLibraryLocations`, exit 2, attributed) when any file path of
+      the imported Cabs locations (user TUs and libc metadata TUs) passes
+      the suffix test and fails the exact one; the only other file-carrying
+      locations are the ones `CoreParser.parseLibraryFile` stamps on
+      `std.core` and the `.impl` file, whose paths `Main.runPipeline` builds
+      as `<runtime>/libcore/std.core` and `<runtime>/libcore/impls/….impl`
+      (exact by construction). The `--libc` dump's bodies carry no file
+      (`CoreParser.parseFile` erases their positions; recorded Z1-A1).
+    This retires the earlier documented residual Z-67 (a user file under a
+    directory literally named `runtime/libcore` was library-classified by
+    Lean and not by the oracle; the witness now refuses) FOR THE DRIVER ONLY.
+    An in-process consumer that calls `CabsImport.parseJson` and this
+    function directly, without `Main.refuseLibraryLocations`, still has the
+    residual; it must apply the same check with its runtime root
+    (VALIDATION §3, in-process consumers; pre-merge audit L4).
+    The previous implementation matched ANY path segment equal to
+    `libcore`/`include`/`impls` — a user file under any `include/` directory
+    was library-classified (wrong), and std.core itself was never classified
+    because CoreParser stamped no file at all (Z-01). -/
+def isLibraryLocation (loc : Loc) : Bool :=
+  match getFilename loc with
+  | none => false
+  | some path => isLibraryPathSuffix path
+
+/-! ## String conversion
+    Corresponds to: cerb_location.ml:188-237 (location_to_string) and
+    :476-491 (simple_location) -/
+
+/-- simple_location — util/cerb_location.ml:476-491 verbatim: the renderer
+    of the batch verdict `loc:` field (driver_ocaml.ml:113/127). Zero-
+    discrepancy Z-03 (noodle O1): the batch lines used `stringFromLocation`
+    (`file:L:C-C`) — the UB location is behaviour [USER 2026-09-03], so its
+    rendering must agree byte-for-byte. An empty `Loc_regions` list makes
+    the OCaml `List.hd` raise `Failure "hd"`; mirrored as a fail-stop. -/
+def simpleLocation : Loc → String
+  | .unknown => "<unknown location>"
+  | .other str => s!"<other location: {str}>"
+  | .point pos => s!"{pos.line}:{pos.col}"
+  | .region s e _ => s!"<{s.line}:{s.col}--{e.line}:{e.col}>"
+  | .regions ((s, e) :: _) _ => s!"<{s.line}:{s.col}--{e.line}:{e.col}>"
+  | .regions [] _ => failwithI "CerbLocation.simpleLocation: hd"
+
+private def stringOfPos (pos : Pos) : String :=
+  s!"{pos.file}:{pos.line}:{pos.col}"
+
+/-- The cursor suffix of `location_to_string` — cerb_location.ml:219-223:
+    `" (cursor: " ^ string_of_pos ~shrink:true pos ^ ")"` /
+    `" (cursor: " ^ b ^ " - " ^ e ^ ")"`, where `~shrink:true` prints
+    `line:col` without the file (:189-191). Zero-discrepancy Z2-P-04 / Z2-L-01:
+    this suffix was dropped (an EXC(a) text gap, closed). -/
+private def cursorSuffix : Cursor → String
+  | .noCursor => ""
+  | .pointCursor p => s!" (cursor: {p.line}:{p.col})"
+  | .regionCursor b e => s!" (cursor: {b.line}:{b.col} - {e.line}:{e.col})"
+
+def stringFromLocation : Loc → String
+  | .unknown => "unknown location"
+  | .other str => s!"other_location({str})"
+  | .point pos => s!"{stringOfPos pos}:"
+  | .region p1 p2 cur =>
+    let fileStr := if p1.file == p2.file then "" else p2.file
+    let lineStr := if p1.line == p2.line then "" else s!"{p2.line}:"
+    s!"{stringOfPos p1}-{fileStr}{lineStr}{p2.col}{cursorSuffix cur}"
+  | .regions xs _ =>
+    let (p1, p2) := outerBbox xs
+    let fileStr := if p1.file == p2.file then "" else p2.file
+    let lineStr := if p1.line == p2.line then "" else s!"{p2.line}:"
+    s!"{stringOfPos p1}-{fileStr}{lineStr}{p2.col}"
+
+end CerbLocation

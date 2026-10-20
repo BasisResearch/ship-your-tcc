@@ -76,7 +76,7 @@ theorem find_array_index_stable_aux (k : Nat) : ∀ (size i : Nat) (ival_ : inte
       | zero => omega
       | succ g =>
         simp only [find_array_index_lemFuel, natGteb]
-        split
+        refine ite_congr rfl (fun _ => ?_) (fun _ => ?_)  -- 4.34: `split` no longer closes this ite (csem/PORT-4.34.md)
         · rfl
         · rename_i h
           have h' : ¬ (i ≥ size) := fun hle => h (decide_eq_true hle)
@@ -140,7 +140,7 @@ theorem memcmp_load_aux_stable_aux [LemFuel] (k : Nat) :
       | zero => omega
       | succ g =>
         simp only [memcmp_load_aux_lemFuel, intGteb]
-        split
+        refine ite_congr rfl (fun _ => ?_) (fun _ => ?_)  -- 4.34: `split` no longer closes this ite (csem/PORT-4.34.md)
         · rfl
         · rename_i h
           have h' : ¬ (offset ≥ max_offset) := fun hle => h (decide_eq_true hle)

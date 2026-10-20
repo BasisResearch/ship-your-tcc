@@ -120,13 +120,36 @@ theorem toList_create (l : Pmap α β) (x : α) (d : β) (r : Pmap α β) :
 
 theorem toList_bal (l : Pmap α β) (x : α) (d : β) (r : Pmap α β) :
     toList (bal l x d r) = toList l ++ (x, d) :: toList r := by
-  unfold bal
-  repeat' split
-  all_goals (try simp only [height] at *)
-  all_goals (repeat' split)
-  all_goals first
-    | (simp [toList_create, toList, List.append_assoc]; done)
-    | (exfalso; omega)
+  -- ship-your-tcc 4.34 port (csem/PORT-4.34.md): 4.34's `split` takes the
+  -- matches before the `if`s and stops on the height guards, so the case
+  -- analysis is written out
+  simp only [bal]
+  by_cases h1 : height l > height r + 2
+  · simp only [h1, ↓reduceIte]
+    cases l with
+    | Empty => simp [height] at h1
+    | Node ll lv ld lr _ =>
+      simp only
+      by_cases h2 : height ll ≥ height lr
+      · simp only [h2, ↓reduceIte]; simp [toList_create, toList, List.append_assoc]
+      · simp only [h2, ↓reduceIte]
+        cases lr with
+        | Empty => simp [height] at h2
+        | Node => simp [toList_create, toList, List.append_assoc]
+  · simp only [h1, ↓reduceIte]
+    by_cases h3 : height r > height l + 2
+    · simp only [h3, ↓reduceIte]
+      cases r with
+      | Empty => simp [height] at h3
+      | Node rl rv rd rr _ =>
+        simp only
+        by_cases h4 : height rr ≥ height rl
+        · simp only [h4, ↓reduceIte]; simp [toList_create, toList, List.append_assoc]
+        · simp only [h4, ↓reduceIte]
+          cases rl with
+          | Empty => simp [height] at h4
+          | Node => simp [toList_create, toList, List.append_assoc]
+    · simp only [h3, ↓reduceIte]; simp [toList]
 
 /-! ## List lemmas -/
 

@@ -32,7 +32,8 @@ while [[ $# -gt 0 ]]; do
 done
 GEN_DIR="$ROOT/lean_frontend/generated"
 HW_DIR="$ROOT/lean_frontend"
-LEMLIB_LIB="$ROOT/lean_frontend/.lake/packages/LemLib/lean-lib"
+# ship-your-tcc: LemLib is vendored in csem/lemlib (upstream: the Lake package copy)
+LEMLIB_LIB="$ROOT/lemlib"
 for d in "$GEN_DIR" "$HW_DIR" "$LEMLIB_LIB"; do
   if [[ ! -d "$d" ]]; then
     echo "check_sorry_token: FAIL — scan directory $d missing (fail-closed)"

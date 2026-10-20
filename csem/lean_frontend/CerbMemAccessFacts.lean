@@ -130,7 +130,7 @@ theorem loadM_erasure [LemFuel] [CerbGlobal.Switches] (es ts l t p s) :
     split <;> (try simp only [stopObserving_deadAllocations, stopObserving_allocations, stopObserving_bytemap,
       stopObserving_lastUsedUnionMembers, stopObserving_funptrmap, findOverlapping_stopObserving, readBytesFrom])
     all_goals (repeat' first
-      | simp_all only [stopObserving_recordAccess, stopObserving_exposeOnLoad, stopObserving_lastUsed,
+      | simp_all only [not_true_eq_false, Bool.false_eq_true, stopObserving_recordAccess, stopObserving_exposeOnLoad, stopObserving_lastUsed,
           stopObserving_observations, exposeOnLoad_observations, recordAccess_of_observations_none,
           stopObserving_deadAllocations, stopObserving_allocations, stopObserving_bytemap,
           stopObserving_lastUsedUnionMembers, stopObserving_funptrmap, findOverlapping_stopObserving]
@@ -139,7 +139,7 @@ theorem loadM_erasure [LemFuel] [CerbGlobal.Switches] (es ts l t p s) :
   all_goals (simp only [stopObserving_deadAllocations, stopObserving_allocations, stopObserving_bytemap,
     stopObserving_lastUsedUnionMembers, stopObserving_funptrmap, findOverlapping_stopObserving, readBytesFrom])
   all_goals (repeat' first
-    | simp_all only [stopObserving_recordAccess, stopObserving_exposeOnLoad, stopObserving_lastUsed,
+    | simp_all only [not_true_eq_false, Bool.false_eq_true, stopObserving_recordAccess, stopObserving_exposeOnLoad, stopObserving_lastUsed,
         stopObserving_observations, exposeOnLoad_observations, recordAccess_of_observations_none,
         stopObserving_deadAllocations, stopObserving_allocations, stopObserving_bytemap,
         stopObserving_lastUsedUnionMembers, stopObserving_funptrmap, findOverlapping_stopObserving]
