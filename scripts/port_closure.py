@@ -47,6 +47,16 @@ MODIFIED = {
     'Vsa/Sim/BlockTactics2.lean', 'Vsa/Sim/ValueSites.lean', 'Vsa/Sim/MemcpySites.lean',
     'Vsa/Sim/MemcpySpec.lean', 'Vsa/Sim/NegTailSites.lean', 'Vsa/Sim/Generic/ExitStep.lean',
 }
+# Copied verbatim from ship-your-ocaml (not in ship-your-lua): the register-write
+# reflection and Sail-normalization helpers of the reset chain that
+# Tcc/Boot/Startup ports (ATTRIBUTION.md). Checked against that source; scanned by
+# the discipline gate (not in copied.txt).
+OCAML_SRC = Path.home() / 'Documents/code/ship-your-ocaml'
+OCAML = {
+    'Vsa/Sim/FactorSail.lean', 'Vsa/Sim/GprCases.lean', 'Vsa/Sim/NormalizeSail.lean',
+    'Vsa/Sim/RegisterWrites.lean', 'Vsa/Sim/ReifyRegisterWrites.lean',
+    'Vsa/Sim/SailUnchanged.lean', 'Vsa/Sim/StateExt.lean',
+}
 COPIED = ROOT / 'experiments/port/copied.txt'
 HEADER = """# Lean files copied verbatim from ship-your-lua (Vsa/: the import closure of the
 # machine lane's seeds, scripts/port_closure.py; source commit in ATTRIBUTION.md).
@@ -116,7 +126,16 @@ def main():
             elif rel not in MODIFIED and src.exists() and not filecmp.cmp(src / rel, ROOT / rel, shallow=False):
                 bad.append(f'changed {rel} (add it to MODIFIED, or restore it)')
         here = sorted(str(p.relative_to(ROOT)) for p in (ROOT / 'Vsa').rglob('*.lean'))
-        extra = set(here) - set(files)
+        for rel in sorted(OCAML):
+            if not (ROOT / rel).exists():
+                bad.append(f'missing {rel}')
+            elif OCAML_SRC.exists() and not filecmp.cmp(OCAML_SRC / rel, ROOT / rel, shallow=False):
+                bad.append(f'changed {rel} (differs from ship-your-ocaml)')
+            for m in imports(ROOT / rel):
+                r = str(mpath(ROOT, m).relative_to(ROOT))
+                if m.split('.')[0] == 'Vsa' and r not in files and r not in OCAML:
+                    bad.append(f'{rel} imports {m}, outside the closure')
+        extra = set(here) - set(files) - OCAML
         bad += [f'not in the closure: {r}' for r in sorted(extra)]
         listed = [l for l in COPIED.read_text().splitlines() if l and not l.startswith('#')]
         if listed != [f for f in files if f not in MODIFIED]:

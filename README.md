@@ -118,29 +118,40 @@ fixes and reproducers are in [DIFFERENTIAL.md](DIFFERENTIAL.md).
 ## Phase 3: one per-program end-to-end theorem
 
 The program P is `c/tests/p3/sum.c`, a loop and a printf that prints `55\n`.
-For P the end-to-end theorem `Tcc.EndToEnd.tcc_run_sum` is proved with one
-premise left open: `CompileCut_Statement`, which says tcc's compile phase
-on Sail reaches the captured cut. The two sections below cover the Clight
+For P the end-to-end theorem is proved with no machine premise:
+`Tcc.EndToEnd.tcc_run_sum_closed` (in the `TccCompileCut` library) says that,
+for every external-call semantics with the printf premises, `tcc -run sum.c`
+from reset on Sail halts printing exactly what Certora's Lean Clight of `sum.c`
+prints, with the same exit code. The two sections below cover the Clight
 side and the machine side. Each obligation's status is in PHASES.md. The
 earlier proof audit is in
 [results/proof-readiness.md](results/proof-readiness.md), and the
 independent native capture of the handoff state (6,632,342 steps) is in
 [results/capture-cut.md](results/capture-cut.md).
 
-`CompileCut_Statement` is reduced to three smaller statements, all about
-reset: `Tcc.Ccp.Sum.compileCut_of`, in the `TccCompileCut` library. The
-reduction has three parts:
+`CompileCut_Statement`, which says tcc's compile phase on Sail reaches the
+captured cut, is proved as `Tcc.Ccp.Sum.compileCut_proved` in the
+`TccCompileCut` library. The proof has five parts:
 
 * a first-order RV64I evaluator (`Tcc/Ccp/Eval.lean`) runs the whole
   compile phase inside the kernel, in 266 generated segments of 25,000 steps
-  each, at about 1.5 ms per step. Building it takes about 2.5 CPU-hours
-  (`scripts/build_ccp.sh`), from 16 MB of generated source;
+  each, at 1.24 ms per step: 2.3 CPU-hours (`scripts/build_ccp.sh`, or
+  `scripts/check.sh --compile-cut`), from 16 MB of generated source;
 * one generic theorem, `Tcc.Ccp.run_sound`, turns an evaluator run into
   Sail `Steps`. It is proved for every instruction kind the run executes;
 * a generated proof that the code table decodes, under Sail, as the
-  evaluator runs it.
+  evaluator runs it;
+* generated proofs that the evaluator's reset memory and code are exactly
+  the bytes `TccSumElf` pins. The pin is now a search tree of chunks
+  (`Tcc/Boot/ChunkTree.lean`);
+* the reset facts, from ship-your-ocaml's reset chain, ported into
+  `Tcc/Boot/Startup`.
 
-The pilot's measurements and what remains are in
+The generated files are checked without the native trace:
+`scripts/gen_ccp.py --check` regenerates them from the committed digest
+`results/p3/ccp-digest.json`, and checks the checkpoint states by hash.
+
+Measurements and design are in
 [results/p3/compile-cut-pilot.md](results/p3/compile-cut-pilot.md).
 
 ### Clight side (done)
@@ -156,14 +167,15 @@ Lean formatter (`Tcc/Clight/Printf.lean`). All on Lean 4.34.0 with the root
 `lakefile.toml`; `lake build` takes about 75 s from scratch (the run of
 P is one 21 s `decide +kernel`), under 1.2 GB.
 
-### Machine side (3b proved for P; 3a open)
+### Machine side (3a and 3b proved for P)
 
 `Tcc.EndToEnd.tcc_run_sum`: for every external-call semantics `X` with
 `PrintfModel X` and `ExtDeterm X`, **given `CompileCut_Statement`**, from
 reset on the tcc image with P embedded, the machine halts with console
 `"55\n"` and exit code 0, Clight's P prints those bytes and returns 0, and the
 codes agree (`Agree`); every halting run of the machine is that one
-(`tcc_run_sum_halts`). The only open premise is the compile phase.
+(`tcc_run_sum_halts`). `tcc_run_sum_closed` and
+`tcc_run_sum_halts_closed` discharge the premise with `compileCut_proved`.
 
 * **The cut** (`Tcc.Capture.Sum.TccSumCut`): PC = `tcc_baremetal_enter`, every
   GPR as captured, `GoodState`, an idle HTIF mailbox, an empty console, and a

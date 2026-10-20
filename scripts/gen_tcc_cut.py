@@ -261,6 +261,17 @@ def elf_chunks(inp, segs):
     return chunks, ranges_of(absent)
 
 
+def ctree(items, leaf):
+    """A balanced search tree over sorted chunks: a node's key is the base of
+    its right half's first chunk (`CTree.lookup` goes right at or above it)."""
+    def go(lo, hi):
+        if hi - lo == 1:
+            return leaf(items[lo])
+        mid = (lo + hi) // 2
+        return f'(.node 0x{items[mid][0]:x}\n  {go(lo, mid)}\n  {go(mid, hi)})'
+    return go(0, len(items))
+
+
 def gen_elf(inp, segs):
     chunks, absent = elf_chunks(inp, segs)
     parts = [chunks[i:i + PART] for i in range(0, len(chunks), PART)]
@@ -269,49 +280,60 @@ def gen_elf(inp, segs):
     for f in range(nfiles):
         body = []
         for p in range(f * PARTS_PER_FILE, min(len(parts), (f + 1) * PARTS_PER_FILE)):
-            lits = ',\n   '.join(chunk_lit(c) for c in parts[p])
-            body.append(f'def part{p} : List Chunk :=\n  [{lits}]\n')
-        files[f'Elf/P{f}.lean'] = f'''import Tcc.Boot.View
+            t = ctree(parts[p], lambda c: f'(.leaf {chunk_lit(c)})')
+            body.append(f'def part{p} : CTree :=\n  {t}\n')
+        files[f'Elf/P{f}.lean'] = f"""import Tcc.Boot.ChunkTree
 
-{header("A slice of `elfImage`'s chunks (`Elf.lean`), read from the ELF file.")}
+{header("A slice of `elfImage`'s chunks (`Elf.lean`), read from the ELF file, as a search tree.")}
 namespace {NS}.Elf
 
 open Tcc.Boot
 
 {chr(10).join(body)}
 end {NS}.Elf
-'''
-    # balanced if-tree over the parts' lower bounds
-    lows = [p[0][0] for p in parts]
-
-    def tree(lo, hi, ind):
-        if hi - lo == 1:
-            return f'chunkView part{lo} k'
-        mid = (lo + hi) // 2
-        pad = ' ' * ind
-        return (f'if k < 0x{lows[mid]:x} then\n{pad}  {tree(lo, mid, ind + 2)}\n'
-                f'{pad}else\n{pad}  {tree(mid, hi, ind + 2)}')
+"""
+    tops = [(p[0][0], i) for i, p in enumerate(parts)]
+    top = ctree(tops, lambda x: f'part{x[1]}')
     imports = '\n'.join(f'import {NS}.Elf.P{f}' for f in range(nfiles))
     nbytes = sum(c[1] for c in chunks)
     nz = sum(c[1] for c in chunks if c[2] == 0 and c[1] >= ZERO_RUN)
     absent_lits = ', '.join(f'(0x{a:x}, {n})' for a, n in absent)
-    files['Elf.lean'] = f'''{imports}
+    abs_tree = ctree([(a, n, 0) for a, n in absent], lambda c: f'(.leaf ⟨0x{c[0]:x}, {c[1]}, 0⟩)')
+    hdr = header(f"The ELF's loaded bytes that pin it (`TccSumElf`): every byte of the image's loaded memory (the emulator's `initializeMemory`) that the compile phase reads before writing it, and the view's host bytes: {nbytes} bytes ({nz} of them in zero runs) in {len(chunks)} chunks, read from the ELF file, as a search tree of chunks (`CTree`: a lookup follows a dozen nodes); and the {sum(n for _, n in absent)} bytes the compile phase reads that the ELF does not load (`elfAbsent`, with the search tree `elfAbsentB` for fast membership).", f"; ELF sha256 {inp['elf_sha256']}")
+    files['Elf.lean'] = f"""{imports}
 import Tcc.Boot.Reset
 
-{header(f"The ELF's loaded bytes that pin it (`TccSumElf`): every byte of the image's loaded memory (the emulator's `initializeMemory`) that the compile phase reads before writing it, and the view's host bytes: {nbytes} bytes ({nz} of them in zero runs) in {len(chunks)} chunks, read from the ELF file, never evaluated except by the host checks; and the {sum(n for _, n in absent)} bytes the compile phase reads that the ELF does not load (`elfAbsent`).", f"; ELF sha256 {inp['elf_sha256']}")}
+{hdr}
 namespace {NS}.Elf
 
 open Tcc.Boot
 
+/-- The chunks of the pinned loaded bytes. -/
+def elfTree : CTree :=
+  {top}
+
 /-- The pinned loaded bytes of the ELF. -/
-def elfImage (k : Nat) : Option (BitVec 8) :=
-  {tree(0, len(parts), 2)}
+def elfImage (k : Nat) : Option (BitVec 8) := elfTree.lookup k
 
 /-- Bytes the compile phase reads that the ELF does not load (they read as 0). -/
 def elfAbsent : List (Nat × Nat) := [{absent_lits}]
 
+/-- `elfAbsent` as a search tree of zero chunks. -/
+def elfAbsTree : CTree :=
+  {abs_tree}
+
+/-- Fast membership in `elfAbsent`. -/
+def elfAbsentB (k : Nat) : Bool := (elfAbsTree.lookup k).isSome
+
+theorem elfAbsTree_leaves :
+    elfAbsTree.leaves.all (fun c => elfAbsent.contains (c.base, c.len)) = true := by
+  decide +kernel
+
+theorem elfAbsentB_sound {{k : Nat}} (h : elfAbsentB k = true) : inRanges elfAbsent k = true :=
+  CTree.inRanges_of elfAbsTree_leaves h
+
 end {NS}.Elf
-'''
+"""
     return files
 
 

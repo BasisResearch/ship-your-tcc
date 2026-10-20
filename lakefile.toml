@@ -59,5 +59,5 @@ globs = ["Tcc.Boot.+", "Tcc.Capture.+", "Tcc.Prog.Sum.Machine.+", "Tcc.EndToEnd.
 # needs ~7 GB: results/p3/compile-cut-pilot.md).
 [[lean_lib]]
 name = "TccCompileCut"
-globs = ["Tcc.Ccp.Sum.+", "Tcc.Ccp.SumCut"]
+globs = ["Tcc.Ccp.Sum.+", "Tcc.Ccp.SumCut", "Tcc.Ccp.EndToEnd"]
 # --- end machine lane ---------------------------------------------------------

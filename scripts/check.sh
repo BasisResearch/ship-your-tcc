@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # check.sh — the gate for ship-your-tcc (after ship-your-lua's scripts/check.sh).
 #
-#   scripts/check.sh [--static-only]
+#   scripts/check.sh [--static-only | --compile-cut]
 #
 # (1) ISA: tcc's output for the corpus and the tcc ELF contain no M/F/D/Q/A/C
 #     instruction (scripts/check_isa.sh, scripts/test_tcc_patch.sh);
@@ -66,6 +66,9 @@ python3 scripts/port_closure.py --check || fail "copied Vsa/ layer drifted (scri
 # (Elf*.lean only when the captured ELF is at build/p3/sum.elf)
 python3 scripts/gen_tcc_cut.py --check || fail "generated Tcc/Capture/Sum drifted (scripts/gen_tcc_cut.py)"
 python3 scripts/gen_tcc_segs.py --check || fail "generated replay drifted (scripts/gen_tcc_segs.py)"
+# the CompileCut chain, table and pin proofs are regenerated from the committed
+# trace digest results/p3/ccp-digest.json (the checkpoint states by hash)
+python3 scripts/gen_ccp.py --check || fail "generated Tcc/Ccp/Sum drifted (scripts/gen_ccp.py)"
 
 echo "== (3b) discipline"
 python3 scripts/check_discipline.py || fail "discipline"
@@ -105,5 +108,13 @@ if [ -f lakefile.toml ] || [ -f lakefile.lean ]; then
   audit scripts/axioms.lean "$std"
   echo "== (6b) axioms of the patch-0002 audit"
   audit scripts/axioms_certora.lean "$std|CC.externalFunctionsSem|CC.inlineAssemblySem|CC.externalFunctionsSemDeterm|CC.inlineAssemblySemDeterm"
+  if [ "${1:-}" = "--compile-cut" ]; then
+    # opt-in: the evaluator run of tcc's compile phase (TccCompileCut, ~2.5 CPU-hours
+    # from scratch) and the closed end-to-end theorem
+    echo "== (7) CompileCut (scripts/build_ccp.sh)"
+    SYT_LAKE_LOCK="$lock" scripts/build_ccp.sh || fail "CompileCut build (scripts/build_ccp.sh)"
+    echo "== (7b) axioms of the CompileCut proofs"
+    audit scripts/axioms_ccp.lean "$std"
+  fi
 else echo "== (5,6) no Lean project yet (Phase 3)"; fi
 echo "check: OK"

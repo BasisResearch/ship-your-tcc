@@ -4,11 +4,12 @@ Question: can `CompileCut_Statement` (Tcc/Capture/Sum/Cut.lean) be discharged by
 kernel-reducible RV64I evaluator, with one generic soundness proof against the
 Sail model, instead of a per-static-block replay (~900 CPU-hours)?
 
-**Verdict: go.** We measured 1.24 ms of kernel time per step on average:
-2.28 CPU-hours for all 6,632,342 steps, run from 16 MB of generated source. The
+**Verdict: go, and done.** We measured 1.24 ms of kernel time per step on
+average: 2.28 CPU-hours for all 6,632,342 steps, run from 16 MB of generated
+source. `CompileCut_Statement` is now proved outright: see "Closing
+CompileCut". The
 generic soundness proof covers every instruction kind the compile phase
-executes. `CompileCut_Statement` is now proved from one premise,
-`ResetSim_Statement` (see "What remains").
+executes.
 
 ## P0: inventory
 
@@ -160,26 +161,52 @@ blocks check, 2.5–3.2 s user each including imports, and
 * `#print axioms run_sound` gives `[propext, Classical.choice, Quot.sound]`;
   `run_100000` (the first four segments) gives `[propext]`.
 
-## What remains
+## Closing CompileCut (2026-10-20, second round)
 
-* `ResetFacts_Statement`: port ship-your-ocaml's `ElfReset.ready` chain
-  (`GoodState`, zero GPRs, the loader's memory, empty console, idle
-  mailbox). That is 25 files, about 960 lines.
-* `MemPin_Statement` and `CodePin_Statement`: `mem0`'s known bytes and the
-  table's words are the `TccSumElf`-pinned bytes. A brute-force `decide`
-  against `elfImage` does not fit: two 64-page blocks needed more than
-  26 GB. The cause is that every lookup scans a list literal of about 250
-  chunks. Plan: a search tree over the chunks (sorted, disjoint, checked
-  once) with a lemma that its view equals `chunkView`, or build `mem0` from
-  the chunks by a proved function.
-* After that, add `TccCompileCut` to an on-demand gate. It is about 3
-  CPU-hours, so not `check.sh`'s default build.
+* **Pins** (`mem0_pinned`, `code_pinned`):
+  * `TccSumElf`'s image is now a search tree of its 4,028 chunks
+    (`Tcc/Boot/ChunkTree.lean`, `CTree.lookup`, `Elf.elfTree`). Before, it was
+    an if-tree over chunk lists: each lookup scanned about 250 chunks, and two
+    64-page blocks needed more than 26 GB.
+  * The absent bytes have a tree as well (`Elf.elfAbsentB`, sound for
+    `inRanges elfAbsent` by `elfAbsentB_sound`).
+  * `scripts/gen_tcc_cut.py` writes the trees. Its `--check` still passes
+    against the pinned ELF, and `scripts/gen_ccp.py`'s parse of the pin is
+    unchanged (`Mem0.lean` and `Code.lean` are byte-identical).
+  * The checks are kernel `decide`s per block of 64 pages or entries, 8 blocks
+    per module (`Tcc/Ccp/Sum/Pin`). Memory: 17 modules, 1,149 s user, at most
+    4.3 GB. Code: 39 modules, 139 s user.
+* **Reset** (`resetFacts`): ship-your-ocaml's `ElfReset.ready` chain is
+  ported into `Tcc/Boot/Startup`. That is 22 files plus `ResetFactor`, and 7
+  verbatim `Vsa/Sim` helpers checked by `scripts/port_closure.py`.
+  * The definitions it is about are byte-identical here: riscv-lean,
+    `Vsa/{Machine,Elf}.lean`, `Vsa/Sim/{GoodState,Frame}.lean`, and
+    `resetSeed`/`ElfReset`/`tohostMetadata`.
+  * `InitValues` differs only in `tohostAddr` (this image's) and in the added
+    `FetchOK`/`StoreWin`.
+  * Adaptations: renamed modules; `RunnerDefaults` imports
+    `Vsa.Sim.BlockPilot`; the while_min-specific statements are dropped
+    (ATTRIBUTION.md).
+  * The chain builds in under a minute.
+* **Assembly:** `Tcc.Ccp.Sum.compileCut_proved : CompileCut_Statement` and
+  `Tcc.EndToEnd.tcc_run_sum_closed` / `tcc_run_sum_halts_closed`
+  (`Tcc/Ccp/EndToEnd.lean`). Their only premises are `PrintfModel X` and
+  `ExtDeterm X`. Axioms: propext, Classical.choice, Quot.sound
+  (`scripts/axioms_ccp.lean`).
+* **Law 7:** `scripts/gen_ccp.py --check` needs no trace. It regenerates all
+  899 generated files from `results/p3/ccp-digest.json` (583 KB: executed PCs
+  and words, written pages, checkpoint PCs and GPRs, the options, and the
+  SHA-256 of each checkpoint state). It checks the 266 state files, whose
+  deltas need the stores, by hash. It runs in `check.sh` stage 2b.
+  `scripts/check.sh --compile-cut` builds `TccCompileCut` through
+  `scripts/build_ccp.sh` and audits `scripts/axioms_ccp.lean`.
 
 ## Reproduce
 
 ```
 make -C c BUILD=build FLAGS=0 PROG=tests/p3/sum.c ELF=build/p3/sum-flags0.elf   # runtime 9e1142dc96d8db10
 scripts/compile_trace.py --elf c/build/p3/sum-flags0.elf --out build/ccp/trace  # 6 min
-scripts/gen_ccp.py --trace build/ccp/trace --out Tcc/Ccp/Sum --chain 25000:6632342 --table-proof
-scripts/build_ccp.sh                                                             # ~2.5 h serial
+scripts/gen_ccp.py --trace build/ccp/trace --chain 25000:6632342 --table-proof --pin-proof --write-digest
+scripts/gen_ccp.py --check                                                       # no trace needed
+scripts/check.sh --compile-cut                                                   # ~2.5 h serial from scratch
 ```

@@ -2,6 +2,8 @@ import Tcc.Ccp.Sum.Seg.Join
 import Tcc.Ccp.Sum.Table.All
 import Tcc.Ccp.Sound
 import Tcc.Capture.Sum.Cut
+import Tcc.Ccp.Sum.Pin.All
+import Tcc.Boot.Startup.SetupElf
 
 /-!
 # `CompileCut_Statement` from the evaluator run (CompileCut pilot)
@@ -24,8 +26,9 @@ namespace Tcc.Ccp.Sum
 
 open Tcc.Ccp Tcc.Boot Tcc.Capture.Sum Vsa.Machine Vsa.Sim
 
-/-- The bytes the run reads before writing them that the ELF does not load. -/
-def absentB (a : Nat) : Bool := inRanges Elf.elfAbsent a
+/-- The bytes the run reads before writing them that the ELF does not load
+(`Elf.elfAbsent`, by its search tree). -/
+abbrev absentB (a : Nat) : Bool := Elf.elfAbsentB a
 
 /-- Open: the reset configuration is related to the evaluator's reset state. -/
 def ResetSim_Statement : Prop :=
@@ -103,18 +106,19 @@ structure ResetFacts (elf : ELF64File) (c : Config) : Prop where
   idle : c.σ.regs.get? .htif_payload_writes = some 0#4
   gprs : ∀ n, 1 ≤ n → n < 32 → gprGet c.σ n = some 0#64
 
-/-- Open: the reset facts (port of ship-your-ocaml's `ElfReset.ready` chain,
-OCaml/Vm/Boot/Startup/{SetupElf,InitModel,...}). -/
+/-- The reset facts (proved: `resetFacts`, by the reset chain ported from
+ship-your-ocaml, `Tcc/Boot/Startup`). -/
 def ResetFacts_Statement : Prop :=
   ∀ elf, TccSumElf elf → ∀ c₀, ElfReset elf c₀ → ResetFacts elf c₀
 
-/-- Open: every byte the evaluator's reset memory knows is the pinned ELF's
-(present), or one of the absent ones (zero). A brute-force kernel `decide`
-does not fit (two 64-page blocks exceeded 26 GB); see
-results/p3/compile-cut-pilot.md for the planned builder proof. -/
+/-- Every byte the evaluator's reset memory knows is the pinned ELF's
+(present), or one of the absent ones (zero). Proved: `memPin`, by the
+generated block decides `Tcc/Ccp/Sum/Pin/M*.lean` against the search-tree
+form of the pin (`Elf.elfTree`). -/
 def MemPin_Statement : Prop := MT.allKnown (pinB absentB Elf.elfImage) mem0 = true
 
-/-- Open: every code-table entry's word is the pinned ELF's bytes at its PC. -/
+/-- Every code-table entry's word is the pinned ELF's bytes at its PC. Proved:
+`codePin` (`Tcc/Ccp/Sum/Pin/C*.lean`). -/
 def CodePin_Statement : Prop := CT.allW (codeB absentB Elf.elfImage) code.table = true
 
 theorem uint64_toBitVec (x : UInt64) : x.toBitVec = BitVec.ofNat 64 x.toNat := by
@@ -128,7 +132,7 @@ theorem resetSim_of (h1 : ResetFacts_Statement) (h2 : MemPin_Statement) (h3 : Co
     (by rw [hr.tick]; decide)
   · rw [hr.pc, uint64_toBitVec, helf.entry]; rfl
   · rw [hf.memory]; exact helf.image
-  · intro a ha; rw [hf.memory]; exact helf.absent a ha
+  · intro a ha; rw [hf.memory]; exact helf.absent a (Elf.elfAbsentB_sound ha)
   · simp [output, hf.output]
 
 /-- **PHASES 3a from the reset premise**: tcc's compile phase reaches the
@@ -142,5 +146,20 @@ theorem compileCut (hreset : ResetSim_Statement) : CompileCut_Statement := by
 theorem compileCut_of (h1 : ResetFacts_Statement) (h2 : MemPin_Statement) (h3 : CodePin_Statement) :
     CompileCut_Statement :=
   compileCut (resetSim_of h1 h2 h3)
+
+/-- The reset facts, from the ported reset chain (`Tcc.Boot.Startup.ElfReset.ready`,
+ship-your-ocaml's): the ELF's `.tohost` is this image's. -/
+theorem resetFacts : ResetFacts_Statement := by
+  intro elf helf c₀ hr
+  have r := Tcc.Boot.Startup.ElfReset.ready hr (by rw [tohostAddr_eq]; exact helf.tohost)
+  exact ⟨r.good, r.memory, r.output, r.idle, r.gprs⟩
+
+theorem memPin : MemPin_Statement := mem0_pinned
+
+theorem codePin : CodePin_Statement := code_pinned
+
+/-- **PHASES 3a, proved**: from reset on the tcc image with `sum.c` embedded,
+the machine reaches the captured cut. -/
+theorem compileCut_proved : CompileCut_Statement := compileCut_of resetFacts memPin codePin
 
 end Tcc.Ccp.Sum
