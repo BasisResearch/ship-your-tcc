@@ -216,6 +216,15 @@ reproduces runtime hash `9e1142dc96d8db10` and `.tohost = 0x8007cec0`; an
 absolute `BUILD` path gives a different image. `scripts/tcc_cut.py` refuses any
 other runtime hash.
 
+## Next: compiler correctness (plan)
+
+[DESIGN-COMPILER.md](DESIGN-COMPILER.md) plans a proof that tcc's compiler is
+correct for a C subset: for every program P in the subset, the code tcc's
+RV64I binary emits refines Certora's Lean Clight of P. It uses two layers:
+Layer A, tcc's binary computes a Lean model of tccpp, tccgen and
+riscv64-gen; Layer B, that model's code simulates Clight. The plan is for
+review; nothing is built yet.
+
 ## Layout
 * `vendor/tinycc`: pristine tinycc 43c7708.
 * `patches/`: the tcc patches.
