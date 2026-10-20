@@ -86,6 +86,8 @@ structure Rec where
   end_switch : M Unit
   do_Static_assert : M Unit
   gfunc_call : Int32 → M Unit
+  /-- `vpop()` (riscv64-gen.c's gfunc_call and gen_vla_alloc) -/
+  vpop : M Unit
   -- libtcc.c / tccelf.c
   /-- `tcc_compile(s1, filetype, filename, fd)` -/
   tcc_compile : Int32 → ByteArray → Int32 → M Int32
