@@ -38,8 +38,61 @@ theorem st_cut_pc : BitVec.ofNat 64 st266.pc = enterPc := by decide +kernel
 theorem st_cut_regs : ∀ i, i < 31 → regs (i + 1) = BitVec.ofNat 64 (getR st266.regs (i + 1)) := by
   decide +kernel
 
-theorem st_cut_view : ∀ ch ∈ viewChunks, viewOK absentB st266.mem ch = true := by
+theorem st_cut_view0 : ((viewChunks.drop 0).take 20).all (viewOK absentB st266.mem) = true := by
   decide +kernel
+
+theorem st_cut_view1 : ((viewChunks.drop 20).take 20).all (viewOK absentB st266.mem) = true := by
+  decide +kernel
+
+theorem st_cut_view2 : ((viewChunks.drop 40).take 20).all (viewOK absentB st266.mem) = true := by
+  decide +kernel
+
+theorem st_cut_view3 : ((viewChunks.drop 60).take 20).all (viewOK absentB st266.mem) = true := by
+  decide +kernel
+
+theorem st_cut_view4 : ((viewChunks.drop 80).take 20).all (viewOK absentB st266.mem) = true := by
+  decide +kernel
+
+theorem st_cut_view5 : ((viewChunks.drop 100).take 20).all (viewOK absentB st266.mem) = true := by
+  decide +kernel
+
+theorem st_cut_view6 : ((viewChunks.drop 120).take 20).all (viewOK absentB st266.mem) = true := by
+  decide +kernel
+
+theorem st_cut_view7 : ((viewChunks.drop 140).take 20).all (viewOK absentB st266.mem) = true := by
+  decide +kernel
+
+theorem st_cut_view8 : ((viewChunks.drop 160).take 20).all (viewOK absentB st266.mem) = true := by
+  decide +kernel
+
+theorem all_split {α : Type} (f : α → Bool) (l : List α) (n : Nat)
+    (h1 : (l.take n).all f = true) (h2 : (l.drop n).all f = true) : l.all f = true := by
+  rw [← List.take_append_drop n l, List.all_append, h1, h2]; rfl
+
+/-- The view check, in slices of 20 chunks (one kernel check each keeps the
+kernel's caches small). -/
+theorem st_cut_view : ∀ ch ∈ viewChunks, viewOK absentB st266.mem ch = true := by
+  have h : viewChunks.all (viewOK absentB st266.mem) = true := by
+    refine all_split _ _ 20 st_cut_view0 ?_
+    try simp only [List.drop_drop, Nat.reduceAdd]
+    refine all_split _ (viewChunks.drop 20) 20 st_cut_view1 ?_
+    try simp only [List.drop_drop, Nat.reduceAdd]
+    refine all_split _ (viewChunks.drop 40) 20 st_cut_view2 ?_
+    try simp only [List.drop_drop, Nat.reduceAdd]
+    refine all_split _ (viewChunks.drop 60) 20 st_cut_view3 ?_
+    try simp only [List.drop_drop, Nat.reduceAdd]
+    refine all_split _ (viewChunks.drop 80) 20 st_cut_view4 ?_
+    try simp only [List.drop_drop, Nat.reduceAdd]
+    refine all_split _ (viewChunks.drop 100) 20 st_cut_view5 ?_
+    try simp only [List.drop_drop, Nat.reduceAdd]
+    refine all_split _ (viewChunks.drop 120) 20 st_cut_view6 ?_
+    try simp only [List.drop_drop, Nat.reduceAdd]
+    refine all_split _ (viewChunks.drop 140) 20 st_cut_view7 ?_
+    try simp only [List.drop_drop, Nat.reduceAdd]
+    refine all_split _ (viewChunks.drop 160) 20 st_cut_view8 ?_
+    try simp only [List.drop_drop, Nat.reduceAdd]
+    decide +kernel
+  exact List.all_eq_true.mp h
 
 /-- What the machine's reset gives (ship-your-ocaml's `ElfResetReady`, for an
 ELF whose `.tohost` is this image's). -/

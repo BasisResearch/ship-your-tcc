@@ -4,8 +4,8 @@ Question: can `CompileCut_Statement` (Tcc/Capture/Sum/Cut.lean) be discharged by
 kernel-reducible RV64I evaluator, with one generic soundness proof against the
 Sail model, instead of a per-static-block replay (~900 CPU-hours)?
 
-**Verdict: go.** We measured about 1.5 ms of kernel time per step (about 2.5
-CPU-hours for all 6,632,342 steps) and 16 MB of generated source. The
+**Verdict: go.** We measured 1.24 ms of kernel time per step on average:
+2.28 CPU-hours for all 6,632,342 steps, run from 16 MB of generated source. The
 generic soundness proof covers every instruction kind the compile phase
 executes. `CompileCut_Statement` is now proved from one premise,
 `ResetSim_Statement` (see "What remains").
@@ -106,12 +106,18 @@ obvious next 2–3× gain, but it is not needed.
 **Totals.** Extrapolated: 266 × 32 s ≈ 2.4 CPU-hours of kernel time for the
 whole compile phase. Wall time is about 2.4 h serial, or about 40 min with 4
 parallel builds (each needs about 7 GB). Generated source: 16 MB, against the
-≤ 500 MB budget. Measured: FULL_RUN_PLACEHOLDER.
+≤ 500 MB budget. Measured: the whole chain
+built in 2.28 CPU-hours (8,225 s user, 9,859 s wall, serial, on a shared box).
+That is 30.9 s per segment, 13–68 s, an average of 1.24 ms per step, and at
+most 9.4 GB per segment. The 267 states took 77 s and the join 3 s.
+`Tcc.Ccp.Sum.run_all : run code 6632342 st0 = some st266` (axioms:
+`propext`).
 
 **Table correctness.** `Table/T<k>.lean` has 64 entries per block. Each entry
 gets its fetch facts by `decide` and its decode fact by `decodeW`, through
-`ccp_entry`. A block takes about 2.6 s, about 15 min for all 305:
-TABLE_PLACEHOLDER.
+`ccp_entry`. A block takes about 2.6 s, about 15 min for all 305. Measured: all 305
+blocks check, 2.5–3.2 s user each including imports, and
+`Tcc.Ccp.Sum.tableOK : TableOK code` builds.
 
 ## P2: soundness, generic and once (`Tcc/Ccp/Sound.lean`, 2,204 lines)
 
@@ -144,23 +150,28 @@ TABLE_PLACEHOLDER.
     the sign flip, arithmetic shifts via `ashr_compl`, and byte reassembly.
 * `sim_cut`: a related state whose PC, GPRs and view bytes are the captured
   ones gives `CapturedCut`.
-* `Tcc.Ccp.SumCut.compileCut : ResetSim_Statement → CompileCut_Statement`.
-  The three cut checks against `st266` (PC, 31 GPRs, 6,689 view bytes) are
-  kernel `decide`s; the view check takes 136 s.
+* `Tcc.Ccp.Sum.compileCut : ResetSim_Statement → CompileCut_Statement`
+  builds, and so does `compileCut_of : ResetFacts_Statement →
+  MemPin_Statement → CodePin_Statement → CompileCut_Statement`, through
+  `sim_reset`. The axioms are the standard three.
+* The three cut checks against `st266` (PC, 31 GPRs, 6,689 view bytes) are
+  kernel `decide`s. The view check runs in 9 slices of 20 chunks: one
+  `decide` over all of them did not fit in 12 GB. The module takes 245 s.
 * `#print axioms run_sound` gives `[propext, Classical.choice, Quot.sound]`;
   `run_100000` (the first four segments) gives `[propext]`.
 
 ## What remains
 
-* `ResetSim_Statement`, which says the reset configuration is related to
-  `st0`. It needs two things:
-  * Port ship-your-ocaml's `ElfReset.ready` chain: `GoodState`, zero GPRs,
-    the loader's memory, empty console, idle mailbox. That is 25 files,
-    about 960 lines.
-  * The correspondence between `mem0` and the `TccSumElf` pin. One way:
-    build `mem0` by a proved function of `elfImage`'s chunks, instead of a
-    second literal. A brute-force `decide` over 701k bytes against
-    `elfImage`'s chunk lists is estimated at 10–20 kernel-minutes.
+* `ResetFacts_Statement`: port ship-your-ocaml's `ElfReset.ready` chain
+  (`GoodState`, zero GPRs, the loader's memory, empty console, idle
+  mailbox). That is 25 files, about 960 lines.
+* `MemPin_Statement` and `CodePin_Statement`: `mem0`'s known bytes and the
+  table's words are the `TccSumElf`-pinned bytes. A brute-force `decide`
+  against `elfImage` does not fit: two 64-page blocks needed more than
+  26 GB. The cause is that every lookup scans a list literal of about 250
+  chunks. Plan: a search tree over the chunks (sorted, disjoint, checked
+  once) with a lemma that its view equals `chunkView`, or build `mem0` from
+  the chunks by a proved function.
 * After that, add `TccCompileCut` to an on-demand gate. It is about 3
   CPU-hours, so not `check.sh`'s default build.
 
