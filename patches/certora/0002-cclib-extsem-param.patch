@@ -1,0 +1,419 @@
+diff --git a/export/CCLib/Clight.lean b/export/CCLib/Clight.lean
+index 8341a5e..2061a17 100644
+--- a/export/CCLib/Clight.lean
++++ b/export/CCLib/Clight.lean
+@@ -431,8 +431,9 @@ end
+ Parameterized over `functionEntry`, exactly as in Rocq, so that both calling
+ conventions share one relation. -/
+ 
+-/-- `Clight.step` — 26 rules, in CompCert's order. -/
+-inductive Step (ge : CGenv)
++/-- `Clight.step` — 26 rules, in CompCert's order; over an `ExtEnv` (ship-your-tcc
++    patch 0002: `Step` below is the instance at Certora's axioms). -/
++inductive StepWith (X : ExtEnv) (ge : CGenv)
+     (functionEntry : Function → List Val → Mem → Env → TempEnv → Mem → Prop) :
+     State → Trace → State → Prop where
+   | assign (f a1 a2 k e le m loc ofs bf v2 v m') :
+@@ -440,11 +441,11 @@ inductive Step (ge : CGenv)
+       EvalExpr ge e le m a2 v2 →
+       Cop.semCast v2 (typeof a2) (typeof a1) m = some v →
+       AssignLoc ge.genv_cenv (typeof a1) m loc ofs bf v m' →
+-      Step ge functionEntry (.State f (.Sassign a1 a2) k e le m) E0
++      StepWith X ge functionEntry (.State f (.Sassign a1 a2) k e le m) E0
+         (.State f .Sskip k e le m')
+   | set (f id a k e le m v) :
+       EvalExpr ge e le m a v →
+-      Step ge functionEntry (.State f (.Sset id a) k e le m) E0
++      StepWith X ge functionEntry (.State f (.Sset id a) k e le m) E0
+         (.State f .Sskip k e (le.set id v) m)
+   | call (f optid a al k e le m tyargs tyres cconv vf vargs fd) :
+       Cop.classifyFun (typeof a) = .f tyargs tyres cconv →
+@@ -452,92 +453,105 @@ inductive Step (ge : CGenv)
+       EvalExprlist ge e le m al tyargs vargs →
+       Genv.findFunct ge.genv_genv vf = some fd →
+       typeOfFundef fd = .Tfunction tyargs tyres cconv →
+-      Step ge functionEntry (.State f (.Scall optid a al) k e le m) E0
++      StepWith X ge functionEntry (.State f (.Scall optid a al) k e le m) E0
+         (.Callstate fd vargs (.Kcall optid f e le k) m)
+   | builtin (f optid ef tyargs al k e le m vargs t vres m') :
+       EvalExprlist ge e le m al tyargs vargs →
+-      externalCall ef ge.genv_genv.toSenv vargs m t vres m' →
+-      Step ge functionEntry (.State f (.Sbuiltin optid ef tyargs al) k e le m) t
++      externalCallWith X ef ge.genv_genv.toSenv vargs m t vres m' →
++      StepWith X ge functionEntry (.State f (.Sbuiltin optid ef tyargs al) k e le m) t
+         (.State f .Sskip k e (setOpttemp optid vres le) m')
+   | seq (f s1 s2 k e le m) :
+-      Step ge functionEntry (.State f (.Ssequence s1 s2) k e le m) E0
++      StepWith X ge functionEntry (.State f (.Ssequence s1 s2) k e le m) E0
+         (.State f s1 (.Kseq s2 k) e le m)
+   | skip_seq (f s k e le m) :
+-      Step ge functionEntry (.State f .Sskip (.Kseq s k) e le m) E0
++      StepWith X ge functionEntry (.State f .Sskip (.Kseq s k) e le m) E0
+         (.State f s k e le m)
+   | continue_seq (f s k e le m) :
+-      Step ge functionEntry (.State f .Scontinue (.Kseq s k) e le m) E0
++      StepWith X ge functionEntry (.State f .Scontinue (.Kseq s k) e le m) E0
+         (.State f .Scontinue k e le m)
+   | break_seq (f s k e le m) :
+-      Step ge functionEntry (.State f .Sbreak (.Kseq s k) e le m) E0
++      StepWith X ge functionEntry (.State f .Sbreak (.Kseq s k) e le m) E0
+         (.State f .Sbreak k e le m)
+   | ifthenelse (f a s1 s2 k e le m v1 b) :
+       EvalExpr ge e le m a v1 →
+       Cop.boolVal v1 (typeof a) m = some b →
+-      Step ge functionEntry (.State f (.Sifthenelse a s1 s2) k e le m) E0
++      StepWith X ge functionEntry (.State f (.Sifthenelse a s1 s2) k e le m) E0
+         (.State f (if b then s1 else s2) k e le m)
+   | loop (f s1 s2 k e le m) :
+-      Step ge functionEntry (.State f (.Sloop s1 s2) k e le m) E0
++      StepWith X ge functionEntry (.State f (.Sloop s1 s2) k e le m) E0
+         (.State f s1 (.Kloop1 s1 s2 k) e le m)
+   | skip_or_continue_loop1 (f s1 s2 k e le m x) :
+       (x = Stmt.Sskip ∨ x = Stmt.Scontinue) →
+-      Step ge functionEntry (.State f x (.Kloop1 s1 s2 k) e le m) E0
++      StepWith X ge functionEntry (.State f x (.Kloop1 s1 s2 k) e le m) E0
+         (.State f s2 (.Kloop2 s1 s2 k) e le m)
+   | break_loop1 (f s1 s2 k e le m) :
+-      Step ge functionEntry (.State f .Sbreak (.Kloop1 s1 s2 k) e le m) E0
++      StepWith X ge functionEntry (.State f .Sbreak (.Kloop1 s1 s2 k) e le m) E0
+         (.State f .Sskip k e le m)
+   | skip_loop2 (f s1 s2 k e le m) :
+-      Step ge functionEntry (.State f .Sskip (.Kloop2 s1 s2 k) e le m) E0
++      StepWith X ge functionEntry (.State f .Sskip (.Kloop2 s1 s2 k) e le m) E0
+         (.State f (.Sloop s1 s2) k e le m)
+   | break_loop2 (f s1 s2 k e le m) :
+-      Step ge functionEntry (.State f .Sbreak (.Kloop2 s1 s2 k) e le m) E0
++      StepWith X ge functionEntry (.State f .Sbreak (.Kloop2 s1 s2 k) e le m) E0
+         (.State f .Sskip k e le m)
+   | return_0 (f k e le m m') :
+       Mem.freeList m (blocksOfEnv ge.genv_cenv e) = some m' →
+-      Step ge functionEntry (.State f (.Sreturn none) k e le m) E0
++      StepWith X ge functionEntry (.State f (.Sreturn none) k e le m) E0
+         (.Returnstate .Vundef (callCont k) m')
+   | return_1 (f a k e le m v v' m') :
+       EvalExpr ge e le m a v →
+       Cop.semCast v (typeof a) f.fn_return m = some v' →
+       Mem.freeList m (blocksOfEnv ge.genv_cenv e) = some m' →
+-      Step ge functionEntry (.State f (.Sreturn (some a)) k e le m) E0
++      StepWith X ge functionEntry (.State f (.Sreturn (some a)) k e le m) E0
+         (.Returnstate v' (callCont k) m')
+   | skip_call (f k e le m m') :
+       isCallCont k = true →
+       Mem.freeList m (blocksOfEnv ge.genv_cenv e) = some m' →
+-      Step ge functionEntry (.State f .Sskip k e le m) E0
++      StepWith X ge functionEntry (.State f .Sskip k e le m) E0
+         (.Returnstate .Vundef k m')
+   | switch (f a sl k e le m v n) :
+       EvalExpr ge e le m a v →
+       Cop.semSwitchArg v (typeof a) = some n →
+-      Step ge functionEntry (.State f (.Sswitch a sl) k e le m) E0
++      StepWith X ge functionEntry (.State f (.Sswitch a sl) k e le m) E0
+         (.State f (seqOfLabeledStatement (selectSwitch n sl)) (.Kswitch k) e le m)
+   | skip_break_switch (f x k e le m) :
+       (x = Stmt.Sskip ∨ x = Stmt.Sbreak) →
+-      Step ge functionEntry (.State f x (.Kswitch k) e le m) E0
++      StepWith X ge functionEntry (.State f x (.Kswitch k) e le m) E0
+         (.State f .Sskip k e le m)
+   | continue_switch (f k e le m) :
+-      Step ge functionEntry (.State f .Scontinue (.Kswitch k) e le m) E0
++      StepWith X ge functionEntry (.State f .Scontinue (.Kswitch k) e le m) E0
+         (.State f .Scontinue k e le m)
+   | label (f lbl s k e le m) :
+-      Step ge functionEntry (.State f (.Slabel lbl s) k e le m) E0
++      StepWith X ge functionEntry (.State f (.Slabel lbl s) k e le m) E0
+         (.State f s k e le m)
+   | goto (f lbl k e le m s' k') :
+       findLabel lbl f.fn_body (callCont k) = some (s', k') →
+-      Step ge functionEntry (.State f (.Sgoto lbl) k e le m) E0
++      StepWith X ge functionEntry (.State f (.Sgoto lbl) k e le m) E0
+         (.State f s' k' e le m)
+   | internal_function (f vargs k m e le m1) :
+       functionEntry f vargs m e le m1 →
+-      Step ge functionEntry (.Callstate (.Internal f) vargs k m) E0
++      StepWith X ge functionEntry (.Callstate (.Internal f) vargs k m) E0
+         (.State f f.fn_body k e le m1)
+   | external_function (ef targs tres cconv vargs k m vres t m') :
+-      externalCall ef ge.genv_genv.toSenv vargs m t vres m' →
+-      Step ge functionEntry (.Callstate (.External ef targs tres cconv) vargs k m) t
++      externalCallWith X ef ge.genv_genv.toSenv vargs m t vres m' →
++      StepWith X ge functionEntry (.Callstate (.External ef targs tres cconv) vargs k m) t
+         (.Returnstate vres k m')
+   | returnstate (v optid f e le k m) :
+-      Step ge functionEntry (.Returnstate v (.Kcall optid f e le k) m) E0
++      StepWith X ge functionEntry (.Returnstate v (.Kcall optid f e le k) m) E0
+         (.State f .Sskip k e (setOpttemp optid v le) m)
+ 
++/-- `Clight.step` — Certora's instance (ship-your-tcc patch 0002). -/
++abbrev Step (ge : CGenv)
++    (functionEntry : Function → List Val → Mem → Env → TempEnv → Mem → Prop) :
++    State → Trace → State → Prop :=
++  StepWith certoraExtEnv ge functionEntry
++
++namespace Step
++export StepWith (assign set call builtin seq skip_seq continue_seq break_seq
++  ifthenelse loop skip_or_continue_loop1 break_loop1 skip_loop2 break_loop2
++  return_0 return_1 skip_call switch skip_break_switch continue_switch label goto
++  internal_function external_function returnstate)
++end Step
++
+ /-! ## Whole-program semantics -/
+ 
+ /-- `Coqlib.list_norepet` -/
+diff --git a/export/CCLib/ClightExecSound.lean b/export/CCLib/ClightExecSound.lean
+index 82fde3c..5e8d6bf 100644
+--- a/export/CCLib/ClightExecSound.lean
++++ b/export/CCLib/ClightExecSound.lean
+@@ -341,10 +341,12 @@ theorem ptrofsOfVal_sound (v : Val) (sz : Integers.Ptrofs)
+   | Vint n => simp only [ptrofsOfVal, Archi.ptr64, if_true] at h; exact absurd h (by simp)
+   | _ => simp only [ptrofsOfVal] at h; exact absurd h (by simp)
+ 
+-theorem doExternalCall_sound (ge : Senv) (ef : ExtFun) (vargs : List Val) (m : Mem)
+-    (t : Trace) (vres : Val) (m' : Mem)
++/-- (ship-your-tcc patch 0002) For every `ExtEnv`: `doExternalCall` never
++    executes an `EF_external`/`EF_builtin`/`EF_runtime`/`EF_inline_asm`. -/
++theorem doExternalCallWith_sound (X : ExtEnv) (ge : Senv) (ef : ExtFun) (vargs : List Val)
++    (m : Mem) (t : Trace) (vres : Val) (m' : Mem)
+     (h : doExternalCall ef vargs m = some (t, vres, m')) :
+-    externalCall ef ge vargs m t vres m' := by
++    externalCallWith X ef ge vargs m t vres m' := by
+   simp only [doExternalCall] at h
+   split at h
+   -- malloc
+@@ -392,6 +394,12 @@ theorem doExternalCall_sound (ge : Senv) (ef : ExtFun) (vargs : List Val) (m : M
+   · next => cases h; exact ExtcallDebugSem.intro ge vargs m
+   · exact absurd h (by simp)
+ 
++theorem doExternalCall_sound (ge : Senv) (ef : ExtFun) (vargs : List Val) (m : Mem)
++    (t : Trace) (vres : Val) (m' : Mem)
++    (h : doExternalCall ef vargs m = some (t, vres, m')) :
++    externalCall ef ge vargs m t vres m' :=
++  doExternalCallWith_sound certoraExtEnv ge ef vargs m t vres m' h
++
+ 
+ /-! ## The interpreter is sound
+ 
+@@ -399,9 +407,9 @@ Every transition `doStep` takes is one the relation permits.  Combined with the
+ fact that `doStep` is a function, this says a run of the interpreter exhibits a
+ genuine behaviour of the Clight semantics — nothing is invented. -/
+ 
+-theorem doStep_sound (ge : CGenv) :
++theorem doStepWith_sound (X : ExtEnv) (ge : CGenv) :
+     ∀ (s : State) (t : Trace) (s' : State),
+-      doStep ge s = some (t, s') → Step ge (FunctionEntry2 ge) s t s'
++      doStep ge s = some (t, s') → StepWith X ge (FunctionEntry2 ge) s t s'
+   | .State f (.Sassign a1 a2) k e le m, t, s', h => by
+       simp only [doStep] at h
+       split at h
+@@ -456,7 +464,7 @@ theorem doStep_sound (ge : CGenv) :
+               cases h
+               exact .builtin f optid ef tyargs al k e le m vargs _ vres m'
+                 (doEvalExprlist_sound ge e le m al tyargs vargs hargs)
+-                (doExternalCall_sound _ ef vargs m _ vres m' hext)
++                (doExternalCallWith_sound X _ ef vargs m _ vres m' hext)
+           · exact absurd h (by simp)
+       · exact absurd h (by simp)
+   | .State f (.Ssequence s1 s2) k e le m, t, s', h => by
+@@ -558,7 +566,7 @@ theorem doStep_sound (ge : CGenv) :
+       · next t0 vres m' hext =>
+           cases h
+           exact .external_function ef targs tres cc vargs k m vres _ m'
+-            (doExternalCall_sound _ ef vargs m _ vres m' hext)
++            (doExternalCallWith_sound X _ ef vargs m _ vres m' hext)
+       · exact absurd h (by simp)
+   | .Returnstate v (.Kcall optid f e le k) m, t, s', h => by
+       simp only [doStep] at h; cases h; exact .returnstate v optid f e le k m
+@@ -573,4 +581,8 @@ theorem doStep_sound (ge : CGenv) :
+   | .Returnstate v (.Kswitch _) m, t, s', h => by
+       simp only [doStep] at h; exact absurd h (by simp)
+ 
++theorem doStep_sound (ge : CGenv) (s : State) (t : Trace) (s' : State)
++    (h : doStep ge s = some (t, s')) : Step ge (FunctionEntry2 ge) s t s' :=
++  doStepWith_sound certoraExtEnv ge s t s' h
++
+ end CC
+diff --git a/export/CCLib/Determinism.lean b/export/CCLib/Determinism.lean
+index ca070a3..b35e9a4 100644
+--- a/export/CCLib/Determinism.lean
++++ b/export/CCLib/Determinism.lean
+@@ -445,12 +445,13 @@ theorem entryDeterm_functionEntry1 (ge : CGenv) : EntryDeterm (FunctionEntry1 ge
+ theorem entryDeterm_functionEntry2 (ge : CGenv) : EntryDeterm (FunctionEntry2 ge) :=
+   fun _ _ _ _ _ _ _ _ _ h1 h2 => functionEntry2_determ h1 h2
+ 
+-set_option maxHeartbeats 2000000 in
+-theorem step_determ {ge : CGenv}
++-- (ship-your-tcc patch 0002) Within the default heartbeat budget on Lean 4.34.0:
++-- the original `set_option maxHeartbeats 2000000 in` is dropped.
++theorem stepWith_determ {X : ExtEnv} (hX : ExtDeterm X) {ge : CGenv}
+     {fe : Function → List Val → Mem → Env → TempEnv → Mem → Prop}
+     (hfe : EntryDeterm fe)
+     (hinj : (Genv.toSenv ge.genv_genv).SymbolsInjective)
+-    {s t1 s1 t2 s2} (h1 : Step ge fe s t1 s1) (h2 : Step ge fe s t2 s2) :
++    {s t1 s1 t2 s2} (h1 : StepWith X ge fe s t1 s1) (h2 : StepWith X ge fe s t2 s2) :
+     MatchTraces (Genv.toSenv ge.genv_genv) t1 t2 ∧ (t1 = t2 → s1 = s2) := by
+   cases h1 <;> cases h2 <;>
+     try (first
+@@ -493,7 +494,7 @@ theorem step_determ {ge : CGenv}
+     have hva := evalExprlist_determ hel1 _ hel2
+     subst hva
+     obtain ⟨hmt, hrest⟩ :=
+-      (externalCall_determ _ hinj).determ _ _ _ _ _ _ _ _ hec1 hec2
++      (externalCallWith_determ X hX _ hinj).determ _ _ _ _ _ _ _ _ hec1 hec2
+     refine ⟨hmt, fun ht => ?_⟩
+     obtain ⟨hv, hm⟩ := hrest ht
+     rw [hv, hm]
+@@ -542,23 +543,37 @@ theorem step_determ {ge : CGenv}
+   case external_function.external_function =>
+     rename_i hec1 _ _ hec2
+     obtain ⟨hmt, hrest⟩ :=
+-      (externalCall_determ _ hinj).determ _ _ _ _ _ _ _ _ hec1 hec2
++      (externalCallWith_determ X hX _ hinj).determ _ _ _ _ _ _ _ _ hec1 hec2
+     refine ⟨hmt, fun ht => ?_⟩
+     obtain ⟨hv, hm⟩ := hrest ht
+     rw [hv, hm]
+ 
++theorem step_determ {ge : CGenv}
++    {fe : Function → List Val → Mem → Env → TempEnv → Mem → Prop}
++    (hfe : EntryDeterm fe)
++    (hinj : (Genv.toSenv ge.genv_genv).SymbolsInjective)
++    {s t1 s1 t2 s2} (h1 : Step ge fe s t1 s1) (h2 : Step ge fe s t2 s2) :
++    MatchTraces (Genv.toSenv ge.genv_genv) t1 t2 ∧ (t1 = t2 → s1 = s2) :=
++  stepWith_determ certoraExtDeterm hfe hinj h1 h2
++
+ /-! ## Trace length, initial and final states -/
+ 
+ /-- `Clight.semantics_determinate`'s `sd_traces`: one step emits at most one
+     event. -/
+-theorem step_traces {ge : CGenv}
++theorem stepWith_traces {X : ExtEnv} (hX : ExtDeterm X) {ge : CGenv}
+     {fe : Function → List Val → Mem → Env → TempEnv → Mem → Prop} {s t s'}
+     (hinj : (Genv.toSenv ge.genv_genv).SymbolsInjective)
+-    (h : Step ge fe s t s') : t.length ≤ 1 := by
++    (h : StepWith X ge fe s t s') : t.length ≤ 1 := by
+   cases h <;>
+     first
+       | simp [E0]
+-      | (rename_i hec; exact (externalCall_determ _ hinj).traceLength _ _ _ _ _ hec)
++      | (rename_i hec; exact (externalCallWith_determ X hX _ hinj).traceLength _ _ _ _ _ hec)
++
++theorem step_traces {ge : CGenv}
++    {fe : Function → List Val → Mem → Env → TempEnv → Mem → Prop} {s t s'}
++    (hinj : (Genv.toSenv ge.genv_genv).SymbolsInjective)
++    (h : Step ge fe s t s') : t.length ≤ 1 :=
++  stepWith_traces certoraExtDeterm hinj h
+ 
+ theorem initialState_determ {p s1 s2}
+     (h1 : InitialState p s1) (h2 : InitialState p s2) : s1 = s2 := by
+@@ -720,12 +735,20 @@ determinacy it holds, in the precise form the caveat allows: if the interpreter
+ takes a step then the relation permits *no other*, up to the trace freedom
+ `MatchTraces` grants a volatile load or a system call. -/
+ 
++theorem doStepWith_complete {X : ExtEnv} (hX : ExtDeterm X) (ge : CGenv)
++    (hinj : (Genv.toSenv ge.genv_genv).SymbolsInjective) {s t s' t2 s2}
++    (hi : doStep ge s = some (t, s'))
++    (hr : StepWith X ge (FunctionEntry2 ge) s t2 s2) :
++    MatchTraces (Genv.toSenv ge.genv_genv) t t2 ∧ (t = t2 → s' = s2) :=
++  stepWith_determ hX (entryDeterm_functionEntry2 ge) hinj
++    (doStepWith_sound X ge s t s' hi) hr
++
+ theorem doStep_complete (ge : CGenv)
+     (hinj : (Genv.toSenv ge.genv_genv).SymbolsInjective) {s t s' t2 s2}
+     (hi : doStep ge s = some (t, s'))
+     (hr : Step ge (FunctionEntry2 ge) s t2 s2) :
+     MatchTraces (Genv.toSenv ge.genv_genv) t t2 ∧ (t = t2 → s' = s2) :=
+-  step_determ (entryDeterm_functionEntry2 ge) hinj (doStep_sound ge s t s' hi) hr
++  doStepWith_complete certoraExtDeterm ge hinj hi hr
+ 
+ /-- The silent case, stated as plain equality: on a step the interpreter can
+     take with no observable event, the relation and the interpreter agree. -/
+diff --git a/export/CCLib/Events.lean b/export/CCLib/Events.lean
+index a19dca4..edbe77d 100644
+--- a/export/CCLib/Events.lean
++++ b/export/CCLib/Events.lean
+@@ -205,8 +205,38 @@ axiom inlineAssemblySem : String → Signature → ExtcallSem
+ def builtinOrExternalSem (name : String) (sg : Signature) : ExtcallSem :=
+   externalFunctionsSem name sg
+ 
++/-- (ship-your-tcc patch 0002) The semantics of the two uninterpreted families,
++    as a parameter: `externalCallWith X` is `externalCall` with `X` in place of
++    the axioms above, and `StepWith X` (`CCLib.Clight`) is `Step` with it.
++    `certoraExtEnv` is the original choice, and `externalCall`/`Step` are
++    defined as its instance, so everything downstream is unchanged. -/
++structure ExtEnv where
++  external : String → Signature → ExtcallSem
++  inlineAsm : String → Signature → ExtcallSem
++
++/-- Certora's choice: the axiomatised relations. -/
++def certoraExtEnv : ExtEnv := ⟨externalFunctionsSem, inlineAssemblySem⟩
++
++/-- `Events.external_call` over an `ExtEnv`. -/
++def externalCallWith (X : ExtEnv) : ExtFun → ExtcallSem
++  | .EF_external name sg => X.external name sg
++  | .EF_builtin name sg => X.external name sg
++  | .EF_runtime name sg => X.external name sg
++  | .EF_vload chunk => VolatileLoadSem chunk
++  | .EF_vstore chunk => VolatileStoreSem chunk
++  | .EF_malloc => ExtcallMallocSem
++  | .EF_free => ExtcallFreeSem
++  | .EF_memcpy sz al => ExtcallMemcpySem sz al
++  | .EF_annot _ txt targs => ExtcallAnnotSem txt targs
++  | .EF_annot_val _ txt targ => ExtcallAnnotValSem txt targ
++  | .EF_inline_asm txt sg _ => X.inlineAsm txt sg
++  | .EF_debug _ _ _ => ExtcallDebugSem
++
+ /-- `Events.external_call` — the semantics of an external function. -/
+-def externalCall : ExtFun → ExtcallSem
++def externalCall (ef : ExtFun) : ExtcallSem := externalCallWith certoraExtEnv ef
++
++/-- The original definition, case by case (ship-your-tcc patch 0002). -/
++def externalCallOrig : ExtFun → ExtcallSem
+   | .EF_external name sg => externalFunctionsSem name sg
+   | .EF_builtin name sg => builtinOrExternalSem name sg
+   | .EF_runtime name sg => builtinOrExternalSem name sg
+@@ -490,6 +520,16 @@ theorem builtinOrExternalSem_determ (name : String) (sg : Signature) (ge : Senv)
+     ExtcallDeterm (builtinOrExternalSem name sg) ge :=
+   externalFunctionsSemDeterm name sg ge
+ 
++/-- (ship-your-tcc patch 0002) What `externalFunctionsSemDeterm` and
++    `inlineAssemblySemDeterm` assert of the axioms, as a property of an
++    `ExtEnv`: the hypothesis of `stepWith_determ`. -/
++structure ExtDeterm (X : ExtEnv) : Prop where
++  external : ∀ name sg ge, ExtcallDeterm (X.external name sg) ge
++  inlineAsm : ∀ name sg ge, ExtcallDeterm (X.inlineAsm name sg) ge
++
++theorem certoraExtDeterm : ExtDeterm certoraExtEnv :=
++  ⟨externalFunctionsSemDeterm, inlineAssemblySemDeterm⟩
++
+ /-! ### The eight interpreted builtins
+ 
+ Each is one or two constructors whose premises are all functions, so the whole
+@@ -640,12 +680,12 @@ theorem extcallDebugSem_determ {ge : Senv} : ExtcallDeterm ExtcallDebugSem ge :=
+     call is determinate up to `MatchTraces` and emits at most one event.  The
+     injectivity hypothesis is discharged for real programs by
+     `Genv.symbInjective_globalenv`. -/
+-theorem externalCall_determ (ef : ExtFun) {ge : Senv} (hinj : ge.SymbolsInjective) :
+-    ExtcallDeterm (externalCall ef) ge := by
++theorem externalCallWith_determ (X : ExtEnv) (hX : ExtDeterm X) (ef : ExtFun) {ge : Senv}
++    (hinj : ge.SymbolsInjective) : ExtcallDeterm (externalCallWith X ef) ge := by
+   cases ef with
+-  | EF_external name sg => exact externalFunctionsSemDeterm name sg ge
+-  | EF_builtin name sg => exact builtinOrExternalSem_determ name sg ge
+-  | EF_runtime name sg => exact builtinOrExternalSem_determ name sg ge
++  | EF_external name sg => exact hX.external name sg ge
++  | EF_builtin name sg => exact hX.external name sg ge
++  | EF_runtime name sg => exact hX.external name sg ge
+   | EF_vload chunk => exact volatileLoadSem_determ chunk hinj
+   | EF_vstore chunk => exact volatileStoreSem_determ chunk hinj
+   | EF_malloc => exact extcallMallocSem_determ
+@@ -653,7 +693,11 @@ theorem externalCall_determ (ef : ExtFun) {ge : Senv} (hinj : ge.SymbolsInjectiv
+   | EF_memcpy sz al => exact extcallMemcpySem_determ sz al
+   | EF_annot _ txt targs => exact extcallAnnotSem_determ txt targs hinj
+   | EF_annot_val _ txt targ => exact extcallAnnotValSem_determ txt targ hinj
+-  | EF_inline_asm txt sg _ => exact inlineAssemblySemDeterm txt sg ge
++  | EF_inline_asm txt sg _ => exact hX.inlineAsm txt sg ge
+   | EF_debug _ _ _ => exact extcallDebugSem_determ
+ 
++theorem externalCall_determ (ef : ExtFun) {ge : Senv} (hinj : ge.SymbolsInjective) :
++    ExtcallDeterm (externalCall ef) ge :=
++  externalCallWith_determ certoraExtEnv certoraExtDeterm ef hinj
++
+ end CC
