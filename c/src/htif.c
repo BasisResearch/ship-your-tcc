@@ -51,6 +51,17 @@
 #include <string.h>
 #include <unistd.h>
 
+#ifndef HOST_MIRROR
+/* newlib's non-reentrant syscall wrappers (_open_r, _read_r, ...) clear
+ * and inspect this raw slot, then copy an error to their caller's _reent.
+ * <errno.h>'s public macro instead names __errno() in this image's _reent;
+ * writing it here would bypass that protocol. The generated program has a
+ * separate _reent but shares this raw slot (main.c: tcc_baremetal_syms).
+ * HOST_MIRROR uses the host libc's errno protocol instead. */
+#undef errno
+extern int errno;
+#endif
+
 /* --- HTIF ---------------------------------------------------------------- */
 
 /* The host locates these by the section name `.tohost` in the ELF. */

@@ -51,7 +51,8 @@ for f in "$T2"/*.c; do
   fl=""; [ "$n" = 76_dollars_in_identifiers ] && fl=-fdollars-in-identifiers
   if (cd "$T2" && "$TCC" $fl -nostdinc -I"$SRC/include" -I"$NEWLIB_INC" -I. -c "$n.c" -o "$OUT/$n.o") > "$OUT/$n.cc" 2>&1; then
     scripts/check_isa.sh -q "$OUT/$n.o" > "$OUT/$n.isa" 2>&1; echo $? > "$OUT/$n.isa.rc"
-    $GCC $CFL -nostartfiles -T "$H/link.ld" -Wl,--no-warn-rwx-segments -o "$OUT/$n.elf" "$OUT/crt0.o" "$OUT/htif.o" "$OUT/$n.o" "$LIBTCC1" -lm -lc -lgcc >> "$OUT/$n.cc" 2>&1
+    $GCC $CFL -nostartfiles -T "$H/link.ld" -Wl,--no-warn-rwx-segments -o "$OUT/$n.elf" "$OUT/crt0.o" "$OUT/htif.o" "$OUT/$n.o" "$LIBTCC1" -lm -lc -lgcc >> "$OUT/$n.cc" 2>&1 \
+      && { scripts/check_isa.sh -q "$OUT/$n.elf" > "$OUT/$n.elfisa" 2>&1; echo $? > "$OUT/$n.elfisa.rc"; }
   fi
 done
 run1() {
@@ -68,10 +69,17 @@ printf '%s\n' "${names[@]}" | xargs -P "$JOBS" -I{} bash -c 'run1 {}'
 pass=0; fail=0; ccfail=0; isabad=0; failed=""
 for n in "${names[@]}"; do
   if [ ! -f "$OUT/$n.elf" ]; then ccfail=$((ccfail+1)); failed="$failed $n(build)"; continue; fi
-  [ "$(cat "$OUT/$n.isa.rc")" = 0 ] || { isabad=$((isabad+1)); failed="$failed $n(ISA)"; }
+  [ "$(cat "$OUT/$n.isa.rc")" = 0 ] && [ "$(cat "$OUT/$n.elfisa.rc")" = 0 ] \
+    || { isabad=$((isabad+1)); failed="$failed $n(ISA)"; }
+  if ! { [ -f "$OUT/$n.rc" ] && [ "$(cat "$OUT/$n.rc")" != 124 ] \
+      && [ -f "$OUT/$n.steps" ] && [ "$(cat "$OUT/$n.steps")" -gt 0 ] \
+      && ! grep -q 'TRACE-FUEL-OUT' "$OUT/$n.trace"; }; then
+    fail=$((fail+1)); failed="$failed $n(incomplete)"; continue
+  fi
   # tcc -run prints its warnings before the program output: prepend ours
   { grep "^$n.c:" "$OUT/$n.cc"; cat "$OUT/$n.out"; } > "$OUT/$n.cmp"
   if diff -b "$T2/$n.expect" "$OUT/$n.cmp" > "$OUT/$n.diff"; then pass=$((pass+1)); else fail=$((fail+1)); failed="$failed $n"; fi
 done
 echo "tests2: run=${#names[@]} pass=$pass fail=$fail build-fail=$ccfail isa-bad=$isabad skipped=$skipped"
 echo "failed:$failed"
+[ $fail = 0 ] && [ $ccfail = 0 ] && [ $isabad = 0 ]

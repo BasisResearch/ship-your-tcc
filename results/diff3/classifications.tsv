@@ -1,5 +1,15 @@
 # Classification of diff3 disagreements (read by scripts/diff3.py).
 # corpus<TAB>prog<TAB>pair (e.g. gcc_native/xgcc_sail, or * for every pair)<TAB>category<TAB>note
 # category: tcc bug | Lean-port bug | CompCert-frontend issue | unspecified behaviour | harness bug | unclassified
-compcert	regr_int64	*	Lean-port bug	int64->float32 conversion double-rounds (via double): 0x52ce6b4000000063 gives 5ea59cd6, correct 5ea59cd7; repro results/repro/lean_long_to_float_rounding.c
-tcc	t_134_double_to_signed	*	Lean-port bug	double->unsigned long saturates at LONG_MAX: (unsigned long)1e19 gives 9223372036854775807; repro results/repro/lean_double_to_ulong.c
+compcert	regr_int64	gcc_native/lean_clight	Lean-port bug	int64->float32 conversion double-rounds (via double): 0x52ce6b4000000063 gives 5ea59cd6, correct 5ea59cd7; repro results/repro/lean_long_to_float_rounding.c
+compcert	regr_int64	xgcc_sail/lean_clight	Lean-port bug	int64->float32 conversion double-rounds (via double): 0x52ce6b4000000063 gives 5ea59cd6, correct 5ea59cd7; repro results/repro/lean_long_to_float_rounding.c
+compcert	regr_int64	tcc_sail/lean_clight	Lean-port bug	int64->float32 conversion double-rounds (via double): 0x52ce6b4000000063 gives 5ea59cd6, correct 5ea59cd7; repro results/repro/lean_long_to_float_rounding.c
+compcert	regr_int64	ccomp_interp/lean_clight	Lean-port bug	int64->float32 conversion double-rounds (via double): 0x52ce6b4000000063 gives 5ea59cd6, correct 5ea59cd7; repro results/repro/lean_long_to_float_rounding.c
+tcc	t_134_double_to_signed	gcc_native/lean_clight	Lean-port bug	double->unsigned long saturates at LONG_MAX: (unsigned long)1e19 gives 9223372036854775807; repro results/repro/lean_double_to_ulong.c
+tcc	t_134_double_to_signed	xgcc_sail/lean_clight	Lean-port bug	double->unsigned long saturates at LONG_MAX: (unsigned long)1e19 gives 9223372036854775807; repro results/repro/lean_double_to_ulong.c
+tcc	t_134_double_to_signed	tcc_sail/lean_clight	Lean-port bug	double->unsigned long saturates at LONG_MAX: (unsigned long)1e19 gives 9223372036854775807; repro results/repro/lean_double_to_ulong.c
+tcc	t_134_double_to_signed	ccomp_interp/lean_clight	Lean-port bug	double->unsigned long saturates at LONG_MAX: (unsigned long)1e19 gives 9223372036854775807; repro results/repro/lean_double_to_ulong.c
+compcert	regr_initializers2	gcc_native/tcc_sail	tcc bug	union designated initializer: a later designator for another member (.c[2] after .a) keeps the overridden member's bytes (42 0 1 0, others 0 0 1 0; C11 6.7.9p17,p19); also in pristine x86_64 tcc 43c7708; repro results/repro/tcc_union_designator_override.c
+compcert	regr_initializers2	xgcc_sail/tcc_sail	tcc bug	union designated initializer: a later designator for another member (.c[2] after .a) keeps the overridden member's bytes (42 0 1 0, others 0 0 1 0; C11 6.7.9p17,p19); also in pristine x86_64 tcc 43c7708; repro results/repro/tcc_union_designator_override.c
+compcert	regr_initializers2	tcc_sail/ccomp_interp	tcc bug	union designated initializer: a later designator for another member (.c[2] after .a) keeps the overridden member's bytes (42 0 1 0, others 0 0 1 0; C11 6.7.9p17,p19); also in pristine x86_64 tcc 43c7708; repro results/repro/tcc_union_designator_override.c
+compcert	regr_initializers2	tcc_sail/lean_clight	tcc bug	union designated initializer: a later designator for another member (.c[2] after .a) keeps the overridden member's bytes (42 0 1 0, others 0 0 1 0; C11 6.7.9p17,p19); also in pristine x86_64 tcc 43c7708; repro results/repro/tcc_union_designator_override.c

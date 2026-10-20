@@ -14,8 +14,8 @@
 #      within 10 s with no sanitizer report;
 #   3. if scripts/run_ccomp_interp.sh exists: ccomp -interp exits 0, i.e.
 #      CompCert's reference interpreter finds no undefined behaviour;
-#   4. ORACLE_A and ORACLE_B (scripts/oracle.py) both finish (exit not
-#      124/125) and differ in stdout or exit status.
+#   4. ORACLE_A and ORACLE_B (scripts/oracle.py --require-ok) both report
+#      outcome ok under their configured status mappings, and differ.
 # Work dir: build/minimise/<prog>-<A>-<B>/ ; the result is copied to OUT.c
 # (default results/repro/<prog>-<A>-<B>.c).
 #
@@ -51,9 +51,9 @@ ASAN_OPTIONS=detect_leaks=0 timeout 10 ./san > san.out 2> san.err || { rc=$?; [ 
 if [ -x "$ROOT/scripts/run_ccomp_interp.sh" ]; then
   timeout 300 "$ROOT/scripts/run_ccomp_interp.sh" "$f" > cc.out 2> cc.err || exit 1
 fi
-python3 -I "$ROOT/scripts/oracle.py" "$A" "$f" > a.out 2> a.err; ra=$?
+python3 -I "$ROOT/scripts/oracle.py" --require-ok "$A" "$f" > a.out 2> a.err; ra=$?
 [ $ra = 124 ] || [ $ra = 125 ] && exit 1
-python3 -I "$ROOT/scripts/oracle.py" "$B" "$f" > b.out 2> b.err; rb=$?
+python3 -I "$ROOT/scripts/oracle.py" --require-ok "$B" "$f" > b.out 2> b.err; rb=$?
 [ $rb = 124 ] || [ $rb = 125 ] && exit 1
 if [ $ra = $rb ] && cmp -s a.out b.out; then exit 1; fi
 exit 0

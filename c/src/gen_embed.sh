@@ -7,12 +7,17 @@
 # - a fourth header word, `embedded_flags` (main.c: bit 0 dumps the
 #   generated code to the console before the jump into it);
 # - `--list FILE` reads more `/path/in/image=host/file` specs, one per line
-#   (the header tree has ~150 files).
+#   (the header tree has ~150 files);
+# - `--largs '"-lm",'`: arguments that must follow /prog.c (libraries: an
+#   archive named before the file pulls nothing in). The command line is
+#   then { "tcc", args..., "/prog.c", largs..., "-run", "--", NULL }, which
+#   tcc accepts ("tcc <files...> -run -- <args...>"); the program's argv is
+#   { "--" } (argc 1, as without --largs, but argv[0] is "--").
 #
 # Emit embed.S: everything that varies with the embedded program, in the
 # `.embed` section at a FIXED address (src/link.ld), so the runtime's code
 # and data are byte-identical whatever program is embedded:
-#   gen_embed.sh [--cargs '"a","b",'] [--flags N] [--list F] /path/in/image=host/file ...
+#   gen_embed.sh [--cargs '"a","b",'] [--largs '"-lm",'] [--flags N] [--list F] /path/in/image=host/file ...
 # The section starts with a fixed four-word header (so the code's
 # addresses do not depend on how many files or arguments follow):
 # * `embedded_files`: -> {path, start, end} triples, NULL-terminated (htif.c);
@@ -20,10 +25,11 @@
 # * `embedded_env`: -> { NULL } (main.c);
 # * `embedded_flags`: a word (main.c).
 set -e
-cargs=; flags=0; list=
+cargs=; largs=; flags=0; list=
 while :; do
   case "$1" in
     --cargs) cargs=$2; shift 2 ;;
+    --largs) largs=$2; shift 2 ;;
     --flags) flags=$2; shift 2 ;;
     --list) list=$2; shift 2 ;;
     *) break ;;
@@ -50,17 +56,25 @@ done < "$specs"
 echo '    .dword 0, 0, 0'
 # one argument per line, quotes kept (they are asm string literals)
 args=$(printf '%s' "$cargs" | grep -o '"[^"]*"' || true)
+largs=$(printf '%s' "$largs" | grep -o '"[^"]*"' || true)
 echo '_argv_table:'
 echo '    .dword _arg_tcc'
 n=0
 for a in $args; do echo "    .dword _arg${n}"; n=$((n+1)); done
-echo '    .dword _arg_run, _arg_prog, 0'
+if [ -n "$largs" ]; then
+  echo '    .dword _arg_prog'
+  for a in $largs; do echo "    .dword _arg${n}"; n=$((n+1)); done
+  echo '    .dword _arg_run, _arg_dashdash, 0'
+else
+  echo '    .dword _arg_run, _arg_prog, 0'
+fi
 echo '_env_table:'
 echo '    .dword 0'
 echo '_arg_tcc: .asciz "tcc"'
 n=0
-for a in $args; do echo "_arg${n}: .asciz $a"; n=$((n+1)); done
+for a in $args $largs; do echo "_arg${n}: .asciz $a"; n=$((n+1)); done
 echo '_arg_run: .asciz "-run"'
+echo '_arg_dashdash: .asciz "--"'
 echo '_arg_prog: .asciz "/prog.c"'
 i=0
 while IFS= read -r spec; do

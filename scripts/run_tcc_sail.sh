@@ -13,14 +13,22 @@
 #              into the generated code: tcc's message goes to stderr) or
 #              the emulator failed
 #   $ORACLE_META: steps=<total>, compile_steps=<_start .. tcc_baremetal_run>,
-#              program_steps=<tcc_baremetal_enter .. _exit's tohost store>
+#              program_steps=<tcc_baremetal_enter .. _exit's tohost store>,
+#              libm=1 when the program was linked with -lm (below)
+#
+# libm: an archive named before /prog.c pulls nothing in, so -lm goes after
+# it (gen_embed.sh --largs). It costs steps (libm's archive index), so it is
+# added only when tcc first stops with an unresolved reference: such a run
+# never reached the program, and programs that link without it are run
+# exactly as before.
 #
 # The runtime (everything but .embed) is built once in c/build (under a lock)
 # and is the same bytes for every program; per program only embed.S is
 # generated, assembled and linked.
 # Env: MAX_STEPS (default 100000000), EMU, TCC_ARGS (extra tcc arguments as
 #      C string literals each followed by a comma; default '"-w",'),
-#      KEEP_WORK=1.
+#      TCC_LIBS (libraries after /prog.c, e.g. '"-lm",'; default: none, with
+#      the -lm retry above), KEEP_WORK=1.
 set -u
 src=$(readlink -f "$1")
 root=$(cd "$(dirname "$0")/.." && pwd)
@@ -44,12 +52,16 @@ RT="$C/build/crt0.o $C/build/htif.o $C/build/main.o $C/build/tcc.o"
   make -s -C "$C" BUILD=build FLAGS=0 ELF=build/base.elf build/base.elf > "$work/make.log" 2>&1
 ) 9> "$C/.build.lock" || { echo "tcc_sail: image build failed" >&2; tail -20 "$work/make.log" >&2; exit 125; }
 
-sh "$C/src/gen_embed.sh" --cargs "$TCC_ARGS" --flags 0 --list "$C/build/fs.list" \
+TCC_LIBS=${TCC_LIBS:-}
+attempt() {
+largs=()
+[ -n "$TCC_LIBS" ] && largs=(--largs "$TCC_LIBS")
+sh "$C/src/gen_embed.sh" --cargs "$TCC_ARGS" "${largs[@]}" --flags 0 --list "$C/build/fs.list" \
     "/prog.c=$src" > "$work/embed.S" &&
 "$XGCC" $CFLAGS -c -o "$work/embed.o" "$work/embed.S" &&
 "$XGCC" $CFLAGS -nostartfiles -T "$C/src/link.ld" -o "$work/prog.elf" \
     $RT "$work/embed.o" -lm > "$work/ld.log" 2>&1 ||
-  { echo "tcc_sail: image link failed" >&2; cat "$work/ld.log" >&2; exit 125; }
+  { echo "tcc_sail: image link failed" >&2; cat "$work/ld.log" >&2; return 1; }
 
 sym() { printf '0x%x' 0x$("$NM" "$work/prog.elf" | awk -v s="$1" '$3==s{print $1}'); }
 run=$(sym tcc_baremetal_run); enter=$(sym tcc_baremetal_enter)
@@ -60,26 +72,18 @@ printf '%s\n' "$run" "$enter" "$exitsd" > "$work/pcs"
     > "$work/raw" 2> "$work/trace"
 erc=$?
 # trace rows: T <step> <pc> ...
+s_run=$(step_at "$(hex $run)"); s_enter=$(step_at "$(hex $enter)"); s_exit=$(step_at "$(hex $exitsd)")
+}
 step_at() { awk -F'\t' -v p="$1" '$1=="T" && $3==p {print $2; exit}' "$work/trace"; }
 hex() { printf '%x' "$1"; }
-s_run=$(step_at "$(hex $run)"); s_enter=$(step_at "$(hex $enter)"); s_exit=$(step_at "$(hex $exitsd)")
+attempt || exit 125
+if [ -z "$s_enter" ] && [ -z "$TCC_LIBS" ] && ! grep -q 'TRACE-FUEL-OUT' "$work/trace" &&
+   grep -aq "unresolved reference" "$work/raw"; then
+  TCC_LIBS='"-lm",'; meta "libm=1"
+  attempt || exit 125
+fi
 
-python3 -I - "$work/raw" > "$work/out" <<'PY'
-import re, sys
-d = open(sys.argv[1], 'rb').read()
-d = re.sub(rb'\A(PC = 0x[0-9a-fA-F]+\n)?(htif_tohost = 0x[0-9a-fA-F]+\n)?', b'', d)
-d = re.sub(rb'(SUCCESS\n|FAILURE[^\n]*\n)\Z', b'', d)
-d = d.replace(b'TODO: cancel_reservation\n', b'')
-# console bytes come out UTF-8 encoded one code point per byte (see
-# run_xgcc_sail.sh): undo it
-try:
-    t = d.decode('utf-8')
-    if all(ord(c) < 256 for c in t):
-        d = t.encode('latin-1')
-except UnicodeDecodeError:
-    pass
-sys.stdout.buffer.write(d)
-PY
+python3 -I "$root/scripts/sail_console.py" "$work/raw" > "$work/out"
 
 [ -n "$s_run" ] && meta "compile_steps=$s_run"
 if [ -n "$s_enter" ] && [ -n "$s_exit" ]; then meta "program_steps=$((s_exit - s_enter + 1))"; fi
@@ -93,6 +97,10 @@ if [ -z "$s_enter" ]; then
   echo "tcc_sail: tcc did not run the program (exit $erc):" >&2
   head -c 4000 "$work/out" >&2; exit 125
 fi
-[ -n "$s_exit" ] && meta "steps=$((s_exit + 1))"
+if [ -z "$s_exit" ]; then
+  echo "tcc_sail: emulator stopped without a traced program exit (exit $erc)" >&2
+  exit 125
+fi
+meta "steps=$((s_exit + 1))"
 cat "$work/out"
 exit $erc

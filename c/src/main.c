@@ -96,8 +96,15 @@ int mkdir(const char *, mode_t);
 
 void tcc_baremetal_sync_icache(void *beg, void *end);
 
+/* The newlib *_r syscall wrappers copy this raw error slot into their
+ * own _reent. Share only the slot with the generated program's libc, not
+ * its __errno() or _impure_ptr (which also owns stdio and exit handlers). */
+#undef errno
+extern int errno;
+
 struct tcc_baremetal_sym { const char *name; void *addr; };
 const struct tcc_baremetal_sym tcc_baremetal_syms[] = {
+    { "errno", (void *)&errno },
     { "_read", (void *)_read },
     { "_write", (void *)_write },
     { "_open", (void *)_open },

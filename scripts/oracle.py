@@ -8,15 +8,16 @@ scripts/oracles.toml); exit 125 if the oracle is absent. Used by
 scripts/minimise.sh's interestingness test.
 """
 import os
-import subprocess
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from diff3 import ROOT, load_config  # noqa: E402
+from diff3 import ROOT, load_config, oracle_outcome, run_process  # noqa: E402
 
 
 def main():
-    name, prog = sys.argv[1], os.path.abspath(sys.argv[2])
+    require_ok = sys.argv[1:2] == ['--require-ok']
+    argv = sys.argv[2:] if require_ok else sys.argv[1:]
+    name, prog = argv[0], os.path.abspath(argv[1])
     _, oracles = load_config(os.environ.get('ORACLES_TOML', os.path.join(ROOT, 'scripts', 'oracles.toml')))
     o = oracles[name]
     if o.get('requires') and not os.path.exists(os.path.join(ROOT, o['requires'])):
@@ -24,12 +25,13 @@ def main():
         sys.exit(125)
     cmd = o['cmd'].replace('{prog}', prog).replace('{root}', ROOT)
     env = dict(os.environ, **{k: str(v) for k, v in o['env'].items()})
-    try:
-        r = subprocess.run(['bash', '-c', cmd], cwd=ROOT, env=env, stdin=subprocess.DEVNULL,
-                           timeout=o['timeout'])
-        sys.exit(r.returncode)
-    except subprocess.TimeoutExpired:
+    rc, _, _, killed = run_process(cmd, env, o['timeout'], capture_output=False)
+    outcome = oracle_outcome(rc, o, killed)
+    if outcome == 'timeout':
         sys.exit(124)
+    if rc < 0 or (require_ok and outcome != 'ok'):
+        sys.exit(125)
+    sys.exit(rc)
 
 
 if __name__ == '__main__':

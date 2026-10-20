@@ -29,9 +29,11 @@ with category exactly one of CATEGORIES. Unlisted disagreements are
 import argparse
 import concurrent.futures as cf
 import fnmatch
+import glob
 import hashlib
 import json
 import os
+import signal
 import subprocess
 import sys
 import tempfile
@@ -69,14 +71,58 @@ def oracle_version(name, o):
     h.update(name.encode())
     h.update(o['cmd'].encode())
     h.update(json.dumps(o['env'], sort_keys=True).encode())
+    # Harness semantics (including status mappings and timeouts) are cache inputs.
+    with open(__file__, 'rb') as harness:
+        h.update(harness.read())
+    h.update(json.dumps({k: o.get(k) for k in ('codes', 'timeout', 'requires', 'completion_meta')},
+                        sort_keys=True).encode())
     if o.get('version_cmd'):
-        r = subprocess.run(o['version_cmd'], shell=True, capture_output=True, cwd=ROOT)
+        env = dict(os.environ, **{k: str(v) for k, v in o['env'].items()})
+        r = subprocess.run(o['version_cmd'], shell=True, capture_output=True,
+                           cwd=ROOT, env=env, timeout=30)
         h.update(r.stdout)
+        h.update(r.stderr)
+        h.update(str(r.returncode).encode())
     for f in o.get('version_files', []):
         p = os.path.join(ROOT, f)
         h.update(f.encode())
-        h.update(open(p, 'rb').read() if os.path.exists(p) else b'<missing>')
+        matches = sorted(x for x in glob.glob(p, recursive=True) if os.path.isfile(x))
+        if not matches:
+            h.update(b'<missing>')
+        for path in matches:
+            h.update(os.path.relpath(path, ROOT).encode())
+            with open(path, 'rb') as source:
+                for chunk in iter(lambda: source.read(1024 * 1024), b''):
+                    h.update(chunk)
     return h.hexdigest()[:16]
+
+
+def run_process(cmd, env, timeout, capture_output=True):
+    """Own a process group so a timeout also stops the oracle's descendants."""
+    p = subprocess.Popen(['bash', '-c', cmd], cwd=ROOT, env=env,
+                         stdin=subprocess.DEVNULL, start_new_session=True,
+                         stdout=subprocess.PIPE if capture_output else None,
+                         stderr=subprocess.PIPE if capture_output else None)
+    try:
+        out, err = p.communicate(timeout=timeout)
+        return p.returncode, out or b'', err or b'', False
+    except subprocess.TimeoutExpired:
+        try:
+            os.killpg(p.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        out, err = p.communicate()
+        return p.returncode, out or b'', err or b'', True
+
+
+def oracle_outcome(rc, o, killed=False):
+    if killed or rc == 124:
+        return 'timeout'
+    # Signals are harness/runtime failures, never a C main return value.
+    if rc is None or rc < 0:
+        return 'n/a'
+    codes = {int(k): v for k, v in o.get('codes', {}).items()}
+    return codes.get(rc, 'n/a' if rc == 125 else 'ok')
 
 
 class Gate:
@@ -116,37 +162,38 @@ def run_oracle(name, o, prog, key, gate, use_cache):
     ctx = gate if o['heavy'] else _Null()
     with ctx:
         t0 = time.time()
-        try:
-            p = subprocess.run(['bash', '-c', cmd], cwd=ROOT, env=env, stdin=subprocess.DEVNULL,
-                               capture_output=True, timeout=o['timeout'])
-            rc, out, err, killed = p.returncode, p.stdout, p.stderr, False
-        except subprocess.TimeoutExpired as e:
-            rc, out, err, killed = None, e.stdout or b'', e.stderr or b'', True
+        rc, out, err, killed = run_process(cmd, env, o['timeout'])
         wall = time.time() - t0
     meta = {}
     try:
-        for l in open(meta_path):
-            if '=' in l:
-                k, v = l.rstrip('\n').split('=', 1)
-                meta[k] = v
+        with open(meta_path) as meta_file:
+            for l in meta_file:
+                if '=' in l:
+                    k, v = l.rstrip('\n').split('=', 1)
+                    meta[k] = v
     finally:
         os.unlink(meta_path)
-    codes = {int(k): v for k, v in o.get('codes', {}).items()}
-    if killed or rc == 124:
-        outcome = 'timeout'
-    elif rc in codes:
-        outcome = codes[rc]
-    elif rc == 125:
-        outcome = 'n/a'
-    else:
-        outcome = 'ok'
+    outcome = oracle_outcome(rc, o, killed)
+    if outcome == 'ok':
+        missing = [k for k in o.get('completion_meta', [])
+                   if not meta.get(k, '').isdigit() or int(meta[k]) <= 0]
+        if missing:
+            outcome = 'n/a'
+            err += ('\ndiff3: oracle missing completion metadata: ' +
+                    ', '.join(missing) + '\n').encode()
+    if outcome == 'ok':
         rc = rc % 256
+    elif killed:
+        rc = None
+    elif rc is not None and rc < 0:
+        err += f'\ndiff3: oracle terminated by signal {-rc}\n'.encode()
     r = dict(outcome=outcome, exit=rc, stdout=out.decode('utf-8', 'backslashreplace'),
              stdout_sha=sha(out), stderr_tail=err.decode('utf-8', 'backslashreplace')[-2000:],
              wall_s=round(wall, 3), meta=meta, cmd=cmd)
     os.makedirs(os.path.dirname(cpath), exist_ok=True)
     tmp = cpath + '.tmp%d' % os.getpid()
-    json.dump(r, open(tmp, 'w'))
+    with open(tmp, 'w') as cache_file:
+        json.dump(r, cache_file)
     os.replace(tmp, cpath)
     r['cached'] = False
     return r
@@ -238,7 +285,9 @@ def main():
             os.makedirs(os.path.join(OUT, c), exist_ok=True)
             jp = os.path.join(OUT, c, p + '.json')
             old = json.load(open(jp)) if os.path.exists(jp) else {}
-            oo = old.get('oracles', {})
+            # Results from a previous source revision cannot be compared with
+            # the selected oracles' results for the new revision.
+            oo = old.get('oracles', {}) if old.get('sha256') == rs['sha256'] else {}
             oo.update({n: rs[n] for n in names})
             rec = dict(corpus=c, prog=p, source=os.path.relpath(dict((x[1], x[2]) for x in progs if x[0] == c)[p], ROOT),
                        sha256=rs['sha256'], oracles=oo)

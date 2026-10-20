@@ -75,20 +75,30 @@ run1() {
 export -f run1; export EMU OBJDUMP MAXSTEPS
 for n in "${names[@]}"; do echo "$OUT/$n.tcc.elf"; echo "$OUT/$n.gcc.elf"; done | xargs -P "$JOBS" -I{} bash -c 'run1 {}'
 
-pass=0; fail=0; npass=0; nfail=0; isabad=0
+# Matching partial output is not success: require the traced tohost exit
+# store and reject both wall-clock timeouts and Sail fuel exhaustion.
+sail_completed() {
+  local base=$1
+  [ -f "$base.rc" ] && [ "$(cat "$base.rc")" != 124 ] &&
+    [ -f "$base.steps" ] && [ "$(cat "$base.steps")" -gt 0 ] &&
+    ! grep -q 'TRACE-FUEL-OUT' "$base.trace"
+}
+pass=0; fail=0; npass=0; nfail=0; isabad=0; elfisabad=0
 printf '%-22s %-5s %-7s %-9s %-9s %-11s %-11s %s\n' test isa elf-isa tcc=gcc tcc=host tcc-steps gcc-steps rc
 for n in "${names[@]}"; do
   isa=-; eisa=-; r1=FAIL; r2=FAIL; ts=-; gs=-; trc=-
   [ -f "$OUT/$n.isa.rc" ] && { [ "$(cat "$OUT/$n.isa.rc")" = 0 ] && isa=ok || { isa=BAD; isabad=$((isabad+1)); }; }
-  [ -f "$OUT/$n.elfisa.rc" ] && { [ "$(cat "$OUT/$n.elfisa.rc")" = 0 ] && eisa=ok || eisa=BAD; }
+  [ -f "$OUT/$n.elfisa.rc" ] && { [ "$(cat "$OUT/$n.elfisa.rc")" = 0 ] && eisa=ok || { eisa=BAD; elfisabad=$((elfisabad+1)); }; }
   [ -f "$OUT/$n.tcc.steps" ] && ts=$(cat "$OUT/$n.tcc.steps")
   [ -f "$OUT/$n.gcc.steps" ] && gs=$(cat "$OUT/$n.gcc.steps")
   [ -f "$OUT/$n.tcc.rc" ] && trc=$(cat "$OUT/$n.tcc.rc")
-  if [ -f "$OUT/$n.tcc.out" ] && [ -f "$OUT/$n.gcc.out" ] && cmp -s "$OUT/$n.tcc.out" "$OUT/$n.gcc.out" \
+  if sail_completed "$OUT/$n.tcc" && sail_completed "$OUT/$n.gcc" \
+     && [ -f "$OUT/$n.tcc.out" ] && [ -f "$OUT/$n.gcc.out" ] && cmp -s "$OUT/$n.tcc.out" "$OUT/$n.gcc.out" \
      && [ "$trc" = "$(cat "$OUT/$n.gcc.rc")" ]; then r1=PASS; pass=$((pass+1)); else fail=$((fail+1)); fi
-  if [ -f "$OUT/$n.tcc.out" ] && [ -f "$OUT/$n.native.out" ] && cmp -s "$OUT/$n.tcc.out" "$OUT/$n.native.out" \
+  if sail_completed "$OUT/$n.tcc" \
+     && [ -f "$OUT/$n.tcc.out" ] && [ -f "$OUT/$n.native.out" ] && cmp -s "$OUT/$n.tcc.out" "$OUT/$n.native.out" \
      && [ "$trc" = "$(cat "$OUT/$n.native.rc")" ]; then r2=PASS; npass=$((npass+1)); else nfail=$((nfail+1)); fi
   printf '%-22s %-5s %-7s %-9s %-9s %-11s %-11s %s\n' "$n" $isa $eisa $r1 $r2 "$ts" "$gs" "$trc"
 done
-echo "tcc vs gcc-rv64i (Sail): pass=$pass fail=$fail; tcc vs host gcc: pass=$npass fail=$nfail; isa-bad objects=$isabad"
-[ $fail = 0 ] && [ $isabad = 0 ]
+echo "tcc vs gcc-rv64i (Sail): pass=$pass fail=$fail; tcc vs host gcc: pass=$npass fail=$nfail; isa-bad objects=$isabad elfs=$elfisabad"
+[ $fail = 0 ] && [ $isabad = 0 ] && [ $elfisabad = 0 ]

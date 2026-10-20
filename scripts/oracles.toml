@@ -48,8 +48,9 @@ timeout = 120
 cmd = "scripts/run_xgcc_sail.sh {prog}"
 env = { MAX_STEPS = "60000000" }
 version_cmd = "$HOME/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin/riscv-none-elf-gcc --version | head -1; sha256sum $HOME/Documents/code/ship-your-lua/riscv-lean/lean_emulator/.lake/build/bin/lean_riscv_emulator | cut -c1-16"
-version_files = ["scripts/run_xgcc_sail.sh", "c/harness/crt0.S", "c/harness/htif.c", "c/harness/link.ld"]
+version_files = ["scripts/run_xgcc_sail.sh", "scripts/sail_console.py", "c/harness/crt0.S", "c/harness/htif.c", "c/harness/link.ld"]
 heavy = true
+completion_meta = ["steps"]
 
 [oracle.tcc_sail]
 # Lane B: the bare-metal tcc image running `tcc -run /prog.c` on Sail.
@@ -58,9 +59,10 @@ heavy = true
 # compile_steps=<steps until the jump into the generated code>).
 cmd = "scripts/run_tcc_sail.sh {prog}"
 requires = "scripts/run_tcc_sail.sh"
-version_files = ["scripts/run_tcc_sail.sh"]
-version_cmd = "cat build/tcc-image/VERSION 2>/dev/null; true"
+version_files = ["scripts/run_tcc_sail.sh", "scripts/sail_console.py", "scripts/tcc_src.sh", "scripts/build_cross_tcc.sh", "vendor/TINYCC_REV", "patches/*.patch", "c/Makefile", "c/src/**"]
+version_cmd = "$HOME/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin/riscv-none-elf-gcc --version | head -1; sha256sum ${EMU:-$HOME/Documents/code/ship-your-lua/riscv-lean/lean_emulator/.lake/build/bin/lean_riscv_emulator} | cut -c1-16"
 heavy = true
+completion_meta = ["steps", "compile_steps", "program_steps"]
 
 [oracle.ccomp_interp]
 # Certora/clean's `ccomp -interp` (CompCert 3.17), scripts/run_ccomp_interp.sh
