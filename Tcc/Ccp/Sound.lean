@@ -224,6 +224,18 @@ structure Sim (c : Code) (s : St) (cf : Config) : Prop where
   payload : cf.σ.regs.get? Register.htif_payload_writes = some 0#4
   tick : cf.tick < 2
 
+/-- From `cf` the machine runs to a configuration related to `t`. -/
+inductive Reaches (c : Code) (cf : Config) (t : St) : Prop where
+  | intro (cf' : Config) (steps : Steps cf cf') (sim : Sim c t cf')
+
+/-- What one straight-line instruction's step gives (`block_mem_sound`). -/
+inductive MPost (cf : Config) (a : MInstr) (L : GRegs) (bs : List (BitVec 8)) : Prop where
+  | intro (σ' : MState) (t' : Nat) (steps : Steps cf ⟨σ', t', cf.steps + 1⟩) (tick : t' < 2)
+      (good : GoodState σ') (mem : σ'.mem = writeLog cf.σ.mem (wlogM [a] L [bs]))
+      (console : output σ' = "") (pc : σ'.regs.get? Register.PC = some (BitVec.addInt a.pc 4))
+      (regs : GHolds σ' (runGM [a] L [bs]))
+      (payload : σ'.regs.get? Register.htif_payload_writes = some 0#4)
+
 /-! ## One straight-line instruction (`block_mem_sound` on a singleton block) -/
 
 theorem pc_toNat {pc : Nat} (h : FetchOK pc) : (BitVec.ofNat 64 pc).toNat = pc := by
@@ -244,11 +256,7 @@ theorem mstep {c : Code} {s : St} {cf : Config} (hS : Sim c s cf) {w : Nat} {a :
       cf.σ.mem[s.pc + 2]? = some (wbyte w 2) ∧ cf.σ.mem[s.pc + 3]? = some (wbyte w 3))
     (hdec : DecodeFactM a) (hk : KindOK (keysG (pinsOf s.regs)) a.kind a.rd a.rs1 a.rs2)
     {bs : List (BitVec 8)} (hmem : MemFacts cf.σ.mem (pinsOf s.regs) bs a) :
-    ∃ σ' t', Steps cf ⟨σ', t', cf.steps + 1⟩ ∧ t' < 2 ∧ GoodState σ' ∧
-      σ'.mem = writeLog cf.σ.mem (wlogM [a] (pinsOf s.regs) [bs]) ∧ output σ' = "" ∧
-      σ'.regs.get? Register.PC = some (BitVec.addInt a.pc 4) ∧
-      GHolds σ' (runGM [a] (pinsOf s.regs) [bs]) ∧
-      σ'.regs.get? Register.htif_payload_writes = some 0#4 := by
+    MPost cf a (pinsOf s.regs) bs := by
   obtain ⟨σ, t, u⟩ := cf
   obtain ⟨hb0, hb1, hb2, hb3⟩ := hb
   obtain ⟨vm, hmi⟩ := hS.good.minstret
@@ -292,7 +300,7 @@ theorem alu_sound {c : Code} {s : St} {cf : Config} (hS : Sim c s cf) {w : Nat}
       (rd, BitVec.ofNat 64 v) :: eraseG rd (pinsOf s.regs))
     (hlog : wlogM [mkM s.pc w k rd rs1 rs2 imm] (pinsOf s.regs) [[]] = [])
     {i : Ins} (hget : c.table.getW s.pc = some (w, i)) :
-    ∃ cf', Steps cf cf' ∧ Sim c ⟨(s.pc + 4) % W, setR s.regs rd v, s.mem⟩ cf' := by
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd v, s.mem⟩ := by
   obtain ⟨σ', t', hs, ht', hG', hmem', hout, hpc', hregs, hpay⟩ :=
     mstep hS hf rfl rfl ⟨rfl, rfl, rfl, rfl⟩ (hS.code _ _ _ hget) hdec hk hmf
   have hregs' : GHolds σ' ((rd, BitVec.ofNat 64 v) :: eraseG rd (pinsOf s.regs)) := by
@@ -320,8 +328,7 @@ theorem ofNat_add_mod (x y : Nat) :
 
 theorem sound_addi {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
     {w rd rs1 imm : Nat} (hget : c.table.getW s.pc = some (w, .addi rd rs1 imm)) :
-    ∃ cf', Steps cf cf' ∧
-      Sim c ⟨(s.pc + 4) % W, setR s.regs rd (fAdd (getR s.regs rs1) imm), s.mem⟩ cf' := by
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fAdd (getR s.regs rs1) imm), s.mem⟩ := by
   obtain ⟨hf, hrd, hrs1, himm, hdec⟩ := hT _ _ _ hget
   refine alu_sound hS hf hdec ⟨hrd, srcOK_of hrs1⟩ trivial hrd ?_ rfl hget
   show (rd, srcVal rs1 (pinsOf s.regs) + sign_extend (m := 64) (BitVec.ofNat 12 imm)) :: _ = _
@@ -329,8 +336,7 @@ theorem sound_addi {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim 
 
 theorem sound_add {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
     {w rd rs1 rs2 : Nat} (hget : c.table.getW s.pc = some (w, .add rd rs1 rs2)) :
-    ∃ cf', Steps cf cf' ∧
-      Sim c ⟨(s.pc + 4) % W, setR s.regs rd (fAdd (getR s.regs rs1) (getR s.regs rs2)), s.mem⟩ cf' := by
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd (fAdd (getR s.regs rs1) (getR s.regs rs2)), s.mem⟩ := by
   obtain ⟨hf, hrd, hrs1, hrs2, hdec⟩ := hT _ _ _ hget
   refine alu_sound hS hf hdec ⟨hrd, srcOK_of hrs1, srcOK_of hrs2⟩ trivial hrd ?_ rfl hget
   show (rd, srcVal rs1 (pinsOf s.regs) + srcVal rs2 (pinsOf s.regs)) :: _ = _
@@ -347,7 +353,7 @@ theorem tstep {c : Code} {s : St} {cf : Config} (hS : Sim c s cf) {w : Nat}
     (hk : TermKindOK (keysG (pinsOf s.regs)) (BitVec.ofNat 64 s.pc) rs1 rs2 i13 i21 k)
     (htf : TermFactsT (pinsOf s.regs) (mkT s.pc w k rs1 rs2 i13 i21 i12))
     {pc' : Nat} (hpc' : tgtPCT (mkT s.pc w k rs1 rs2 i13 i21 i12) (pinsOf s.regs) = BitVec.ofNat 64 pc') :
-    ∃ cf', Steps cf cf' ∧ Sim c ⟨pc', s.regs, s.mem⟩ cf' := by
+    Reaches c cf ⟨pc', s.regs, s.mem⟩ := by
   obtain ⟨σ, t, u⟩ := cf
   obtain ⟨vm, hmi⟩ := hS.good.minstret
   have hpcn := pc_toNat hf.fetch
@@ -389,7 +395,7 @@ theorem branch_sound {c : Code} {s : St} {cf : Config} (hS : Sim c s cf) {w : Na
     (htgt : BitVec.ofNat 64 s.pc + sign_extend (m := 64) off = BitVec.ofNat 64 tgt)
     (hlt : tgt < 2 ^ 64) (hal : tgt % 4 = 0)
     (hdec : DecodeFactT (mkT s.pc w (.br op true) rs1 rs2 off 0 0)) :
-    ∃ cf', Steps cf cf' ∧ Sim c (br s (f (getR s.regs rs1) (getR s.regs rs2)) tgt) cf' := by
+    Reaches c cf (br s (f (getR s.regs rs1) (getR s.regs rs2)) tgt) := by
   have hg := hop _ _ (getR_lt s.regs rs1) (getR_lt s.regs rs2)
   rw [← srcVal_pinsOf hS.x0 h1, ← srcVal_pinsOf hS.x0 h2] at hg
   have hal' : (BitVec.ofNat 64 s.pc + sign_extend (m := 64) off).toNat % 4 = 0 := by
@@ -411,7 +417,7 @@ theorem sound_br {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c 
     {w a b tgt : Nat} {i : Ins} (hget : c.table.getW s.pc = some (w, i)) {op : bop}
     (hbr : BrOK s.pc w op a b tgt) {f : Nat → Nat → Bool}
     (hop : ∀ x y, x < 2 ^ 64 → y < 2 ^ 64 → guardB op (BitVec.ofNat 64 x) (BitVec.ofNat 64 y) = f x y) :
-    ∃ cf', Steps cf cf' ∧ Sim c (br s (f (getR s.regs a) (getR s.regs b)) tgt) cf' := by
+    Reaches c cf (br s (f (getR s.regs a) (getR s.regs b)) tgt) := by
   obtain ⟨ha, hb, hlt, hal, off, htgt, hdec⟩ := hbr
   exact branch_sound hS (hT _ _ _ hget).fetch hget hop ha hb htgt hlt hal hdec
 
@@ -467,7 +473,7 @@ theorem storeOK_iff {c : Code} {a w : Nat} (h : storeOK c a w = true) :
 theorem sound_ld {c : Code} (hT : TableOK c) {s s' : St} {cf : Config} (hS : Sim c s cf)
     {w rd rs1 imm : Nat} (hget : c.table.getW s.pc = some (w, .ld rd rs1 imm))
     (hex : exec (.ld rd rs1 imm) c s = some s') :
-    ∃ cf', Steps cf cf' ∧ Sim c s' cf' := by
+    Reaches c cf s' := by
   obtain ⟨hf, hrd, hrs1, himm, hdec⟩ := hT _ _ _ hget
   simp only [exec, opLd, ldI] at hex
   generalize ha : (getR s.regs rs1 + imm) % W = a at hex
@@ -479,7 +485,7 @@ theorem sound_ld {c : Code} (hT : TableOK c) {s s' : St} {cf : Config} (hS : Sim
     | some v =>
       simp only [hok, hl, Option.some.injEq, id] at hex
       subst hex
-      show ∃ cf', Steps cf cf' ∧ Sim c ⟨(s.pc + 4) % W, setR s.regs rd v, s.mem⟩ cf'
+      show Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd v, s.mem⟩
       obtain ⟨hv, hbytes⟩ := load_bytes hl
       have hea := eaddr_mkM (k := .ld) (pc := s.pc) (w := w) (rd := rd) (rs2 := 0) hS.x0 hrs1 himm
       rw [ha] at hea
@@ -560,7 +566,7 @@ theorem mem_after_store {c : Code} {M M' : MT} {a wd v : Nat} {σm : Std.ExtHash
 theorem sound_sd {c : Code} (hT : TableOK c) {s s' : St} {cf : Config} (hS : Sim c s cf)
     {w rs1 rs2 imm : Nat} (hget : c.table.getW s.pc = some (w, .sd rs1 rs2 imm))
     (hex : exec (.sd rs1 rs2 imm) c s = some s') :
-    ∃ cf', Steps cf cf' ∧ Sim c s' cf' := by
+    Reaches c cf s' := by
   obtain ⟨hf, hrs1, hrs2, himm, hdec⟩ := hT _ _ _ hget
   simp only [exec, opSt, stI] at hex
   generalize ha : (getR s.regs rs1 + imm) % W = a at hex
@@ -611,7 +617,7 @@ theorem zext_byte {v : Nat} (hv : v < 2 ^ (8 * 1)) :
 theorem sound_lbu {c : Code} (hT : TableOK c) {s s' : St} {cf : Config} (hS : Sim c s cf)
     {w rd rs1 imm : Nat} (hget : c.table.getW s.pc = some (w, .lbu rd rs1 imm))
     (hex : exec (.lbu rd rs1 imm) c s = some s') :
-    ∃ cf', Steps cf cf' ∧ Sim c s' cf' := by
+    Reaches c cf s' := by
   obtain ⟨hf, hrd, hrs1, himm, hdec⟩ := hT _ _ _ hget
   simp only [exec, opLd, ldI] at hex
   generalize ha : (getR s.regs rs1 + imm) % W = a at hex
@@ -623,7 +629,7 @@ theorem sound_lbu {c : Code} (hT : TableOK c) {s s' : St} {cf : Config} (hS : Si
     | some v =>
       simp only [hok, hl, Option.some.injEq, id] at hex
       subst hex
-      show ∃ cf', Steps cf cf' ∧ Sim c ⟨(s.pc + 4) % W, setR s.regs rd v, s.mem⟩ cf'
+      show Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd v, s.mem⟩
       obtain ⟨hv, hbytes⟩ := load_bytes hl
       have hea := eaddr_mkM (k := .lbu) (pc := s.pc) (w := w) (rd := rd) (rs2 := 0) hS.x0 hrs1 himm
       rw [ha] at hea
@@ -655,7 +661,7 @@ theorem sound_lbu {c : Code} (hT : TableOK c) {s s' : St} {cf : Config} (hS : Si
 /-- `lui rd, imm` / `auipc rd, imm` (the evaluator's `li`, whose value the table fixes). -/
 theorem sound_li {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
     {w rd v : Nat} (hget : c.table.getW s.pc = some (w, .li rd v)) :
-    ∃ cf', Steps cf cf' ∧ Sim c ⟨(s.pc + 4) % W, setR s.regs rd v, s.mem⟩ cf' := by
+    Reaches c cf ⟨(s.pc + 4) % W, setR s.regs rd v, s.mem⟩ := by
   obtain ⟨hf, hrd, hk⟩ := hT _ _ _ hget
   rcases hk with ⟨hdec, hval⟩ | ⟨hdec, hval⟩
   · exact alu_sound hS hf hdec hrd trivial hrd (by show (rd, _) :: _ = _; rw [← hval]; rfl) rfl hget
@@ -698,7 +704,7 @@ theorem sim_link {c : Code} {s : St} {σ σ' : MState} {t u t' u' : Nat} (hS : S
 
 theorem sound_jal {c : Code} (hT : TableOK c) {s : St} {cf : Config} (hS : Sim c s cf)
     {w rd tgt : Nat} (hget : c.table.getW s.pc = some (w, .jal rd tgt)) :
-    ∃ cf', Steps cf cf' ∧ Sim c ⟨tgt, setR s.regs rd ((s.pc + 4) % W), s.mem⟩ cf' := by
+    Reaches c cf ⟨tgt, setR s.regs rd ((s.pc + 4) % W), s.mem⟩ := by
   obtain ⟨hf, hrd, hlt, hal, off, htgt, hdec⟩ := hT _ _ _ hget
   have hal' : (BitVec.ofNat 64 s.pc + sign_extend (m := 64) off).toNat % 4 = 0 := by
     rw [htgt, BitVec.toNat_ofNat, Nat.mod_eq_of_lt hlt]; exact hal
@@ -792,7 +798,7 @@ theorem jalr_tgt {R : Nat} (hx0 : getR R 0 = 0) {rs1 imm : Nat} (h1 : rs1 ≤ 31
 theorem sound_jalr {c : Code} (hT : TableOK c) {s s' : St} {cf : Config} (hS : Sim c s cf)
     {w rd rs1 imm : Nat} (hget : c.table.getW s.pc = some (w, .jalr rd rs1 imm))
     (hex : exec (.jalr rd rs1 imm) c s = some s') :
-    ∃ cf', Steps cf cf' ∧ Sim c s' cf' := by
+    Reaches c cf s' := by
   obtain ⟨hf, hrd, hrs1, himm, hdec⟩ := hT _ _ _ hget
   simp only [exec, opJalr] at hex
   generalize ht : (getR s.regs rs1 + imm) % W - (getR s.regs rs1 + imm) % W % 2 = tg at hex
@@ -882,7 +888,7 @@ covers is handled; for the others `DecOK` is `False`, so a table that
 `TableOK` holds of contains only covered kinds. -/
 theorem exec_sound {c : Code} (hT : TableOK c) {s s' : St} {cf : Config} (hS : Sim c s cf)
     {w : Nat} {i : Ins} (hget : c.table.getW s.pc = some (w, i)) (hex : exec i c s = some s') :
-    ∃ cf', Steps cf cf' ∧ Sim c s' cf' := by
+    Reaches c cf s' := by
   have hok := (hT _ _ _ hget).dec
   cases i
   case li rd v =>
@@ -904,7 +910,7 @@ theorem exec_sound {c : Code} (hT : TableOK c) {s s' : St} {cf : Config} (hS : S
   all_goals exact (hok : False).elim
 
 theorem step_sound {c : Code} (hT : TableOK c) {s s' : St} {cf : Config} (hS : Sim c s cf)
-    (h : step c s = some s') : ∃ cf', Steps cf cf' ∧ Sim c s' cf' := by
+    (h : step c s = some s') : Reaches c cf s' := by
   unfold step at h
   rw [CT.get_getW] at h
   cases hg : c.table.getW s.pc with
@@ -917,7 +923,7 @@ theorem step_sound {c : Code} (hT : TableOK c) {s s' : St} {cf : Config} (hS : S
 /-- **A run of the evaluator is a run of the Sail model**, between configurations
 the simulation relation ties to its start and end states. -/
 theorem run_sound {c : Code} (hT : TableOK c) : ∀ (n : Nat) {s t : St} {cf : Config},
-    Sim c s cf → run c n s = some t → ∃ cf', Steps cf cf' ∧ Sim c t cf'
+    Sim c s cf → run c n s = some t → Reaches c cf t
   | 0, s, t, cf, hS, h => by
     simp only [run, Option.some.injEq] at h; subst h; exact ⟨cf, Steps.refl _, hS⟩
   | n + 1, s, t, cf, hS, h => by
