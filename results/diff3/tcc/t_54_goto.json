@@ -2,20 +2,20 @@
  "corpus": "tcc",
  "oracles": {
   "ccomp_interp": {
-   "cached": false,
-   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_54_goto.c",
+   "cached": true,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_54_goto.c",
    "exit": 0,
    "meta": {},
    "outcome": "ok",
    "stderr_tail": "",
    "stdout": "In fred()\nAt end\nIn joe()\nc = 1234\ndone\nIn henry()\nb = 1234\ndone\n",
    "stdout_sha": "7902cbdf542d20091a404f2e6c8d64cc9d6df5977e6fd46515e2196175d087a5",
-   "version": "213e70752b2d7e90",
-   "wall_s": 0.202
+   "version": "f9164bcd0a83ec9e",
+   "wall_s": 0.185
   },
   "gcc_native": {
    "cached": true,
-   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_54_goto.c",
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_54_goto.c",
    "exit": 0,
    "meta": {
     "stderr_bytes": "0"
@@ -24,28 +24,40 @@
    "stderr_tail": "",
    "stdout": "In fred()\nAt end\nIn joe()\nc = 1234\ndone\nIn henry()\nb = 1234\ndone\n",
    "stdout_sha": "7902cbdf542d20091a404f2e6c8d64cc9d6df5977e6fd46515e2196175d087a5",
-   "version": "a9e7753b61c98058",
-   "wall_s": 0.186
+   "version": "e0951d0fcef6d457",
+   "wall_s": 0.2
   },
   "lean_clight": {
-   "cached": false,
-   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_54_goto.c",
+   "cached": true,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_54_goto.c",
    "exit": 0,
    "meta": {},
    "outcome": "ok",
    "stderr_tail": "",
    "stdout": "In fred()\nAt end\nIn joe()\nc = 1234\ndone\nIn henry()\nb = 1234\ndone\n",
    "stdout_sha": "7902cbdf542d20091a404f2e6c8d64cc9d6df5977e6fd46515e2196175d087a5",
-   "version": "7a8543be5896d606",
-   "wall_s": 1.734
+   "version": "026fb96670207d7c",
+   "wall_s": 1.344
   },
   "tcc_sail": {
-   "outcome": "absent",
-   "version": "a618d9561cec04d8"
+   "cached": true,
+   "cmd": "scripts/run_tcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_54_goto.c",
+   "exit": 0,
+   "meta": {
+    "compile_steps": "11406558",
+    "program_steps": "9516",
+    "steps": "11416099"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "In fred()\nAt end\nIn joe()\nc = 1234\ndone\nIn henry()\nb = 1234\ndone\n",
+   "stdout_sha": "7902cbdf542d20091a404f2e6c8d64cc9d6df5977e6fd46515e2196175d087a5",
+   "version": "12ca7335e2361f43",
+   "wall_s": 532.768
   },
   "xgcc_sail": {
    "cached": true,
-   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_54_goto.c",
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_54_goto.c",
    "exit": 0,
    "meta": {
     "steps": "9945",
@@ -55,8 +67,8 @@
    "stderr_tail": "",
    "stdout": "In fred()\nAt end\nIn joe()\nc = 1234\ndone\nIn henry()\nb = 1234\ndone\n",
    "stdout_sha": "7902cbdf542d20091a404f2e6c8d64cc9d6df5977e6fd46515e2196175d087a5",
-   "version": "64cd4e6942fcf57f",
-   "wall_s": 1.156
+   "version": "c8149771eacd5358",
+   "wall_s": 1.012
   }
  },
  "prog": "t_54_goto",

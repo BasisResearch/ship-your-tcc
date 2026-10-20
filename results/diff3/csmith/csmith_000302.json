@@ -2,20 +2,20 @@
  "corpus": "csmith",
  "oracles": {
   "ccomp_interp": {
-   "cached": false,
-   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/csmith/csmith_000302.c",
+   "cached": true,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/csmith/csmith_000302.c",
    "exit": 0,
    "meta": {},
    "outcome": "ok",
-   "stderr_tail": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/csmith/csmith_000302.c:139: warning: incompatible conversion: assigning to 'int32_t *' from 'uint32_t *'\n",
+   "stderr_tail": "/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/csmith/csmith_000302.c:139: warning: incompatible conversion: assigning to 'int32_t *' from 'uint32_t *'\n",
    "stdout": "checksum = 4E615CD5\n",
    "stdout_sha": "29b5fc59279bea7c8d53ac849692cd69848182880f6eae5b1a7021879125c368",
-   "version": "213e70752b2d7e90",
-   "wall_s": 0.235
+   "version": "f9164bcd0a83ec9e",
+   "wall_s": 0.133
   },
   "gcc_native": {
    "cached": true,
-   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/csmith/csmith_000302.c",
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/csmith/csmith_000302.c",
    "exit": 0,
    "meta": {
     "stderr_bytes": "0"
@@ -24,28 +24,40 @@
    "stderr_tail": "",
    "stdout": "checksum = 4E615CD5\n",
    "stdout_sha": "29b5fc59279bea7c8d53ac849692cd69848182880f6eae5b1a7021879125c368",
-   "version": "a9e7753b61c98058",
-   "wall_s": 0.371
+   "version": "e0951d0fcef6d457",
+   "wall_s": 0.207
   },
   "lean_clight": {
-   "cached": false,
-   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/csmith/csmith_000302.c",
+   "cached": true,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/csmith/csmith_000302.c",
    "exit": 0,
    "meta": {},
    "outcome": "ok",
    "stderr_tail": "",
    "stdout": "checksum = 4E615CD5\n",
    "stdout_sha": "29b5fc59279bea7c8d53ac849692cd69848182880f6eae5b1a7021879125c368",
-   "version": "7a8543be5896d606",
-   "wall_s": 2.371
+   "version": "026fb96670207d7c",
+   "wall_s": 1.377
   },
   "tcc_sail": {
-   "outcome": "absent",
-   "version": "a618d9561cec04d8"
+   "cached": true,
+   "cmd": "scripts/run_tcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/csmith/csmith_000302.c",
+   "exit": 0,
+   "meta": {
+    "compile_steps": "7473384",
+    "program_steps": "48672",
+    "steps": "7522081"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "checksum = 4E615CD5\n",
+   "stdout_sha": "29b5fc59279bea7c8d53ac849692cd69848182880f6eae5b1a7021879125c368",
+   "version": "12ca7335e2361f43",
+   "wall_s": 270.105
   },
   "xgcc_sail": {
    "cached": true,
-   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/csmith/csmith_000302.c",
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/csmith/csmith_000302.c",
    "exit": 0,
    "meta": {
     "steps": "43381",
@@ -55,8 +67,8 @@
    "stderr_tail": "",
    "stdout": "checksum = 4E615CD5\n",
    "stdout_sha": "29b5fc59279bea7c8d53ac849692cd69848182880f6eae5b1a7021879125c368",
-   "version": "64cd4e6942fcf57f",
-   "wall_s": 2.286
+   "version": "c8149771eacd5358",
+   "wall_s": 2.694
   }
  },
  "prog": "csmith_000302",

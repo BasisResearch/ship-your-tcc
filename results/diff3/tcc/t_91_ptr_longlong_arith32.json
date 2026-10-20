@@ -2,20 +2,20 @@
  "corpus": "tcc",
  "oracles": {
   "ccomp_interp": {
-   "cached": false,
-   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_91_ptr_longlong_arith32.c",
+   "cached": true,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_91_ptr_longlong_arith32.c",
    "exit": 0,
    "meta": {},
    "outcome": "ok",
    "stderr_tail": "",
    "stdout": "data = \"0123-5678\"\n",
    "stdout_sha": "ea97a5ef19aea5a7990b0c438e1dcf340a0f8759848ec3a87f538d29020bd470",
-   "version": "213e70752b2d7e90",
-   "wall_s": 0.306
+   "version": "f9164bcd0a83ec9e",
+   "wall_s": 0.115
   },
   "gcc_native": {
    "cached": true,
-   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_91_ptr_longlong_arith32.c",
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_91_ptr_longlong_arith32.c",
    "exit": 0,
    "meta": {
     "stderr_bytes": "0"
@@ -24,28 +24,40 @@
    "stderr_tail": "",
    "stdout": "data = \"0123-5678\"\n",
    "stdout_sha": "ea97a5ef19aea5a7990b0c438e1dcf340a0f8759848ec3a87f538d29020bd470",
-   "version": "a9e7753b61c98058",
-   "wall_s": 0.159
+   "version": "e0951d0fcef6d457",
+   "wall_s": 0.319
   },
   "lean_clight": {
-   "cached": false,
-   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_91_ptr_longlong_arith32.c",
+   "cached": true,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_91_ptr_longlong_arith32.c",
    "exit": 0,
    "meta": {},
    "outcome": "ok",
    "stderr_tail": "",
    "stdout": "data = \"0123-5678\"\n",
    "stdout_sha": "ea97a5ef19aea5a7990b0c438e1dcf340a0f8759848ec3a87f538d29020bd470",
-   "version": "7a8543be5896d606",
-   "wall_s": 1.307
+   "version": "026fb96670207d7c",
+   "wall_s": 0.833
   },
   "tcc_sail": {
-   "outcome": "absent",
-   "version": "a618d9561cec04d8"
+   "cached": true,
+   "cmd": "scripts/run_tcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_91_ptr_longlong_arith32.c",
+   "exit": 0,
+   "meta": {
+    "compile_steps": "6639080",
+    "program_steps": "2747",
+    "steps": "6641852"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "data = \"0123-5678\"\n",
+   "stdout_sha": "ea97a5ef19aea5a7990b0c438e1dcf340a0f8759848ec3a87f538d29020bd470",
+   "version": "12ca7335e2361f43",
+   "wall_s": 254.883
   },
   "xgcc_sail": {
    "cached": true,
-   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/tcc/t_91_ptr_longlong_arith32.c",
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_91_ptr_longlong_arith32.c",
    "exit": 0,
    "meta": {
     "steps": "4035",
@@ -55,8 +67,8 @@
    "stderr_tail": "",
    "stdout": "data = \"0123-5678\"\n",
    "stdout_sha": "ea97a5ef19aea5a7990b0c438e1dcf340a0f8759848ec3a87f538d29020bd470",
-   "version": "64cd4e6942fcf57f",
-   "wall_s": 0.626
+   "version": "c8149771eacd5358",
+   "wall_s": 0.876
   }
  },
  "prog": "t_91_ptr_longlong_arith32",

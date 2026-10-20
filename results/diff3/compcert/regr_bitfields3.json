@@ -2,20 +2,20 @@
  "corpus": "compcert",
  "oracles": {
   "ccomp_interp": {
-   "cached": false,
-   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_bitfields3.c",
+   "cached": true,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_bitfields3.c",
    "exit": 0,
    "meta": {},
    "outcome": "ok",
    "stderr_tail": "",
    "stdout": "x = {a = 12345678}\nx = {a = deadbeef}\n",
    "stdout_sha": "4d8b6a05d0381f84983c7a742f094da174a5da92945068ce87a911476376773d",
-   "version": "213e70752b2d7e90",
-   "wall_s": 0.089
+   "version": "f9164bcd0a83ec9e",
+   "wall_s": 0.156
   },
   "gcc_native": {
    "cached": true,
-   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_bitfields3.c",
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_bitfields3.c",
    "exit": 0,
    "meta": {
     "stderr_bytes": "0"
@@ -24,28 +24,40 @@
    "stderr_tail": "",
    "stdout": "x = {a = 12345678}\nx = {a = deadbeef}\n",
    "stdout_sha": "4d8b6a05d0381f84983c7a742f094da174a5da92945068ce87a911476376773d",
-   "version": "a9e7753b61c98058",
-   "wall_s": 0.206
+   "version": "e0951d0fcef6d457",
+   "wall_s": 0.337
   },
   "lean_clight": {
-   "cached": false,
-   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_bitfields3.c",
+   "cached": true,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_bitfields3.c",
    "exit": 0,
    "meta": {},
    "outcome": "ok",
    "stderr_tail": "",
    "stdout": "x = {a = 12345678}\nx = {a = deadbeef}\n",
    "stdout_sha": "4d8b6a05d0381f84983c7a742f094da174a5da92945068ce87a911476376773d",
-   "version": "7a8543be5896d606",
-   "wall_s": 0.698
+   "version": "026fb96670207d7c",
+   "wall_s": 0.958
   },
   "tcc_sail": {
-   "outcome": "absent",
-   "version": "a618d9561cec04d8"
+   "cached": true,
+   "cmd": "scripts/run_tcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_bitfields3.c",
+   "exit": 0,
+   "meta": {
+    "compile_steps": "11333545",
+    "program_steps": "4306",
+    "steps": "11337876"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "x = {a = 12345678}\nx = {a = deadbeef}\n",
+   "stdout_sha": "4d8b6a05d0381f84983c7a742f094da174a5da92945068ce87a911476376773d",
+   "version": "12ca7335e2361f43",
+   "wall_s": 445.872
   },
   "xgcc_sail": {
    "cached": true,
-   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_bitfields3.c",
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_bitfields3.c",
    "exit": 0,
    "meta": {
     "steps": "5977",
@@ -55,8 +67,8 @@
    "stderr_tail": "",
    "stdout": "x = {a = 12345678}\nx = {a = deadbeef}\n",
    "stdout_sha": "4d8b6a05d0381f84983c7a742f094da174a5da92945068ce87a911476376773d",
-   "version": "64cd4e6942fcf57f",
-   "wall_s": 0.389
+   "version": "c8149771eacd5358",
+   "wall_s": 0.606
   }
  },
  "prog": "regr_bitfields3",

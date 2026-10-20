@@ -2,20 +2,20 @@
  "corpus": "compcert",
  "oracles": {
   "ccomp_interp": {
-   "cached": false,
-   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/bench_nsieve.c",
+   "cached": true,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_nsieve.c",
    "exit": 126,
    "meta": {},
    "outcome": "stuck",
    "stderr_tail": "/data/home/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/riscv-none-elf/include/stdlib.h:108: warning: unknown attribute '__alloc_size__' ignored [-Wunknown-attributes]\n[run_ccomp_interp] STUCK (undefined behaviour or unsupported external): Stuck state: calling memset(<ptr>, 1, 20000LL) ERROR: Undefined behavior \n",
    "stdout": "",
    "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-   "version": "213e70752b2d7e90",
-   "wall_s": 0.088
+   "version": "f9164bcd0a83ec9e",
+   "wall_s": 0.111
   },
   "gcc_native": {
    "cached": true,
-   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/bench_nsieve.c",
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_nsieve.c",
    "exit": 0,
    "meta": {
     "stderr_bytes": "0"
@@ -24,28 +24,40 @@
    "stderr_tail": "",
    "stdout": "Primes up to    20000     2262\nPrimes up to    10000     1229\nPrimes up to        0        0\n",
    "stdout_sha": "7eccbae36547c2764105830390c3d80c640c1449bb5643a6d449a7b51b0df362",
-   "version": "a9e7753b61c98058",
-   "wall_s": 0.193
+   "version": "e0951d0fcef6d457",
+   "wall_s": 0.256
   },
   "lean_clight": {
-   "cached": false,
-   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/bench_nsieve.c",
+   "cached": true,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_nsieve.c",
    "exit": 126,
    "meta": {},
    "outcome": "stuck",
    "stderr_tail": "[clight_run] STUCK (undefined behaviour or outside the interpreter): call to unsupported external function memset\n",
    "stdout": "",
    "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-   "version": "7a8543be5896d606",
-   "wall_s": 0.82
+   "version": "026fb96670207d7c",
+   "wall_s": 0.833
   },
   "tcc_sail": {
-   "outcome": "absent",
-   "version": "a618d9561cec04d8"
+   "cached": true,
+   "cmd": "scripts/run_tcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_nsieve.c",
+   "exit": 0,
+   "meta": {
+    "compile_steps": "12883426",
+    "program_steps": "3980758",
+    "steps": "16864209"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "Primes up to    20000     2262\nPrimes up to    10000     1229\nPrimes up to        0        0\n",
+   "stdout_sha": "7eccbae36547c2764105830390c3d80c640c1449bb5643a6d449a7b51b0df362",
+   "version": "12ca7335e2361f43",
+   "wall_s": 600.24
   },
   "xgcc_sail": {
    "cached": true,
-   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/bench_nsieve.c",
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_nsieve.c",
    "exit": 0,
    "meta": {
     "steps": "3024035",
@@ -55,8 +67,8 @@
    "stderr_tail": "",
    "stdout": "Primes up to    20000     2262\nPrimes up to    10000     1229\nPrimes up to        0        0\n",
    "stdout_sha": "7eccbae36547c2764105830390c3d80c640c1449bb5643a6d449a7b51b0df362",
-   "version": "64cd4e6942fcf57f",
-   "wall_s": 112.502
+   "version": "c8149771eacd5358",
+   "wall_s": 134.637
   }
  },
  "prog": "bench_nsieve",

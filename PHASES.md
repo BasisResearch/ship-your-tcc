@@ -15,8 +15,8 @@ See BRIEF.md for the full plan. Status is updated as work lands.
 |---|---|---|
 | 2.1 Certora/clean | `ccomp -interp`, `clightgen -lean`, Lean CCLib interpreter built | done (results/certora.md) |
 | 2.2 corpus | Csmith (common subset, UB-free per `ccomp -interp`), CompCert test/c, tcc tests2 | done: 345 programs, results/corpus.md |
-| 2.3 differential | every program attempted on tcc/Sail, Lean Clight, `ccomp -interp`, gcc -O0; each comparable disagreement classified and minimised | full rerun on one harness version in progress (the earlier, mixed-version numbers: 345 attempted, 301 common, 298 agree, 3 reduced discrepancies) |
-| 2.4 report | DIFFERENTIAL.md | draft; numbers replaced after the rerun |
+| 2.3 differential | every program attempted on tcc/Sail, Lean Clight, `ccomp -interp`, gcc -O0; each comparable disagreement classified and minimised | done: single-version rerun 2026-10-20; 345 attempted, tcc/Sail 345/345 ok, 301 common to the three primary oracles, 298 agree, 3 disagreements classified with reproducers (2 Lean-port, 1 tcc front end, also in pristine x86_64 tcc) |
+| 2.4 report | DIFFERENTIAL.md | done (DIFFERENTIAL.md, results/diff3/summary.md) |
 
 ## Phase 3: one per-program end-to-end theorem
 P = `c/tests/p3/sum.c` (prints "55\n", returns 0). The Clight side is proved;

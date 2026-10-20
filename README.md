@@ -78,7 +78,7 @@ programs give the same stdout and exit code as xPack gcc -O0 rv64i on Sail and
 as host gcc. tcc's tests2: 101/104 match `.expect`; none of the three failures
 comes from the code generator (`results/tcc-patch.md`).
 
-## Phase 2: three-way differential (measured report)
+## Phase 2: three-way differential (done)
 
 Oracles (`scripts/oracles.toml`, runner `scripts/diff3.py`):
 
@@ -96,7 +96,13 @@ Oracles (`scripts/oracles.toml`, runner `scripts/diff3.py`):
   72 CompCert test programs and 73 tcc tests2 programs.
 * All five oracles agree on all 200 Csmith programs. Across the full corpus,
   301 programs finish on all three primary oracles: 298 agree and three
-  disagree. Forty-four are outside the common executed subset.
+  disagree. The other 44 are outside the common executed subset: the
+  CompCert interpreters get stuck on or reject them.
+* tcc/Sail completes all 345 programs, including the nine that need libm,
+  and matches native gcc on 344 of them. The one mismatch is the union
+  initializer below. Median compile phase: 8.6M steps (max 21.4M). Median
+  program phase: 52k steps (max 15.0M). The run used 40.9 emulator-hours in
+  total.
 * Two Lean-port discrepancies have small reproducers in `results/repro/`:
   * converting a 64-bit integer to `float` rounds twice, through double;
   * converting `double` to `unsigned long` saturates as if signed:
@@ -105,10 +111,9 @@ Oracles (`scripts/oracles.toml`, runner `scripts/diff3.py`):
 * One TinyCC union-designator discrepancy also reproduces on pristine
   native TinyCC; it is outside the new RV64I backend.
 
-Counts, exclusions, harness fixes, measurement provenance and reproducers
-are in [DIFFERENTIAL.md](DIFFERENTIAL.md). The retained corpus measurements
-span multiple harness versions; the complete corpus has not been rerun
-after the runtime errno fix. Publication was approved on 2026-10-20.
+All numbers come from one complete rerun on 2026-10-20, on a single
+harness version and the corrected runtime. Counts, exclusions, harness
+fixes and reproducers are in [DIFFERENTIAL.md](DIFFERENTIAL.md).
 
 ## Phase 3: proof work remains open
 

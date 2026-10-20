@@ -2,20 +2,20 @@
  "corpus": "compcert",
  "oracles": {
   "ccomp_interp": {
-   "cached": false,
-   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/bench_binarytrees.c",
+   "cached": true,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_binarytrees.c",
    "exit": 126,
    "meta": {},
    "outcome": "stuck",
    "stderr_tail": "/data/home/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/riscv-none-elf/include/stdlib.h:108: warning: unknown attribute '__alloc_size__' ignored [-Wunknown-attributes]\n[run_ccomp_interp] STUCK (undefined behaviour or unsupported external): Stuck state: calling pow(2., 6.) ERROR: Undefined behavior \n",
    "stdout": "stretch tree of depth 7\t check: -1\n\n",
    "stdout_sha": "333c9064b7d81ae23dbb97a8d4156d208bbcf24004825199cc8022c52e9f588e",
-   "version": "213e70752b2d7e90",
-   "wall_s": 0.189
+   "version": "f9164bcd0a83ec9e",
+   "wall_s": 0.222
   },
   "gcc_native": {
    "cached": true,
-   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/bench_binarytrees.c",
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_binarytrees.c",
    "exit": 0,
    "meta": {
     "stderr_bytes": "0"
@@ -24,28 +24,41 @@
    "stderr_tail": "",
    "stdout": "stretch tree of depth 7\t check: -1\n128\t trees of depth 4\t check: -128\n32\t trees of depth 6\t check: -32\nlong lived tree of depth 6\t check: -1\n",
    "stdout_sha": "ce32e6d56ef1b0c5d5ac2680c7a719c4ca70f6694ef4c1029d5d1c695c0ac77b",
-   "version": "a9e7753b61c98058",
-   "wall_s": 0.271
+   "version": "e0951d0fcef6d457",
+   "wall_s": 0.211
   },
   "lean_clight": {
-   "cached": false,
-   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/bench_binarytrees.c",
+   "cached": true,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_binarytrees.c",
    "exit": 126,
    "meta": {},
    "outcome": "stuck",
    "stderr_tail": "[clight_run] STUCK (undefined behaviour or outside the interpreter): call to unsupported external function pow\n",
    "stdout": "stretch tree of depth 7\t check: -1\n",
    "stdout_sha": "751b13afbeeb68339f2bf54dfbf91b836d5078501c08947401e8e39adaf651dd",
-   "version": "7a8543be5896d606",
-   "wall_s": 0.911
+   "version": "026fb96670207d7c",
+   "wall_s": 1.032
   },
   "tcc_sail": {
-   "outcome": "absent",
-   "version": "a618d9561cec04d8"
+   "cached": true,
+   "cmd": "scripts/run_tcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_binarytrees.c",
+   "exit": 0,
+   "meta": {
+    "compile_steps": "14023479",
+    "libm": "1",
+    "program_steps": "2241982",
+    "steps": "16265486"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "stretch tree of depth 7\t check: -1\n128\t trees of depth 4\t check: -128\n32\t trees of depth 6\t check: -32\nlong lived tree of depth 6\t check: -1\n",
+   "stdout_sha": "ce32e6d56ef1b0c5d5ac2680c7a719c4ca70f6694ef4c1029d5d1c695c0ac77b",
+   "version": "12ca7335e2361f43",
+   "wall_s": 1146.805
   },
   "xgcc_sail": {
    "cached": true,
-   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/bench_binarytrees.c",
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_binarytrees.c",
    "exit": 0,
    "meta": {
     "steps": "2090803",
@@ -55,8 +68,8 @@
    "stderr_tail": "",
    "stdout": "stretch tree of depth 7\t check: -1\n128\t trees of depth 4\t check: -128\n32\t trees of depth 6\t check: -32\nlong lived tree of depth 6\t check: -1\n",
    "stdout_sha": "ce32e6d56ef1b0c5d5ac2680c7a719c4ca70f6694ef4c1029d5d1c695c0ac77b",
-   "version": "64cd4e6942fcf57f",
-   "wall_s": 89.072
+   "version": "c8149771eacd5358",
+   "wall_s": 84.317
   }
  },
  "prog": "bench_binarytrees",

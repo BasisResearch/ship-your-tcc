@@ -2,20 +2,20 @@
  "corpus": "compcert",
  "oracles": {
   "ccomp_interp": {
-   "cached": false,
-   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_bitfields1.c",
+   "cached": true,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_bitfields1.c",
    "exit": 126,
    "meta": {},
    "outcome": "stuck",
    "stderr_tail": "[run_ccomp_interp] STUCK (undefined behaviour or unsupported external): Stuck state: in function main, expression <loc x> = 56 Stuck subexpression: <loc x> = 56 ERROR: Undefined behavior \n",
    "stdout": "",
    "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-   "version": "213e70752b2d7e90",
-   "wall_s": 0.095
+   "version": "f9164bcd0a83ec9e",
+   "wall_s": 0.108
   },
   "gcc_native": {
    "cached": true,
-   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_bitfields1.c",
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_bitfields1.c",
    "exit": 0,
    "meta": {
     "stderr_bytes": "0"
@@ -24,28 +24,40 @@
    "stderr_tail": "",
    "stdout": "x = {a = -6, b = 2 }\ny = {c = 12345, d = 1, e = 89 }\nf returns 12434\n",
    "stdout_sha": "6d27b627bbf6007dbc5fed810c07f4093e6ebbee3547a17347212f1d37762905",
-   "version": "a9e7753b61c98058",
-   "wall_s": 0.205
+   "version": "e0951d0fcef6d457",
+   "wall_s": 0.242
   },
   "lean_clight": {
-   "cached": false,
-   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_bitfields1.c",
+   "cached": true,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_bitfields1.c",
    "exit": 126,
    "meta": {},
    "outcome": "stuck",
    "stderr_tail": "[clight_run] STUCK (undefined behaviour or outside the interpreter): stuck at statement Sassign\n",
    "stdout": "",
    "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-   "version": "7a8543be5896d606",
-   "wall_s": 0.949
+   "version": "026fb96670207d7c",
+   "wall_s": 0.923
   },
   "tcc_sail": {
-   "outcome": "absent",
-   "version": "a618d9561cec04d8"
+   "cached": true,
+   "cmd": "scripts/run_tcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_bitfields1.c",
+   "exit": 0,
+   "meta": {
+    "compile_steps": "11455615",
+    "program_steps": "9032",
+    "steps": "11464672"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "x = {a = -6, b = 2 }\ny = {c = 12345, d = 1, e = 89 }\nf returns 12434\n",
+   "stdout_sha": "6d27b627bbf6007dbc5fed810c07f4093e6ebbee3547a17347212f1d37762905",
+   "version": "12ca7335e2361f43",
+   "wall_s": 455.728
   },
   "xgcc_sail": {
    "cached": true,
-   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_bitfields1.c",
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_bitfields1.c",
    "exit": 0,
    "meta": {
     "steps": "11333",
@@ -55,8 +67,8 @@
    "stderr_tail": "",
    "stdout": "x = {a = -6, b = 2 }\ny = {c = 12345, d = 1, e = 89 }\nf returns 12434\n",
    "stdout_sha": "6d27b627bbf6007dbc5fed810c07f4093e6ebbee3547a17347212f1d37762905",
-   "version": "64cd4e6942fcf57f",
-   "wall_s": 0.507
+   "version": "c8149771eacd5358",
+   "wall_s": 0.995
   }
  },
  "prog": "regr_bitfields1",

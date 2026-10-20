@@ -2,20 +2,20 @@
  "corpus": "compcert",
  "oracles": {
   "ccomp_interp": {
-   "cached": false,
-   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_compound.c",
+   "cached": true,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_compound.c",
    "exit": 0,
    "meta": {},
    "outcome": "ok",
    "stderr_tail": "",
    "stdout": "temp1 = \"/temp/XXXXXX\"\ntemp2 = \"/temp/XXXXXX\"\nmutated temp1 = \"/temp/!XXXXX\"\n{x = 12, y = 45}\n{x = 42, y = -42}\n{from = {x = 42, y = 43}, to = {x = 44, y = 45}\n{from = {x = 39, y = 40}, to = {x = 41, y = 42}\n{x = -41, y = -41}\nptrs contains 4 4 4 4 4\nptrs contains 0 1 2 3 4\nstructure = {a = 12, b = \"a\"}\nfoo = { \"x\", \"y\", \"z\" }\nx = {a = 1, b[0] = 'a', b[1] = 'b'}\n{f = 0.250000}\n{i = 11}\n1 + 3 = 4\n{x = 0, y = 0}\n{x = 1, y = 1}\n{x = 2, y = 2}\n{x = 1, y = 0}\n{x = 0, y = 2}\n\"first\", \"second\", NULL\n77\n{ n = 3, p -> {0,1,2,0} }\n{ n = 4, p -> {0,1,2,3} }\n",
    "stdout_sha": "40502488127556479811a50fb30f4601452bd0dcb20213f98f65c507889ef135",
-   "version": "213e70752b2d7e90",
-   "wall_s": 0.293
+   "version": "f9164bcd0a83ec9e",
+   "wall_s": 0.137
   },
   "gcc_native": {
    "cached": true,
-   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_compound.c",
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_compound.c",
    "exit": 0,
    "meta": {
     "stderr_bytes": "0"
@@ -24,28 +24,40 @@
    "stderr_tail": "",
    "stdout": "temp1 = \"/temp/XXXXXX\"\ntemp2 = \"/temp/XXXXXX\"\nmutated temp1 = \"/temp/!XXXXX\"\n{x = 12, y = 45}\n{x = 42, y = -42}\n{from = {x = 42, y = 43}, to = {x = 44, y = 45}\n{from = {x = 39, y = 40}, to = {x = 41, y = 42}\n{x = -41, y = -41}\nptrs contains 4 4 4 4 4\nptrs contains 0 1 2 3 4\nstructure = {a = 12, b = \"a\"}\nfoo = { \"x\", \"y\", \"z\" }\nx = {a = 1, b[0] = 'a', b[1] = 'b'}\n{f = 0.250000}\n{i = 11}\n1 + 3 = 4\n{x = 0, y = 0}\n{x = 1, y = 1}\n{x = 2, y = 2}\n{x = 1, y = 0}\n{x = 0, y = 2}\n\"first\", \"second\", NULL\n77\n{ n = 3, p -> {0,1,2,0} }\n{ n = 4, p -> {0,1,2,3} }\n",
    "stdout_sha": "40502488127556479811a50fb30f4601452bd0dcb20213f98f65c507889ef135",
-   "version": "a9e7753b61c98058",
-   "wall_s": 0.223
+   "version": "e0951d0fcef6d457",
+   "wall_s": 0.256
   },
   "lean_clight": {
-   "cached": false,
-   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_compound.c",
+   "cached": true,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_compound.c",
    "exit": 0,
    "meta": {},
    "outcome": "ok",
    "stderr_tail": "",
    "stdout": "temp1 = \"/temp/XXXXXX\"\ntemp2 = \"/temp/XXXXXX\"\nmutated temp1 = \"/temp/!XXXXX\"\n{x = 12, y = 45}\n{x = 42, y = -42}\n{from = {x = 42, y = 43}, to = {x = 44, y = 45}\n{from = {x = 39, y = 40}, to = {x = 41, y = 42}\n{x = -41, y = -41}\nptrs contains 4 4 4 4 4\nptrs contains 0 1 2 3 4\nstructure = {a = 12, b = \"a\"}\nfoo = { \"x\", \"y\", \"z\" }\nx = {a = 1, b[0] = 'a', b[1] = 'b'}\n{f = 0.250000}\n{i = 11}\n1 + 3 = 4\n{x = 0, y = 0}\n{x = 1, y = 1}\n{x = 2, y = 2}\n{x = 1, y = 0}\n{x = 0, y = 2}\n\"first\", \"second\", NULL\n77\n{ n = 3, p -> {0,1,2,0} }\n{ n = 4, p -> {0,1,2,3} }\n",
    "stdout_sha": "40502488127556479811a50fb30f4601452bd0dcb20213f98f65c507889ef135",
-   "version": "7a8543be5896d606",
-   "wall_s": 6.17
+   "version": "026fb96670207d7c",
+   "wall_s": 3.075
   },
   "tcc_sail": {
-   "outcome": "absent",
-   "version": "a618d9561cec04d8"
+   "cached": true,
+   "cmd": "scripts/run_tcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_compound.c",
+   "exit": 0,
+   "meta": {
+    "compile_steps": "12254197",
+    "program_steps": "65485",
+    "steps": "12319707"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "temp1 = \"/temp/XXXXXX\"\ntemp2 = \"/temp/XXXXXX\"\nmutated temp1 = \"/temp/!XXXXX\"\n{x = 12, y = 45}\n{x = 42, y = -42}\n{from = {x = 42, y = 43}, to = {x = 44, y = 45}\n{from = {x = 39, y = 40}, to = {x = 41, y = 42}\n{x = -41, y = -41}\nptrs contains 4 4 4 4 4\nptrs contains 0 1 2 3 4\nstructure = {a = 12, b = \"a\"}\nfoo = { \"x\", \"y\", \"z\" }\nx = {a = 1, b[0] = 'a', b[1] = 'b'}\n{f = 0.250000}\n{i = 11}\n1 + 3 = 4\n{x = 0, y = 0}\n{x = 1, y = 1}\n{x = 2, y = 2}\n{x = 1, y = 0}\n{x = 0, y = 2}\n\"first\", \"second\", NULL\n77\n{ n = 3, p -> {0,1,2,0} }\n{ n = 4, p -> {0,1,2,3} }\n",
+   "stdout_sha": "40502488127556479811a50fb30f4601452bd0dcb20213f98f65c507889ef135",
+   "version": "12ca7335e2361f43",
+   "wall_s": 546.031
   },
   "xgcc_sail": {
    "cached": true,
-   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/regr_compound.c",
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_compound.c",
    "exit": 0,
    "meta": {
     "steps": "75790",
@@ -55,8 +67,8 @@
    "stderr_tail": "",
    "stdout": "temp1 = \"/temp/XXXXXX\"\ntemp2 = \"/temp/XXXXXX\"\nmutated temp1 = \"/temp/!XXXXX\"\n{x = 12, y = 45}\n{x = 42, y = -42}\n{from = {x = 42, y = 43}, to = {x = 44, y = 45}\n{from = {x = 39, y = 40}, to = {x = 41, y = 42}\n{x = -41, y = -41}\nptrs contains 4 4 4 4 4\nptrs contains 0 1 2 3 4\nstructure = {a = 12, b = \"a\"}\nfoo = { \"x\", \"y\", \"z\" }\nx = {a = 1, b[0] = 'a', b[1] = 'b'}\n{f = 0.250000}\n{i = 11}\n1 + 3 = 4\n{x = 0, y = 0}\n{x = 1, y = 1}\n{x = 2, y = 2}\n{x = 1, y = 0}\n{x = 0, y = 2}\n\"first\", \"second\", NULL\n77\n{ n = 3, p -> {0,1,2,0} }\n{ n = 4, p -> {0,1,2,3} }\n",
    "stdout_sha": "40502488127556479811a50fb30f4601452bd0dcb20213f98f65c507889ef135",
-   "version": "64cd4e6942fcf57f",
-   "wall_s": 6.314
+   "version": "c8149771eacd5358",
+   "wall_s": 3.78
   }
  },
  "prog": "regr_compound",

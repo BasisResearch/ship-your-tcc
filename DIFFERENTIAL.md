@@ -32,7 +32,7 @@ Lean 4.32.1. See [oracle construction](results/certora.md),
 | tcc/Sail vs Lean Clight | 298 | 3 | 44 |
 | ccomp vs Lean Clight | 299 | 2 | 44 |
 | native GCC vs RV64I GCC/Sail | 345 | 0 | 0 |
-| native GCC vs tcc/Sail | 335 | 1 | 9 |
+| native GCC vs tcc/Sail | 344 | 1 | 0 |
 
 An agreement requires identical stdout bytes and exit status. Incomplete,
 rejected, unsupported, or stuck executions are incomparable. Every current
@@ -40,12 +40,30 @@ pairwise disagreement is classified in
 [classifications.tsv](results/diff3/classifications.tsv); the generated
 [summary](results/diff3/summary.md) lists every outcome and pair.
 
-The retained measurements span multiple harness revisions, as recorded in
-each JSON's `version`. They have not all been rerun after the errno and
-completion-check fixes. One invalid wrapper result was replaced by the
-explicitly labelled fresh rerun described below. The version identifiers
-must be preserved when reproducing these numbers; current cache keys
-invalidate earlier harness results.
+Every number here comes from one complete rerun on 2026-10-20, on the
+current harness and the corrected runtime (hash `9e1142dc96d8db10`). All
+345 tcc/Sail records carry the same harness version, `12ca7335e2361f43`,
+recorded in each JSON's `version`. The fingerprint covers the wrapper, the
+patches and the runtime sources, so a change to any of them invalidates the
+cache. The earlier mixed-version measurements gave the same three-way
+counts.
+
+### tcc/Sail cost
+
+tcc/Sail completes all 345 programs (`ok`, no timeouts, no `n/a`), each
+under a 100M-step budget.
+
+| phase | median steps | max steps | total steps |
+|---|---:|---:|---:|
+| compile (`_start` to `tcc_baremetal_run`) | 8,636,467 | 21,436,675 | 3,307,962,085 |
+| program (`tcc_baremetal_enter` to `_exit`) | 51,661 | 14,983,519 | 95,207,108 |
+
+Median wall time per program is 339 s for Csmith, 528 s for CompCert tests
+and 499 s for TinyCC tests. Summed over all programs, that is 40.9 hours of
+emulator time. The rerun took 3 h 12 min of wall time (01:40–04:52 UTC)
+in two runner instances, one for Csmith and one for the two test suites.
+On the same programs, RV64I GCC on Sail needs about 1–3 s each: the cost is
+tcc compiling on the model, not the generated code.
 
 ## Reduced discrepancies
 
@@ -76,25 +94,23 @@ treat as undefined. CompCert rejects another 11; Lean additionally cannot
 elaborate `regr_floats-lit`. These are exclusions, not evidence of output
 agreement or a compiler bug. Individual diagnostics remain in the JSONs.
 
-Nine retained tcc results are `n/a` because libm symbols were unresolved:
-`bench_almabench`, `bench_binarytrees`, `bench_bisect`, `bench_fft`,
-`bench_fftsp`, `bench_nbody`, `bench_perlin`, `bench_spectral`, and
-`t_24_math_library`. All nine are also outside the common interpreter
-subset. The wrapper now retries with `-lm` after the source file; the
-reported nine results still describe the earlier invocation.
-An explicit `-lm` rerun of `t_24_math_library` on 2026-10-20 matches both
-GCC oracles: 13,822,698 compile steps and 311,447 program steps. Its output
-and metadata are supplemental artifacts under `results/review/`; they do
-not replace the retained corpus record or alter the tables above.
+Nine programs need libm: `bench_almabench`, `bench_binarytrees`,
+`bench_bisect`, `bench_fft`, `bench_fftsp`, `bench_nbody`, `bench_perlin`,
+`bench_spectral` and `t_24_math_library`. In the earlier measurements their
+tcc results were `n/a`, because `-lm` named before the source file pulls
+nothing in. The wrapper now retries with `-lm` after `/prog.c` when tcc
+first stops on an unresolved reference (metadata `libm=1`). All nine now
+complete and match both GCC oracles byte for byte. For example,
+`t_24_math_library` takes 13,822,698 compile steps and 311,447 program
+steps, and `bench_almabench` takes 17,553,173 and 11,192,976. All nine are
+outside the common interpreter subset.
 
-`regr_varargs2` previously had an empty stdout and exit 2 caused by a shell
-syntax error. That record was incorrectly marked `ok`. A fresh Sail run
-on 2026-10-19 completed with exit 0 and matched both GCC outputs byte for
-byte: 13,003,889 compile steps, 234,368 program steps, 13,238,282 total.
-The invalid record and rerun output/metadata are retained under
-[results/review](results/review/). This case is still outside the primary
-three-way subset because both CompCert interpreters get stuck on its
-user-defined variadic calls.
+`regr_varargs2` once had a record wrongly marked `ok`, with empty stdout and
+exit 2 from a shell syntax error in the wrapper. That record is kept under
+[results/review](results/review/). In the rerun it completes with exit 0 and
+matches both GCC oracles, taking 12,980,867 compile steps and 234,364
+program steps. It is still outside the three-way subset, because both
+CompCert interpreters get stuck on its user-defined variadic calls.
 
 The harness now requires traced guest-exit metadata, preserves program
 text that resembles emulator diagnostics, kills its own process group on
@@ -119,6 +135,7 @@ Run fresh oracles with `scripts/diff3.py --no-cache --jobs 8`; build them
 first using the scripts and resource caps described in README.md and
 results/certora.md. The runner waits for 25 GB available memory before
 heavy work and permits at most eight heavy jobs. A complete fresh rerun
-will take hours because tcc's compilation itself executes on Sail.
+takes 5–6 hours with eight jobs, because tcc's compilation itself
+executes on Sail.
 
 The user approved publication to `BasisResearch/ship-your-tcc` on 2026-10-20.

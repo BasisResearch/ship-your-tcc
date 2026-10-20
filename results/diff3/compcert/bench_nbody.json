@@ -2,20 +2,20 @@
  "corpus": "compcert",
  "oracles": {
   "ccomp_interp": {
-   "cached": false,
-   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/bench_nbody.c",
+   "cached": true,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=8G scripts/run_ccomp_interp.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_nbody.c",
    "exit": 126,
    "meta": {},
    "outcome": "stuck",
    "stderr_tail": "[run_ccomp_interp] STUCK (undefined behaviour or unsupported external): Stuck state: calling sqrt(24.7965385447582) ERROR: Undefined behavior \n",
    "stdout": "",
    "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-   "version": "213e70752b2d7e90",
-   "wall_s": 0.106
+   "version": "f9164bcd0a83ec9e",
+   "wall_s": 0.116
   },
   "gcc_native": {
    "cached": true,
-   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/bench_nbody.c",
+   "cmd": "scripts/run_gcc_native.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_nbody.c",
    "exit": 0,
    "meta": {
     "stderr_bytes": "0"
@@ -24,28 +24,41 @@
    "stderr_tail": "",
    "stdout": "-0.169075164\n-0.169070787\n",
    "stdout_sha": "8b298b53536485b9aed76eb7b38c9c2606411bac68bdfb475cec0a3a337f43d6",
-   "version": "a9e7753b61c98058",
-   "wall_s": 0.24
+   "version": "e0951d0fcef6d457",
+   "wall_s": 0.271
   },
   "lean_clight": {
-   "cached": false,
-   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/bench_nbody.c",
+   "cached": true,
+   "cmd": "systemd-run --user --scope -q -p MemoryMax=4G scripts/run_lean_clight.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_nbody.c",
    "exit": 126,
    "meta": {},
    "outcome": "stuck",
    "stderr_tail": "[clight_run] STUCK (undefined behaviour or outside the interpreter): call to unsupported external function sqrt\n",
    "stdout": "",
    "stdout_sha": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-   "version": "7a8543be5896d606",
-   "wall_s": 1.176
+   "version": "026fb96670207d7c",
+   "wall_s": 1.183
   },
   "tcc_sail": {
-   "outcome": "absent",
-   "version": "a618d9561cec04d8"
+   "cached": true,
+   "cmd": "scripts/run_tcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_nbody.c",
+   "exit": 0,
+   "meta": {
+    "compile_steps": "14582981",
+    "libm": "1",
+    "program_steps": "3628830",
+    "steps": "18211836"
+   },
+   "outcome": "ok",
+   "stderr_tail": "",
+   "stdout": "-0.169075164\n-0.169070787\n",
+   "stdout_sha": "8b298b53536485b9aed76eb7b38c9c2606411bac68bdfb475cec0a3a337f43d6",
+   "version": "12ca7335e2361f43",
+   "wall_s": 1168.766
   },
   "xgcc_sail": {
    "cached": true,
-   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a6343dfa70f257776/corpus/compcert/bench_nbody.c",
+   "cmd": "scripts/run_xgcc_sail.sh /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_nbody.c",
    "exit": 0,
    "meta": {
     "steps": "3577599",
@@ -55,8 +68,8 @@
    "stderr_tail": "",
    "stdout": "-0.169075164\n-0.169070787\n",
    "stdout_sha": "8b298b53536485b9aed76eb7b38c9c2606411bac68bdfb475cec0a3a337f43d6",
-   "version": "64cd4e6942fcf57f",
-   "wall_s": 84.176
+   "version": "c8149771eacd5358",
+   "wall_s": 122.046
   }
  },
  "prog": "bench_nbody",
