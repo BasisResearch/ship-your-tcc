@@ -49,7 +49,7 @@ for f in "$T2"/*.c; do
   names+=("$n")
   rm -f "$OUT/$n".*
   fl=""; [ "$n" = 76_dollars_in_identifiers ] && fl=-fdollars-in-identifiers
-  if (cd "$T2" && "$TCC" $fl -nostdinc -I"$SRC/include" -I"$NEWLIB_INC" -I. -c "$n.c" -o "$OUT/$n.o") > "$OUT/$n.cc" 2>&1; then
+  if (cd "$T2" && "$TCC" -std=c11 $fl -nostdinc -I"$SRC/include" -I"$NEWLIB_INC" -I. -c "$n.c" -o "$OUT/$n.o") > "$OUT/$n.cc" 2>&1; then
     scripts/check_isa.sh -q "$OUT/$n.o" > "$OUT/$n.isa" 2>&1; echo $? > "$OUT/$n.isa.rc"
     $GCC $CFL -nostartfiles -T "$H/link.ld" -Wl,--no-warn-rwx-segments -o "$OUT/$n.elf" "$OUT/crt0.o" "$OUT/htif.o" "$OUT/$n.o" "$LIBTCC1" -lm -lc -lgcc >> "$OUT/$n.cc" 2>&1 \
       && { scripts/check_isa.sh -q "$OUT/$n.elf" > "$OUT/$n.elfisa" 2>&1; echo $? > "$OUT/$n.elfisa.rc"; }

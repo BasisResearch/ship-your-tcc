@@ -3,7 +3,7 @@
  * The command line is baked in at build time, in the `.embed` section with
  * the file system (gen_embed.sh, at a fixed address: src/link.ld), so the
  * image's own code and data do not depend on it:
- *   argv = { "tcc", args..., "-run", "/prog.c", NULL }
+ *   argv = { "tcc", "-std=c11", args..., "-run", "/prog.c", NULL }
  * tcc compiles /prog.c from htif.c's in-image file system, links it in
  * memory against /lib/libc.a, /lib/libgcc.a and /lib/tcc/libtcc1.a through
  * its archive loader, relocates it into the static arena (link.ld,

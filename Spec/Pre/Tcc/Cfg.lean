@@ -15,8 +15,8 @@ tcc's choices for C11 translation phases 1–4 (`CSem.Pre.PreCfg`).
   TCC_BAREMETAL type macros. Its first 15 `#define` lines were checked
   equal, in order, to `riscv64-tcc -dM -E` of an empty file.
 
-tcc's default language is C99 (`cversion` 199901): only the `L` prefix
-(`c11Prefixes` false). Implementation-defined choices (tccpp.c): no trigraphs; `$` and bytes
+The compiler is invoked with `-std=c11` (`cversion` 201112), including
+`u8`/`u`/`U` literal prefixes (`c11Prefixes` true). Implementation-defined choices (tccpp.c): no trigraphs; `$` and bytes
 ≥ 0x80 are identifier characters (`tccpp_new`, `dollars_in_identifiers`);
 CR is white space (`is_space`); `<…>` from macro-replaced tokens is joined
 without spaces (`parse_include`); plain `char` unsigned (riscv64-gen.c
@@ -52,15 +52,15 @@ def extTcc : Ext where
   redefine := true
 
 /-- tcc's predefined text for `tcc -run` in the image. -/
-def predefsRun : String := "#define __TINYC__ 928\n#define __riscv 1\n#define __riscv_xlen 64\n#define __riscv_float_abi_soft 1\n#define __linux__ 1\n#define __linux 1\n#define __unix__ 1\n#define __unix 1\n#define __INT8_TYPE__ signed char\n#define __INT16_TYPE__ short int\n#define __INT32_TYPE__ int\n#define __UINT8_TYPE__ unsigned char\n#define __UINT16_TYPE__ short unsigned int\n#define __UINT32_TYPE__ unsigned int\n#define __UINT64_TYPE__ long unsigned int\n#define __INT_LEAST8_TYPE__ signed char\n#define __INT_LEAST16_TYPE__ short int\n#define __INT_LEAST32_TYPE__ int\n#define __INT_LEAST64_TYPE__ long int\n#define __UINT_LEAST8_TYPE__ unsigned char\n#define __UINT_LEAST16_TYPE__ short unsigned int\n#define __UINT_LEAST32_TYPE__ unsigned int\n#define __UINT_LEAST64_TYPE__ long unsigned int\n#define __INT_FAST8_TYPE__ int\n#define __INT_FAST16_TYPE__ int\n#define __INT_FAST32_TYPE__ int\n#define __INT_FAST64_TYPE__ long int\n#define __UINT_FAST8_TYPE__ unsigned int\n#define __UINT_FAST16_TYPE__ unsigned int\n#define __UINT_FAST32_TYPE__ unsigned int\n#define __UINT_FAST64_TYPE__ long unsigned int\n#define __INTMAX_TYPE__ long int\n#define __UINTMAX_TYPE__ long unsigned int\n#define __TCC_RUN__ 1\n#define __CHAR_UNSIGNED__ 1\n#define __SIZEOF_POINTER__ 8\n#define __SIZEOF_LONG__ 8\n#define __STDC__ 1\n#define __STDC_HOSTED__ 1\n#define __STDC_VERSION__ 199901L\n#include <tccdefs.h>\n#define __BASE_FILE__ \"/prog.c\"\n"
+def predefsRun : String := "#define __TINYC__ 928\n#define __riscv 1\n#define __riscv_xlen 64\n#define __riscv_float_abi_soft 1\n#define __linux__ 1\n#define __linux 1\n#define __unix__ 1\n#define __unix 1\n#define __INT8_TYPE__ signed char\n#define __INT16_TYPE__ short int\n#define __INT32_TYPE__ int\n#define __UINT8_TYPE__ unsigned char\n#define __UINT16_TYPE__ short unsigned int\n#define __UINT32_TYPE__ unsigned int\n#define __UINT64_TYPE__ long unsigned int\n#define __INT_LEAST8_TYPE__ signed char\n#define __INT_LEAST16_TYPE__ short int\n#define __INT_LEAST32_TYPE__ int\n#define __INT_LEAST64_TYPE__ long int\n#define __UINT_LEAST8_TYPE__ unsigned char\n#define __UINT_LEAST16_TYPE__ short unsigned int\n#define __UINT_LEAST32_TYPE__ unsigned int\n#define __UINT_LEAST64_TYPE__ long unsigned int\n#define __INT_FAST8_TYPE__ int\n#define __INT_FAST16_TYPE__ int\n#define __INT_FAST32_TYPE__ int\n#define __INT_FAST64_TYPE__ long int\n#define __UINT_FAST8_TYPE__ unsigned int\n#define __UINT_FAST16_TYPE__ unsigned int\n#define __UINT_FAST32_TYPE__ unsigned int\n#define __UINT_FAST64_TYPE__ long unsigned int\n#define __INTMAX_TYPE__ long int\n#define __UINTMAX_TYPE__ long unsigned int\n#define __TCC_RUN__ 1\n#define __CHAR_UNSIGNED__ 1\n#define __SIZEOF_POINTER__ 8\n#define __SIZEOF_LONG__ 8\n#define __STDC__ 1\n#define __STDC_HOSTED__ 1\n#define __STDC_VERSION__ 201112L\n#include <tccdefs.h>\n#define __BASE_FILE__ \"/prog.c\"\n"
 
 /-- tcc's predefined text for the cross `tcc -E`. -/
-def predefsE : String := "#define __TINYC__ 928\n#define __riscv 1\n#define __riscv_xlen 64\n#define __riscv_float_abi_soft 1\n#define __linux__ 1\n#define __linux 1\n#define __unix__ 1\n#define __unix 1\n#define __TCC_PP__ 1\n#define __CHAR_UNSIGNED__ 1\n#define __SIZEOF_POINTER__ 8\n#define __SIZEOF_LONG__ 8\n#define __STDC__ 1\n#define __STDC_HOSTED__ 1\n#define __STDC_VERSION__ 199901L\n#include <tccdefs.h>\n#define __BASE_FILE__ \"/prog.c\"\n"
+def predefsE : String := "#define __TINYC__ 928\n#define __riscv 1\n#define __riscv_xlen 64\n#define __riscv_float_abi_soft 1\n#define __linux__ 1\n#define __linux 1\n#define __unix__ 1\n#define __unix 1\n#define __TCC_PP__ 1\n#define __CHAR_UNSIGNED__ 1\n#define __SIZEOF_POINTER__ 8\n#define __SIZEOF_LONG__ 8\n#define __STDC__ 1\n#define __STDC_HOSTED__ 1\n#define __STDC_VERSION__ 201112L\n#include <tccdefs.h>\n#define __BASE_FILE__ \"/prog.c\"\n"
 
 /-- The image's `tcc -run /prog.c`. -/
 def cfgTcc : PreCfg where
   trigraphs := false
-  c11Prefixes := false
+  c11Prefixes := true
   extraIdChar := fun c => c = 36 ∨ c ≥ 128
   extraSpace := fun c => c = 13
   predefs := bs predefsRun

@@ -46,7 +46,7 @@ for f in "${files[@]}"; do
   n=$(basename "$f" .c); names+=("$n")
   rm -f "$OUT/$n".*
   # 1-3: tcc
-  if "$TCC" -nostdinc -I"$SRC/include" -I"$NEWLIB_INC" -c "$f" -o "$OUT/$n.tcc.o" 2> "$OUT/$n.tcc.err"; then
+  if "$TCC" -std=c11 -nostdinc -I"$SRC/include" -I"$NEWLIB_INC" -c "$f" -o "$OUT/$n.tcc.o" 2> "$OUT/$n.tcc.err"; then
     scripts/check_isa.sh "$OUT/$n.tcc.o" > "$OUT/$n.isa" 2>&1; echo $? > "$OUT/$n.isa.rc"
     $GCC $LDFL -o "$OUT/$n.tcc.elf" "$OUT/crt0.o" "$OUT/htif.o" "$OUT/$n.tcc.o" "$LIBTCC1" -lm -lc -lgcc 2>> "$OUT/$n.tcc.err" \
       && { scripts/check_isa.sh -q "$OUT/$n.tcc.elf" > "$OUT/$n.elfisa" 2>&1; echo $? > "$OUT/$n.elfisa.rc"; }

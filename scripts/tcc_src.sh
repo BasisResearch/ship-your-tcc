@@ -27,6 +27,6 @@ rm -rf "$out"
 mkdir -p "$out"
 cp -a "$here/vendor/tinycc/." "$out/"
 for p in "${patches[@]}"; do
-  patch -s -p1 -d "$out" --no-backup-if-mismatch < "$p"
+  patch -s --batch --fuzz=0 -p1 -d "$out" --no-backup-if-mismatch < "$p"
 done
 echo "$stamp" > "$out/.tcc_src_stamp"

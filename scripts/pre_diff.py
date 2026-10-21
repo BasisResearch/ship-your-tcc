@@ -7,9 +7,9 @@
 For each C file (default: every corpus file, see `default_files`):
   spec  .lake/build/bin/pre_spec --cfg E (cfgTccE: the cross tcc's -E
         configuration) with the image's header tree (c/build/fs.list);
-  tcc   build/cross/riscv64-tcc -E -nostdinc -I<root>/lib/tcc/include
+  tcc   build/cross/riscv64-tcc -std=c11 -E -nostdinc -I<root>/lib/tcc/include
         -I<root>/include <root>/prog.c;
-  gcc   riscv-none-elf-gcc -E -undef -nostdinc -std=c99 (same -I) -include
+  gcc   riscv-none-elf-gcc -E -undef -nostdinc -std=c11 (same -I) -include
         <root>/predefs.h, where predefs.h is cfgTccE's predefined text minus
         the three __STDC*__ macros gcc defines itself.
 <root> is a per-worker directory whose lib/tcc/include and include are
@@ -159,7 +159,7 @@ def date_time(root):
     p = os.path.join(root, 'dt.c')
     with open(p, 'w') as f:
         f.write('__DATE__ __TIME__\n')
-    _, out, _ = run([TCC, '-E', '-P', '-nostdinc', p])
+    _, out, _ = run([TCC, '-std=c11', '-E', '-P', '-nostdinc', p])
     m = re.search(r'"([^"]*)"\s*"([^"]*)"', out)
     return (m.group(1), m.group(2)) if m else ('??? ?? ????', '??:??:??')
 
@@ -186,7 +186,7 @@ def one(path, root, tmpdir, want_gcc=True):
             f.write('/%s=%s\n' % (n, os.path.join(root, n)))
     inc = ['-I' + os.path.join(root, 'lib', 'tcc', 'include'), '-I' + os.path.join(root, 'include')]
     date, time = date_time(root)
-    trc, tout, terr = run([TCC, '-E', '-nostdinc'] + inc + [prog])
+    trc, tout, terr = run([TCC, '-std=c11', '-E', '-nostdinc'] + inc + [prog])
     src = open(path, 'rb').read()
     if b'__DATE__' in src or b'__TIME__' in src:
         date, time = date_time(root)
@@ -217,7 +217,7 @@ def one(path, root, tmpdir, want_gcc=True):
             res['tcc_ctx'] = '%s | %s' % (' '.join(s for _, s in stoks[max(0, i - 6):i + 6]),
                                           ' '.join(s for _, s in ttoks[max(0, j - 6):j + 6]))
     if want_gcc and XGCC:
-        grc, gout, gerr = run([XGCC, '-E', '-undef', '-nostdinc', '-std=c99'] + inc +
+        grc, gout, gerr = run([XGCC, '-E', '-undef', '-nostdinc', '-std=c11'] + inc +
                               ['-include', os.path.join(root, 'predefs.h'), prog])
         if grc == 0:
             gtoks, _ = lex_text(gout, tmpdir)

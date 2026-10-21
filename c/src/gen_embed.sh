@@ -1,7 +1,7 @@
 #!/bin/sh
 # ship-your-tcc: copied from ship-your-ocaml c/src/gen_embed.sh (commit
 # 272e4361) and adapted for tcc -run:
-# - the command line is { "tcc", args..., "-run", "/prog.c", NULL } (was
+# - the command line is { "tcc", "-std=c11", args..., "-run", "/prog.c", NULL } (was
 #   { "ocamlrun", "/prog", args... }); there is no OCAMLRUNPARAM, the
 #   environment is empty;
 # - a fourth header word, `embedded_flags` (main.c: bit 0 dumps the
@@ -10,7 +10,7 @@
 #   (the header tree has ~150 files);
 # - `--largs '"-lm",'`: arguments that must follow /prog.c (libraries: an
 #   archive named before the file pulls nothing in). The command line is
-#   then { "tcc", args..., "/prog.c", largs..., "-run", "--", NULL }, which
+#   then { "tcc", "-std=c11", args..., "/prog.c", largs..., "-run", "--", NULL }, which
 #   tcc accepts ("tcc <files...> -run -- <args...>"); the program's argv is
 #   { "--" } (argc 1, as without --largs, but argv[0] is "--").
 #
@@ -21,7 +21,7 @@
 # The section starts with a fixed four-word header (so the code's
 # addresses do not depend on how many files or arguments follow):
 # * `embedded_files`: -> {path, start, end} triples, NULL-terminated (htif.c);
-# * `embedded_argv`: -> { "tcc", args..., "-run", "/prog.c", NULL } (main.c);
+# * `embedded_argv`: -> { "tcc", "-std=c11", args..., "-run", "/prog.c", NULL } (main.c);
 # * `embedded_env`: -> { NULL } (main.c);
 # * `embedded_flags`: a word (main.c).
 set -e
@@ -58,7 +58,7 @@ echo '    .dword 0, 0, 0'
 args=$(printf '%s' "$cargs" | grep -o '"[^"]*"' || true)
 largs=$(printf '%s' "$largs" | grep -o '"[^"]*"' || true)
 echo '_argv_table:'
-echo '    .dword _arg_tcc'
+echo '    .dword _arg_tcc, _arg_c11'
 n=0
 for a in $args; do echo "    .dword _arg${n}"; n=$((n+1)); done
 if [ -n "$largs" ]; then
@@ -71,6 +71,7 @@ fi
 echo '_env_table:'
 echo '    .dword 0'
 echo '_arg_tcc: .asciz "tcc"'
+echo '_arg_c11: .asciz "-std=c11"'
 n=0
 for a in $args $largs; do echo "_arg${n}: .asciz $a"; n=$((n+1)); done
 echo '_arg_run: .asciz "-run"'

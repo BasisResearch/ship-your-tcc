@@ -125,14 +125,14 @@ def predefs(mode):
     # riscv64 (no ARM float ABI), not asm, no backtrace/bcheck (configured
     # off), char_is_unsigned (CHAR_IS_UNSIGNED, riscv64-gen.c), optimize 0,
     # no pthread, no leading underscore (only TCC_TARGET_MACHO), PTR_SIZE 8,
-    # LONG_SIZE 8, nostdlib 0, cversion 199901 (libtcc.c tcc_new).
+    # LONG_SIZE 8, nostdlib 0, cversion 201112 (-std=c11).
     out += putdef('__TCC_RUN__' if mode == 'run' else '__TCC_PP__')
     out += putdef('__CHAR_UNSIGNED__')
     out += '#define __SIZEOF_POINTER__ 8\n'
     out += '#define __SIZEOF_LONG__ 8\n'
     out += putdef('__STDC__')
     out += '#define __STDC_HOSTED__ 1\n'
-    out += '#define __STDC_VERSION__ 199901L\n'
+    out += '#define __STDC_VERSION__ 201112L\n'
     out += '#include <tccdefs.h>\n'
     out += '#define __BASE_FILE__ "/prog.c"\n'
     return out, bm
@@ -143,7 +143,7 @@ def cross_check(text_e):
     if not os.path.exists(CROSS):
         sys.exit('gen_pre_cfg.py: no %s (scripts/build_cross_tcc.sh)' % CROSS)
     tccinc = os.path.join(SRC, 'include')
-    dm = subprocess.run([CROSS, '-nostdinc', '-I' + tccinc, '-dM', '-E', '-'], input='',
+    dm = subprocess.run([CROSS, '-std=c11', '-nostdinc', '-I' + tccinc, '-dM', '-E', '-'], input='',
                         check=True, capture_output=True, text=True).stdout.split('\n')
     dm = [l for l in dm if l]
     mine = [l for l in text_e.split('\n') if l.startswith('#define')]
@@ -199,8 +199,8 @@ tcc's choices for C11 translation phases 1–4 (`CSem.Pre.PreCfg`).
   TCC_BAREMETAL type macros. Its first {nchk} `#define` lines were checked
   equal, in order, to `riscv64-tcc -dM -E` of an empty file.
 
-tcc's default language is C99 (`cversion` 199901): only the `L` prefix
-(`c11Prefixes` false). Implementation-defined choices (tccpp.c): no trigraphs; `$` and bytes
+The compiler is invoked with `-std=c11` (`cversion` 201112), including
+`u8`/`u`/`U` literal prefixes (`c11Prefixes` true). Implementation-defined choices (tccpp.c): no trigraphs; `$` and bytes
 ≥ 0x80 are identifier characters (`tccpp_new`, `dollars_in_identifiers`);
 CR is white space (`is_space`); `<…>` from macro-replaced tokens is joined
 without spaces (`parse_include`); plain `char` unsigned (riscv64-gen.c
@@ -244,7 +244,7 @@ def predefsE : String := {e}
 /-- The image's `tcc -run /prog.c`. -/
 def cfgTcc : PreCfg where
   trigraphs := false
-  c11Prefixes := false
+  c11Prefixes := true
   extraIdChar := fun c => c = 36 ∨ c ≥ 128
   extraSpace := fun c => c = 13
   predefs := bs predefsRun

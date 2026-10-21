@@ -1,0 +1,35 @@
+#include <stdio.h>
+union U { int a; char c[8]; void *p; };
+static int target;
+static union U a = {.a = 42, .c[2] = 1, .c[4] = 3};
+static union U b = {.p = &target, .c[3] = 2};
+static union U c = {.c[0] = 12, .p = &target};
+struct S { int x; union U u; int y; };
+static struct S d = {.x=9, .u.a=42, .u.c[2]=1, .u.c[4]=3, .y=8};
+struct A { union { int a; char c[8]; }; };
+static struct A e = {.a=42, .c[2]=1, .c[4]=3};
+union N { int a; struct { union U u; int z; } s; };
+static union N f = {.s.u.a=42, .a=12, .s.u.c[2]=1};
+static union N h = {.s.z=9, .s.u.a=42, .s.u.c[2]=1, .a=12};
+static union U g[2] = {[0].a=42, [1].a=42, [0].c[2]=1, [1].c[3]=2};
+static int check(union U *u, int i, int v, int j, int w) {
+  int k, bad=0;
+  for(k=0;k<8;k++) bad |= u->c[k] != (k==i ? v : k==j ? w : 0);
+  return bad;
+}
+int main(void) {
+  union U local = {.a=42, .c[2]=1, .c[4]=3};
+  struct A anon = {.a=42, .c[2]=1, .c[4]=3};
+  union N nested = {.s.u.a=42, .a=12, .s.u.c[2]=1};
+  union N enclosing = {.s.z=9, .s.u.a=42, .s.u.c[2]=1, .a=12};
+  int bad = check(&a,2,1,4,3) || check(&b,3,2,-1,0) || c.p != &target;
+  bad |= check(&d.u,2,1,4,3) || d.x!=9 || d.y!=8;
+  bad |= e.c[0] || e.c[2]!=1 || e.c[4]!=3;
+  bad |= check(&f.s.u,2,1,-1,0) || f.s.z;
+  bad |= check(&g[0],2,1,-1,0) || check(&g[1],3,2,-1,0);
+  bad |= check(&local,2,1,4,3) || anon.c[0] || anon.c[4]!=3;
+  bad |= check(&nested.s.u,2,1,-1,0) || nested.s.z;
+  bad |= h.a!=12 || h.s.z || enclosing.a!=12 || enclosing.s.z;
+  printf("union %d\n", bad);
+  return bad;
+}

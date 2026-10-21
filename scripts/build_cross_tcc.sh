@@ -48,7 +48,7 @@ make -s -j"$JOBS" riscv64-tcc EXTRA-DEFS=-DTCC_RV64I_SOFT
 
 # libtcc1.a
 rm -rf lib1 && mkdir lib1
-TCC="$out/riscv64-tcc -B$src -I$src/include -nostdinc"
+TCC="$out/riscv64-tcc -std=c11 -B$src -I$src/include -nostdinc"
 objs=()
 for f in builtin.c alloca.S armflush.c dsohandle.c; do
   o=lib1/${f%.*}.o
