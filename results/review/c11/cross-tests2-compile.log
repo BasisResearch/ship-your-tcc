@@ -1,0 +1,2 @@
+tests2 compile/link/ISA: attempted=104 pass=103 fail=1 skipped=38
+failed: 118_switch

@@ -1,0 +1,30 @@
+PASS host/gcc/pp/cross/ISA tcc_pp_digraphs
+PASS host/gcc/pp/cross/ISA tcc_pp_line_relative_name
+PASS host/gcc/pp/cross/ISA tcc_pp_pragma_operator
+PASS host/gcc/pp/cross/ISA tcc_pp_stringize_escapes
+PASS host/gcc/pp/cross/ISA tcc_pp_ucn_identifier
+PASS host/gcc/pp/cross/ISA tcc_union_designator_override
+PASS host/gcc/pp/cross/ISA utf_literals
+PASS host/gcc/pp/cross/ISA digraphs
+PASS host/gcc/pp/cross/ISA pragma
+PASS host/gcc/pp/cross/ISA ucn
+PASS host/gcc/pp/cross/ISA union
+PASS host/gcc/pp/cross/ISA line_include
+PASS host/gcc/pp/cross/ISA stringize_raw
+PASS host/gcc/pp/cross/ISA ucn_boundary_1
+PASS host/gcc/pp/cross/ISA ucn_boundary_2
+PASS host/gcc/pp/cross/ISA ucn_boundary_3
+PASS host/gcc/pp/cross/ISA ucn_boundary_4
+PASS host/gcc/pp/cross/ISA ucn_boundary_5
+PASS host/gcc/pp/cross/ISA ucn_boundary_6
+PASS host/gcc/pp/cross/ISA ucn_boundary_7
+PASS host/gcc/pp/cross/ISA ucn_boundary_8
+PASS host/gcc/pp/cross/ISA ucn_boundary_9
+PASS tcc -run/Sail results/repro/tcc_pp_pragma_operator.c
+PASS tcc -run/Sail results/repro/tcc_pp_line_relative_name.c
+PASS tcc -run/Sail results/repro/tcc_pp_digraphs.c
+PASS tcc -run/Sail results/repro/tcc_pp_stringize_escapes.c
+PASS tcc -run/Sail results/repro/tcc_pp_ucn_identifier.c
+PASS tcc -run/Sail results/repro/tcc_union_designator_override.c
+PASS tcc -run/Sail c/tests/c11/utf_literals.c
+C11: 22 positive cases, 6 negative cases; all passed

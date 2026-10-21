@@ -1,0 +1,5 @@
+test                   isa   elf-isa tcc=gcc   tcc=host  tcc-steps   gcc-steps   rc
+pragma                 ok    ok      PASS      PASS      5516        5519        0
+union                  ok    ok      PASS      PASS      8109        7902        0
+utf_literals           ok    ok      PASS      PASS      5517        5510        0
+tcc vs gcc-rv64i (Sail): pass=3 fail=0; tcc vs host gcc: pass=3 fail=0; isa-bad objects=0 elfs=0

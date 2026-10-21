@@ -1,0 +1,114 @@
+{
+  "positive_cases": 22,
+  "negative_ucn_cases": 6,
+  "implementation_pragma_checks": 1,
+  "host_pp": {
+    "pass": 24
+  },
+  "host_tests2": {
+    "pass": 124
+  },
+  "selfhost_test3": "pass",
+  "cross_sail_targeted": {
+    "pass": 12,
+    "fail": 0
+  },
+  "full_compiler_sail": [
+    {
+      "source": "c/tests/c11/utf_literals.c",
+      "source_sha256": "ed390832b178e5fd18e7387d2e7a0d47907b5b835ede4035c14f60adf0324b32",
+      "stdout": "utf 0\n",
+      "rc": 0,
+      "compile_steps": 12238383,
+      "program_steps": 2508,
+      "steps": 12240916
+    },
+    {
+      "source": "results/repro/tcc_pp_digraphs.c",
+      "source_sha256": "089c4338cae721f30f6fae79b8bed4901f11f1c951d221a03767df7a37e046ee",
+      "stdout": "2 3\n",
+      "rc": 0,
+      "compile_steps": 11949858,
+      "program_steps": 2549,
+      "steps": 11952432
+    },
+    {
+      "source": "results/repro/tcc_pp_line_relative_name.c",
+      "source_sha256": "5085bb02cf6bde882abdbdb510b3a152997db38534ba897823a227f40541fd74",
+      "stdout": "foo.c 10\n",
+      "rc": 0,
+      "compile_steps": 11945824,
+      "program_steps": 2751,
+      "steps": 11948600
+    },
+    {
+      "source": "results/repro/tcc_pp_pragma_operator.c",
+      "source_sha256": "81b7ca3fed2ef67effcbb563f7dbfaf65924320c2f1e15f551aa6c0648f638a7",
+      "stdout": "ok\n",
+      "rc": 0,
+      "compile_steps": 8447227,
+      "program_steps": 1795,
+      "steps": 8449047
+    },
+    {
+      "source": "results/repro/tcc_pp_stringize_escapes.c",
+      "source_sha256": "73200d28260598befa598ba6cc618579acdce49dd45f781cdc491703b414369e",
+      "stdout": "9\n",
+      "rc": 0,
+      "compile_steps": 11950385,
+      "program_steps": 2136,
+      "steps": 11952546
+    },
+    {
+      "source": "results/repro/tcc_pp_ucn_identifier.c",
+      "source_sha256": "52ca392ba8e02dbdac3ad5bef7a4cacde35e4477289e5ab4a2a0e9cbc25a136f",
+      "stdout": "3\n",
+      "rc": 0,
+      "compile_steps": 11931388,
+      "program_steps": 2138,
+      "steps": 11933551,
+      "metadata_note": "Exact live metadata observed at 2026-10-21 02:15:32 UTC; stale serial child subsequently removed its working filename."
+    },
+    {
+      "source": "results/repro/tcc_union_designator_override.c",
+      "source_sha256": "b46c875972bfc984f5eb76eb87c24152af5e8af3a515c643fa977bbc2e41cc12",
+      "stdout": "0 0 1 0\n",
+      "rc": 0,
+      "compile_steps": 11961735,
+      "program_steps": 3306,
+      "steps": 11965066
+    }
+  ],
+  "codegen_sail": {
+    "pass": 43,
+    "fail": 0
+  },
+  "tests2_compile_link_isa": {
+    "attempted": 104,
+    "pass": 103,
+    "build_fail": [
+      "118_switch"
+    ],
+    "skipped": 38
+  },
+  "tests2_sail": {
+    "attempted": 104,
+    "pass": 101,
+    "output_harness_diffs": [
+      "61_integers",
+      "83_utf8_in_identifiers"
+    ],
+    "build_fail": [
+      "118_switch"
+    ],
+    "isa_fail": 0
+  },
+  "image_isa": {
+    "instructions": 108867,
+    "forbidden": 0,
+    "ebreak_notes": 5
+  },
+  "static_gate": "pass",
+  "lake_build": "not run (required systemd scope denied)",
+  "patch_sha256": "8ce084ebb702b1889a0d56603e7a1551d0171225f761bb131926d73d46acc9c5"
+}

@@ -1,0 +1,6 @@
+NOTE c/build/base.elf(c/build/base.elf) .text 8001dcf8: 00100073 ebreak
+NOTE c/build/base.elf(c/build/base.elf) .text 80020958: 00100073 ebreak
+NOTE c/build/base.elf(c/build/base.elf) .text 800297c8: 00100073 ebreak
+NOTE c/build/base.elf(c/build/base.elf) .text 8003d9a4: 00100073 ebreak
+NOTE c/build/base.elf(c/build/base.elf) .text 8003e818: 00100073 ebreak
+OK   c/build/base.elf insns=108867 bad=0 notes=5 zero-pad=0

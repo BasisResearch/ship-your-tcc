@@ -1,0 +1,389 @@
+[
+  {
+    "name": "t01_imul",
+    "tcc_rc": 89,
+    "tcc_steps": 977728,
+    "gcc_rc": 89,
+    "gcc_steps": 964289,
+    "native_rc": 89,
+    "equal_output": true
+  },
+  {
+    "name": "t02_idiv",
+    "tcc_rc": 125,
+    "tcc_steps": 1374453,
+    "gcc_rc": 125,
+    "gcc_steps": 1360304,
+    "native_rc": 125,
+    "equal_output": true
+  },
+  {
+    "name": "t03_udiv",
+    "tcc_rc": 113,
+    "tcc_steps": 810980,
+    "gcc_rc": 113,
+    "gcc_steps": 805791,
+    "native_rc": 113,
+    "equal_output": true
+  },
+  {
+    "name": "t04_ldiv",
+    "tcc_rc": 0,
+    "tcc_steps": 2293778,
+    "gcc_rc": 0,
+    "gcc_steps": 2275693,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t05_muldiv_mixed",
+    "tcc_rc": 0,
+    "tcc_steps": 69128,
+    "gcc_rc": 0,
+    "gcc_steps": 63147,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t06_const_muldiv",
+    "tcc_rc": 0,
+    "tcc_steps": 451529,
+    "gcc_rc": 0,
+    "gcc_steps": 433652,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t07_dbl_arith",
+    "tcc_rc": 0,
+    "tcc_steps": 2591862,
+    "gcc_rc": 0,
+    "gcc_steps": 2580774,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t08_flt_arith",
+    "tcc_rc": 0,
+    "tcc_steps": 2034447,
+    "gcc_rc": 0,
+    "gcc_steps": 2020412,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t09_dbl_cmp",
+    "tcc_rc": 15,
+    "tcc_steps": 166478,
+    "gcc_rc": 15,
+    "gcc_steps": 163594,
+    "native_rc": 15,
+    "equal_output": true
+  },
+  {
+    "name": "t10_flt_cmp",
+    "tcc_rc": 0,
+    "tcc_steps": 80910,
+    "gcc_rc": 0,
+    "gcc_steps": 79477,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t11_cvt_itof",
+    "tcc_rc": 0,
+    "tcc_steps": 818492,
+    "gcc_rc": 0,
+    "gcc_steps": 818204,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t12_cvt_ftoi",
+    "tcc_rc": 0,
+    "tcc_steps": 519333,
+    "gcc_rc": 0,
+    "gcc_steps": 518985,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t13_cvt_ftof",
+    "tcc_rc": 0,
+    "tcc_steps": 648336,
+    "gcc_rc": 0,
+    "gcc_steps": 648551,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t14_bool",
+    "tcc_rc": 0,
+    "tcc_steps": 31117,
+    "gcc_rc": 0,
+    "gcc_steps": 31024,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t15_neg",
+    "tcc_rc": 0,
+    "tcc_steps": 52135,
+    "gcc_rc": 0,
+    "gcc_steps": 51323,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t16_incdec",
+    "tcc_rc": 0,
+    "tcc_steps": 109962,
+    "gcc_rc": 0,
+    "gcc_steps": 109929,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t17_compound",
+    "tcc_rc": 0,
+    "tcc_steps": 113294,
+    "gcc_rc": 0,
+    "gcc_steps": 113025,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t18_varargs",
+    "tcc_rc": 0,
+    "tcc_steps": 264683,
+    "gcc_rc": 0,
+    "gcc_steps": 263367,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t19_struct_float_pass",
+    "tcc_rc": 0,
+    "tcc_steps": 146683,
+    "gcc_rc": 0,
+    "gcc_steps": 144735,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t20_many_args",
+    "tcc_rc": 0,
+    "tcc_steps": 56020,
+    "gcc_rc": 0,
+    "gcc_steps": 55373,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t21_funcptr",
+    "tcc_rc": 0,
+    "tcc_steps": 144132,
+    "gcc_rc": 0,
+    "gcc_steps": 143831,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t22_recursion",
+    "tcc_rc": 0,
+    "tcc_steps": 648211,
+    "gcc_rc": 0,
+    "gcc_steps": 685527,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t23_dbl_array",
+    "tcc_rc": 0,
+    "tcc_steps": 664045,
+    "gcc_rc": 0,
+    "gcc_steps": 638594,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t24_ldouble",
+    "tcc_rc": 0,
+    "tcc_steps": 178250,
+    "gcc_rc": 0,
+    "gcc_steps": 135896,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t25_fconst",
+    "tcc_rc": 0,
+    "tcc_steps": 626257,
+    "gcc_rc": 0,
+    "gcc_steps": 625071,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t26_ternary",
+    "tcc_rc": 0,
+    "tcc_steps": 198178,
+    "gcc_rc": 0,
+    "gcc_steps": 197922,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t27_switch",
+    "tcc_rc": 0,
+    "tcc_steps": 584529,
+    "gcc_rc": 0,
+    "gcc_steps": 584495,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t28_structcopy",
+    "tcc_rc": 0,
+    "tcc_steps": 467667,
+    "gcc_rc": 0,
+    "gcc_steps": 430686,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t29_strings",
+    "tcc_rc": 0,
+    "tcc_steps": 308224,
+    "gcc_rc": 0,
+    "gcc_steps": 304855,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t30_math",
+    "tcc_rc": 0,
+    "tcc_steps": 685997,
+    "gcc_rc": 0,
+    "gcc_steps": 682861,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t31_globals",
+    "tcc_rc": 0,
+    "tcc_steps": 116517,
+    "gcc_rc": 0,
+    "gcc_steps": 114142,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t32_bitfields",
+    "tcc_rc": 0,
+    "tcc_steps": 83192,
+    "gcc_rc": 0,
+    "gcc_steps": 81626,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t33_llong_edge",
+    "tcc_rc": 0,
+    "tcc_steps": 372391,
+    "gcc_rc": 0,
+    "gcc_steps": 153173,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t34_promo",
+    "tcc_rc": 0,
+    "tcc_steps": 86257,
+    "gcc_rc": 0,
+    "gcc_steps": 85859,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t35_sieve",
+    "tcc_rc": 46,
+    "tcc_steps": 757607,
+    "gcc_rc": 46,
+    "gcc_steps": 718774,
+    "native_rc": 46,
+    "equal_output": true
+  },
+  {
+    "name": "t36_mandel",
+    "tcc_rc": 0,
+    "tcc_steps": 17996789,
+    "gcc_rc": 0,
+    "gcc_steps": 15416838,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t37_nbody",
+    "tcc_rc": 0,
+    "tcc_steps": 10124937,
+    "gcc_rc": 0,
+    "gcc_steps": 8736620,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t38_hash",
+    "tcc_rc": 5,
+    "tcc_steps": 434393,
+    "gcc_rc": 5,
+    "gcc_steps": 243078,
+    "native_rc": 5,
+    "equal_output": true
+  },
+  {
+    "name": "t39_matrix_int",
+    "tcc_rc": 0,
+    "tcc_steps": 135728,
+    "gcc_rc": 0,
+    "gcc_steps": 92789,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t40_union_pun",
+    "tcc_rc": 0,
+    "tcc_steps": 57373,
+    "gcc_rc": 0,
+    "gcc_steps": 56937,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t41_oldstyle_ldva",
+    "tcc_rc": 0,
+    "tcc_steps": 36463,
+    "gcc_rc": 0,
+    "gcc_steps": 36003,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t42_builtins",
+    "tcc_rc": 0,
+    "tcc_steps": 107081,
+    "gcc_rc": 0,
+    "gcc_steps": 95591,
+    "native_rc": 0,
+    "equal_output": true
+  },
+  {
+    "name": "t43_ldouble_cvt",
+    "tcc_rc": 0,
+    "tcc_steps": 105143,
+    "gcc_rc": 0,
+    "gcc_steps": 104505,
+    "native_rc": 0,
+    "equal_output": true
+  }
+]

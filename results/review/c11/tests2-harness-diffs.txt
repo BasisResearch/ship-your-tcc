@@ -1,0 +1,8 @@
+0a1
+> 61_integers.c:5: warning: UINT_MAX redefined
+1,2c1,2
+< привет=0.1
+< Lefèvre=2
+---
+> Ð¿ÑÐ¸Ð²ÐµÑ=0.1
+> LefÃ¨vre=2

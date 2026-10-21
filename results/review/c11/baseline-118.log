@@ -1,0 +1,10 @@
+In file included from build/c11-baseline-src/tests/tests2/118_switch.c:1:
+In file included from /Users/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/riscv-none-elf/include/limits.h:6:
+/Users/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/riscv-none-elf/include/sys/syslimits.h:36: warning: ARG_MAX redefined
+In file included from build/c11-baseline-src/tests/tests2/118_switch.c:1:
+In file included from /Users/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/riscv-none-elf/include/limits.h:6:
+/Users/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/riscv-none-elf/include/sys/syslimits.h:48: warning: PATH_MAX redefined
+In file included from build/c11-baseline-src/tests/tests2/118_switch.c:2:
+In file included from /Users/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/riscv-none-elf/include/stdio.h:60:
+In file included from /Users/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/riscv-none-elf/include/sys/reent.h:16:
+/Users/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/riscv-none-elf/include/sys/_types.h:205: error: ';' expected (got '__sa_family_t')

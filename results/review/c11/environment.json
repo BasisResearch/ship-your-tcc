@@ -1,0 +1,17 @@
+{
+  "scope_attempt": {
+    "argv": ["systemd-run", "--user", "--scope", "-p", "MemoryMax=12G", "scripts/test_tcc_c11.py", "--sail"],
+    "rc": 1,
+    "stderr": "Failed to connect to user scope bus via local transport: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user)"
+  },
+  "git_metadata_failure": {
+    "operation": "git add and git commit in the supplied worktree",
+    "rc": 128,
+    "stderr": "fatal: Unable to create '/data/home/kirancodes/Documents/code/ship-your-tcc/.git/worktrees/codex-c11/index.lock': Read-only file system",
+    "transport": "results/review/c11.bundle; prerequisite 6fb1c2d7607d30de5828b7d0c77d55642a554891"
+  },
+  "available_memory_gib_before_builds": [95, 85],
+  "lake_builds": 0,
+  "proof_changes": false,
+  "sum_compile_cut_regenerated": false
+}
