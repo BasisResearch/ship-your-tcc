@@ -3,6 +3,7 @@ build/
 __pycache__/
 .lake/
 .claude/
+logs/
 # copied at run time by scripts/collect_corpus.sh (manifests are committed)
 corpus/compcert/*.c
 corpus/tcc/*.c
