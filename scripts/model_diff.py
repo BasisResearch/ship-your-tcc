@@ -95,7 +95,10 @@ def ref_run(prog, extra, args, libs, rtkey):
         st = open(base + '.status').read().split()
         if st[0] == 'ran':
             return 'ran', base + '.arena', st[1] if len(st) > 1 else ''
-        return 'exit', (int(st[1]), open(base + '.console', 'rb').read()), st[2] if len(st) > 2 else ''
+        # Old caches can contain emulator limits/traps classified as exits.
+        # Re-run those records; neither is a compiler refusal.
+        if int(st[1]) not in (124, 126):
+            return 'exit', (int(st[1]), open(base + '.console', 'rb').read()), st[2] if len(st) > 2 else ''
     env = dict(os.environ)
     env['TCC_ARGS'] = ''.join('"%s",' % a for a in args)
     # a non-empty TCC_LIBS turns off ref_arena.sh's own -lm retry (we retry here,
@@ -105,6 +108,9 @@ def ref_run(prog, extra, args, libs, rtkey):
         env['EXTRA_FILES'] = ' '.join('%s=%s' % (p, os.path.abspath(h)) for p, h in extra)
     r = subprocess.run([os.path.join(ROOT, 'scripts', 'ref_arena.sh'), prog, base + '.arena', base + '.console'],
                        capture_output=True, env=env)
+    if r.returncode in (124, 126):
+        raise RuntimeError('reference emulator limit/trap for %s: %s' %
+                           (prog, r.stderr.decode(errors='replace')[-500:]))
     m = re.search(rb'rv64emu: steps=(\d+) compile_steps=(\S+) exit=(-?\d+)', r.stderr)
     con = open(base + '.console', 'rb').read() if os.path.exists(base + '.console') else b''
     lm = 'lm' if (r.returncode != 0 and not libs and b'unresolved reference' in con) else ''
@@ -140,6 +146,8 @@ def model_run(prog, extra, args, libs, tag):
     dt = time.time() - t0
     out = r.stdout.decode(errors='replace').strip()
     con = open(console, 'rb').read() if os.path.exists(console) else b''
+    if r.returncode != 0 and (out == 'ran' or out.startswith('exit ')):
+        raise RuntimeError(f'model status/exit mismatch: {r.returncode}: {out}')
     if out == 'ran':
         return 'ran', arena, dt
     if out.startswith('exit '):
@@ -257,6 +265,12 @@ def main():
                        check=True, stdout=subprocess.DEVNULL)
         with open(SYMS, 'w') as f:
             subprocess.run([os.path.join(ROOT, 'scripts', 'gen_image_syms.sh')], stdout=f, check=True)
+    for group, files in groups:
+        if not files:
+            ap.error(f'empty corpus {group}: generate/populate it before comparison')
+        for source in files:
+            if not os.path.isfile(source):
+                ap.error(f'input does not exist: {source}')
     os.makedirs(CACHE, exist_ok=True)
     rtkey = runtime_key()
     mode = 'obj' if a.obj else 'c'
@@ -291,9 +305,10 @@ def main():
         ms = [r['model_s'] for r in rs if 'model_s' in r]
         rows.append((g, n, c['same'], c['diff'], c['model-error'], c['skip'], c['harness-error'], c['same-refusal'],
                      (sum(ms) / len(ms)) if ms else 0))
-    print('\n%-14s %6s %6s %6s %6s %6s' % ('corpus', 'total', 'same', 'diff', 'merr', 'skip'))
+    print('\n%-14s %6s %6s %6s %6s %6s %6s %7s' %
+          ('corpus', 'total', 'same', 'diff', 'merr', 'skip', 'herr', 'refusal'))
     for r in rows:
-        print('%-14s %6d %6d %6d %6d %6d' % r[:6])
+        print('%-14s %6d %6d %6d %6d %6d %6d %7d' % r[:8])
     print('%-14s %6d %6d   (%.0f s wall)' % ('all', tot['n'], tot['same'], wall))
     if not a.no_report:
         write_report(results, rows, tot, mode, wall)

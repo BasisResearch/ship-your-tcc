@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 # One external Sol worker per slot; the lead reviews and integrates commits.
+# Parse the complete body before waiting in codex, so later edits cannot
+# change the shell's resume position inside a running launch.
+main() {
 set -euo pipefail
 repo=$(cd "$(dirname "$0")" && pwd)
 slot=${1:?usage: codexwork.sh 1|2 tasks/file.md}
@@ -53,3 +56,5 @@ if ! grep -E '^RESULT: (landed|stuck) ' "$log" | tail -1; then
   echo "RESULT: stuck worker exited $rc without a result; inspect $log"
 fi
 exit "$rc"
+}
+main "$@"

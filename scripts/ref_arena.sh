@@ -58,4 +58,7 @@ cp "$work/console" "$console"
 [ -n "${ELF_OUT:-}" ] && cp "$work/prog.elf" "$ELF_OUT"
 cat "$work/emu.log" >&2
 [ -f "$out" ] && exit 0
+# Emulator exhaustion/traps are harness failures, not compiler refusals.
+[ "$erc" = 124 ] && exit 124
+[ "$erc" = 126 ] && exit 126
 exit 125
