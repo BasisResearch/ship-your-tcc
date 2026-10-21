@@ -55,7 +55,7 @@ def bitlen (n : Nat) : Nat := Nat.log2 n + 1
 
 /-- round (-1)^neg * (q + sticky·ε) * 2^e to nearest-even in `f`, where
 `sticky` says whether a nonzero remainder below q's last bit was cut -/
-def roundQ (f : Fmt) (neg : Bool) (q : Nat) (e : Int) (sticky : Bool) : Nat :=
+def roundQ (f : Fmt) (neg : Bool) (q : Nat) (e : Int) (sticky : Bool) (trunc : Bool := false) : Nat :=
   let sgn := if neg then f.signBit else 0
   if q == 0 && !sticky then sgn else
   if q == 0 then sgn else
@@ -74,6 +74,7 @@ def roundQ (f : Fmt) (neg : Bool) (q : Nat) (e : Int) (sticky : Bool) : Nat :=
       let up := rem > half || (rem == half && (sticky || m0 % 2 == 1))
       let up := if rem == half && !sticky && m0 % 2 == 0 then false else up
       let up := if rem < half then false else up
+      let up := if trunc then false else up
       (if up then m0 + 1 else m0, 1)
   let _ := inexactHalf
   -- m * 2^qe, m < 2^(mbits+1) (maybe = after carry)
@@ -84,11 +85,12 @@ def roundQ (f : Fmt) (neg : Bool) (q : Nat) (e : Int) (sticky : Bool) : Nat :=
     sgn + m
   else
     let bexp : Int := qe + f.mbits + f.bias
-    if bexp ≥ f.emaxBits then f.inf neg
+    if bexp ≥ f.emaxBits then
+      (if trunc then (if neg then f.signBit else 0) + (f.emaxBits - 1) * 2 ^ f.mbits + (2 ^ f.mbits - 1) else f.inf neg)
     else sgn + bexp.toNat * 2 ^ f.mbits + (m - 2 ^ f.mbits)
 
 /-- round the exact rational (-1)^neg * num/den * 2^e2 -/
-def roundRat (f : Fmt) (neg : Bool) (num den : Nat) (e2 : Int := 0) : Nat :=
+def roundRat (f : Fmt) (neg : Bool) (num den : Nat) (e2 : Int := 0) (trunc : Bool := false) : Nat :=
   if num == 0 then (if neg then f.signBit else 0) else
   -- scale so the quotient has at least mbits+3 bits
   let need := f.mbits + 3
@@ -98,7 +100,7 @@ def roundRat (f : Fmt) (neg : Bool) (num den : Nat) (e2 : Int := 0) : Nat :=
   let (n', d') := if sh ≥ 0 then (num * 2 ^ sh.toNat, den) else (num, den * 2 ^ (-sh).toNat)
   let q := n' / d'
   let r := n' % d'
-  roundQ f neg q (e2 - sh) (r != 0)
+  roundQ f neg q (e2 - sh) (r != 0) trunc
 
 /-- encode an exact finite value -/
 def ofVal (f : Fmt) : Val → Nat
@@ -276,25 +278,27 @@ def parseDec (s : List Char) : Nat × Int := Id.run do
   return (m, e)
 
 /-- strtod-like: the decimal value correctly rounded into `f` -/
-def ofDecimal (f : Fmt) (s : String) : Nat :=
+def ofDecimal (f : Fmt) (s : String) (trunc : Bool := false) : Nat :=
   let (m, e) := parseDec s.toList
   if m == 0 then 0
   else
     let lm := (toString m).length
     if e + lm > 6000 then f.inf false
     else if e + lm < -6000 then 0
-    else if e ≥ 0 then roundQ f false (m * 10 ^ e.toNat) 0 false
-    else roundRat f false m (10 ^ (-e).toNat) 0
+    else if e ≥ 0 then roundQ f false (m * 10 ^ e.toNat) 0 false trunc
+    else roundRat f false m (10 ^ (-e).toNat) 0 trunc
 
 /-- newlib's `strtold` on rv64: `_strtold_r` calls gdtoa's `_strtorx`
 (newlib/libc/stdlib/strtold.c, as `_LDBL_EQ_DBL` is not defined), which
 writes the x87 80-bit extended format into the 16-byte binary128 `long
 double`: bytes 0–7 the 64-bit significand with its explicit integer bit,
 bytes 8–9 sign and biased exponent; bytes 10–15 are not written (they are
-zero in every reference run). The value is correctly rounded to 64 bits. -/
+TccModel takes them as an oracle). newlib passes rounding mode 0 to
+_strtorx, gdtoa's FPI_Round_zero: the value is truncated to 64 bits. -/
 def ofDecimalX87 (s : String) : Nat :=
   let x : Fmt := ⟨15, 63⟩
-  let b := ofDecimal x s
+  -- newlib passes rounding 0 (gdtoa's FPI_Round_zero): truncation
+  let b := ofDecimal x s true
   let neg := (b / x.signBit) % 2 == 1
   let ex := (b / 2 ^ 63) % 2 ^ 15
   let fr := b % 2 ^ 63

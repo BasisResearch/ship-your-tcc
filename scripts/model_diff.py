@@ -113,7 +113,7 @@ def ref_run(prog, extra, args, libs, rtkey):
     return 'exit', (code, open(base + '.console', 'rb').read()), lm
 
 
-def model_run(prog, extra, args, libs, tag):
+def model_run(prog, extra, args, libs, tag, ldg=None):
     os.makedirs(WORK, exist_ok=True)
     arena = os.path.join(WORK, tag + '.arena')
     console = os.path.join(WORK, tag + '.console')
@@ -130,6 +130,9 @@ def model_run(prog, extra, args, libs, tag):
         cmd += ['--no-args']
     for l in libs:
         cmd += ['--larg', l]
+    if ldg and os.path.exists(ldg):
+        # the reference's indeterminate strtold bytes (rv64emu --log-strtorx)
+        cmd += ['--ld-garbage', ldg]
     t0 = time.time()
     r = subprocess.run(cmd, capture_output=True, timeout=600)
     dt = time.time() - t0
@@ -178,9 +181,10 @@ def compare(prog, mode, rtkey):
     libs = ['-lm'] if lm else []
     if lm:
         rst, rdata, _ = ref_run(src, extra, args, libs, rtkey)
-    mst, mdata, dt = model_run(src, extra, args, [], tag)
+    ldg = (rdata + '.ldg') if rst == 'ran' else None
+    mst, mdata, dt = model_run(src, extra, args, [], tag, ldg)
     if mst == 'exit' and b'unresolved reference' in mdata[1]:
-        mst, mdata, dt2 = model_run(src, extra, args, ['-lm'], tag)
+        mst, mdata, dt2 = model_run(src, extra, args, ['-lm'], tag, ldg)
         dt += dt2
     res = dict(name=name, model_s=dt, ref=rst, model=mst)
     if mst == 'model-error':

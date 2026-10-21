@@ -8,7 +8,13 @@
  * scripts/model_diff.py spot-checks this emulator against it (step counts
  * of the compile phase and console bytes).
  *
- *   rv64emu ELF [--max-steps N] [--arena-out FILE] [--quiet]
+ *   rv64emu ELF [--max-steps N] [--arena-out FILE] [--log-strtorx FILE] [--quiet]
+ *
+ * --log-strtorx: for each call of newlib's _strtorx_l during the compile
+ * phase (tcc's strtold for long double literals), one line with the six
+ * bytes 10..15 of the destination long double as a 48-bit hex number:
+ * _strtorx_l writes only bytes 0..9 (the x87 format), so these are
+ * uninitialised stack contents; TccModel takes them as an oracle input.
  *
  * Semantics follow the subset of the Sail model the image uses: RV64I
  * (no M/F/D/A/C, no CSRs), registers and memory zero at reset, PC = ELF
@@ -55,7 +61,7 @@ static inline uint8_t *addr(uint64_t a, unsigned n) {
     return ram + (a - RAM_BASE);
 }
 
-static uint64_t sym_tohost, sym_run, sym_tccrun_start, sym_tccrun_end;
+static uint64_t sym_tohost, sym_run, sym_tccrun_start, sym_tccrun_end, sym_strtorx;
 
 static void load_elf(const char *path, uint64_t *entry) {
     FILE *f = fopen(path, "rb");
@@ -86,6 +92,7 @@ static void load_elf(const char *path, uint64_t *entry) {
             else if (!strcmp(nm, "tcc_baremetal_run")) sym_run = sy[k].st_value;
             else if (!strcmp(nm, "__tccrun_start")) sym_tccrun_start = sy[k].st_value;
             else if (!strcmp(nm, "__tccrun_end")) sym_tccrun_end = sy[k].st_value;
+            else if (!strcmp(nm, "_strtorx_l")) sym_strtorx = sy[k].st_value;
         }
     }
     free(b);
@@ -108,18 +115,21 @@ static void dump_arena(const char *path) {
 #define SEXT(v, b) ((int64_t)((uint64_t)(v) << (64 - (b))) >> (64 - (b)))
 
 int main(int argc, char **argv) {
-    const char *elf = NULL, *arena_out = NULL;
+    const char *elf = NULL, *arena_out = NULL, *strtorx_log = NULL;
+    FILE *strtorx_f = NULL;
     uint64_t max_steps = 4000000000ULL;
     int quiet = 0;
     for (int i = 1; i < argc; i++) {
         if (!strcmp(argv[i], "--max-steps") && i + 1 < argc) max_steps = strtoull(argv[++i], 0, 0);
         else if (!strcmp(argv[i], "--arena-out") && i + 1 < argc) arena_out = argv[++i];
         else if (!strcmp(argv[i], "--quiet")) quiet = 1;
+        else if (!strcmp(argv[i], "--log-strtorx") && i + 1 < argc) strtorx_log = argv[++i];
         else elf = argv[i];
     }
     if (!elf) { fprintf(stderr, "usage: rv64emu ELF [--max-steps N] [--arena-out F]\n"); return 2; }
     ram = calloc(1, RAM_SIZE);
     load_elf(elf, &pc);
+    if (strtorx_log && !(strtorx_f = fopen(strtorx_log, "w"))) { perror(strtorx_log); return 2; }
     uint64_t steps = 0, compile_steps = 0;
     int code = 124;
     static char out[1 << 16];
@@ -129,6 +139,13 @@ int main(int argc, char **argv) {
         if (pc == sym_run && !compile_steps) {
             compile_steps = steps;
             if (arena_out) dump_arena(arena_out);
+        }
+        if (pc == sym_strtorx && strtorx_f && !compile_steps) {
+            /* gdtoa's _strtorx_l(ptr, s, se, rounding, L, loc) writes 10 bytes
+               of the 16-byte long double at L (x87 layout); log the other 6,
+               which are whatever the stack held (TccModel's ld oracle) */
+            uint8_t *q = addr(x[14] + 10, 6);
+            fprintf(strtorx_f, "%02x%02x%02x%02x%02x%02x\n", q[5], q[4], q[3], q[2], q[1], q[0]);
         }
         uint32_t in = *(uint32_t *)addr(pc, 4);
         uint64_t npc = pc + 4;
@@ -248,6 +265,7 @@ int main(int argc, char **argv) {
 done:
     fwrite(out, 1, outn, stdout);
     fflush(stdout);
+    if (strtorx_f) fclose(strtorx_f);
     if (!quiet) {
         if (compile_steps)
             fprintf(stderr, "rv64emu: steps=%llu compile_steps=%llu exit=%d\n",

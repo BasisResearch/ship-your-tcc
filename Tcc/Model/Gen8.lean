@@ -8,6 +8,12 @@ namespace Tcc.Model
 open C
 open Tok
 
+/-- the current value of decl_initializer_alloc's `type` (the global symbol's type, or the caller's) -/
+def curT (tloc : Option SymId) (tval : CType) : M CType :=
+  match tloc with
+  | some s => do return (← getSym s).type
+  | none => pure tval
+
 /-- `decl_initializer_alloc(type, ad, r, has_init, v, scope)` -/
 def decl_initializer_alloc (R : Rec) (type0 : CType) (ad : AttributeDef) (r0 : Int32) (has_init : Int32)
     (v : Int32) (scope : Int32) : M Unit := do
@@ -28,18 +34,15 @@ def decl_initializer_alloc (R : Rec) (type0 : CType) (ad : AttributeDef) (r0 : I
         return
       tloc := some sym
       tval := sx.type
-  let getT : M CType := match tloc with
-    | some s => do return (← getSym s).type
-    | none => pure tval
   if v != 0 && (r &&& VT_VALMASK) == VT_CONST then
     modify fun s => { s with nocode_wanted := s.nocode_wanted ||| DATA_ONLY_WANTED }
   let mut flexible_array : SymId := 0
-  let (size0, align0) ← R.type_size (← getT)
+  let (size0, align0) ← R.type_size (← curT tloc tval)
   let mut size := size0
   let mut align := align0
   let mut init_str : Option TokArr := none
   if size < 0 then
-    let t ← getT
+    let t ← curT tloc tval
     if t.t &&& VT_ARRAY == 0 then tcc_error_s R "initialization of incomplete type"
     if IS_BT_ARRAY t.t then
       let rx ← getSym t.ref
@@ -47,9 +50,9 @@ def decl_initializer_alloc (R : Rec) (type0 : CType) (ad : AttributeDef) (r0 : I
       match tloc with
       | some s => modSym s fun y => { y with type := { y.type with ref := nr } }
       | none => tval := { tval with ref := nr }
-    p := { p with flex_array_ref := (← getT).ref }
-  else if has_init != 0 && (← getT).t &&& VT_BTYPE == VT_STRUCT then
-    let mut field := (← getSym (← getT).ref).next
+    p := { p with flex_array_ref := (← curT tloc tval).ref }
+  else if has_init != 0 && (← curT tloc tval).t &&& VT_BTYPE == VT_STRUCT then
+    let mut field := (← getSym (← curT tloc tval).ref).next
     if field != 0 then
       for _ in [0:fuel] do
         let nx := (← getSym field).next
@@ -77,11 +80,11 @@ def decl_initializer_alloc (R : Rec) (type0 : CType) (ad : AttributeDef) (r0 : I
     let toks := init_str.getD #[]
     let _ ← begin_macro .heap toks 0 1
     R.next
-    R.decl_initializer p.sec p.local_offset p.flex_array_ref (← getT) 0 (DIF_FIRST ||| DIF_SIZE_ONLY)
+    R.decl_initializer p.sec p.local_offset p.flex_array_ref (← curT tloc tval) 0 (DIF_FIRST ||| DIF_SIZE_ONLY)
     -- prepare second initializer parsing
     modify fun s => { s with macro_ptr := some { arr := toks, pos := 0 } }
     R.next
-    let (sz, al) ← R.type_size (← getT)
+    let (sz, al) ← R.type_size (← curT tloc tval)
     size := sz; align := al
     if size < 0 then tcc_error_s R "unknown type size"
     if flexible_array != 0 then
@@ -104,7 +107,7 @@ def decl_initializer_alloc (R : Rec) (type0 : CType) (ad : AttributeDef) (r0 : I
     addr := (← get).loc
     p := { p with local_offset := addr + size }
     if v != 0 then
-      sym ← sym_push R v (← getT) r addr
+      sym ← sym_push R v (← curT tloc tval) r addr
       if ad.cleanup_func != 0 then
         let cs := (← get).cur_scope
         modScope cs fun x => { x with cl_n := x.cl_n + 1 }
@@ -119,15 +122,15 @@ def decl_initializer_alloc (R : Rec) (type0 : CType) (ad : AttributeDef) (r0 : I
       let sym' := sym
       modSym sym' fun y => { y with a := aa }
     else
-      vset R (← getT) r addr
+      vset R (← curT tloc tval) r addr
   else
-    let mut tp ← getT
+    let mut tp ← curT tloc tval
     for _ in [0:fuel] do
       if (tp.t &&& (VT_BTYPE ||| VT_ARRAY)) != (VT_PTR ||| VT_ARRAY) then break
       tp := (← getSym tp.ref).type
     let is_const := tp.t &&& VT_CONSTANT != 0
     sec := ad.sec
-    let t ← getT
+    let t ← curT tloc tval
     if sec == 0 then
       if t.t &&& VT_TLS != 0 then
         sec ← find_section (if has_init != 0 then ".tdata" else ".tbss").toUTF8
@@ -149,14 +152,14 @@ def decl_initializer_alloc (R : Rec) (type0 : CType) (ad : AttributeDef) (r0 : I
       sec := (← get).common_section
     if v != 0 then
       if sym == 0 then
-        sym ← sym_push R v (← getT) (r ||| VT_SYM) 0
+        sym ← sym_push R v (← curT tloc tval) (r ||| VT_SYM) 0
         patch_storage R sym ad none
       put_extern_sym sym sec addr.toInt64.toUInt64 size.toInt64.toUInt64
     else
-      vpush_ref R (← getT) sec addr.toInt64.toUInt64 size.toInt64.toUInt64
+      vpush_ref R (← curT tloc tval) sec addr.toInt64.toUInt64 size.toInt64.toUInt64
       sym := (← vt).sym
       modVt 0 fun x => { x with r := x.r ||| r.toUInt16' }
-  let t ← getT
+  let t ← curT tloc tval
   if t.t &&& VT_VLA != 0 then
     if has_init != 0 then tcc_error_s R "variable length array cannot be initialized"
     if !(← NODATA_WANTED) then
