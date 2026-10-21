@@ -246,7 +246,15 @@ def main():
             groups.append((t, corpus_files(t)))
         else:
             groups.append((os.path.relpath(os.path.dirname(os.path.abspath(t)), ROOT), [os.path.abspath(t)]))
-    if not os.path.exists(SYMS):
+    # Rebuild before fingerprinting: patches can change the runtime and its
+    # exported addresses. Never pair a new reference with stale model symbols
+    # or cache it under the previous image's key.
+    with open(os.path.join(ROOT, 'c', '.build.lock'), 'w') as lock:
+        import fcntl
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        subprocess.run(['make', '-s', '-C', os.path.join(ROOT, 'c'),
+                        'BUILD=build', 'FLAGS=0', 'ELF=build/base.elf', 'build/base.elf'],
+                       check=True, stdout=subprocess.DEVNULL)
         with open(SYMS, 'w') as f:
             subprocess.run([os.path.join(ROOT, 'scripts', 'gen_image_syms.sh')], stdout=f, check=True)
     os.makedirs(CACHE, exist_ok=True)

@@ -926,11 +926,9 @@ def parse_number (R : Rec) (src : ByteArray) : M Unit := do
         modify fun st => { st with tok := TOK_CFLOAT, tokc := st.tokc.setFbits (UInt32.ofNat fb) }
       else if t == 76 then
         ch := at_ p; p := p + 1
-        -- newlib strtold = _strtorx (x87 layout in bytes 0..9; 10..15 unwritten)
-        let st0 ← get
-        let g := (st0.ldGarbage[st0.ldGarbageIdx]?).getD 0
-        modify fun st => { st with ldGarbageIdx := st.ldGarbageIdx + 1 }
-        let d := SF.ofDecimalX87 txt + (g.toNat % 2 ^ 48) * 2 ^ 80
+        -- patches/0004: exact mprec rational conversion, nearest-even, gradual underflow.
+        -- Independent exact rational rounding; no reference stack bytes.
+        let d := SF.ofDecimal SF.F128 txt
         modify fun st => { st with
           tok := TOK_CLDOUBLE,
           tokc := { st.tokc with lo := UInt64.ofNat (d % 2^64), hi := UInt64.ofNat (d / 2^64) } }

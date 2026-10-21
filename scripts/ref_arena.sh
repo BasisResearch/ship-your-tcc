@@ -47,7 +47,7 @@ attempt() {
       $RT "$work/embed.o" -lm > "$work/ld.log" 2>&1 ||
     { echo "ref_arena: image link failed" >&2; cat "$work/ld.log" >&2; exit 2; }
   rm -f "$out"
-  "$EMU" "$work/prog.elf" --max-steps "$MAX_STEPS" --arena-out "$out" --log-strtorx "$out.ldg" > "$work/console" 2> "$work/emu.log"
+  "$EMU" "$work/prog.elf" --max-steps "$MAX_STEPS" --arena-out "$out" > "$work/console" 2> "$work/emu.log"
   erc=$?
 }
 attempt "${TCC_LIBS:-}"

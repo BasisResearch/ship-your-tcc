@@ -288,25 +288,8 @@ def ofDecimal (f : Fmt) (s : String) (trunc : Bool := false) : Nat :=
     else if e ≥ 0 then roundQ f false (m * 10 ^ e.toNat) 0 false trunc
     else roundRat f false m (10 ^ (-e).toNat) 0 trunc
 
-/-- newlib's `strtold` on rv64: `_strtold_r` calls gdtoa's `_strtorx`
-(newlib/libc/stdlib/strtold.c, as `_LDBL_EQ_DBL` is not defined), which
-writes the x87 80-bit extended format into the 16-byte binary128 `long
-double`: bytes 0–7 the 64-bit significand with its explicit integer bit,
-bytes 8–9 sign and biased exponent; bytes 10–15 are not written (they are
-TccModel takes them as an oracle). newlib passes rounding mode 0 to
-_strtorx, gdtoa's FPI_Round_zero: the value is truncated to 64 bits. -/
-def ofDecimalX87 (s : String) : Nat :=
-  let x : Fmt := ⟨15, 63⟩
-  -- newlib passes rounding 0 (gdtoa's FPI_Round_zero): truncation
-  let b := ofDecimal x s true
-  let neg := (b / x.signBit) % 2 == 1
-  let ex := (b / 2 ^ 63) % 2 ^ 15
-  let fr := b % 2 ^ 63
-  let (e16, mant) :=
-    if ex == 0 then (0, fr)                                    -- zero / denormal
-    else if ex == 2 ^ 15 - 1 then (0x7fff, 2 ^ 63)              -- infinity
-    else (ex, fr + 2 ^ 63)
-  let e16 := if neg then e16 + 0x8000 else e16
-  mant + e16 * 2 ^ 64
+/- Decimal long doubles use `ofDecimal F128` after patches/0004. The
+   compiler's mprec-based conversion and this rational algorithm are independent;
+   their agreement is a differential obligation, not yet proved. -/
 
 end Tcc.Model.SF

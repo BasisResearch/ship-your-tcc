@@ -6,7 +6,7 @@ import Tcc.Model.Tie
 
     tcc_model --fs c/build/fs.list --syms build/image.syms --prog prog.c
               [--extra /path=hostfile]... [--arg A]... [--larg L]...
-              [--ld-garbage FILE] [--ghost-out FILE]
+              [--ghost-out FILE]
               --arena-out OUT.arena [--console-out OUT.console]
 
 Builds the image's file system (fs.list, /prog.c, extra files), its symbol
@@ -34,7 +34,6 @@ structure Opts where
   argsSet : Bool := false
   arenaOut : String := ""
   consoleOut : String := ""
-  ldGarbage : String := ""
   ghostOut : String := ""
 
 partial def parseOpts (o : Opts) : List String → Except String Opts
@@ -48,7 +47,6 @@ partial def parseOpts (o : Opts) : List String → Except String Opts
   | "--larg" :: v :: r => parseOpts { o with largs := o.largs.push v } r
   | "--arena-out" :: v :: r => parseOpts { o with arenaOut := v } r
   | "--console-out" :: v :: r => parseOpts { o with consoleOut := v } r
-  | "--ld-garbage" :: v :: r => parseOpts { o with ldGarbage := v } r
   | "--ghost-out" :: v :: r => parseOpts { o with ghostOut := v } r
   | a :: _ => .error s!"unknown argument {a}"
 
@@ -102,14 +100,8 @@ def main (argv : List String) : IO UInt32 := do
     else #["tcc"] ++ args ++ #["/prog.c"] ++ o.largs ++ #["-run", "--"]
   -- the loop bound of every C loop: proportional to the input's size
   let fuel := 16 * total + 4096
-  let mut ldg : Array UInt64 := #[]
-  if o.ldGarbage ≠ "" then
-    for l in (← IO.FS.readFile o.ldGarbage).splitOn "\n" do
-      if l.trim ≠ "" then
-        let v := l.trim.foldl (fun acc c => acc * 16 + (if c.isDigit then c.toNat - 48 else c.toLower.toNat - 87)) 0
-        ldg := ldg.push (UInt64.ofNat v)
   let st0 : TccSt := { fsFiles := files, fsDirs := dirs, imageSyms := syms, fuel := fuel,
-                       fds := Array.replicate 3 none, ldGarbage := ldg }
+                       fds := Array.replicate 3 none }
   let R := Tie.tie fuel
   let res := (tcc_main R (tccArgv.map (·.toUTF8))).run st0
   let (outcome, st) : MainOutcome × TccSt ← match res with

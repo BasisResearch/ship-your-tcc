@@ -1,0 +1,173 @@
+Exact decimal binary128 literals in the pinned bare-metal RV64 image.
+
+Newlib 4.5.0.20241231 strtold writes x87 into binary128 storage. Its
+_strtodg_l also fails boundary tests at 113-bit nearest and 114-bit directed
+rounding. Reuse its integer bignum helpers (mprec) without the approximate
+floating conversion path: construct the exact rational, divide at the
+binary128 quantum and round once, ties to even. See results/model/ld-literals.md.
+
+Only compiler literal parsing changes; public libc strtold is unchanged.
+Applies after 0001/0002 and slot 1's 0003 (disjoint preprocessor/C11 work).
+The pristine vendor/tinycc and existing sum compile-cut stay untouched.
+
+--- a/tccpp.c
++++ b/tccpp.c
+@@ -2238,6 +2238,146 @@
+     }
+ }
+ 
++#ifdef TCC_BAREMETAL
++/* newlib 4.5.0 strtold writes x87, and strtodg has binary128 boundary
++   defects. Reuse newlib's integer bignums directly and round an exact
++   decimal rational once. Private ABI: sys/reent.h and stdlib/mprec.h;
++   see ATTRIBUTION.md. No floating-point arithmetic occurs here. */
++#include <reent.h>
++#if __LDBL_MANT_DIG__ != 113 || __LDBL_MAX_EXP__ != 16384 \
++    || __SIZEOF_LONG_DOUBLE__ != 16 || __BYTE_ORDER__ != __ORDER_LITTLE_ENDIAN__
++#error TCC_BAREMETAL literal conversion requires little-endian IEEE binary128
++#endif
++extern struct _Bigint *_Balloc(struct _reent *, int);
++extern void _Bfree(struct _reent *, struct _Bigint *);
++extern struct _Bigint *__i2b(struct _reent *, int);
++extern struct _Bigint *__multadd(struct _reent *, struct _Bigint *, int, int);
++extern struct _Bigint *__pow5mult(struct _reent *, struct _Bigint *, int);
++extern struct _Bigint *__lshift(struct _reent *, struct _Bigint *, int);
++extern struct _Bigint *__mdiff(struct _reent *, struct _Bigint *, struct _Bigint *);
++extern int __mcmp(struct _Bigint *, struct _Bigint *);
++extern int __hi0bits(__ULong);
++
++static struct _Bigint *tcc_big_checked(struct _Bigint *b)
++{
++    if (!b)
++        tcc_error("memory full (binary128 literal)");
++    return b;
++}
++
++static struct _Bigint *tcc_big_copy(struct _Bigint *b)
++{
++    struct _Bigint *r = tcc_big_checked(_Balloc(_REENT, b->_k));
++    r->_sign = b->_sign;
++    r->_wds = b->_wds;
++    memcpy(r->_x, b->_x, b->_wds * sizeof b->_x[0]);
++    return r;
++}
++
++static struct _Bigint *tcc_big_shift(struct _Bigint *b, int shift)
++{
++    return tcc_big_checked(__lshift(_REENT, b, shift));
++}
++
++static int tcc_big_bits(struct _Bigint *b)
++{
++    return 32 * b->_wds - __hi0bits(b->_x[b->_wds - 1]);
++}
++
++static long double tcc_strtold_binary128(const char *s)
++{
++    struct _Bigint *num = tcc_big_checked(__i2b(_REENT, 0));
++    struct _Bigint *den = NULL, *tmp, *rem;
++    __ULong words[4] = { 0, 0, 0, 0 };
++    long double result;
++    int e10 = 0, digits = 0, dot = 0, nonzero = 0, exp10 = 0;
++    int negexp = 0, exponent, quantum, i, cmp, carry;
++
++    /* parse_number has already validated this unsigned decimal token. */
++    for (; (*s >= '0' && *s <= '9') || *s == '.'; ++s) {
++        if (*s == '.') {
++            dot = 1;
++        } else {
++            num = tcc_big_checked(__multadd(_REENT, num, 10, *s - '0'));
++            if (*s != '0') nonzero = 1;
++            if (nonzero) ++digits;
++            if (dot) --e10;
++        }
++    }
++    if (*s == 'e' || *s == 'E') {
++        ++s;
++        if (*s == '-' || *s == '+') negexp = *s++ == '-';
++        for (; *s >= '0' && *s <= '9'; ++s)
++            if (exp10 < 100000000) exp10 = exp10 * 10 + *s - '0';
++        e10 += negexp ? -exp10 : exp10;
++    }
++    if (!nonzero || e10 + digits < -6000) goto done;
++    if (e10 + digits > 6000) goto infinity;
++
++    den = tcc_big_checked(__i2b(_REENT, 1));
++    if (e10 >= 0) {
++        num = tcc_big_checked(__pow5mult(_REENT, num, e10));
++        num = tcc_big_shift(num, e10);
++    } else {
++        den = tcc_big_checked(__pow5mult(_REENT, den, -e10));
++        den = tcc_big_shift(den, -e10);
++    }
++    /* floor(log2(num/den)), then the representable quantum exponent. */
++    exponent = tcc_big_bits(num) - tcc_big_bits(den);
++    if (exponent >= 0) {
++        tmp = tcc_big_shift(tcc_big_copy(den), exponent);
++        cmp = __mcmp(num, tmp);
++    } else {
++        tmp = tcc_big_shift(tcc_big_copy(num), -exponent);
++        cmp = __mcmp(tmp, den);
++    }
++    _Bfree(_REENT, tmp);
++    if (cmp < 0) --exponent;
++    if (exponent > 16383) goto infinity;
++    if (exponent < -16495) goto done;
++    quantum = exponent - 112;
++    if (quantum < -16494) quantum = -16494;
++    if (quantum >= 0) den = tcc_big_shift(den, quantum);
++    else num = tcc_big_shift(num, -quantum);
++
++    /* Binary long division: quotient has at most 113 bits. Keep the
++       exact remainder for a single ties-to-even rounding decision. */
++    for (i = 112; i >= 0; --i) {
++        tmp = tcc_big_shift(tcc_big_copy(den), i);
++        if (__mcmp(num, tmp) >= 0) {
++            rem = tcc_big_checked(__mdiff(_REENT, num, tmp));
++            _Bfree(_REENT, num);
++            num = rem;
++            words[i / 32] |= (__ULong)1 << (i % 32);
++        }
++        _Bfree(_REENT, tmp);
++    }
++    num = tcc_big_shift(num, 1);
++    cmp = __mcmp(num, den);
++    carry = cmp > 0 || (cmp == 0 && (words[0] & 1));
++    for (i = 0; carry && i < 4; ++i)
++        carry = ++words[i] == 0;
++    if (words[3] & 0x20000u) {
++        memset(words, 0, sizeof words);
++        words[3] = 0x10000u;
++        ++quantum;
++    }
++    if (words[3] & 0x10000u) {
++        if (quantum > 16271) goto infinity;
++        words[3] = (words[3] & 0xffffu) | ((__ULong)(quantum + 16495) << 16);
++    }
++    goto done;
++infinity:
++    memset(words, 0, sizeof words);
++    words[3] = 0x7fff0000u;
++done:
++    _Bfree(_REENT, num);
++    if (den) _Bfree(_REENT, den);
++    memcpy(&result, words, sizeof result);
++    return result;
++}
++#endif
++
+ /* parse number in null terminated string 'p' and return it in the
+    current token */
+ static void parse_number(const char *p)
+@@ -2424,7 +2564,11 @@
+             } else if (t == 'L') {
+                 ch = *p++;
+                 tok = TOK_CLDOUBLE;
++#ifdef TCC_BAREMETAL
++                tokc.ld = tcc_strtold_binary128(token_buf);
++#else
+                 tokc.ld = strtold(token_buf, NULL);
++#endif
+             } else {
+                 tok = TOK_CDOUBLE;
+                 tokc.d = strtod(token_buf, NULL);

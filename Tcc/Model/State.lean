@@ -34,11 +34,6 @@ structure TccSt where
   imageSyms : Std.HashMap String UInt64 := {}
   /-- the loop bound (fuel) of every C loop, from the input size -/
   fuel : Nat := 0
-  /-- the indeterminate bytes 10..15 of each strtold result, in call order
-      (an oracle: newlib's _strtorx writes only 10 of the 16 bytes; the rest
-      is the image's stack contents) -/
-  ldGarbage : Array UInt64 := #[]
-  ldGarbageIdx : Nat := 0
   -- ===== host environment =====
   fds : Array (Option FdEntry) := #[]
   console : ByteArray := ByteArray.empty
