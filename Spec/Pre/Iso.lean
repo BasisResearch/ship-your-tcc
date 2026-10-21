@@ -29,6 +29,7 @@ def extNone : Ext where
 plain `char`, a single include directory `/include`. -/
 def cfgIso : PreCfg where
   trigraphs := true
+  c11Prefixes := true
   extraIdChar := fun _ => false
   extraSpace := fun _ => false
   predefs := bs "#define __STDC__ 1\n#define __STDC_HOSTED__ 1\n#define __STDC_VERSION__ 201112L\n"

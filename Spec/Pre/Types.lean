@@ -106,8 +106,8 @@ structure Ext where
   /-- `#include_next` (GNU): continue the header search after the place the
   current file was found. -/
   includeNext : Bool
-  /-- `#pragma once`: a file is not included again (keyed by the path it was
-  opened with). -/
+  /-- `#pragma once`: a file is not included again (the same file: its path
+  after resolving `.`, `..` and repeated `/`). -/
   pragmaOnce : Bool
   /-- `#pragma push_macro("X")` / `#pragma pop_macro("X")`. -/
   pushPopMacro : Bool
@@ -149,6 +149,11 @@ structure PreCfg where
   /-- Phase 1 (§5.1.1.2p1): replace the nine trigraph sequences (§5.2.1.1).
   ISO C11 requires it; tcc does not implement trigraphs (`cfgTcc`: false). -/
   trigraphs : Bool
+  /-- The `u8`, `u` and `U` prefixes of string literals and character
+  constants (§6.4.5, §6.4.4.4), new in C11. tcc's default mode is C99
+  (`__STDC_VERSION__` 199901L), whose grammar has only `L`: there `u8"a"` is
+  the identifier `u8` followed by a string literal (`cfgTcc`: false). -/
+  c11Prefixes : Bool
   /-- §6.4.2.1p1: "other implementation-defined characters" allowed in
   identifiers (tcc: `$` and every byte ≥ 0x80). -/
   extraIdChar : UInt8 → Bool

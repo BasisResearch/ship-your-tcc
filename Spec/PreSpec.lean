@@ -11,8 +11,9 @@
     pre_spec --lex FILE      phase 1–3 tokens only (same format, no directives)
     pre_spec --check-fs FILE the compiled-in image FS equals FILE's headers
 
-The file system is read from an fs.list (`/path/in/image=host/file` lines,
-the `.h` entries), or is the compiled-in `imageFS` (`--image-fs`).
+The file system is read from an fs.list (`/path/in/image=host/file` lines;
+archives and objects are left out), or is the compiled-in `imageFS`
+(`--image-fs`, the default).
 -/
 import Spec.Pre
 import Spec.Pre.Tcc.Cfg
@@ -36,13 +37,17 @@ def readBytes (p : String) : IO Bytes := do
   let b ← IO.FS.readBinFile p
   pure b.toList
 
-def loadFsList (p : String) : IO FileSys := do
+/-- The entries of an fs.list: with `headersOnly` the `.h` files, else every
+file but archives and objects. -/
+def loadFsList (p : String) (headersOnly : Bool := false) : IO FileSys := do
   let txt ← IO.FS.readFile p
   let mut files : List (Bytes × Bytes) := []
   for line in txt.splitOn "\n" do
     match line.splitOn "=" with
     | path :: rest =>
-      if path.endsWith ".h" ∧ !rest.isEmpty then
+      let keep := if headersOnly then path.endsWith ".h"
+        else !(path.endsWith ".a" || path.endsWith ".o")
+      if keep ∧ !rest.isEmpty then
         let host := "=".intercalate rest
         let c ← readBytes host
         files := files ++ [(bs path, c)]
@@ -83,7 +88,7 @@ def main (args : List String) : IO UInt32 := do
   let out ← IO.getStdout
   let some file := o.file | do IO.eprintln "usage: pre_spec [options] FILE"; return 2
   if o.checkFs then
-    let fs ← loadFsList file
+    let fs ← loadFsList file (headersOnly := true)
     let img := Tcc.imageFS
     let ok := fs.files.length = img.files.length ∧
       fs.files.all (fun (p, c) => img.lookup p = some c)

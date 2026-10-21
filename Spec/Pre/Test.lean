@@ -181,4 +181,14 @@ yes
 " "yes"
 #guard ppFails cfgIso testFS "#if 9223372036854775807 + 1\n#endif\n"
 
+/-! ### Digraphs (§6.4.6p3) are punctuators, spelled as written. -/
+#guard both "%:define DG(a) %:a
+int x<:2:> = <% 1 %>; DG(y)
+" "int x<:2:> = <% 1 %>; \"y\""
+
+/-! ### C11's `u8`/`u`/`U` prefixes: one token in C11 (`cfgIso`), an
+identifier and a literal in C99 (tcc's default mode). -/
+#guard ppIs cfgIso testFS "#define u8 X\nu8\"a\"\n" "u8\"a\""
+#guard ppIs Tcc.cfgTcc testFS "#define u8 X\nu8\"a\"\n" "X \"a\""
+
 end CSem.Pre.Test

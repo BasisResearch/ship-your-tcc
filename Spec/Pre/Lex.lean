@@ -13,7 +13,8 @@ sequence of characters that could constitute a preprocessing token"
   implementation-defined characters `PreCfg.extraIdChar`;
 * pp-number (§6.4.8);
 * character-constant (§6.4.4.4) with prefixes `L`, `u`, `U`;
-* string-literal (§6.4.5) with prefixes `u8`, `u`, `U`, `L`;
+* string-literal (§6.4.5) with prefixes `u8`, `u`, `U`, `L` (the first
+  three only with `PreCfg.c11Prefixes`: C99 has only `L`);
 * punctuator (§6.4.6), digraphs included;
 * any other single non-white-space character.
 
@@ -171,8 +172,8 @@ def lexToken (cfg : PreCfg) (hdr : Bool) (fuel : Nat) (cs : List PChar) : PPKind
       | [] => none
     let prefixed : Option (PPKind × Bytes × List PChar) :=
       if c = 39 ∨ c = 34 then lit [] cs
-      else if c = 76 ∨ c = 85 then lit [c] rest                 -- L U
-      else if c = 117 then                                        -- u, u8
+      else if c = 76 ∨ (cfg.c11Prefixes ∧ c = 85) then lit [c] rest    -- L U
+      else if cfg.c11Prefixes ∧ c = 117 then                          -- u, u8
         match rest with
         | e :: r' =>
           if e.c = 56 then

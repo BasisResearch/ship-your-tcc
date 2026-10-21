@@ -15,6 +15,8 @@ For each C file (default: every corpus file, see `default_files`):
 <root> is a per-worker directory whose lib/tcc/include and include are
 symlinks to c/build/fs/{tccinclude,include} (the image's tree) and whose
 prog.c is the file under test, so every include resolves as in the image.
+Files the test includes by a plain `"name"` that sit next to it are copied
+beside prog.c (and given to the spec as /name).
 
 Normalisation of the -E outputs (the documented rule, results/pre/f2-diff.md):
   1. line markers (`# N "file" ...`, `#line N "file"`) are dropped;
@@ -162,16 +164,34 @@ def date_time(root):
     return (m.group(1), m.group(2)) if m else ('??? ?? ????', '??:??:??')
 
 
+def local_headers(path):
+    """The files a test names in `#include "x"` (x without a directory) that
+    sit next to it: they are placed beside /prog.c, as /x."""
+    d = os.path.dirname(path)
+    names = re.findall(rb'#\s*include\s*"([^"/]+)"', open(path, 'rb').read())
+    return sorted({n.decode() for n in names if os.path.isfile(os.path.join(d, n.decode()))})
+
+
 def one(path, root, tmpdir, want_gcc=True):
     shutil.copyfile(path, os.path.join(root, 'prog.c'))
     prog = os.path.join(root, 'prog.c')
+    for n in os.listdir(root):
+        if n not in ('prog.c', 'predefs.h', 'lib', 'include', 'dt.c', 'fs.list'):
+            os.unlink(os.path.join(root, n))
+    extra = local_headers(path)
+    with open(os.path.join(root, 'fs.list'), 'w') as f:
+        f.write(open(FSLIST).read())
+        for n in extra:
+            shutil.copyfile(os.path.join(os.path.dirname(path), n), os.path.join(root, n))
+            f.write('/%s=%s\n' % (n, os.path.join(root, n)))
     inc = ['-I' + os.path.join(root, 'lib', 'tcc', 'include'), '-I' + os.path.join(root, 'include')]
     date, time = date_time(root)
     trc, tout, terr = run([TCC, '-E', '-nostdinc'] + inc + [prog])
     src = open(path, 'rb').read()
     if b'__DATE__' in src or b'__TIME__' in src:
         date, time = date_time(root)
-    src_rc, sout, _ = run([PRE_SPEC, '--cfg', 'E', '--fslist', FSLIST, '--date', date, '--time', time, prog])
+    src_rc, sout, _ = run([PRE_SPEC, '--cfg', 'E', '--fslist', os.path.join(root, 'fs.list'),
+                           '--date', date, '--time', time, prog])
     stoks, serr = parse_toks(sout)
     res = {'file': path, 'spec_err': serr, 'tcc_rc': trc, 'tcc_err': terr.strip().split('\n')[0] if trc else ''}
     if trc == 0:
@@ -217,6 +237,16 @@ def one(path, root, tmpdir, want_gcc=True):
                 res['gcc_ctx'] = '%s | %s' % (' '.join(s for _, s in stoks[max(0, i - 6):i + 6]),
                                               ' '.join(s for _, s in gtoks[max(0, j - 6):j + 6]))
     return res
+
+
+def display(path, corpus_dir):
+    """A file's name in reports: relative to the repository, or corpus/… for
+    the corpus copies (which may live in another checkout)."""
+    a = os.path.abspath(path)
+    c = os.path.abspath(corpus_dir)
+    if a.startswith(c + os.sep):
+        return os.path.join('corpus', os.path.relpath(a, c))
+    return os.path.relpath(a, ROOT)
 
 
 def default_files(corpus_dir):
@@ -265,7 +295,7 @@ def main():
                         free.append(r)
             for res in ex.map(task, files):
                 results.append(res)
-                line = '%-60s tcc=%-10s gcc=%-10s' % (os.path.relpath(res['file'], ROOT)[-60:],
+                line = '%-60s tcc=%-10s gcc=%-10s' % (display(res['file'], a.corpus_dir)[-60:],
                                                       res['tcc'], res.get('gcc', '-'))
                 if res.get('spec_err'):
                     line += ' spec: ' + res['spec_err']
@@ -285,7 +315,7 @@ def main():
             f.write('file\tvs_tcc\tvs_gcc\tspec_tokens\ttcc_tokens\tspec_error\ttcc_error\tgcc_error\ttcc_context\tgcc_context\n')
             for r in results:
                 f.write('\t'.join(str(x).replace('\t', ' ') for x in (
-                    os.path.relpath(r['file'], ROOT), r['tcc'], r.get('gcc', '-'), r['spec_n'], r['tcc_n'],
+                    display(r['file'], a.corpus_dir), r['tcc'], r.get('gcc', '-'), r['spec_n'], r['tcc_n'],
                     r.get('spec_err') or '', r.get('tcc_err', ''), r.get('gcc_err', ''),
                     r.get('tcc_ctx', ''), r.get('gcc_ctx', ''))) + '\n')
 

@@ -6,3 +6,4 @@ import Spec.Pre.IfExpr
 import Spec.Pre.Phase4
 import Spec.Pre.Main
 import Spec.Pre.Iso
+import Spec.Pre.Compare

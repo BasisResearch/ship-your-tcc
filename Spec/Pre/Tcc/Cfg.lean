@@ -15,7 +15,8 @@ tcc's choices for C11 translation phases 1–4 (`CSem.Pre.PreCfg`).
   TCC_BAREMETAL type macros. Its first 15 `#define` lines were checked
   equal, in order, to `riscv64-tcc -dM -E` of an empty file.
 
-Implementation-defined choices (tccpp.c): no trigraphs; `$` and bytes
+tcc's default language is C99 (`cversion` 199901): only the `L` prefix
+(`c11Prefixes` false). Implementation-defined choices (tccpp.c): no trigraphs; `$` and bytes
 ≥ 0x80 are identifier characters (`tccpp_new`, `dollars_in_identifiers`);
 CR is white space (`is_space`); `<…>` from macro-replaced tokens is joined
 without spaces (`parse_include`); plain `char` unsigned (riscv64-gen.c
@@ -59,6 +60,7 @@ def predefsE : String := "#define __TINYC__ 928\n#define __riscv 1\n#define __ri
 /-- The image's `tcc -run /prog.c`. -/
 def cfgTcc : PreCfg where
   trigraphs := false
+  c11Prefixes := false
   extraIdChar := fun c => c = 36 ∨ c ≥ 128
   extraSpace := fun c => c = 13
   predefs := bs predefsRun

@@ -335,7 +335,23 @@ def expand (ctx : ExpCtx) : Nat → Nat → List Tok → List Tok → Except Pre
           | some (h, rest') =>
             let found := ctx.hasInc (t.spell = bs "__has_include_next") h
             expand ctx fuel ctr rest' (numTok t (if found then 1 else 0) :: acc)
-          | none => .error (ctx.err .ifExpr t.line "malformed __has_include")
+          | none =>
+            -- otherwise the parenthesized tokens are macro-replaced first and
+            -- must then form a header name (as for `#include`, §6.10.2p4)
+            match rest with
+            | lp :: rest1 =>
+              if isPunct lp "(" then
+                match splitArgs 0 true rest1 0 [] [] with
+                | some ([inner], rp, rest2) => do
+                  let (ctr', ex) ← expand ctx fuel ctr inner []
+                  match hasIncludeOperand ctx.cfg (lp :: ex ++ [rp]) with
+                  | some (h, _) =>
+                    let found := ctx.hasInc (t.spell = bs "__has_include_next") h
+                    expand ctx fuel ctr' rest2 (numTok t (if found then 1 else 0) :: acc)
+                  | none => .error (ctx.err .ifExpr t.line "malformed __has_include")
+                | _ => .error (ctx.err .ifExpr t.line "malformed __has_include")
+              else .error (ctx.err .ifExpr t.line "malformed __has_include")
+            | [] => .error (ctx.err .ifExpr t.line "malformed __has_include")
         else if ¬ctx.inIf ∧ t.spell = bs "_Pragma" then
           match rest with
           | lp :: s :: rp :: rest' =>
