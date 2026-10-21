@@ -1,5 +1,5 @@
 #!/bin/bash
-# Usage: scripts/test_tcc_tests2.sh
+# Usage: scripts/test_tcc_tests2.sh [--compile-only]
 #
 # Extra regression signal for the TCC_RV64I_SOFT code generator: tcc's own
 # tests/tests2 programs, compiled by build/cross/riscv64-tcc -c, linked with
@@ -55,6 +55,23 @@ for f in "$T2"/*.c; do
       && { scripts/check_isa.sh -q "$OUT/$n.elf" > "$OUT/$n.elfisa" 2>&1; echo $? > "$OUT/$n.elfisa.rc"; }
   fi
 done
+# Compiler/preprocessor work can exercise the whole existing compilation,
+# link and ISA lane without repeating long floating-point Sail executions.
+if [ "${1:-}" = --compile-only ]; then
+  pass=0; fail=0; failed=""
+  for n in "${names[@]}"; do
+    if [ -f "$OUT/$n.elf" ] && [ "$(cat "$OUT/$n.isa.rc")" = 0 ] \
+       && [ "$(cat "$OUT/$n.elfisa.rc")" = 0 ]; then
+      pass=$((pass+1))
+    else
+      fail=$((fail+1)); failed="$failed $n"
+    fi
+  done
+  echo "tests2 compile/link/ISA: attempted=${#names[@]} pass=$pass fail=$fail skipped=$skipped"
+  echo "failed:$failed"
+  [ "$fail" = 0 ]; exit $?
+fi
+
 run1() {
   n=$1; elf=$OUT/$n.elf
   [ -f "$elf" ] || exit 0
