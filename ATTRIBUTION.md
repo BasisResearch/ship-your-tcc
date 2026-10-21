@@ -30,6 +30,7 @@ components keep their own licences.
 | `csem/native-lake/`, `csem/lean_frontend/CSemRun.lean`, `csem/lean_frontend/CerbDriver.lean` (upstream `Main.lean` with `main` renamed `cerbMain`) | ours, on top of the fork (`csem/PORT-4.34.md`) | BSD-2-Clause, as `csem/` |
 | `scripts/csem_lane.py` | after the fork's `scripts/test_exec.sh` (its taxonomy and verdict tokens) | ours |
 | `scripts/csem_libc_prep.sh` | after the fork's `scripts/libc_prep.sh` | ours |
+| `csem/cparser/CSemCParser/`, `scripts/csem_parse_cmp.py` | Lean transcription of Cerberus `parsers/c/{c_lexer.mll,c_parser.mly,lexer_feedback.ml}` and `backend/lean_export/cabs_json.ml` at the `vendor/CSEM_REV` pin; recovered F1 draft, compile fixes and differential harness (ours) | BSD-2-Clause, as `csem/` |
 
 ## Copied from the sister projects
 | here | there | changes |

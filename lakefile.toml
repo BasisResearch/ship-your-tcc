@@ -343,6 +343,21 @@ name = "memory-access-test"
 srcDir = "csem/lean_frontend/test"
 root = "Unit.MemoryAccess"
 
+# F1a: the C grammar in Lean (csem/cparser; DESIGN-COMPILER.md §3.1): lexer and
+# recursive-descent parser for Cerberus's menhir grammar, producing the fork's
+# Cabs; `csem_cparse` compares it with `cerberus --cabs-json`
+# (scripts/csem_parse_cmp.py, results/csem/f1a-parser.md).
+[[lean_lib]]
+name = "CSemCParser"
+srcDir = "csem/cparser"
+globs = ["CSemCParser", "CSemCParser.+"]
+leanOptions = { autoImplicit = false }
+
+[[lean_exe]]
+name = "csem_cparse"
+srcDir = "csem/cparser"
+root = "CSemCParser.Main"
+
 # The F0 statement of `tcc_run_correct` over CSem (Tcc/CSem/: Supported,
 # Statement); needs CerberusLean, so it is built only under --csem.
 [[lean_lib]]
