@@ -363,3 +363,13 @@ globs = ["Spec.Pre", "Spec.Pre.+"]
 [[lean_exe]]
 name = "pre_spec"
 root = "Spec.PreSpec"
+# --- Phase 4 F3: the executable Lean model of tcc (DESIGN-COMPILER.md §4.1) ---
+# Not a default target. `lake build tcc_model` builds the driver
+# (scripts/model_diff.py runs it against the fast reference).
+[[lean_lib]]
+name = "TccModel"
+globs = ["Tcc.Model.+"]
+
+[[lean_exe]]
+name = "tcc_model"
+root = "Tcc.ModelMain"

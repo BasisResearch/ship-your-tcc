@@ -10,6 +10,7 @@ components keep their own licences.
 |---|---|---|
 | `vendor/tinycc/` | tinycc-mirror-repository, mob, commit 43c7708 (`vendor/TINYCC_REV`) | LGPL-2.1 (`vendor/tinycc/COPYING`) |
 | `patches/0001-tcc-rv64i-soft.patch`, `patches/0002-tcc-baremetal-run.patch` | changes to tinycc (ours) | LGPL-2.1, as tinycc |
+| `Tcc/Model/*.lean`, `Tcc/ModelMain.lean`, `scripts/gen_model_tok.py` | manual executable translation of tinycc 43c7708 with patches 0001/0002; recovered previous-agent F3 work (results/model/recovery-audit.md); token constants generated from the patched sources | LGPL-2.1, as tinycc; executable validation only, correctness proofs open |
 | `c/src/runmain.c` | tinycc `lib/runmain.c` @43c7708; ends in the program's newlib `exit()`, no `__rt_exit`/longjmp | LGPL-2.1 |
 | image `/lib/tcc/libtcc1.a` | tinycc `lib/` (builtin, alloca, armflush, dsohandle), built by `scripts/build_cross_tcc.sh` | LGPL-2.1 |
 | `patches/certora/0001-printf-interp-lp64-and-clightgen-printf-builtin.patch` | changes to Certora/clean @123f7f7 driver code (ours; no proved code changed) | as CompCert (non-commercial INRIA licence / GPL parts) |

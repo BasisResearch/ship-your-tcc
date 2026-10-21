@@ -32,6 +32,18 @@ Such runs cannot establish independent byte equality. Remove that input
 from acceptance tests and investigate the reported newlib literal conversion
 defect. Matching refusals likewise do not satisfy the F3 success criterion.
 
+The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
+two at a time, following MANAGER.md. Slot 1 completes patch 0003; slot 2
+fixes the binary128 literal defect. Built-in agents have checkpointed and
+stopped. Parser recovery is committed at `7dabfe1` for subsequent review:
+375/664 agree with Menhir, with missing `else` dispatch among the failures.
+
+F3 recovery includes 398 independent identical arenas out of 401 inputs
+against the fast reference, two binary128 mismatches and one matching
+refusal. This is not the Sail exit criterion. The inherited unfinished
+assembler modules are preserved in `build/recovery/assembler/` outside the
+model's import closure.
+
 Builds are serialized across these lanes, capped at 12 GB. The two existing
 untracked `results/review/*.json` files in main are preserved pending review.
 

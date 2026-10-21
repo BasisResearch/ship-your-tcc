@@ -76,6 +76,8 @@ python3 scripts/gen_printf_layout.py --check || fail "generated Tcc/Printf/Sum d
 # the CompileCut chain, table and pin proofs are regenerated from the committed
 # trace digest results/p3/ccp-digest.json (the checkpoint states by hash)
 python3 scripts/gen_ccp.py --check || fail "generated Tcc/Ccp/Sum drifted (scripts/gen_ccp.py)"
+# Executable compiler model token numbers must follow the patched tcc headers.
+python3 scripts/gen_model_tok.py --check || fail "generated Tcc/Model/Tok drifted"
 # CSem.Pre's tcc configuration and image file system (Spec/Pre/Tcc/), from the
 # patched tcc sources, the cross tcc's -dM listing and c/build/fs.list
 if [ -f c/build/fs.list ] && [ -x build/cross/riscv64-tcc ]; then
