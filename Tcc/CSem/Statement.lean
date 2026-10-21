@@ -107,6 +107,11 @@ structure Config where
   argv : List String
   /-- the observable exit status of `main`'s value -/
   exitStatus : Int → Nat
+  /-- the file system's embedded files other than `/prog.c` (DESIGN §3.3 "filesystem", §3.4 pathleak):
+  absolute paths as gen_embed.sh writes them, with their bytes; `verdicts` starts the program in
+  `CerbFS.fs_initial_state_of` of this table with `/prog.c` = the source put first, as
+  run_tcc_sail.sh's gen_embed.sh call orders it -/
+  fsFiles : List (String × List UInt8)
 
 /-- What one execution (one branch of the ND tree) ends in. -/
 inductive Verdict where
@@ -202,7 +207,7 @@ def verdicts (cfg : Config) (src : List UInt8) (n : Nat) : List Verdict :=
       | .Result linked =>
         let runFile := convert_file linked
         let (drSt, _) := initial_driver_state supply cfg.addressSpaceTop digest runFile
-          CerbFS.fs_initial_state
+          (CerbFS.fs_initial_state_of (("/prog.c", src) :: cfg.fsFiles))
         (CerbND.runND (drive runFile.enumDefs runFile.tagDefs false runFile cfg.argv) drSt).map
           leafVerdict
 
@@ -242,6 +247,9 @@ structure F0Params where
   (an `ElfPin` of the base image with the embedded file table's `/prog.c`
   entry holding `src`) -/
   image : List UInt8 → ELF64File → Prop
+  /-- the image's embedded file table other than `/prog.c` (the header tree, the archives, tcc's own
+  files: c/build/fs.list); F6 pins it as the table of the same base image `image` describes -/
+  imageFiles : List (String × List UInt8)
 
 /-- **`Supported src`** (DESIGN §1, §5): the front end accepts `src` and no
 construct of §5's first table occurs in it. -/
@@ -268,7 +276,7 @@ def TccImage (P : F0Params) (src : List UInt8) (elf : ELF64File) : Prop := P.ima
 newlib errno, and the ordinary no-extra-library image command line. The
 allocator cursor is an executable resolution, pending allocation recovery;
 it is not a claim about the image's stack/data/heap addresses. -/
-def cfgTcc (fe : CSem.FrontEnd) : CSem.Config where
+def cfgTcc (fe : CSem.FrontEnd) (files : List (String × List UInt8)) : CSem.Config where
   frontEnd := fe
   implementation := CerbImplCfg.tccRV64
   implFileName := CerbImplCfg.tccRV64.implFileName
@@ -281,6 +289,7 @@ def cfgTcc (fe : CSem.FrontEnd) : CSem.Config where
   argv := [CerbImplCfg.tccRV64.argv0]
   /- the image's `_exit` sends `(uint32_t)code` through HTIF (c/src/htif.c) -/
   exitStatus := fun v => (v % 2 ^ CerbImplCfg.tccRV64.exitBits).toNat
+  fsFiles := files
 
 /-- **The headline, F0 form** (DESIGN-COMPILER.md §1, no refusal disjunct):
 for every C source with no undefined behaviour under CSem, supported and
@@ -288,13 +297,13 @@ fitting, any observation of `tcc -run` on the Sail RV64I model from reset on
 the image is one CSem allows. -/
 def TccRunCorrect_Statement (P : F0Params) : Prop :=
   ∀ src : List UInt8,
-  CSem.NoUB (cfgTcc P.frontEnd) src →
+  CSem.NoUB (cfgTcc P.frontEnd P.imageFiles) src →
   Supported P.frontEnd src →
   Fits P src →
   ∀ elf, TccImage P src elf →
   ∀ c₀, Boot.ElfReset elf c₀ →
   ∀ obs, Sail.Observes c₀ obs →
-  obs ∈ CSem.outcomes (cfgTcc P.frontEnd) src
+  obs ∈ CSem.outcomes (cfgTcc P.frontEnd P.imageFiles) src
 
 /-- The preprocessing spec's interface (DESIGN §1.1), as named placeholders
 until F2's `CSem.Pre` (Spec/Pre/) and F3's `TccModel` exist. -/
@@ -317,8 +326,8 @@ def sumSrc : List UInt8 := (include_str "../../c/tests/p3/sum.c").toUTF8.toList
 /-- **The non-vacuity witness, F0 form** (DESIGN §1.2), for an ELF the
 caller pins (F8 instantiates it with `TccSumElf`). -/
 def TccRunCorrectWitnessSum_Statement (P : F0Params) (sumElf : ELF64File) : Prop :=
-  CSem.NoUB (cfgTcc P.frontEnd) sumSrc ∧ Supported P.frontEnd sumSrc ∧ Fits P sumSrc ∧
+  CSem.NoUB (cfgTcc P.frontEnd P.imageFiles) sumSrc ∧ Supported P.frontEnd sumSrc ∧ Fits P sumSrc ∧
   ∃ c₀ out, Boot.ElfReset sumElf c₀ ∧ Halts c₀ out 0 ∧
-    Observation.halts out 0 ∈ CSem.outcomes (cfgTcc P.frontEnd) sumSrc
+    Observation.halts out 0 ∈ CSem.outcomes (cfgTcc P.frontEnd P.imageFiles) sumSrc
 
 end Tcc

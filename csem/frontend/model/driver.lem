@@ -353,9 +353,11 @@ let drive_fs_step tid th_st dr_st fs_oper =
     | Core_run.FS_CLOSE fd ->
       return $ Fs.fs_close dr_st.fs_state fd
     | Core_run.FS_WRITE fd buf size ->
-      match natFromInteger fd with
-      | 0 ->
-        error "driver_fs_step: stdin not supported yet."
+      (* ship-your-tcc F1b: a console stream is found in the file model's
+         descriptor table (fs_console_fd), not by number: write on fd 0 is
+         EBADF and a closed or reused fd 1/2 is the model's (htif.c _write);
+         was: fd 0 an error "stdin not supported yet", fds 1/2 always console *)
+      match Fs.fs_console_fd dr_st.fs_state fd with
       | 1 ->
         update_stdout (List.take (natFromInteger size) buf)
       | 2 ->
@@ -410,7 +412,15 @@ let drive_fs_step tid th_st dr_st fs_oper =
         | Left err ->
           error "TODO: printf error"
         | Right (Undefined.Defined buf) ->
-          update_stdout buf
+          (* ship-your-tcc F1b: fd 1 as for FS_WRITE below *)
+          match Fs.fs_console_fd dr_st.fs_state 1 with
+          | 1 ->
+            update_stdout buf
+          | 2 ->
+            update_stderr buf
+          | _ ->
+            return $ Fs.fs_write dr_st.fs_state 1 buf (integerFromNat $ List.length buf)
+          end
         | Right (Undefined.Error loc str) ->
           ND.kill (ND.Error loc str)
         | Right (Undefined.Undef loc ubs) ->
@@ -422,9 +432,8 @@ let drive_fs_step tid th_st dr_st fs_oper =
           error "TODO: vprintf error"
         | Right (Undefined.Defined buf) ->
           let size = integerFromNat $ List.length buf in
-          match natFromInteger fd with
-          | 0 ->
-            error "vprintf trying to output in the stdin"
+          (* ship-your-tcc F1b: console streams as for FS_WRITE above *)
+          match Fs.fs_console_fd dr_st.fs_state fd with
           | 1 ->
             update_stdout buf
           | 2 ->

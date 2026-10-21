@@ -169,3 +169,10 @@ declare lean target_rep function fs_rewinddir = `CerbFS.fs_rewinddir`
 val fs_closedir: fs_state -> integer -> fs_state * (either fs_error nat)
 declare ocaml target_rep function fs_closedir = `Sibylfs.run_closedir`
 declare lean target_rep function fs_closedir = `CerbFS.fs_closedir`
+
+(* ship-your-tcc F1b (Lean only): which console stream descriptor fd is in the
+   model's descriptor table: 1 = stdout, 2 = stderr, 0 = none (a file, stdin, or
+   not open). driver.lem routes a write on a console stream to the stdout/stderr
+   records and every other write to fs_write (CerbFS.lean header). *)
+val fs_console_fd: fs_state -> integer -> nat
+declare lean target_rep function fs_console_fd = `CerbFS.fs_console_fd`

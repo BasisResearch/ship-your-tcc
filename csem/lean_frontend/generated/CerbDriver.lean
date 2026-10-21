@@ -1060,6 +1060,9 @@ def runPipeline [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (runtime : St
     (libc : Option (String × List String))
     (argv0 : String)
     (progArgs : List String)
+    -- the initial file system (ship-your-tcc F1b: `loadImageFs`, the fork's
+    -- `CerbFS.fs_initial_state` without --image-fs)
+    (fsState : CerbFS.FsState)
     (tunits : List (String × translation_unit)) : IO UInt8 := do
   -- Progress chatter: human mode only (batch and pp-core keep stdout clean)
   let quiet := batch || ppCore
@@ -1214,7 +1217,6 @@ def runPipeline [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (runtime : St
     -- C1: CerbMem's struct/union layout reads receive runFile.tagDefs by
     -- VALUE (reader_consumer, mem.lem) — no global set is needed or
     -- possible.
-    let fsState := CerbFS.fs_initial_state
     -- Entry shape (b), charter section 1.3: the supply-parameterized
     -- pure constructor — one draw (the run-init seed) from the stream.
     -- The address-space top is the run's parameter (the same value the
@@ -1499,6 +1501,32 @@ def refuseSwitchesParseCore (tok : String) (next? : Option String) : IO Unit := 
   IO.eprintln s!"cerberus-lean: refused — {flag}: --parse-core runs only the Core text parser, which reads no switch set; the switch would be silently ignored (see CONTRACT.md §2)"
   IO.Process.exit 2
 
+/-- `--image-fs FILE` / `--image-fs-file SPEC` (ship-your-tcc F1b): the initial file system is the tcc -run
+    image's (`CerbFS.fs_initial_state_of`) with the files the specs name, each `/path/in/image=host/file`
+    (gen_embed.sh's syntax: the path is before the first `=`, the host file after it). The `SPEC`s come
+    first, in order, then FILE's non-blank lines (c/build/fs.list), as gen_embed.sh orders its positional
+    specs before `--list`; `run_tcc_sail.sh` passes `/prog.c=<the program>` positionally. Without either
+    option the state is the fork's `CerbFS.fs_initial_state` (the root alone). A missing host file is
+    refused (exit 2), as gen_embed.sh fails. -/
+def loadImageFs (specs : List String) (list : Option String) : IO CerbFS.FsState := do
+  if specs.isEmpty && list.isNone then return CerbFS.fs_initial_state
+  let listSpecs ← match list with
+    | none => pure []
+    | some f => do
+      unless ← System.FilePath.pathExists f do
+        IO.eprintln s!"cerberus-lean: refused — --image-fs {f}: no such file"
+        IO.Process.exit 2
+      pure (((← IO.FS.readFile f).splitOn "\n").filter (fun l => !l.trim.isEmpty))
+  let mut files : Array (String × List UInt8) := #[]
+  for spec in specs ++ listSpecs do
+    let path := (spec.splitOn "=").headD ""
+    let host := (spec.drop (path.length + 1)).toString
+    unless !host.isEmpty && (← System.FilePath.pathExists host) do
+      IO.eprintln s!"cerberus-lean: refused — image file spec '{spec}': no such host file (gen_embed.sh fails likewise)"
+      IO.Process.exit 2
+    files := files.push (path, (← IO.FS.readBinFile host).toList)
+  pure (CerbFS.fs_initial_state_of files.toList)
+
 def cerbMain (args : List String) : IO Unit := do
   -- Zero-discrepancy Z2-FL-03 (Z2 audit @ 9e86fe67c; fail-closed hygiene):
   -- a Lean `panic!` — this port's fail-stop mirror of every OCaml
@@ -1580,6 +1608,10 @@ def cerbMain (args : List String) : IO Unit := do
   let mut switchesArg : Option (String × String) := none
   let mut implArg : Option String := none
   let mut argv0Arg : Option String := none
+  -- --image-fs FILE / --image-fs-file SPEC (ship-your-tcc F1b): the tcc -run image's
+  -- file system as the initial state (loadImageFs)
+  let mut imageFsList : Option String := none
+  let mut imageFsSpecs : List String := []
   let mut restArgs : List String := []
   -- --parse-core consumes its file list itself (below); nothing to scan
   let mut pending := if parseCoreMode then [] else rest1
@@ -1601,6 +1633,12 @@ def cerbMain (args : List String) : IO Unit := do
     | "--trace-nodes" :: rest => traceNodes := true; pending := rest
     | "--impl" :: v :: rest => implArg := some v; pending := rest
     | "--argv0" :: v :: rest => argv0Arg := some v; pending := rest
+    | "--image-fs" :: v :: rest =>
+      if imageFsList.isSome then
+        IO.eprintln "cerberus-lean: option --image-fs cannot be repeated"
+        IO.Process.exit 2
+      imageFsList := some v; pending := rest
+    | "--image-fs-file" :: v :: rest => imageFsSpecs := imageFsSpecs ++ [v]; pending := rest
     | "--fuel" :: v :: rest => fuelStr := some v; pending := rest
     | "--address-space-top" :: v :: rest => addressSpaceTopStr := some v; pending := rest
     | "--runtime" :: v :: rest =>
@@ -1612,9 +1650,10 @@ def cerbMain (args : List String) : IO Unit := do
         IO.Process.exit 2
       switchesArg := some (s!"--switches {v}", v); pending := rest
     | ["--libc"] | ["--libc-tu"] | ["--call"] | ["--call-args"]
-    | ["--impl"] | ["--argv0"] | ["--args"] | ["--fuel"] | ["--address-space-top"] | ["--runtime"] | ["--switches"] =>
+    | ["--impl"] | ["--argv0"] | ["--args"] | ["--fuel"] | ["--address-space-top"] | ["--runtime"] | ["--switches"]
+    | ["--image-fs"] | ["--image-fs-file"] =>
       IO.eprintln "cerberus-lean: --libc/--libc-tu/--call/--call-args/\
-        --args/--fuel/--address-space-top/--runtime/--switches require an argument"
+        --args/--fuel/--address-space-top/--runtime/--switches/--image-fs/--image-fs-file require an argument"
       IO.Process.exit 1
     | a :: rest =>
       if a.startsWith "--runtime=" then
@@ -1807,8 +1846,9 @@ def cerbMain (args : List String) : IO Unit := do
   -- general path, the set only selects the arms (no PNVI-only entry point). No other
   -- instance of `CerbGlobal.Switches` exists in this repository
   -- (speedbump: `scripts/check_no_fuel_numerals.sh` rule W1).
+  let fsState ← loadImageFs imageFsSpecs imageFsList
   let argv0 := argv0Arg.getD implParams.argv0
   let code ← (letI : CerbImplCfg.Impl := ⟨implParams⟩; letI : LemFuel := ⟨fuel⟩; letI : CerbGlobal.Switches := ⟨switchSet⟩; runPipeline runtimeDir batchMode ppCoreMode firstTrace
-    addressSpaceTop callFn traceNodes libc argv0 progArgs tunits)
+    addressSpaceTop callFn traceNodes libc argv0 progArgs fsState tunits)
   if code != 0 then
     IO.Process.exit code

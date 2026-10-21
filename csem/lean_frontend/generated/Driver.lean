@@ -532,13 +532,14 @@ def drive_fs_step [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
   | FS_OPEN path oflag mode_opt => return3 (CerbFS.fs_open dr_st.fs_state0 path oflag mode_opt)
   | FS_CLOSE fd => return3 (CerbFS.fs_close dr_st.fs_state0 fd)
   | FS_WRITE fd buf size =>
-    (match Int.natAbs (lemIntFromInteger fd) with
-     | 0 =>
-       (failwithI "driver_fs_step: stdin not supported yet." : ndM Unit step_kind driver_error
-         (mem_constraint CerbMem.IntegerValue) driver_state)
-     | 1 => update_stdout (List.take (Int.natAbs (lemIntFromInteger size)) buf)
-     | 2 => update_stderr (List.take (Int.natAbs (lemIntFromInteger size)) buf)
-     | _ => return3 (CerbFS.fs_write dr_st.fs_state0 fd buf size))
+    (/- ship-your-tcc F1b: a console stream is found in the file model's
+         descriptor table (fs_console_fd), not by number: write on fd 0 is
+         EBADF and a closed or reused fd 1/2 is the model's (htif.c _write);
+         was: fd 0 an error "stdin not supported yet", fds 1/2 always console -/
+    match CerbFS.fs_console_fd dr_st.fs_state0 fd with
+    | 1 => update_stdout (List.take (Int.natAbs (lemIntFromInteger size)) buf)
+    | 2 => update_stderr (List.take (Int.natAbs (lemIntFromInteger size)) buf)
+    | _ => return3 (CerbFS.fs_write dr_st.fs_state0 fd buf size))
   | FS_READ fd ptr size => store_buffer ptr (CerbFS.fs_read dr_st.fs_state0 fd size)
   | FS_PWRITE fd buf size off => return3 (CerbFS.fs_pwrite dr_st.fs_state0 fd buf size off)
   | FS_PREAD fd ptr size off => store_buffer ptr (CerbFS.fs_pread dr_st.fs_state0 fd size off)
@@ -571,7 +572,13 @@ def drive_fs_step [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
         | Sum.inl err =>
           (failwithI "TODO: printf error" : ndM Unit step_kind driver_error
             (mem_constraint CerbMem.IntegerValue) driver_state)
-        | Sum.inr (Defined buf) => update_stdout buf
+        | Sum.inr (Defined buf) =>
+          (/- ship-your-tcc F1b: fd 1 as for FS_WRITE below -/
+          match CerbFS.fs_console_fd dr_st.fs_state0 ((1 : Int)) with
+          | 1 => update_stdout buf
+          | 2 => update_stderr buf
+          | _ =>
+            return3 (CerbFS.fs_write dr_st.fs_state0 ((1 : Int)) buf (Int.ofNat (List.length buf))))
         | Sum.inr (Error loc1 str) => kill (Error0 loc1 str)
         | Sum.inr (Undef loc1 ubs) => kill (Undef0 loc1 ubs))
   | FS_VPRINTF fd fmt ap =>
@@ -586,10 +593,8 @@ def drive_fs_step [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
             (mem_constraint CerbMem.IntegerValue) driver_state)
         | Sum.inr (Defined buf) =>
           (let size := Int.ofNat (List.length buf);
-           match Int.natAbs (lemIntFromInteger fd) with
-           | 0 =>
-             (failwithI "vprintf trying to output in the stdin" : ndM Unit step_kind driver_error
-               (mem_constraint CerbMem.IntegerValue) driver_state)
+           /- ship-your-tcc F1b: console streams as for FS_WRITE above -/
+           match CerbFS.fs_console_fd dr_st.fs_state0 fd with
            | 1 => update_stdout buf
            | 2 => update_stderr buf
            | _ => return3 (CerbFS.fs_write dr_st.fs_state0 fd buf size))

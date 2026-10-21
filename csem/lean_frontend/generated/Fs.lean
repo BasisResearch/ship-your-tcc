@@ -28,3 +28,7 @@ abbrev  fs_error := CerbFS.FsError
 
 abbrev  fs_state := CerbFS.FsState
  -/
+/- ship-your-tcc F1b (Lean only): which console stream descriptor fd is in the
+   model's descriptor table: 1 = stdout, 2 = stderr, 0 = none (a file, stdin, or
+   not open). driver.lem routes a write on a console stream to the stdout/stderr
+   records and every other write to fs_write (CerbFS.lean header). -/
