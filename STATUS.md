@@ -25,18 +25,20 @@ Takeover in progress, 2026-10-21. The approved target is
 | F1 ABI/allocation | `agent-a4ab6bbd8c0be5325` | review configuration/oracle; generated copies are incomplete, do not merge results blindly |
 | F1 filesystem | `agent-ad868c434f5f27398` | review actual image path behavior and FS tests |
 | F1 IEEE | `agent-a45cb08cf87ce958c` | review standalone arithmetic; connection to CSem remains open |
-| F3 compiler model | `agent-a05464165befb7074` (recovery merged) | binary128 patch/model reviewed: capped build and 45 targeted arena comparisons pass; broader comparison running |
+| F3 compiler model | `agent-a05464165befb7074` (recovery merged) | patch 0004 integrated: main gate, capped model build, 45 targeted arena comparisons and 156-vector stress arena pass; broader comparison running |
 
 F3 review found reference-derived long-double bytes supplied to the model.
-Such runs cannot establish independent byte equality. Remove that input
-from acceptance tests and investigate the reported newlib literal conversion
-defect. Matching refusals likewise do not satisfy the F3 success criterion.
+Such runs cannot establish independent byte equality. That input is now
+removed. Patch 0004 fixes compiler literals using exact integer rounding;
+public libc `strtold` still needs correction in the library lane. Matching refusals likewise do not satisfy the F3 success criterion.
 
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
-two at a time, following MANAGER.md. Slot 1 completes patch 0003; slot 2
-has handed off the binary128 fix and now completes the parser. Built-in
+two at a time, following MANAGER.md. Both Sol workers have handed off their results: patch 0003 passes its
+seven full-compiler Sail reproducers; the parser now has 614 exact Cabs
+agreements, 41 joint rejections and nine preprocessing failures. Lead
+review/integration is in progress. Built-in
 agents have checkpointed and stopped. Parser recovery is integrated:
-375/664 agree with Menhir, with missing `else` dispatch among the failures.
+the recovered baseline had 375/664 agreements, before the token-dispatch fix.
 
 F3 recovery includes 398 independent identical arenas out of 401 inputs
 against the fast reference, two binary128 mismatches and one matching

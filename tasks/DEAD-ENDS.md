@@ -33,3 +33,12 @@
   `git add` fails creating `.git/worktrees/agent-a05464165befb7074/index.lock`;
   commits require a worker environment with writable Git metadata. No
   alternate index/object-store workaround was attempted.
+
+- F3 reference limits: the 156-vector binary128 stress compilation needs about
+  574 million steps. A 400-million-step emulator stop was cached as an exit.
+  Limits/traps must be harness errors and old such cache entries rechecked;
+  successful compilation refusals and arena equality remain separate.
+- Worker launcher: bash resumes a running script by file offset after its
+  child exits. Editing that file during the wait corrupted both old launches
+  after their workers completed. Parse the whole body in a function or feed
+  a snapshot via stdin; retain the parent shell in this execution environment.

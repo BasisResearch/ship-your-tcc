@@ -92,9 +92,21 @@ python3 scripts/model_diff.py --no-report -j 4 tcc c/tests/model/ld_literal.c c/
 (9 seconds wall with cached reference runs). This includes both former
 mismatches, `t24_ldouble.c` and `t41_oldstyle_ldva.c`. Logs are in the
 recovery worktree's `build/ld-model-lead-{build,diff}.log`.
-A broader `all build/ld-stress.c` run is in progress; no final count is
-claimed for it here. The fast runner remains unverified rv64emu; the Sail
-output check above does not establish Sail arena equality.
+The exact 156-vector stress program also gives **one identical arena**:
+
+```
+python3 scripts/gen_ld_literal_tests.py --stress-out build/ld-stress.c
+MAX_STEPS=4000000000 python3 scripts/model_diff.py --no-report -j 4 build/ld-stress.c
+```
+
+The initial stress invocation used the reference's 400-million-step limit;
+its compilation needs about 574 million steps. That exposed a harness bug:
+emulator exhaustion was cached as a compiler exit. The harness now rejects
+limits/traps, rechecks such old cache entries, rejects missing/empty inputs,
+and prints refusal and harness-error columns. Raising this executable test's
+step count does not alter Lean elaboration budgets or model fuel.
+The fast runner remains unverified rv64emu; the Sail output check above
+does not establish Sail arena equality. Broader results are in f3-diff.md.
 
 ## Coordination and proof limitations
 
