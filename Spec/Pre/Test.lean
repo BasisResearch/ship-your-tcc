@@ -186,9 +186,8 @@ yes
 int x<:2:> = <% 1 %>; DG(y)
 " "int x<:2:> = <% 1 %>; \"y\""
 
-/-! ### C11's `u8`/`u`/`U` prefixes: one token in C11 (`cfgIso`), an
-identifier and a literal in C99 (tcc's default mode). -/
-#guard ppIs cfgIso testFS "#define u8 X\nu8\"a\"\n" "u8\"a\""
-#guard ppIs Tcc.cfgTcc testFS "#define u8 X\nu8\"a\"\n" "X \"a\""
+/-! ### C11's `u8`/`u`/`U` prefixes: one token in both configurations;
+the image invokes the patched compiler with `-std=c11`. -/
+#guard both "#define u8 X\nu8\"a\"\n" "u8\"a\""
 
 end CSem.Pre.Test

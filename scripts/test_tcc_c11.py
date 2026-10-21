@@ -9,6 +9,7 @@ and gcc, checks -E round trips, RV64I objects, UCN buffer splits and diagnostics
 images (one for each defect). Logs and exact commands: build/test-c11/.
 """
 import argparse
+import fcntl
 from concurrent.futures import ThreadPoolExecutor
 import json
 import os
@@ -129,8 +130,13 @@ def main():
     print(f'C11: {len(cases)} positive cases, {len(bad)} negative cases; all passed')
 
 if __name__ == '__main__':
-    try:
-        main()
-    finally:
-        OUT.mkdir(parents=True, exist_ok=True)
-        (OUT / 'commands.json').write_text(json.dumps(COMMANDS, indent=2) + '\n')
+    OUT.mkdir(parents=True, exist_ok=True)
+    with (OUT / '.lock').open('w') as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            sys.exit('another C11 regression run owns build/test-c11; keep its artifacts intact')
+        try:
+            main()
+        finally:
+            (OUT / 'commands.json').write_text(json.dumps(COMMANDS, indent=2) + '\n')

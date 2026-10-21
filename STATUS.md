@@ -19,13 +19,13 @@ Takeover in progress, 2026-10-21. The approved target is
 
 | lane | recovery source | review and next check |
 |---|---|---|
-| C11 patches | new `codex-c11` worktree; existing F2 reproducers | patch and run each reproducer |
-| F1 grammar | `agent-a31b97b8f1c090141` | review total parser and Cabs comparison; build and compare with Menhir |
+| C11 patches | new `codex-c11` worktree; existing F2 reproducers | patch 0003 integrated: 7/7 full compiler Sail reproducers; combined 0003/0004 host/cross tests and main gate pass |
+| F1 grammar | `agent-a31b97b8f1c090141` | integrated: main capped build and full comparison pass, 614 exact Cabs agreements / 664 inputs; 41 joint rejections, 9 preprocessing failures |
 | F1 pure seams | `agent-a249bbaa5b1df80ec` | digest retirement integrated; main's full CSem gate passes: 19 unit executables, 113 baseline oracle results; remaining partial/native seams inventoried |
-| F1 ABI/allocation | `agent-a4ab6bbd8c0be5325` | review configuration/oracle; generated copies are incomplete, do not merge results blindly |
-| F1 filesystem | `agent-ad868c434f5f27398` | review actual image path behavior and FS tests |
+| F1 ABI/allocation | `agent-a4ab6bbd8c0be5325` | Sol slot 2 reviews source into a fresh worktree; stale generated copies/results preserved for audit |
+| F1 filesystem | `agent-ad868c434f5f27398` | lead replaced synthetic fstat paths with a descriptor builtin; build and stat/create/error CSem probes pass; Sail/gates running |
 | F1 IEEE | `agent-a45cb08cf87ce958c` | review standalone arithmetic; connection to CSem remains open |
-| F3 compiler model | `agent-a05464165befb7074` (recovery merged) | patch 0004 integrated: main gate, capped model build, 45 targeted arena comparisons and 156-vector stress arena pass; broader comparison running |
+| F3 compiler model | `agent-a05464165befb7074` (recovery merged) | patch 0004 validated on main; Sol slot 1 now mirrors patch 0003 and C11 arguments |
 
 F3 review found reference-derived long-double bytes supplied to the model.
 Such runs cannot establish independent byte equality. That input is now
@@ -33,24 +33,29 @@ removed. Patch 0004 fixes compiler literals using exact integer rounding;
 public libc `strtold` still needs correction in the library lane. Matching refusals likewise do not satisfy the F3 success criterion.
 
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
-two at a time, following MANAGER.md. Both Sol workers have handed off their results: patch 0003 passes its
-seven full-compiler Sail reproducers; the parser now has 614 exact Cabs
-agreements, 41 joint rejections and nine preprocessing failures. Lead
-review/integration is in progress. Built-in
-agents have checkpointed and stopped. Parser recovery is integrated:
-the recovered baseline had 375/664 agreements, before the token-dispatch fix.
+two at a time, following MANAGER.md. Slot 1 mirrors the patched C11 compiler
+in TccModel; slot 2 recovers the RV64 implementation configuration. The lead
+reviews/builds worker results and completes filesystem recovery and F2 checks.
+Built-in agents remain stopped.
 
-F3 recovery includes 398 independent identical arenas out of 401 inputs
-against the fast reference, two binary128 mismatches and one matching
-refusal. This is not the Sail exit criterion. The inherited unfinished
-assembler modules are preserved in `build/recovery/assembler/` outside the
-model's import closure.
+Before patch 0003, the binary128-fixed model gave 1,557 identical arenas /
+2,079 inputs against the fast reference: 499 matching refusals, 23 explicit
+unsupported-assembly/pragma errors, no mismatches. Original 401-input corpus:
+400 identical arenas, one refusal. Generated successful arenas total 1,043;
+none of these fast-runner counts satisfies the pending Sail criterion.
+The 156-vector binary128 stress program also has an identical arena. The
+inherited assembler drafts remain in `build/recovery/assembler/`.
+
+F2 recheck after patch 0003: 583 token-equal inputs / 593. The remaining
+spec gaps include UCN macro identity and macro operands of `_Pragma`;
+the cross-host signed-character difference is already diagnosed. These
+remain implementation work, not changes to the C11 contract.
 
 Builds are serialized across these lanes, capped at 12 GB. The two inherited
 `results/review/*.json` handoffs are retained as dated records; all 345 hashes
 in `phase2-snapshot-current.json` match the committed Phase 2 result files.
-Parser recovery builds in main and the repository gate passes; its first
-comparison is diagnostic, with grammar and comparator gaps still open.
+Parser recovery builds in main and the repository gate passes. Approved
+GNU forms, K&R definitions and connection to F2/raw-source CSem remain open.
 Inherited hard-linked Lake caches have been isolated for active lanes;
 main's CSem objects were rebuilt before accepting the digest retirement.
 
