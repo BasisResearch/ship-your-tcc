@@ -537,22 +537,25 @@ instance (priority := 500) : Lem_Basic_classes.Ord0 prefix0 where
 def digest_of_sym (s : sym) : String :=
   match s with
   | (Symbol dig _ _) => dig
-def fresh (_lemSupply_fresh_int : Nat) (_ : Unit) : (sym × Nat) :=
+def fresh [CerberusFresh.Digest] (_lemSupply_fresh_int : Nat) (_ : Unit) : (sym × Nat) :=
   let (_lemSupplyV0, _lemSupplyS1) := LemLib.supplySplit _lemSupply_fresh_int;
-  ((Symbol (CerberusFresh.digest ()) _lemSupplyV0 SD_None), _lemSupplyS1)
-def fresh_pretty (_lemSupply_fresh_int : Nat) (str : String) : (sym × Nat) :=
+  ((Symbol CerberusFresh.Digest.digest _lemSupplyV0 SD_None), _lemSupplyS1)
+def fresh_pretty [CerberusFresh.Digest] (_lemSupply_fresh_int : Nat) (str : String) : (sym × Nat) :=
   let (_lemSupplyV0, _lemSupplyS1) := LemLib.supplySplit _lemSupply_fresh_int;
-  ((Symbol (CerberusFresh.digest ()) _lemSupplyV0 (SD_Id str)), _lemSupplyS1)
-def fresh_cn (_lemSupply_fresh_int : Nat) (str : String) : (sym × Nat) :=
+  ((Symbol CerberusFresh.Digest.digest _lemSupplyV0 (SD_Id str)), _lemSupplyS1)
+def fresh_cn [CerberusFresh.Digest] (_lemSupply_fresh_int : Nat) (str : String) : (sym × Nat) :=
   let (_lemSupplyV0, _lemSupplyS1) := LemLib.supplySplit _lemSupply_fresh_int;
-  ((Symbol (CerberusFresh.digest ()) _lemSupplyV0 (SD_CN_Id str)), _lemSupplyS1)
-def fresh_pretty_with_id (_lemSupply_fresh_int : Nat) (mkStr : Nat → String) : (sym × Nat) :=
+  ((Symbol CerberusFresh.Digest.digest _lemSupplyV0 (SD_CN_Id str)), _lemSupplyS1)
+def fresh_pretty_with_id [CerberusFresh.Digest] (_lemSupply_fresh_int : Nat)
+    (mkStr : Nat → String) :
+    (sym × Nat) :=
   let (_lemSupplyV0, _lemSupplyS1) := LemLib.supplySplit _lemSupply_fresh_int;
   let id1 := _lemSupplyV0;
-  (Symbol (CerberusFresh.digest ()) id1 (SD_Id (mkStr id1)), _lemSupplyS1)
+  (Symbol CerberusFresh.Digest.digest id1 (SD_Id (mkStr id1)), _lemSupplyS1)
 /- C1: eta-expanded (was `function`-sugar, a lambda — the supply
    transform's G-lambda guard rejects draws under lambdas) -/
-def fresh_fancy (_lemSupply_fresh_int : Nat) (str_opt : Option String) : (sym × Nat) :=
+def fresh_fancy [CerberusFresh.Digest] (_lemSupply_fresh_int : Nat) (str_opt : Option String) :
+    (sym × Nat) :=
   let (_lemSupplyV4, _lemSupplyS5) :=
     (match str_opt with
      | some str =>
@@ -568,17 +571,22 @@ def fresh_fancy (_lemSupply_fresh_int : Nat) (str_opt : Option String) : (sym ×
 
 def fresh_given_int (d : String) (n : Nat) : sym := Symbol d n SD_None
 
-def fresh_object_address (_lemSupply_fresh_int : Nat) (name1 : String) : (sym × Nat) :=
+def fresh_object_address [CerberusFresh.Digest] (_lemSupply_fresh_int : Nat) (name1 : String) :
+    (sym × Nat) :=
   let (_lemSupplyV0, _lemSupplyS1) := LemLib.supplySplit _lemSupply_fresh_int;
-  ((Symbol (CerberusFresh.digest ()) _lemSupplyV0 (SD_ObjectAddress name1)), _lemSupplyS1)
+  ((Symbol CerberusFresh.Digest.digest _lemSupplyV0 (SD_ObjectAddress name1)), _lemSupplyS1)
 
-def fresh_funarg (_lemSupply_fresh_int : Nat) (loc1 : CerbLocation.Loc) (i : Nat) : (sym × Nat) :=
+def fresh_funarg [CerberusFresh.Digest] (_lemSupply_fresh_int : Nat) (loc1 : CerbLocation.Loc)
+    (i : Nat) :
+    (sym × Nat) :=
   let (_lemSupplyV0, _lemSupplyS1) := LemLib.supplySplit _lemSupply_fresh_int;
-  ((Symbol (CerberusFresh.digest ()) _lemSupplyV0 (SD_FunArg loc1 i)), _lemSupplyS1)
+  ((Symbol CerberusFresh.Digest.digest _lemSupplyV0 (SD_FunArg loc1 i)), _lemSupplyS1)
 
-def fresh_description (_lemSupply_fresh_int : Nat) (sd : symbol_description) : (sym × Nat) :=
+def fresh_description [CerberusFresh.Digest] (_lemSupply_fresh_int : Nat)
+    (sd : symbol_description) :
+    (sym × Nat) :=
   let (_lemSupplyV0, _lemSupplyS1) := LemLib.supplySplit _lemSupply_fresh_int;
-  ((Symbol (CerberusFresh.digest ()) _lemSupplyV0 sd), _lemSupplyS1)
+  ((Symbol CerberusFresh.Digest.digest _lemSupplyV0 sd), _lemSupplyS1)
 
 def set_symbol_description (s : sym) (sd : symbol_description) : sym :=
   match s, sd with

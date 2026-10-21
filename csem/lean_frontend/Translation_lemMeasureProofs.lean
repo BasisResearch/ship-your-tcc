@@ -125,7 +125,7 @@ theorem collect_cases__measure_sufficient (stmt : statement genTypeCategory) (le
   collect_cases__stable (statement.lemSize stmt) stmt lemFuel (statement.lemSize stmt)
     (Nat.le_refl _) lemMeasureLe (Nat.le_refl _)
 
-theorem erase_loop_control_aux_stable (k : Nat) :
+theorem erase_loop_control_aux_stable [CerberusFresh.Digest] (k : Nat) :
     ∀ (s : statement genTypeCategory) (f g : Nat), statement.lemSize s ≤ k →
       statement.lemSize s ≤ f → statement.lemSize s ≤ g →
       erase_loop_control_aux_lemFuel f s = erase_loop_control_aux_lemFuel g s := by
@@ -156,7 +156,7 @@ theorem erase_loop_control_aux_stable (k : Nat) :
           simp (disch := (simp only [statement.lemSize, statement_.lemSize] at *; omega)) only
             [erase_loop_control_aux_lemFuel, key, keys]
 
-theorem erase_loop_control_aux_measure_sufficient (stmt : statement genTypeCategory) (lemFuel : Nat)
+theorem erase_loop_control_aux_measure_sufficient [CerberusFresh.Digest] (stmt : statement genTypeCategory) (lemFuel : Nat)
     (lemMeasureLe : statement.lemSize stmt ≤ lemFuel) :
     erase_loop_control_aux_lemFuel lemFuel stmt = erase_loop_control_aux stmt :=
   erase_loop_control_aux_stable (statement.lemSize stmt) stmt lemFuel (statement.lemSize stmt)

@@ -3,11 +3,11 @@
 import LemLib
 
 import CerbMem
+import CerberusFresh
 import CerbGlobal
 import CerbDebug
 import CerbPP
 import CerbLocation
-import CerberusFresh
 import CerbFS
 import CerbND
 import Exception
@@ -107,7 +107,7 @@ def run_const_expr_driver [LemFuel] [CerbGlobal.Switches] (en : Fmap sym integer
    redirect ambiently); the desugM caller draws/restores the dead
    field — behavior unchanged. -/
 
-def evalConstantExpressionAux [LemFuel] [CerbGlobal.Switches]
+def evalConstantExpressionAux [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (sup : Nat)
     (address_space_top1 : Int) (loc1 : CerbLocation.Loc)
@@ -192,7 +192,7 @@ def evalConstantExpressionAux [LemFuel] [CerbGlobal.Switches]
                            visible_objects_env0 := fmapEmpty } : generic_file Unit Unit));
                    /- Frontend-phase seed: the desugarer's current TU digest (S0 record section 5 Q-C). -/
                    match initial_driver_state_given sup_after_elab address_space_top1
-                       (CerberusFresh.digest ()) dummy_core_file CerbFS.fs_initial_state with
+                       CerberusFresh.Digest.digest dummy_core_file CerbFS.fs_initial_state with
                    | (init_dr_st, sup') =>
                      (/- spawning a thread with the Core expression we just generated as it's arena -/
                      match runStateM
@@ -232,7 +232,7 @@ def evalConstantExpressionAux [LemFuel] [CerbGlobal.Switches]
                      (failwithI "TODO error: the driver found less/more than one active execution" :
                        exceptM (value × Nat) (CerbLocation.Loc × cause)))))))
 
-def evalIntegerConstantExpression [LemFuel] [CerbGlobal.Switches]
+def evalIntegerConstantExpression [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (sup : Nat)
     (address_space_top1 : Int) (loc1 : CerbLocation.Loc)
@@ -304,10 +304,11 @@ def typecheckAil (_lemReader_enum_definitions : Fmap sym integerType)
    the two seeds have DIFFERENT types, so a positional slip (audit N1) is a
    type error, not a silent value change. -/
 
-def evalIntegerConstantExpression_seeded [LemFuel] [CerbGlobal.Switches] (en : Fmap sym integerType)
-    (tds : Fmap sym (CerbLocation.Loc × tag_definition)) (sup : Nat) (address_space_top1 : Int)
-    (loc1 : CerbLocation.Loc) (core_env : (Fmap String sym × fun_map Unit × impl))
-    (sigm : sigma Unit) (ty_opt : Option ctype) (expr1 : expression Unit) :
+def evalIntegerConstantExpression_seeded [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
+    (en : Fmap sym integerType) (tds : Fmap sym (CerbLocation.Loc × tag_definition)) (sup : Nat)
+    (address_space_top1 : Int) (loc1 : CerbLocation.Loc)
+    (core_env : (Fmap String sym × fun_map Unit × impl)) (sigm : sigma Unit) (ty_opt : Option ctype)
+    (expr1 : expression Unit) :
     exceptM (Int × Nat) error :=
   (evalIntegerConstantExpression en tds) sup address_space_top1 loc1 core_env sigm ty_opt expr1
 def typecheckAil_seeded (en : Fmap sym integerType)

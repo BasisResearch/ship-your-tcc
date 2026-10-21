@@ -8,7 +8,7 @@
   DIGEST REPRESENTATION (arc 5 / S2, documented-deliberate divergence):
   OCaml's `Digest.t` is the RAW 16-byte MD5 string; a Lean `String` must
   be valid UTF-8, so we store digests in `Digest.to_hex` form (32-char
-  lowercase hex, native/md5.c). Consequences, each checked:
+  lowercase hex, `md5Hex` below). Consequences, each checked:
     * equality: hex is injective on raw digests — `digest_compare = 0`
       agrees exactly with OCaml `Digest.compare = 0` (the only digest
       property the model consumes: symbolEquality/symbol_compare
@@ -27,8 +27,8 @@
   filename` = Digest.file, pipeline.ml:181, util/cerb_fresh.ml:88-94);
   the Lean pipeline never sees the .c, so the oracle's --cabs-json path
   records that very digest in the JSON (`digest` field, main.ml) and
-  Main.lean installs it per TU (CabsImport.parseJson, fail-closed on a
-  JSON without it). Until Z3 the Lean side hashed the cabs-json text — a
+  the driver passes it per TU (CabsImport.parseJson, fail-closed on a
+  JSON without it; the `Digest` instance below). Until Z3 the Lean side hashed the cabs-json text — a
   different value, under which every program global sorted after every
   libc global in libc mode: symbol digests ORDER the linked globals
   (Core_linking.merge_globs' min-(digest, number) topological choice),
@@ -50,129 +50,140 @@ def digest_compare (x y : String) : Int :=
     representation is already the to_hex image (see the module note). -/
 def string_of_digest (x : String) : String := x
 
-/-- MD5 of a string's bytes as 32-char lowercase hex (native/md5.c,
-    RFC 1321). Equals OCaml `Digest.to_hex (Digest.string s)`; verified
-    against the RFC 1321 test vectors and OCaml Digest in
-    test/Unit/FreshIntTest.lean. Pure extern: MD5 is a pure function. -/
-@[extern "cerb_md5_hex"]
-opaque md5Hex : @& String → String
+/-! ## MD5 (RFC 1321), pure
 
-/-- Read the current per-TU digest (native mutable global, native/md5.c).
-    Corresponds to: the `Cerb_fresh.digest` ref cell read
-    (util/cerb_fresh.ml:7-10). BaseIO variant for hand-written callers
-    that must not be dead-code eliminated (CerbTags.lean pattern). -/
-@[extern "cerb_digest_get"]
-opaque digestIO : @& Unit → BaseIO String
+The digest as a total, kernel-reducible function over the UTF-8 bytes
+(F1b, DESIGN-COMPILER §3.4: it replaces the native `cerb_md5_hex`). Every
+loop is structural recursion on a count; byte reads are `getD` reads of
+indices below the padded length. -/
 
-/-- Set the per-TU digest. Corresponds to: `Cerb_fresh.set_digest`
-    (util/cerb_fresh.ml:7-10), called once per translation unit before
-    its desugar (pipeline.ml:181 mirror: Main.lean per-TU loop). -/
-@[extern "cerb_digest_set"]
-opaque setDigestIO : @& String → BaseIO Unit
+namespace MD5
 
-/-- Pure-signature read of the per-TU digest, for the generated code's
-    call sites (`Symbol.fresh` etc. call `CerberusFresh.digest ()` in
-    pure position — symbol.lem:44-46 declares no effect annotation, and
-    OCaml's `Cerb_fresh.digest` is likewise an ordinary pure-typed ref
-    read).
+/-- `T[i] = floor(abs(sin(i+1)) * 2^32)` (RFC 1321 §3.4). -/
+def T : Array UInt32 := #[
+  0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee, 0xf57c0faf, 0x4787c62a, 0xa8304613, 0xfd469501,
+  0x698098d8, 0x8b44f7af, 0xffff5bb1, 0x895cd7be, 0x6b901122, 0xfd987193, 0xa679438e, 0x49b40821,
+  0xf61e2562, 0xc040b340, 0x265e5a51, 0xe9b6c7aa, 0xd62f105d, 0x02441453, 0xd8a1e681, 0xe7d3fbc8,
+  0x21e1cde6, 0xc33707d6, 0xf4d50d87, 0x455a14ed, 0xa9e3e905, 0xfcefa3f8, 0x676f02d9, 0x8d2a4c8a,
+  0xfffa3942, 0x8771f681, 0x6d9d6122, 0xfde5380c, 0xa4beea44, 0x4bdecfa9, 0xf6bb4b60, 0xbebfbc70,
+  0x289b7ec6, 0xeaa127fa, 0xd4ef3085, 0x04881d05, 0xd9d4d039, 0xe6db99e5, 0x1fa27cf8, 0xc4ac5665,
+  0xf4292244, 0x432aff97, 0xab9423a7, 0xfc93a039, 0x655b59c3, 0x8f0ccc92, 0xffeff47d, 0x85845dd1,
+  0x6fa87e4f, 0xfe2ce6e0, 0xa3014314, 0x4e0811a1, 0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391]
 
-    KERNEL-CHECKED-OPAQUE CONVERSION (effect-retirement C2, the Q4
-    ruling's promoted deliverable — charter section 7.2; the last
-    `unsafeBaseIO` of the C2-convert class leaves with it): the chain
-    is now the forceIO/with_tagDefs pattern exactly — an unsafe extern
-    opaque carrying an EXPLICIT kernel-checked witness, wrapped by a
-    @[never_extract, noinline] impl, bound to the public constant via
-    @[implemented_by] on a kernel-checked `opaque` that also carries
-    its witness. Nothing is postulated: `digest` can NEVER appear in
-    an axiom cone (opaque, not axiom); its runtime trust is exactly
-    the declared implemented_by/extern boundary. The witness
-    `fun _ => ""` is the C side's own pre-set state (native/md5.c:
-    get before any set returns "").
+/-- The per-operation left-rotate amounts (RFC 1321 §3.4, rounds 1–4). -/
+def S : Array UInt32 := #[
+  7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
+  5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20,
+  4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23,
+  6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21]
 
-    ARMOUR PLACEMENT (the L2-audit F1 lesson, lem-lean
-    doc/lean-backend/2026-09-01_L2-deletion-record.md addendum:
-    closed-term extraction reaches THROUGH outer attributes — the
-    extracted closed term mentions only the INNER names, so the inner
-    names must carry @[never_extract, noinline] themselves):
-    `digestPure` is marked never_extract/noinline so the closed
-    application `digestPure ()` inside `digest_impl` cannot be cached
-    as a module-init constant (it would freeze the pre-set "" value),
-    and never_extract on `digest` keeps every generated call site a
-    real call, never CSE-hoisted across the per-TU setDigestIO sites.
-    Within one TU the value is constant, so intra-TU sharing — the
-    only sharing never_extract permits inside a single evaluation —
-    is semantically harmless. Behavior re-verified:
-    test/Unit/FreshIntTest.lean testDigestGlobal (per-TU pickup under
-    two set sites) + the C2 differential spot-run (byte-identical
-    pre/post conversion). Normative soundness invariant:
-    docs/2026-08-22_arc14-effect-erasure-invariant.md (arc-14 S1 F5,
-    sem:S17 — still governing this seam). -/
-@[extern "cerb_digest_get", never_extract, noinline]
-private unsafe opaque digestPure : @& Unit → String :=
-  fun _ => ""  -- explicit witness (C2): the C global's initial value
+/-- The chaining state `A, B, C, D`. -/
+structure State where
+  a : UInt32
+  b : UInt32
+  c : UInt32
+  d : UInt32
 
-@[never_extract, noinline]
-private unsafe def digest_impl (_ : Unit) : String :=
-  digestPure ()
+/-- RFC 1321 §3.3's initial state. -/
+def State.init : State := ⟨0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476⟩
 
-@[implemented_by digest_impl]
-opaque digest : Unit → String :=
-  fun _ => ""  -- explicit witness (C2), kernel-checked
-attribute [never_extract] digest
+def rotl (x c : UInt32) : UInt32 := (x <<< c) ||| (x >>> (32 - c))
 
-/-- IO-positioned evaluation barrier (native/md5.c cerb_force_thunk).
-    `forceIO (fun () => e)` evaluates `e` exactly at this point of the
-    IO bind chain. Needed wherever a PURE computation reads mutable
-    native state (the per-TU digest via `digest ()`) and is written
-    between two writes of that state: the Lean compiler sinks pure lets
-    to their use sites, so without the barrier the computation can be
-    deferred past a LATER `setDigestIO` and observe the wrong TU's
-    digest (caught by test/Unit/FreshIntTest.lean testDigestGlobal).
-    Armoring mirrors CerbTags.with_tagDefs exactly (unsafe extern +
-    @[never_extract, noinline] impl + @[implemented_by] on an
-    irreducible constant; the whole-extent-in-C rationale of arc-4
-    S3b): the thunk is applied inside the C call, extern calls are
-    never reordered, and the closure boundary blocks let-sinking out
-    of the body.
+/-- Little-endian 32-bit word `i` of the block at byte offset `off`. -/
+def word (m : ByteArray) (off i : Nat) : UInt32 :=
+  let byte (k : Nat) : UInt32 := (m[off + 4 * i + k]?.getD 0).toUInt32
+  byte 0 ||| (byte 1 <<< 8) ||| (byte 2 <<< 16) ||| (byte 3 <<< 24)
 
-    AXIOM DELETED (arc-17 S2b, 2026-08-25 — the [USER 2026-08-24]
-    temporal-mover execution for this entry): this was `axiom forceIO`
-    from arc-5 S2 until arc-17 S2b. The old docstring already stated
-    the witness — "`fun f => pure (f ())` inhabits the type" — and it
-    is now an `opaque` carrying that witness explicitly, so the KERNEL
-    checks it and nothing is postulated. The constant stays
-    IRREDUCIBLE (opaque — the compiler cannot inline-and-beta-reduce
-    the closure away, and no proof can unfold it), implemented_by
-    still routes execution through the C-side barrier (behavior
-    re-verified by test/Unit/FreshIntTest.lean testDigestGlobal — the
-    test that found the original sinking bug). Result: this constant
-    can NEVER appear in any axiom cone; the runtime trust is exactly
-    the implemented_by boundary (declared, gated — check_theorem_axioms.sh
-    pins the implemented_by/unsafe seam population to
-    scripts/unsafebaseio_allowlist.txt exactly and asserts zero axiom
-    declarations, fail-closed). -/
-@[extern "cerb_force_thunk"]
-private unsafe opaque forceThunkIO {b : Type} : (@& (Unit → b)) → BaseIO b :=
-  fun f => pure (f ())  -- explicit witness (arc-17 S2b): kills the
-                        -- synthesized-sorryAx inhabitant (see
-                        -- CerbTags.withTagDefsIO)
+/-- Operation `i` (0 ≤ i < 64) of the compression function. -/
+def step (m : ByteArray) (off : Nat) (i : Nat) (s : State) : State :=
+  let (f, g) :=
+    if i < 16 then ((s.b &&& s.c) ||| (~~~s.b &&& s.d), i)
+    else if i < 32 then ((s.d &&& s.b) ||| (~~~s.d &&& s.c), (5 * i + 1) % 16)
+    else if i < 48 then (s.b ^^^ s.c ^^^ s.d, (3 * i + 5) % 16)
+    else (s.c ^^^ (s.b ||| ~~~s.d), (7 * i) % 16)
+  let x := s.a + f + T.getD i 0 + word m off g
+  { a := s.d, b := s.b + rotl x (S.getD i 0), c := s.b, d := s.c }
 
-@[never_extract, noinline]
-private unsafe def forceIO_impl {b : Type} (f : Unit → b) : BaseIO b :=
-  forceThunkIO f
+/-- Operations `i … i+n-1`. -/
+def steps (m : ByteArray) (off : Nat) : Nat → Nat → State → State
+  | 0, _, s => s
+  | n + 1, i, s => steps m off n (i + 1) (step m off i s)
 
-@[implemented_by forceIO_impl]
-opaque forceIO {b : Type} : (Unit → b) → BaseIO b :=
-  fun f => pure (f ())
-attribute [never_extract] forceIO
+/-- One 64-byte block at offset `off`. -/
+def block (m : ByteArray) (off : Nat) (s : State) : State :=
+  let r := steps m off 64 0 s
+  ⟨s.a + r.a, s.b + r.b, s.c + r.c, s.d + r.d⟩
 
-/- freshIntIO DELETED (effect-retirement C1, charter sections 3.4/7.1):
-   the fresh counter is no longer an extern — `fresh_int` is a lem
-   SUPPLY on the Lean target (every transitive caller threads the
-   counter explicitly; entry points are supply-parameterized, Main
-   seeds the single stream). native/fresh_int.c, the 2^20 ambient-base
-   stratification, and the Main startup floor probe are gone with it.
-   The digest machinery above stays — its opaque conversion is a C2
-   deliverable (Q4 ruling). -/
+/-- Blocks `k … k+n-1`. -/
+def blocks (m : ByteArray) : Nat → Nat → State → State
+  | 0, _, s => s
+  | n + 1, k, s => blocks m n (k + 1) (block m (64 * k) s)
+
+/-- `n` zero bytes pushed onto `b`. -/
+def pushZeros (b : ByteArray) : Nat → ByteArray
+  | 0 => b
+  | n + 1 => pushZeros (b.push 0) n
+
+/-- The 8 little-endian bytes of `v` pushed onto `b`. -/
+def pushLE64 (b : ByteArray) (v : Nat) : ByteArray :=
+  (List.range 8).foldl (fun acc k => acc.push (v / 2 ^ (8 * k) % 256).toUInt8) b
+
+/-- RFC 1321 §3.1–3.2: `0x80`, zeros to 56 mod 64, the bit length mod 2^64. -/
+def pad (msg : ByteArray) : ByteArray :=
+  let len := msg.size
+  pushLE64 (pushZeros (msg.push 0x80) ((55 + 64 - len % 64) % 64)) (8 * len % 2 ^ 64)
+
+/-- The 16 digest bytes: the little-endian bytes of `A, B, C, D`. -/
+def digestBytes (msg : ByteArray) : List UInt8 :=
+  let m := pad msg
+  let s := blocks m (m.size / 64) 0 State.init
+  ([s.a, s.b, s.c, s.d] : List UInt32).flatMap fun (w : UInt32) =>
+    [w.toUInt8, (w >>> 8).toUInt8, (w >>> 16).toUInt8, (w >>> 24).toUInt8]
+
+def hexDigit (n : UInt8) : Char :=
+  if n < 10 then Char.ofNat (48 + n.toNat) else Char.ofNat (87 + n.toNat)
+
+/-- Lowercase hex, two digits per byte (OCaml `Digest.to_hex`'s `%02x`). -/
+def hex (bs : List UInt8) : String :=
+  String.ofList (bs.flatMap fun (b : UInt8) => [hexDigit (b >>> 4), hexDigit (b &&& 0xf)])
+
+end MD5
+
+/-- MD5 of a string's UTF-8 bytes as 32-char lowercase hex (RFC 1321).
+    Equals OCaml `Digest.to_hex (Digest.string s)`. Pure and total since
+    ship-your-tcc F1b (2026-10-21): it replaces the native MD5 extern.
+    Checked against RFC 1321 and Python hashlib vectors in
+    test/Unit/FreshIntTest.lean, including padding boundaries and UTF-8;
+    the kernel computes the empty-string and abc vectors there. -/
+def md5Hex (s : String) : String := MD5.hex (MD5.digestBytes s.toUTF8)
+
+/-- The frontend's per-TU symbol digest, as an instance-implicit parameter.
+    Corresponds to: the `Cerb_fresh.digest` ref cell (util/cerb_fresh.ml:7-10),
+    which `Cerb_fresh.set_digest` writes before each TU's frontend
+    (backend/common/pipeline.ml:181) and every `Symbol.fresh` reads
+    (symbol.lem:238 `Symbol (digest()) …`).
+
+    THE DIGEST IS A PARAMETER (ship-your-tcc F1b, DESIGN-COMPILER §3.4,
+    2026-10-21): lem's instance reader `declare {lean} reader val
+    Symbol.digest = instance `CerberusFresh.Digest.digest``
+    (frontend/model/lean_digest.lem; the `CerbGlobal.Switches` mechanism)
+    makes every read of `Symbol.digest ()` the projection
+    `CerberusFresh.Digest.digest`, and every definition that transitively
+    reads it binds `[CerberusFresh.Digest]`. NO instance exists in the
+    library, the seams or the generated tree: the driver supplies the TU's
+    digest per TU (`CerbDriver.frontendTU`), a statement or theorem supplies
+    its own (`letI : CerberusFresh.Digest := ⟨d⟩`, or `@f ⟨d⟩`).
+
+    DELETED with it: the native mutable global (`cerb_digest_get`/
+    `cerb_digest_set`), its kernel-opaque reader `digest` (`opaque … :=
+    fun _ => ""` implemented by the global), the BaseIO accessors
+    `digestIO`/`setDigestIO`, and the evaluation barrier `forceIO`
+    (`cerb_force_thunk`) that kept the compiler from sinking a pure stage
+    call past the next TU's set. With the digest an argument of the stage
+    calls there is no state to order against, and the kernel sees which
+    digest each desugared symbol carries. native/md5.c and the
+    `CSemNative` Lake package are gone. -/
+class Digest where
+  digest : String
 
 end CerberusFresh

@@ -206,7 +206,9 @@ LEM_SRC_LEAN = $(filter-out frontend/model/core_unstruct.lem,$(LEM_SRC)) \
 # generated OCaml as a comment, so it lives outside LEM_SRC to keep the
 # generated OCaml byte-identical (record
 # lean_frontend/docs/2026-10-05_pnvi-s1-switch-parameter-record.md §3).
-LEM_SRC_LEAN_ONLY = frontend/model/lean_switches.lem
+# lean_digest.lem (ship-your-tcc F1b, 2026-10-21) declares the per-TU symbol
+# digest's instance reader (CerberusFresh.Digest), the same mechanism.
+LEM_SRC_LEAN_ONLY = frontend/model/lean_switches.lem frontend/model/lean_digest.lem
 ####
 
 PRELUDE_SRC_DIR = ocaml_frontend/generated
@@ -373,9 +375,10 @@ lean-prelude-src: $(LEM_SRC_LEAN)
 # Lake does NOT track these .o files as link inputs, so after recompiling we
 # delete the linked executables to force a relink on the next lake build.
 # effect-retirement C1: fresh_int/debug/tags retired with their externs
-# (supply threading / value passing / driver-local verbosity); md5 stays
-# — the digest boundary remains (its opaque conversion is C2).
-LEAN_NATIVE = md5
+# (supply threading / value passing / driver-local verbosity); md5 and the
+# digest global retired at ship-your-tcc F1b (2026-10-21: pure Lean MD5, the
+# digest an instance-implicit parameter) — no native object remains.
+LEAN_NATIVE =
 .PHONY: lean-native-obj
 lean-native-obj:
 	@echo "[LEANC] compiling lean_frontend/native objects"

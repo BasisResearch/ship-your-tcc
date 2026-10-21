@@ -1023,24 +1023,26 @@ def fresh_sym_int (_ : Unit) :
    by util/cerb_fresh.ml check_ail_window. Evidence + decision:
    lean_frontend/docs/2026-08-22_arc13-s0-scheme-decision.md. -/
 
-def fresh_sym (_ : Unit) : state_with_markers → exceptM (sym × state_with_markers) error :=
-  stExpect_bind (fresh_sym_int ()) (fun (n : Nat) =>
-    stExpect_return (Symbol (CerberusFresh.digest ()) n SD_None))
-def fresh_sym_pretty (str : String) :
+def fresh_sym [CerberusFresh.Digest] (_ : Unit) :
     state_with_markers → exceptM (sym × state_with_markers) error :=
   stExpect_bind (fresh_sym_int ()) (fun (n : Nat) =>
-    stExpect_return (Symbol (CerberusFresh.digest ()) n (SD_Id str)))
-def fresh_sym_cn (str : String) : state_with_markers → exceptM (sym × state_with_markers) error :=
-  stExpect_bind (fresh_sym_int ()) (fun (n : Nat) =>
-    stExpect_return (Symbol (CerberusFresh.digest ()) n (SD_CN_Id str)))
-def fresh_sym_object_address (str : String) :
+    stExpect_return (Symbol CerberusFresh.Digest.digest n SD_None))
+def fresh_sym_pretty [CerberusFresh.Digest] (str : String) :
     state_with_markers → exceptM (sym × state_with_markers) error :=
   stExpect_bind (fresh_sym_int ()) (fun (n : Nat) =>
-    stExpect_return (Symbol (CerberusFresh.digest ()) n (SD_ObjectAddress str)))
-def fresh_sym_description (sd : symbol_description) :
+    stExpect_return (Symbol CerberusFresh.Digest.digest n (SD_Id str)))
+def fresh_sym_cn [CerberusFresh.Digest] (str : String) :
     state_with_markers → exceptM (sym × state_with_markers) error :=
   stExpect_bind (fresh_sym_int ()) (fun (n : Nat) =>
-    stExpect_return (Symbol (CerberusFresh.digest ()) n sd))
+    stExpect_return (Symbol CerberusFresh.Digest.digest n (SD_CN_Id str)))
+def fresh_sym_object_address [CerberusFresh.Digest] (str : String) :
+    state_with_markers → exceptM (sym × state_with_markers) error :=
+  stExpect_bind (fresh_sym_int ()) (fun (n : Nat) =>
+    stExpect_return (Symbol CerberusFresh.Digest.digest n (SD_ObjectAddress str)))
+def fresh_sym_description [CerberusFresh.Digest] (sd : symbol_description) :
+    state_with_markers → exceptM (sym × state_with_markers) error :=
+  stExpect_bind (fresh_sym_int ()) (fun (n : Nat) =>
+    stExpect_return (Symbol CerberusFresh.Digest.digest n sd))
 def record_marker (_ : Unit) : state_with_markers → exceptM (Nat × state_with_markers) error :=
   stExpect_bind (fresh_sym_int ()) (fun (id1 : Nat) =>
     stExpect_bind
@@ -1116,7 +1118,7 @@ def ident_is_in_current_scope (ident : identifier) (namespace2 : namespace0) :
     is_in_current_scope (ident, namespace2) (return_scope st.registered_identifiers))
 /- NOTE: this function shouldn't be called outside of the current module -/
 
-def internal_register_identifier
+def internal_register_identifier [CerberusFresh.Digest]
     (if_found : (scope × (ail_identifier × identifier_kind × Option linkage)) →
       (Unit → state_with_markers → exceptM (sym × state_with_markers) error) → state_with_markers →
       exceptM (sym × state_with_markers) error) (ident : identifier) (namespace2 : namespace0)
@@ -1414,7 +1416,8 @@ def internal_register_identifier
                                           match u with
                                           | () => "lookup external ==> Just"))
                                     (fun _ => if_found (scope1, decl) do_fresh)))))))))))))))
-def register_typedef (ident : identifier) (p : (attributes × qualifiers × ctype)) :
+def register_typedef [CerberusFresh.Digest] (ident : identifier)
+    (p : (attributes × qualifiers × ctype)) :
     state_with_markers → exceptM (Unit × state_with_markers) error :=
   match ident, p with
   | ident, (attrs1, qs, ty1) =>
@@ -1792,7 +1795,7 @@ def resolve_cn_ident (ns : cn_namespace) (ident : identifier) :
                           | (Identifier loc1 _) => loc1),
                           DESUGAR (Desugar_CN (CNErr_unknown_identifier ns ident))))))))))
     | some (s, kind1) => stExpect_return (s, kind1))
-def register_cn_ident (ns : cn_namespace) (i : identifier) :
+def register_cn_ident [CerberusFresh.Digest] (ns : cn_namespace) (i : identifier) :
     state_with_markers → exceptM (sym × state_with_markers) error :=
   match ns, i with
   | ns, ident@((Identifier loc1 str)) =>
@@ -1954,7 +1957,7 @@ def register_cn_function (magic_loc : CerbLocation.Loc) (ident : identifier)
         fail0 (loc1, DESUGAR (Desugar_CN (CNErr_redeclaration CN_function)))))
 
 /- copied and adjusted from register_cn_function -/
-def register_cn_lemma (magic_loc : CerbLocation.Loc) (ident : identifier)
+def register_cn_lemma [CerberusFresh.Digest] (magic_loc : CerbLocation.Loc) (ident : identifier)
     (mk : state_with_markers → exceptM
       ((List (sym × cn_base_type sym) × List (cn_condition sym ctype) × List
         (cn_condition sym ctype)) × state_with_markers) error) :
@@ -2443,7 +2446,7 @@ STD_ "§6.2.2#6" $
 -/
 /- NOTE: don't call this on typedef identifier -/
 
-def register_ordinary_identifier (ident : identifier) (kind1 : ordinary_kind)
+def register_ordinary_identifier [CerberusFresh.Digest] (ident : identifier) (kind1 : ordinary_kind)
     (storage_classes1 : List storage_class_specifier) :
     state_with_markers → exceptM ((linkage × sym) × state_with_markers) error :=
   stExpect_bind
@@ -2538,7 +2541,7 @@ def register_ordinary_identifier (ident : identifier) (kind1 : ordinary_kind)
 -/
               ) ident Namespace_ordinary (Kind_ordinary kind1) (some link1))
         (fun (sym1 : sym) => stExpect_return (link1, sym1)))
-def register_tag (loc1 : CerbLocation.Loc) (kind1 : tag_kind) :
+def register_tag [CerberusFresh.Digest] (loc1 : CerbLocation.Loc) (kind1 : tag_kind) :
     Option identifier → state_with_markers → exceptM (ail_identifier × state_with_markers) error :=
   fun (x : Option identifier) =>
     match x with
@@ -3392,7 +3395,7 @@ def register_static_assertion (e : expression Unit)
     state_with_markers → exceptM (Unit × state_with_markers) (CerbLocation.Loc × cause) :=
   update_inner (fun (st : state) =>
     { st with static_assertions0 := (e, strCst) :: st.static_assertions0 })
-def register_label (ident : identifier) :
+def register_label [CerberusFresh.Digest] (ident : identifier) :
     state_with_markers → exceptM (Unit × state_with_markers) error :=
   cabs_to_ail_effect_void
     (internal_register_identifier
@@ -3460,7 +3463,7 @@ def get_used_identifier :
     state_with_markers → exceptM (List ail_identifier × state_with_markers)
         (CerbLocation.Loc × cause) :=
   read_inner (fun (st : state) => st.used_identifier)
-def register_enum_constant (ident : identifier) (expr1 : expression_ Unit) :
+def register_enum_constant [CerberusFresh.Digest] (ident : identifier) (expr1 : expression_ Unit) :
     state_with_markers → exceptM (Unit × state_with_markers) error :=
   (lemSeq
     (fun _ =>

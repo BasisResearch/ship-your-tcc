@@ -81,12 +81,6 @@ name = "LemLibTests"
 srcDir = "csem/lemlib"
 roots = ["LemLibTest", "LemLibTheorems", "LemLibPmapLaws"]
 
-# The fork's native digest support (csem/lean_frontend/native/md5.c) as a Lake
-# extern_lib; a path package because lakefile.toml cannot declare one.
-[[require]]
-name = "CSemNative"
-path = "csem/native-lake"
-
 # The semantics: the Lem-generated model and the hand-written seams, both
 # compiled from csem/lean_frontend/generated (scripts/csem_regen.sh); the
 # fork's flag -DautoImplicit=false.
@@ -148,6 +142,7 @@ roots = [
   "Global", "Global_auxiliary",
   "Implementation", "Implementation_auxiliary",
   "Lean_switches", "Lean_switches_auxiliary",
+  "Lean_digest", "Lean_digest_auxiliary",
   "IntegerImpl", "IntegerImpl_auxiliary",
   "IntegerType", "IntegerType_auxiliary",
   "Linux", "Linux_auxiliary",

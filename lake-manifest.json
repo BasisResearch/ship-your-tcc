@@ -3,13 +3,6 @@
  "packages":
  [{"type": "path",
    "scope": "",
-   "name": "CSemNative",
-   "manifestFile": "lake-manifest.json",
-   "inherited": false,
-   "dir": "csem/native-lake",
-   "configFile": "lakefile.lean"},
-  {"type": "path",
-   "scope": "",
    "name": "«lean-riscv»",
    "manifestFile": "lake-manifest.json",
    "inherited": false,

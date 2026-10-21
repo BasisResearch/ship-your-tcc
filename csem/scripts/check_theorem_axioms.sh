@@ -216,10 +216,8 @@ fi
 # 2026-09-28 (a plain def failing loudly, served-surface audit P3-1), 10 -> 9
 # — the reviewed population is 9.)
 OPAQUE_WANT=(
-  # CerberusFresh — the digest boundary (VALIDATION.md §4), [seam]
-  'CerberusFresh.lean:md5Hex' 'CerberusFresh.lean:digestIO' 'CerberusFresh.lean:setDigestIO'
-  'CerberusFresh.lean:digestPure' 'CerberusFresh.lean:digest' 'CerberusFresh.lean:forceThunkIO'
-  'CerberusFresh.lean:forceIO'
+  # CerberusFresh: no opaque rows since ship-your-tcc F1 (pure MD5 and
+  # explicit Digest parameter). Any reintroduced opaque is unregistered.
   # CerbGlobal — NO rows since 2026-09-05 (reasoning-artifact audit
   # instance A step 1, docs/2026-09-05_cerbglobal-defs-record.md): the
   # eleven config/switch opaques (never-written refs) became plain `def`s

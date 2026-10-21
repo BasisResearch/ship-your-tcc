@@ -149,14 +149,7 @@ PIN IMPLBY lem-lean/lean-lib/LemLib.lean lemSeqImpl 1
 PIN UNSAFEBASEIO lem-lean/lean-lib/LemLib.lean lemSeqImpl 1
 PIN UNSAFEDECL lem-lean/lean-lib/LemLib.lean lemSeqImpl 1
 PIN UNSAFEDECL lean_frontend/test/Unit/FuelFormsTool.lean main 1
-PIN EXTERN lean_frontend/CerberusFresh.lean digestIO 2
-PIN EXTERN lean_frontend/CerberusFresh.lean digestPure 2
-PIN EXTERN lean_frontend/CerberusFresh.lean forceThunkIO 2
-PIN EXTERN lean_frontend/CerberusFresh.lean md5Hex 2
-PIN EXTERN lean_frontend/CerberusFresh.lean setDigestIO 2
-PIN IMPLBY lean_frontend/CerberusFresh.lean digest_impl 2
-PIN IMPLBY lean_frontend/CerberusFresh.lean forceIO_impl 2
-PIN UNSAFEDECL lean_frontend/CerberusFresh.lean digest_impl 2
-PIN UNSAFEDECL lean_frontend/CerberusFresh.lean digestPure 2
-PIN UNSAFEDECL lean_frontend/CerberusFresh.lean forceIO_impl 2
-PIN UNSAFEDECL lean_frontend/CerberusFresh.lean forceThunkIO 2
+
+# ship-your-tcc F1: CerberusFresh has no native seams. MD5 is a total
+# definition and the per-TU digest is an instance parameter. Reintroducing
+# any of its former extern/unsafe/implemented_by sites fails this census.

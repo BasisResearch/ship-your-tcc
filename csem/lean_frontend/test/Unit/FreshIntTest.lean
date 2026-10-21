@@ -1,13 +1,14 @@
 /-
-  Test: supply-threaded fresh symbols + the digest boundary.
+  Test: supply-threaded fresh symbols + the digest parameter and MD5.
 
   Effect-retirement C1 rewrite (charter section 7.1): the old
   runEffectful/freshIntIO distinctness probes died with the mechanism —
   `fresh_int` is a lem SUPPLY on the Lean target, so `Symbol.fresh` is
   the pure lifted `fresh : Nat → Unit → sym × Nat`. The tests now pin
   the THREADING LAWS (monotonicity + distinctness through a lifted
-  chain, kernel-visible) and keep the surviving digest-barrier tests
-  (the digest global remains; its opaque conversion is C2).
+  chain, kernel-visible). Since ship-your-tcc F1b the digest is the
+  instance-implicit `[CerberusFresh.Digest]` and `md5Hex` is pure Lean;
+  the native global, its barrier test and native/md5.c are gone.
 -/
 
 import Symbol
@@ -38,10 +39,12 @@ def testRunDigest : String := "900150983cd24fb0d6963f7d28e17f72"
 def symId : sym → Nat := fun | Symbol _ n _ => n
 
 def testSupplyThreading : IO Bool := do
+  -- the digest the native global held before any TU set it (F1b: a parameter)
+  letI : CerberusFresh.Digest := ⟨""⟩
   IO.println "test: Symbol.fresh threads the supply (monotone, distinct, returned)"
-  let (s1, sup1) := fresh 500 ()
-  let (s2, sup2) := fresh sup1 ()
-  let (s3, sup3) := fresh sup2 ()
+  let (s1, sup1) := @fresh ⟨""⟩ 500 ()
+  let (s2, sup2) := @fresh ⟨""⟩ sup1 ()
+  let (s3, sup3) := @fresh ⟨""⟩ sup2 ()
   IO.println s!"  got ids: {symId s1}, {symId s2}, {symId s3}; final supply {sup3}"
   let okA ← assertEqual "first draw uses the seed" (symId s1) 500
   let okB ← assertEqual "supply advances by one per draw" (sup1, sup2, sup3) (501, 502, 503)
@@ -55,9 +58,11 @@ def testSupplyThreading : IO Bool := do
     return false
 
 def testSupplyFamily : IO Bool := do
+  -- the digest the native global held before any TU set it (F1b: a parameter)
+  letI : CerberusFresh.Digest := ⟨""⟩
   IO.println "test: the fresh* family draws exactly one id each and composes"
   -- fresh_pretty_with_id bakes the drawn id into the description
-  let (sp, supP) := fresh_pretty_with_id 700 (fun n => s!"while_{n}")
+  let (sp, supP) := @fresh_pretty_with_id ⟨""⟩ 700 (fun n => s!"while_{n}")
   let okP ← assertEqual "fresh_pretty_with_id id" (symId sp) 700
   let okP2 ← assertEqual "fresh_pretty_with_id supply" supP 701
   let okP3 ← assertEqual "fresh_pretty_with_id descr"
@@ -87,15 +92,10 @@ def testMd5Hex : IO Bool := do
   let ok3 ← assertEqual "md5(fox)"
               (CerberusFresh.md5Hex "The quick brown fox jumps over the lazy dog")
               "9e107d9d372bb6826bd81d3542a419d6"
-  -- padding/block coverage (comment corrected per arc-5 audit 2, F5):
-  --   a-z is 26 bytes — single padded block (tail_len = 64 in
-  --     native/md5.c:111);
-  --   A-Za-z0-9 is 62 bytes — < 64 so it never enters the main block
-  --     loop, but its remainder ≥ 56 forces the TWO-block padding path
-  --     (tail_len = 128, md5.c:111/116-117);
-  --   the 80-byte digits vector (RFC 1321 A.5) is the only one that
-  --     exercises the ≥64-byte MAIN loop (`while (n >= 64)`,
-  --     md5.c:102-105) — one full block plus a 16-byte tail.
+  -- padding/block coverage: a-z is 26 bytes (one padded block);
+  -- A-Za-z0-9 is 62 bytes (remainder >= 56: the two-block padding path);
+  -- the 80-byte digits vector (RFC 1321 A.5) has one full block plus a
+  -- 16-byte tail.
   -- RFC 1321 A.5: alphabet, A-Za-z0-9, and digits-x8 vectors
   let ok4 ← assertEqual "md5(a-z)" (CerberusFresh.md5Hex "abcdefghijklmnopqrstuvwxyz")
               "c3fcd3d76192e4007dfb496cca67e13b"
@@ -106,46 +106,62 @@ def testMd5Hex : IO Bool := do
               (CerberusFresh.md5Hex
                 "12345678901234567890123456789012345678901234567890123456789012345678901234567890")
               "57edf4a22be3c955ac49da2e2107b67a"
-  if ok1 && ok2 && ok3 && ok4 && ok5 && ok6 then
+  -- ship-your-tcc F1b (pure md5Hex): UTF-8 multi-byte inputs and the byte
+  -- lengths at the padding boundaries (55/56, 63/64/65, 119/120, 128);
+  -- expected values are Python 3 `hashlib.md5(s.encode()).hexdigest()`.
+  let pyVectors : List (String × String) := [
+    ("é", "66ddcd97cfdeabb2f6fb8a999b4bc76f"),
+    ("日本語", "00110af8b4393ef3f72c50be5b332bec"),
+    ("😀", "2a02eac39d716a70ecf37579185927b6"),
+    ("Ünïcödé — ∀x. x ≠ 😀", "a157b0cfd201120ed5342045fcedf574"),
+    (String.ofList (List.replicate 55 'a'), "ef1772b6dff9a122358552954ad0df65"),
+    (String.ofList (List.replicate 56 'a'), "3b0c8ac703f828b04c6c197006d17218"),
+    (String.ofList (List.replicate 63 'a'), "b06521f39153d618550606be297466d5"),
+    (String.ofList (List.replicate 64 'a'), "014842d480b571495a4a0363793f7367"),
+    (String.ofList (List.replicate 65 'a'), "c743a45e0d2e6a95cb859adae0248435"),
+    (String.ofList (List.replicate 119 'a'), "8a7bd0732ed6a28ce75f6dabc90e1613"),
+    (String.ofList (List.replicate 120 'a'), "5f61c0ccad4cac44c75ff505e1f1e537"),
+    (String.ofList (List.replicate 128 'a'), "e510683b3f5ffe4093d021808bc6ff70")]
+  let mut ok7 := true
+  for (inp, want) in pyVectors do
+    let ok ← assertEqual s!"md5(<{inp.utf8ByteSize} bytes>)" (CerberusFresh.md5Hex inp) want
+    ok7 := ok7 && ok
+  if ok1 && ok2 && ok3 && ok4 && ok5 && ok6 && ok7 then
     IO.println "  ✓ PASS"
     return true
   else
     return false
 
-def testDigestGlobal : IO Bool := do
-  IO.println "test: per-TU digest global (set/get + Symbol.fresh pickup + armoring)"
-  -- init state mirrors util/cerb_fresh.ml:7-10 (ref "")
-  let d0 ← CerberusFresh.digestIO ()
-  let ok0 ← assertEqual "initial digest" d0 ""
-  -- Symbol.fresh must pick up the CURRENT digest at each draw
-  -- (symbol.lem: Symbol (digest()) id SD_None). Two draws under
-  -- different set_digest values must carry different digests — this is
-  -- exactly the CSE/startup-freeze hazard the never_extract armoring in
-  -- CerberusFresh.lean guards against (a frozen `digest ()` returns ""
-  -- or the first value for both). The supply argument is now explicit
-  -- (C1), but the DIGEST read inside fresh remains ambient — the
-  -- barrier discipline is unchanged.
-  -- The draws are IO-positioned via CerberusFresh.forceIO — a plain pure
-  -- `let s1 := fresh 0 ()` here gets let-SUNK to its first use (below
-  -- both sets) and observes dB for both draws (empirically confirmed on
-  -- the pre-C1 form of this test). The multi-TU pipeline loop
-  -- (Main.lean) uses the same barrier around each per-TU stage.
+/-- `md5Hex` is a pure, kernel-reducible definition (ship-your-tcc F1b): the
+    kernel itself computes the RFC 1321 vectors (`decide +kernel` is kernel
+    evaluation, no extra axiom). -/
+example : CerberusFresh.md5Hex "" = "d41d8cd98f00b204e9800998ecf8427e" := by decide +kernel
+example : CerberusFresh.md5Hex "abc" = "900150983cd24fb0d6963f7d28e17f72" := by decide +kernel
+
+/-- The digest is an instance-implicit parameter (ship-your-tcc F1b): a fresh
+    symbol carries the supplied digest, by `rfl`. -/
+example (d : String) : digest_of_sym (@fresh ⟨d⟩ 7 ()).1 = d := rfl
+
+def testDigestParameter : IO Bool := do
+  IO.println "test: per-TU digest parameter (Symbol.fresh carries the supplied digest)"
+  -- Symbol.fresh stamps the digest of the `CerberusFresh.Digest` instance in
+  -- scope (symbol.lem: Symbol (digest()) id SD_None; the instance reader of
+  -- lean_digest.lem). Two draws under two TU digests carry different
+  -- digests; two under the same one are from the same TU. (Until F1b this
+  -- tested the native global and its IO barrier: the draws had to be
+  -- IO-positioned so a let-sunk draw did not see the later TU's digest.)
   let dA := CerberusFresh.md5Hex "tu-A"
   let dB := CerberusFresh.md5Hex "tu-B"
-  let _ ← (CerberusFresh.setDigestIO dA : BaseIO Unit)
-  let s1 ← (CerberusFresh.forceIO (fun () => (fresh 0 ()).1) : BaseIO sym)
-  let _ ← (CerberusFresh.setDigestIO dB : BaseIO Unit)
-  let s2 ← (CerberusFresh.forceIO (fun () => (fresh 1 ()).1) : BaseIO sym)
+  let s1 := (@fresh ⟨dA⟩ 0 ()).1
+  let s2 := (@fresh ⟨dB⟩ 1 ()).1
+  let s3 := (@fresh ⟨dB⟩ 2 ()).1
   let ok1 ← assertEqual "digest of fresh under A" (digest_of_sym s1) dA
   let ok2 ← assertEqual "digest of fresh under B" (digest_of_sym s2) dB
   let ok3 ← assertEqual "cross-TU from_same_translation_unit"
               (from_same_translation_unit s1 s2) false
-  let s3 ← (CerberusFresh.forceIO (fun () => (fresh 2 ()).1) : BaseIO sym)
   let ok4 ← assertEqual "same-TU from_same_translation_unit"
               (from_same_translation_unit s2 s3) true
-  -- restore the pristine "" for any later test
-  let _ ← (CerberusFresh.setDigestIO "" : BaseIO Unit)
-  if ok0 && ok1 && ok2 && ok3 && ok4 then
+  if ok1 && ok2 && ok3 && ok4 then
     IO.println "  ✓ PASS"
     return true
   else
@@ -154,7 +170,7 @@ def testDigestGlobal : IO Bool := do
 def main : IO UInt32 := do
   let mut passed := 0
   let mut failed := 0
-  for test in [testSupplyThreading, testSupplyFamily, testMd5Hex, testDigestGlobal] do
+  for test in [testSupplyThreading, testSupplyFamily, testMd5Hex, testDigestParameter] do
     if ← test then
       passed := passed + 1
     else

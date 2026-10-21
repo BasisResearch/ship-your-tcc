@@ -137,7 +137,7 @@ def elabFailure (loc : CerbLocation.Loc) (ub : Bool) : Verdict :=
 
 /-- Cabs → Core for one TU: the fork driver's `frontendTU` without its IO
 (same calls, same arguments; the supply starts at 0 as in `runPipeline`). -/
-def elaborate [LemFuel] [CerbGlobal.Switches] (cfg : Config)
+def elaborate [LemFuel] [CerbGlobal.Switches] [CerberusFresh.Digest] (cfg : Config)
     (std : (Fmap String sym × fun_map Unit) × impl) (tu : translation_unit) :
     Except Verdict (file Unit × Nat) :=
   let ((ailnames, stdFunMap), coreImpl) := std
@@ -190,6 +190,7 @@ def verdicts (cfg : Config) (src : List UInt8) (n : Nat) : List Verdict :=
   | none, _ => [.refused]
   | _, .error _ => [.refused]
   | some (digest, tu), .ok std =>
+    letI : CerberusFresh.Digest := ⟨digest⟩
     match elaborate cfg std tu with
     | .error v => [v]
     | .ok (coreFile, supply) =>

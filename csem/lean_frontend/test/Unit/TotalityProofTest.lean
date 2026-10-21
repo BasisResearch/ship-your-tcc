@@ -68,8 +68,8 @@ example [i1 : CerbGlobal.Switches] (n : Nat) : @load_character_array_aux ⟨n⟩
 example {a b c d e f : Type} (n : Nat) : @nd_bind a b c d e f ⟨n⟩ = @nd_bind_lemFuel a b c d e f n := rfl
 example {a cs err1 err2 info1 info2 st1 st2 : Type} (n : Nat) : @liftND a cs err1 err2 info1 info2 st1 st2 ⟨n⟩ = @liftND_lemFuel a cs err1 err2 info1 info2 st1 st2 n := rfl
 example {a cs err1 err2 info1 info2 st1 st2 : Type} (n : Nat) : @liftAction a cs err1 err2 info1 info2 st1 st2 ⟨n⟩ = @liftAction_lemFuel a cs err1 err2 info1 info2 st1 st2 n := rfl
-example [i1 : CerbGlobal.Switches] (n : Nat) : @translate_expression ⟨n⟩ i1 = @translate_expression_lemFuel ⟨n⟩ i1 n := rfl
-example [i1 : CerbGlobal.Switches] (n : Nat) : @translate_stmt ⟨n⟩ i1 = @translate_stmt_lemFuel ⟨n⟩ i1 n := rfl
+example [i1 : CerbGlobal.Switches] [d : CerberusFresh.Digest] (n : Nat) : @translate_expression ⟨n⟩ d i1 = @translate_expression_lemFuel ⟨n⟩ d i1 n := rfl
+example [i1 : CerbGlobal.Switches] [d : CerberusFresh.Digest] (n : Nat) : @translate_stmt ⟨n⟩ d i1 = @translate_stmt_lemFuel ⟨n⟩ d i1 n := rfl
 example {a b : Type} (n : Nat) : @list_unfoldr_aux a b ⟨n⟩ = @list_unfoldr_aux_lemFuel a b n := rfl
 
 /-! ### Part 2: symbolic execution over the total exec slice.

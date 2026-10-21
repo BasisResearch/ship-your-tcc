@@ -30,15 +30,9 @@
 #     coverage stub (effect-retirement C1: the global, its BaseIO
 #     externs, and the with_tagDefs opaque are DELETED — the linked
 #     table is passed by value; charter section 4);
-#   CerberusFresh.lean — the digest read is a KERNEL-CHECKED OPAQUE
-#     since effect-retirement C2 (2026-09-01, the Q4 promoted
-#     deliverable): unsafe extern opaque digestPure (explicit witness)
-#     + impl + implemented_by on `opaque digest := fun _ => ""`; ZERO
-#     unsafeBaseIO left in the file. The full surviving seam list is
-#     MACHINE-PINNED: scripts/unsafebaseio_allowlist.txt PIN rows,
-#     enforced both-directions by check_theorem_axioms.sh's C2 ratchet
-#     leg 3 (any new implemented_by/unsafe/unsafeBaseIO site fails
-#     naming itself).
+#   CerberusFresh.lean — pure MD5 and per-TU Digest instance parameter since
+#     ship-your-tcc F1. All former native sites have been removed from the
+#     population pin, so reintroducing any fails the C2 ratchet census.
 #   CerbFloat/CerbUtils/... — unchanged (CerbUtils boundedIntegerImpl
 #     stub: permanent-declared, Q4).
 #   CerberusImpl.lean — ZERO seams since program-data parameters E-A

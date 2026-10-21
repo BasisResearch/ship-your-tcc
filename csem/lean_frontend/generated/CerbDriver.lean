@@ -650,129 +650,132 @@ def printUndefinedLine (ub : String) (stderr : String) (loc : String) : IO Unit 
   out.write ("Undefined {ub: \"".toUTF8 ++ payload ++ s!"\", stderr: \"{stderr}\", loc: \"{loc}\"}\n".toUTF8)
 
 /-- Per-TU frontend: desugar → typecheck → translate, under the TU's own
-    digest (set by the caller). Mirror of the OCaml per-file frontend
+    digest `digest`. Mirror of the OCaml per-file frontend
     (`c_frontend` pipeline.ml:180-247 + `c_frontend_and_elaboration`
     pipeline.ml:249-260), factored out of `runPipeline` for the multi-TU
     loop (arc-5 S2). Returns `.error exitCode` on a stage failure (the
     historical exit-code behavior of each failure branch is preserved:
     batch mode 1, human mode 0).
 
-    EVALUATION ORDER: every pure stage call goes through
-    `CerberusFresh.forceIO` — the stages read the per-TU digest global
-    internally (Symbol.fresh → `digest ()`), and a plain pure `let` here
-    would be let-SUNK past the NEXT TU's `setDigestIO`, stamping this
-    TU's symbols with the wrong digest (see CerberusFresh.forceIO and
-    test/Unit/FreshIntTest.lean testDigestGlobal). This is frontend-only:
-    the run receives `runDigest tunits` as data and never reads the global. -/
-def frontendTU [LemFuel] [CerbGlobal.Switches] (quiet : Bool) (supply : Nat) (addressSpaceTop : Int)
+    THE DIGEST IS AN ARGUMENT (ship-your-tcc F1b, 2026-10-21): the stages
+    read it through the instance reader `[CerberusFresh.Digest]`
+    (frontend/model/lean_digest.lem), supplied here from `digest`, so
+    `Symbol.fresh` stamps this TU's symbols with this TU's digest by
+    construction. (Until F1b the stages read a native mutable global that
+    the caller set per TU, and every stage call went through an IO
+    evaluation barrier, `CerberusFresh.forceIO`, so the compiler could not
+    sink it past the next TU's set; both are deleted.) This is
+    frontend-only: the run receives `runDigest tunits` as data. -/
+def frontendTU [LemFuel] [CerbGlobal.Switches] (quiet : Bool) (digest : String) (supply : Nat) (addressSpaceTop : Int)
     (coreEvalStuff : Fmap String sym × fun_map Unit × impl)
     (ailnames : Fmap String sym) (stdFunMap : fun_map Unit) (coreImpl : impl)
-    (tunit : translation_unit) : IO (Except UInt8 (file Unit × Nat)) := do
-  let say (s : String) : IO Unit := unless quiet do IO.println s
-  -- Desugar Cabs → AIL
-  say "  desugaring Cabs → AIL..."
-  let cnInit := empty_init
-  -- Effect-retirement C1: `supply` is the pipeline's SINGLE fresh-symbol
-  -- stream (S1 ruling) — threaded through desugar (incl. its const-expr
-  -- mini-runs), elaboration, and back out to the caller.
-  -- desugar/translate are reader-lifted since C1 (the reader_consumer
-  -- mem-ops in their cones, mem.lem): the reader argument is the
-  -- PHASE-APPROPRIATE tag table — EMPTY during desugar/typing/
-  -- elaboration, mirroring the oracle's empty Tags global there
-  -- (pipeline.ml:253 resets before translate; the union-arm asymmetry
-  -- mirror, charter section 4.2 — the offsetof-union-member crash pair
-  -- pins this). The mini-run's own extent still sees the translated
-  -- definitions via the reader_seed run_const_expr_driver.
-  -- Program-data parameters E-A (2026-09-20): `enum_definitions` is the
-  -- FIRST reader (sorted order: enum_definitions, tagDefs). At the desugar
-  -- entry the map is EMPTY — every desugar-time read of it is seeded from
-  -- the desugar state at its site (record §1, D3), exactly as the oracle's
-  -- registry is filled as enums are registered; a miss here would be a
-  -- seeding gap (loud: `Ocaml_implementation.typeof_enum: … was not registered`).
-  let desugRes ← (CerberusFresh.forceIO
-    (fun () => desugar fmapEmpty fmapEmpty supply addressSpaceTop coreEvalStuff cnInit "main" tunit) : BaseIO _)
-  match desugRes with
-  | .Result (_, (mainSym, ailProg), supplyAfterDesugar) =>
-    say s!"  desugaring succeeded!"
-    say s!"    main symbol: {match mainSym with | some _ => "found" | none => "not found"}"
-    say s!"    declarations: {List.length ailProg.declarations}"
-    say s!"    function defs: {List.length ailProg.function_definitions}"
-    say s!"    tag defs: {List.length ailProg.tag_definitions}"
-    say s!"    enum defs: {List.length ailProg.enum_definitions}"
-    -- The COMPLETE per-TU enum map from the sigma (D3): typing and
-    -- elaboration receive what the oracle's registry holds after this TU's
-    -- desugaring — the same GCC-rule decisions, as data.
-    let enumDefs : Fmap sym integerType := Lem_Map.fromList ailProg.enum_definitions
+    (tunit : translation_unit) : IO (Except UInt8 (file Unit × Nat)) :=
+  letI : CerberusFresh.Digest := ⟨digest⟩
+  do
+    let say (s : String) : IO Unit := unless quiet do IO.println s
+    -- Desugar Cabs → AIL
+    say "  desugaring Cabs → AIL..."
+    let cnInit := empty_init
+    -- Effect-retirement C1: `supply` is the pipeline's SINGLE fresh-symbol
+    -- stream (S1 ruling) — threaded through desugar (incl. its const-expr
+    -- mini-runs), elaboration, and back out to the caller.
+    -- desugar/translate are reader-lifted since C1 (the reader_consumer
+    -- mem-ops in their cones, mem.lem): the reader argument is the
+    -- PHASE-APPROPRIATE tag table — EMPTY during desugar/typing/
+    -- elaboration, mirroring the oracle's empty Tags global there
+    -- (pipeline.ml:253 resets before translate; the union-arm asymmetry
+    -- mirror, charter section 4.2 — the offsetof-union-member crash pair
+    -- pins this). The mini-run's own extent still sees the translated
+    -- definitions via the reader_seed run_const_expr_driver.
+    -- Program-data parameters E-A (2026-09-20): `enum_definitions` is the
+    -- FIRST reader (sorted order: enum_definitions, tagDefs). At the desugar
+    -- entry the map is EMPTY — every desugar-time read of it is seeded from
+    -- the desugar state at its site (record §1, D3), exactly as the oracle's
+    -- registry is filled as enums are registered; a miss here would be a
+    -- seeding gap (loud: `Ocaml_implementation.typeof_enum: … was not registered`).
+    let desugRes := desugar fmapEmpty fmapEmpty supply addressSpaceTop coreEvalStuff cnInit "main" tunit
+    match desugRes with
+    | .Result (_, (mainSym, ailProg), supplyAfterDesugar) =>
+      say s!"  desugaring succeeded!"
+      say s!"    main symbol: {match mainSym with | some _ => "found" | none => "not found"}"
+      say s!"    declarations: {List.length ailProg.declarations}"
+      say s!"    function defs: {List.length ailProg.function_definitions}"
+      say s!"    tag defs: {List.length ailProg.tag_definitions}"
+      say s!"    enum defs: {List.length ailProg.enum_definitions}"
+      -- The COMPLETE per-TU enum map from the sigma (D3): typing and
+      -- elaboration receive what the oracle's registry holds after this TU's
+      -- desugaring — the same GCC-rule decisions, as data.
+      let enumDefs : Fmap sym integerType := Lem_Map.fromList ailProg.enum_definitions
 
-    -- Step 2: Typecheck AIL (mirrors pipeline.ml:217-219); reader-lifted since
-    -- E-A (its layout reads normalise through the enum map)
-    say "  typechecking AIL..."
-    let ailInput := (mainSym, ailProg)
-    let tyRes ← (CerberusFresh.forceIO (fun () =>
-      to_exception (fun (p : CerbLocation.Loc × typing_error) => (p.1, AIL_TYPING p.2))
-        (annotate_program enumDefs fmapEmpty ailInput)) : BaseIO _)
-    match tyRes with
+      -- Step 2: Typecheck AIL (mirrors pipeline.ml:217-219); reader-lifted since
+      -- E-A (its layout reads normalise through the enum map)
+      say "  typechecking AIL..."
+      let ailInput := (mainSym, ailProg)
+      let tyRes :=
+        to_exception (fun (p : CerbLocation.Loc × typing_error) => (p.1, AIL_TYPING p.2))
+          (annotate_program enumDefs fmapEmpty ailInput)
+      match tyRes with
+      | .Exception (loc, cause) =>
+        if quiet then
+          -- OCaml parity: typing-level UB gets a batch Undefined line (main.ml runM)
+          match cause with
+          | .AIL_TYPING (.TError_UndefinedBehaviour ub) =>
+            -- main.ml:173-177: `Undefined { ub; stderr= ""; loc }` through string_of_batch_output
+            printUndefinedLine (stringFromUndefined_behaviour ub) "" (CerbLocation.simpleLocation loc)
+          | _ =>
+            IO.println s!"Error \{msg: \"typechecking failed at {CerbLocation.stringFromLocation loc}\"}"
+          return .error 1
+        else
+          IO.println s!"  typechecking failed!"
+          IO.println s!"    at: {CerbLocation.stringFromLocation loc}"
+          return .error 0
+      | .Result (typedProg, _annots) =>
+        say s!"  typechecking succeeded!"
+
+        -- Step 3: Translate AIL → Core
+        say "  translating AIL → Core..."
+        -- C1: the per-TU CerbTags reset (pipeline.ml:253 mirror) is GONE —
+        -- there is no global to reset; translate's reader argument below is
+        -- the empty table, which IS the oracle's reset-then-elaborate state
+        -- (documented divergence from the driver-level bookkeeping, mirror
+        -- doctrine; the value-passing replaces the write scaffold).
+        let callconv := Normal_callconv
+        let (coreFile, supplyAfterTranslate) :=
+          translate enumDefs fmapEmpty supplyAfterDesugar (ailnames, stdFunMap) callconv coreImpl typedProg
+        say s!"  translation succeeded!"
+        say s!"    main: {match coreFile.main with | some _ => "found" | none => "not found"}"
+        say s!"    funs: {List.length (fmapElements coreFile.funs)}"
+        say s!"    globs: {List.length coreFile.globs}"
+        return .ok (coreFile, supplyAfterTranslate)
     | .Exception (loc, cause) =>
       if quiet then
-        -- OCaml parity: typing-level UB gets a batch Undefined line (main.ml runM)
+        -- OCaml parity (main.ml runM): desugar-level UB gets a batch Undefined line
         match cause with
-        | .AIL_TYPING (.TError_UndefinedBehaviour ub) =>
-          -- main.ml:173-177: `Undefined { ub; stderr= ""; loc }` through string_of_batch_output
+        | .DESUGAR (.Desugar_UndefinedBehaviour ub) =>
+          -- main.ml:166-170: `Undefined { ub; stderr= ""; loc }` through string_of_batch_output
           printUndefinedLine (stringFromUndefined_behaviour ub) "" (CerbLocation.simpleLocation loc)
         | _ =>
-          IO.println s!"Error \{msg: \"typechecking failed at {CerbLocation.stringFromLocation loc}\"}"
+          IO.println s!"Error \{msg: \"desugaring failed at {CerbLocation.stringFromLocation loc}\"}"
         return .error 1
       else
-        IO.println s!"  typechecking failed!"
+        IO.println s!"  desugaring failed!"
         IO.println s!"    at: {CerbLocation.stringFromLocation loc}"
+        -- Print cause details
+        match cause with
+        | .DESUGAR (.Desugar_ConstraintViolation v) => IO.println s!"    cause: DESUGAR ConstraintViolation"
+        | .DESUGAR (.Desugar_UndefinedBehaviour ub) =>
+          IO.println s!"    cause: DESUGAR UndefinedBehaviour: {stringFromUndefined_behaviour ub}"
+        | .DESUGAR (.Desugar_MiscViolation _) => IO.println s!"    cause: DESUGAR MiscViolation"
+        | .DESUGAR (.Desugar_NotYetSupported s) => IO.println s!"    cause: DESUGAR NotYetSupported: {s}"
+        | .DESUGAR (.Desugar_NeverSupported s) => IO.println s!"    cause: DESUGAR NeverSupported: {s}"
+        | .DESUGAR (.Desugar_agnosticFailure s) => IO.println s!"    cause: DESUGAR agnosticFailure: {s}"
+        | .DESUGAR .Desugar_illtypedIntegerConstant => IO.println s!"    cause: DESUGAR illtypedIntegerConstant"
+        | .DESUGAR (.Desugar_TODO s) => IO.println s!"    cause: DESUGAR TODO: {s}"
+        | .DESUGAR _ => IO.println s!"    cause: DESUGAR (other)"
+        | .AIL_TYPING _ => IO.println s!"    cause: AIL_TYPING"
+        | .CPP _ => IO.println s!"    cause: CPP"
+        | _ => IO.println s!"    cause: (other)"
         return .error 0
-    | .Result (typedProg, _annots) =>
-      say s!"  typechecking succeeded!"
-
-      -- Step 3: Translate AIL → Core
-      say "  translating AIL → Core..."
-      -- C1: the per-TU CerbTags reset (pipeline.ml:253 mirror) is GONE —
-      -- there is no global to reset; translate's reader argument below is
-      -- the empty table, which IS the oracle's reset-then-elaborate state
-      -- (documented divergence from the driver-level bookkeeping, mirror
-      -- doctrine; the value-passing replaces the write scaffold).
-      let callconv := Normal_callconv
-      let (coreFile, supplyAfterTranslate) ← (CerberusFresh.forceIO (fun () =>
-        translate enumDefs fmapEmpty supplyAfterDesugar (ailnames, stdFunMap) callconv coreImpl typedProg) : BaseIO _)
-      say s!"  translation succeeded!"
-      say s!"    main: {match coreFile.main with | some _ => "found" | none => "not found"}"
-      say s!"    funs: {List.length (fmapElements coreFile.funs)}"
-      say s!"    globs: {List.length coreFile.globs}"
-      return .ok (coreFile, supplyAfterTranslate)
-  | .Exception (loc, cause) =>
-    if quiet then
-      -- OCaml parity (main.ml runM): desugar-level UB gets a batch Undefined line
-      match cause with
-      | .DESUGAR (.Desugar_UndefinedBehaviour ub) =>
-        -- main.ml:166-170: `Undefined { ub; stderr= ""; loc }` through string_of_batch_output
-        printUndefinedLine (stringFromUndefined_behaviour ub) "" (CerbLocation.simpleLocation loc)
-      | _ =>
-        IO.println s!"Error \{msg: \"desugaring failed at {CerbLocation.stringFromLocation loc}\"}"
-      return .error 1
-    else
-      IO.println s!"  desugaring failed!"
-      IO.println s!"    at: {CerbLocation.stringFromLocation loc}"
-      -- Print cause details
-      match cause with
-      | .DESUGAR (.Desugar_ConstraintViolation v) => IO.println s!"    cause: DESUGAR ConstraintViolation"
-      | .DESUGAR (.Desugar_UndefinedBehaviour ub) =>
-        IO.println s!"    cause: DESUGAR UndefinedBehaviour: {stringFromUndefined_behaviour ub}"
-      | .DESUGAR (.Desugar_MiscViolation _) => IO.println s!"    cause: DESUGAR MiscViolation"
-      | .DESUGAR (.Desugar_NotYetSupported s) => IO.println s!"    cause: DESUGAR NotYetSupported: {s}"
-      | .DESUGAR (.Desugar_NeverSupported s) => IO.println s!"    cause: DESUGAR NeverSupported: {s}"
-      | .DESUGAR (.Desugar_agnosticFailure s) => IO.println s!"    cause: DESUGAR agnosticFailure: {s}"
-      | .DESUGAR .Desugar_illtypedIntegerConstant => IO.println s!"    cause: DESUGAR illtypedIntegerConstant"
-      | .DESUGAR (.Desugar_TODO s) => IO.println s!"    cause: DESUGAR TODO: {s}"
-      | .DESUGAR _ => IO.println s!"    cause: DESUGAR (other)"
-      | .AIL_TYPING _ => IO.println s!"    cause: AIL_TYPING"
-      | .CPP _ => IO.println s!"    cause: CPP"
-      | _ => IO.println s!"    cause: (other)"
-      return .error 0
 
 /-- Load and assemble the libc library Core file (see the module note at
     "C-libc loading" above). -/
@@ -786,12 +789,13 @@ def loadLibc [LemFuel] [CerbGlobal.Switches] (runtime : String) (quiet : Bool) (
     if quiet then IO.println s!"Error \{msg: \"libc load failed: {CerbEscape.text msg}\"}"
     else IO.println s!"  libc load failed: {msg}"
     return .error 1
-  -- 1. Parse the pinned dump (bodies). The TU digest is the real MD5 of
-  --    the pinned file (arc-5 per-TU digest machinery; CoreParser's
-  --    interning is digest-independent, so this is provenance-recording).
+  -- 1. Parse the pinned dump (bodies). CoreParser's interning is
+  --    digest-independent (digest ""), so no digest is involved. (Until
+  --    ship-your-tcc F1b the driver set the native digest global to the
+  --    dump's MD5 here, provenance only: the metadata loop below set it
+  --    again before any symbol was minted.)
   say s!"  loading libc bodies from {libcCorePath}..."
   let dumpContent ← IO.FS.readFile ⟨libcCorePath⟩
-  let _ ← (CerberusFresh.setDigestIO (CerberusFresh.md5Hex dumpContent) : BaseIO Unit)
   let parsed ← match CoreParser.parseFile dumpContent with
     | .ok f => pure f
     | .error e => return (← bail s!"parsing {libcCorePath}: {e}")
@@ -814,8 +818,7 @@ def loadLibc [LemFuel] [CerbGlobal.Switches] (runtime : String) (quiet : Bool) (
         refuseLibraryLocations runtime s!"the libc metadata TU {j}" files
         pure (d, t)
       | .error e => return (← bail s!"cabs-json parse error in {j}: {e}")
-    let _ ← (CerberusFresh.setDigestIO digest : BaseIO Unit)
-    match ← frontendTU true supply addressSpaceTop coreEvalStuff ailnames stdFunMap coreImpl tunit with
+    match ← frontendTU true digest supply addressSpaceTop coreEvalStuff ailnames stdFunMap coreImpl tunit with
     | .error _ => return (← bail s!"frontend failed for libc metadata TU {j}")
     | .ok (f, supply') => metaFiles := f :: metaFiles; supply := supply'
   let metaFile ← match link metaFiles with
@@ -1033,8 +1036,8 @@ def loadLibc [LemFuel] [CerbGlobal.Switches] (runtime : String) (quiet : Bool) (
 /-- Run the pipeline over one or more translation units (multi-TU, arc-5
     S2). `tunits` carries (source digest, parsed Cabs) per TU in
     command-line order — the digest is the oracle's `Digest.file` the
-    cabs-json carries (CabsImport.parseJson; zero-discrepancy Z3). Per TU: set the TU digest, then
-    desugar→typecheck→translate (`frontendTU`); the resulting Core files
+    cabs-json carries (CabsImport.parseJson; zero-discrepancy Z3). Per TU:
+    desugar→typecheck→translate under the TU digest (`frontendTU`); the resulting Core files
     are linked with the generated `Core_linking.link` exactly as the
     OCaml driver does (backend/driver/main.ml:278-281), tag definitions
     are taken from the LINKED file (main.ml:284-285), and execution
@@ -1152,10 +1155,9 @@ def runPipeline [LemFuel] [CerbGlobal.Switches] (runtime : String) (batch : Bool
     -- Placement note: OCaml sets the digest before its C PARSE; our Cabs
     -- deserialization already happened in main — harmless, Cabs carries
     -- no Symbol.sym, so no symbol is created before the set.
-    -- BaseIO variant: a discarded pure call is dead-code-eliminated
-    -- (CerbTags set/reset pattern, arc-4 S3b).
-    let _ ← (CerberusFresh.setDigestIO digest : BaseIO Unit)
-    match ← frontendTU quiet supply addressSpaceTop coreEvalStuff ailnames stdFunMap coreImpl tunit with
+    -- Since ship-your-tcc F1b the digest is frontendTU's argument (the
+    -- instance reader `[CerberusFresh.Digest]`), not a native global.
+    match ← frontendTU quiet digest supply addressSpaceTop coreEvalStuff ailnames stdFunMap coreImpl tunit with
     | .error code => return code
     | .ok (coreFile, supply') => coreFiles := coreFile :: coreFiles; supply := supply'
 
@@ -1764,7 +1766,7 @@ def cerbMain (args : List String) : IO Unit := do
   -- frontend fold (main.ml:153-156), but our deserialization is the
   -- Lean-side half of the --cabs-json bridge, not the C parse — its
   -- placement is an artifact of the split and carries no symbol state
-  -- (Cabs has no Symbol.sym). Per-TU digests are set inside
+  -- (Cabs has no Symbol.sym). Per-TU digests are passed to frontendTU in
   -- runPipeline's frontend loop (pipeline.ml:181 mirror).
   -- bug-hunt BUG-2: the runtime is resolved like the oracle's (resolveRuntime),
   -- never searched for relative to the working directory

@@ -31,7 +31,8 @@ theorem collect_cases__measure_sufficient (stmt : statement genTypeCategory) (le
   Translation_lemMeasureProofs.collect_cases__measure_sufficient stmt lemFuel lemMeasureLe
 
 /- lem: fuel_measure obligation for `erase_loop_control_aux` (generated; declare {lean} fuel_measure val erase_loop_control_aux = `lemSize stmt`): the worker is fuel-STABLE at the measure (equal to the wrapper at every fuel at or above it). The proof is hand-written in `Translation_lemMeasureProofs.erase_loop_control_aux_measure_sufficient`, stated with exactly these binders; a missing or mistyped theorem fails the build (a `sorry` is the sorry/axiom gates' job). -/
-theorem erase_loop_control_aux_measure_sufficient (stmt : statement genTypeCategory) (lemFuel : Nat)
+theorem erase_loop_control_aux_measure_sufficient [CerberusFresh.Digest]
+    (stmt : statement genTypeCategory) (lemFuel : Nat)
     (lemMeasureLe : (statement.lemSize stmt) ≤ lemFuel) :
     erase_loop_control_aux_lemFuel lemFuel stmt = erase_loop_control_aux stmt :=
   Translation_lemMeasureProofs.erase_loop_control_aux_measure_sufficient stmt lemFuel lemMeasureLe

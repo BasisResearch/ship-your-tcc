@@ -4,6 +4,9 @@ set_option autoImplicit false
 
 namespace TranslationFuelTest
 
+-- Fresh-symbol operations receive the translation unit digest explicitly.
+variable [CerberusFresh.Digest]
+
 -- The measured wrappers use data-derived fuel, with no ambient instance.
 example (enums : Fmap sym integerType)
     (tags : Fmap sym (CerbLocation.Loc × tag_definition)) (c : constant) :

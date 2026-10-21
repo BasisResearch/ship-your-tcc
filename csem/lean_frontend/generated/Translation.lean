@@ -2,9 +2,9 @@
 
 import LemLib
 
+import CerberusFresh
 import CerbGlobal
 import CerbDebug
-import CerberusFresh
 import Cerb_attributes
 import CerbUtils
 import CerbMem
@@ -280,7 +280,8 @@ theorem translate_constant_lemFuel_zero (_lemReader_enum_definitions : Fmap sym 
         (fuelExhausted (mk_specified_pe (mk_nullptr_pe void))) :=
   rfl
 
-def translate_function_designator (_lemReader_enum_definitions : Fmap sym integerType)
+def translate_function_designator [CerberusFresh.Digest]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (translate_expr : expression genTypeCategory → elab_state →
       (generic_expr Unit Unit sym × elab_state)) (stdlib1 : translation_stdlib)
@@ -313,7 +314,8 @@ def translate_function_designator (_lemReader_enum_definitions : Fmap sym intege
             elab_state → (generic_expr Unit Unit sym × elab_state))))
 /- STD §6.5.5 Multiplicative operators -/
 
-def translate_mul_operator (_lemReader_enum_definitions : Fmap sym integerType)
+def translate_mul_operator [CerberusFresh.Digest]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (translate_expr : expression genTypeCategory → elab_state →
       (generic_expr Unit Unit sym × elab_state))
@@ -384,7 +386,8 @@ else
                                       mk_undef_exceptional_condition
                                         loc1))]))))))))))) /- MUST BE A.Div or A.Mod -/
 
-def translate_div_mod_operator (_lemReader_enum_definitions : Fmap sym integerType)
+def translate_div_mod_operator [CerberusFresh.Digest]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (translate_expr : expression genTypeCategory → elab_state →
       (generic_expr Unit Unit sym × elab_state))
@@ -480,7 +483,8 @@ def translate_div_mod_operator (_lemReader_enum_definitions : Fmap sym integerTy
 /- STD §6.5.8 Relational operators -/
 /- MUST BE in { A.Lt, A.Gt. A.Le, A.Ge } -/
 
-def translate_relational_operator (_lemReader_enum_definitions : Fmap sym integerType)
+def translate_relational_operator [CerberusFresh.Digest]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (translate_expr : expression genTypeCategory → elab_state →
       (generic_expr Unit Unit sym × elab_state))
@@ -555,7 +559,8 @@ def translate_relational_operator (_lemReader_enum_definitions : Fmap sym intege
 /- STD §6.5.9 Equality operators -/
 /- MUST BE in { A.Eq, A.Ne } -/
 
-def translate_equality_operator (_lemReader_enum_definitions : Fmap sym integerType)
+def translate_equality_operator [CerberusFresh.Digest]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (translate_expr : expression genTypeCategory → elab_state →
       (generic_expr Unit Unit sym × elab_state))
@@ -679,7 +684,8 @@ def translate_equality_operator (_lemReader_enum_definitions : Fmap sym integerT
 /- STD §6.5.12  Bitwise inclusive OR operator -/
 /- MUST BE in { A.Band, A.Bxor, A.Bor } -/
 
-def translate_bitwise_operator (_lemReader_enum_definitions : Fmap sym integerType)
+def translate_bitwise_operator [CerberusFresh.Digest]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (translate_expr : expression genTypeCategory → elab_state →
       (generic_expr Unit Unit sym × elab_state))
@@ -746,7 +752,7 @@ def translate_bitwise_operator (_lemReader_enum_definitions : Fmap sym integerTy
                                      mk_unspecified_pe
                                        result_ty)]))))))))))) /- MUST BE in { A.PostfixIncr, A.PostfixDecr } -/
 
-def translate_postfix (_lemReader_enum_definitions : Fmap sym integerType)
+def translate_postfix [CerberusFresh.Digest] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (translate_expr : expression genTypeCategory → elab_state →
       (generic_expr Unit Unit sym × elab_state)) (stdlib1 : translation_stdlib) (result_ty : ctype)
@@ -879,7 +885,8 @@ def translate_postfix (_lemReader_enum_definitions : Fmap sym integerType)
                         | _ => mk_common ()
                       else
                         mk_common ())))))))
-def translate_assignment_conversion (_lemReader_enum_definitions : Fmap sym integerType)
+def translate_assignment_conversion [CerberusFresh.Digest]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (translate_expr : expression genTypeCategory → elab_state →
       (generic_expr Unit Unit sym × elab_state)) (stdlib1 : translation_stdlib) (ty1 : ctype)
@@ -931,7 +938,8 @@ def translate_assignment_conversion (_lemReader_enum_definitions : Fmap sym inte
                   (stdlib1.mkproc_loaded_pointer_to_Bool conv_wrp.sym_pe),
                 (fun (z : generic_pexpr Unit sym) => z))))) /- is_used -/
 
-def translate_function_call (_lemReader_enum_definitions : Fmap sym integerType)
+def translate_function_call [CerberusFresh.Digest]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (annots1 : List annot) (is_used : Bool)
     (translate_expr : expression genTypeCategory → elab_state →
@@ -1133,8 +1141,7 @@ def translate_function_call (_lemReader_enum_definitions : Fmap sym integerType)
                                                                             expect_param_ty_pe)
                                                                           expect_param_ty_pe
                                                                           (PrefFunArg loc1
-                                                                            (CerberusFresh.digest
-                                                                              ())
+                                                                            CerberusFresh.Digest.digest
                                                                             (lemIntFromInteger n)))
                                                                         (mk_wseq_e
                                                                           (mk_empty_pat BTy_unit)
@@ -1709,7 +1716,8 @@ instance (priority := 500) : Lem_Basic_classes.Ord0 atomic_explicit where
   isGreater := defaultGreater
   isGreaterEqual := defaultGreaterEq
 
-def translate_atomic_explicit (_lemReader_enum_definitions : Fmap sym integerType)
+def translate_atomic_explicit [CerberusFresh.Digest]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (translate_expr : expression genTypeCategory → elab_state →
       (generic_expr Unit Unit sym × elab_state)) (atomic_op : atomic_explicit)
@@ -2012,8 +2020,8 @@ instance (priority := 500) : Lem_Basic_classes.Ord0 expr_ctx where
     | _ =>
       true /- whether the value of the expression is used (i.e. the expression is directly applied to AilSexpr) -/
 
-def translate_expression_lemFuel [LemFuel] [CerbGlobal.Switches] (lemFuel : Nat)
-    (_lemReader_enum_definitions : Fmap sym integerType)
+def translate_expression_lemFuel [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
+    (lemFuel : Nat) (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (translate_block_opt : Option
       ((expression genTypeCategory → elab_state → (generic_expr Unit Unit sym × elab_state)) → List
@@ -4444,14 +4452,14 @@ def translate_expression_lemFuel [LemFuel] [CerbGlobal.Switches] (lemFuel : Nat)
                      else
                        maybe_annotate_integer_type result_ty)) a))))
 
-def translate_expression [LemFuel] [CerbGlobal.Switches] :
+def translate_expression [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches] :
     (Fmap sym integerType) -> (Fmap sym (CerbLocation.Loc × tag_definition)) -> Option
         ((expression genTypeCategory → elabM (expr Unit)) → bindings → List
           (statement genTypeCategory) → elabM (expr Unit)) → Bool → expr_ctx →
         (Option sym × Option sym) → translation_stdlib → core_tag_definitions → expression
         genTypeCategory → elabM (expr Unit) :=
   translate_expression_lemFuel LemFuel.fuel
-theorem translate_expression_lemFuel_zero [LemFuel] [CerbGlobal.Switches]
+theorem translate_expression_lemFuel_zero [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (translate_block_opt : Option
@@ -4569,7 +4577,8 @@ def elc_fresh_int : erase_loop_control_state → (Nat × erase_loop_control_stat
   fun (st : erase_loop_control_state) =>
     let n := st.elc_supply;
     (n, { st with elc_supply := n + 1 })
-def erase_loop_control_aux_lemFuel (lemFuel : Nat) (stmt : statement genTypeCategory) :
+def erase_loop_control_aux_lemFuel [CerberusFresh.Digest] (lemFuel : Nat)
+    (stmt : statement genTypeCategory) :
     erase_loop_control_state → (statement genTypeCategory × erase_loop_control_state) :=
   match lemFuel with
   | 0 => (fuelExhausted (fun st => (stmt, st)))
@@ -4593,10 +4602,10 @@ def erase_loop_control_aux_lemFuel (lemFuel : Nat) (stmt : statement genTypeCate
              (match elc_fresh_int st_c with
               | (nb, st_b) =>
                 (let continue_sym :=
-                   set_symbol_description (fresh_given_int (CerberusFresh.digest ()) nc)
+                   set_symbol_description (fresh_given_int CerberusFresh.Digest.digest nc)
                      (SD_Id (String.append "continue_" (Lem_String_extra.stringFromNat nc)));
                  let break_sym :=
-                   set_symbol_description (fresh_given_int (CerberusFresh.digest ()) nb)
+                   set_symbol_description (fresh_given_int CerberusFresh.Digest.digest nb)
                      (SD_Id (String.append "break_" (Lem_String_extra.stringFromNat nb)));
                  match mf
                      (({ elc_continue := (some continue_sym),
@@ -4717,10 +4726,11 @@ def erase_loop_control_aux_lemFuel (lemFuel : Nat) (stmt : statement genTypeCate
         | AilSmarker id1 s =>
           state_fmap (AilSmarker id1) ((erase_loop_control_aux_lemFuel lemFuel) s)))
 
-def erase_loop_control_aux (stmt : statement genTypeCategory) :
+def erase_loop_control_aux [CerberusFresh.Digest] (stmt : statement genTypeCategory) :
     stateM (statement genTypeCategory) erase_loop_control_state :=
   erase_loop_control_aux_lemFuel (statement.lemSize stmt) stmt
-theorem erase_loop_control_aux_lemFuel_zero (stmt : statement genTypeCategory) :
+theorem erase_loop_control_aux_lemFuel_zero [CerberusFresh.Digest]
+    (stmt : statement genTypeCategory) :
     erase_loop_control_aux_lemFuel 0 stmt = (fuelExhausted (fun st => (stmt, st))) :=
   rfl
 
@@ -4729,7 +4739,7 @@ theorem erase_loop_control_aux_lemFuel_zero (stmt : statement genTypeCategory) :
    and the final value is returned to it (the pass's draws stay a
    contiguous block — contiguity only, per charter section 3.4 b'). -/
 
-def erase_loop_control (stmt : statement genTypeCategory) :
+def erase_loop_control [CerberusFresh.Digest] (stmt : statement genTypeCategory) :
     elab_state → (statement genTypeCategory × elab_state) :=
   with_fresh_supply (fun (sup : Nat) =>
     match runStateM (erase_loop_control_aux stmt)
@@ -4957,7 +4967,7 @@ instance (priority := 500) : Lem_Basic_classes.Ord0 translate_stmt_env where
   isGreater := defaultGreater
   isGreaterEqual := defaultGreaterEq
 
-def wrapped_translate_expression [LemFuel] [CerbGlobal.Switches]
+def wrapped_translate_expression [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (translate_block_opt : Option
@@ -5004,7 +5014,8 @@ def wrapped_translate_expression [LemFuel] [CerbGlobal.Switches]
                           (mk_unit_sseq core_kills (mk_pure_e e_wrp.sym_pe)))))))))
 
 /- TODO: make use of this function for elaboration of normal AilSblock statements -/
-def translate_block { a b : Type } (_lemReader_enum_definitions : Fmap sym integerType)
+def translate_block { a b : Type } [CerberusFresh.Digest]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (translate_expr_opt : Option
       (expression genTypeCategory → elab_state → (generic_expr Unit Unit sym × elab_state)))
@@ -5121,7 +5132,7 @@ def translate_block { a b : Type } (_lemReader_enum_definitions : Fmap sym integ
              ((lit_pats_core_creates ++ pats_core_creates) ++ cheri_const_intrinsic)
              (mk_core (core_kills ++ pat_core_kills)))))
 
-def translate_stmt_lemFuel [LemFuel] [CerbGlobal.Switches] (lemFuel : Nat)
+def translate_stmt_lemFuel [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches] (lemFuel : Nat)
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (stdlib1 : translation_stdlib) (tagDefs1 : Fmap sym (CerbLocation.Loc × tag_definition))
@@ -5845,12 +5856,12 @@ def translate_stmt_lemFuel [LemFuel] [CerbGlobal.Switches] (lemFuel : Nat)
              (fun (x : generic_expr Unit Unit sym)=> add_loc loc1 (add_stmt x))
                (add_attrs stmt.attrs x))) a)))
 
-def translate_stmt [LemFuel] [CerbGlobal.Switches] :
+def translate_stmt [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches] :
     (Fmap sym integerType) -> (Fmap sym (CerbLocation.Loc × tag_definition)) -> translation_stdlib →
         core_tag_definitions → ail_identifier → translate_stmt_env → statement genTypeCategory →
         elabM (expr Unit) :=
   translate_stmt_lemFuel LemFuel.fuel
-theorem translate_stmt_lemFuel_zero [LemFuel] [CerbGlobal.Switches]
+theorem translate_stmt_lemFuel_zero [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (stdlib1 : translation_stdlib) (tagDefs1 : Fmap sym (CerbLocation.Loc × tag_definition))
@@ -5868,7 +5879,7 @@ def translate_tag_definitions
         match p with
         | (x, (loc1, _, y)) => (x, (loc1, y))) ctx)
 
-def translate_program [LemFuel] [CerbGlobal.Switches]
+def translate_program [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (stdlib1 : translation_stdlib) (p : (Option sym × sigma genTypeCategory)) :
@@ -6193,7 +6204,7 @@ def translate_program [LemFuel] [CerbGlobal.Switches]
                                                             (BTy_object OTy_pointer),
                                                             pcreate loc1 (mk_alignof_pe ty_pe) ty_pe
                                                               (PrefFunArg loc1
-                                                                (CerberusFresh.digest ())
+                                                                CerberusFresh.Digest.digest
                                                                 (Int.ofNat i))),
                                                             (mk_empty_pat BTy_unit,
                                                               pstore loc1 ty_pe (mk_sym_pe ptr_sym)
@@ -6381,7 +6392,8 @@ def translate_extern_map { a b : Type } (p : (b × sigma a)) :
    counter): main.ml/pipeline.ml pass 0 and drop the second component
    — documented divergence, see ocaml_frontend/fork_renumber.ml. -/
 
-def translate [LemFuel] [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
+def translate [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (sup : Nat)
     (p : (Fmap String sym × Fmap sym (generic_fun_map_decl Unit Unit)))
     (callconv : calling_convention) (impl2 : Fmap implementation_constant (generic_impl_decl Unit))

@@ -124,13 +124,15 @@ def fresh_elab_int : elab_state → (Nat × elab_state) :=
   fun (st : elab_state) =>
     let n := st.fresh_supply;
     (n, { st with fresh_supply := n + 1 })
-def fresh_elab_sym (descr : symbol_description) : elab_state → (sym × elab_state) :=
+def fresh_elab_sym [CerberusFresh.Digest] (descr : symbol_description) :
+    elab_state → (sym × elab_state) :=
   bind1 fresh_elab_int (fun (n : Nat) =>
-    return0 (set_symbol_description (fresh_given_int (CerberusFresh.digest ()) n) descr))
-def fresh_elab_pretty_with_id (mkStr : Nat → String) : elab_state → (sym × elab_state) :=
+    return0 (set_symbol_description (fresh_given_int CerberusFresh.Digest.digest n) descr))
+def fresh_elab_pretty_with_id [CerberusFresh.Digest] (mkStr : Nat → String) :
+    elab_state → (sym × elab_state) :=
   bind1 fresh_elab_int (fun (n : Nat) =>
     return0
-      (set_symbol_description (fresh_given_int (CerberusFresh.digest ()) n) (SD_Id (mkStr n))))
+      (set_symbol_description (fresh_given_int CerberusFresh.Digest.digest n) (SD_Id (mkStr n))))
 /- Run a supply-consuming sub-computation against the elaboration
    supply: f receives the current supply and returns (result, final
    supply). Used by the erase_loop_control pass (m1b). Pure threading —
@@ -144,12 +146,14 @@ def with_fresh_supply { a : Type } (f : Nat → (a × Nat)) : elab_state → (a 
 /- TODO: this does not need to be in the monad, but it is useful to unsure
    proper ordering (for "intuitive" sym number) -/
 
-def wrapped_fresh_symbol (bTy : core_base_type) : elab_state → (wrapped_symbol × elab_state) :=
+def wrapped_fresh_symbol [CerberusFresh.Digest] (bTy : core_base_type) :
+    elab_state → (wrapped_symbol × elab_state) :=
   bind1 (fresh_elab_sym SD_None) (fun (sym1 : sym) =>
     return0
       (({ sym_sym := sym1, sym_pat := (mk_sym_pat sym1 bTy), sym_pe := (mk_sym_pe sym1) } :
         wrapped_symbol)))
-def wrapped_fresh_symbol_ (descr : symbol_description) (bTy : core_base_type) :
+def wrapped_fresh_symbol_ [CerberusFresh.Digest] (descr : symbol_description)
+    (bTy : core_base_type) :
     elab_state → ((sym × generic_pattern sym × generic_pexpr Unit sym) × elab_state) :=
   bind1 (fresh_elab_sym descr) (fun (sym1 : sym) =>
     return0 (sym1, mk_sym_pat sym1 bTy, mk_sym_pe sym1))
@@ -185,8 +189,8 @@ def pop_block_objects : elab_state → (Unit × elab_state) :=
               (List sym)) })
 def cheri_const_alias_map : elab_state → (Fmap sym sym × elab_state) :=
   fun (st : elab_state) => (st.cheri_const_alias, st)
-def with_block_objects { a : Type } (binds : List (sym × (qualifiers × ctype)))
-    (ma : elab_state → (a × elab_state)) :
+def with_block_objects { a : Type } [CerberusFresh.Digest]
+    (binds : List (sym × (qualifiers × ctype))) (ma : elab_state → (a × elab_state)) :
     elab_state →
         ((List (sym × (qualifiers × ctype × sym)) × List compound_literal_info × a) × elab_state) :=
   fun (st : elab_state) =>
@@ -203,7 +207,7 @@ def with_block_objects { a : Type } (binds : List (sym × (qualifiers × ctype))
             (/- TODO: fail if sym IN acc -/ lem_if qs.const then
               match fresh_elab_int stx with
               | (n, stx') =>
-                (let sym' := fresh_given_int (CerberusFresh.digest ()) n;
+                (let sym' := fresh_given_int CerberusFresh.Digest.digest n;
                  (((sym1, (qs, ty1, sym')) :: xs_acc),
                    (fmapAddBy (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2) sym1 sym'
                      map_acc), stx'))

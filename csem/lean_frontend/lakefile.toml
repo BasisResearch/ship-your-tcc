@@ -148,6 +148,7 @@ roots = [
   "Global", "Global_auxiliary",
   "Implementation", "Implementation_auxiliary",
   "Lean_switches", "Lean_switches_auxiliary",
+  "Lean_digest", "Lean_digest_auxiliary",
   "IntegerImpl", "IntegerImpl_auxiliary",
   "IntegerType", "IntegerType_auxiliary",
   "Linux", "Linux_auxiliary",
@@ -231,7 +232,6 @@ roots = [
 [[lean_exe]]
 name = "cerberus-lean"
 root = "Main"
-moreLinkArgs = ["native/md5.o"]
 
 # Test library: tests live under lean_frontend/test/ and import from
 # the main CerberusLean lib. Each test exe has root "Unit.<Name>Test".
@@ -244,25 +244,21 @@ globs = ["Unit.+"]
 name = "core-parser-test"
 srcDir = "test"
 root = "Unit.CoreParserTest"
-moreLinkArgs = ["native/md5.o"]
 
 [[lean_exe]]
 name = "effects-proof-test"
 srcDir = "test"
 root = "Unit.EffectsProofTest"
-moreLinkArgs = ["native/md5.o"]
 
 [[lean_exe]]
 name = "totality-proof-test"
 srcDir = "test"
 root = "Unit.TotalityProofTest"
-moreLinkArgs = ["native/md5.o"]
 
 [[lean_exe]]
 name = "fresh-int-test"
 srcDir = "test"
 root = "Unit.FreshIntTest"
-moreLinkArgs = ["native/md5.o"]
 
 # arc-10 S3: pretty-printer mirrors vs recorded oracle outputs (OCaml
 # string_of_float / %.*f transcript + Pp_core_ctype / pp_value shapes).
@@ -270,7 +266,6 @@ moreLinkArgs = ["native/md5.o"]
 name = "pp-test"
 srcDir = "test"
 root = "Unit.PPTest"
-moreLinkArgs = ["native/md5.o"]
 
 # FUEL arc (2026-09-03): the consumer-shaped exemplar theorem over the
 # shipped fuel-parametric pipeline (CerbND.drive_lemFuel), kernel-checked
@@ -280,7 +275,6 @@ moreLinkArgs = ["native/md5.o"]
 name = "fuel-exemplar-test"
 srcDir = "test"
 root = "Unit.FuelExemplar"
-moreLinkArgs = ["native/md5.o"]
 
 # FUEL arc C2 (2026-09-04): the (A)/(B)/(C) classifier of every fuel'd worker
 # (test/Unit/FuelFormsTool.lean) — a RUNTIME instrument over the compiled
@@ -297,7 +291,6 @@ supportInterpreter = true
 name = "monadic-failstop-test"
 srcDir = "test"
 root = "Unit.MonadicFailstop"
-moreLinkArgs = ["native/md5.o"]
 
 # allocator soundness (upstream-tray draft 44, remedy 1 landed 2026-09-16): the
 # four draft-44 states evaluated on the ACTUAL CerbMem.allocator — a RUNTIME
@@ -307,7 +300,6 @@ moreLinkArgs = ["native/md5.o"]
 name = "allocator-soundness-test"
 srcDir = "test"
 root = "Unit.AllocatorSoundnessTest"
-moreLinkArgs = ["native/md5.o"]
 
 
 # semantics-audit repairs D1 (2026-09-11): CerbFloat.of_string bit-pattern pins
@@ -336,7 +328,6 @@ root = "Unit.ManyRestatementTest"
 name = "opaque-failure-test"
 srcDir = "test"
 root = "Unit.OpaqueFailureTest"
-moreLinkArgs = ["native/md5.o"]
 
 # PNVI arc S2 (2026-10-07): the default-mode compatibility wrappers `CerbMem.reconstructValue(_lemFuel)`
 # equal the pre-S2 text (a verbatim legacy copy, kernel equality); the mem-scale C1 index-slicing
@@ -345,7 +336,6 @@ moreLinkArgs = ["native/md5.o"]
 name = "reconstruct-legacy-test"
 srcDir = "test"
 root = "Unit.ReconstructLegacyTest"
-moreLinkArgs = ["native/md5.o"]
 
 # PNVI arc S3 (2026-10-07, docs/2026-10-07_pnvi-s3-arms-record.md): the PNVI-ae-udi
 # arms' runtime witnesses under <[.PNVI .AE_UDI]> with default-instance controls, and
@@ -354,7 +344,6 @@ moreLinkArgs = ["native/md5.o"]
 name = "pnvi-arms-test"
 srcDir = "test"
 root = "Unit.PnviArmsTest"
-moreLinkArgs = ["native/md5.o"]
 
 # program-data parameters E-A (2026-09-20): the enum's compatible type is program data — the
 # design note §4 kernel pins (normalise/sizeof/alignof at a registered enum by rfl given the map,
@@ -369,7 +358,6 @@ root = "Unit.EnumDataTest"
 name = "run-digest-test"
 srcDir = "test"
 root = "Unit.RunDigestTest"
-moreLinkArgs = ["native/md5.o"]
 
 # Cabs JSON position import (2026-10-16, cerberus-caesium filing 2): the position
 # object carries the lexing (preprocessed-file) position beside the source one —
@@ -389,7 +377,6 @@ root = "Unit.CabsImportTest"
 name = "match-pattern-arity-test"
 srcDir = "test"
 root = "Unit.MatchPatternArityTest"
-moreLinkArgs = ["native/md5.o"]
 
 # SC WP0: passive primitive diagnostic; fuel selected by the caller.
 [[lean_exe]]
