@@ -9,6 +9,7 @@ and gcc, checks -E round trips, RV64I objects, UCN buffer splits and diagnostics
 images (one for each defect). Logs and exact commands: build/test-c11/.
 """
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 import json
 import os
 from pathlib import Path
@@ -33,10 +34,10 @@ CASES = {
 }
 COMMANDS = []
 
-def run(cmd, *, cwd=ROOT, expected=0):
+def run(cmd, *, cwd=ROOT, expected=0, env=None):
     cmd = [str(c) for c in cmd]
     p = subprocess.run(cmd, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                       timeout=3600)
+                       timeout=3600, env=env)
     COMMANDS.append({'argv': cmd, 'cwd': str(cwd), 'rc': p.returncode,
                      'stdout': p.stdout.decode('utf8', 'replace'),
                      'stderr': p.stderr.decode('utf8', 'replace')})
@@ -114,19 +115,17 @@ def main():
         # in the image; that behavior is covered above on host and cross.
         run(['scripts/test_tcc_patch.sh'] + list(CASES))
         full = list(CASES)[:7]
-        for f in full:
+        def full_image(f):
             meta = OUT / (Path(f).stem + '.meta')
             meta.unlink(missing_ok=True)
-            old = os.environ.get('ORACLE_META')
-            os.environ['ORACLE_META'] = str(meta)
-            try:
-                p = run(['scripts/run_tcc_sail.sh', f])
-            finally:
-                if old is None: os.environ.pop('ORACLE_META', None)
-                else: os.environ['ORACLE_META'] = old
+            p = run(['scripts/run_tcc_sail.sh', f],
+                    env={**os.environ, 'ORACLE_META': str(meta)})
             if p.stdout != CASES[f].encode():
                 raise RuntimeError(f'{f}: full image differs: {p.stdout!r}')
             print(f'PASS tcc -run/Sail {f}', flush=True)
+        # Leave room for the other worker; each Sail process is about 120 MB.
+        with ThreadPoolExecutor(max_workers=3) as pool:
+            list(pool.map(full_image, full))
     print(f'C11: {len(cases)} positive cases, {len(bad)} negative cases; all passed')
 
 if __name__ == '__main__':

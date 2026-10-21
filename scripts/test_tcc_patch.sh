@@ -52,10 +52,10 @@ for f in "${files[@]}"; do
       && { scripts/check_isa.sh -q "$OUT/$n.tcc.elf" > "$OUT/$n.elfisa" 2>&1; echo $? > "$OUT/$n.elfisa.rc"; }
   fi
   # 4: gcc rv64i oracle
-  $GCC $CFL -O0 -w -c "$f" -o "$OUT/$n.gcc.o" 2> "$OUT/$n.gcc.err" \
+  $GCC $CFL -std=c11 -O0 -w -c "$f" -o "$OUT/$n.gcc.o" 2> "$OUT/$n.gcc.err" \
     && $GCC $LDFL -o "$OUT/$n.gcc.elf" "$OUT/crt0.o" "$OUT/htif.o" "$OUT/$n.gcc.o" -lm -lc -lgcc 2>> "$OUT/$n.gcc.err"
   # 5: native
-  if $NATIVE_CC -O0 -funsigned-char -w "$f" -o "$OUT/$n.native" -lm 2> "$OUT/$n.native.err"; then
+  if $NATIVE_CC -std=c11 -O0 -funsigned-char -w "$f" -o "$OUT/$n.native" -lm 2> "$OUT/$n.native.err"; then
     timeout 60 "$OUT/$n.native" > "$OUT/$n.native.out" 2>/dev/null; echo $? > "$OUT/$n.native.rc"
   fi
 done
