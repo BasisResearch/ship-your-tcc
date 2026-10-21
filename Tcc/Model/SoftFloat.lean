@@ -205,6 +205,44 @@ def fixSat (f : Fmt) (a : Nat) (lo hi : Int) : Int :=
     | some v => if v < lo then lo else if v > hi then hi else v
     | none => 0
 
+/-- libgcc soft-fp `__fix*` to a signed `bits`-bit integer (two's complement
+result as Nat mod 2^bits): truncation; NaN/inf/overflow saturate by sign -/
+def fixS (f : Fmt) (a : Nat) (bits : Nat) : Nat :=
+  let lo : Int := -(2 ^ (bits - 1))
+  let hi : Int := 2 ^ (bits - 1) - 1
+  let sat (neg : Bool) : Int := if neg then lo else hi
+  let r : Int := match decode f a with
+    | .nan => sat ((a / f.signBit) % 2 == 1)
+    | .inf n => sat n
+    | .zero _ => 0
+    | v@(.fin n _ _) => match toIntTrunc f a with
+      | some x => if x < lo || x > hi then sat n else x
+      | none => let _ := v; 0
+  (r % (2 ^ bits : Int)).toNat
+
+/-- libgcc soft-fp `__fixuns*` to an unsigned `bits`-bit integer -/
+def fixU (f : Fmt) (a : Nat) (bits : Nat) : Nat :=
+  let hi : Int := 2 ^ bits - 1
+  let sat (neg : Bool) : Int := if neg then 0 else hi
+  let r : Int := match decode f a with
+    | .nan => sat ((a / f.signBit) % 2 == 1)
+    | .inf n => sat n
+    | .zero _ => 0
+    | .fin n _ _ => match toIntTrunc f a with
+      | some x => if x < 0 then (if x == 0 then 0 else sat n) else if x > hi then sat n else x
+      | none => 0
+  r.toNat
+
+/-- int64/uint64 → format, as libgcc's __float[un]di* -/
+def ofU64 (f : Fmt) (v : Nat) : Nat := ofInt f v
+def ofS64 (f : Fmt) (v : Nat) : Nat := ofInt f (if v ≥ 2 ^ 63 then (v : Int) - 2 ^ 64 else v)
+
+/-- 0 test (`x != 0` with NaN unequal) -/
+def isNonzero (f : Fmt) (a : Nat) : Bool :=
+  match decode f a with
+  | .zero _ => false
+  | _ => true
+
 /-! ## decimal strings (correctly rounded, as newlib's strtod) -/
 
 /-- parse the C decimal floating literal text `[digits][.digits][e[+-]digits]`
@@ -247,5 +285,24 @@ def ofDecimal (f : Fmt) (s : String) : Nat :=
     else if e + lm < -6000 then 0
     else if e ≥ 0 then roundQ f false (m * 10 ^ e.toNat) 0 false
     else roundRat f false m (10 ^ (-e).toNat) 0
+
+/-- newlib's `strtold` on rv64: `_strtold_r` calls gdtoa's `_strtorx`
+(newlib/libc/stdlib/strtold.c, as `_LDBL_EQ_DBL` is not defined), which
+writes the x87 80-bit extended format into the 16-byte binary128 `long
+double`: bytes 0–7 the 64-bit significand with its explicit integer bit,
+bytes 8–9 sign and biased exponent; bytes 10–15 are not written (they are
+zero in every reference run). The value is correctly rounded to 64 bits. -/
+def ofDecimalX87 (s : String) : Nat :=
+  let x : Fmt := ⟨15, 63⟩
+  let b := ofDecimal x s
+  let neg := (b / x.signBit) % 2 == 1
+  let ex := (b / 2 ^ 63) % 2 ^ 15
+  let fr := b % 2 ^ 63
+  let (e16, mant) :=
+    if ex == 0 then (0, fr)                                    -- zero / denormal
+    else if ex == 2 ^ 15 - 1 then (0x7fff, 2 ^ 63)              -- infinity
+    else (ex, fr + 2 ^ 63)
+  let e16 := if neg then e16 + 0x8000 else e16
+  mant + e16 * 2 ^ 64
 
 end Tcc.Model.SF

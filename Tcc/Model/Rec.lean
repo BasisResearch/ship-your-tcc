@@ -69,7 +69,7 @@ structure Rec where
   parse_expr_type : M CType
   /-- `init_putv(p, type, c)` with p = (sec, local_offset, flex_array_ref) -/
   init_putv : SecId → Int32 → SymId → CType → UInt64 → M Unit
-  decl_initializer : SecId → Int32 → SymId → CType → UInt64 → Int32 → M SymId
+  decl_initializer : SecId → Int32 → SymId → CType → UInt64 → Int32 → M Unit
   /-- `decl_initializer_alloc(type, ad, r, has_init, v, scope)` -/
   decl_initializer_alloc : CType → AttributeDef → Int32 → Int32 → Int32 → Int32 → M Unit
   decl : Int32 → M Int32

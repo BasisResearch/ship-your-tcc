@@ -605,6 +605,7 @@ structure SwitchT where
   bsym : Nat := 0
   scope : Nat := 0
   sv : SValue := {}
+  prev : Nat := 0
   deriving Inhabited
 
 /-- `struct scope`; `bsym`/`csym` are cells (0 = NULL) -/

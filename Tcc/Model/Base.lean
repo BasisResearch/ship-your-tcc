@@ -22,6 +22,7 @@ namespace Tcc.Model
 @[inline] def _root_.Int32.toUInt16' (x : Int32) : UInt16 := x.toUInt32.toUInt16
 @[inline] def _root_.Int64.toUInt32' (x : Int64) : UInt32 := x.toUInt64.toUInt32
 @[inline] def _root_.Int32.toUInt8 (x : Int32) : UInt8 := x.toUInt32.toUInt8
+@[inline] def _root_.Int64.toUInt32 (x : Int64) : UInt32 := x.toUInt64.toUInt32
 @[inline] def _root_.Int32.toUInt64 (x : Int32) : UInt64 := x.toInt64.toUInt64
 @[inline] def _root_.UInt8.toInt32 (x : UInt8) : Int32 := x.toUInt32.toInt32
 @[inline] def b2i (b : Bool) : Int32 := if b then 1 else 0

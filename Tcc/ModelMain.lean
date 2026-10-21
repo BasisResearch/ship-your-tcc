@@ -1,7 +1,5 @@
 import Tcc.Model.Main
--- The knot. Until the compiler half is tied in (Tcc/Model/Tie.lean), the
--- link-only test knot; replace with `import Tcc.Model.Tie` and `Tie.tie`.
-import Tcc.Model.TieStub
+import Tcc.Model.Tie
 
 /-!
 # tcc_model: the executable TccModel driver
@@ -94,7 +92,7 @@ def main (argv : List String) : IO UInt32 := do
   let fuel := 16 * total + 4096
   let st0 : TccSt := { fsFiles := files, fsDirs := dirs, imageSyms := syms, fuel := fuel,
                        fds := Array.replicate 3 none }
-  let R := TieStub.tie fuel
+  let R := Tie.tie fuel
   let res := (tcc_main R (tccArgv.map (·.toUTF8))).run st0
   let (outcome, st) : MainOutcome × TccSt ← match res with
     | .ok r s => pure (r, s)

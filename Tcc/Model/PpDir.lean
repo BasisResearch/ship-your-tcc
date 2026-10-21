@@ -924,7 +924,7 @@ def parse_number (R : Rec) (src : ByteArray) : M Unit := do
         modify fun st => { st with tok := TOK_CFLOAT, tokc := st.tokc.setFbits (UInt32.ofNat fb) }
       else if t == 76 then
         ch := at_ p; p := p + 1
-        let d := SF.ofDecimal SF.F128 txt
+        let d := SF.ofDecimalX87 txt   -- newlib strtold = _strtorx (x87 layout)
         modify fun st => { st with
           tok := TOK_CLDOUBLE,
           tokc := { st.tokc with lo := UInt64.ofNat (d % 2^64), hi := UInt64.ofNat (d / 2^64) } }
