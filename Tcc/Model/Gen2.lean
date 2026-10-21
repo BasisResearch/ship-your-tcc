@@ -120,7 +120,7 @@ def gen_opic (R : Rec) (op0 : Int32) : M Unit := do
                    (op == 38 && (l2 == 0xffffffffffffffff || (l2 == 0xFFFFFFFF && t2 != VT_LLONG)))) then
       vtopDec
     else if c2 && (op == 42 || op == TOK_PDIV || op == TOK_UDIV || op == TOK_UMOD) then
-      if l2.toInt64 > 0 && (l2 &&& (l2 - 1)) == 0 then
+      if l2 > 0 && (l2 &&& (l2 - 1)) == 0 then
         if op == TOK_UMOD then
           setVtCi 0 (l2 - 1)
           op := 38

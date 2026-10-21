@@ -1,0 +1,5 @@
+prog	sail_compile_steps	emu_compile_steps	sail_exit	emu_exit	console_equal	verdict
+hello	11278537	11278537	0	0	yes	same
+t41_oldstyle_ldva	12387114	12387114	0	0	yes	same
+t24_ldouble	13984423	13984423	0	0	yes	same
+bench_aes	20822082	20822082	0	0	yes	same

@@ -352,8 +352,18 @@ def block_return (R : Rec) : M Unit := do
     modify fun s => { s with rsym := r }
   CODE_OFF
 
+/-- the ghost node kind of a statement starting with `t` -/
+def stmtGhostKind (t : Int32) : String :=
+  if t == TOK_IF then "if" else if t == TOK_WHILE then "while" else if t == 123 then "block"
+  else if t == TOK_RETURN then "return" else if t == TOK_BREAK then "break"
+  else if t == TOK_CONTINUE then "continue" else if t == TOK_FOR then "for" else if t == TOK_DO then "do"
+  else if t == TOK_SWITCH then "switch" else if t == TOK_CASE then "case" else if t == TOK_DEFAULT then "default"
+  else if t == TOK_GOTO then "goto" else if t == TOK_ASM1 || t == TOK_ASM2 || t == TOK_ASM3 then "asm"
+  else if t == 59 then "empty" else "label"
+
 /-- one pass of `block(flags)`: returns true for `goto again` -/
 def blockOnce (R : Rec) (flags : Int32) : M Bool := do
+  let gm ← gmark
   let t ← getTok
   let mut afterLabel := false
   let mut isExpr := false
@@ -510,6 +520,7 @@ def blockOnce (R : Rec) (flags : Int32) : M Bool := do
         unget_tok t
         isExpr := true
   if afterLabel then
+    gwrap gm (stmtGhostKind t)
     let _ ← parse_attribute R {}
     vla_restore (← getScope (← get).cur_scope).vla_loc
     if (← getTok) != 125 then
@@ -524,6 +535,9 @@ def blockOnce (R : Rec) (flags : Int32) : M Bool := do
       R.gexpr
       vpop R
     skip R 59
+    gwrap gm "expr"
+  else if !afterLabel then
+    gwrap gm (stmtGhostKind t)
   return false
 
 /-- `block(flags)` -/

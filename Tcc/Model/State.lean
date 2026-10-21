@@ -316,6 +316,35 @@ def curFile : M BufferedFile := do
     let b := { b with buf := ByteArray.empty }
     { b with buf := f d }
 
+/-! ## ghost output (DESIGN-COMPILER.md §4.1, §6.2)
+
+tcc parses in one pass; the model's parse functions return the syntax
+they parsed on the ghost stack `TccSt.ghost`: each parse function leaves
+exactly one `GNode` for its construct there (its children are the nodes
+its sub-parses left). Ghost nodes have no influence on tcc's state. -/
+
+/-- the current ghost-stack height -/
+@[inline] def gmark : M Nat := do return (← get).ghost.size
+
+/-- replace the ghost nodes above `mark` by one node holding them -/
+def gwrap (mark : Nat) (kind : String) (toks : Array Int32 := #[]) : M Unit :=
+  modify fun s =>
+    let g := s.ghost
+    let s := { s with ghost := #[] }
+    let m := min mark g.size
+    let kids := g.extract m g.size
+    { s with ghost := (g.extract 0 m).push (.node kind toks kids) }
+
+/-- a node from the top `n` ghost nodes -/
+def gnode (kind : String) (toks : Array Int32 := #[]) (n : Nat := 0) : M Unit := do
+  let h ← gmark
+  gwrap (h - n) kind toks
+
+/-- drop the ghost nodes above `mark` (constant expressions tcc evaluates
+for the preprocessor, dry runs it repeats) -/
+def gdrop (mark : Nat) : M Unit :=
+  modify fun s => { s with ghost := s.ghost.extract 0 (min mark s.ghost.size) }
+
 /-- console output (stdout and stderr share the HTIF console) -/
 def putConsole (b : ByteArray) : M Unit :=
   modify fun s =>

@@ -289,7 +289,9 @@ def expr_preprocess (R : Rec) : M Bool := do
   let tsave ← getTok
   let _ ← begin_macro .heap str.str 0 1
   R.next
+  let gm ← gmark
   let c ← R.expr_const
+  gdrop gm
   if (← getTok) != TOK_EOF then tcc_error_s R "..."
   modify fun s => { s with pp_expr := 0 }
   end_macro

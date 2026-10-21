@@ -6,7 +6,7 @@ import Tcc.Model.Tie
 
     tcc_model --fs c/build/fs.list --syms build/image.syms --prog prog.c
               [--extra /path=hostfile]... [--arg A]... [--larg L]...
-              [--ld-garbage FILE]
+              [--ld-garbage FILE] [--ghost-out FILE]
               --arena-out OUT.arena [--console-out OUT.console]
 
 Builds the image's file system (fs.list, /prog.c, extra files), its symbol
@@ -35,6 +35,7 @@ structure Opts where
   arenaOut : String := ""
   consoleOut : String := ""
   ldGarbage : String := ""
+  ghostOut : String := ""
 
 partial def parseOpts (o : Opts) : List String → Except String Opts
   | [] => .ok o
@@ -48,6 +49,7 @@ partial def parseOpts (o : Opts) : List String → Except String Opts
   | "--arena-out" :: v :: r => parseOpts { o with arenaOut := v } r
   | "--console-out" :: v :: r => parseOpts { o with consoleOut := v } r
   | "--ld-garbage" :: v :: r => parseOpts { o with ldGarbage := v } r
+  | "--ghost-out" :: v :: r => parseOpts { o with ghostOut := v } r
   | a :: _ => .error s!"unknown argument {a}"
 
 /-- every directory prefix of an absolute path ("" is the root) -/
@@ -58,6 +60,13 @@ def dirsOf (p : String) : List String :=
     | [_] => []
     | c :: rest => let d := acc ++ "/" ++ c; d :: go d rest
   go "" comps
+
+/-- the ghost AST as an S-expression -/
+partial def ghostSexp : GNode → String
+  | .node k toks kids =>
+    let t := if toks.isEmpty then "" else " " ++ " ".intercalate (toks.toList.map (fun x => toString x.toInt))
+    let ks := kids.toList.map ghostSexp
+    "(" ++ k ++ t ++ (if ks.isEmpty then "" else " " ++ " ".intercalate ks) ++ ")"
 
 def main (argv : List String) : IO UInt32 := do
   let o ← match parseOpts {} argv with
@@ -117,6 +126,7 @@ def main (argv : List String) : IO UInt32 := do
       IO.println s!"model-error {msg}"
       return 2
   if o.consoleOut ≠ "" then IO.FS.writeBinFile o.consoleOut st.console
+  if o.ghostOut ≠ "" then IO.FS.writeFile o.ghostOut (String.intercalate "\n" (st.ghost.toList.map ghostSexp) ++ "\n")
   match outcome with
   | .exited n =>
     IO.println s!"exit {n.toUInt32.toUInt8.toNat}"

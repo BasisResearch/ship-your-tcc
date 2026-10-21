@@ -55,11 +55,13 @@ def expr_infix : Nat → Rec → Int32 → M Unit
         R.unary
         if precedence (← getTok) > p2 then expr_infix fuel R (p2 + 1)
         R.gen_op t
+        gnode "binop" #[t] 2
       t ← getTok
 where
   expr_landor : Nat → Rec → Int32 → M Unit
   | 0, _, _ => throw (.fuel "expr_landor")
   | fuel+1, R, op => do
+    let gm ← gmark
     let mut t : Int32 := 0
     let mut cc := true
     let mut f := false
@@ -86,6 +88,7 @@ where
       if f then modify fun s => { s with nocode_wanted := s.nocode_wanted - 1 }
     else
       gvtst_set R i t
+    gwrap (gm - 1) "logop" #[op]
 
 /-- `is_cond_bool(sv)` -/
 def is_cond_bool (sv : SValue) : Bool :=
@@ -102,6 +105,7 @@ def expr_lor (R : Rec) : M Unit := do
 def expr_cond : Nat → Rec → M Unit
   | 0, _ => throw (.fuel "expr_cond")
   | fuel+1, R => do
+    let gm ← gmark
     expr_lor R
     if (← getTok) != 63 then return
     R.next
@@ -144,6 +148,7 @@ def expr_cond : Nat → Rec → M Unit
       gvtst_set R 0 t1
       gvtst_set R 1 t2
       R.gen_cast type
+      gwrap gm "cond"
       return
     let islv := VT_STRUCT == (type.t &&& VT_BTYPE)
     if c != 1 then
@@ -173,9 +178,11 @@ def expr_cond : Nat → Rec → M Unit
         setVtR 0 r2
       gsym R tt
     if islv then indir R
+    gwrap gm "cond"
 
 /-- `expr_eq()` -/
 def expr_eq (R : Rec) : M Unit := do
+  let gm ← gmark
   expr_cond (← fuelM) R
   let t ← getTok
   if t == 61 || TOK_ASSIGN t then
@@ -188,9 +195,11 @@ def expr_eq (R : Rec) : M Unit := do
       R.expr_eq
       R.gen_op (TOK_ASSIGN_OP t)
     R.vstore
+    gwrap gm "assign" #[t]
 
 /-- `gexpr()` -/
 def gexpr (R : Rec) : M Unit := do
+  let gm ← gmark
   R.expr_eq
   if (← getTok) == 44 then
     let fuel ← fuelM
@@ -204,6 +213,7 @@ def gexpr (R : Rec) : M Unit := do
       let t ← vtt
       if t != VT_VOID && t &&& VT_BTYPE != VT_STRUCT then
         let _ ← R.gv (RC_TYPE t)
+    gwrap gm "comma"
 
 /-- `expr_const1()` -/
 def expr_const1 (R : Rec) : M Unit := do

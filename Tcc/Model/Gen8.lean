@@ -80,7 +80,9 @@ def decl_initializer_alloc (R : Rec) (type0 : CType) (ad : AttributeDef) (r0 : I
     let toks := init_str.getD #[]
     let _ ← begin_macro .heap toks 0 1
     R.next
+    let gmd ← gmark
     R.decl_initializer p.sec p.local_offset p.flex_array_ref (← curT tloc tval) 0 (DIF_FIRST ||| DIF_SIZE_ONLY)
+    gdrop gmd    -- the dry run's syntax is parsed again below
     -- prepare second initializer parsing
     modify fun s => { s with macro_ptr := some { arr := toks, pos := 0 } }
     R.next
@@ -266,6 +268,7 @@ def add_array (sec : String) (c : Int32) : M Unit := do
 
 /-- `gen_function(sym)` -/
 def gen_function (R : Rec) (sym : SymId) : M Unit := do
+  let gm ← gmark
   let f ← newScopeObj
   modify fun s => { s with cur_scope := f, root_scope := f, nocode_wanted := 0 }
   let cts := (← get).cur_text_section
@@ -315,6 +318,7 @@ def gen_function (R : Rec) (sym : SymId) : M Unit := do
     t := VT_VOID }, func_var := 0, ind := 0,
     func_ind := -1, nocode_wanted := DATA_ONLY_WANTED }
   check_vstack R
+  gwrap gm "fundef" #[(← getSym sym).v]
   R.next
 
 /-- `gen_inline_functions(s)` -/
@@ -357,7 +361,7 @@ def do_Static_assert (R : Rec) : M Unit := do
 /-- one declarator of `decl(l)`; returns `some ret` for decl's `return ret`,
 `none` to continue with the next declarator/declaration (`brk`: break the
 inner loop) -/
-def decl_one (R : Rec) (l : Int32) (btype : CType) (adbase : AttributeDef) (oldint : Bool) :
+def decl_one_body (R : Rec) (l : Int32) (btype : CType) (adbase : AttributeDef) (oldint : Bool) :
     M (Option Int32 × Bool) := do
   let mut ad := adbase
   let (type1, ad1, v) ← R.type_decl btype ad (if l == VT_CMP then TYPE_DIRECT ||| TYPE_PARAM else TYPE_DIRECT)
@@ -484,6 +488,14 @@ def decl_one (R : Rec) (l : Int32) (btype : CType) (adbase : AttributeDef) (oldi
   R.next
   return (none, false)
 
+/-- one declarator, with its ghost node -/
+def decl_one (R : Rec) (l : Int32) (btype : CType) (adbase : AttributeDef) (oldint : Bool) :
+    M (Option Int32 × Bool) := do
+  let gm ← gmark
+  let r ← decl_one_body R l btype adbase oldint
+  gwrap gm "decl" #[btype.t]
+  return r
+
 /-- `decl(l)` -/
 def decl (R : Rec) (l : Int32) : M Int32 := do
   let fuel ← fuelM
@@ -557,9 +569,11 @@ def tccgen_compile (R : Rec) : M Int32 := do
     nocode_wanted := DATA_ONLY_WANTED, debug_modes := 0, global_expr := 0 }
   tcc_debug_start
   modify fun s => { s with parse_flags := PARSE_FLAG_PREPROCESS ||| PARSE_FLAG_TOK_NUM ||| PARSE_FLAG_TOK_STR }
+  let gm ← gmark
   R.next
   let _ ← R.decl VT_CONST
   R.gen_inline_functions
+  gwrap gm "tu"
   check_vstack R
   tcc_eh_frame_end
   return 0
