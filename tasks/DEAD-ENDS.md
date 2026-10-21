@@ -1,5 +1,11 @@
 # Approaches not to repeat
 
+- Inherited `.lake/build` trees use hard links. Lake updates traces in place
+  but replaces objects, allowing another checkout's trace to certify a stale
+  object (observed: new `Symbol` with old `CerberusFresh`). Detach artifacts
+  with `scripts/isolate_lake_cache.py` under the shared build lock. Never seed
+  worktree caches with `cp -al`; use independent files or reflinks.
+
 - F3: feeding reference-run long-double stack bytes to the compiler model
   invalidates independent arena equality. Keep such replay diagnostic only;
   fix and model the conversion independently.

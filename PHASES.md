@@ -92,7 +92,7 @@ The F0 statement (`Tcc/CSem/Statement.lean`, lib `TccCSem`, built under
 | dynamic limits (`F0Params.dynamicLimits`) | a parameter (stack, heap of CSem's executions) | F4/F5 |
 | image (`F0Params.image`) | a parameter "`elf` is the image with `/prog.c = src`" | F6 (an `ElfPin` of the base image) |
 | `cfgTcc` | the fork's default implementation (LP64, signed `char`, x86_64 `.impl`, address-space top 2^48−1); only the exit status (`(uint32_t)` code, htif.c) and argv (`{"/prog.c"}`) are tcc's | F1 (§3.3 table, allocation oracle) |
-| native seams in `CSem.verdicts`' cone | the extern symbol digest (`CerberusFresh`), `partial` defs in `CoreParser`/`CabsImport`, Lean `Float` | F1 (§3.4) |
+| native seams in `CSem.verdicts`' cone | **digest seam closed**: pure Lean MD5 plus explicit per-TU `Digest` reader; native object/global/barrier removed, 19 unit executables and 113 baseline oracle results pass (results/csem/f1b-seams.md). Partial frontend/Core parsers, native floats and LemLib runtime implementations remain; the cone census is diagnostic, not a purity certificate | F1 (§3.4) |
 | divergence in `CSem.outcomes` | a fuel-exhausted branch printed a prefix of `o` for all large fuel; not yet "o is one branch's limit" | F4 (relational outcome set) |
 | `TccppCorrect_Statement` | over `TccppParams` (placeholder `Token`, `phases14`, `preprocess`) | F2, F3 |
 | `TccRunCorrectWitnessSum_Statement` | for a caller-pinned ELF | F8 (`TccSumElf`) |

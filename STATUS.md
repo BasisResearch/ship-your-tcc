@@ -21,11 +21,11 @@ Takeover in progress, 2026-10-21. The approved target is
 |---|---|---|
 | C11 patches | new `codex-c11` worktree; existing F2 reproducers | patch and run each reproducer |
 | F1 grammar | `agent-a31b97b8f1c090141` | review total parser and Cabs comparison; build and compare with Menhir |
-| F1 pure seams | `agent-a249bbaa5b1df80ec` | review pure MD5 and per-TU digest parameter; regenerate and retain fork gates |
+| F1 pure seams | `agent-a249bbaa5b1df80ec` | digest retirement integrated; main's full CSem gate passes: 19 unit executables, 113 baseline oracle results; remaining partial/native seams inventoried |
 | F1 ABI/allocation | `agent-a4ab6bbd8c0be5325` | review configuration/oracle; generated copies are incomplete, do not merge results blindly |
 | F1 filesystem | `agent-ad868c434f5f27398` | review actual image path behavior and FS tests |
 | F1 IEEE | `agent-a45cb08cf87ce958c` | review standalone arithmetic; connection to CSem remains open |
-| F3 compiler model | `agent-a05464165befb7074` (six unmerged commits plus draft changes) | build passes; audit comparison independence, then corpus and Sail |
+| F3 compiler model | `agent-a05464165befb7074` (recovery merged) | binary128 patch/model reviewed: capped build and 45 targeted arena comparisons pass; broader comparison running |
 
 F3 review found reference-derived long-double bytes supplied to the model.
 Such runs cannot establish independent byte equality. Remove that input
@@ -34,8 +34,8 @@ defect. Matching refusals likewise do not satisfy the F3 success criterion.
 
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
 two at a time, following MANAGER.md. Slot 1 completes patch 0003; slot 2
-fixes the binary128 literal defect. Built-in agents have checkpointed and
-stopped. Parser recovery is committed at `7dabfe1` for subsequent review:
+has handed off the binary128 fix and now completes the parser. Built-in
+agents have checkpointed and stopped. Parser recovery is integrated:
 375/664 agree with Menhir, with missing `else` dispatch among the failures.
 
 F3 recovery includes 398 independent identical arenas out of 401 inputs
@@ -49,6 +49,8 @@ Builds are serialized across these lanes, capped at 12 GB. The two inherited
 in `phase2-snapshot-current.json` match the committed Phase 2 result files.
 Parser recovery builds in main and the repository gate passes; its first
 comparison is diagnostic, with grammar and comparator gaps still open.
+Inherited hard-linked Lake caches have been isolated for active lanes;
+main's CSem objects were rebuilt before accepting the digest retirement.
 
 ## Needs user
 

@@ -33,6 +33,7 @@ if ! git -C "$wt" rebase main; then
   echo "RESULT: stuck launch: rebase conflict in $wt; changes preserved"
   exit 1
 fi
+flock "$repo/build/lake.lock" python3 "$repo/scripts/isolate_lake_cache.py" "$wt"
 codex=${CODEX:-$HOME/.local/share/codex-0.162.0/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex}
 export SYT_LAKE_LOCK="$repo/build/lake.lock"
 echo "$$ $wt" > "$repo/build/workers/slot-$slot.pid"
