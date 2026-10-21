@@ -45,11 +45,9 @@ Work only in this worktree. Do not push or merge main; commit for lead review.
 No built-in subagents. Builds: free -g, then flock \"\$SYT_LAKE_LOCK\" systemd-run --user --scope -p MemoryMax=12G lake build TARGET.
 Record dead ends in your result so the lead does not resend them.
 Finish with RESULT: landed <commit> or RESULT: stuck <where> (landed means ready for lead review)." \
-  > "$log.worker" 2>&1
+  >> "$log" 2>&1
 rc=$?
 set -e
-cat "$log.worker"
-rm "$log.worker"
 if ! grep -E '^RESULT: (landed|stuck) ' "$log" | tail -1; then
   echo "RESULT: stuck worker exited $rc without a result; inspect $log"
 fi
