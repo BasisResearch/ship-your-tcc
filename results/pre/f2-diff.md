@@ -109,14 +109,27 @@ Each has a runnable reproducer in `results/repro/` (expected output = gcc
 5. **`#` stringizing** writes every byte outside 32..126 as an octal escape
    (`add_char`); §6.10.3.2p2 escapes only `"` and `\`. The string value of one
    stringization is the same; stringizing again shows the spelling.
-   `tcc_pp_stringize_escapes.c`: expected `9`, tcc `13`.
+   `tcc_pp_stringize_escapes.c`: expected `9`, tcc `15`.
 
 `scripts/run_pre_repros.sh` runs them under `tcc -run` on the Sail image;
 results in the next section.
 
 ## Image runs of the reproducers
 
-See the table filled in from `scripts/run_pre_repros.sh` below.
+`scripts/run_pre_repros.sh` (`tcc -run /prog.c` on the Sail RV64I image,
+2026-10-21); expected = gcc `-std=c11` natively:
+
+| reproducer | expected | tcc on the image |
+|---|---|---|
+| tcc_pp_digraphs.c | `2 3` | rejected: `/prog.c:9: error: declaration expected` |
+| tcc_pp_pragma_operator.c | `ok` | rejected: `/prog.c:9: error: identifier expected` |
+| tcc_pp_ucn_identifier.c | `3` | rejected: `/prog.c:8: error: stray '\' in program` |
+| tcc_pp_line_relative_name.c | `foo.c 10` | `/foo.c 10` |
+| tcc_pp_stringize_escapes.c | `9` | `15` |
+
+The `ifexpr` classification was checked the same way: `#if '\377' < 0` in
+a program run by the image's tcc takes the unsigned branch, as the spec
+does (the cross tcc's signed answer is its x86 host's `char`).
 
 ## Known limits of the spec (choices recorded, not hidden)
 

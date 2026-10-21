@@ -7,9 +7,9 @@
  * stringizing the result again shows the spelling. S("<e-acute>") is spelled
  * with the two raw bytes, "\"<C3><A9>\"", and XS(S(...)) stringizes that
  * spelling: the string \"<C3><A9>\" plus quotes, 8 bytes (sizeof 9, as gcc
- * prints). tcc spells the inner result "\"\303\251\"" (octal escapes), so
- * the outer string is 12 bytes (sizeof 13 on the image, where char is
- * unsigned). Expected output "9"; tcc prints "13". The string literal below
+ * prints). tcc spells the inner result with octal escapes for the two
+ * bytes, so the outer string is longer. Expected output "9"; `tcc -run` on
+ * the Sail image prints "15" (scripts/run_pre_repros.sh). The string literal below
  * holds the two raw UTF-8 bytes
  * of U+00E9. CSem.Pre: c/tests/pre/stringize.c. */
 #include <stdio.h>
