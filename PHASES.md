@@ -64,6 +64,12 @@ Approved 2026-10-20. Headline `tcc_run_correct`: ∀ src, `CSem.NoUB cfgTcc src`
 `tccpp_correct` (phases 1–4) and the witness `tcc_run_correct_witness_sum`.
 Whole compiler; no subset is an end state.
 
+Takeover 2026-10-21: previous F1/F3 worktrees are being reviewed before
+integration (STATUS.md). CSem stays C11; tcc is to run with `-std=c11` and
+the seven user-listed deviations get patch 0003 plus reproducers. F3 models
+the patched compiler. Existing `sum.c` compile-cut artifacts stay pinned
+until the image is stable; no regeneration during this work.
+
 | step | content | exit | status |
 |---|---|---|---|
 | F0 fork in place | cerberus-lean imported in `csem/` at a pin, Lean 4.34.0, built under the root Lake with the 12 GB cap, fork gates kept; `tcc_run_correct` stated as a `_Statement` | fork gates pass on 4.34; statement elaborates | **done** (results/csem/f0-validation.md): `csem/` = cerberus-lean @e7e9bb4 + LemLib @2d3a492 (`vendor/CSEM_REV`), generated Lean committed (`scripts/csem_regen.sh --check` byte-identical), port = 3 proofs (`csem/PORT-4.34.md`), no options; libs from scratch 379 s wall / 646 s CPU / 3.3 GB peak; fork gates pass (`scripts/check.sh --csem`); exec lane 90 MATCH + 18 UB_MATCH + 5 CERB_SKIP = the fork's baseline; `csem_run` gives `sum.c` `.halts "55\n" 0`; `Tcc.TccRunCorrect_Statement` elaborates, axioms standard |

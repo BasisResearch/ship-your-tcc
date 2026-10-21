@@ -7,8 +7,11 @@ output on Sail produces exactly the outputs Certora's Clight semantics gives
 the program. Plan: BRIEF.md. Ledger and exit criteria: PHASES.md. Discipline:
 CLAUDE.md. Provenance: ATTRIBUTION.md.
 
-TinyCC is a compiler, not an interpreter, so the reachable theorem is per
-program (translation validation), not for all programs.
+The approved target is now whole-compiler correctness: `tcc -run` interprets
+C source through compilation and execution. DESIGN-COMPILER.md specifies
+`tcc_run_correct` against CSem, with `Supported` and `Fits` premises and no
+refusal disjunct. The existing per-program theorem is its non-vacuity witness;
+STATUS.md records the active F0–F3 work.
 
 ## The target: RV64I
 
