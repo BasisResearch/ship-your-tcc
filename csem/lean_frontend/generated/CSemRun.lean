@@ -62,9 +62,10 @@ def runC (opts : List String) (src : String) : IO Unit := do
   h.putStr out.stdout
   h.flush
   let json := json.toString
-  let (first, rest) := match opts with
-    | "--first" :: r => (["--first"], r)
-    | r => ([], r)
+  -- `--first` (single trace) may be given anywhere; the driver wants it
+  -- right after `--batch`
+  let first := if opts.contains "--first" then ["--first"] else []
+  let rest := opts.filter (· != "--first")
   let rest := if (runtimeOf rest).isSome then rest else rest ++ [s!"--runtime={runtime}"]
   cerbMain (["--batch"] ++ first ++ rest ++ [json])
 

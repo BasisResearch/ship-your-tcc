@@ -17,6 +17,7 @@ flock "$lock" systemd-run --user --scope -q -p MemoryMax=12G bash -c '
   lake build "$@"; rc=$?
   cg=$(cut -d: -f3 /proc/self/cgroup)
   [ -r "/sys/fs/cgroup$cg/memory.peak" ] && echo "csem_build: peak $(( $(cat /sys/fs/cgroup$cg/memory.peak) / 1048576 )) MiB"
+  [ -r "/sys/fs/cgroup$cg/cpu.stat" ] && echo "csem_build: cpu $(( $(sed -n "s/^usage_usec //p" /sys/fs/cgroup$cg/cpu.stat) / 1000000 )) s"
   exit $rc' _ "${targets[@]}"
 rc=$?
 echo "csem_build: ${targets[*]}: exit $rc, wall $(( $(date +%s) - start )) s"

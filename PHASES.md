@@ -66,8 +66,8 @@ Whole compiler; no subset is an end state.
 
 | step | content | exit | status |
 |---|---|---|---|
-| F0 fork in place | cerberus-lean imported in `csem/` at a pin, Lean 4.34.0, built under the root Lake with the 12 GB cap, fork gates kept; `tcc_run_correct` stated as a `_Statement` | fork gates pass on 4.34; statement elaborates | in progress |
-| F1 fork tasks | Lean C grammar; `cfgTcc`; image-FS model (pathleak); allocation oracle; definitional floats; pure seams | Lean parse = menhir parse on all corpora; CSem in `diff3.py` agreeing with tcc on Sail on UB-free programs | waits for F0 |
+| F0 fork in place | cerberus-lean imported in `csem/` at a pin, Lean 4.34.0, built under the root Lake with the 12 GB cap, fork gates kept; `tcc_run_correct` stated as a `_Statement` | fork gates pass on 4.34; statement elaborates | **done** (results/csem/f0-validation.md): `csem/` = cerberus-lean @e7e9bb4 + LemLib @2d3a492 (`vendor/CSEM_REV`), generated Lean committed (`scripts/csem_regen.sh --check` byte-identical), port = 3 proofs (`csem/PORT-4.34.md`), no options; libs from scratch 379 s wall / 646 s CPU / 3.3 GB peak; fork gates pass (`scripts/check.sh --csem`); exec lane 90 MATCH + 18 UB_MATCH + 5 CERB_SKIP = the fork's baseline; `csem_run` gives `sum.c` `.halts "55\n" 0`; `Tcc.TccRunCorrect_Statement` elaborates, axioms standard |
+| F1 fork tasks | Lean C grammar; `cfgTcc`; image-FS model (pathleak); allocation oracle; definitional floats; pure seams | Lean parse = menhir parse on all corpora; CSem in `diff3.py` agreeing with tcc on Sail on UB-free programs | not started (F0 done: `scripts/csem_run.sh [--libc]` is the oracle) |
 | F2 preprocessing | phases 1–4 spec; model of `tccpp`; `tccpp_correct` | spec = `tcc -E` on all corpora; theorem | in progress |
 | F3 executable `TccModel` | whole compiler and `-run` linker, ghost Cabs | byte-identical arena with tcc on Sail on every corpus program + 1,000 generated | in progress |
 | F4 Layer B framework | Core relation and outcome set; memory/value relations; abstract RV64I and lift | framework; first expression forms | not started |
@@ -75,3 +75,18 @@ Whole compiler; no subset is an end state.
 | F6 Layer A | prefix by evaluator; tccpp, tccgen, riscv64-gen, linker; `TccRepr` | `binary_computes_model` | not started |
 | F7 library | newlib ⊑ CSem for printf (`formatted.lem`), dlmalloc, string functions | per-function theorems | not started |
 | F8 compose | A + B + preprocessor + reset + library; witnesses | `tcc_run_correct`, `tcc_run_correct_witness_sum` | not started |
+
+The F0 statement (`Tcc/CSem/Statement.lean`, lib `TccCSem`, built under
+`--csem`) has the §1 shape. Its provisional parts, each owed by a phase:
+
+| item | F0 form | supplied by |
+|---|---|---|
+| front end (`F0Params.frontEnd`) | a parameter `List UInt8 → Option (digest × Cabs)` standing for `cerberus --cabs-json` + `CabsImport` (what `csem_run` runs) | F1 (Lean grammar), F2 (`CSem.Pre` for phases 1–4) |
+| static limits (`F0Params.staticLimits`) | a parameter (arena, `VSTACK_SIZE`, tcc heap, include/macro depth) | F3 (from `TccModel`) |
+| dynamic limits (`F0Params.dynamicLimits`) | a parameter (stack, heap of CSem's executions) | F4/F5 |
+| image (`F0Params.image`) | a parameter "`elf` is the image with `/prog.c = src`" | F6 (an `ElfPin` of the base image) |
+| `cfgTcc` | the fork's default implementation (LP64, signed `char`, x86_64 `.impl`, address-space top 2^48−1); only the exit status (`(uint32_t)` code, htif.c) and argv (`{"/prog.c"}`) are tcc's | F1 (§3.3 table, allocation oracle) |
+| native seams in `CSem.verdicts`' cone | the extern symbol digest (`CerberusFresh`), `partial` defs in `CoreParser`/`CabsImport`, Lean `Float` | F1 (§3.4) |
+| divergence in `CSem.outcomes` | a fuel-exhausted branch printed a prefix of `o` for all large fuel; not yet "o is one branch's limit" | F4 (relational outcome set) |
+| `TccppCorrect_Statement` | over `TccppParams` (placeholder `Token`, `phases14`, `preprocess`) | F2, F3 |
+| `TccRunCorrectWitnessSum_Statement` | for a caller-pinned ELF | F8 (`TccSumElf`) |

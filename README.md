@@ -262,7 +262,20 @@ cerberus-lean (Cabs → Ail → Core in Lean), with a Lean C grammar,
 preprocessing semantics and tcc's RV64 lp64 parameters. The proof has two
 layers: tcc's binary computes a Lean model of tcc (Layer A), and that model's
 code simulates Core (Layer B). Certora's Clight and CompCert become testing
-oracles. The plan is for review; nothing is built yet.
+oracles. The plan is approved; PHASES.md (Phase 4) is the ledger.
+
+**F0 (done): the fork in place.** `csem/` holds cerberus-lean @e7e9bb4 with
+LemLib @2d3a492, its Lean generated from Lem and committed
+(`scripts/csem_regen.sh --check` reproduces it), ported to Lean 4.34.0 by
+changing three proofs (`csem/PORT-4.34.md`). The CSem libraries build in the
+root project in 379 s (646 CPU-s, 3.3 GB peak) and pass the fork's own gates
+(`scripts/check.sh --csem`). On the fork's minimal corpus CSem agrees with the
+Cerberus OCaml oracle exactly as the fork's baseline records (90 MATCH,
+18 UB_MATCH, 5 oracle skips). `scripts/csem_run.sh [--libc] prog.c` is the CSem
+oracle; it gives `sum.c` the outcome `55\n`, exit 0. `Tcc/CSem/Statement.lean`
+states `TccRunCorrect_Statement` with the headline shape over the fork's
+current pipeline; its front end, resource limits and image predicate are still
+parameters owed by F1–F6 (results/csem/f0-validation.md).
 
 ## Layout
 * `vendor/tinycc`: pristine tinycc 43c7708.
@@ -281,6 +294,8 @@ oracles. The plan is for review; nothing is built yet.
   printf read off the image, P's call).
 * `Vsa/`, `riscv-lean/`: the machine layer and the Sail model, copied from
   ship-your-lua.
+* `csem/`: CSem, our fork of cerberus-lean (`csem/PORT-4.34.md`);
+  `Tcc/CSem/`: the F0 statement over it.
 * `results/`: measurements.
 * `abstractions/`: the abstraction gate.
 * `scripts/check.sh`: the gate.

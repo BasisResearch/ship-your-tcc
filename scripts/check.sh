@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # check.sh — the gate for ship-your-tcc (after ship-your-lua's scripts/check.sh).
 #
-#   scripts/check.sh [--static-only | --compile-cut]
+#   scripts/check.sh [--static-only | --compile-cut | --csem]
 #
 # (1) ISA: tcc's output for the corpus and the tcc ELF contain no M/F/D/Q/A/C
 #     instruction (scripts/check_isa.sh, scripts/test_tcc_patch.sh);
@@ -15,6 +15,11 @@
 #     Tcc/Audit/StepOrig.lean from the pristine Clight.lean (scripts/gen_cclib_audit.sh);
 # (5) lake build (skipped with --static-only, and until the Lean project exists;
 #     capped at 12 GB as on ship-your-lua, serialised on $SYT_LAKE_LOCK);
+# (2c) CSem (csem/, our fork of cerberus-lean) text gates, no toolchain needed:
+#     copy-set sync, lem-sync stamp, exec totality and purity, sorry token;
+# --csem: the fork's gates on the 4.34 build (scripts/csem_gates.sh: build,
+#     unit executables, axiom census, generator drift when lem is present, the
+#     exec lane when the oracle is present) and scripts/axioms_csem.lean;
 # (6) #print axioms of the key theorems ⊆ {propext, Classical.choice, Quot.sound}
 #     (scripts/axioms.lean); (6b) the patch-0002 audit (scripts/axioms_certora.lean)
 #     may add exactly Certora's four external-call axioms.
@@ -72,6 +77,13 @@ python3 scripts/gen_printf_layout.py --check || fail "generated Tcc/Printf/Sum d
 # trace digest results/p3/ccp-digest.json (the checkpoint states by hash)
 python3 scripts/gen_ccp.py --check || fail "generated Tcc/Ccp/Sum drifted (scripts/gen_ccp.py)"
 
+echo "== (2c) CSem text gates"
+csem/tools/check_handwritten_sync.sh --quiet || fail "csem: hand-written copies drifted (scripts/csem_regen.sh)"
+csem/tools/check_lem_sync.sh --check-lean >/dev/null || fail "csem: generated Lean is not the lem output of csem/frontend"
+csem/scripts/check_exec_totality.sh || fail "csem: exec totality"
+csem/scripts/check_exec_purity.sh || fail "csem: exec purity"
+csem/scripts/check_sorry_token.sh || fail "csem: sorry token"
+
 echo "== (3b) discipline"
 python3 scripts/check_discipline.py || fail "discipline"
 echo "== (3c) abstraction gate"
@@ -110,6 +122,14 @@ if [ -f lakefile.toml ] || [ -f lakefile.lean ]; then
   audit scripts/axioms.lean "$std"
   echo "== (6b) axioms of the patch-0002 audit"
   audit scripts/axioms_certora.lean "$std|CC.externalFunctionsSem|CC.inlineAssemblySem|CC.externalFunctionsSemDeterm|CC.inlineAssemblySemDeterm"
+  if [ "${1:-}" = "--csem" ]; then
+    # opt-in: the CSem libraries and the fork's gates (about 7 CPU-minutes from
+    # scratch, peak 3.3 GB; results/csem/f0-validation.md), then the F0 statement
+    echo "== (8) CSem gates (scripts/csem_gates.sh)"
+    SYT_LAKE_LOCK="$lock" scripts/csem_gates.sh || fail "CSem gates (scripts/csem_gates.sh)"
+    echo "== (8b) axioms of the F0 statement over CSem"
+    audit scripts/axioms_csem.lean "$std"
+  fi
   if [ "${1:-}" = "--compile-cut" ]; then
     # opt-in: the evaluator run of tcc's compile phase (TccCompileCut, ~2.5 CPU-hours
     # from scratch) and the closed end-to-end theorem

@@ -45,6 +45,11 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR/.."
+# ship-your-tcc (csem/PORT-4.34.md): the semantics builds in the root Lake
+# project, not in lean_frontend/; LemLib is vendored in csem/lemlib, the
+# lem-lean clone at the pin (for leg 4's scaffold assertion) is $CSEM_LEMLEAN.
+CSEM_ROOT="$(pwd)"
+LAKE_ROOT="${CSEM_LAKE_ROOT:-$CSEM_ROOT/..}"
 
 # Hand-written axiom census (arc-5 audit 2, F3; end state arc-17 S2b):
 # C2-audit note (registered, kept as-is): this line-anchored '^axiom'
@@ -310,8 +315,8 @@ echo "check_theorem_axioms: generated-tree census OK ($GEN_SCANNED files: 0 axio
 #       WITH at least one would-trip token, and the scan list must
 #       contain nothing under the package outside lean-lib/.
 # ---------------------------------------------------------------------------
-LEMLIB_PKG=lean_frontend/.lake/packages/LemLib
-LEMLIB_LIB="$LEMLIB_PKG/lean-lib"
+LEMLIB_PKG="${CSEM_LEMLEAN:?CSEM_LEMLEAN (the lem-lean clone at the pin) is required}"
+LEMLIB_LIB=lemlib
 ALLOWLIST=scripts/unsafebaseio_allowlist.txt
 
 if [[ ! -d "$LEMLIB_LIB" ]]; then
@@ -336,7 +341,7 @@ if [[ -z "$HW_LIST" ]]; then
 fi
 # recursive-glob liveness (charter A3 / plant P3): the LemLib list must
 # reach the subdirectory sources, or the census is silently flat.
-if ! grep -q "lean-lib/LemLib/" <<<"$LEMLIB_LIST"; then
+if ! grep -q "^$LEMLIB_LIB/LemLib/" <<<"$LEMLIB_LIST"; then
   echo "check_theorem_axioms: FAIL — C2 ratchet: LemLib file list has NO lean-lib/LemLib/ subdirectory entries (recursive glob broken — a flat glob would miss subdirectory axioms; fail-closed)"
   exit 1
 fi
@@ -352,9 +357,9 @@ fi
 # (C2-audit note, registered: this third assertion is tautological
 # TODAY — the list is built by find over lean-lib/ — it guards future
 # edits to the list construction, not the present one.)
-if grep -v "^$LEMLIB_PKG/lean-lib/" <<<"$LEMLIB_LIST" | grep -q .; then
+if grep -v "^$LEMLIB_LIB/" <<<"$LEMLIB_LIST" | grep -q .; then
   echo "check_theorem_axioms: FAIL — C2 ratchet leg 4: scan list reaches package paths outside lean-lib/:"
-  grep -v "^$LEMLIB_PKG/lean-lib/" <<<"$LEMLIB_LIST"
+  grep -v "^$LEMLIB_LIB/" <<<"$LEMLIB_LIST"
   exit 1
 fi
 
@@ -425,7 +430,7 @@ def norm(path):
     # the sync gate's job; the pin carries the occurrence COUNT, 2 for
     # mirrored files); the consumed LemLib copy normalizes onto its
     # repo-side path.
-    lem = 'lean_frontend/.lake/packages/LemLib/lean-lib/'
+    lem = 'lemlib/'
     gen = 'lean_frontend/generated/'
     if path.startswith(lem):
         return 'lem-lean/lean-lib/' + path[len(lem):]
@@ -598,7 +603,7 @@ if [[ ${#D14_HW[@]} -eq 0 ]]; then
   echo "check_theorem_axioms: FAIL — D14 grep-ban: no hand-written lean_frontend/*.lean found (fail-closed; vacuous scan)"
   exit 1
 fi
-D14_LEMLIB_TEST="$D14_ROOT/lean_frontend/.lake/packages/LemLib/lean-lib/LemLibTest.lean"
+D14_LEMLIB_TEST="$D14_ROOT/lemlib/LemLibTest.lean"
 if [[ ! -f "$D14_LEMLIB_TEST" ]]; then
   echo "check_theorem_axioms: FAIL — D14 grep-ban: $D14_LEMLIB_TEST missing (fail-closed)"
   exit 1
@@ -637,7 +642,7 @@ EOF
     echo "#print axioms $name"
   done
 } > "$PROBE"
-OUT=$(cd lean_frontend && "$SCRIPT_DIR/capped" lake env lean .axiom-probe.lean 2>&1 | grep -v -i warning || true)
+OUT=$(cd "$LAKE_ROOT" && "$SCRIPT_DIR/capped" lake env lean "$CSEM_ROOT"/lean_frontend/.axiom-probe.lean 2>&1 | grep -v -i warning || true)
 rm -f "$PROBE"
 echo "$OUT"
 
@@ -688,7 +693,7 @@ cat > "$PROBE2" <<'EOF'
 import Driver
 #print axioms driver2
 EOF
-OUT2=$(cd lean_frontend && "$SCRIPT_DIR/capped" lake env lean .axiom-probe-driver2.lean 2>&1 | grep -v -i warning || true)
+OUT2=$(cd "$LAKE_ROOT" && "$SCRIPT_DIR/capped" lake env lean "$CSEM_ROOT"/lean_frontend/.axiom-probe-driver2.lean 2>&1 | grep -v -i warning || true)
 rm -f "$PROBE2"
 echo "$OUT2"
 if ! grep -q "'driver2' \(depends on axioms\|does not depend on any axioms\)" <<<"$OUT2"; then
@@ -739,7 +744,7 @@ EOF
     echo "#print axioms $name"
   done
 } > "$PROBE3"
-OUT3=$(cd lean_frontend && "$SCRIPT_DIR/capped" lake env lean .axiom-probe-entries.lean 2>&1 | grep -v -i warning || true)
+OUT3=$(cd "$LAKE_ROOT" && "$SCRIPT_DIR/capped" lake env lean "$CSEM_ROOT"/lean_frontend/.axiom-probe-entries.lean 2>&1 | grep -v -i warning || true)
 rm -f "$PROBE3"
 echo "$OUT3"
 for name in "${ENTRIES[@]}"; do
@@ -851,7 +856,7 @@ MEMSCALE_THMS=(CerbMem.chunksOf_eq_range_map
     echo "#print axioms $name"
   done
 } > "$PROBE4"
-OUT4=$(cd lean_frontend && "$SCRIPT_DIR/capped" lake env lean .axiom-probe-memscale.lean 2>&1 | grep -v -i warning || true)
+OUT4=$(cd "$LAKE_ROOT" && "$SCRIPT_DIR/capped" lake env lean "$CSEM_ROOT"/lean_frontend/.axiom-probe-memscale.lean 2>&1 | grep -v -i warning || true)
 rm -f "$PROBE4"
 echo "$OUT4"
 for name in "${MEMSCALE_THMS[@]}"; do
@@ -958,7 +963,7 @@ FUEL_THMS+=(CerbND.runNDFuel_stable CerbND.runND1Fuel_stable CerbND.runND1TraceF
     echo "#print axioms $name"
   done
 } > "$PROBE5"
-OUT5=$(cd lean_frontend && "$SCRIPT_DIR/capped" lake env lean .axiom-probe-fuel.lean 2>&1 | grep -v -i warning || true)
+OUT5=$(cd "$LAKE_ROOT" && "$SCRIPT_DIR/capped" lake env lean "$CSEM_ROOT"/lean_frontend/.axiom-probe-fuel.lean 2>&1 | grep -v -i warning || true)
 rm -f "$PROBE5"
 echo "$OUT5"
 for name in "${FUEL_THMS[@]}"; do
