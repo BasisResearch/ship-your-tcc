@@ -341,19 +341,12 @@ def startsParamDecl (t : Tok) : P Bool := do
   | .TYPEDEF => pure false
   | _ => startsDeclSpecs t
 
-def expect (t : Tok) (what : String) (ok : Tok → Bool) : P PTok := do
-  if ok (← peek) then advance else failAt s!"expected {what}"
+/-- Exact token equality, including payloads. Deriving it on `Tok` keeps every
+keyword and punctuator available to all lookahead/shift helpers. -/
+def isTok (a b : Tok) : Bool := a == b
 
-def isTok (a : Tok) (b : Tok) : Bool :=
-  match a, b with
-  | .LPAREN, .LPAREN | .RPAREN, .RPAREN | .LBRACE, .LBRACE | .RBRACE, .RBRACE
-  | .LBRACK, .LBRACK | .RBRACK, .RBRACK | .SEMICOLON, .SEMICOLON | .COMMA, .COMMA
-  | .COLON, .COLON | .EQ, .EQ | .ELLIPSIS, .ELLIPSIS | .WHILE, .WHILE | .RBRACES, .RBRACES
-  | .LBRACK_LBRACK, .LBRACK_LBRACK | .DOT, .DOT | .STAR, .STAR | .PIPES, .PIPES
-  | .COLON_COLON, .COLON_COLON | .QUESTION, .QUESTION | .EOF, .EOF => true
-  | _, _ => false
-
-def expectT (t : Tok) : P PTok := expect t (t.describe) (isTok t)
+def expectT (t : Tok) : P PTok := do
+  if isTok t (← peek) then advance else failAt s!"expected {t.describe}"
 
 @[inline] def at? (t : Tok) : P Bool := do return isTok t (← peek)
 

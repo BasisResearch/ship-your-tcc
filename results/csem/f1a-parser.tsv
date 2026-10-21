@@ -38,38 +38,38 @@ c-tests-tcc	c/tests/tcc/t31_globals.c	AGREE	lean 0 ms
 c-tests-tcc	c/tests/tcc/t32_bitfields.c	AGREE	lean 0 ms
 c-tests-tcc	c/tests/tcc/t33_llong_edge.c	AGREE	lean 0 ms
 c-tests-tcc	c/tests/tcc/t34_promo.c	AGREE	lean 0 ms
-c-tests-tcc	c/tests/tcc/t35_sieve.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/c/tests/tcc/t35_sieve.c:20:13: error: expected an expression (at else) | oracle: 
+c-tests-tcc	c/tests/tcc/t35_sieve.c	AGREE	lean 0 ms
 c-tests-tcc	c/tests/tcc/t36_mandel.c	AGREE	lean 0 ms
 c-tests-tcc	c/tests/tcc/t37_nbody.c	AGREE	lean 0 ms
 c-tests-tcc	c/tests/tcc/t38_hash.c	AGREE	lean 0 ms
 c-tests-tcc	c/tests/tcc/t39_matrix_int.c	AGREE	lean 0 ms
 c-tests-tcc	c/tests/tcc/t40_union_pun.c	AGREE	lean 0 ms
-c-tests-tcc	c/tests/tcc/t41_oldstyle_ldva.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/c/tests/tcc/t41_oldstyle_ldva.c:6:1: error: found K&R-style declaration (unsupported) | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/c/tests/tcc/t41_oldstyle_ldva.c:6:1: error: found K&R-style declaration (unsupported) double kr(a, b, c) ^~
-c-tests-tcc	c/tests/tcc/t42_builtins.c	CPP_FAIL	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/c/tests/tcc/t42_builtins.c:4:10: fatal error: alloca.h: No such file or directory
+c-tests-tcc	c/tests/tcc/t41_oldstyle_ldva.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/c/tests/tcc/t41_oldstyle_ldva.c:6:1: error: found K&R-style declaration (unsupported) | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/c/tests/tcc/t41_oldstyle_ldva.c:6:1: error: found K&R-style declaration (unsupported) double kr(a, b, c) ^~~~~~~~~~~~~~~~~~
+c-tests-tcc	c/tests/tcc/t42_builtins.c	CPP_FAIL	rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/c/tests/tcc/t42_builtins.c:4:10: fatal error: alloca.h: No such file or directory     4 | #include <alloca.h>       |          ^~~~~~~~~~ compilation terminated.
 c-tests-tcc	c/tests/tcc/t43_ldouble_cvt.c	AGREE	lean 0 ms
-compcert	corpus/compcert/bench_aes.c	CPP_FAIL	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_aes.c:38:2: error: #error "unknown endianness"
+compcert	corpus/compcert/bench_aes.c	CPP_FAIL	rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_aes.c:38:2: error: #error "unknown endianness"    38 | #error "unknown endianness"       |  ^~~~~
 compcert	corpus/compcert/bench_almabench.c	AGREE	lean 0 ms
-compcert	corpus/compcert/bench_binarytrees.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_binarytrees.c:41:5: error: expected an expression (at else) | oracle: 
-compcert	corpus/compcert/bench_bisect.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_bisect.c:126:5: error: expected an expression (at else) | oracle: 
-compcert	corpus/compcert/bench_chomp.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_chomp.c:46:8: error: expected an expression (at else) | oracle: 
+compcert	corpus/compcert/bench_binarytrees.c	AGREE	lean 0 ms
+compcert	corpus/compcert/bench_bisect.c	AGREE	lean 0 ms
+compcert	corpus/compcert/bench_chomp.c	AGREE	lean 0 ms
 compcert	corpus/compcert/bench_fannkuch.c	AGREE	lean 0 ms
-compcert	corpus/compcert/bench_fft.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_fft.c:155:37: error: expected an expression (at else) | oracle: 
-compcert	corpus/compcert/bench_fftsp.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_fftsp.c:157:37: error: expected an expression (at else) | oracle: 
+compcert	corpus/compcert/bench_fft.c	AGREE	lean 0 ms
+compcert	corpus/compcert/bench_fftsp.c	AGREE	lean 0 ms
 compcert	corpus/compcert/bench_fftw.c	AGREE	lean 0 ms
-compcert	corpus/compcert/bench_fib.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_fib.c:9:3: error: expected an expression (at else) | oracle: 
-compcert	corpus/compcert/bench_integr.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_integr.c:29:37: error: expected an expression (at else) | oracle: 
-compcert	corpus/compcert/bench_lists.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_lists.c:62:37: error: expected an expression (at else) | oracle: 
-compcert	corpus/compcert/bench_mandelbrot.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_mandelbrot.c:27:7: error: expected an expression (at else) | oracle: 
+compcert	corpus/compcert/bench_fib.c	AGREE	lean 0 ms
+compcert	corpus/compcert/bench_integr.c	AGREE	lean 0 ms
+compcert	corpus/compcert/bench_lists.c	AGREE	lean 0 ms
+compcert	corpus/compcert/bench_mandelbrot.c	AGREE	lean 0 ms
 compcert	corpus/compcert/bench_nbody.c	AGREE	lean 0 ms
 compcert	corpus/compcert/bench_nsieve.c	AGREE	lean 0 ms
 compcert	corpus/compcert/bench_nsievebits.c	AGREE	lean 0 ms
 compcert	corpus/compcert/bench_perlin.c	AGREE	lean 0 ms
-compcert	corpus/compcert/bench_qsort.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_qsort.c:38:37: error: expected an expression (at else) | oracle: 
-compcert	corpus/compcert/bench_sha1.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_sha1.c:28:5: error: expected an expression (at else) | oracle: 
+compcert	corpus/compcert/bench_qsort.c	AGREE	lean 0 ms
+compcert	corpus/compcert/bench_sha1.c	AGREE	lean 0 ms
 compcert	corpus/compcert/bench_sha3.c	AGREE	lean 0 ms
 compcert	corpus/compcert/bench_siphash24.c	AGREE	lean 0 ms
 compcert	corpus/compcert/bench_spectral.c	AGREE	lean 0 ms
-compcert	corpus/compcert/bench_vmach.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_vmach.c:105:9: error: expected an expression (at else) | oracle: 
+compcert	corpus/compcert/bench_vmach.c	AGREE	lean 0 ms
 compcert	corpus/compcert/regr_bitfields1.c	AGREE	lean 0 ms
 compcert	corpus/compcert/regr_bitfields10.c	AGREE	lean 0 ms
 compcert	corpus/compcert/regr_bitfields2.c	AGREE	lean 0 ms
@@ -87,9 +87,9 @@ compcert	corpus/compcert/regr_casts2.c	AGREE	lean 0 ms
 compcert	corpus/compcert/regr_casts3.c	AGREE	lean 0 ms
 compcert	corpus/compcert/regr_char1.c	AGREE	lean 0 ms
 compcert	corpus/compcert/regr_compar.c	AGREE	lean 0 ms
-compcert	corpus/compcert/regr_compound.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_compound.c:39:3: error: expected an expression (at else) | oracle: 
+compcert	corpus/compcert/regr_compound.c	AGREE	lean 0 ms
 compcert	corpus/compcert/regr_decl1.c	AGREE	lean 0 ms
-compcert	corpus/compcert/regr_dollars.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_dollars.c: lexing line 130, column 5: invalid symbol | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_dollars.c:4:5: error: invalid symbol int $1[2];     ^
+compcert	corpus/compcert/regr_dollars.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_dollars.c: lexing line 130, column 5: invalid symbol | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_dollars.c:4:5: error: invalid symbol int $1[2];     ^
 compcert	corpus/compcert/regr_expr1.c	AGREE	lean 0 ms
 compcert	corpus/compcert/regr_expr5.c	AGREE	lean 0 ms
 compcert	corpus/compcert/regr_expr6.c	AGREE	lean 0 ms
@@ -99,226 +99,226 @@ compcert	corpus/compcert/regr_for1.c	AGREE	lean 0 ms
 compcert	corpus/compcert/regr_for2.c	AGREE	lean 0 ms
 compcert	corpus/compcert/regr_funct3.c	AGREE	lean 0 ms
 compcert	corpus/compcert/regr_funptr2.c	AGREE	lean 0 ms
-compcert	corpus/compcert/regr_generic.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_generic.c:20:36: error: expected a type specifier (at default) | oracle: 
-compcert	corpus/compcert/regr_ifconv.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_ifconv.c:14:25: error: expected an expression (at else) | oracle: 
-compcert	corpus/compcert/regr_initializers.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_initializers.c:83:5: error: expected an expression (at else) | oracle: 
+compcert	corpus/compcert/regr_generic.c	AGREE	lean 0 ms
+compcert	corpus/compcert/regr_ifconv.c	AGREE	lean 0 ms
+compcert	corpus/compcert/regr_initializers.c	AGREE	lean 0 ms
 compcert	corpus/compcert/regr_initializers2.c	AGREE	lean 0 ms
-compcert	corpus/compcert/regr_initializers3.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_initializers3.c:12:5: error: expected an expression (at else) | oracle: 
-compcert	corpus/compcert/regr_int32.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_int32.c:19:25: error: expected an expression (at else) | oracle: 
-compcert	corpus/compcert/regr_int64.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_int64.c:18:25: error: expected an expression (at else) | oracle: 
+compcert	corpus/compcert/regr_initializers3.c	AGREE	lean 0 ms
+compcert	corpus/compcert/regr_int32.c	AGREE	lean 0 ms
+compcert	corpus/compcert/regr_int64.c	AGREE	lean 0 ms
 compcert	corpus/compcert/regr_ptrs3.c	AGREE	lean 0 ms
 compcert	corpus/compcert/regr_sizeof1.c	AGREE	lean 0 ms
 compcert	corpus/compcert/regr_sizeof2.c	AGREE	lean 0 ms
 compcert	corpus/compcert/regr_struct11.c	AGREE	lean 0 ms
-compcert	corpus/compcert/regr_struct12.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_struct12.c:19:31: error: expected a type specifier (at () | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_struct12.c:19:31: error: unexpected token after '(' and before '(' Please add error message for state 375 to parsers/c/c_parser_
+compcert	corpus/compcert/regr_struct12.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_struct12.c:19:31: error: expected a type specifier (at () | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_struct12.c:19:31: error: unexpected token after '(' and before '(' Please add error message for state 375 to parsers/c/c_parser_error.messages static struct s __attribute__((noinline)) rp(void)                               ^
 compcert	corpus/compcert/regr_struct7.c	AGREE	lean 0 ms
 compcert	corpus/compcert/regr_struct8.c	AGREE	lean 0 ms
 compcert	corpus/compcert/regr_switch.c	AGREE	lean 0 ms
 compcert	corpus/compcert/regr_switch2.c	AGREE	lean 0 ms
-compcert	corpus/compcert/regr_switch3.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/regr_switch3.c:54:3: error: expected an expression (at else) | oracle: 
+compcert	corpus/compcert/regr_switch3.c	AGREE	lean 0 ms
 compcert	corpus/compcert/regr_telescopes.c	AGREE	lean 0 ms
 compcert	corpus/compcert/regr_varargs1.c	AGREE	lean 0 ms
 compcert	corpus/compcert/regr_varargs2.c	AGREE	lean 0 ms
-csmith	corpus/csmith/csmith_000003.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000003.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000004.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000004.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000005.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000005.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000007.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000007.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000008.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000008.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000009.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000009.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000013.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000013.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000014.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000014.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000015.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000015.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000017.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000017.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000019.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000019.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000020.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000020.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000021.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000021.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000022.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000022.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000023.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000023.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000025.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000025.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000026.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000026.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000027.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000027.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000031.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000031.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000034.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000034.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000035.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000035.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000037.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000037.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000038.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000038.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000041.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000041.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000042.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000042.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000044.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000044.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000045.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000045.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000046.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000046.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000047.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000047.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000048.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000048.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000049.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000049.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000051.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000051.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000052.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000052.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000053.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000053.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000054.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000054.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000057.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000057.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000059.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000059.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000062.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000062.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000065.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000065.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000067.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000067.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000068.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000068.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000070.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000070.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000072.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000072.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000074.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000074.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000075.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000075.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000079.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000079.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000081.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000081.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000082.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000082.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000083.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000083.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000086.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000086.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000087.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000087.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000089.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000089.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000090.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000090.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000091.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000091.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000093.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000093.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000099.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000099.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000100.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000100.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000103.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000103.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000104.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000104.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000106.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000106.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000108.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000108.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000109.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000109.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000112.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000112.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000113.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000113.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000114.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000114.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000116.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000116.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000117.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000117.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000119.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000119.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000121.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000121.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000122.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000122.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000125.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000125.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000128.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000128.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000129.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000129.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000131.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000131.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000132.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000132.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000135.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000135.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000137.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000137.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000141.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000141.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000142.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000142.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000144.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000144.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000145.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000145.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000146.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000146.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000147.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000147.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000148.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000148.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000150.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000150.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000151.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000151.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000154.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000154.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000155.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000155.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000157.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000157.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000158.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000158.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000159.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000159.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000161.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000161.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000162.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000162.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000163.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000163.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000165.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000165.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000166.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000166.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000168.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000168.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000169.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000169.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000173.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000173.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000175.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000175.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000178.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000178.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000179.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000179.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000181.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000181.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000182.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000182.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000183.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000183.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000184.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000184.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000185.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000185.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000186.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000186.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000187.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000187.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000188.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000188.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000189.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000189.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000190.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000190.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000192.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000192.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000193.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000193.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000194.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000194.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000196.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000196.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000197.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000197.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000199.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000199.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000202.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000202.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000204.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000204.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000205.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000205.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000206.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000206.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000207.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000207.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000208.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000208.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000210.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000210.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000211.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000211.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000212.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000212.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000214.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000214.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000216.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000216.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000218.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000218.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000219.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000219.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000220.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000220.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000221.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000221.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000223.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000223.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000224.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000224.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000229.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000229.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000230.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000230.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000233.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000233.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000234.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000234.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000235.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000235.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000236.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000236.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000237.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000237.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000239.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000239.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000240.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000240.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000241.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000241.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000242.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000242.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000243.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000243.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000244.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000244.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000245.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000245.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000246.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000246.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000247.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000247.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000248.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000248.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000252.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000252.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000253.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000253.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000256.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000256.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000257.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000257.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000258.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000258.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000259.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000259.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000262.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000262.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000264.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000264.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000267.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000267.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000268.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000268.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000269.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000269.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000270.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000270.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000274.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000274.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000275.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000275.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000276.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000276.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000280.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000280.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000283.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000283.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000284.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000284.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000286.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000286.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000288.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000288.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000289.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000289.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000291.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000291.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000293.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000293.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000294.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000294.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000298.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000298.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000300.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000300.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000301.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000301.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000302.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000302.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000303.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000303.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000304.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000304.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000305.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000305.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000306.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000306.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000307.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000307.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000311.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000311.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000313.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000313.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000316.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000316.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000318.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000318.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000319.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000319.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000320.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000320.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000322.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000322.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000324.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000324.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000325.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000325.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000326.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000326.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000329.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000329.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000331.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000331.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000332.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000332.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000334.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000334.c:29:9: error: expected an expression (at else) | oracle: 
-csmith	corpus/csmith/csmith_000336.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/corpus/csmith/csmith_000336.c:29:9: error: expected an expression (at else) | oracle: 
+csmith	corpus/csmith/csmith_000003.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000004.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000005.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000007.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000008.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000009.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000013.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000014.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000015.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000017.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000019.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000020.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000021.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000022.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000023.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000025.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000026.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000027.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000031.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000034.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000035.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000037.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000038.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000041.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000042.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000044.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000045.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000046.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000047.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000048.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000049.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000051.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000052.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000053.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000054.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000057.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000059.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000062.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000065.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000067.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000068.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000070.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000072.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000074.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000075.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000079.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000081.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000082.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000083.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000086.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000087.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000089.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000090.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000091.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000093.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000099.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000100.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000103.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000104.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000106.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000108.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000109.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000112.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000113.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000114.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000116.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000117.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000119.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000121.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000122.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000125.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000128.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000129.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000131.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000132.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000135.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000137.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000141.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000142.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000144.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000145.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000146.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000147.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000148.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000150.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000151.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000154.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000155.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000157.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000158.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000159.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000161.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000162.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000163.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000165.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000166.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000168.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000169.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000173.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000175.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000178.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000179.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000181.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000182.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000183.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000184.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000185.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000186.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000187.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000188.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000189.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000190.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000192.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000193.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000194.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000196.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000197.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000199.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000202.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000204.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000205.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000206.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000207.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000208.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000210.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000211.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000212.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000214.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000216.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000218.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000219.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000220.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000221.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000223.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000224.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000229.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000230.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000233.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000234.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000235.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000236.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000237.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000239.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000240.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000241.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000242.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000243.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000244.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000245.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000246.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000247.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000248.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000252.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000253.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000256.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000257.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000258.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000259.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000262.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000264.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000267.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000268.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000269.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000270.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000274.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000275.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000276.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000280.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000283.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000284.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000286.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000288.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000289.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000291.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000293.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000294.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000298.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000300.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000301.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000302.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000303.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000304.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000305.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000306.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000307.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000311.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000313.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000316.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000318.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000319.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000320.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000322.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000324.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000325.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000326.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000329.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000331.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000332.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000334.c	AGREE	lean 0 ms
+csmith	corpus/csmith/csmith_000336.c	AGREE	lean 0 ms
 fork-corpus	csem/lean_frontend/corpus/p01_clamp.c	AGREE	lean 0 ms
 fork-corpus	csem/lean_frontend/corpus/p02_sat_add.c	AGREE	lean 0 ms
 fork-corpus	csem/lean_frontend/corpus/p03_swap_mayalias.c	AGREE	lean 0 ms
@@ -345,7 +345,7 @@ minimal	csem/tests/minimal/007-local-var.c	AGREE	lean 0 ms
 minimal	csem/tests/minimal/008-local-var-arith.c	AGREE	lean 0 ms
 minimal	csem/tests/minimal/009-if-true.c	AGREE	lean 0 ms
 minimal	csem/tests/minimal/010-if-false.c	AGREE	lean 0 ms
-minimal	csem/tests/minimal/011-if-else.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/csem/tests/minimal/011-if-else.c:6:5: error: expected an expression (at else) | oracle: 
+minimal	csem/tests/minimal/011-if-else.c	AGREE	lean 0 ms
 minimal	csem/tests/minimal/012-compare-eq.c	AGREE	lean 0 ms
 minimal	csem/tests/minimal/013-compare-lt.c	AGREE	lean 0 ms
 minimal	csem/tests/minimal/014-while-simple.c	AGREE	lean 0 ms
@@ -427,7 +427,7 @@ minimal	csem/tests/minimal/089-unseq-func-args.undef.c	AGREE	lean 0 ms
 minimal	csem/tests/minimal/090-unseq-func-args-ok.c	AGREE	lean 0 ms
 minimal	csem/tests/minimal/091-unseq-nested-complex.undef.c	AGREE	lean 0 ms
 minimal	csem/tests/minimal/092-unseq-comma-plus.undef.c	AGREE	lean 0 ms
-minimal	csem/tests/minimal/093-nd-choice.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/csem/tests/minimal/093-nd-choice.c:7:5: error: expected an expression (at else) | oracle: 
+minimal	csem/tests/minimal/093-nd-choice.c	AGREE	lean 0 ms
 minimal	csem/tests/minimal/094-bool-conversion.c	AGREE	lean 0 ms
 minimal	csem/tests/minimal/095-unsigned-div-zero.undef.c	AGREE	lean 0 ms
 minimal	csem/tests/minimal/096-unsigned-mod-zero.undef.c	AGREE	lean 0 ms
@@ -457,8 +457,8 @@ tcc	corpus/tcc/t_06_case.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_07_function.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_08_while.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_09_do_while.c	AGREE	lean 0 ms
-tcc	corpus/tcc/t_102_alignas.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_102_alignas.c:5:14: error: expected a type specifier (at identifier 'i3') | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_102_alignas.c:5:14: error: unexpected token after 'i3' and before 'i3' parsing "typedef_name": seen "LNAME", expecting "TYPE" _Alignas(1
-tcc	corpus/tcc/t_103_implicit_memmove.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_103_implicit_memmove.c:12:33: error: expected a type specifier (at identifier '__SIZE_TYPE__') | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_103_implicit_memmove.c:12:33: error: unexpected token after '__SIZE_TYPE__' and before '__SIZE_TYPE__' parsing "typedef_name": seen "LNA
+tcc	corpus/tcc/t_102_alignas.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_102_alignas.c:5:14: error: expected a type specifier (at identifier 'i3') | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_102_alignas.c:5:14: error: unexpected token after 'i3' and before 'i3' parsing "typedef_name": seen "LNAME", expecting "TYPE" _Alignas(16) i3;              ^~
+tcc	corpus/tcc/t_103_implicit_memmove.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_103_implicit_memmove.c:12:33: error: expected a type specifier (at identifier '__SIZE_TYPE__') | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_103_implicit_memmove.c:12:33: error: unexpected token after '__SIZE_TYPE__' and before '__SIZE_TYPE__' parsing "typedef_name": seen "LNAME", expecting "TYPE" void *memmove(void*,const void*,__SIZE_TYPE__);                                 ^~~~~~~~~~~~~
 tcc	corpus/tcc/t_105_local_extern.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_107_stack_safe.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_109_float_struct_calling.c	AGREE	lean 0 ms
@@ -468,17 +468,17 @@ tcc	corpus/tcc/t_118_switch.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_11_precedence.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_12_hashdefine.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_130_large_argument.c	AGREE	lean 0 ms
-tcc	corpus/tcc/t_131_return_struct_in_reg.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_131_return_struct_in_reg.c:42:76: error: expected an expression (at else) | oracle: 
-tcc	corpus/tcc/t_133_old_func.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_133_old_func.c:4:1: error: found K&R-style declaration (unsupported) | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_133_old_func.c:4:1: error: found K&R-style declaration (unsupported) float fx(x) ^~~~~~~~~~~
+tcc	corpus/tcc/t_131_return_struct_in_reg.c	AGREE	lean 0 ms
+tcc	corpus/tcc/t_133_old_func.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_133_old_func.c:4:1: error: found K&R-style declaration (unsupported) | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_133_old_func.c:4:1: error: found K&R-style declaration (unsupported) float fx(x) ^~~~~~~~~~~
 tcc	corpus/tcc/t_134_double_to_signed.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_135_func_arg_struct_compare.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_13_integer_literals.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_143_void_expr.c	AGREE	lean 0 ms
-tcc	corpus/tcc/t_14_if.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_14_if.c:10:4: error: expected an expression (at else) | oracle: 
-tcc	corpus/tcc/t_15_recursion.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_15_recursion.c:8:4: error: expected an expression (at else) | oracle: 
+tcc	corpus/tcc/t_14_if.c	AGREE	lean 0 ms
+tcc	corpus/tcc/t_15_recursion.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_16_nesting.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_17_enum.c	AGREE	lean 0 ms
-tcc	corpus/tcc/t_19_pointer_arithmetic.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_19_pointer_arithmetic.c:18:4: error: expected an expression (at else) | oracle: 
+tcc	corpus/tcc/t_19_pointer_arithmetic.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_20_pointer_comparison.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_21_char_array.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_23_type_coercion.c	AGREE	lean 0 ms
@@ -489,7 +489,7 @@ tcc	corpus/tcc/t_28_strings.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_29_array_address.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_30_hanoi.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_32_led.c	AGREE	lean 0 ms
-tcc	corpus/tcc/t_35_sizeof.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_35_sizeof.c:12:17: error: expected an expression (at }) | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_35_sizeof.c:12:17: error: unexpected token after '{' and before '}' Please add error message for state 680 to parsers/c/c_parser_error.m
+tcc	corpus/tcc/t_35_sizeof.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_35_sizeof.c:12:17: error: expected an expression (at }) | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_35_sizeof.c:12:17: error: unexpected token after '{' and before '}' Please add error message for state 680 to parsers/c/c_parser_error.messages     int ii[] = {}; /* gnu extension, size = 0 */                 ^
 tcc	corpus/tcc/t_36_array_initialisers.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_37_sprintf.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_38_multiple_array_index.c	AGREE	lean 0 ms
@@ -509,10 +509,10 @@ tcc	corpus/tcc/t_61_integers.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_64_macro_nesting.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_67_macro_concat.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_71_macro_empty_arg.c	AGREE	lean 0 ms
-tcc	corpus/tcc/t_72_long_long_constant.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_72_long_long_constant.c:12:5: error: expected an expression (at else) | oracle: 
+tcc	corpus/tcc/t_72_long_long_constant.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_75_array_in_struct_init.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_77_push_pop_macro.c	AGREE	lean 0 ms
-tcc	corpus/tcc/t_80_flexarray.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_80_flexarray.c:19:16: error: expected an expression (at }) | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_80_flexarray.c:19:16: error: unexpected token after '{' and before '}' Please add error message for state 680 to parsers/c/c_parser_erro
+tcc	corpus/tcc/t_80_flexarray.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_80_flexarray.c:19:16: error: expected an expression (at }) | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/tcc/t_80_flexarray.c:19:16: error: unexpected token after '{' and before '}' Please add error message for state 680 to parsers/c/c_parser_error.messages int empty[] = {}; // GNU extension                ^
 tcc	corpus/tcc/t_81_types.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_83_utf8_in_identifiers.c	AGREE	lean 0 ms
 tcc	corpus/tcc/t_84_hex-float.c	AGREE	lean 0 ms
@@ -524,79 +524,79 @@ tcc	corpus/tcc/t_97_utf8_string_literal.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/00_assignment.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/01_comment.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/02_printf.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/03_struct.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/03_struct.c: lexing line 24, column 10: invalid symbol | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/03_struct.c:5:10: error: invalid symbol void fred$(struct fred* this)          ^
+tests2	vendor/tinycc/tests/tests2/03_struct.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/03_struct.c: lexing line 24, column 10: invalid symbol | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/03_struct.c:5:10: error: invalid symbol void fred$(struct fred* this)          ^
 tests2	vendor/tinycc/tests/tests2/04_for.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/05_array.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/06_case.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/07_function.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/08_while.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/09_do_while.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/100_c99array-decls.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/100_c99array-decls.c:3:17: error: expected an expression (at static) | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/100_c99array-decls.c:39:20: error: unexpected token after '__typeof__' and befor
-tests2	vendor/tinycc/tests/tests2/101_cleanup.c	LEAN_CRASH	?
-tests2	vendor/tinycc/tests/tests2/102_alignas.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/102_alignas.c:4:14: error: expected a type specifier (at identifier 'i3') | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/102_alignas.c:4:14: error: unexpected token after 'i3' and before 'i3' parsing "
-tests2	vendor/tinycc/tests/tests2/103_implicit_memmove.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/103_implicit_memmove.c:11:33: error: expected a type specifier (at identifier '__SIZE_TYPE__') | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/103_implicit_memmove.c:11:33: error: unexpected token after '__SIZE_TYPE__' and 
-tests2	vendor/tinycc/tests/tests2/104+_inline.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/104+_inline.c:11:27: error: expected ; (at void) | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/104+_inline.c:11:27: error: unexpected token after ')' and before 'void' Please 
+tests2	vendor/tinycc/tests/tests2/100_c99array-decls.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/100_c99array-decls.c:39:20: error: expected a type specifier (at identifier '__typeof__') | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/100_c99array-decls.c:39:20: error: unexpected token after '__typeof__' and before '__typeof__' parsing "typedef_name": seen "LNAME", expecting "TYPE"                    __typeof__(1 ? restricted_pp : unrestricted_pp),                    ^~~~~~~~~~
+tests2	vendor/tinycc/tests/tests2/101_cleanup.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/101_cleanup.c:35:27: error: expected a type specifier (at () | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/101_cleanup.c:35:27: error: unexpected token after '(' and before '(' Please add error message for state 375 to parsers/c/c_parser_error.messages     char * __attribute__ ((cleanup(check2))) stop_that = "wololo";                           ^
+tests2	vendor/tinycc/tests/tests2/102_alignas.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/102_alignas.c:4:14: error: expected a type specifier (at identifier 'i3') | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/102_alignas.c:4:14: error: unexpected token after 'i3' and before 'i3' parsing "typedef_name": seen "LNAME", expecting "TYPE" _Alignas(16) i3;              ^~
+tests2	vendor/tinycc/tests/tests2/103_implicit_memmove.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/103_implicit_memmove.c:11:33: error: expected a type specifier (at identifier '__SIZE_TYPE__') | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/103_implicit_memmove.c:11:33: error: unexpected token after '__SIZE_TYPE__' and before '__SIZE_TYPE__' parsing "typedef_name": seen "LNAME", expecting "TYPE" void *memmove(void*,const void*,__SIZE_TYPE__);                                 ^~~~~~~~~~~~~
+tests2	vendor/tinycc/tests/tests2/104+_inline.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/104+_inline.c:11:27: error: expected ; (at void) | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/104+_inline.c:11:27: error: unexpected token after ')' and before 'void' Please add error message for state 236 to parsers/c/c_parser_error.messages     GOT(inline_inline_2decl_only)                           ^~~~
 tests2	vendor/tinycc/tests/tests2/104_inline.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/105_local_extern.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/106_versym.c	CPP_FAIL	In file included from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/106_versym.c:2:
+tests2	vendor/tinycc/tests/tests2/106_versym.c	CPP_FAIL	rc=1 In file included from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/106_versym.c:2: /data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-src/cerberus-lean/_build/install/default/lib/cerberus-lib/runtime/libc/include/posix/pthread.h:1:2: error: #error "Cerberus doesn't support pthread.h"     1 | #error "Cerberus doesn't support pthread.h"       |  ^~~~~
 tests2	vendor/tinycc/tests/tests2/107_stack_safe.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/108_constructor.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/108_constructor.c:3:28: error: expected a type specifier (at () | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/108_constructor.c:3:28: error: unexpected token after '(' and before '(' Please 
+tests2	vendor/tinycc/tests/tests2/108_constructor.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/108_constructor.c:3:28: error: expected a type specifier (at () | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/108_constructor.c:3:28: error: unexpected token after '(' and before '(' Please add error message for state 375 to parsers/c/c_parser_error.messages static void __attribute__ ((constructor))                            ^
 tests2	vendor/tinycc/tests/tests2/109_float_struct_calling.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/10_pointer.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/110_average.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/111_conversion.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/112_backtrace.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/113_btdll.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/114_bound_signal.c	CPP_FAIL	In file included from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/114_bound_signal.c:2:
-tests2	vendor/tinycc/tests/tests2/115_bound_setjmp.c	CPP_FAIL	In file included from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/115_bound_setjmp.c:3:
-tests2	vendor/tinycc/tests/tests2/116_bound_setjmp2.c	CPP_FAIL	In file included from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/116_bound_setjmp2.c:3:
-tests2	vendor/tinycc/tests/tests2/117_builtins.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/117_builtins.c:23:27: error: expected an expression (at struct) | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/117_builtins.c:23:27: error: unexpected token after '(' and before 'struct' pars
+tests2	vendor/tinycc/tests/tests2/114_bound_signal.c	CPP_FAIL	rc=1 In file included from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/114_bound_signal.c:2: /data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-src/cerberus-lean/_build/install/default/lib/cerberus-lib/runtime/libc/include/posix/pthread.h:1:2: error: #error "Cerberus doesn't support pthread.h"     1 | #error "Cerberus doesn't support pthread.h"       |  ^~~~~ In file included from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/114_bound_sign
+tests2	vendor/tinycc/tests/tests2/115_bound_setjmp.c	CPP_FAIL	rc=1 In file included from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/115_bound_setjmp.c:3: /data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-src/cerberus-lean/_build/install/default/lib/cerberus-lib/runtime/libc/include/setjmp.h:15:2: error: #error <setjmp.h> is not currently supported by Cerberus    15 | #error <setjmp.h> is not currently supported by Cerberus       |  ^~~~~
+tests2	vendor/tinycc/tests/tests2/116_bound_setjmp2.c	CPP_FAIL	rc=1 In file included from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/116_bound_setjmp2.c:3: /data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-src/cerberus-lean/_build/install/default/lib/cerberus-lib/runtime/libc/include/setjmp.h:15:2: error: #error <setjmp.h> is not currently supported by Cerberus    15 | #error <setjmp.h> is not currently supported by Cerberus       |  ^~~~~ In file included from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/
+tests2	vendor/tinycc/tests/tests2/117_builtins.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/117_builtins.c:23:27: error: expected an expression (at struct) | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/117_builtins.c:23:27: error: unexpected token after '(' and before 'struct' parsing "postfix_expression": seen "postfix_expression LPAREN", expecting "option(argument_expression_list) RPAREN"   r = (__builtin_offsetof(struct big_struct, a) != 0);                           ^~~~~~
 tests2	vendor/tinycc/tests/tests2/118_switch.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/119_random_stuff.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/119_random_stuff.c:10:8: error: expected an identifier (at *) | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/119_random_stuff.c:10:8: error: unexpected token after 'goto' and before '*' par
+tests2	vendor/tinycc/tests/tests2/119_random_stuff.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/119_random_stuff.c:10:8: error: expected an identifier (at *) | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/119_random_stuff.c:10:8: error: unexpected token after 'goto' and before '*' parsing "jump_statement": seen "GOTO", expecting "general_identifier SEMICOLON"   goto *&&a;         ^
 tests2	vendor/tinycc/tests/tests2/11_precedence.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/120+_alias.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/120_alias.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/120_alias.c:8:29: error: expected a type specifier (at identifier '__attribute__') | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/120_alias.c:8:29: error: unexpected token after '__attribute__' and before '__at
+tests2	vendor/tinycc/tests/tests2/120_alias.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/120_alias.c:8:29: error: expected a type specifier (at identifier '__attribute__') | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/120_alias.c:8:29: error: unexpected token after '__attribute__' and before '__attribute__' parsing "typedef_name": seen "LNAME", expecting "TYPE" void alias_for_target(void) __attribute__((alias("target")));                             ^~~~~~~~~~~~~
 tests2	vendor/tinycc/tests/tests2/121_struct_return.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/122_vla_reuse.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/122_vla_reuse.c:19:5: error: expected an expression (at else) | oracle: 
-tests2	vendor/tinycc/tests/tests2/123_vla_bug.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/123_vla_bug.c:1:9: error: expected a type specifier (at identifier '__SIZE_TYPE__') | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/123_vla_bug.c:1:9: error: unexpected token after '__SIZE_TYPE__' and before '__S
-tests2	vendor/tinycc/tests/tests2/124_atomic_counter.c	CPP_FAIL	In file included from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/threads.h:21,
+tests2	vendor/tinycc/tests/tests2/122_vla_reuse.c	AGREE	lean 0 ms
+tests2	vendor/tinycc/tests/tests2/123_vla_bug.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/123_vla_bug.c:1:9: error: expected a type specifier (at identifier '__SIZE_TYPE__') | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/123_vla_bug.c:1:9: error: unexpected token after '__SIZE_TYPE__' and before '__SIZE_TYPE__' parsing "typedef_name": seen "LNAME", expecting "TYPE" typedef __SIZE_TYPE__ size_t;         ^~~~~~~~~~~~~
+tests2	vendor/tinycc/tests/tests2/124_atomic_counter.c	CPP_FAIL	rc=1 In file included from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/threads.h:21,                  from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/124_atomic_counter.c:5: /data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-src/cerberus-lean/_build/install/default/lib/cerberus-lib/runtime/libc/include/posix/pthread.h:1:2: error: #error "Cerberus doesn't support pthread.h"     1 | #error "Cerberus doesn't support pthread.h"       |  ^~~~
 tests2	vendor/tinycc/tests/tests2/125_atomic_misc.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/126_bound_global.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/127_asm_goto.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/127_asm_goto.c:19:22: error: expected ) (at ,) | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/127_asm_goto.c:19:22: error: unexpected token after 'smaller' and before ',' par
-tests2	vendor/tinycc/tests/tests2/128_run_atexit.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/128_run_atexit.c:7:18: error: expected a type specifier (at () | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/128_run_atexit.c:7:18: error: unexpected token after '(' and before '(' Please a
-tests2	vendor/tinycc/tests/tests2/129_scopes.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/129_scopes.c:155:43: error: expected ; (at punctuator) | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/129_scopes.c:155:56: error: unimplemented keyword 'asm (inline assembly label on
+tests2	vendor/tinycc/tests/tests2/127_asm_goto.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/127_asm_goto.c:19:22: error: expected ) (at ,) | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/127_asm_goto.c:19:22: error: unexpected token after 'smaller' and before ',' parsing "list(asm_label)": seen "asm_label", expecting "list(asm_label)"             : smaller, larger);                      ^
+tests2	vendor/tinycc/tests/tests2/128_run_atexit.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/128_run_atexit.c:7:18: error: expected a type specifier (at () | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/128_run_atexit.c:7:18: error: unexpected token after '(' and before '(' Please add error message for state 375 to parsers/c/c_parser_error.messages void __attribute((constructor)) startup5(void)                  ^
+tests2	vendor/tinycc/tests/tests2/129_scopes.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/129_scopes.c:155:43: error: unimplemented keyword 'asm (inline assembly label on a declarator is unsupported)' (at punctuator) | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/129_scopes.c:155:56: error: unimplemented keyword 'asm (inline assembly label on a declarator is unsupported)'         extern struct xx7 { int a, b; } x __asm__(_"z7");                                                        ^
 tests2	vendor/tinycc/tests/tests2/12_hashdefine.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/130_large_argument.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/131_return_struct_in_reg.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/131_return_struct_in_reg.c:41:76: error: expected an expression (at else) | oracle: 
+tests2	vendor/tinycc/tests/tests2/131_return_struct_in_reg.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/132_bound_test.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/133_old_func.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/133_old_func.c:3:1: error: found K&R-style declaration (unsupported) | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/133_old_func.c:3:1: error: found K&R-style declaration (unsupported) float fx(x)
+tests2	vendor/tinycc/tests/tests2/133_old_func.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/133_old_func.c:3:1: error: found K&R-style declaration (unsupported) | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/133_old_func.c:3:1: error: found K&R-style declaration (unsupported) float fx(x) ^~~~~~~~~~~
 tests2	vendor/tinycc/tests/tests2/134_double_to_signed.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/135_func_arg_struct_compare.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/136_atomic_gcc_style.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/137_funcall_struct_args.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/138_arm64_encoding.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/138_arm64_encoding.c:182:24: error: expected ; (at punctuator) | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/138_arm64_encoding.c:182:38: error: unimplemented keyword 'asm (inline assembly 
+tests2	vendor/tinycc/tests/tests2/138_arm64_encoding.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/138_arm64_encoding.c:182:24: error: unimplemented keyword 'asm (inline assembly label on a declarator is unsupported)' (at punctuator) | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/138_arm64_encoding.c:182:38: error: unimplemented keyword 'asm (inline assembly label on a declarator is unsupported)'     register int64_t r __asm__("x0") = x;                                      ^
 tests2	vendor/tinycc/tests/tests2/139_arm64_errors.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/13_integer_literals.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/140_arm64_extasm.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/140_arm64_extasm.c:185:28: error: expected ; (at punctuator) | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/140_arm64_extasm.c:185:39: error: unimplemented keyword 'asm (inline assembly la
+tests2	vendor/tinycc/tests/tests2/140_arm64_extasm.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/140_arm64_extasm.c:185:28: error: unimplemented keyword 'asm (inline assembly label on a declarator is unsupported)' (at punctuator) | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/140_arm64_extasm.c:185:39: error: unimplemented keyword 'asm (inline assembly label on a declarator is unsupported)'     register uint64_t keep asm("x19") = 0x123456789abcdef0ULL;                                       ^
 tests2	vendor/tinycc/tests/tests2/141_riscv_asm.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/142_int_conversion.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/143_void_expr.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/144_tls.c	CPP_FAIL	In file included from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/threads.h:21,
-tests2	vendor/tinycc/tests/tests2/145_winarm64_interlocked.c	CPP_FAIL	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/145_winarm64_interlocked.c:2:10: fatal error: windows.h: No such file or directory
-tests2	vendor/tinycc/tests/tests2/146_tls_extern.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/146_tls_extern.c:5:8: error: expected a type specifier (at identifier '__thread') | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/146_tls_extern.c:5:8: error: unexpected token after '__thread' and before '__thr
+tests2	vendor/tinycc/tests/tests2/144_tls.c	CPP_FAIL	rc=1 In file included from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/threads.h:21,                  from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/144_tls.c:2: /data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-src/cerberus-lean/_build/install/default/lib/cerberus-lib/runtime/libc/include/posix/pthread.h:1:2: error: #error "Cerberus doesn't support pthread.h"     1 | #error "Cerberus doesn't support pthread.h"       |  ^~~~~
+tests2	vendor/tinycc/tests/tests2/145_winarm64_interlocked.c	CPP_FAIL	rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/145_winarm64_interlocked.c:2:10: fatal error: windows.h: No such file or directory     2 | #include <windows.h>       |          ^~~~~~~~~~~ compilation terminated.
+tests2	vendor/tinycc/tests/tests2/146_tls_extern.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/146_tls_extern.c:5:8: error: expected a type specifier (at identifier '__thread') | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/146_tls_extern.c:5:8: error: unexpected token after '__thread' and before '__thread' parsing "typedef_name": seen "LNAME", expecting "TYPE" extern __thread signed short extern_tls_short;        ^~~~~~~~
 tests2	vendor/tinycc/tests/tests2/148_linker_symbols.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/149_parameter_qualifier_errors.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/149_parameter_qualifiers.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/149_parameter_qualifiers.c:3:5: error: expected an expression (at punctuator) | oracle: 
-tests2	vendor/tinycc/tests/tests2/14_if.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/14_if.c:9:4: error: expected an expression (at else) | oracle: 
-tests2	vendor/tinycc/tests/tests2/150_return_qualifiers.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/150_return_qualifiers.c:5:1: error: expected a type specifier (at punctuator) | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/150_return_qualifiers.c:5:45: error: unexpected token after '__typeof__' and bef
-tests2	vendor/tinycc/tests/tests2/15_recursion.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/15_recursion.c:7:4: error: expected an expression (at else) | oracle: 
+tests2	vendor/tinycc/tests/tests2/149_parameter_qualifiers.c	AGREE	lean 0 ms
+tests2	vendor/tinycc/tests/tests2/14_if.c	AGREE	lean 0 ms
+tests2	vendor/tinycc/tests/tests2/150_return_qualifiers.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/150_return_qualifiers.c:5:45: error: expected a type specifier (at identifier '__typeof__') | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/150_return_qualifiers.c:5:45: error: unexpected token after '__typeof__' and before '__typeof__' parsing "typedef_name": seen "LNAME", expecting "TYPE" _Static_assert(__builtin_types_compatible_p(__typeof__(const_return()) *, int *),                                             ^~~~~~~~~~
+tests2	vendor/tinycc/tests/tests2/15_recursion.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/16_nesting.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/17_enum.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/18_include.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/19_pointer_arithmetic.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/19_pointer_arithmetic.c:17:4: error: expected an expression (at else) | oracle: 
+tests2	vendor/tinycc/tests/tests2/19_pointer_arithmetic.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/20_pointer_comparison.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/21_char_array.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/22_floating_point.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/22_floating_point.c:12:6: error: expected an expression (at else) | oracle: 
+tests2	vendor/tinycc/tests/tests2/22_floating_point.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/23_type_coercion.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/24_math_library.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/25_quicksort.c	AGREE	lean 0 ms
@@ -607,9 +607,9 @@ tests2	vendor/tinycc/tests/tests2/29_array_address.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/30_hanoi.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/31_args.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/32_led.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/33_ternary_op.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/33_ternary_op.c:20:31: error: expected an expression (at )) | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/33_ternary_op.c:20:31: error: unexpected token after '*' and before ')' parsing 
+tests2	vendor/tinycc/tests/tests2/33_ternary_op.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/33_ternary_op.c:20:31: error: expected an expression (at )) | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/33_ternary_op.c:20:31: error: unexpected token after '*' and before ')' parsing "multiplicative_expression": seen "multiplicative_expression STAR", expecting "cast_expression"     _Generic((__typeof(1?f:f)*){0}, void (**)(void): (void)0);                               ^
 tests2	vendor/tinycc/tests/tests2/34_array_assignment.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/35_sizeof.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/35_sizeof.c:11:17: error: expected an expression (at }) | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/35_sizeof.c:11:17: error: unexpected token after '{' and before '}' Please add e
+tests2	vendor/tinycc/tests/tests2/35_sizeof.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/35_sizeof.c:11:17: error: expected an expression (at }) | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/35_sizeof.c:11:17: error: unexpected token after '{' and before '}' Please add error message for state 680 to parsers/c/c_parser_error.messages     int ii[] = {}; /* gnu extension, size = 0 */                 ^
 tests2	vendor/tinycc/tests/tests2/36_array_initialisers.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/37_sprintf.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/38_multiple_array_index.c	AGREE	lean 0 ms
@@ -620,7 +620,7 @@ tests2	vendor/tinycc/tests/tests2/42_function_pointer.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/43_void_param.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/44_scoped_declarations.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/45_empty_for.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/46_grep.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/46_grep.c:222:13: error: expected an expression (at else) | oracle: 
+tests2	vendor/tinycc/tests/tests2/46_grep.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/47_switch_return.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/48_nested_break.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/49_bracket_evaluation.c	AGREE	lean 0 ms
@@ -635,31 +635,31 @@ tests2	vendor/tinycc/tests/tests2/64_macro_nesting.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/67_macro_concat.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/70_floating_point_literals.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/71_macro_empty_arg.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/72_long_long_constant.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/72_long_long_constant.c:11:5: error: expected an expression (at else) | oracle: 
-tests2	vendor/tinycc/tests/tests2/73_arm64.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/73_arm64.c:43:64: error: expected an expression (at }) | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/73_arm64.c:43:64: error: unexpected token after '{' and before '}' Please add er
+tests2	vendor/tinycc/tests/tests2/72_long_long_constant.c	AGREE	lean 0 ms
+tests2	vendor/tinycc/tests/tests2/73_arm64.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/73_arm64.c:43:64: error: expected an expression (at }) | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/73_arm64.c:43:64: error: unexpected token after '{' and before '}' Please add error message for state 680 to parsers/c/c_parser_error.messages struct hfae12 { struct empty e; struct hfa12 h; } hfae12 = { { }, { 112.1, 112.2 } };                                                                ^
 tests2	vendor/tinycc/tests/tests2/75_array_in_struct_init.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/76_dollars_in_identifiers.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/76_dollars_in_identifiers.c: lexing line 142, column 8: invalid symbol | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/76_dollars_in_identifiers.c:24:8: error: invalid symbol    int $ = 10;        ^
+tests2	vendor/tinycc/tests/tests2/76_dollars_in_identifiers.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/76_dollars_in_identifiers.c: lexing line 142, column 8: invalid symbol | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/76_dollars_in_identifiers.c:24:8: error: invalid symbol    int $ = 10;        ^
 tests2	vendor/tinycc/tests/tests2/77_push_pop_macro.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/78_vla_label.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/79_vla_continue.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/79_vla_continue.c:22:5: error: expected an expression (at else) | oracle: 
-tests2	vendor/tinycc/tests/tests2/80_flexarray.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/80_flexarray.c:18:16: error: expected an expression (at }) | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/80_flexarray.c:18:16: error: unexpected token after '{' and before '}' Please ad
+tests2	vendor/tinycc/tests/tests2/79_vla_continue.c	AGREE	lean 0 ms
+tests2	vendor/tinycc/tests/tests2/80_flexarray.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/80_flexarray.c:18:16: error: expected an expression (at }) | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/80_flexarray.c:18:16: error: unexpected token after '{' and before '}' Please add error message for state 680 to parsers/c/c_parser_error.messages int empty[] = {}; // GNU extension                ^
 tests2	vendor/tinycc/tests/tests2/81_types.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/82_attribs_position.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/82_attribs_position.c:7:17: error: expected a type specifier (at () | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/82_attribs_position.c:7:17: error: unexpected token after '(' and before '(' Ple
+tests2	vendor/tinycc/tests/tests2/82_attribs_position.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/82_attribs_position.c:7:17: error: expected a type specifier (at () | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/82_attribs_position.c:7:17: error: unexpected token after '(' and before '(' Please add error message for state 375 to parsers/c/c_parser_error.messages } __attribute__((packed)) Unaligned16a;                 ^
 tests2	vendor/tinycc/tests/tests2/83_utf8_in_identifiers.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/84_hex-float.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/85_asm-outside-function.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/85_asm-outside-function.c:9:1: error: expected a type specifier (at punctuator) | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/85_asm-outside-function.c:9:1: error: unexpected token after ';' and before '__a
+tests2	vendor/tinycc/tests/tests2/85_asm-outside-function.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/85_asm-outside-function.c:9:1: error: expected a type specifier (at punctuator) | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/85_asm-outside-function.c:9:1: error: unexpected token after ';' and before '__asm__' Please add error message for state 1972 to parsers/c/c_parser_error.messages __asm__(_"vide: ret"); ^~~~~~~
 tests2	vendor/tinycc/tests/tests2/86_memory-model.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/87_dead_code.c	ORACLE_ONLY	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/87_dead_code.c:50:9: error: expected an expression (at else) | oracle: 
-tests2	vendor/tinycc/tests/tests2/88_codeopt.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/88_codeopt.c:4:9: error: expected a type specifier (at identifier '__SIZE_TYPE__') | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/88_codeopt.c:4:9: error: unexpected token after '__SIZE_TYPE__' and before '__SI
+tests2	vendor/tinycc/tests/tests2/87_dead_code.c	AGREE	lean 0 ms
+tests2	vendor/tinycc/tests/tests2/88_codeopt.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/88_codeopt.c:4:9: error: expected a type specifier (at identifier '__SIZE_TYPE__') | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/88_codeopt.c:4:9: error: unexpected token after '__SIZE_TYPE__' and before '__SIZE_TYPE__' parsing "typedef_name": seen "LNAME", expecting "TYPE" typedef __SIZE_TYPE__ size_t;         ^~~~~~~~~~~~~
 tests2	vendor/tinycc/tests/tests2/89_nocode_wanted.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/90_struct-init.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/90_struct-init.c:8:49: error: expected an expression (at }) | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/90_struct-init.c:8:49: error: unexpected token after '{' and before '}' parsing 
+tests2	vendor/tinycc/tests/tests2/90_struct-init.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/90_struct-init.c:8:49: error: expected an expression (at }) | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/90_struct-init.c:8:49: error: unexpected token after '{' and before '}' parsing "postfix_expression": seen "LPAREN type_name RPAREN LBRACE", expecting "initializer_list option(COMMA) RBRACE" struct contains_empty ce = { { (1) }, (empty_s){}, 022, };                                                 ^
 tests2	vendor/tinycc/tests/tests2/91_ptr_longlong_arith32.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/92_enum_bitfield.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/93_integer_promotion.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/94_generic.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/94_generic.c:36:21: error: expected a type specifier (at identifier '__typeof__') | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/94_generic.c:36:21: error: unexpected token after '__typeof__' and before '__typ
-tests2	vendor/tinycc/tests/tests2/95_bitfields.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/95_bitfields.c:12:778: error: expected an expression (at struct) | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/95_bitfields.c:12:778: error: unexpected token after '(' and before 'struct' par
-tests2	vendor/tinycc/tests/tests2/95_bitfields_ms.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/95_bitfields.c:12:778: error: expected an expression (at struct) | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/95_bitfields.c:12:778: error: unexpected token after '(' and before 'struct' par
+tests2	vendor/tinycc/tests/tests2/94_generic.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/94_generic.c:36:21: error: expected a type specifier (at identifier '__typeof__') | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/94_generic.c:36:21: error: unexpected token after '__typeof__' and before '__typeof__' parsing "typedef_name": seen "LNAME", expecting "TYPE"  return _Generic(t, __typeof__( ((void)0, (T){0}) ) : 1 );                     ^~~~~~~~~~
+tests2	vendor/tinycc/tests/tests2/95_bitfields.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/95_bitfields.c:12:778: error: expected an expression (at struct) | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/95_bitfields.c:12:778: error: unexpected token after '(' and before 'struct' parsing "postfix_expression": seen "postfix_expression LPAREN", expecting "option(argument_expression_list) RPAREN"     TEST_STRUCT(0x333,0x44,0x555555,6,7);
+tests2	vendor/tinycc/tests/tests2/95_bitfields_ms.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/95_bitfields.c:12:778: error: expected an expression (at struct) | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/95_bitfields.c:12:778: error: unexpected token after '(' and before 'struct' parsing "postfix_expression": seen "postfix_expression LPAREN", expecting "option(argument_expression_list) RPAREN"     TEST_STRUCT(0x333,0x44,0x555555,6,7);
 tests2	vendor/tinycc/tests/tests2/96_nodata_wanted.c	AGREE	lean 0 ms
 tests2	vendor/tinycc/tests/tests2/97_utf8_string_literal.c	AGREE	lean 0 ms
-tests2	vendor/tinycc/tests/tests2/98_al_ax_extend.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/98_al_ax_extend.c:3:1: error: expected a type specifier (at punctuator) | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/98_al_ax_extend.c:3:1: error: unexpected token after ';' and before 'asm' Please
-tests2	vendor/tinycc/tests/tests2/99_fastcall.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/99_fastcall.c:26:1: error: expected a type specifier (at punctuator) | oracle: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/99_fastcall.c:26:1: error: unexpected token after ';' and before 'asm' Please ad
+tests2	vendor/tinycc/tests/tests2/98_al_ax_extend.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/98_al_ax_extend.c:3:1: error: expected a type specifier (at punctuator) | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/98_al_ax_extend.c:3:1: error: unexpected token after ';' and before 'asm' Please add error message for state 1972 to parsers/c/c_parser_error.messages asm ( ^~~
+tests2	vendor/tinycc/tests/tests2/99_fastcall.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/99_fastcall.c:26:1: error: expected a type specifier (at punctuator) | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/vendor/tinycc/tests/tests2/99_fastcall.c:26:1: error: unexpected token after ';' and before 'asm' Please add error message for state 1972 to parsers/c/c_parser_error.messages asm ( ^~~

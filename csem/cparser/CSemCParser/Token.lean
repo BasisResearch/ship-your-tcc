@@ -44,7 +44,7 @@ inductive Tok where
   | MINUS_EQ | LT_LT_EQ | GT_GT_EQ | AMPERSAND_EQ | CARET_EQ | PIPE_EQ | COMMA | LBRACK_LBRACK
   | QUESTION_COLON | LBRACES | PIPES | RBRACES
   | EOF
-  deriving Inhabited
+  deriving Inhabited, BEq
 
 /-- A lexing position, as ocamllex keeps it (`Lexing.position` without the
 file name, which is constant for a translation unit): line number, offset of

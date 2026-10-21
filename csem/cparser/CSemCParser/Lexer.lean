@@ -448,9 +448,19 @@ def lexLoop (cfg : LexCfg) (s : ByteArray) : Nat → St → Except LexErr St
   | 0, st => .error ⟨st.pos, "lexer fuel exhausted"⟩
   | f+1, st =>
     if st.i ≥ s.size then .ok { st with toks := st.toks.push ⟨.EOF, st.pos, st.pos⟩ }
-    else match step cfg s st with
+    else
+      -- `step`'s token alternatives capture its state. Keep the accumulated
+      -- token array outside those closures so an emitted token never copies
+      -- the entire prefix (notably on large macro expansions).
+      let pos := st.pos
+      let toks := st.toks
+      match step cfg s { st with toks := #[] } with
       | .error e => .error e
-      | .ok st' => if st'.i ≤ st.i then .error ⟨st.pos, "lexer made no progress"⟩ else lexLoop cfg s f st'
+      | .ok st' =>
+        if st'.i ≤ pos.cnum then .error ⟨pos, "lexer made no progress"⟩
+        else
+          let toks := st'.toks.foldl (fun acc t => acc.push t) toks
+          lexLoop cfg s f { st' with toks }
 
 end Lex
 

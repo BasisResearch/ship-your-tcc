@@ -1,0 +1,3 @@
+corpus	file	status	detail
+adhoc	csem/cparser/tests/reject.c	BOTH_REJECT	/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/csem/cparser/tests/reject.c:1:27: error: expected an expression (at else) | oracle: rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141/csem/cparser/tests/reject.c:1:27: error: unexpected token after ';' and before 'else' Please add error message for state 738 to parsers/c/c_parser_error.messages int main(void) { return ; else return 1; }                           ^~~~
+adhoc	csem/cparser/tests/token_dispatch.c	AGREE	lean 0 ms

@@ -55,26 +55,28 @@ def main (args : List String) : IO UInt32 := do
     let timing := s!"lean {t1 - t0} ms"
     if oracle == "-" then
       match lean with
-      | .ok _ => IO.println s!"LEAN_ONLY\t{timing}"
+      | .ok _ => IO.println s!"LEAN_ONLY\t{timing}"; return 1
       | .error e => IO.println s!"BOTH_REJECT\t{e}"
       return 0
     let text ← IO.FS.readFile oracle
     let oj ← match Json.parse text with
       | .ok j => pure (stripDigest j)
-      | .error e => IO.println s!"ROUNDTRIP\toracle JSON does not parse: {e}"; return 0
+      | .error e => IO.println s!"ROUNDTRIP\toracle JSON does not parse: {e}"; return 1
     match CabsImport.jsonToTranslationUnit oj with
-    | .error e => IO.println s!"ROUNDTRIP\tCabsImport refuses the oracle JSON: {e}"; return 0
+    | .error e => IO.println s!"ROUNDTRIP\tCabsImport refuses the oracle JSON: {e}"; return 1
     | .ok otu =>
       let rt := CabsExport.translationUnit otu
       if rt != oj then
         IO.println s!"ROUNDTRIP\t{(firstDiff rt oj "").getD "?"}"
-        return 0
+        return 1
       match lean with
-      | .error e => IO.println s!"ORACLE_ONLY\t{e}"
+      | .error e => IO.println s!"ORACLE_ONLY\t{e}"; return 1
       | .ok tu =>
         let lj := CabsExport.translationUnit tu
         if lj == oj then IO.println s!"AGREE\t{timing}"
-        else IO.println s!"DIFF\t{(firstDiff lj oj "").getD "?"}"
+        else
+          IO.println s!"DIFF\t{(firstDiff lj oj "").getD "?"}"
+          return 1
       return 0
   | _ =>
     IO.eprintln "usage: csem_cparse --json [--gnu] PP FILE | --cmp [--gnu] PP FILE ORACLE.json|-"

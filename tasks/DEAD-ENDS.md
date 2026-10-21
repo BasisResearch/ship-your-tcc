@@ -42,3 +42,23 @@
   child exits. Editing that file during the wait corrupted both old launches
   after their workers completed. Parse the whole body in a function or feed
   a snapshot via stdin; retain the parent shell in this execution environment.
+- F1 token dispatch: adding ELSE to the handwritten equality list alone misses
+  DEFAULT, STATIC, STATIC_ASSERT and ASM too. Derive exact token equality and
+  share it across accept/expectT/at?/direct lookahead. The token fix gives exact
+  Cabs equality on all 614 Menhir-accepted inputs, including 200 Csmith.
+- F1 GNU scope: Menhir rejects approved forms (cleanup/other attributes, GNU
+  aliases, empty initializers and K&R declaration lists). BOTH_REJECT does not
+  validate Supported. Do not delete attributes/local-label declarations or
+  classify their meaning away. Cabs has no local-label-declaration node and
+  Lem has no cleanup lowering; extensions need representation/desugaring too.
+- F1 cleanup expansion: the hardened run makes the former interruption
+  reproducible as a 120-second LEAN_TIMEOUT on tests2/101_cleanup.c (15 MB
+  preprocessing expansion). Lexer step closures retain the token prefix during
+  array push. Moving the accumulator outside step closures fixed it; capped
+  incremental build and full rerun passed (614 AGREE, 41 BOTH_REJECT, 9 CPP_FAIL).
+  Merely increasing the
+  timeout is not a grammar fix. Making the ident let lazy was considered but
+  rejected: generated C already sinks identLen into its branch.
+- F1 worker sandbox: systemd user bus returns Operation not permitted. The lead
+  successfully built the first stable request under the shared lock/12 GB cap.
+  Keep the build request protocol; never fall back to an uncapped build.
