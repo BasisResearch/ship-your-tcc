@@ -44,8 +44,11 @@ refusal. This is not the Sail exit criterion. The inherited unfinished
 assembler modules are preserved in `build/recovery/assembler/` outside the
 model's import closure.
 
-Builds are serialized across these lanes, capped at 12 GB. The two existing
-untracked `results/review/*.json` files in main are preserved pending review.
+Builds are serialized across these lanes, capped at 12 GB. The two inherited
+`results/review/*.json` handoffs are retained as dated records; all 345 hashes
+in `phase2-snapshot-current.json` match the committed Phase 2 result files.
+Parser recovery builds in main and the repository gate passes; its first
+comparison is diagnostic, with grammar and comparator gaps still open.
 
 ## Needs user
 

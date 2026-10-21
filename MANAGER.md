@@ -13,6 +13,10 @@ without discarding changes. Every Lean build holds the shared
 `build/lake.lock` and runs under `systemd-run --user --scope -p MemoryMax=12G`.
 Check `free -g` before builds; wait below 25 GB available.
 
+If the worker sandbox cannot connect to the systemd user bus, keep the cap:
+report the exact build targets and stable source revision for the lead to
+build under the shared lock. Do not fall back to an uncapped Lean build.
+
 Task files contain fewer than 40 lines: binding project rules first, one
 target, files, and an explicit completion criterion. Workers commit but do
 not push or merge main. Their final line is `RESULT: landed <commit>` (ready

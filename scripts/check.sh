@@ -52,13 +52,13 @@ def strip(src):
     src = re.sub(r"/-.*?-/", "", src, flags=re.S)
     src = re.sub(r"--[^\n]*", "", src)
     return re.sub(r'"(?:\\.|[^"\\])*"', '""', src)
-for d in ["Tcc", "Vsa", "VsaIris", "Spec"]:
+for d in ["Tcc", "Vsa", "VsaIris", "Spec", "csem/cparser"]:
     for dp, _, fs in os.walk(d):
         for f in fs:
             if not f.endswith(".lean"): continue
             p = os.path.join(dp, f); s = strip(open(p).read())
             for i, line in enumerate(s.splitlines(), 1):
-                if pat.search(line) or (d in ("Tcc", "Spec") and lim.search(line)):
+                if pat.search(line) or (d in ("Tcc", "Spec", "csem/cparser") and lim.search(line)):
                     bad.append(f"{p}:{i}: {line.strip()}")
 for b in bad: print(b)
 sys.exit(1 if bad else 0)
