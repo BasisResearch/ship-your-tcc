@@ -52,13 +52,13 @@ def strip(src):
     src = re.sub(r"/-.*?-/", "", src, flags=re.S)
     src = re.sub(r"--[^\n]*", "", src)
     return re.sub(r'"(?:\\.|[^"\\])*"', '""', src)
-for d in ["Tcc", "Vsa", "VsaIris"]:
+for d in ["Tcc", "Vsa", "VsaIris", "Spec"]:
     for dp, _, fs in os.walk(d):
         for f in fs:
             if not f.endswith(".lean"): continue
             p = os.path.join(dp, f); s = strip(open(p).read())
             for i, line in enumerate(s.splitlines(), 1):
-                if pat.search(line) or (d == "Tcc" and lim.search(line)):
+                if pat.search(line) or (d in ("Tcc", "Spec") and lim.search(line)):
                     bad.append(f"{p}:{i}: {line.strip()}")
 for b in bad: print(b)
 sys.exit(1 if bad else 0)
@@ -76,6 +76,14 @@ python3 scripts/gen_printf_layout.py --check || fail "generated Tcc/Printf/Sum d
 # the CompileCut chain, table and pin proofs are regenerated from the committed
 # trace digest results/p3/ccp-digest.json (the checkpoint states by hash)
 python3 scripts/gen_ccp.py --check || fail "generated Tcc/Ccp/Sum drifted (scripts/gen_ccp.py)"
+# CSem.Pre's tcc configuration and image file system (Spec/Pre/Tcc/), from the
+# patched tcc sources, the cross tcc's -dM listing and c/build/fs.list
+if [ -f c/build/fs.list ] && [ -x build/cross/riscv64-tcc ]; then
+  scripts/tcc_src.sh build/tcc-src && python3 scripts/gen_pre_cfg.py --check \
+    || fail "generated Spec/Pre/Tcc drifted (scripts/gen_pre_cfg.py)"
+else
+  echo "  (skipping gen_pre_cfg.py --check: no c/build/fs.list or build/cross/riscv64-tcc)"
+fi
 
 echo "== (2c) CSem text gates"
 csem/tools/check_handwritten_sync.sh --quiet || fail "csem: hand-written copies drifted (scripts/csem_regen.sh)"
