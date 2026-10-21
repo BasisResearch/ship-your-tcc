@@ -70,6 +70,8 @@ def bot : Rec where
   end_switch := fuelErr
   do_Static_assert := fuelErr
   gfunc_call := fun _ => fuelErr
+  asm_instr := fuelErr
+  asm_global_instr := fuelErr
   vpop := fuelErr
   tcc_compile := fun _ _ _ => fuelErr
   tcc_add_file_internal := fun _ _ => fuelErr
@@ -131,6 +133,8 @@ def step (r : Thunk Rec) : Rec where
   end_switch := fun s => (Tcc.Model.end_switch).run s
   do_Static_assert := fun s => (Tcc.Model.do_Static_assert r.get).run s
   gfunc_call := fun n s => (Tcc.Model.gfunc_call r.get n).run s
+  asm_instr := fun s => (unsupported "asm statement" : M Unit).run s
+  asm_global_instr := fun s => (unsupported "global asm block" : M Unit).run s
   vpop := fun s => (Tcc.Model.vpop r.get).run s
   tcc_compile := fun ft fn fd s => (Tcc.Model.tcc_compile r.get ft fn fd).run s
   tcc_add_file_internal := fun f fl s => (Tcc.Model.tcc_add_file_internal r.get f fl).run s

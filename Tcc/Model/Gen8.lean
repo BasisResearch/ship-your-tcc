@@ -500,7 +500,8 @@ def decl (R : Rec) (l : Int32) : M Int32 := do
         R.do_Static_assert; continue
       if l != VT_CONST then break
       if tk == TOK_ASM1 || tk == TOK_ASM2 || tk == TOK_ASM3 then
-        unsupported "global asm block"
+        R.asm_global_instr
+        continue
       if tk ≥ C.TOK_UIDENT then
         btype := { btype with t := VT_INT }
         oldint := true

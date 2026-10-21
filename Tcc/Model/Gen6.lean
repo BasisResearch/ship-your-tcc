@@ -500,7 +500,7 @@ def blockOnce (R : Rec) (flags : Int32) : M Bool := do
   else if t == TOK_GOTO then
     block_goto R
   else if t == TOK_ASM1 || t == TOK_ASM2 || t == TOK_ASM3 then
-    unsupported "asm statement"
+    R.asm_instr
   else
     if (← getTok) == 58 && t ≥ C.TOK_UIDENT then
       block_label R t

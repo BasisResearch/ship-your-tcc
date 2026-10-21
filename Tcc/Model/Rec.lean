@@ -86,6 +86,10 @@ structure Rec where
   end_switch : M Unit
   do_Static_assert : M Unit
   gfunc_call : Int32 → M Unit
+  /-- `asm_instr()` (tccasm.c: an inline asm statement) -/
+  asm_instr : M Unit
+  /-- `asm_global_instr()` (tccasm.c: a top-level asm block) -/
+  asm_global_instr : M Unit
   /-- `vpop()` (riscv64-gen.c's gfunc_call and gen_vla_alloc) -/
   vpop : M Unit
   -- libtcc.c / tccelf.c
