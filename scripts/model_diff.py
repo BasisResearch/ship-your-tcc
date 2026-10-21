@@ -9,6 +9,8 @@ build/rv64emu, arena dumped at the hand-off to the program); the model is
 symbols. When tcc reaches the program, the two arenas (base, entry, the
 program's code range, every byte up to the last non-zero one) must be
 equal; when tcc stops first, its console bytes and exit status must be.
+Matching refusals are diagnostic agreement only, not F3 arena coverage.
+Reference-derived long-double padding is never supplied to the model.
 
     scripts/model_diff.py [--obj] [-j N] [--limit N] [--no-report] CORPUS|FILE...
 
@@ -46,6 +48,9 @@ CORPORA = {
     'tests': 'c/tests/*.c', 'run': 'c/tests/run/*.c', 'tcc': 'c/tests/tcc/*.c', 'p3': 'c/tests/p3/*.c',
     'compcert': 'corpus/compcert/*.c', 'tcctests': 'corpus/tcc/*.c', 'csmith': 'corpus/csmith/*.c',
     'tests2': 'build/tcc-src/tests/tests2/*.c',
+    'gen-cgen': 'build/model_corpus/cgen/*.c', 'gen-csmith': 'build/model_corpus/csmith/*.c',
+    'model': 'c/tests/model/*.c',
+    'gen-mutants': 'build/model_corpus/mutants/*.c', 'gen-dtsplit': 'build/model_corpus/dtsplit/*.c',
 }
 
 
@@ -113,7 +118,7 @@ def ref_run(prog, extra, args, libs, rtkey):
     return 'exit', (code, open(base + '.console', 'rb').read()), lm
 
 
-def model_run(prog, extra, args, libs, tag, ldg=None):
+def model_run(prog, extra, args, libs, tag):
     os.makedirs(WORK, exist_ok=True)
     arena = os.path.join(WORK, tag + '.arena')
     console = os.path.join(WORK, tag + '.console')
@@ -130,9 +135,6 @@ def model_run(prog, extra, args, libs, tag, ldg=None):
         cmd += ['--no-args']
     for l in libs:
         cmd += ['--larg', l]
-    if ldg and os.path.exists(ldg):
-        # the reference's indeterminate strtold bytes (rv64emu --log-strtorx)
-        cmd += ['--ld-garbage', ldg]
     t0 = time.time()
     r = subprocess.run(cmd, capture_output=True, timeout=600)
     dt = time.time() - t0
@@ -181,10 +183,9 @@ def compare(prog, mode, rtkey):
     libs = ['-lm'] if lm else []
     if lm:
         rst, rdata, _ = ref_run(src, extra, args, libs, rtkey)
-    ldg = (rdata + '.ldg') if rst == 'ran' else None
-    mst, mdata, dt = model_run(src, extra, args, [], tag, ldg)
+    mst, mdata, dt = model_run(src, extra, args, [], tag)
     if mst == 'exit' and b'unresolved reference' in mdata[1]:
-        mst, mdata, dt2 = model_run(src, extra, args, ['-lm'], tag, ldg)
+        mst, mdata, dt2 = model_run(src, extra, args, ['-lm'], tag)
         dt += dt2
     res = dict(name=name, model_s=dt, ref=rst, model=mst)
     if mst == 'model-error':
@@ -202,7 +203,7 @@ def compare(prog, mode, rtkey):
         if rdata != mdata:
             res.update(result='diff', why='exit %d vs %d; console %r vs %r' % (rdata[0], mdata[0], rdata[1][:300], mdata[1][:300]))
         else:
-            res.update(result='same', why='both stop: exit %d' % rdata[0])
+            res.update(result='same-refusal', why='both stop: exit %d' % rdata[0])
         return res
     rh, rb = parse_arena(rdata)
     mh, mb = parse_arena(mdata)
@@ -267,7 +268,7 @@ def main():
             except Exception as e:  # harness failure
                 r = dict(name='?', result='harness-error', why=str(e))
             results.setdefault(g, []).append(r)
-            if a.v or r['result'] not in ('same', 'skip'):
+            if a.v or r['result'] not in ('same', 'same-refusal', 'skip'):
                 print('%-12s %-45s %s' % (r['result'], r['name'], r.get('why', '')[:160]), flush=True)
                 if a.v and r.get('detail'):
                     print(r['detail'])
@@ -275,12 +276,12 @@ def main():
     rows = []
     tot = dict(n=0, same=0)
     for g, rs in results.items():
-        c = {k: sum(1 for r in rs if r['result'] == k) for k in ('same', 'diff', 'model-error', 'skip', 'harness-error')}
+        c = {k: sum(1 for r in rs if r['result'] == k) for k in ('same', 'same-refusal', 'diff', 'model-error', 'skip', 'harness-error')}
         n = len(rs) - c['skip']
         tot['n'] += n
         tot['same'] += c['same']
         ms = [r['model_s'] for r in rs if 'model_s' in r]
-        rows.append((g, n, c['same'], c['diff'], c['model-error'], c['skip'], c['harness-error'],
+        rows.append((g, n, c['same'], c['diff'], c['model-error'], c['skip'], c['harness-error'], c['same-refusal'],
                      (sum(ms) / len(ms)) if ms else 0))
     print('\n%-14s %6s %6s %6s %6s %6s' % ('corpus', 'total', 'same', 'diff', 'merr', 'skip'))
     for r in rows:
@@ -288,6 +289,8 @@ def main():
     print('%-14s %6d %6d   (%.0f s wall)' % ('all', tot['n'], tot['same'], wall))
     if not a.no_report:
         write_report(results, rows, tot, mode, wall)
+    return int(any(r['result'] not in ('same', 'same-refusal', 'skip')
+                   for rs in results.values() for r in rs))
 
 
 def write_report(results, rows, tot, mode, wall):
@@ -295,20 +298,19 @@ def write_report(results, rows, tot, mode, wall):
     rev = subprocess.run(['git', '-C', ROOT, 'rev-parse', '--short', 'HEAD'], capture_output=True, text=True).stdout.strip()
     L = ['# F3: TccModel against tcc, byte for byte', '',
          'Generated by `scripts/model_diff.py%s` at %s (commit %s). Reference: the image\'s tcc -run on'
-         ' build/rv64emu (scripts/ref_arena.sh); model: `tcc_model`. "same" = identical arena (or, when'
-         ' tcc stops before the program, identical console and exit status).' % (' --obj' if mode == 'obj' else '',
+         ' build/rv64emu (scripts/ref_arena.sh); model: `tcc_model`. "same" = identical arena. Matching compile/link refusals are reported separately and do not count toward the F3 exit criterion.' % (' --obj' if mode == 'obj' else '',
                                                                                  time.strftime('%Y-%m-%d %H:%M'), rev), '']
     if mode == 'obj':
         L += ['Mode `--obj`: link-only. The program is compiled by the host cross tcc and loaded as /prog.o'
               ' with an empty /prog.c, so this checks the model\'s object/archive loading, GOT/PLT,'
               ' relocation and arena layout, not its compiler.', '']
-    L += ['| corpus | programs | identical | different | model error | skipped | harness error | model s/prog |',
-          '|---|---|---|---|---|---|---|---|']
+    L += ['| corpus | programs | identical | different | model error | skipped | harness error | matching refusal | model s/prog |',
+          '|---|---|---|---|---|---|---|---|---|']
     for r in rows:
-        L.append('| %s | %d | %d | %d | %d | %d | %d | %.2f |' % r)
-    L += ['| **all** | **%d** | **%d** | | | | | |' % (tot['n'], tot['same']), '',
+        L.append('| %s | %d | %d | %d | %d | %d | %d | %d | %.2f |' % r)
+    L += ['| **all** | **%d** | **%d** | | | | | | |' % (tot['n'], tot['same']), '',
           'Wall time %.0f s.' % wall, '']
-    bad = [r for rs in results.values() for r in rs if r['result'] not in ('same', 'skip')]
+    bad = [r for rs in results.values() for r in rs if r['result'] not in ('same', 'same-refusal', 'skip')]
     if bad:
         L += ['## Divergences (first 50)', '']
         for r in sorted(bad, key=lambda r: r['name'])[:50]:
@@ -320,4 +322,4 @@ def write_report(results, rows, tot, mode, wall):
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
