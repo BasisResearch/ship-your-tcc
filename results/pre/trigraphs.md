@@ -114,10 +114,13 @@ The lead must review and commit the diff.
 
 Lead review: strict pre_diff also exposes the known distinction between raw
 phase-4 string spelling and `-E` source encoding. Stringification of question
-marks joined by phase-2 splicing yields a raw trigraph spelling; both tcc and
-GCC escape a question mark in emitted source. The comparator reports a
-difference. Keep the exact token-stream theorem: do not erase literal escapes
-to make this pass. An internal-token observation path is the next F2 task.
+marks joined by phase-2 splicing yields a raw trigraph spelling. Patched tcc
+escapes a question mark when emitting source. Correction from the later exact
+token review: GCC sometimes emits an unprotected trigraph spelling; the old
+comparator also incorrectly ran phase 1 again on that emitted text. These are
+distinct printer/observer effects (results/pre/token-stream.md, once integrated).
+Keep the exact token-stream theorem: do not erase literal escapes to force
+equality. The internal-token observation path records raw spelling directly.
 The existing local-header fixture discovery also only scans raw #include,
 so trigraph-created include directives need explicit fixture handling.
 Final Sail raw output, trace and PC list are retained beside this report.

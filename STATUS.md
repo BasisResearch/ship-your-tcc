@@ -100,6 +100,11 @@ no byte differences or model errors
 for the remaining gaps. The IEEE draft review and follow-up task are recorded
 in results/csem/ieee-recovery-review.json and tasks/f1-ieee-recovery.md.
 
+The repaired CSem union suite also exposes tcc's valid nested-designator
+continuation refusal (results/repro/tcc_designator_continuation.c). The next
+compiler/model task is tasks/f3-designator-continuation.md; this does not
+change Supported/Fits. The repin candidate's own final gate passes.
+
 ## Needs user
 
 None currently. Implementation defects and unfinished obligations are work
