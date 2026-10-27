@@ -1,0 +1,1 @@
+#define IMAGE_DUPLICATE_VALUE 2

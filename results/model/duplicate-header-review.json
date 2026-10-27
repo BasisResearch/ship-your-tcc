@@ -1,0 +1,19 @@
+{
+  "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/results/repro/tcc_image_duplicate_header.c",
+  "extra_files": [
+    [
+      "/duplicate.h",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/results/repro/tcc_image_duplicate_first.h"
+    ],
+    [
+      "/duplicate.h",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/results/repro/tcc_image_duplicate_last.h"
+    ]
+  ],
+  "source_sha256": "1ae36cf72aa43e870bfbecb23076a47bd2215eead068f944bf099610dd8e32bb",
+  "reference": "ran",
+  "model": "exit",
+  "model_detail": "(1, b'/prog.c:2: error: last embedded file must win\\n')",
+  "model_binary_sha256": "7e3a9fbff199e0815d24693a26937f451f63a01e307ca5618163e724c372d7bc",
+  "runtime_key": "179bb6ca417e94bd05d1786d700cd42434d4edc04a717c489bcedac38b037edd"
+}
