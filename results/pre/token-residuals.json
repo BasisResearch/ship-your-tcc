@@ -1,0 +1,702 @@
+{
+  "results/pre/token-focused.json": [
+    {
+      "file": "build/pre-token-cases/pragma-argument-twice.c",
+      "source_sha256": "a2f1a75703694041839deb43463ec7dcb8f69b623e1e20063102235eeacf273f",
+      "model_tokens": 493,
+      "reference_tokens": 493,
+      "spec_tokens": 501,
+      "observer_preserves_effects": true,
+      "model_error": null,
+      "reference_error": null,
+      "spec_error": null,
+      "model_diagnostics": "",
+      "reference_diagnostics": "",
+      "raw": "exact",
+      "state": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "spec": "different",
+      "spec_context": {
+        "index": 492,
+        "left": [
+          [
+            "N",
+            "31"
+          ],
+          [
+            "P",
+            "29"
+          ],
+          [
+            "]",
+            ""
+          ],
+          [
+            "[",
+            ""
+          ],
+          [
+            "I",
+            "7061636b"
+          ],
+          [
+            "P",
+            "28"
+          ],
+          [
+            "I",
+            "70757368"
+          ]
+        ],
+        "right": [
+          [
+            "N",
+            "31"
+          ],
+          [
+            "P",
+            "29"
+          ],
+          [
+            "]",
+            ""
+          ],
+          [
+            "I",
+            "6166746572"
+          ]
+        ]
+      },
+      "observations_sha256": {
+        "model": "eb3825d2ad72be16db97b56cd3ba7a4956ee84dfa9aefec7a9171fc27799268a",
+        "reference": "eb3825d2ad72be16db97b56cd3ba7a4956ee84dfa9aefec7a9171fc27799268a",
+        "plain_reference": "f923337b43955c959c6d25c2ac253679179c9bedfcad13ff452e80d69492e5be",
+        "plain_model": "f923337b43955c959c6d25c2ac253679179c9bedfcad13ff452e80d69492e5be",
+        "spec": "12de8eea95db2b1d0bd183c2ee7129ba7fbb15f33dab511068599a5f8a2f59b7"
+      },
+      "auxiliary": {
+        "legacy_phases123_tcc": "equal",
+        "legacy_phases123_gcc": "equal",
+        "encoding": {
+          "tcc": "exact",
+          "gcc": "exact"
+        },
+        "contexts": {},
+        "tcc_error": "",
+        "gcc_error": ""
+      }
+    },
+    {
+      "file": "build/pre-token-cases/pragma-ignored-counter.c",
+      "source_sha256": "fce5d12b3ab3a0c2870a45edfddcd7f704809a1b152913806ebaa816ea1160fd",
+      "model_tokens": 489,
+      "reference_tokens": 489,
+      "spec_tokens": 489,
+      "observer_preserves_effects": true,
+      "model_error": null,
+      "reference_error": null,
+      "spec_error": null,
+      "model_diagnostics": "",
+      "reference_diagnostics": "",
+      "raw": "exact",
+      "state": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "spec": "different",
+      "spec_context": {
+        "index": 486,
+        "left": [
+          [
+            "P",
+            "3b"
+          ],
+          [
+            "[",
+            ""
+          ],
+          [
+            "I",
+            "756e6b6e6f776e"
+          ],
+          [
+            "N",
+            "30"
+          ],
+          [
+            "]",
+            ""
+          ],
+          [
+            "N",
+            "31"
+          ]
+        ],
+        "right": [
+          [
+            "P",
+            "3b"
+          ],
+          [
+            "[",
+            ""
+          ],
+          [
+            "I",
+            "756e6b6e6f776e"
+          ],
+          [
+            "I",
+            "5f5f434f554e5445525f5f"
+          ],
+          [
+            "]",
+            ""
+          ],
+          [
+            "N",
+            "30"
+          ]
+        ]
+      },
+      "observations_sha256": {
+        "model": "9a7355c5ac74e8c63ce792c4895614500b58775d5fbb3822d392f30bb9eaf517",
+        "reference": "9a7355c5ac74e8c63ce792c4895614500b58775d5fbb3822d392f30bb9eaf517",
+        "plain_reference": "0e7b794a3907e496f34ecb024c53c8b2124582b0071b9a0410d2215f39f7b136",
+        "plain_model": "0e7b794a3907e496f34ecb024c53c8b2124582b0071b9a0410d2215f39f7b136",
+        "spec": "5c9e571d4879c5055e2339dfdedb4051bcfc102f9cf22a545346425c725e4839"
+      },
+      "auxiliary": {
+        "legacy_phases123_tcc": "equal",
+        "legacy_phases123_gcc": "diff",
+        "encoding": {
+          "tcc": "exact",
+          "gcc": "different"
+        },
+        "contexts": {
+          "gcc": {
+            "index": 2,
+            "left": [
+              [
+                "[",
+                ""
+              ],
+              [
+                "I",
+                "756e6b6e6f776e"
+              ],
+              [
+                "N",
+                "30"
+              ],
+              [
+                "]",
+                ""
+              ],
+              [
+                "N",
+                "31"
+              ]
+            ],
+            "right": [
+              [
+                "[",
+                ""
+              ],
+              [
+                "I",
+                "756e6b6e6f776e"
+              ],
+              [
+                "I",
+                "5f5f434f554e5445525f5f"
+              ],
+              [
+                "]",
+                ""
+              ],
+              [
+                "N",
+                "30"
+              ]
+            ]
+          }
+        },
+        "tcc_error": "",
+        "gcc_error": ""
+      }
+    },
+    {
+      "file": "build/pre-token-cases/pragma-paste.c",
+      "source_sha256": "24c9ef3c181457ee99d0a917553ec7901a4e7e12a31bf08e69e674157fa20880",
+      "model_tokens": 494,
+      "reference_tokens": 494,
+      "spec_tokens": 494,
+      "observer_preserves_effects": true,
+      "model_error": null,
+      "reference_error": null,
+      "spec_error": null,
+      "model_diagnostics": "",
+      "reference_diagnostics": "",
+      "raw": "exact",
+      "state": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "spec": "different",
+      "spec_context": {
+        "index": 491,
+        "left": [
+          [
+            "P",
+            "2c"
+          ],
+          [
+            "N",
+            "31"
+          ],
+          [
+            "P",
+            "29"
+          ],
+          [
+            "I",
+            "776f7264"
+          ],
+          [
+            "I",
+            "6166746572"
+          ],
+          [
+            "]",
+            ""
+          ]
+        ],
+        "right": [
+          [
+            "P",
+            "2c"
+          ],
+          [
+            "N",
+            "31"
+          ],
+          [
+            "P",
+            "29"
+          ],
+          [
+            "]",
+            ""
+          ],
+          [
+            "I",
+            "776f7264"
+          ],
+          [
+            "I",
+            "6166746572"
+          ]
+        ]
+      },
+      "observations_sha256": {
+        "model": "30dd7ef613dd01e74e4f7067ef105fba606fe1f56b67f5ec12fc8b5bf1f0ed69",
+        "reference": "30dd7ef613dd01e74e4f7067ef105fba606fe1f56b67f5ec12fc8b5bf1f0ed69",
+        "plain_reference": "13ffc41d277edbf0a7a51e1304fa20ea10524c90205dd0f2c61cbb27cc888105",
+        "plain_model": "13ffc41d277edbf0a7a51e1304fa20ea10524c90205dd0f2c61cbb27cc888105",
+        "spec": "42a194a46b5f1b6a6891b07d21fd53b7ce0e14e7926a0ba57de659c7a98c25d0"
+      },
+      "auxiliary": {
+        "legacy_phases123_tcc": "diff",
+        "legacy_phases123_gcc": "gcc-error",
+        "encoding": {
+          "tcc": "different",
+          "gcc": "printer-error"
+        },
+        "contexts": {
+          "tcc": {
+            "index": 7,
+            "left": [
+              [
+                "P",
+                "2c"
+              ],
+              [
+                "N",
+                "31"
+              ],
+              [
+                "P",
+                "29"
+              ],
+              [
+                "I",
+                "776f7264"
+              ],
+              [
+                "I",
+                "6166746572"
+              ],
+              [
+                "]",
+                ""
+              ]
+            ],
+            "right": [
+              [
+                "P",
+                "2c"
+              ],
+              [
+                "N",
+                "31"
+              ],
+              [
+                "P",
+                "29"
+              ],
+              [
+                "]",
+                ""
+              ],
+              [
+                "I",
+                "776f7264"
+              ],
+              [
+                "I",
+                "6166746572"
+              ]
+            ]
+          }
+        },
+        "tcc_error": "",
+        "gcc_error": "In file included from /Users/kirancodes/tmp/pre_tokens_we5e8q11/tmpkc_b3o2f/predefs.h:13,"
+      }
+    },
+    {
+      "file": "build/pre-token-cases/pragma-stringify.c",
+      "source_sha256": "f107747ff3b38e32e7e6c2d90aa6042991b6cb816d1335445a51a3c5bd294a5c",
+      "model_tokens": 494,
+      "reference_tokens": 494,
+      "spec_tokens": 486,
+      "observer_preserves_effects": true,
+      "model_error": null,
+      "reference_error": null,
+      "spec_error": null,
+      "model_diagnostics": "",
+      "reference_diagnostics": "",
+      "raw": "exact",
+      "state": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "spec": "different",
+      "spec_context": {
+        "index": 484,
+        "left": [
+          [
+            "I",
+            "6c6f6e67"
+          ],
+          [
+            "P",
+            "29"
+          ],
+          [
+            "P",
+            "3b"
+          ],
+          [
+            "S",
+            "22207061636b28707573682c20312920776f726422"
+          ],
+          [
+            "I",
+            "6166746572"
+          ]
+        ],
+        "right": [
+          [
+            "I",
+            "6c6f6e67"
+          ],
+          [
+            "P",
+            "29"
+          ],
+          [
+            "P",
+            "3b"
+          ],
+          [
+            "[",
+            ""
+          ],
+          [
+            "I",
+            "7061636b"
+          ],
+          [
+            "P",
+            "28"
+          ],
+          [
+            "I",
+            "70757368"
+          ]
+        ]
+      },
+      "observations_sha256": {
+        "model": "52434c86f31ee3c6cbab8fb2e8aec4653d47cd79e1abc4bf5122784766fa724c",
+        "reference": "52434c86f31ee3c6cbab8fb2e8aec4653d47cd79e1abc4bf5122784766fa724c",
+        "plain_reference": "59418d46cf18d9a923c7f40e7f21ec8ef39ac48f94988c453ec3ac881f47c9e7",
+        "plain_model": "59418d46cf18d9a923c7f40e7f21ec8ef39ac48f94988c453ec3ac881f47c9e7",
+        "spec": "d02824f73e097ae928572be0e322ca9b2b05f11d067d0f76741240dcb1cb6112"
+      },
+      "auxiliary": {
+        "legacy_phases123_tcc": "diff",
+        "legacy_phases123_gcc": "diff",
+        "encoding": {
+          "tcc": "different",
+          "gcc": "different"
+        },
+        "contexts": {
+          "tcc": {
+            "index": 0,
+            "left": [
+              [
+                "S",
+                "22207061636b28707573682c20312920776f726422"
+              ],
+              [
+                "I",
+                "6166746572"
+              ]
+            ],
+            "right": [
+              [
+                "O",
+                "22"
+              ],
+              [
+                "P",
+                "3c"
+              ],
+              [
+                "I",
+                "6c696e656e756d626572"
+              ],
+              [
+                "P",
+                "3e"
+              ]
+            ]
+          },
+          "gcc": {
+            "index": 0,
+            "left": [
+              [
+                "S",
+                "22207061636b28707573682c20312920776f726422"
+              ],
+              [
+                "I",
+                "6166746572"
+              ]
+            ],
+            "right": [
+              [
+                "S",
+                "225f507261676d61285c227061636b28707573682c2031295c222920776f726422"
+              ],
+              [
+                "I",
+                "6166746572"
+              ]
+            ]
+          }
+        },
+        "tcc_error": "",
+        "gcc_error": ""
+      }
+    },
+    {
+      "file": "build/pre-token-cases/pragma-unknown.c",
+      "source_sha256": "7243ab1514879155ed24ebb1d6e79074314f67d5b58539e18fdba7b56a8de70a",
+      "model_tokens": 495,
+      "reference_tokens": 495,
+      "spec_tokens": 495,
+      "observer_preserves_effects": true,
+      "model_error": null,
+      "reference_error": null,
+      "spec_error": null,
+      "model_diagnostics": "",
+      "reference_diagnostics": "",
+      "raw": "exact",
+      "state": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "spec": "different",
+      "spec_context": {
+        "index": 487,
+        "left": [
+          [
+            "I",
+            "6265666f7265"
+          ],
+          [
+            "[",
+            ""
+          ],
+          [
+            "I",
+            "756e6b6e6f776e"
+          ],
+          [
+            "N",
+            "37"
+          ],
+          [
+            "]",
+            ""
+          ],
+          [
+            "I",
+            "6166746572"
+          ],
+          [
+            "[",
+            ""
+          ]
+        ],
+        "right": [
+          [
+            "I",
+            "6265666f7265"
+          ],
+          [
+            "[",
+            ""
+          ],
+          [
+            "I",
+            "756e6b6e6f776e"
+          ],
+          [
+            "I",
+            "58"
+          ],
+          [
+            "]",
+            ""
+          ],
+          [
+            "I",
+            "6166746572"
+          ],
+          [
+            "[",
+            ""
+          ]
+        ]
+      },
+      "observations_sha256": {
+        "model": "724a41d1bb57b77ae83e5381a53b70e4dbfc5d78b6d316c328581014092a3e7f",
+        "reference": "724a41d1bb57b77ae83e5381a53b70e4dbfc5d78b6d316c328581014092a3e7f",
+        "plain_reference": "951a661abbd14ae919f272b01220dac055137bfbecaa89d50893d3e1a87305d1",
+        "plain_model": "951a661abbd14ae919f272b01220dac055137bfbecaa89d50893d3e1a87305d1",
+        "spec": "38876151ff68f2a871b5447b9a1f94a8a3902e1994472ba90ed37ffe938145a9"
+      },
+      "auxiliary": {
+        "legacy_phases123_tcc": "equal",
+        "legacy_phases123_gcc": "diff",
+        "encoding": {
+          "tcc": "exact",
+          "gcc": "different"
+        },
+        "contexts": {
+          "gcc": {
+            "index": 3,
+            "left": [
+              [
+                "I",
+                "6265666f7265"
+              ],
+              [
+                "[",
+                ""
+              ],
+              [
+                "I",
+                "756e6b6e6f776e"
+              ],
+              [
+                "N",
+                "37"
+              ],
+              [
+                "]",
+                ""
+              ],
+              [
+                "I",
+                "6166746572"
+              ],
+              [
+                "[",
+                ""
+              ]
+            ],
+            "right": [
+              [
+                "I",
+                "6265666f7265"
+              ],
+              [
+                "[",
+                ""
+              ],
+              [
+                "I",
+                "756e6b6e6f776e"
+              ],
+              [
+                "I",
+                "58"
+              ],
+              [
+                "]",
+                ""
+              ],
+              [
+                "I",
+                "6166746572"
+              ],
+              [
+                "[",
+                ""
+              ]
+            ]
+          }
+        },
+        "tcc_error": "",
+        "gcc_error": ""
+      }
+    }
+  ],
+  "results/pre/token-corpus.json": []
+}

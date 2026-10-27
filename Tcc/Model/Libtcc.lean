@@ -153,6 +153,42 @@ def get_tok_str_st (s : TccSt) (v : Int32) (cv : Option CValue) : Option ByteArr
 def get_tok_str (v : Int32) (cv : Option CValue) : M ByteArray := do
   return (get_tok_str_st (← get) v cv).getD ByteArray.empty
 
+/-- Project an unconverted tcc token, without reading phase-7 values. -/
+def ppObservation : M PPObservation := do
+  let s ← get
+  -- Observer metadata is carried through macro token strings in a PPSTR
+  -- payload beginning with NUL, impossible for a physical literal spelling.
+  -- It is never enabled on ordinary compilation's phase-7 path.
+  if s.tok == TOK_PPSTR && s.tokc.strSize ≥ 11 && s.tokc.sdata.get! 0 == 0 then
+    let kind := match (s.tokc.sdata.get! 1).toNat with
+      | 73 => PPClass.ident | 78 => .number | 67 => .charLit | 83 => .stringLit
+      | 80 => .punct | 91 => .pragmaBegin | 93 => .pragmaEnd | _ => .other
+    return ⟨kind, s.tokc.sdata.extract 10 (s.tokc.strSize - 1).toNat', (Bytes.r64 s.tokc.sdata 2).toNat⟩
+  let spell ← get_tok_str s.tok (some s.tokc)
+  let kind := if s.tok == TOK_PPNUM then PPClass.number
+    else if TOK_IS_STR s.tok then PPClass.stringLit
+    else if s.tok == TOK_PPSTR then
+      if spell.get! 0 == 39 ||
+          ((spell.get! 0 == 76 || spell.get! 0 == 117 || spell.get! 0 == 85) && spell.get! 1 == 39)
+        then PPClass.charLit else PPClass.stringLit
+    else if s.tok ≥ TOK_IDENT then PPClass.ident
+    else if ["[", "]", "(", ")", "{", "}", ".", "->", "++", "--", "&", "*", "+", "-",
+      "~", "!", "/", "%", "<<", ">>", "<", ">", "<=", ">=", "==", "!=", "^", "|", "&&",
+      "||", "?", ":", ";", "...", "=", "*=", "/=", "%=", "+=", "-=", "<<=", ">>=", "&=",
+      "^=", "|=", ",", "#", "##", "<:", ":>", "<%", "%>", "%:", "%:%:"].any
+        (fun p => p.toUTF8 == spell) then PPClass.punct else PPClass.other
+  return ⟨kind, spell, 0⟩
+
+/-- In-band observation metadata, distinct from every lexed literal. This
+lets eager macro expansion carry an event to its position in the stream. -/
+def PPObservation.payload (o : PPObservation) (event : Nat) : CValue := Id.run do
+  let k : UInt8 := match o.kind with
+    | .ident => 73 | .number => 78 | .charLit => 67 | .stringLit => 83
+    | .punct => 80 | .other => 79 | .pragmaBegin => 91 | .pragmaEnd => 93
+  let hdr := Bytes.w64 ((ByteArray.empty.push 0).push k ++ Bytes.zeros 8) 2 event.toUInt64
+  let b := (hdr ++ o.spell).push 0
+  return (default : CValue).setStr b (Int32.ofNat b.size)
+
 /-! ## messages (libtcc.c error1) -/
 
 inductive ErrMode where

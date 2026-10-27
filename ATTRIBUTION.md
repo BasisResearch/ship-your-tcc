@@ -125,3 +125,8 @@ suite from `sol-csem-repin` (`scripts/gen_union_suite.py` and its 33 conforming
 unchanged generator produces the Sail input; no CSem sources or proof routines
 are imported. See `results/model/designator-continuation.md` for source hashes
 and the separate GCC / repaired OCaml / repaired Lean observations.
+## Exact phase-4 observation
+
+| here | source | changes |
+|---|---|---|
+| `scripts/pre_tokens_ref.c`, `scripts/build_pre_tokens_ref.py` generated observer | TinyCC 43c7708 (`vendor/TINYCC_REV`), Fabrice Bellard and TinyCC contributors, LGPL-2.1-or-later | Includes the locally patched tcc translation unit; generated instrumentation is confined to `build/pre-tokens-ref`. Reads no model/spec token data. Reuses `scripts/pre_diff.py`'s corpus and auxiliary setup; uses the existing model lexer/macro/effect functions for the Lean interface. |

@@ -14,7 +14,7 @@ by `get_tok_str`). Setting the two flags only adds the phase-7 conversion
 pipeline, not of phases 1–4. The model's `preprocess` is that unconverted
 stream, each token projected to a `PPToken`:
 * `TOK_PPNUM` ↦ `ppNumber`; `TOK_PPSTR` ↦ `charConst` if its spelling
-  starts with `'` or `L'`, else `strLit`; a `TokenSym` ↦ `ident` (keywords
+  starts with `'`, `L'`, `u'` or `U'`, else `strLit`; a `TokenSym` ↦ `ident` (keywords
   are identifiers in phases 1–4); a punctuator ↦ `punct`; the spelling is
   `get_tok_str`'s;
 * a pragma that tcc executes after phase 4 (`#pragma pack`,
@@ -24,7 +24,16 @@ stream, each token projected to a `PPToken`:
   declaration, so the position is meaningful);
 * `#pragma once`, `push_macro`, `pop_macro` are phase 4's own and leave no
   token (as in the specification, `Ext.pragmaOnce`/`pushPopMacro`).
-White space and line information are not part of either side.
+Built-in `__FILE__`/`__DATE__`/`__TIME__` may manufacture `TOK_STR`
+internally even with conversion disabled: these project to `strLit` using
+`get_tok_str`, without changing any lexed `TOK_PPSTR` spelling.
+White space and line information are not part of either side. In particular,
+`u8"..."`, `u"..."`, `U"..."`, digraph and UCN spellings are retained.
+`-E` is only an auxiliary observation: its literal printer may insert `\?`
+to protect a trigraph spelling created after phase 1. Those bytes are not
+part of this stream. Decoding C literal escapes is not an equality rule.
+The executable instance is `TccModel.preprocess` in `Tcc/Model/Preprocess`;
+its correctness and observation noninterference remain typed Statements.
 
 **The relation.** Where the specification gives a token sequence, the model
 must give the same one. Where the specification stops with an error (a

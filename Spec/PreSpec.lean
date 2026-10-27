@@ -9,6 +9,8 @@
         [ / ] pragma begin / end); on an error, `!<TAB>kind<TAB>file:line<TAB>msg`
         and exit status 1.
     pre_spec --lex FILE      phase 1–3 tokens only (same format, no directives)
+    pre_spec --lex-printed FILE phase 3 only, for auxiliary -E output; do not
+        repeat trigraph translation/splicing on a printer's phase-4 output
     pre_spec --check-fs FILE the compiled-in image FS equals FILE's headers
 
 The file system is read from an fs.list (`/path/in/image=host/file` lines;
@@ -65,6 +67,7 @@ structure Opts where
   date : Option String := none
   time : Option String := none
   lex : Bool := false
+  printed : Bool := false
   checkFs : Bool := false
   file : Option String := none
 
@@ -75,6 +78,7 @@ partial def parseOpts : List String → Opts → Opts
   | "--date" :: v :: r, o => parseOpts r { o with date := some v }
   | "--time" :: v :: r, o => parseOpts r { o with time := some v }
   | "--lex" :: r, o => parseOpts r { o with lex := true }
+  | "--lex-printed" :: r, o => parseOpts r { o with lex := true, printed := true }
   | "--check-fs" :: r, o => parseOpts r { o with checkFs := true }
   | f :: r, o => parseOpts r { o with file := some f }
   | [], o => o
@@ -100,7 +104,10 @@ def main (args : List String) : IO UInt32 := do
     time := (o.time.map bs).getD base.time }
   let src ← readBytes file
   if o.lex then
-    match phases123 cfg (bs file) src with
+    let result := if o.printed then
+        phase3 cfg (bs file) (src.map fun c => (⟨c, 0⟩ : PChar))
+      else phases123 cfg (bs file) src
+    match result with
     | .ok items =>
       printToks out (items.filterMap (fun i => match i with
         | .tok t => some (⟨t.kind, t.spell⟩ : PPToken) | .nl _ => none))

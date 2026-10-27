@@ -1,0 +1,686 @@
+{
+  "results/pre/token-focused.json": [
+    {
+      "file": "build/pre-token-cases/error-comment.c",
+      "source_sha256": "dd721310faa828477e6268bd9011509bf221902e19cd465d45ccec7a39bf869e",
+      "model_tokens": 0,
+      "reference_tokens": 0,
+      "spec_tokens": 0,
+      "observer_preserves_effects": true,
+      "model_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "reference_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "spec_error": "lexical\t/prog.c:1\tunterminated comment",
+      "model_diagnostics": "/prog.c:1: error: unexpected end of file in comment\n",
+      "reference_diagnostics": "/prog.c:1: error: unexpected end of file in comment\n",
+      "raw": "both-refused",
+      "spec": "spec-error",
+      "observations_sha256": {
+        "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "spec": "0f6bd519d2177745c684a911fffa80387098f06f0156fbbb23df662fb64e96f6"
+      },
+      "auxiliary": {
+        "legacy_phases123_tcc": "both-error",
+        "legacy_phases123_gcc": "both-error",
+        "encoding": {
+          "tcc": "both-error",
+          "gcc": "both-error"
+        },
+        "contexts": {},
+        "tcc_error": "/Users/kirancodes/tmp/pre_tokens_f1r1wl84/tmpbzeto7s2/prog.c:1: error: unexpected end of file in comment",
+        "gcc_error": ""
+      }
+    },
+    {
+      "file": "build/pre-token-cases/error-directive.c",
+      "source_sha256": "a5ac4c6d1c3cf44fed2343a90214f6c324a17797e59d60c9840b70c6a52cc96a",
+      "model_tokens": 0,
+      "reference_tokens": 0,
+      "spec_tokens": 0,
+      "observer_preserves_effects": true,
+      "model_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "reference_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "spec_error": "error\t/prog.c:1\t#error no",
+      "model_diagnostics": "/prog.c:1: error: #error no\n",
+      "reference_diagnostics": "/prog.c:1: error: #error no\n",
+      "raw": "both-refused",
+      "spec": "spec-error",
+      "observations_sha256": {
+        "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "spec": "ca5d1a6ef278585abe6d2dad02ecbd22dc3756cb52406743337ccf7ef3f3a954"
+      },
+      "auxiliary": {
+        "legacy_phases123_tcc": "both-error",
+        "legacy_phases123_gcc": "both-error",
+        "encoding": {
+          "tcc": "both-error",
+          "gcc": "both-error"
+        },
+        "contexts": {},
+        "tcc_error": "/Users/kirancodes/tmp/pre_tokens_fqk4lj_9/tmp1a8ygjw5/prog.c:1: error: #error no",
+        "gcc_error": ""
+      }
+    },
+    {
+      "file": "build/pre-token-cases/error-include.c",
+      "source_sha256": "842a3799cbba85e3b834a4c3999f29852b57f1c831447cdad5ec743a673d7323",
+      "model_tokens": 0,
+      "reference_tokens": 0,
+      "spec_tokens": 0,
+      "observer_preserves_effects": true,
+      "model_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "reference_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "spec_error": "include\t/prog.c:1\theader not found (\u00a76.10.2p2)",
+      "model_diagnostics": "/prog.c:1: error: include file 'missing.h' not found\n",
+      "reference_diagnostics": "/prog.c:1: error: include file 'missing.h' not found\n",
+      "raw": "both-refused",
+      "spec": "spec-error",
+      "observations_sha256": {
+        "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "spec": "a8e9a7e1a968320c1a08d1aae3e2fd7bd4dda794676e96fd10ab5f89024baa0e"
+      },
+      "auxiliary": {
+        "legacy_phases123_tcc": "both-error",
+        "legacy_phases123_gcc": "both-error",
+        "encoding": {
+          "tcc": "both-error",
+          "gcc": "both-error"
+        },
+        "contexts": {},
+        "tcc_error": "/Users/kirancodes/tmp/pre_tokens_zb0krqk3/tmpbt4ne2vz/prog.c:1: error: include file 'missing.h' not found",
+        "gcc_error": ""
+      }
+    },
+    {
+      "file": "build/pre-token-cases/error-macro.c",
+      "source_sha256": "de283001191f0ffe644a7392cfc0d7c363f6a906d1c17308758765e04dbfebdf",
+      "model_tokens": 0,
+      "reference_tokens": 0,
+      "spec_tokens": 0,
+      "observer_preserves_effects": true,
+      "model_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "reference_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "spec_error": "macro\t/prog.c:2\tunterminated argument list invoking macro (\u00a76.10.3p4)",
+      "model_diagnostics": "/prog.c:3: error: EOF in invocation of macro 'F'\n",
+      "reference_diagnostics": "/prog.c:3: error: EOF in invocation of macro 'F'\n",
+      "raw": "both-refused",
+      "spec": "spec-error",
+      "observations_sha256": {
+        "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "spec": "61e3109c55f40b017b9a5881484964aa940ace8b4a3809fe33047fc4e2c26f21"
+      },
+      "auxiliary": {
+        "legacy_phases123_tcc": "both-error",
+        "legacy_phases123_gcc": "both-error",
+        "encoding": {
+          "tcc": "both-error",
+          "gcc": "both-error"
+        },
+        "contexts": {},
+        "tcc_error": "/Users/kirancodes/tmp/pre_tokens_icm28wr6/tmp3af074pk/prog.c:3: error: EOF in invocation of macro 'F'",
+        "gcc_error": ""
+      }
+    },
+    {
+      "file": "build/pre-token-cases/error-pack.c",
+      "source_sha256": "1671805fa94261f4f75fa4c5463567c1f6fd21560c9a43bcb428c0115020a134",
+      "model_tokens": 0,
+      "reference_tokens": 0,
+      "spec_tokens": 490,
+      "observer_preserves_effects": true,
+      "model_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "reference_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "spec_error": null,
+      "model_diagnostics": "/prog.c:2: error: malformed #pragma directive\n",
+      "reference_diagnostics": "/prog.c:2: error: malformed #pragma directive\n",
+      "raw": "both-refused",
+      "spec": "compiler-refusal",
+      "observations_sha256": {
+        "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "spec": "ca94469177bf83e51a4508b67f0edb782714fa2556ca55e31f266c1ff4e67114"
+      },
+      "auxiliary": {
+        "legacy_phases123_tcc": "equal",
+        "legacy_phases123_gcc": "equal",
+        "encoding": {
+          "tcc": "exact",
+          "gcc": "exact"
+        },
+        "contexts": {},
+        "tcc_error": "",
+        "gcc_error": ""
+      }
+    },
+    {
+      "file": "build/pre-token-cases/error-paste.c",
+      "source_sha256": "41a07097774229ca1e65aa16fe9ce0ce462a1b0c9e52453e26cf9246389eab77",
+      "model_tokens": 0,
+      "reference_tokens": 0,
+      "spec_tokens": 0,
+      "observer_preserves_effects": true,
+      "model_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "reference_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "spec_error": "macro\t/prog.c:1\t'##' at the start of a replacement list (\u00a76.10.3.3p1)",
+      "model_diagnostics": "/prog.c:1: error: '##' cannot appear at either end of macro\n",
+      "reference_diagnostics": "/prog.c:1: error: '##' cannot appear at either end of macro\n",
+      "raw": "both-refused",
+      "spec": "spec-error",
+      "observations_sha256": {
+        "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "spec": "5ce67db496ea14b3840f356b34c6ede09fb81983a50a81a6302c3b37aacda429"
+      },
+      "auxiliary": {
+        "legacy_phases123_tcc": "both-error",
+        "legacy_phases123_gcc": "both-error",
+        "encoding": {
+          "tcc": "both-error",
+          "gcc": "both-error"
+        },
+        "contexts": {},
+        "tcc_error": "/Users/kirancodes/tmp/pre_tokens_n4e030p0/tmp040j1zxi/prog.c:1: error: '##' cannot appear at either end of macro",
+        "gcc_error": ""
+      }
+    },
+    {
+      "file": "build/pre-token-cases/error-pragma-operand.c",
+      "source_sha256": "60abce65932a153c656b23d5de00d0503dbfaf8d6e0a4bffd6ae8a42358bbec3",
+      "model_tokens": 0,
+      "reference_tokens": 0,
+      "spec_tokens": 492,
+      "observer_preserves_effects": true,
+      "model_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "reference_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "spec_error": null,
+      "model_diagnostics": "/prog.c:1: error: ordinary or wide string literal in _Pragma expected\n",
+      "reference_diagnostics": "/prog.c:1: error: ordinary or wide string literal in _Pragma expected\n",
+      "raw": "both-refused",
+      "spec": "compiler-refusal",
+      "observations_sha256": {
+        "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "spec": "b29510a493646433d67dcf0b9132371a00b615a48c65beec0d6a977f41e37565"
+      },
+      "auxiliary": {
+        "legacy_phases123_tcc": "tcc-error",
+        "legacy_phases123_gcc": "equal",
+        "encoding": {
+          "tcc": "printer-error",
+          "gcc": "exact"
+        },
+        "contexts": {},
+        "tcc_error": "/Users/kirancodes/tmp/pre_tokens_oqw1q4a8/tmph_9m1xht/prog.c:1: error: ordinary or wide string literal in _Pragma expected",
+        "gcc_error": ""
+      }
+    },
+    {
+      "file": "build/pre-token-cases/error-string.c",
+      "source_sha256": "9d5328f2c9ae31f0839bf9037362ade53000f715411715ef340c0b8c5e7e3812",
+      "model_tokens": 0,
+      "reference_tokens": 0,
+      "spec_tokens": 0,
+      "observer_preserves_effects": true,
+      "model_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "reference_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "spec_error": "lexical\t/prog.c:1\tunmatched quote (\u00a76.4p3)",
+      "model_diagnostics": "/prog.c:1: error: missing terminating \" character\n",
+      "reference_diagnostics": "/prog.c:1: error: missing terminating \" character\n",
+      "raw": "both-refused",
+      "spec": "spec-error",
+      "observations_sha256": {
+        "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "spec": "ce2f20e4bd51f2d87618504091189300732c106fbcb061ec7c1a8cee233c7c66"
+      },
+      "auxiliary": {
+        "legacy_phases123_tcc": "both-error",
+        "legacy_phases123_gcc": "spec-error",
+        "encoding": {
+          "tcc": "both-error",
+          "gcc": "spec-error"
+        },
+        "contexts": {},
+        "tcc_error": "/Users/kirancodes/tmp/pre_tokens_pvf32657/tmpd9x0hx22/prog.c:1: error: missing terminating \" character",
+        "gcc_error": ""
+      }
+    }
+  ],
+  "results/pre/token-corpus.json": [
+    {
+      "file": "vendor/tinycc/tests/pp/03.c",
+      "source_sha256": "44df8d4fda9f3fe46473763364c672f0ae9b21c0afd5064a0edb67a0cd117c6a",
+      "model_tokens": 0,
+      "reference_tokens": 0,
+      "spec_tokens": 513,
+      "observer_preserves_effects": true,
+      "model_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "reference_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "spec_error": null,
+      "model_diagnostics": "/prog.c:12: error: stray '\\' in program\n",
+      "reference_diagnostics": "/prog.c:12: error: stray '\\' in program\n",
+      "raw": "both-refused",
+      "spec": "compiler-refusal",
+      "observations_sha256": {
+        "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "spec": "c829bd4c421587f9e1531e30d842417c13c4224afacb289090c98fab8be933fb"
+      },
+      "auxiliary": {
+        "legacy_phases123_tcc": "equal",
+        "legacy_phases123_gcc": "equal",
+        "encoding": {
+          "tcc": "exact",
+          "gcc": "exact"
+        },
+        "contexts": {},
+        "tcc_error": "",
+        "gcc_error": ""
+      }
+    },
+    {
+      "file": "vendor/tinycc/tests/pp/21.c",
+      "source_sha256": "0a49cb120deb1bf1f47cc3bddbea316c375f3dbeff26fc2455be6539e0ac54d5",
+      "model_tokens": 546,
+      "reference_tokens": 546,
+      "spec_tokens": 0,
+      "observer_preserves_effects": true,
+      "model_error": null,
+      "reference_error": null,
+      "spec_error": "ifExpr\t/prog.c:57\tsigned overflow in #if (\u00a76.5p5)",
+      "model_diagnostics": "",
+      "reference_diagnostics": "",
+      "raw": "exact",
+      "state": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "spec": "spec-error",
+      "observations_sha256": {
+        "model": "0120ae171af467059557bfa2030ca9e8a334596ce7eebd01623c309806df7cae",
+        "reference": "0120ae171af467059557bfa2030ca9e8a334596ce7eebd01623c309806df7cae",
+        "plain_reference": "0120ae171af467059557bfa2030ca9e8a334596ce7eebd01623c309806df7cae",
+        "plain_model": "0120ae171af467059557bfa2030ca9e8a334596ce7eebd01623c309806df7cae",
+        "spec": "2d4441ff319e9e197506c6f262c12d7812d881d48cf0b4a5807c3c7d976ae6eb"
+      },
+      "auxiliary": {
+        "legacy_phases123_tcc": "spec-error",
+        "legacy_phases123_gcc": "spec-error",
+        "encoding": {
+          "tcc": "spec-error",
+          "gcc": "spec-error"
+        },
+        "contexts": {},
+        "tcc_error": "",
+        "gcc_error": ""
+      }
+    },
+    {
+      "file": "vendor/tinycc/tests/pp/22.c",
+      "source_sha256": "532323661da969f2476b5cf72abb03c196d9f0bad812acd738a8d16cd2fdb99f",
+      "model_tokens": 495,
+      "reference_tokens": 495,
+      "spec_tokens": 0,
+      "observer_preserves_effects": true,
+      "model_error": null,
+      "reference_error": null,
+      "spec_error": "macro\t/prog.c:4\tunterminated argument list invoking macro (\u00a76.10.3p4)",
+      "model_diagnostics": "",
+      "reference_diagnostics": "",
+      "raw": "exact",
+      "state": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "spec": "spec-error",
+      "observations_sha256": {
+        "model": "7e7ab96096016009c91fd607debf2d5af5b259ac89445b789c77af541436baa5",
+        "reference": "7e7ab96096016009c91fd607debf2d5af5b259ac89445b789c77af541436baa5",
+        "plain_reference": "7e7ab96096016009c91fd607debf2d5af5b259ac89445b789c77af541436baa5",
+        "plain_model": "7e7ab96096016009c91fd607debf2d5af5b259ac89445b789c77af541436baa5",
+        "spec": "825926b18c7b70c1c9ab0a730e2bbe1e7b8c9b8cf7cd6aa892f822bf9056a4c6"
+      },
+      "auxiliary": {
+        "legacy_phases123_tcc": "spec-error",
+        "legacy_phases123_gcc": "spec-error",
+        "encoding": {
+          "tcc": "spec-error",
+          "gcc": "spec-error"
+        },
+        "contexts": {},
+        "tcc_error": "",
+        "gcc_error": ""
+      }
+    },
+    {
+      "file": "vendor/tinycc/tests/tests2/114_bound_signal.c",
+      "source_sha256": "3e5be4736e50ceb49d7ecd75f02c4a93d29a82df4a93fb00b06624c297d79c15",
+      "model_tokens": 0,
+      "reference_tokens": 0,
+      "spec_tokens": 0,
+      "observer_preserves_effects": true,
+      "model_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "reference_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "spec_error": "include\t/prog.c:3\theader not found (\u00a76.10.2p2)",
+      "model_diagnostics": "/prog.c:3: error: include file 'semaphore.h' not found\n",
+      "reference_diagnostics": "/prog.c:3: error: include file 'semaphore.h' not found\n",
+      "raw": "both-refused",
+      "spec": "spec-error",
+      "observations_sha256": {
+        "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "spec": "de31feeb9834c3acc368421f26f08f6b3d80e4f8b0c7e1b4808c7b6410934a8c"
+      },
+      "auxiliary": {
+        "legacy_phases123_tcc": "both-error",
+        "legacy_phases123_gcc": "both-error",
+        "encoding": {
+          "tcc": "both-error",
+          "gcc": "both-error"
+        },
+        "contexts": {},
+        "tcc_error": "/Users/kirancodes/tmp/pre_tokens_04azlfy7/tmpy5_kuhd2/prog.c:3: error: include file 'semaphore.h' not found",
+        "gcc_error": ""
+      }
+    },
+    {
+      "file": "vendor/tinycc/tests/tests2/119_random_stuff.c",
+      "source_sha256": "53c7352434c1d6755c773696001c2b493817f8a827fc0628dec07189d98b9cb0",
+      "model_tokens": 0,
+      "reference_tokens": 0,
+      "spec_tokens": 0,
+      "observer_preserves_effects": true,
+      "model_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "reference_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "spec_error": "include\t/prog.c:30\theader not found (\u00a76.10.2p2)",
+      "model_diagnostics": "/prog.c:30: error: include file 'sys/mman.h' not found\n",
+      "reference_diagnostics": "/prog.c:30: error: include file 'sys/mman.h' not found\n",
+      "raw": "both-refused",
+      "spec": "spec-error",
+      "observations_sha256": {
+        "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "spec": "d4b2714ba0a64e3b2dfc20bc1c5437f6aefdd574f46223abd89006be8f9ba0dd"
+      },
+      "auxiliary": {
+        "legacy_phases123_tcc": "both-error",
+        "legacy_phases123_gcc": "both-error",
+        "encoding": {
+          "tcc": "both-error",
+          "gcc": "both-error"
+        },
+        "contexts": {},
+        "tcc_error": "/Users/kirancodes/tmp/pre_tokens_laqsh_da/tmpcxq93dkm/prog.c:30: error: include file 'sys/mman.h' not found",
+        "gcc_error": ""
+      }
+    },
+    {
+      "file": "vendor/tinycc/tests/tests2/145_winarm64_interlocked.c",
+      "source_sha256": "eaecd92bd7b6c658c0aaf7cd11d8ef6f237a88a25b47c8df50e05fc8b1e05320",
+      "model_tokens": 0,
+      "reference_tokens": 0,
+      "spec_tokens": 0,
+      "observer_preserves_effects": true,
+      "model_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "reference_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "spec_error": "include\t/prog.c:2\theader not found (\u00a76.10.2p2)",
+      "model_diagnostics": "/prog.c:2: error: include file 'windows.h' not found\n",
+      "reference_diagnostics": "/prog.c:2: error: include file 'windows.h' not found\n",
+      "raw": "both-refused",
+      "spec": "spec-error",
+      "observations_sha256": {
+        "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "spec": "ca1b4f7c1d534637ada1dd51e9d28ecbdd7327e12a941d11ecd352b119970c3b"
+      },
+      "auxiliary": {
+        "legacy_phases123_tcc": "both-error",
+        "legacy_phases123_gcc": "both-error",
+        "encoding": {
+          "tcc": "both-error",
+          "gcc": "both-error"
+        },
+        "contexts": {},
+        "tcc_error": "/Users/kirancodes/tmp/pre_tokens_4602ibaj/tmprzjippwu/prog.c:2: error: include file 'windows.h' not found",
+        "gcc_error": ""
+      }
+    },
+    {
+      "file": "vendor/tinycc/tests/tests2/18_include.c",
+      "source_sha256": "8b1e9e6c20fbaf69acce6a81d64aa43f82470483b17b253cbc8c78ab8136be9a",
+      "model_tokens": 0,
+      "reference_tokens": 0,
+      "spec_tokens": 0,
+      "observer_preserves_effects": true,
+      "model_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "reference_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "spec_error": "include\t/prog.c:42\theader not found (\u00a76.10.2p2)",
+      "model_diagnostics": "/prog.c:42: error: include file '../tests2/18_include2.h' not found\n",
+      "reference_diagnostics": "/prog.c:42: error: include file '../tests2/18_include2.h' not found\n",
+      "raw": "both-refused",
+      "spec": "spec-error",
+      "observations_sha256": {
+        "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "spec": "c0aa3638384d3478e2b57e73c968abeac17af81b3b41db12ea6fb7e4fcb5ddaf"
+      },
+      "auxiliary": {
+        "legacy_phases123_tcc": "both-error",
+        "legacy_phases123_gcc": "both-error",
+        "encoding": {
+          "tcc": "both-error",
+          "gcc": "both-error"
+        },
+        "contexts": {},
+        "tcc_error": "/Users/kirancodes/tmp/pre_tokens_40ctyudx/tmpp_k0cyf5/prog.c:42: error: include file '../tests2/18_include2.h' not found",
+        "gcc_error": ""
+      }
+    },
+    {
+      "file": "vendor/tinycc/tests/tests2/95_bitfields.c",
+      "source_sha256": "272aac324fe52653f4421672bf9188c335f0d7d70f54d0f9b1d5c9189c5e29f9",
+      "model_tokens": 0,
+      "reference_tokens": 0,
+      "spec_tokens": 0,
+      "observer_preserves_effects": true,
+      "model_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "reference_error": [
+        "refuse",
+        {
+          "hex": "7463635f6572726f72"
+        }
+      ],
+      "spec_error": "include\t/prog.c:235\theader not found (\u00a76.10.2p2)",
+      "model_diagnostics": "/prog.c:235: error: include file '95_bitfields.c' not found\n",
+      "reference_diagnostics": "/prog.c:235: error: include file '95_bitfields.c' not found\n",
+      "raw": "both-refused",
+      "spec": "spec-error",
+      "observations_sha256": {
+        "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+        "spec": "828269391f84cb01a2479c03a257828536f7c3cd8753bab55f748cdd3c49054b"
+      },
+      "auxiliary": {
+        "legacy_phases123_tcc": "both-error",
+        "legacy_phases123_gcc": "both-error",
+        "encoding": {
+          "tcc": "both-error",
+          "gcc": "both-error"
+        },
+        "contexts": {},
+        "tcc_error": "/Users/kirancodes/tmp/pre_tokens_b08msco8/tmplt4_8d9f/prog.c:235: error: include file '95_bitfields.c' not found",
+        "gcc_error": ""
+      }
+    }
+  ]
+}

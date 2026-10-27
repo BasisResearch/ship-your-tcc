@@ -404,3 +404,7 @@ root = "CoreQuoteRunner"
 [[lean_lib]]
 name = "CSemConeReport"
 roots = ["scripts.csem_cone"]
+# Exact unconverted phase-4 stream, independent of the -E printer.
+[[lean_exe]]
+name = "tcc_pre_tokens"
+root = "Tcc.ModelPreMain"

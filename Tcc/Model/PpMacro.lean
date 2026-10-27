@@ -374,6 +374,54 @@ def next_nomacro (R : Rec) : M Unit := do
 
 /-! ## the macro engine -/
 
+/-- Metadata is zero width for # and ##. If an already expanded argument
+is transformed again, lift its events before the transformed output and
+remove them from the semantic token string (including newly exposed edge
+spaces). Ordinary arguments and ordinary compilation are unchanged. -/
+def observationArgs (template : TokPtr) (args : SymId) : M TokenString := do
+  if !(← get).observePP then return {}
+  let fuel ← fuelM
+  let mut q := template
+  let mut transforms := false
+  for _ in [0:fuel] do
+    let (t, _, q') := TOK_GET q {}
+    q := q'
+    if t == 0 then break
+    if t == 35 || t == TOK_DG_SHARP || t == TOK_PPJOIN then transforms := true
+  if !transforms then return {}
+  let mut events : TokenString := {}
+  let mut arg := args
+  for _ in [0:fuel] do
+    if arg == 0 then break
+    let sx ← getSym arg
+    let mut ptr : TokPtr := { arr := sx.d.getD #[] }
+    let mut clean : TokenString := {}
+    let mut found := false
+    let mut real := false
+    let mut space := false
+    let mut line : Option CValue := none
+    for _ in [0:fuel] do
+      let (t, cv, ptr') := TOK_GET ptr {}
+      ptr := ptr'
+      if t == TOK_EOF then break
+      if t == TOK_PPSTR && cv.strSize ≥ 11 && cv.sdata.get! 0 == 0 then
+        events := tok_str_add2 events t cv
+        found := true
+      else if t == TOK_PPLINE then line := some cv
+      else if t == 32 then space := true
+      else
+        if real && space then clean := tok_str_add clean 32
+        if let some ln := line then clean := tok_str_add2 clean TOK_PPLINE ln
+        clean := tok_str_add2 clean t cv
+        real := true
+        space := false
+        line := none
+    if found then
+      clean := tok_str_add clean TOK_EOF
+      modSym arg fun x => { x with d := some (clean.str.extract 0 clean.len.toNat') }
+    arg := sx.prev
+  return events
+
 /-- `macro_arg_subst(nested_list, macro_str, args)` -/
 def macro_arg_subst (R : Rec) (nested0 : Option SymId) (macro_str0 : TokPtr) (args : SymId) :
     M (TokArr × Option SymId) := do
@@ -381,7 +429,7 @@ def macro_arg_subst (R : Rec) (nested0 : Option SymId) (macro_str0 : TokPtr) (ar
   let subst_line := (← get).tok_line
   let mut nested := nested0
   let mut ms := macro_str0
-  let mut str : TokenString := {}
+  let mut str ← observationArgs macro_str0 args
   let mut t0 : Int32 := 0
   let mut t1 : Int32 := 0
   for _ in [0:fuel] do
@@ -797,6 +845,12 @@ def pragma_operator (R : Rec) (nested0 : Option SymId) : M (Option SymId) := do
   modify fun s => { s with parse_flags := PARSE_FLAG_PREPROCESS ||| PARSE_FLAG_TOK_NUM ||| PARSE_FLAG_TOK_STR ||| PARSE_FLAG_LINEFEED }
   let _ ← pragma_parse R
   let mut result : TokenString := {}
+  if saved.observePP then
+    let events := (← get).ppObserved.extract saved.ppObserved.size (← get).ppObserved.size
+    modify fun s => { s with ppObserved := saved.ppObserved }
+    for event in events do
+      let id ← freshId
+      result := tok_str_add2 result TOK_PPSTR (event.payload id)
   for _ in [0:fuel] do
     let tk ← getTok
     if tk == TOK_LINEFEED || tk == TOK_EOF then break

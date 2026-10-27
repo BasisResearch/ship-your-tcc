@@ -1,0 +1,41 @@
+Running as unit: run-p3017606-i463654676.scope; invocation ID: 4eac40fb43c04bb48bee186028b304e0
+⚠ [23/87] Replayed Spec.Pre.Phase4
+warning: Spec/Pre/Phase4.lean:75:8: Variable name `l` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _l
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: Spec/Pre/Phase4.lean:137:37: Variable name `prev` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _prev
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+✔ [61/87] Built Tcc.Model.PpDir (3.2s)
+✔ [63/87] Built Tcc.Model.PpMacro (6.2s)
+✔ [65/87] Built Tcc.Model.Gen1 (3.1s)
+✔ [67/87] Built Tcc.Model.Gen2 (2.9s)
+✔ [69/87] Built Tcc.Model.Gen3 (3.6s)
+✔ [71/87] Built Tcc.Model.Gen4 (2.3s)
+✔ [73/87] Built Tcc.Model.Gen5 (1.1s)
+✔ [75/87] Built Tcc.Model.Gen6 (1.7s)
+✔ [77/87] Built Tcc.Model.Gen7 (1.5s)
+⚠ [79/87] Built Tcc.Model.Gen8 (2.4s)
+warning: Tcc/Model/Gen8.lean:268:47: `String.get` has been deprecated: Use `String.Pos.Raw.get` instead
+
+Note: The updated constant is in a different namespace. Dot notation may need to be changed (e.g., from `x.get` to `String.Pos.Raw.get x`).
+✔ [81/87] Built Tcc.Model.Tie (306ms)
+✔ [83/87] Built Tcc.Model.Preprocess (360ms)
+✖ [84/87] Building Tcc.ModelPreMain (353ms)
+trace: .> LEAN_PATH=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/packages/Cli/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/riscv-lean/lean-sail/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/packages/ELFSage/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/riscv-lean/Lean_RV64D_executable/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/riscv-lean/lean_emulator/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/build/lib/lean /data/home/kirancodes/.elan/toolchains/leanprover--lean4---v4.34.0/bin/lean /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/Tcc/ModelPreMain.lean -o /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/build/lib/lean/Tcc/ModelPreMain.olean -i /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/build/lib/lean/Tcc/ModelPreMain.ilean -c /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/build/ir/Tcc/ModelPreMain.c --setup /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/build/ir/Tcc/ModelPreMain.setup.json --json
+error: Tcc/ModelPreMain.lean:53:11: Type mismatch
+  rc
+has type
+  Nat
+but is expected to have type
+  UInt32
+✔ [86/87] Built Tcc.Model.Preprocess:c.o (461ms)
+Some required targets logged failures:
+- Tcc.ModelPreMain
+error: build failed

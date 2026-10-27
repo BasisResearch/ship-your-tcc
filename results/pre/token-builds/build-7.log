@@ -1,0 +1,57 @@
+Running as unit: run-p3199521-i463944885.scope; invocation ID: b6a28cea7abe4663b9d6f15f8fc981df
+⚠ [24/91] Replayed Spec.Pre.Phase4
+warning: Spec/Pre/Phase4.lean:75:8: Variable name `l` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _l
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: Spec/Pre/Phase4.lean:137:37: Variable name `prev` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _prev
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+✔ [63/91] Built Tcc.Model.PpMacro (6.7s)
+✔ [64/91] Built Tcc.Model.Gen1 (3.6s)
+✔ [66/91] Built Tcc.Model.Gen2 (3.3s)
+✔ [68/91] Built Tcc.Model.Gen3 (3.5s)
+✔ [70/91] Built Tcc.Model.Gen4 (2.3s)
+✔ [72/91] Built Tcc.Model.Gen5 (1.2s)
+✔ [74/91] Built Tcc.Model.Gen6 (1.8s)
+✔ [76/91] Built Tcc.Model.Gen7 (1.6s)
+⚠ [78/91] Built Tcc.Model.Gen8 (2.5s)
+warning: Tcc/Model/Gen8.lean:268:47: `String.get` has been deprecated: Use `String.Pos.Raw.get` instead
+
+Note: The updated constant is in a different namespace. Dot notation may need to be changed (e.g., from `x.get` to `String.Pos.Raw.get x`).
+✔ [80/91] Built Tcc.Model.Tie (324ms)
+✔ [82/91] Built Tcc.Model.Preprocess (424ms)
+⚠ [84/91] Built Tcc.ModelMain (523ms)
+warning: Tcc/ModelMain.lean:25:33: `String.mk` has been deprecated: Use `String.ofList` instead
+warning: Tcc/ModelMain.lean:78:9: `String.trim` has been deprecated: Use `String.trimAscii` instead
+
+Note: The updated constant has a different type:
+  String → String.Slice
+instead of
+  String → String
+warning: Tcc/ModelMain.lean:78:46: `String.trim` has been deprecated: Use `String.trimAscii` instead
+
+Note: The updated constant has a different type:
+  String → String.Slice
+instead of
+  String → String
+warning: Tcc/ModelMain.lean:92:13: `String.trim` has been deprecated: Use `String.trimAscii` instead
+
+Note: The updated constant has a different type:
+  String → String.Slice
+instead of
+  String → String
+ℹ [86/91] Built Tcc.Model.PreAudit (224ms)
+info: Tcc/Model/PreAudit.lean:4:0: 'TccModel.preprocess' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Tcc/Model/PreAudit.lean:5:0: 'TccModel.PreprocessCorrect_Statement' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Tcc/Model/PreAudit.lean:6:0: 'TccModel.PragmaObservationEffects_Statement' depends on axioms: [propext, Classical.choice, Quot.sound]
+✔ [87/91] Built Tcc.ModelPreMain (363ms)
+✔ [89/91] Built Tcc.Model.PpMacro:c.o (53s)
+✔ [90/91] Built tcc_model:exe (237ms)
+✔ [91/91] Built tcc_pre_tokens:exe (245ms)
+Build completed successfully (91 jobs).

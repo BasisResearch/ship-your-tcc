@@ -397,8 +397,7 @@ def unget_tok (last_tok : Int32) : M Unit := do
   setTok last_tok
 
 /-- `pragma_parse(s1)`: whether the pragma was handled -/
-def pragma_parse (R : Rec) : M Bool := do
-  R.next_nomacro
+def pragma_parse_body (R : Rec) : M Bool := do
   let tok ← getTok
   let err : M Bool := tcc_error_s R "malformed #pragma directive"
   if tok == Tok.TOK_push_macro || tok == Tok.TOK_pop_macro then
@@ -504,6 +503,49 @@ def pragma_parse (R : Rec) : M Bool := do
     return false
   R.next
   return true
+
+/-- The observation path buffers the unconverted pragma payload once, then
+replays those tokens with numeric/string conversion for the existing effect
+parser. Macro expansion (including counters) happens only during collection.
+Phase-4 once/push/pop pragmas keep their original path and emit no event. -/
+def pragma_parse (R : Rec) : M Bool := do
+  R.next_nomacro
+  let t ← getTok
+  if !(← get).observePP || t == Tok.TOK_once || t == Tok.TOK_push_macro || t == Tok.TOK_pop_macro then
+    return ← pragma_parse_body R
+  let flags := (← get).parse_flags
+  modify fun s => { s with
+    parse_flags := PARSE_FLAG_PREPROCESS ||| PARSE_FLAG_LINEFEED,
+    ppObserved := s.ppObserved.push ⟨.pragmaBegin, ByteArray.empty, 0⟩ }
+  let fuel ← fuelM
+  let mut payload : TokenString := {}
+  let mut ended := false
+  for _ in [0:fuel] do
+    let st ← get
+    if st.tok == TOK_LINEFEED || st.tok == TOK_EOF then
+      payload := tok_str_add payload st.tok
+      ended := true
+      break
+    let obs ← ppObservation
+    modify fun s => { s with ppObserved := s.ppObserved.push obs }
+    payload := tok_str_add2 payload st.tok st.tokc
+    -- Only recognized effect parsers expand operands. An ignored pragma
+    -- must not advance __COUNTER__ or execute nested _Pragma operators.
+    if t == Tok.TOK_pack || t == Tok.TOK_comment then R.next else R.next_nomacro
+  if !ended then throw (.fuel "pragma observation")
+  modify fun s => { s with
+    ppObserved := s.ppObserved.push ⟨.pragmaEnd, ByteArray.empty, 0⟩,
+    parse_flags := PARSE_FLAG_TOK_NUM ||| PARSE_FLAG_TOK_STR ||| PARSE_FLAG_LINEFEED }
+  payload := tok_str_add payload 0
+  let _ ← begin_macro .heap payload.str 0 1
+  R.next
+  let handled ← pragma_parse_body R
+  -- Unknown pragmas leave their first token current; discard their replay,
+  -- whose physical input and expansion effects were consumed exactly once.
+  end_macro
+  setTok TOK_LINEFEED
+  modify fun s => { s with parse_flags := flags }
+  return handled
 
 /-- `preprocess(is_bof)` -/
 def preprocess (R : Rec) (is_bof0 : Int32) : M Unit := do

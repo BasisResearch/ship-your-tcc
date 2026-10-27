@@ -174,3 +174,8 @@ its comparisons with rebuilt binaries; initial combined arena counts are not
 accepted as current-source evidence. Concrete anonymous-member compiler and
 float-literal rounding follow-ups are queued in tasks/f3-anonymous-members.md
 and tasks/f3-direct-float-literals.md. Binary128 printf/sqrtl remain F7 work.
+The executable exact-token TccModel.preprocess interface is implemented. Its
+PreprocessCorrect_Statement, PragmaObservationEffects_Statement and
+PreprocessObservationNoninterference_Statement (Tcc/Model/Preprocess.lean)
+remain open; finite token comparisons do not prove those propositions.
+Combined integration evidence is results/pre/observer-integration-2026-10-27.md.

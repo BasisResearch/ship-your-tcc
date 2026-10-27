@@ -288,6 +288,14 @@ states `TccRunCorrect_Statement` with the headline shape over the fork's
 current pipeline; its front end, resource limits and image predicate are still
 parameters owed by F1–F6 (results/csem/f0-validation.md).
 
+F2 now exposes `TccModel.preprocess` as exact phase-4 tokens, with a dedicated
+internal-token observer independent of `-E`. The focused run has 41 exact raw
+matches and 8 joint refusals; the 618-input corpus has 612 exact raw matches
+(including all 200 Csmith inputs) and 6 joint refusals. All 15 protocol/golden
+tests pass. Spec residuals, printer encoding classifications and open typed
+connections are retained in [the token-stream report](results/pre/token-stream.md);
+this does not prove the preprocessing theorem.
+
 ## Layout
 * `vendor/tinycc`: pristine tinycc 43c7708.
 * `patches/`: the tcc patches.

@@ -34,6 +34,10 @@ structure TccSt where
   imageSyms : Std.HashMap String UInt64 := {}
   /-- the loop bound (fuel) of every C loop, from the input size -/
   fuel : Nat := 0
+  /-- Enable phase-4 pragma observation; ordinary compilation leaves this off. -/
+  observePP : Bool := false
+  ppObserved : Array PPObservation := #[]
+  ppSeen : Std.HashMap Nat Unit := {}
   -- ===== host environment =====
   fds : Array (Option FdEntry) := #[]
   console : ByteArray := ByteArray.empty

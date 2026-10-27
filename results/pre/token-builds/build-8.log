@@ -1,0 +1,49 @@
+Running as unit: run-p3247493-i463929228.scope; invocation ID: b6b302fa8af54357be3cb95bdc1dc902
+⚠ [24/91] Replayed Tcc.Model.Gen8
+warning: Tcc/Model/Gen8.lean:268:47: `String.get` has been deprecated: Use `String.Pos.Raw.get` instead
+
+Note: The updated constant is in a different namespace. Dot notation may need to be changed (e.g., from `x.get` to `String.Pos.Raw.get x`).
+⚠ [34/91] Replayed Spec.Pre.Phase4
+warning: Spec/Pre/Phase4.lean:75:8: Variable name `l` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _l
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: Spec/Pre/Phase4.lean:137:37: Variable name `prev` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _prev
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [83/91] Replayed Tcc.ModelMain
+warning: Tcc/ModelMain.lean:25:33: `String.mk` has been deprecated: Use `String.ofList` instead
+warning: Tcc/ModelMain.lean:78:9: `String.trim` has been deprecated: Use `String.trimAscii` instead
+
+Note: The updated constant has a different type:
+  String → String.Slice
+instead of
+  String → String
+warning: Tcc/ModelMain.lean:78:46: `String.trim` has been deprecated: Use `String.trimAscii` instead
+
+Note: The updated constant has a different type:
+  String → String.Slice
+instead of
+  String → String
+warning: Tcc/ModelMain.lean:92:13: `String.trim` has been deprecated: Use `String.trimAscii` instead
+
+Note: The updated constant has a different type:
+  String → String.Slice
+instead of
+  String → String
+✔ [86/91] Built Tcc.Model.Preprocess (557ms)
+ℹ [87/91] Built Tcc.Model.PreAudit (325ms)
+info: Tcc/Model/PreAudit.lean:4:0: 'TccModel.preprocess' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Tcc/Model/PreAudit.lean:5:0: 'TccModel.PreprocessCorrect_Statement' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Tcc/Model/PreAudit.lean:6:0: 'TccModel.PragmaObservationEffects_Statement' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Tcc/Model/PreAudit.lean:7:0: 'TccModel.PreprocessObservationNoninterference_Statement' depends on axioms: [propext, Classical.choice, Quot.sound]
+✔ [88/91] Built Tcc.ModelPreMain (528ms)
+✔ [89/91] Built Tcc.Model.Preprocess:c.o (686ms)
+✔ [90/91] Built Tcc.ModelPreMain:c.o (277ms)
+✔ [91/91] Built tcc_pre_tokens:exe (306ms)
+Build completed successfully (91 jobs).

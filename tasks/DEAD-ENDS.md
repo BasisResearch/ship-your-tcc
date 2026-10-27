@@ -220,3 +220,38 @@
   wrong export switch and then the missing flag produced harness errors,
   never semantic agreements. The corrected separate-stream captures retain
   anonymous-member and unnamed-bitfield CSem gaps independently of GCC.
+
+- F2 raw-token worker (2026-10-27): sandbox systemd access fails with
+  `Failed to connect to user scope bus ... Operation not permitted`. Keep
+  the shared lock and 12 GB cap: frozen `build/worker-build.request` /
+  matching result handoff works. Requests 1–3 failed on Lean record layout
+  and a Nat/UInt32 driver exit code; their retained logs are not successful
+  validation. Later requests supersede them, with source hashes checked.
+- Do not observe phase 4 by decoding C literal escapes in `-E` text. That
+  conflates distinct spellings such as `"A"`, `"\x41"`, and `"\101"`.
+  Moreover, applying phases 1–3 to printer output repeats trigraph
+  translation on literals created after phase 1. Use direct internal tokens;
+  auxiliary printed-output lexing must use phase 3 alone. Classify printer
+  question-mark protection and unprotected trigraph spellings separately.
+- A raw pragma recorder that expands every payload changes compiler
+  behavior: ignored pragmas must not advance `__COUNTER__`. Retain the
+  compiler/spec discrepancy; expand only where the existing effect parser
+  does. Do not change Supported or silently change the spec to obtain a pass.
+- Appending `_Pragma` observations immediately during eager macro expansion
+  puts them before preceding replacement tokens. Carry observations through
+  macro token strings to their stream positions. Cached argument reuse can
+  duplicate that metadata although the effect ran once; preserve event
+  identities rather than executing or reporting the same event twice.
+- Deferred observation metadata is zero width for subsequent stringification
+  and token pasting. Treating it as an ordinary PPSTR produced `" word"`
+  instead of `"word"` and lost a pragma boundary during `##`. Lift events
+  before the transformed token and remove newly exposed edge spaces; the
+  new focused fixtures compare both observers with plain compiler runs.
+  Whole-run observation noninterference remains a typed Statement, not a
+  theorem justified by these finite tests.
+- The host observer cannot compile the bare-metal newlib binary128 literal
+  adapter (`reent.h` is unavailable to host GCC). Its generator retains the
+  patched image's predefined type macros directly from tccpp.c while using
+  the host cross-target configuration for runtime support. No phase-7 float
+  conversion is part of the raw stream; this is diagnostic host execution,
+  not evidence that the Sail binary computes the new interface.

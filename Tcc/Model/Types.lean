@@ -649,6 +649,22 @@ structure InlineFunc where
   filename : ByteArray := ByteArray.empty
   deriving Inhabited
 
+/-! ## unconverted phase-4 observation -/
+
+/-- Independent of the specification's token type: exact `get_tok_str` bytes,
+including prefixes, quotes, digraphs and UCN spellings. -/
+inductive PPClass where
+  | ident | number | charLit | stringLit | punct | other | pragmaBegin | pragmaEnd
+  deriving Inhabited, BEq
+
+structure PPObservation where
+  kind : PPClass
+  spell : ByteArray := ByteArray.empty
+  /-- Identity of a deferred observation, so cached macro arguments cannot
+  duplicate an effect event that executed only once. Zero means immediate. -/
+  event : Nat := 0
+  deriving Inhabited
+
 /-! ## errors and the monad -/
 
 inductive Err where

@@ -1,0 +1,20 @@
+{
+  "request": "f2-tokens-2",
+  "request_id": "f2-tokens-2",
+  "exit": 1,
+  "log": "build/worker-build-f2-tokens-2.log",
+  "command": [
+    "flock",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/lake.lock",
+    "systemd-run",
+    "--user",
+    "--scope",
+    "-p",
+    "MemoryMax=12G",
+    "lake",
+    "build",
+    "tcc_pre_tokens",
+    "pre_spec"
+  ],
+  "source_hashes_verified": true
+}
