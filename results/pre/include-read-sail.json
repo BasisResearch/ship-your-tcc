@@ -1,0 +1,34 @@
+{
+  "results": [
+    {
+      "name": "directory",
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/repro/pre_include_directory.c",
+      "source_sha256": "5902db71e63858af6eacdab13a6d83110daa8b156b643bf12a03aab764f20a86",
+      "returncode": 125,
+      "expected": 125,
+      "passed": true,
+      "elf_sha256": "89634f3986018f8d1160c54ef7ca3478e880482f45c09ca46ed05cc17513d7f8",
+      "console_hex": "496e2066696c6520696e636c756465642066726f6d202f70726f672e633a323a0a2f6c69623a303a206572726f723a20636f756c64206e6f74207265616420736f757263652066696c650a",
+      "trace": "TODO: cancel_reservation\nT\t1891690\t80000804\t80000808\t8004baec\t87fffff0\t8007e110\t0\t80058a50\t1\t800ae588\t1\t0\t1\t0\t8007e840\t2\t8007d800\t3\t1201\t8007d910\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t80130990\t1\t0\tS8\t8007d900\t0\t0\tO\t75\t75\t256\n",
+      "meta": ""
+    },
+    {
+      "name": "positive",
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/include-read-positive.c",
+      "source_sha256": "5e1381fa559a365b6a5550498cc5c3b9d7f085cbcf66d4922a8b7159cf676a4c",
+      "returncode": 0,
+      "expected": 0,
+      "passed": true,
+      "elf_sha256": "823a7630a3b4d6e7391d936cd4361cbb26bf399fcefca7f7672a75ad248b44a9",
+      "console_hex": "",
+      "trace": "TODO: cancel_reservation\nT\t3304497\t80001b60\t80001b64\t800430cc\t87fffc30\t8007e110\t0\t80058a50\tf\tffffffffffffffff\t800aba40\t8007e5e8\t86400028\t1\t86800ec8\t86800ed8\t86400000\t28\t7f\t8007d910\t5f\t1\t0\t0\t0\t0\t2\t86800ea8\t5\t800aba40\t800ae644\t80\tfffffffff0000000\t7f\tO\t0\t0\t256\nT\t3304522\t80001b48\t80001b4c\t800430cc\t87fffc30\t8007e110\t0\t80058a50\tf\tffffffffffffffff\t800aba40\t8007e5e8\t86400028\t1\t86800ec8\t86800ed8\t86400000\t28\t0\t8007d910\t5f\t1\t0\t0\t0\t0\t2\t86800ea8\t5\t800aba40\t800ae644\t80\tfffffffff0000000\t7f\tO\t0\t0\t256\nT\t3304610\t80000804\t80000808\t864000d4\t87fffbf0\t8007e110\t0\t80058a50\t86402234\tffffffffffffffff\t0\t1\t0\t0\t86800ed8\t86800ed8\t8007d800\t1\t0\t8007d910\t86800ec8\t86800ed8\t86400000\t0\t0\t0\t2\t86800ea8\t5\t800aba40\t800007f4\t80\tfffffffff0000000\t7f\tS8\t8007d900\t0\t0\tO\t0\t0\t256\n",
+      "meta": "compile_steps=3304497\nprogram_steps=89\nsteps=3304611\n"
+    }
+  ],
+  "pins": {
+    "patches/0003-tcc-c11.patch": "8539b1c4dd9da4c6e571a45bef4d07b897587e507d7b6368f962996ac040fdad",
+    "Tcc/Model/PpLex.lean": "1244a7081fe8875e2b08ca795ad7cc6682ae10854f5cc51d7e48e8ba9e3c6333",
+    "c/build/base.elf": "6b386aad1b585766f20b88b4529d835d9c747016ceb6bdb4d0dd2a742d14f67c",
+    "scripts/run_tcc_sail.sh": "9a7737b4ac7a3578db6d1597a1c8224800e912cae30592e95c772f7637737ac8"
+  }
+}

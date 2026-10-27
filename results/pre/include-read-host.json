@@ -1,0 +1,130 @@
+[
+  {
+    "compiler": "host",
+    "standard": "c11",
+    "case": "directory",
+    "passed": true,
+    "exit": 1,
+    "stderr": "In file included from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/read-error-host/directory.c:1:\n/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/read-error-host/directory:0: error: could not read source file\n"
+  },
+  {
+    "compiler": "host",
+    "standard": "c11",
+    "case": "empty",
+    "passed": true,
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "compiler": "host",
+    "standard": "c11",
+    "case": "normal",
+    "passed": true,
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "compiler": "host",
+    "standard": "c11",
+    "case": "missing",
+    "passed": true,
+    "exit": 1,
+    "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/read-error-host/missing.c:1: error: include file '/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/read-error-host/missing.h' not found\n"
+  },
+  {
+    "compiler": "host",
+    "standard": "c99",
+    "case": "directory",
+    "passed": true,
+    "exit": 1,
+    "stderr": "In file included from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/read-error-host/directory.c:1:\n/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/read-error-host/directory:0: error: could not read source file\n"
+  },
+  {
+    "compiler": "host",
+    "standard": "c99",
+    "case": "empty",
+    "passed": true,
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "compiler": "host",
+    "standard": "c99",
+    "case": "normal",
+    "passed": true,
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "compiler": "host",
+    "standard": "c99",
+    "case": "missing",
+    "passed": true,
+    "exit": 1,
+    "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/read-error-host/missing.c:1: error: include file '/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/read-error-host/missing.h' not found\n"
+  },
+  {
+    "compiler": "cross",
+    "standard": "c11",
+    "case": "directory",
+    "passed": true,
+    "exit": 1,
+    "stderr": "In file included from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/read-error-host/directory.c:1:\n/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/read-error-host/directory:0: error: could not read source file\n"
+  },
+  {
+    "compiler": "cross",
+    "standard": "c11",
+    "case": "empty",
+    "passed": true,
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "compiler": "cross",
+    "standard": "c11",
+    "case": "normal",
+    "passed": true,
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "compiler": "cross",
+    "standard": "c11",
+    "case": "missing",
+    "passed": true,
+    "exit": 1,
+    "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/read-error-host/missing.c:1: error: include file '/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/read-error-host/missing.h' not found\n"
+  },
+  {
+    "compiler": "cross",
+    "standard": "c99",
+    "case": "directory",
+    "passed": true,
+    "exit": 1,
+    "stderr": "In file included from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/read-error-host/directory.c:1:\n/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/read-error-host/directory:0: error: could not read source file\n"
+  },
+  {
+    "compiler": "cross",
+    "standard": "c99",
+    "case": "empty",
+    "passed": true,
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "compiler": "cross",
+    "standard": "c99",
+    "case": "normal",
+    "passed": true,
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "compiler": "cross",
+    "standard": "c99",
+    "case": "missing",
+    "passed": true,
+    "exit": 1,
+    "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/read-error-host/missing.c:1: error: include file '/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/read-error-host/missing.h' not found\n"
+  }
+]

@@ -78,7 +78,9 @@ the same eight residuals (results/pre/line-spec-repaired.md). The include
 filesystem also incorrectly normalizes away missing directories before lookup
 (results/pre/path-resolution.md); the shared CerbFS traversal/initializer repair passes 12 guards and 11 independent
 image/model observations and is integrated after the full gate (results/model/image-files-review.md).
-A separate directory-read-as-EOF compiler defect is tracked in tasks/f2-include-read-error.md.
+The directory-read-as-EOF compiler/model defect is now repaired and gated:
+13 image/model observations, 16 host/cross checks, and two full Sail executions
+(results/pre/include-read-repair.md).
 
 Builds are serialized across these lanes, capped at 12 GB. The two inherited
 `results/review/*.json` handoffs are retained as dated records; all 345 hashes

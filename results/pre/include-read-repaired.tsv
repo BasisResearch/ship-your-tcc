@@ -1,0 +1,2 @@
+file	vs_tcc	vs_gcc	spec_tokens	tcc_tokens	spec_error	tcc_error	gcc_error	tcc_context	gcc_context
+results/repro/pre_include_directory.c	both-error	both-error	0	0	include /prog.c:2 header not found (Â§6.10.2p2)	In file included from /Users/kirancodes/tmp/pre_diff_4alxbwz3/tmp3ylueqnh/prog.c:2:			

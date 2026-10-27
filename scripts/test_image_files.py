@@ -24,11 +24,13 @@ def main():
     key = md.runtime_key()
     one, two = '#define VALUE 1\n', '#define VALUE 2\n'
     cases = [
+        ('empty-header', '/empty.h', [('/empty.h', '')], 0),
+        ('trigraph-header', '/tri.h', [('/tri.h', '??=define VALUE 7\n')], 7),
         ('duplicate-last', '/same.h', [('/same.h', one), ('/same.h', two)], 2),
         ('duplicate-reversed', '/same.h', [('/same.h', two), ('/same.h', one)], 1),
         ('file-blocks-child', '/x/y.h', [('/x', one), ('/x/y.h', two)], None),
         ('directory-blocks-file', '/x/y.h', [('/x/y.h', two), ('/x', one)], 2),
-        ('directory-not-file', '/x', [('/x/y.h', two), ('/x', one)], 'empty'),
+        ('directory-not-file', '/x', [('/x/y.h', two), ('/x', one)], None),
         ('missing-parent', '/missing/../root.h', [('/root.h', two)], None),
         ('file-parent', '/root.h/../root.h', [('/root.h', two)], None),
         ('trailing-slash', '/root.h/', [('/root.h', two)], None),
@@ -40,8 +42,7 @@ def main():
     for name, include, entries, expected in cases:
         src = OUT / (name + '.c')
         src.write_text('#include "' + include + '"\n' +
-                       ('#ifdef VALUE\n#error directory was replaced by file contents\n#endif\n' if expected == 'empty' else
-                        f'#if VALUE != {expected}\n#error wrong embedded contents\n#endif\n' if expected is not None else '') +
+                       (f'#if VALUE != {expected}\n#error wrong embedded contents\n#endif\n' if expected is not None else '') +
                        'int main(void) { return 0; }\n')
         extra = []
         for n, (path, data) in enumerate(entries):
