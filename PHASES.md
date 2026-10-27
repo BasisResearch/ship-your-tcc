@@ -156,3 +156,8 @@ results/model/designator-continuation.md. The six independent CSem layout/
 bitfield gaps and 498 compiler refusals/seven assembly gaps stay explicit.
 The allocation draft review is results/csem/allocation-recovery-review.json;
 its missing soundness/outcome connection is queued as tasks/f1-allocation-oracle.md.
+
+Two fresh designator cases also have complete 4 MiB native Sail/model arena
+equality (3,341,630 and 3,366,690 instructions; handoff registers agree).
+Their retained offline evidence is results/model/designator/native-captures/;
+all-corpus native equality and the generic proof obligations remain open.

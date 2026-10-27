@@ -152,3 +152,19 @@ receipt and compressed log are `designator/adopted-full-gate.*`. This gate
 checks the integrated sources; the original worker captures remain dated
 evidence. Pristine layout/bitfield failures are independently minimized in
 `designator/layout-minimized/` and added to Kiran's upstream bug list.
+
+Fresh complete native Sail captures on the integrated designator image:
+
+| source | native steps | compared bytes |
+|---|---:|---:|
+| `tcc_designator_continuation.c` | 3,341,630 | 4,194,304 |
+| `designator_nested_union_static.c` | 3,366,690 | 4,194,304 |
+
+Both independent model payloads equal Sail after zero-extension to the 4 MiB
+arena; entry/code registers also agree. `native-arenas.json` pins the source,
+compiler image, model and capture tool. `native-captures/` retains compressed
+full arrays/presence maps, registers, model outputs and source copies.
+The two offline rechecks pass; stale source pins and overwriting retained
+evidence are rejected by `scripts/freeze_sail_arenas.py`. These dated native
+observations do not close F3 refinement, fuel adequacy or all-corpus coverage.
+The frozen sum compile-cut chain is unchanged.

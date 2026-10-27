@@ -1,0 +1,81 @@
+{
+  "evidence": "native observations; not reachability proofs",
+  "exporter_sha256": "8fa33c617923dbe960f5582aa7b580216e39a015348727c507d0769d38b3c123",
+  "report_sha256": "7c5578b1d586c5cb6afd3bd5f2547c18c5b9cd0bf89d3817f718f0b957f064e5",
+  "successes": 2,
+  "residuals": [],
+  "rows": [
+    {
+      "source": "results/repro/tcc_designator_continuation.c",
+      "directory": "be6e39ae4dadca0a3fee5265",
+      "comparison": {
+        "status": "equal",
+        "evidence": "native Sail observation; not a theorem",
+        "compared_bytes": 4194304,
+        "model_payload_bytes": 13108,
+        "arena_sha256": "a5d0d417fcbc126f228f9a5436f8d637685b22132bfddc030ff37cfcbc7f0063",
+        "model_arena_sha256": "ed3c132d3f55be9de78b523f9bf8d495fb2e431960cc5e2767c0ae78b5dc095e",
+        "trace_sha256": null,
+        "capture_manifest_sha256": "541159dc35a920ad208fc5e77d31a85eea3ce0086e05ae522b26fb8138c9c3d6",
+        "elf_sha256": "119f041bcfe780ae43598e4a0889b8adbb5f0218eee8aba97cbe75d85256e996",
+        "source_sha256": "207d48f4e803b9a1280ef8170b95b7252b26fd19cb234b17abb0fe1d675a4b77",
+        "steps": 3341630,
+        "pc": 2147490632,
+        "handoff": {
+          "x10": 2252341356,
+          "x14": 2252341248,
+          "x15": 108
+        }
+      },
+      "files": {
+        "arena.bin.gz": "0b13bcacf1a7f7f86a2c93080e5aa603a02ad2f1fd77e76e8e1391c2d3f0d45c",
+        "arena.present.bin.gz": "7dd1bfc7b4a4e81b5947490750603ed7efa530813fe7182b04815b53c72dad7a",
+        "console.repr.txt": "eb92a90a8fbc1020de59f62e527480dc5d396402edb88b6beddb89a663c207d2",
+        "console.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "cut.json": "541159dc35a920ad208fc5e77d31a85eea3ce0086e05ae522b26fb8138c9c3d6",
+        "cut.tsv": "d3b180c8923b78a0f44a6361fc81be82197a3c5eff2b7f99fb8cc3eeca00d17e",
+        "model.arena.gz": "9151630f0b77ad7c8cd243117d88004fa95a483caf21c1c48a48a7fd2c01d40f",
+        "native.stderr": "9b5abdd2c54053e5bda600e68b1d9213c19f6b77013130366d7ab27ddd6278f6",
+        "native.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "registers.txt": "a431f74b0150f6df06f0b0248a87c29fc1931540c2104accce780b2e77e65712",
+        "source.c": "207d48f4e803b9a1280ef8170b95b7252b26fd19cb234b17abb0fe1d675a4b77"
+      }
+    },
+    {
+      "source": "build/designator-focused/designator_nested_union_static.c",
+      "directory": "f601577dd36d93d950a6011f",
+      "comparison": {
+        "status": "equal",
+        "evidence": "native Sail observation; not a theorem",
+        "compared_bytes": 4194304,
+        "model_payload_bytes": 13172,
+        "arena_sha256": "18fb66a44acaf40171c8f26fbdfc6970e35d528a55f1e7e4943831b20329b56a",
+        "model_arena_sha256": "38b865cacfb9a24af2b73e960da03e0026795889e25ac4b53cd8b6cef6f2c8f1",
+        "trace_sha256": null,
+        "capture_manifest_sha256": "5e64f9196c5c586455d8d5ffa97775414bfa43341d45ec3d6aef7a919ee1ab12",
+        "elf_sha256": "a77b68558e1dbed3632681b2d004af6b00764ecbecdc1c64139b3c80133810ec",
+        "source_sha256": "4fd2fed172f4c8ac88cc8480288585695e1aeb55a6100386b651624c8b976c95",
+        "steps": 3366690,
+        "pc": 2147490632,
+        "handoff": {
+          "x10": 2252341408,
+          "x14": 2252341248,
+          "x15": 160
+        }
+      },
+      "files": {
+        "arena.bin.gz": "acd07498ebfccbb6bec46e030c6c4c314514f1848ff005eb067be7780aed6987",
+        "arena.present.bin.gz": "bcc15bc76289d9bfeac0659de72d4995020a6387ef6231ce4a94c6fc42aca03b",
+        "console.repr.txt": "eb92a90a8fbc1020de59f62e527480dc5d396402edb88b6beddb89a663c207d2",
+        "console.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "cut.json": "5e64f9196c5c586455d8d5ffa97775414bfa43341d45ec3d6aef7a919ee1ab12",
+        "cut.tsv": "c1a2c1cd19b4e14dfc5f8ede36a03ff66257bfd8a38c2cbad3f83a963d8b3347",
+        "model.arena.gz": "0c1e4bf11ef392d2c4307d812edcb23be708e3dfd9af34b4b318b44d174103a9",
+        "native.stderr": "9b5abdd2c54053e5bda600e68b1d9213c19f6b77013130366d7ab27ddd6278f6",
+        "native.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "registers.txt": "b5b0cdfdc31c2062c47a696cce912ed34cafdaecdcf50419602b849cc0ffd88d",
+        "source.c": "4fd2fed172f4c8ac88cc8480288585695e1aeb55a6100386b651624c8b976c95"
+      }
+    }
+  ]
+}
