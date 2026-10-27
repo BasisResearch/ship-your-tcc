@@ -1,0 +1,32 @@
+{
+  "rows": [
+    {
+      "worktree": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a31b97b8f1c090141",
+      "revision": "827b76fbfc38923820f69405f84d0120f2ae0b65",
+      "archived_files": 92,
+      "archive": "build/recovery/parser-recovery/binaries.tar.gz",
+      "sha256": "615d1be26a490c79898b8e9e6fb30e2d5dfc7495c4f0e257473fbe28a5364b1c",
+      "manifest": "build/recovery/parser-recovery/manifest.json",
+      "action": "Archived verified executables; removed reproducible inactive Lake build cache only."
+    },
+    {
+      "worktree": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-ad868c434f5f27398",
+      "revision": "c9754f51388cfcb69df8675a4da652e47d0433c1",
+      "archived_files": 88,
+      "archive": "build/recovery/filesystem-recovery/binaries.tar.gz",
+      "sha256": "fdc647c00816afccad4949bce63f2583cbb192dab3e09e3a6100c9ff50b9658f",
+      "manifest": "build/recovery/filesystem-recovery/manifest.json",
+      "action": "Archived verified executables; removed reproducible inactive Lake build cache only."
+    },
+    {
+      "worktree": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-2",
+      "revision": "80e0c9b3329630e31df9e53b6a7f517135882613",
+      "archived_files": 96,
+      "archive": "build/recovery/configuration-recovery/binaries.tar.gz",
+      "sha256": "6caf58a296a485c3dfee0a0da23548596f4c99f0e0311eaa2a0d8befdb4ef48b",
+      "manifest": "build/recovery/configuration-recovery/manifest.json",
+      "action": "Archived verified executables; removed reproducible inactive Lake build cache only."
+    }
+  ],
+  "scope": "Inactive project worktrees only; source, uncommitted recovery work, toolchains and oracle evidence retained. Archived binaries re-read and hashed before deleting only .lake/build."
+}
