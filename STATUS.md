@@ -42,8 +42,8 @@ The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
 two at a time, following MANAGER.md. Slot 1 recovers and connects pure IEEE arithmetic to CSem; slot 2 finishes the combined raw-token/pragma integration, including a nested
 macro -E regression. Its 89 C11 positives/six negatives now pass, including
 round trips; strict combined observation and final gate checks remain pending. The nested-designator compiler/model repair is integrated after its gate
-with the adopted CSem pin. Two complete native Sail arena comparisons are
-running for representative designator cases.
+with the adopted CSem pin. Two fresh complete native Sail arena comparisons pass
+for representative designator cases (results/model/designator/native-captures).
 The line repair is integrated, and the scheduled CSem repin plus selected-member
 union initializer repair is adopted after its integrated full gate. The compiler-handoff collector and strict model_diff consumer are integrated.
 Fresh 1,412-input comparison: 1,308 arenas (1,299 generated), 104 refusals,
