@@ -22,6 +22,8 @@ layer), Tie, ModelMain.
 namespace Tcc.Model
 
 structure Rec where
+  -- libtcc.c options, also called by pragma_parse
+  tcc_set_options : ByteArray → M Int32
   -- tccpp.c
   next : M Unit
   next_nomacro : M Unit

@@ -497,7 +497,7 @@ def pragma_parse (R : Rec) : M Bool := do
     if t == Tok.TOK_lib then
       modify fun s => { s with pragma_libs := s.pragma_libs.push p }
     else if t == Tok.TOK_option then
-      unsupported "#pragma comment(option)"
+      let _ ← R.tcc_set_options p
   else
     let st ← get
     tcc_warning_c R WARNC_all (cfmt "#pragma %s ignored" [.s (← get_tok_str st.tok (some st.tokc))])
@@ -779,11 +779,11 @@ def parse_escape_string (R : Rec) (buf : ByteArray) (width : Nat) : M ByteArray 
 def parse_string (R : Rec) (s0 : ByteArray) (len0 : Nat) : M Unit := do
   let mut s := s0
   let mut len := len0
-  let prefix := s.get! 0
-  let width := if prefix == 76 || prefix == 85 then 4 else if prefix == 117 && s.get! 1 != 56 then 2 else 0
-  if prefix == 76 || prefix == 117 || prefix == 85 then
+  let literalPrefix := s.get! 0
+  let width := if literalPrefix == 76 || literalPrefix == 85 then 4 else if literalPrefix == 117 && s.get! 1 != 56 then 2 else 0
+  if literalPrefix == 76 || literalPrefix == 117 || literalPrefix == 85 then
     s := s.extract 1 s.size; len := len - 1
-    if prefix == 117 && s.get! 0 == 56 then
+    if literalPrefix == 117 && s.get! 0 == 56 then
       s := s.extract 1 s.size; len := len - 1
   let sep := s.get! 0
   s := s.extract 1 s.size
@@ -793,7 +793,7 @@ def parse_string (R : Rec) (s0 : ByteArray) (len0 : Nat) : M Unit := do
   modify fun st => { st with tokcstr := str }
   if sep == 39 then
     let char_size := if width == 0 then 1 else width
-    let tok := if width == 0 then TOK_CCHAR else if prefix == 117 then TOK_U16CHAR else if prefix == 85 then TOK_U32CHAR else TOK_LCHAR
+    let tok := if width == 0 then TOK_CCHAR else if literalPrefix == 117 then TOK_U16CHAR else if literalPrefix == 85 then TOK_U32CHAR else TOK_LCHAR
     let n : Int := (str.size / char_size : Nat) - 1
     if n < 1 then tcc_error_s R "empty character constant"
     if n > 1 then tcc_warning_c R WARNC_all "multi-character character constant".toUTF8
@@ -804,7 +804,7 @@ def parse_string (R : Rec) (s0 : ByteArray) (len0 : Nat) : M Unit := do
       else c := (c <<< 8) ||| (str.get! i).toUInt32.toInt32
     modify fun st => { st with tok := tok, tokc := st.tokc.setI c.toInt64.toUInt64 }
   else
-    modify fun st => { st with tok := if width == 0 then TOK_STR else if prefix == 117 then TOK_U16STR else if prefix == 85 then TOK_U32STR else TOK_LSTR,
+    modify fun st => { st with tok := if width == 0 then TOK_STR else if literalPrefix == 117 then TOK_U16STR else if literalPrefix == 85 then TOK_U32STR else TOK_LSTR,
                                tokc := st.tokc.setStr str (Int32.ofNat str.size) }
 
 /-- `bn_lshift(bn, shift, or_val)` on a 128-bit number -/

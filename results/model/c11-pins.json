@@ -1,0 +1,828 @@
+{
+  "source_revision": "5d4edbb47d5ea8eef7a8d845118c5e5a691d0144",
+  "pending_build_request": "c11-model-5",
+  "successful_binary_build": "c11-model-4; binary does not include pending option fixes",
+  "sha256": {
+    "Tcc/Model/Base.lean": "fe70936ded2b273f274b50cc70e82906c642f60d29409d05ca26603e203372ce",
+    "Tcc/Model/Elf.lean": "86e9c5b1f4f3b857abecfeb5165626f412077499535638f687e6f91a96265ecf",
+    "Tcc/Model/Gen1.lean": "fe08462b006e985b16076217fb7cae765aa923526115fed0e3bd7968593b32be",
+    "Tcc/Model/Gen2.lean": "123100220a3950e1d13879de3078837b3e572e2483675fd0ca2dae3aee1beea8",
+    "Tcc/Model/Gen3.lean": "fd6700d670b22f0b710a5f5b128a1acc0c6f26199fb8ffd0ebe131f13f370807",
+    "Tcc/Model/Gen4.lean": "e2ee73b47159e375e8c0d5570baba56134fb2fcb24c476554834c8336d1485d6",
+    "Tcc/Model/Gen5.lean": "2dfbeef1ace7ddeba17fbf7aad9148e4720b731c2df8811f72cfff691fb4107e",
+    "Tcc/Model/Gen6.lean": "ea63055e061369e695a0a266f03963a5623cec859eeba5b43f652aadbf21f61d",
+    "Tcc/Model/Gen7.lean": "2d3d170beeb29d7aa85bb349e99229d88a4847f92ccb41faa2520583be64f73b",
+    "Tcc/Model/Gen8.lean": "ca7181599c51b34fef24df1a5c0e0c591082769ac411f1c52bde71d3e92a563e",
+    "Tcc/Model/Ghost.lean": "4900187f172322317ad455446451626ffd535dfc530b5d45d9a80635f8cd3987",
+    "Tcc/Model/Host.lean": "69ee454169a0fce6e00cd56cfdf8e70e8dc7e4c6d906e10707a2772bd2bb9180",
+    "Tcc/Model/Libtcc.lean": "ddc7e5d728db43bc659c6f8d41bb7a00053610ab8937455eaa344fc740bdc064",
+    "Tcc/Model/Link.lean": "bca83501267db6fd81769c9ffb74f26b97882058c0e39cf824d22405d2066ac4",
+    "Tcc/Model/Main.lean": "9ae9d1788cbce70b883232385cf96d14d66a5d498351cdc611b9c33fb4f0abfc",
+    "Tcc/Model/PpDir.lean": "3e568f0934fe34d5a1cc90c6d461eb72bd14aef76eae37c07e3062d8e401eeb1",
+    "Tcc/Model/PpLex.lean": "4737e3964e13b9beac3b3fba3db124194e77a82a76452c6da73bffea08c4a439",
+    "Tcc/Model/PpMacro.lean": "657d309cc99415b8ffb1ab1f91afcbaf5328f93158bd7bcb950e62db76c4c320",
+    "Tcc/Model/Rec.lean": "e9c4370fbeb05e3acef60466e932106ea7b0c66ce0e8f550182f37ea4add9be4",
+    "Tcc/Model/Riscv.lean": "4302cc9e2a5fe66fd70c4821a9f6a926c2d93e95282cf699dca00bc91a41d5ac",
+    "Tcc/Model/Run.lean": "69aa48d19fb81f4e0414eb1877b7ae55d352f35b0bcfe863d4b4243257c2dd31",
+    "Tcc/Model/SoftFloat.lean": "5a1e3387c9a642e18f23b4e4875e0deced1af37552a79a7d0589b9c35f2e5fd9",
+    "Tcc/Model/State.lean": "c394c84f350a771536d2a9b8c3fa4cf77c24a122794b4cc37de875eab803d925",
+    "Tcc/Model/Syms.lean": "5b873ab99b01ff805677f5f7df1d75911d7ad9fec965b1ee9d269286d30b6a41",
+    "Tcc/Model/Tie.lean": "bfcd00f452c2ba31fa4da21be386ec3056d5d5bfce8956c50601f2da296bc89a",
+    "Tcc/Model/TieStub.lean": "48f9c8f5b757507be9ad93a568134d81edb878da6dfd6a672b6ef77b6a48bc6a",
+    "Tcc/Model/Tok.lean": "e26013f71fa12f4d99bdd7a13878d0f83c06a80480cf200c60caffcb3d7a9f06",
+    "Tcc/Model/Types.lean": "3cb9bb963f534cb833dba1ff07eff24d16447358dc7312607470cf776009f0ae",
+    "Tcc/ModelMain.lean": "4c90a94f7fc6e16016b13ff42f953acdd5b6d67ec377f1a46d6ddad03cac2470",
+    "scripts/model_diff.py": "e152de067a2f2da91f8cc2edd1b61ba9101351b53241650729dc7aab8f489af0",
+    "scripts/gen_model_tok.py": "5cb3428c0a91a70c12cac02edb79f5c323908a3e3476a0f868337bb4d6904b16",
+    "scripts/gen_model_corpus.py": "0ce2abe25b871f32e546c6f5cd35a3ac91050e248749acb0cb23d158128b28da",
+    "scripts/gen_ld_literal_tests.py": "c35c57bea6a1339b9e2c9c9764268d98a6fae73a3e1cd1c64df30a9322e95db4",
+    "scripts/ref_arena.sh": "5e90b8f915a674e4d1a10bee1287f5a96510a7d9a255601ed1213bab0a3be413",
+    "scripts/rv64emu.c": "724a86714c21200888a5fe9746c3bdf45da1cf8fd400c32799e02727bb7cde8c",
+    "scripts/gen_image_syms.sh": "ea424e610dfa99bcf703ac82b3faa15f09643e5ee08edc8f7ee0c5bc4942b445",
+    "c/src/gen_embed.sh": "68534ee3a238c143bf4e749fcb0ea43e8b53933c4a9d6843422d995c879d7d76",
+    "c/build/base.elf": "5502363b8447bea47322b575d8a62878c300edb61deb03f30820c65700686c2d",
+    ".lake/build/bin/tcc_model": "5e98a03fee823bacd91566282c837a9907b6d030b8842eeb602d22a5cfca814c",
+    "vendor/TINYCC_REV": "76ca376f1f96cf1b316713d8f94d91c8629445929d1e7474792fd76610bce1c0",
+    "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+    "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+    "patches/0003-tcc-c11.patch": "8ce084ebb702b1889a0d56603e7a1551d0171225f761bb131926d73d46acc9c5",
+    "patches/0004-tcc-binary128-literals.patch": "4dfcc192c23a777b1b335e9052a416956886b1071c3de1e8da403b5b194e221e",
+    "results/model/gen_c11_fixtures.py": "e52b20d4dc43074a3aa3c019e034ec639f9c0b5078264275d2733a01763b5abc",
+    "results/model/c11-state.c": "a49384cc12ad272e2ffac7fbcce5185f84c0f41a303c9b3fceafa02f4df0b90d",
+    "results/model/c11-state.h": "4d9a38b4a0085e0961cafd56fc1841a77da022dd0bcf0f9b606cbb6d6946167d",
+    "results/model/c11-options.c": "a39163df6b4a1b9fadf085b23cd2d1489ffe39ee5df84d643db313490972d158",
+    "results/model/c11-pragma-operand.c": "38fbfc92d2492c6d97c2848ae765945222dd25fcebb2b38eab44934002a51045",
+    "lakefile.toml": "73660451007a1247d3e65881ebf87fb367876a601dcd6fb64234373666887825",
+    "lean-toolchain": "8733782dc070a99b312039cda424f601b80f3be6f6f512627da5ba25adc27632"
+  },
+  "fs_list_sha256": "9cfbf92b055aa5d263523d651f14095566e3321c772ce852e2adfbf8740eaf61",
+  "embedded_files": [
+    {
+      "image": "/lib/tcc/include/float.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/tccinclude/float.h",
+      "sha256": "54d8ab2bcbc9e925acbe8a0fb873343234a7637fa94a283c58821b7dd5eaeca5"
+    },
+    {
+      "image": "/lib/tcc/include/stdalign.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/tccinclude/stdalign.h",
+      "sha256": "8a411cf23f6a4aebbee8b62266b718d0c62710169bbed3cab4c84dc3541d3b7c"
+    },
+    {
+      "image": "/lib/tcc/include/stdarg.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/tccinclude/stdarg.h",
+      "sha256": "c8f36632bb6a181d1499d8693cd1096d7eff927bf50dd54d62069d58c8aa1960"
+    },
+    {
+      "image": "/lib/tcc/include/stdatomic.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/tccinclude/stdatomic.h",
+      "sha256": "b54ab923ee04514bd7260cec8165b5901ea9df549b29861c1de1b429bcec55ac"
+    },
+    {
+      "image": "/lib/tcc/include/stdbool.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/tccinclude/stdbool.h",
+      "sha256": "de87aff995f53b7b949b1a0a9ed41b9f403000d54d2aae88f1685f0c3edd905a"
+    },
+    {
+      "image": "/lib/tcc/include/stddef.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/tccinclude/stddef.h",
+      "sha256": "8749a475d01fb10f67e29b3750809a285dabf3e9a401b3c085e69575cdb97cf7"
+    },
+    {
+      "image": "/lib/tcc/include/stdnoreturn.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/tccinclude/stdnoreturn.h",
+      "sha256": "1ba7a435dca82dbdfc95c6c4c4547ce173be39c1c3320d5c09e9f8f858e8f9b6"
+    },
+    {
+      "image": "/lib/tcc/include/tccdefs.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/tccinclude/tccdefs.h",
+      "sha256": "3bbcf6cc77af60bf2f56e1bce14a18ff100b75a0207129a31c9dde115862dc8a"
+    },
+    {
+      "image": "/lib/tcc/include/tgmath.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/tccinclude/tgmath.h",
+      "sha256": "5ebf958646a1f69c815cce2c660471b068c613d97e8a561d5e729896918ef37d"
+    },
+    {
+      "image": "/lib/tcc/include/varargs.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/tccinclude/varargs.h",
+      "sha256": "c475b0c8fa47a2938b78cb681337a84749c86e7c9889caec9432041c56b0331d"
+    },
+    {
+      "image": "/lib/tcc/libtcc1.a",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/libtcc1.a",
+      "sha256": "06b0247f46c63c7c0b606fc0c01de340de884c5f6079bb9a5b8ec6366d2969d7"
+    },
+    {
+      "image": "/lib/tcc/runmain.o",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/runmain.o",
+      "sha256": "4017a23f26930deeec0eaac61643f1996994b0e7eb9738fe7847f781154ab9ee"
+    },
+    {
+      "image": "/lib/libc.a",
+      "host": "/data/home/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/../../../../riscv-none-elf/lib/rv64i/lp64/libc.a",
+      "sha256": "e6d56536913c89a22a25e2d84a0bc2ed920cba5973b9aad0426ea83e4270e4e3"
+    },
+    {
+      "image": "/lib/libm.a",
+      "host": "/data/home/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/../../../../riscv-none-elf/lib/rv64i/lp64/libm.a",
+      "sha256": "2f0f0a317218452fe275347509e466257272cc8f4ac8c098470cbbba9b8ee395"
+    },
+    {
+      "image": "/lib/libgcc.a",
+      "host": "/data/home/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv64i/lp64/libgcc.a",
+      "sha256": "afbf7180cc9d4cb6d6179c279dcfe5a32650db41b1d9d059c389d4753a9b4867"
+    },
+    {
+      "image": "/include/_ansi.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/_ansi.h",
+      "sha256": "b07edf6829bdf3ff2ec375a226e16d0a16c343b7f58b81d0df5f2a7726f4afc5"
+    },
+    {
+      "image": "/include/_newlib_version.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/_newlib_version.h",
+      "sha256": "b1497ce93aa26f196a6ea4998429ffe263e4c92dead3d0cf019909eb4ed40aae"
+    },
+    {
+      "image": "/include/_syslist.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/_syslist.h",
+      "sha256": "fbb0b4c1e5169368021fa9f6328c943796031563a374450d8f9853985eb73642"
+    },
+    {
+      "image": "/include/alloca.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/alloca.h",
+      "sha256": "4016dd727d8db2dc991a6e9140632b1af4d77ab5531491d970e25c3d7785ca9d"
+    },
+    {
+      "image": "/include/ar.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/ar.h",
+      "sha256": "6bc98c4a4632b8a4574963f5d96e203e88c0882e5754171bc93e118a27476616"
+    },
+    {
+      "image": "/include/argz.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/argz.h",
+      "sha256": "bfde28cd64b47d004d599dbb5e79a73dffdd2ca2d91b5fd0646552963658df13"
+    },
+    {
+      "image": "/include/assert.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/assert.h",
+      "sha256": "82cdd4cda886d1430198879eec1ae12902db206c27e05e0d1105f5b1b79d8250"
+    },
+    {
+      "image": "/include/complex.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/complex.h",
+      "sha256": "50d60a9a10884db16a1bca7f5e60568970c31f8d0cbf00e399493e61d3213e8b"
+    },
+    {
+      "image": "/include/cpio.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/cpio.h",
+      "sha256": "8e34deafedd4f28abe2a5381e770b063344770d079fdec1c21dc25586508e064"
+    },
+    {
+      "image": "/include/ctype.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/ctype.h",
+      "sha256": "38057a8bef7fa893ad14b50b871c5f4c924c984fbe5e70290c69933cf62e5c39"
+    },
+    {
+      "image": "/include/devctl.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/devctl.h",
+      "sha256": "97e87d4edb0a6d554b331c3f0e284d3cde588d76b4d6f3510523854c5af949e8"
+    },
+    {
+      "image": "/include/dirent.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/dirent.h",
+      "sha256": "fd87749378cf8a161984b71f7422a8fd37faf2220585b7fc8d551607d14ffbad"
+    },
+    {
+      "image": "/include/elf.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/elf.h",
+      "sha256": "98462ee2441ffa4ccb39f7b26fb78f35dac5abd1e1fd6d87dff25c4d5ea8525b"
+    },
+    {
+      "image": "/include/envlock.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/envlock.h",
+      "sha256": "c0e51020778daa2d28e4f6a06f80dec81d5211d706c409bc9b06e94033d2b134"
+    },
+    {
+      "image": "/include/envz.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/envz.h",
+      "sha256": "3f7831d69269a125ac73ecf63f0a160cad784848f68a87c9cd00d6c6124696a5"
+    },
+    {
+      "image": "/include/errno.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/errno.h",
+      "sha256": "5c06bea0901c2c2e1078e7bf66ab9a461d9b4dc5dac4f92d8c1745a5d8455070"
+    },
+    {
+      "image": "/include/fastmath.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/fastmath.h",
+      "sha256": "72066780eefc558a9309c885d9a091a5cdcf74fd0884fed114ab5b3f172d5a77"
+    },
+    {
+      "image": "/include/fcntl.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/fcntl.h",
+      "sha256": "637889253928e98bc028dbdcd58560492aed8e981eff349c43a8e7e6a45f75f5"
+    },
+    {
+      "image": "/include/fenv.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/fenv.h",
+      "sha256": "e8358c25f2d3f2bcd3e0db08c3bc47b9af6281c0680478b3dc4079a9677bf643"
+    },
+    {
+      "image": "/include/fnmatch.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/fnmatch.h",
+      "sha256": "e67e1ee199119fc678ebeaa3b1493807afd5a465f356126d440fd91459a58b30"
+    },
+    {
+      "image": "/include/ftw.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/ftw.h",
+      "sha256": "e14c9929a7012846da4ea3f07646a119aafe4a81eedce1b394562eca76ad357d"
+    },
+    {
+      "image": "/include/getopt.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/getopt.h",
+      "sha256": "483cff5a5a42dc5d2545870701f17032a2b904aa8126e696a0ce7468727f6d12"
+    },
+    {
+      "image": "/include/glob.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/glob.h",
+      "sha256": "3b35901b558cd3c67e04c8b0126380497ea72b80f306be7091212c4b11fb03e6"
+    },
+    {
+      "image": "/include/grp.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/grp.h",
+      "sha256": "4d29bb3868e8344cc761480b3df11d6b939be16e49674967b4194c6f11da7a79"
+    },
+    {
+      "image": "/include/iconv.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/iconv.h",
+      "sha256": "b80f8dc5c213d16f88319f6858d64e4a43514a65885152e72374105e1c48cd0f"
+    },
+    {
+      "image": "/include/ieeefp.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/ieeefp.h",
+      "sha256": "a50d6710396764116c6f27d4978ec04d1cd702fcedbd5dc51f14c954d8b44cf6"
+    },
+    {
+      "image": "/include/inttypes.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/inttypes.h",
+      "sha256": "aca1c88d508b7aad3c0eb9048c7255d6c6c2aac8bc83e754407d73e3f2734788"
+    },
+    {
+      "image": "/include/langinfo.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/langinfo.h",
+      "sha256": "c636fdcac9e64e6196ba3711b72ecd67a867032c1a6f1806789b4442795defd0"
+    },
+    {
+      "image": "/include/libgen.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/libgen.h",
+      "sha256": "b61a3d372b8c81975711c8af5bca37b6be518497bd3579980688deeff90e9a21"
+    },
+    {
+      "image": "/include/limits.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/limits.h",
+      "sha256": "dcf3931988fb7722b402421d645ca42cc4a6d188b9119733f12d47f626182463"
+    },
+    {
+      "image": "/include/locale.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/locale.h",
+      "sha256": "042a30b0368a06a5f74c1a6590bc000aa0ba798b77d2e1547760ad10d9f3c7e1"
+    },
+    {
+      "image": "/include/machine/_arc4random.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/machine/_arc4random.h",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "image": "/include/machine/_default_types.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/machine/_default_types.h",
+      "sha256": "bda328d0f4a44e2ed176aef5b5c6c3c7dc23ed1b2886114814b031a5a3272ab2"
+    },
+    {
+      "image": "/include/machine/_endian.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/machine/_endian.h",
+      "sha256": "94d364aa821147729e09735b5de64fbd0719bb3896936f40276d39687c2a1ccb"
+    },
+    {
+      "image": "/include/machine/_fpmath.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/machine/_fpmath.h",
+      "sha256": "85ebe1406f2ed24a1d2b49272d110a7b87ed2a8aeeac0b44f0d7a14c0caa2c3d"
+    },
+    {
+      "image": "/include/machine/_time.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/machine/_time.h",
+      "sha256": "0f07279d1bd56ec38fd77dd0b028de47bcb483956a84bd7b9a0cab9d30dbbbb0"
+    },
+    {
+      "image": "/include/machine/_types.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/machine/_types.h",
+      "sha256": "359bd4562d052a2a2d6db9e09e0e9c89259cfd0fce52d3f43f57e82f486b2fe2"
+    },
+    {
+      "image": "/include/machine/ansi.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/machine/ansi.h",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "image": "/include/machine/endian.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/machine/endian.h",
+      "sha256": "6aa58d274806ddfcda505f3f4e75c05ddcc8cee7f7e1f91d1680877fbba416ed"
+    },
+    {
+      "image": "/include/machine/fastmath.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/machine/fastmath.h",
+      "sha256": "936e28dd72a5f0d4f3f14710bf4ef8316723791efc9f95764d8949c24183278b"
+    },
+    {
+      "image": "/include/machine/ieee.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/machine/ieee.h",
+      "sha256": "02ad8872d0933da5fd8c3369b7b18782536e0e502ca16a217c00e9d9ca1cfb16"
+    },
+    {
+      "image": "/include/machine/ieeefp.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/machine/ieeefp.h",
+      "sha256": "fb72c83096b4c69b7a6a5638b1f3c4c6eea78cc2bb09ebaaf494c27021a7111d"
+    },
+    {
+      "image": "/include/machine/malloc.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/machine/malloc.h",
+      "sha256": "9df6d785c145e8bfa00a547215f0c28ff366d61f909b39fe75a0089684bd2215"
+    },
+    {
+      "image": "/include/machine/param.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/machine/param.h",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "image": "/include/machine/setjmp-dj.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/machine/setjmp-dj.h",
+      "sha256": "aef1d38163a43cd8e10511eeb0f9c98478c758cc08e813e27d90548fc53aab9c"
+    },
+    {
+      "image": "/include/machine/setjmp.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/machine/setjmp.h",
+      "sha256": "5cc079a78c7d20112f993992c1a7734f7b5b50892ea121c75989eba0dc5015fc"
+    },
+    {
+      "image": "/include/machine/stdlib.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/machine/stdlib.h",
+      "sha256": "6d6ae3d7b32ce3afd6ee48fabd4734b67750466a33906dfb2045cf0c25e2b915"
+    },
+    {
+      "image": "/include/machine/syscall.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/machine/syscall.h",
+      "sha256": "f335516b585b57347199396f50bb6294c4055bff156d41221ffe7f2cc465e01c"
+    },
+    {
+      "image": "/include/machine/termios.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/machine/termios.h",
+      "sha256": "d6e16ee56b728aff179afd72ac18247320a64c124e43060a9d96261be2ea462c"
+    },
+    {
+      "image": "/include/machine/time.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/machine/time.h",
+      "sha256": "d427e178c244be599fe622a692c75ed72fc19feac0c35419319a2ea10f395251"
+    },
+    {
+      "image": "/include/machine/types.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/machine/types.h",
+      "sha256": "803fce1d52cf3b316bcbf89b150b63a9914cf1df71d8a03c696cc85b05ca76f0"
+    },
+    {
+      "image": "/include/malloc.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/malloc.h",
+      "sha256": "aad92d8a71b1172d57742f7a5606e56ec4aabb0d21c9a1df10633d18920f99f8"
+    },
+    {
+      "image": "/include/math.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/math.h",
+      "sha256": "4664b586bd21cf61248ba25382938ca8c01e028d45561e5b4969dc1a565f24aa"
+    },
+    {
+      "image": "/include/memory.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/memory.h",
+      "sha256": "d1337084b8c75d08e9c9f81a2a76e02f8e8578743dc637ea26142c0f8286d472"
+    },
+    {
+      "image": "/include/ndbm.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/ndbm.h",
+      "sha256": "d85ccb4e0036db8861197c34a143df07a70b2cb5b6bb01b00d25b0d98e839627"
+    },
+    {
+      "image": "/include/newlib-nano/newlib.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/newlib-nano/newlib.h",
+      "sha256": "e4cd554be666d161510f49ba4b6b31998c5712df5451d9b2c30d934e7e68066f"
+    },
+    {
+      "image": "/include/newlib.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/newlib.h",
+      "sha256": "d3dd4671e02eba17ee5a566226c5c75a8b66a7692f658c06908d2c55f2b6f45b"
+    },
+    {
+      "image": "/include/paths.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/paths.h",
+      "sha256": "2253a2b8bf9de9a97592265172554cb6473f4d92dffcf719157a66c67f8e51f3"
+    },
+    {
+      "image": "/include/pthread.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/pthread.h",
+      "sha256": "d1b807bc13aaec027adf5ac7e7a51680ee024c83bf344477608cdd9e309510e8"
+    },
+    {
+      "image": "/include/pwd.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/pwd.h",
+      "sha256": "0179686dd9fdfd37f808e65c3d14ffb57b3d0622d4670378f86f0f72fd54008d"
+    },
+    {
+      "image": "/include/reent.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/reent.h",
+      "sha256": "f2c48fec1627351389258215d761f1623fb11a3cc678553ce660b02a51155f3a"
+    },
+    {
+      "image": "/include/regdef.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/regdef.h",
+      "sha256": "214b8ecc61d9dad5dade1ce8c065e7f8c679d0bd4b9bb20df66674da3a735025"
+    },
+    {
+      "image": "/include/regex.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/regex.h",
+      "sha256": "f32acb42ca8cb3c1aae36b85c8207c53105328fdd5041bb9f731e38373a011ee"
+    },
+    {
+      "image": "/include/sched.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sched.h",
+      "sha256": "90c1a364702c9dfca5948117b750b4daf028c88ec7dd14c42a2de85fb16edea7"
+    },
+    {
+      "image": "/include/search.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/search.h",
+      "sha256": "368fc7696d2f6a9fac057e68127118579114e5a5efbe15c77a14a2c124fa975c"
+    },
+    {
+      "image": "/include/setjmp.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/setjmp.h",
+      "sha256": "4a304bfadfd921fab78f12536f86a95a1095e702c07ede1d74d79b51f6346c4e"
+    },
+    {
+      "image": "/include/signal.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/signal.h",
+      "sha256": "b94b6a878fd4aaaf9576cebaff67dd46a5777722f72f1488e29477237b34e63d"
+    },
+    {
+      "image": "/include/spawn.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/spawn.h",
+      "sha256": "ae271a292c536663fc9ead32b38ad1e89299a5a46f977e132379c5c10e26feb9"
+    },
+    {
+      "image": "/include/ssp/ssp.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/ssp/ssp.h",
+      "sha256": "b05cad3f48e1262008efc23bb1b2ebca12188db1b0a7649561abb21f9ea7e5ac"
+    },
+    {
+      "image": "/include/ssp/stdio.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/ssp/stdio.h",
+      "sha256": "f4336810da86f0c90db72f8f5e023051f3622bec1bce5b282f86da8e8839a662"
+    },
+    {
+      "image": "/include/ssp/stdlib.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/ssp/stdlib.h",
+      "sha256": "23d71b538aec492ba94ef8039539ab28b521e16b9109f3a178b40f1e8b3058a9"
+    },
+    {
+      "image": "/include/ssp/string.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/ssp/string.h",
+      "sha256": "69e59721ee0025e6a788332ac956df1498c3121246e461f1e99ea500849bc54d"
+    },
+    {
+      "image": "/include/ssp/strings.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/ssp/strings.h",
+      "sha256": "fa72b18650e0d090211cc5ac010e48f80b55be2611d0eedb40de386f2cf6155f"
+    },
+    {
+      "image": "/include/ssp/unistd.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/ssp/unistd.h",
+      "sha256": "31ba4d6e767664480f8f119e26462ae95cc510459ebd6bb98570eed0f7aa47cc"
+    },
+    {
+      "image": "/include/ssp/wchar.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/ssp/wchar.h",
+      "sha256": "f686f738b83c9a06a2fe1b5e86413bb70e515d0ba95843055136f660b9e6d48e"
+    },
+    {
+      "image": "/include/stdatomic.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/stdatomic.h",
+      "sha256": "2f2fee1c6f8e6a8cbc39f9aa87bf7e615c64244bfad0dc255dcdf522b6cc5d77"
+    },
+    {
+      "image": "/include/stdint.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/stdint.h",
+      "sha256": "703366dd277eb10da3396c1afa48d5d48b4fe7bd636825c5e311150b45c84cf5"
+    },
+    {
+      "image": "/include/stdio.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/stdio.h",
+      "sha256": "a5ee836c8b571154e6bf4b0310a2598b88fe3c1b6f6ee93f136db0aeaed33461"
+    },
+    {
+      "image": "/include/stdio_ext.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/stdio_ext.h",
+      "sha256": "3fb4d03726a2861626f0573565c43f64da70b52ea08b7a0443d055e3e9351869"
+    },
+    {
+      "image": "/include/stdlib.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/stdlib.h",
+      "sha256": "1ff268cd3a95114b45b40730652314c471e94c4ee4efee9d66d3f0b51908cf7f"
+    },
+    {
+      "image": "/include/string.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/string.h",
+      "sha256": "89c7939a7ca30d5d42b6500b381b2f2f10ed3b0d6981b8cacba16b27b6d5353c"
+    },
+    {
+      "image": "/include/strings.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/strings.h",
+      "sha256": "8fbb28689d0dc82ea61c557cfb51dfb8e4162d741f740c4e14f9c62a3c1e7315"
+    },
+    {
+      "image": "/include/sys/_default_fcntl.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/_default_fcntl.h",
+      "sha256": "dd0fefd360955b1043db061eb1dad35b9cefee09676c453b55785cd95f6ce713"
+    },
+    {
+      "image": "/include/sys/_intsup.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/_intsup.h",
+      "sha256": "060c543302bdace78e1ca672deb7073012e1068ddd315b6439945fac3b7f3ffc"
+    },
+    {
+      "image": "/include/sys/_locale.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/_locale.h",
+      "sha256": "966d7882bfb0a73aba7a978b248b01d842d2768e817bdbebfeb930bb9a9fc7e8"
+    },
+    {
+      "image": "/include/sys/_pthreadtypes.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/_pthreadtypes.h",
+      "sha256": "59b1bd07f2c9a4007b6d02445fb67c59c7998c04563c6e0b9d906cc3ffb008f2"
+    },
+    {
+      "image": "/include/sys/_sigset.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/_sigset.h",
+      "sha256": "17fa65dc839d59cb25ee0bf541883c02a6efa95eb6fba059606bb06bf9986053"
+    },
+    {
+      "image": "/include/sys/_stdint.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/_stdint.h",
+      "sha256": "f8b5f922456d9c69f371cbf9f9409bf20eb5f7913413f2f66e818309c80d7f6b"
+    },
+    {
+      "image": "/include/sys/_timespec.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/_timespec.h",
+      "sha256": "f194f0c28947b740a7fd332d33dfa20504d927fad4fb4a2f554ab7b7f55d3626"
+    },
+    {
+      "image": "/include/sys/_timeval.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/_timeval.h",
+      "sha256": "a9d67ec7ab5fbcf8a8d3765b820c3479091d56fff7fdd063649a55db72dc7caf"
+    },
+    {
+      "image": "/include/sys/_types.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/_types.h",
+      "sha256": "cafdb33d45c40becc0ee6b8a81af7938fd1236194b0f760299a57e6d0df5116c"
+    },
+    {
+      "image": "/include/sys/_tz_structs.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/_tz_structs.h",
+      "sha256": "59d97bed29abb3cf499f2af1b2c9d399a1ef92355c140e020bee072fa89ce05b"
+    },
+    {
+      "image": "/include/sys/asm.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/asm.h",
+      "sha256": "65e2f2fc77b96110726fd599cdde04b5d58c77ff5d3f4f119a8607d800c1c89c"
+    },
+    {
+      "image": "/include/sys/cdefs.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/cdefs.h",
+      "sha256": "2622b5693eb6cdbd4f6b32956f5c50397679321640aae681e514b496aa6e5204"
+    },
+    {
+      "image": "/include/sys/config.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/config.h",
+      "sha256": "73e6de212d7e8d65ce7fa07ee41306750a00e4012ef03cd4af2b87afd6ee3e06"
+    },
+    {
+      "image": "/include/sys/custom_file.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/custom_file.h",
+      "sha256": "7a8f3cc9612d591c93281dc05188d874e2dc7ebfce430f6f44e16b9b1e499bc7"
+    },
+    {
+      "image": "/include/sys/dir.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/dir.h",
+      "sha256": "9d6ef62c7e7334875ba348cdf7ccde7d33d6d7366f70168f93055947d9b7512e"
+    },
+    {
+      "image": "/include/sys/dirent.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/dirent.h",
+      "sha256": "42c07480bc4933770c090490e7a5a094d66dfc68b74fc05cc23f76571da4e596"
+    },
+    {
+      "image": "/include/sys/endian.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/endian.h",
+      "sha256": "f3c87468fc294bf906f211907c71b5cfe0e6d10bb941c2d22941dc5ebb45c8b9"
+    },
+    {
+      "image": "/include/sys/errno.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/errno.h",
+      "sha256": "a32de6b5fc826e83d22443c10816394189f1dd34f20b8f69c133937ed38be2a9"
+    },
+    {
+      "image": "/include/sys/fcntl.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/fcntl.h",
+      "sha256": "471e655eee7e30a4a8c5c34a465c0891c85a0bed33a26bd555d7538a91bd6e9b"
+    },
+    {
+      "image": "/include/sys/features.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/features.h",
+      "sha256": "835f38a1b152705c540bb9f1009cf512eb51cc8bd40eef4c80d21c41d60543d8"
+    },
+    {
+      "image": "/include/sys/fenv.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/fenv.h",
+      "sha256": "6753cfbfa42120d1e799fa68a85d235a0d49416a5a283bab21647c3d9eeaa310"
+    },
+    {
+      "image": "/include/sys/file.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/file.h",
+      "sha256": "c4e08fdb66f877ddc18fc704b7127aea39766f08593fa833d7f385beea0b5a35"
+    },
+    {
+      "image": "/include/sys/iconvnls.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/iconvnls.h",
+      "sha256": "55910f50cdbab6bdd6f978955e53bd52aa9d2bd98e1c24dfb4d659d1e55ffd66"
+    },
+    {
+      "image": "/include/sys/lock.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/lock.h",
+      "sha256": "0b65d3b16445aefd880ec841839385a5821c23044771db96929394cb8d407ff1"
+    },
+    {
+      "image": "/include/sys/param.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/param.h",
+      "sha256": "8eb31b517f0b881db30ffc4a418c10e1ad6649def163c8d7c118b1d67e6a568a"
+    },
+    {
+      "image": "/include/sys/queue.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/queue.h",
+      "sha256": "7d41aaf63093a6e49c0b6866a1feeb15a25ca24a7ea207beb00158d630d70b86"
+    },
+    {
+      "image": "/include/sys/reent.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/reent.h",
+      "sha256": "dec217a5d0e96db3a801f6c75e8ef5edffdcf40c6143facfcf5e3c4ed0e35632"
+    },
+    {
+      "image": "/include/sys/resource.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/resource.h",
+      "sha256": "fc816c589ce2a1e575e55d407b3755c9aefd420b21c800b83a45852b9a6e5be7"
+    },
+    {
+      "image": "/include/sys/sched.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/sched.h",
+      "sha256": "126bf49c40354daddaf2fb7b996191a92e679f1268266dbe9fb6b87867176338"
+    },
+    {
+      "image": "/include/sys/select.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/select.h",
+      "sha256": "6094de986c613b638cdd8fadc8dc4c1cc5f1efb88ace3d6d90bb79665635aab4"
+    },
+    {
+      "image": "/include/sys/signal.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/signal.h",
+      "sha256": "48ed7fe472041a5c3e7dc4abe8be2f09a41d9405d7b6f523f7006f10c82e4404"
+    },
+    {
+      "image": "/include/sys/stat.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/stat.h",
+      "sha256": "bbc6fc82341ba0a62f39a71b092ba4c949028b3ee20b3bb417cbba6e54ae19a0"
+    },
+    {
+      "image": "/include/sys/stdio.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/stdio.h",
+      "sha256": "cdef5d61edd073f43debfcea5602eb25df03948b23f0d8757916d350cb141266"
+    },
+    {
+      "image": "/include/sys/string.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/string.h",
+      "sha256": "ce8cdd56234815fd89e75beec74a6cd1140ba13e9e0c8d27e1a4d0f4306ef7c6"
+    },
+    {
+      "image": "/include/sys/syslimits.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/syslimits.h",
+      "sha256": "4c9868c2d77e8e607c64620270d6b8da6b20b611ec36b36c19467a44ef4a8632"
+    },
+    {
+      "image": "/include/sys/time.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/time.h",
+      "sha256": "a7d13ccc843a0495bdebd6bce5fbdfa3412cf31b1b67e730d6462bf12baa7e74"
+    },
+    {
+      "image": "/include/sys/timeb.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/timeb.h",
+      "sha256": "971d6507b637c34d4770a79d11ce574f8b182c22379ad0368928048f066ebe36"
+    },
+    {
+      "image": "/include/sys/times.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/times.h",
+      "sha256": "0d7ede865cbadca9bce06a3facaba84c07196a60a94c118410473d23d95da06b"
+    },
+    {
+      "image": "/include/sys/timespec.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/timespec.h",
+      "sha256": "7c41c5283a623556ec4b2b6350632899c4de2a957808e207c14e7f155677dc96"
+    },
+    {
+      "image": "/include/sys/tree.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/tree.h",
+      "sha256": "3429d3370703537ddd340ca018ea49c3fb818dc4460619a42c2a011df4673fd0"
+    },
+    {
+      "image": "/include/sys/types.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/types.h",
+      "sha256": "d96d4ca54d24160823da9f9ec0f4bbc201a82e677d0ada7b1d6be3baf0ee1fe7"
+    },
+    {
+      "image": "/include/sys/unistd.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/unistd.h",
+      "sha256": "f45923d0f0e2c528a71bcb506f1b42f55563cf23086cfafd8f3cec051b0fc37e"
+    },
+    {
+      "image": "/include/sys/utime.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/utime.h",
+      "sha256": "c12e60c1e9416c2d8f56ca355748e800d42d397cf170310f551e2ba1e95a8884"
+    },
+    {
+      "image": "/include/sys/wait.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/sys/wait.h",
+      "sha256": "4640660d3b9f319438eed0cac09f0ec90758ccfab245df45799481693950903b"
+    },
+    {
+      "image": "/include/tar.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/tar.h",
+      "sha256": "bc82f051dfea3ae855fdec8bebbb06a62174db21746d8acf112b10908ac5ddce"
+    },
+    {
+      "image": "/include/termios.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/termios.h",
+      "sha256": "fc13c1c649a2530491bed09e072743a931822b0faa826efb34e98bafd7373fa8"
+    },
+    {
+      "image": "/include/tgmath.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/tgmath.h",
+      "sha256": "5a71d896e9084d3b937c3a2042e2ecf8675c70ec7eabc5e0d2d375412e79a1d1"
+    },
+    {
+      "image": "/include/threads.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/threads.h",
+      "sha256": "840f0806416fc3974fd3f3101f7d63ed5886d2b2f1cd6b045081eb2d05b19f0e"
+    },
+    {
+      "image": "/include/time.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/time.h",
+      "sha256": "443934a804fa16f85c8f09f3640d582e77b0f51e54967f3daca110edd65b5398"
+    },
+    {
+      "image": "/include/unctrl.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/unctrl.h",
+      "sha256": "5b822526f95d9e1e2d7e4107aff8b439c9a1b5186012c9edaf873d7584534d74"
+    },
+    {
+      "image": "/include/unistd.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/unistd.h",
+      "sha256": "efcfd48d7eb25091d58704b910529a9247689f29a3c8316c6d3514d8c20d5e69"
+    },
+    {
+      "image": "/include/utime.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/utime.h",
+      "sha256": "73f81d9e6172f1df1359d5cbee51a9ab30df8bbe20848ecfafede8ef41393f64"
+    },
+    {
+      "image": "/include/utmp.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/utmp.h",
+      "sha256": "0cf902b1dcfa51852a3127a012ef4e77182510b0c5c89dab89d522656366e237"
+    },
+    {
+      "image": "/include/wchar.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/wchar.h",
+      "sha256": "81914f70278d767781f525888745c1d1881c73b3ded49ec908b619e2c3724062"
+    },
+    {
+      "image": "/include/wctype.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/wctype.h",
+      "sha256": "c089dfe2b8933841a79223c13de0b63281fb1c34ca032c390a5ab991e18cb4e4"
+    },
+    {
+      "image": "/include/wordexp.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074/c/build/fs/include/wordexp.h",
+      "sha256": "67da110845b7dfea01fe40a87485cd6197e3d28253e9313aad08cb034e242c3b"
+    }
+  ],
+  "old_comparison_runtime_key": "bf56a53d9d96b0b6286cdbabd0598dedcb582508d8f1166d4e9367aef242a639",
+  "fresh_reference_runtime_key": "a389d2ea0190cb60079b61a2339bb8a0c71faa966c7d70456c6ae52759b6d25f"
+}

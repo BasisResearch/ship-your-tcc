@@ -242,6 +242,62 @@ def WARNC_unsupported : Int32 := 4
 def WARNC_implicit_function_declaration : Int32 := 5
 def WARNC_discarded_qualifiers : Int32 := 6
 
+/-- libtcc.c's FlagDef, with field access replacing C byte offsets. -/
+structure FlagDef where
+  name : String
+  read : TccSt → Int32
+  write : TccSt → Int32 → TccSt
+  all : Bool := false
+  invert : Bool := false
+
+def options_W : Array FlagDef := #[
+  { name := "all", read := (·.warn_all), write := fun s v => { s with warn_all := v }, all := true },
+  { name := "error", read := (·.warn_error), write := fun s v => { s with warn_error := v } },
+  { name := "write-strings", read := (·.warn_write_strings), write := fun s v => { s with warn_write_strings := v } },
+  { name := "unsupported", read := (·.warn_unsupported), write := fun s v => { s with warn_unsupported := v } },
+  { name := "implicit-function-declaration", read := (·.warn_implicit_function_declaration),
+    write := fun s v => { s with warn_implicit_function_declaration := v }, all := true },
+  { name := "discarded-qualifiers", read := (·.warn_discarded_qualifiers),
+    write := fun s v => { s with warn_discarded_qualifiers := v }, all := true } ]
+
+def options_f : Array FlagDef := #[
+  { name := "unsigned-char", read := (·.char_is_unsigned), write := fun s v => { s with char_is_unsigned := v } },
+  { name := "signed-char", read := (·.char_is_unsigned), write := fun s v => { s with char_is_unsigned := v }, invert := true },
+  { name := "common", read := (·.nocommon), write := fun s v => { s with nocommon := v }, invert := true },
+  { name := "leading-underscore", read := (·.leading_underscore), write := fun s v => { s with leading_underscore := v } },
+  { name := "ms-extensions", read := (·.ms_extensions), write := fun s v => { s with ms_extensions := v } },
+  { name := "dollars-in-identifiers", read := (·.dollars_in_identifiers), write := fun s v => { s with dollars_in_identifiers := v } },
+  { name := "test-coverage", read := (·.test_coverage), write := fun s v => { s with test_coverage := v } },
+  { name := "reverse-funcargs", read := (·.reverse_funcargs), write := fun s v => { s with reverse_funcargs := v } },
+  { name := "gnu89-inline", read := (·.gnu89_inline), write := fun s v => { s with gnu89_inline := v } },
+  { name := "asynchronous-unwind-tables", read := (·.unwind_tables), write := fun s v => { s with unwind_tables := v } } ]
+
+def options_m : Array FlagDef := #[
+  { name := "ms-bitfields", read := (·.ms_bitfields), write := fun s v => { s with ms_bitfields := v } } ]
+
+/-- `set_flag`: no-/error=, warning masks, -Wall propagation and FD_INVERT. -/
+def set_flag (flags : Array FlagDef) (name0 : ByteArray) : M Int32 := do
+  let mut name := name0
+  let mut value : Int32 := 1
+  let mut mask : Int32 := 0
+  if name.extract 0 3 == "no-".toUTF8 then
+    name := name.extract 3 name.size
+    value := 0
+  if (flags[0]?.map (·.all)).getD false && name.extract 0 6 == "error=".toUTF8 then
+    name := name.extract 6 name.size
+    value := if value != 0 then WARN_ON ||| WARN_ERR else WARN_NOE
+    mask := WARN_ON
+  let mut ret : Int32 := -1
+  for flag in flags do
+    if ret != 0 then
+      if name != flag.name.toUTF8 then continue
+    else if !flag.all then continue
+    modify fun s => flag.write s ((flag.read s &&& mask) ||| (value ^^^ b2i flag.invert))
+    if ret != 0 then
+      ret := 0
+      if name != "all".toUTF8 then break
+  return ret
+
 /-- `expect(msg)` -/
 def expect (R : Rec) (msg : String) : M α := tcc_error R (cfmt "%s expected" [.s msg.toUTF8])
 

@@ -73,17 +73,32 @@ def unary_call (R : Rec) : M Unit := do
     ret := { ret with type := sx.type }
   if ret_nregs > 0 then
     ret := { ret with c := ret.c.setI 0, r := (R_RET ret.type.t).toUInt16', r2 := (R2_RET ret.type.t).toUInt16' }
+  let mut savedArgs : Array TokArr := #[]
   if (← getTok) != 41 then
+    let reverse := (← get).reverse_funcargs != 0
     let fuel ← fuelM
     for _ in [0:fuel] do
-      -- reverse_funcargs is 0
-      R.expr_eq
-      gfunc_param_typed R s sa
+      if reverse then
+        if let some ts ← skip_or_save_block R true then savedArgs := savedArgs.push ts
+      else
+        R.expr_eq
+        gfunc_param_typed R s sa
       nb_args := nb_args + 1
       if sa != 0 then sa := (← getSym sa).next
       if (← getTok) == 41 then break
       skip R 44
   if sa != 0 then tcc_error_s R "too few arguments to function"
+  for i in [0:savedArgs.size] do
+    let argIndex := savedArgs.size - 1 - i
+    sa := sx.next
+    for _ in [0:argIndex] do
+      if sa != 0 then sa := (← getSym sa).next
+    let _ ← begin_macro .heap savedArgs[argIndex]! 0 1
+    R.next
+    R.expr_eq
+    gfunc_param_typed R s sa
+    end_macro
+  if !savedArgs.isEmpty then vrev R (Int32.ofNat savedArgs.size)
   R.next
   vcheck_cmp R
   R.gfunc_call nb_args

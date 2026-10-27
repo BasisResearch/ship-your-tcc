@@ -79,7 +79,7 @@ def next_nomacro (R : Rec) : M Unit := do
   let mut lbl := NL.redo
   let mut c : Int32 := 0
   let mut t : Int32 := 0
-  let mut prefix : Int32 := 0
+  let mut literalPrefix : Int32 := 0
   for _ in [0:fuel] do
     match lbl with
     | .redo =>
@@ -133,12 +133,12 @@ def next_nomacro (R : Rec) : M Unit := do
         let original := c
         let (c', p') ← peekc R p
         c := c'; p := p'
-        prefix := original
+        literalPrefix := original
         if original == 117 && c == 56 then
           let (c', p') ← peekc R p
           c := c'; p := p'
           if c == 34 then
-            prefix := 56; lbl := .strConst
+            literalPrefix := 56; lbl := .strConst
           else
             p := p - 1; wrb p 56
             p := p - 1; wrb p original; c := original
@@ -173,7 +173,7 @@ def next_nomacro (R : Rec) : M Unit := do
         else
           setTok 46; lbl := .done
       else if c == 39 || c == 34 then
-        prefix := 0; lbl := .strConst
+        literalPrefix := 0; lbl := .strConst
       else if c == 60 then
         let (c', p') ← peekc R p
         c := c'; p := p'
@@ -353,8 +353,8 @@ def next_nomacro (R : Rec) : M Unit := do
       lbl := .done
     | .strConst =>
       let mut cs := ByteArray.empty
-      if prefix == 56 then cs := "u8".toUTF8
-      else if prefix != 0 then cs := cs.push prefix.toUInt8
+      if literalPrefix == 56 then cs := "u8".toUTF8
+      else if literalPrefix != 0 then cs := cs.push literalPrefix.toUInt8
       cs := cs.push c.toUInt8
       let (p', cs') ← parse_pp_string R p c (some cs)
       p := p'
@@ -744,7 +744,8 @@ def pragma_operator (R : Rec) : M Unit := do
   R.next
   if (← getTok) != 41 then expect R ")"
   let saved ← get
-  modify fun s => { s with macro_stack := [], macro_ptr := none,
+  modify fun s => { s with
+    macro_stack := [], macro_ptr := none,
     tokstr_buf := {}, unget_buf := {}, include_stack := #[] }
   let caller ← curFile
   tcc_open_bf caller.filename (some out)
@@ -766,7 +767,8 @@ def pragma_operator (R : Rec) : M Unit := do
     if (← get).macro_stack.isEmpty then break
     end_macro
   tcc_close
-  modify fun s => { s with macro_stack := saved.macro_stack, macro_ptr := saved.macro_ptr,
+  modify fun s => { s with
+    macro_stack := saved.macro_stack, macro_ptr := saved.macro_ptr,
     tokstr_buf := saved.tokstr_buf, unget_buf := saved.unget_buf,
     include_stack := saved.include_stack, tok_flags := saved.tok_flags, parse_flags := flags }
   if result.len != 0 then
@@ -779,7 +781,7 @@ def parse_string_concat (R : Rec) : M Unit := do
   let flags := (← get).parse_flags
   modify fun s => { s with parse_flags := s.parse_flags &&& ~~~PARSE_FLAG_TOK_STR }
   let mut literals : Array ByteArray := #[]
-  let mut prefix : UInt8 := 0
+  let mut literalPrefix : UInt8 := 0
   let fuel ← fuelM
   for _ in [0:fuel] do
     let st ← get
@@ -788,8 +790,8 @@ def parse_string_concat (R : Rec) : M Unit := do
     let c := spelling.get! 0
     let mut p : UInt8 := if c == 76 || c == 117 || c == 85 then c else 0
     if p == 117 && spelling.get! 1 == 56 then p := 56
-    if p != 0 && prefix != 0 && p != prefix then tcc_error_s R "incompatible string literal prefixes"
-    if p != 0 then prefix := p
+    if p != 0 && literalPrefix != 0 && p != literalPrefix then tcc_error_s R "incompatible string literal prefixes"
+    if p != 0 then literalPrefix := p
     literals := literals.push spelling
     R.next
     if (← getTok) == TOK_PPSTR then
@@ -808,8 +810,8 @@ def parse_string_concat (R : Rec) : M Unit := do
       i := 1
       if spelling.get! 0 == 117 && spelling.get! 1 == 56 then i := 2
     let mut sp := ByteArray.empty
-    if prefix == 56 then sp := "u8".toUTF8
-    else if prefix != 0 then sp := sp.push prefix
+    if literalPrefix == 56 then sp := "u8".toUTF8
+    else if literalPrefix != 0 then sp := sp.push literalPrefix
     sp := sp ++ spelling.extract i spelling.size
     parse_string R sp sp.size
     let st ← get

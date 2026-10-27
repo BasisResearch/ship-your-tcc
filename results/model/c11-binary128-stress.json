@@ -1,0 +1,61 @@
+{
+  "command": [
+    "scripts/model_diff.py",
+    "build/ld-stress.c",
+    "-j",
+    "1",
+    "--no-report",
+    "--json-out",
+    "results/model/c11-binary128-stress.json",
+    "-v"
+  ],
+  "runtime_key": "bf56a53d9d96b0b6286cdbabd0598dedcb582508d8f1166d4e9367aef242a639",
+  "pins": {
+    "vendor/TINYCC_REV": "76ca376f1f96cf1b316713d8f94d91c8629445929d1e7474792fd76610bce1c0",
+    "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+    "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+    "patches/0003-tcc-c11.patch": "8ce084ebb702b1889a0d56603e7a1551d0171225f761bb131926d73d46acc9c5",
+    "patches/0004-tcc-binary128-literals.patch": "4dfcc192c23a777b1b335e9052a416956886b1071c3de1e8da403b5b194e221e",
+    "c/build/base.elf": "5502363b8447bea47322b575d8a62878c300edb61deb03f30820c65700686c2d",
+    "c/src/gen_embed.sh": "68534ee3a238c143bf4e749fcb0ea43e8b53933c4a9d6843422d995c879d7d76",
+    "scripts/model_diff.py": "ed164d1db6171f89c42563e55045c64f50eb594d86f79021fbfd84fb2fa2a469",
+    ".lake/build/bin/tcc_model": "5e98a03fee823bacd91566282c837a9907b6d030b8842eeb602d22a5cfca814c",
+    "build/ld-stress.c": "1c951f56156bf87989b1080abf4904d8988d09a3784220153a901f66456197d9"
+  },
+  "results": {
+    "build": [
+      {
+        "name": "build/ld-stress.c",
+        "model_s": 0.11326456069946289,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 85268 bytes"
+      }
+    ]
+  },
+  "rows": [
+    [
+      "build",
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.11326456069946289
+    ]
+  ],
+  "totals": {
+    "n": 1,
+    "same": 1
+  },
+  "wall_seconds": 3.5115816593170166,
+  "reference": "rv64emu diagnostic; Sail arena equality pending",
+  "compiler_args": [
+    "-std=c11",
+    "-w"
+  ]
+}

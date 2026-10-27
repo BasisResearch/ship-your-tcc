@@ -1,0 +1,71 @@
+{
+  "command": [
+    "scripts/model_diff.py",
+    "results/model/c11-state.c",
+    "results/model/c11-pragma-operand.c",
+    "-j",
+    "2",
+    "--no-report",
+    "--json-out",
+    "results/model/c11-state.json",
+    "-v"
+  ],
+  "runtime_key": "bf56a53d9d96b0b6286cdbabd0598dedcb582508d8f1166d4e9367aef242a639",
+  "pins": {
+    "vendor/TINYCC_REV": "76ca376f1f96cf1b316713d8f94d91c8629445929d1e7474792fd76610bce1c0",
+    "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+    "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+    "patches/0003-tcc-c11.patch": "8ce084ebb702b1889a0d56603e7a1551d0171225f761bb131926d73d46acc9c5",
+    "patches/0004-tcc-binary128-literals.patch": "4dfcc192c23a777b1b335e9052a416956886b1071c3de1e8da403b5b194e221e",
+    "c/build/base.elf": "5502363b8447bea47322b575d8a62878c300edb61deb03f30820c65700686c2d",
+    "c/src/gen_embed.sh": "68534ee3a238c143bf4e749fcb0ea43e8b53933c4a9d6843422d995c879d7d76",
+    "scripts/model_diff.py": "ed164d1db6171f89c42563e55045c64f50eb594d86f79021fbfd84fb2fa2a469",
+    ".lake/build/bin/tcc_model": "5e98a03fee823bacd91566282c837a9907b6d030b8842eeb602d22a5cfca814c",
+    "results/model/c11-state.c": "a49384cc12ad272e2ffac7fbcce5185f84c0f41a303c9b3fceafa02f4df0b90d",
+    "results/model/c11-pragma-operand.c": "38fbfc92d2492c6d97c2848ae765945222dd25fcebb2b38eab44934002a51045"
+  },
+  "results": {
+    "results/model": [
+      {
+        "name": "results/model/c11-state.c",
+        "model_s": 0.02632284164428711,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13116 bytes"
+      },
+      {
+        "name": "results/model/c11-pragma-operand.c",
+        "model_s": 0.013016700744628906,
+        "ref": "exit",
+        "model": "exit",
+        "result": "same-refusal",
+        "why": "both stop: exit 1"
+      }
+    ]
+  },
+  "rows": [
+    [
+      "results/model",
+      2,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0.019669771194458008
+    ]
+  ],
+  "totals": {
+    "n": 2,
+    "same": 1
+  },
+  "wall_seconds": 0.4751918315887451,
+  "reference": "rv64emu diagnostic; Sail arena equality pending",
+  "compiler_args": [
+    "-std=c11",
+    "-w"
+  ]
+}

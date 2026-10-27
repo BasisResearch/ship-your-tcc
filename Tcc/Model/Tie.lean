@@ -1,5 +1,5 @@
 import Tcc.Model.Gen8
-import Tcc.Model.Run
+import Tcc.Model.Main
 
 /-!
 # TccModel: tying the knot
@@ -17,6 +17,7 @@ def fuelErr {α : Type} : M α := throw (.fuel "recursion depth")
 
 /-- the record at depth 0 -/
 def bot : Rec where
+  tcc_set_options := fun _ => fuelErr
   next := fuelErr
   next_nomacro := fuelErr
   preprocess := fun _ => fuelErr
@@ -78,6 +79,7 @@ def bot : Rec where
 
 /-- the record at depth n+1 from the one at depth n -/
 def step (r : Thunk Rec) : Rec where
+  tcc_set_options := fun p s => (Tcc.Model.tcc_set_options r.get p).run s
   next := fun s => (Tcc.Model.next r.get).run s
   next_nomacro := fun s => (Tcc.Model.next_nomacro r.get).run s
   preprocess := fun b s => (Tcc.Model.preprocess r.get b).run s

@@ -70,11 +70,34 @@ def sha(*parts):
 
 def runtime_key():
     elf = os.path.join(ROOT, 'c', 'build', 'base.elf')
-    out = subprocess.run([os.path.join(TC, 'riscv-none-elf-objcopy'), '-O', 'binary', '-R', '.embed', elf, '/dev/stdout'],
-                         capture_output=True, check=True).stdout
-    if not out:
+    # objcopy seeks when writing binary output. /dev/stdout can contain only
+    # partial .text even when the process fails; always check a regular file.
+    with tempfile.TemporaryDirectory(prefix='model-runtime-') as work:
+        binary = os.path.join(work, 'runtime.bin')
+        subprocess.run([os.path.join(TC, 'riscv-none-elf-objcopy'), '-O', 'binary',
+                        '-R', '.embed', elf, binary], capture_output=True, check=True)
+        runtime = open(binary, 'rb').read()
+    if not runtime:
         raise RuntimeError('empty reference runtime image')
-    return hashlib.sha256(out).hexdigest()[:16]
+    h = hashlib.sha256()
+    def add(label, data):
+        for part in (label.encode(), data):
+            h.update(len(part).to_bytes(8, 'big'))
+            h.update(part)
+    add('cache-schema', b'independent-c11-v3')
+    add('runtime-without-embed', runtime)
+    # The runtime excludes .embed, whose headers and archives still determine
+    # compilation. Include every ordered image path and its exact file bytes.
+    add('fs.list', open(FSLIST, 'rb').read())
+    for line in open(FSLIST):
+        if not line.strip():
+            continue
+        image_path, host_path = line.rstrip('\n').split('=', 1)
+        add('fs:' + image_path, open(host_path, 'rb').read())
+    for path in ('c/src/gen_embed.sh', 'scripts/ref_arena.sh',
+                 'scripts/rv64emu.c', 'scripts/model_diff.py'):
+        add(path, open(os.path.join(ROOT, path), 'rb').read())
+    return h.hexdigest()
 
 
 def parse_arena(path):
@@ -91,7 +114,7 @@ def parse_arena(path):
 def ref_run(prog, extra, args, libs, rtkey):
     """scripts/ref_arena.sh, cached: (status, data) where status is 'ran'
     (data = arena path) or 'exit' (data = (code, console bytes))."""
-    key = sha('independent-c11-v2', open(prog, 'rb').read(), repr(extra), repr(args), repr(libs), rtkey, open(os.path.join(ROOT, 'c/src/gen_embed.sh'), 'rb').read(),
+    key = sha('independent-c11-v3', open(prog, 'rb').read(), repr(extra), repr(args), repr(libs), rtkey, open(os.path.join(ROOT, 'c/src/gen_embed.sh'), 'rb').read(),
               *[open(h, 'rb').read() for _, h in extra])
     base = os.path.join(CACHE, key)
     if os.path.exists(base + '.status'):
@@ -281,8 +304,17 @@ def main():
         subprocess.run(['make', '-s', '-C', os.path.join(ROOT, 'c'),
                         'BUILD=build', 'FLAGS=0', 'ELF=build/base.elf', 'build/base.elf'],
                        check=True, stdout=subprocess.DEVNULL)
-        with open(SYMS, 'w') as f:
-            subprocess.run([os.path.join(ROOT, 'scripts', 'gen_image_syms.sh')], stdout=f, check=True)
+        # Other invocations may already be running model processes. Publish
+        # a complete symbol table atomically so readers never see truncation.
+        with tempfile.NamedTemporaryFile(dir=os.path.dirname(SYMS), delete=False) as f:
+            symbol_tmp = f.name
+            try:
+                subprocess.run([os.path.join(ROOT, 'scripts', 'gen_image_syms.sh')], stdout=f, check=True)
+                f.flush()
+                os.replace(symbol_tmp, SYMS)
+            finally:
+                if os.path.exists(symbol_tmp):
+                    os.unlink(symbol_tmp)
     os.makedirs(CACHE, exist_ok=True)
     rtkey = runtime_key()
     mode = 'obj' if a.obj else 'c'

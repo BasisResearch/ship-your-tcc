@@ -49,6 +49,14 @@ def tcc_parse_args (R : Rec) (argv : Array ByteArray) : M (Int32 × Array ByteAr
     let opt := r.extract 1 r.size
     if opt == "w".toUTF8 then
       modify fun s => { s with warn_none := 1 }
+    else if opt.size > 0 && (opt.get! 0 == 102 || opt.get! 0 == 109 || opt.get! 0 == 87) then
+      let group := opt.get! 0
+      let arg := opt.extract 1 opt.size
+      let flags := if group == 102 then options_f else if group == 109 then options_m else options_W
+      if !(group == 87 && arg.size == 0) && (← set_flag flags arg) < 0 then
+        if group == 109 && arg == "32".toUTF8 then return (32, #[])
+        if !(group == 109 && arg == "64".toUTF8) then
+          tcc_warning_c R WARNC_unsupported (cfmt "unsupported option '%s'" [.s r])
     else if opt.size ≥ 3 && opt.extract 0 3 == "std".toUTF8 then
       -- libtcc.c's TCC_OPTION_std only updates these two spellings.
       let value := opt.extract 3 opt.size
@@ -83,6 +91,37 @@ def tcc_parse_args (R : Rec) (argv : Array ByteArray) : M (Int32 × Array ByteAr
     if o.size != 0 then unsupported "-run<options>"
     return (0, argv.extract (optind - 1) argv.size)
   | none => return (if empty then 1 else 0, #[])
+
+/-- `dynarray_split(..., sep=0)`: double quotes and escaped quotes/backslashes,
+including the trailing unmatched quote behavior of libtcc.c. -/
+def split_option_args (text : ByteArray) : Array ByteArray := Id.run do
+  let mut args := #[ByteArray.empty]
+  let mut p := 0
+  for _ in [0:text.size + 1] do
+    for _ in [0:text.size + 1] do
+      let c := text.get! p
+      if c != 0 && c <= 32 then p := p + 1 else break
+    if text.get! p == 0 then break
+    let mut arg := ByteArray.empty
+    let mut quoted := false
+    for _ in [0:text.size + 1] do
+      let mut c := text.get! p
+      if c == 0 then break
+      p := p + 1
+      if c == 92 && (text.get! p == 34 || text.get! p == 92) then
+        c := text.get! p
+        p := p + 1
+      else if c == 34 then
+        quoted := !quoted
+        continue
+      else if c <= 32 && !quoted then break
+      arg := arg.push c
+    args := args.push arg
+  return args
+
+/-- Options supplied by #pragma use the same parser as command-line options. -/
+def tcc_set_options (R : Rec) (text : ByteArray) : M Int32 := do
+  return (← tcc_parse_args R (split_option_args text)).1
 
 /-- `tcc_set_output_type(s, output_type)` for TCC_OUTPUT_MEMORY -/
 def tcc_set_output_type (output_type : Int32) : M Int32 := do
