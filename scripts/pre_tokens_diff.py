@@ -39,23 +39,29 @@ def run(cmd,timeout=120):
         raise ProtocolError('timeout: '+str(cmd[0])) from e
 
 
+def fixture_files(path):
+    names=re.findall(rb'#\s*include\s*"([^"/]+)"',path.read_bytes())
+    direct=[path.parent/n.decode() for n in names if (path.parent/n.decode()).is_file()]
+    return sorted({path,*path.parent.glob('*.h'),*direct})
+
+
 def materialize(path,d):
     """Same virtual names for both raw observers. Header bytes are independent
     image files, never spec/model outputs. First fs.list entry wins."""
-    entries=[];seen=set()
+    entries=[('/prog.c',path)];seen={'/prog.c'}
     for row in Path(old.FSLIST).read_text().splitlines():
         if not row:continue
         p,h=row.split('=',1)
         if p.endswith(('.a','.o')) or p in seen:continue
         seen.add(p);entries.append((p,Path(h)))
-    names=re.findall(rb'#\s*include\s*"([^"/]+)"',path.read_bytes())
-    locals_=sorted({n.decode() for n in names if (path.parent/n.decode()).is_file()})
-    for name in locals_:
-        entries.append(('/'+name,path.parent/name))
-    # Headers may themselves include a local header; retain sibling headers
-    # for focused once/include fixtures and tests2 multilevel include tests.
-    for h in sorted(path.parent.glob('*.h')):
-        if '/'+h.name not in {p for p,_ in entries}:entries.append(('/'+h.name,h))
+    # The entry is relocated to /prog.c, but corpus fixtures also address
+    # themselves by basename (including through macro operands) and sibling
+    # headers as ../<original-directory>/header.h. Supply the same explicit
+    # aliases to every observer; these are input bytes, never observed output.
+    for h in fixture_files(path):
+        for virtual in ['/'+h.name, '/'+path.parent.name+'/'+h.name]:
+            if virtual not in seen:
+                seen.add(virtual);entries.append((virtual,h))
     for p,h in entries:
         target=d/p.lstrip('/')
         target.parent.mkdir(parents=True,exist_ok=True)
@@ -207,7 +213,7 @@ def main():
     pins += [ROOT/'scripts/pre_diff.py',ROOT/'scripts/tests/test_raw_tokens.py',ROOT/'scripts/tests/test_pre_tokens_integration.py']
     hashes={str(p.relative_to(ROOT)):digest(p) for p in pins}
     input_paths=set(files)
-    for p in files:input_paths.update(p.parent.glob('*.h'))
+    for p in files:input_paths.update(fixture_files(p))
     input_hashes={str(p):digest(p) for p in sorted(input_paths)}
     fs_pins={h:digest(h) for l in Path(old.FSLIST).read_text().splitlines() if l for p,h in [l.split('=',1)] if p.endswith('.h')}
     ref_build=json.loads((ROOT/'build/pre-tokens-ref/build.json').read_text())

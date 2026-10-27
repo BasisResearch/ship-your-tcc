@@ -26,7 +26,7 @@ namespace CSem.Pre
 
 /-- A file being processed. `path`: the path it was opened with (its
 directory is searched first for `#include "…"`, §6.10.2p3, and it keys
-`#pragma once`, after resolution); `presumed`/`lineDelta`: `#line` state (§6.10.4: presumed
+`#pragma once`, under the configured cache identity); `presumed`/`lineDelta`: `#line` state (§6.10.4: presumed
 name and presumed line − physical line); `foundAt`: index of the search
 place it was found in (for `#include_next`); `level`: include nesting
 (main file 1). -/
@@ -52,9 +52,8 @@ structure CondFrame where
 structure PState where
   macros : Macros
   counter : Nat
-  /-- the files that had `#pragma once`, by their resolved path (the file,
-  not the spelling it was named by) -/
-  once : List (List Bytes)
+  /-- Files that had `#pragma once`, by the configured cache identity. -/
+  once : List OnceKey
   pushed : List (Bytes × Option MacroDef)
   /-- the output so far, reversed -/
   out : List PPToken
@@ -299,7 +298,7 @@ enabled): `some st'`; others: `none` (they go to the output). -/
 def phase4Pragma (cfg : PreCfg) (fc : FileCtx) (st : PState) (ts : List Tok) : Option PState :=
   match ts with
   | [o] => if cfg.ext.pragmaOnce ∧ o.kind = .ident ∧ o.spell = bs "once" then
-             some { st with once := FileSys.normComponents fc.path :: st.once } else none
+             some { st with once := cfg.onceKey fc.path :: st.once } else none
   | _ =>
     let ctx : ExpCtx :=
       { cfg := cfg, macros := st.macros, pushed := st.pushed,
@@ -495,7 +494,7 @@ def procFile (cfg : PreCfg) (fs : FileSys) : Nat → PState → FileCtx → List
               match searchHeader cfg fs fc quote next nm with
               | none => throw (err .include s!"header not found (§6.10.2p2)")
               | some (path, foundAt, contents) =>
-                if st.once.contains (FileSys.normComponents path) then procFile cfg fs fuel st fc rest' false conds
+                if st.once.contains (cfg.onceKey path) then procFile cfg fs fuel st fc rest' false conds
                 else if fc.level + 1 > cfg.maxIncludeDepth then
                   throw (err .limit "#include nested too deeply (§5.2.4.1)")
                 else do

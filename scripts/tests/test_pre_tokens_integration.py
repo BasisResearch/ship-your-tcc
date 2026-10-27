@@ -34,6 +34,31 @@ class RawIntegration(unittest.TestCase):
                 else:
                     self.assertIsNotNone(err)
             return model,ref
+    def test_macro_self_include_fixture(self):
+        (self.cases/'self.c').write_text('#ifndef SELF_SEEN\n#define SELF_SEEN 1\n'
+            '#define SELF_NAME "self.c"\n#include SELF_NAME\n#else\nselected_self\n#endif\n')
+        m,_=self.observe('self')
+        self.assertEqual(m.tokens[-1:], [('I',b'selected_self')])
+    def test_original_directory_include_fixture(self):
+        (self.cases/'relative_header.h').write_text('27\n')
+        (self.cases/'relative.c').write_text('#include "../cases/relative_header.h"\n')
+        m,_=self.observe('relative')
+        self.assertEqual(m.tokens[-1:], [('N',b'27')])
+    def test_once_opened_path_policy(self):
+        for operator,pragma in [(False,'#pragma once'),(True,'_Pragma("once")')]:
+            with self.subTest(operator=operator):
+                (self.cases/'once_path.h').write_text(pragma+'\n__COUNTER__\n')
+                (self.cases/'once_path.c').write_text('#include "once_path.h"\n'
+                    '#include "./once_path.h"\n#include "once_path.h"\n'
+                    '#include "../cases/once_path.h"\n')
+                m,_=self.observe('once_path')
+                self.assertEqual(m.tokens[-3:], [('N',b'0'),('N',b'1'),('N',b'2')])
+                with tempfile.TemporaryDirectory() as t:
+                    d=Path(t);listing=h.materialize(self.cases/'once_path.c',d)
+                    rc,out,_=h.run([h.SPEC,'--cfg','E','--fslist',listing,self.cases/'once_path.c'])
+                    tokens,err=h.spec_obs(rc,out)
+                    self.assertIsNone(err)
+                    self.assertEqual(tokens[-2:], [('N',b'0'),('N',b'1')])
     def test_prefixes_and_no_concat(self):
         m,_=self.observe('prefixes')
         expected=[('S',b'L"wide"'),('S',b'u8"utf8"'),('S',b'u"utf16"'),('S',b'U"utf32"'),

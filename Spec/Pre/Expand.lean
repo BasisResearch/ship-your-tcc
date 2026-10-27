@@ -87,7 +87,7 @@ structure ExpCtx where
   hasInc : Bool → Bytes → Bool
   nextPragma : Nat := 0
   path : Bytes := []
-  onceFiles : List (List Bytes) := []
+  onceFiles : List OnceKey := []
   pack : List Nat := [0]
   /-- Supplied by the phase-4 driver for implementation-defined validation;
   it runs at execution, including during argument prescan. -/
@@ -442,7 +442,7 @@ def expand (ctx : ExpCtx) : Nat → Nat → List Tok → List Tok → Except Pre
                         throw (ex.ctx.err .directive t.line "malformed macro-stack pragma")
                       else if ex.ctx.cfg.ext.pragmaOnce ∧ ps.length = 1 ∧
                           (ps.head?.map (·.spell)) = some (bs "once") then
-                        expand { ex.ctx with onceFiles := FileSys.normComponents ex.ctx.path :: ex.ctx.onceFiles }
+                        expand { ex.ctx with onceFiles := ex.ctx.cfg.onceKey ex.ctx.path :: ex.ctx.onceFiles }
                           fuel ex.counter rest' acc
                       else
                         let pack ← ex.ctx.checkPragma ex.ctx.pack ps

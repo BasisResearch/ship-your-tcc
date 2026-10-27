@@ -24,6 +24,8 @@ without spaces (`parse_include`); plain `char` unsigned (riscv64-gen.c
 CHAR_IS_UNSIGNED); include nesting INCLUDE_STACK_SIZE 32 (level ≤ 33 with
 the main file at 1), #if nesting IFDEF_STACK_SIZE 64; non-STDC pragmas are
 macro-replaced after their first token (`pragma_parse` reads with `next()`).
+The image's `realpath` in c/src/main.c is identity, so its once cache uses
+opened path spellings; host `cfgTccE` uses resolved path components instead.
 Extensions tcc implements: `#include_next`, `#pragma once`,
 `push_macro`/`pop_macro`, `__COUNTER__`, `__has_include(_next)`,
 `#warning`, GNU line markers, `#!` on the first line, GNU named variadic
@@ -78,6 +80,7 @@ def cfgTcc : PreCfg where
   charSigned := false
   pragmaExpand := fun n => n = bs "pack" ∨ n = bs "comment" ∨ n = bs "push_macro" ∨ n = bs "pop_macro"
   pragmaEventsRightToLeft := true
+  pragmaOnceUsesOpenedPath := true
   ext := extTcc
 
 /-- The cross tcc's `tcc -E`, with the same file-system layout (the
@@ -86,6 +89,7 @@ are set by the driver to the host tcc's values. -/
 def cfgTccE : PreCfg :=
   { cfgTcc with
     predefs := bs predefsE
+    pragmaOnceUsesOpenedPath := false
     pragmaExpand := fun n => n = bs "push_macro" ∨ n = bs "pop_macro"
     ext := { extTcc with pragmaPack := false }
     includePaths := [bs "/lib/tcc/include", bs "/include"]

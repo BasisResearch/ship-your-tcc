@@ -114,8 +114,8 @@ structure Ext where
   /-- `#include_next` (GNU): continue the header search after the place the
   current file was found. -/
   includeNext : Bool
-  /-- `#pragma once`: a file is not included again (the same file: its path
-  after resolving `.`, `..` and repeated `/`). -/
+  /-- Enable `#pragma once`; the configured cache identity determines
+  whether different opened spellings name the same cache entry. -/
   pragmaOnce : Bool
   /-- `#pragma push_macro("X")` / `#pragma pop_macro("X")`. -/
   pushPopMacro : Bool
@@ -151,6 +151,12 @@ structure Ext where
   /-- Validate the implementation's pack stack choices in compiler mode. -/
   pragmaPack : Bool := false
   deriving Repr, Inhabited
+
+/-- Cache identity is separate from resolved physical source provenance. -/
+inductive OnceKey where
+  | opened (path : Bytes)
+  | resolved (components : List Bytes)
+  deriving BEq, Repr, Inhabited
 
 /-- The implementation's choices for phases 1–4.
 
@@ -207,6 +213,15 @@ structure PreCfg where
   Their effects have already executed during prescan; tcc reports the last
   argument first when a subsequent macro transforms those arguments. -/
   pragmaEventsRightToLeft : Bool := false
+  /-- The image's identity realpath stub caches the exact opened spelling.
+  Host tcc instead resolves dot components before comparing once entries. -/
+  pragmaOnceUsesOpenedPath : Bool := false
   ext : Ext
+
+/-- Both directive and operator pragmas use the same configured cache key.
+This does not change filesystem lookup or source provenance identities. -/
+def PreCfg.onceKey (cfg : PreCfg) (path : Bytes) : OnceKey :=
+  if cfg.pragmaOnceUsesOpenedPath then .opened path
+  else .resolved (FileSys.normComponents path)
 
 end CSem.Pre
