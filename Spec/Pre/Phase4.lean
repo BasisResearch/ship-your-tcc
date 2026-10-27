@@ -57,6 +57,9 @@ structure PState where
   pushed : List (Bytes × Option MacroDef)
   /-- the output so far, reversed -/
   out : List PPToken
+  nextPragma : Nat := 0
+  seenPragmas : List Nat := []
+  pack : List Nat := [0]
 
 def fileErr (fc : FileCtx) (k : ErrKind) (line : Nat) (msg : String) : PreError :=
   ⟨k, fc.presumed, line, msg⟩
@@ -285,27 +288,66 @@ def phase4Pragma (cfg : PreCfg) (fc : FileCtx) (st : PState) (ts : List Tok) : O
         hasInc := fun _ _ => false }
     (macroPragma ctx ts).map fun ctx' => { st with macros := ctx'.macros, pushed := ctx'.pushed }
 
-/-- Emit expanded text: tokens go to the output; pragma markers (from
-`_Pragma`) are executed if they are phase-4 pragmas, else output. A `'` or
-`"` that is not part of a literal is undefined behaviour (§6.4p3): error. -/
+/-- The compiler's implementation-defined pack choices. Validation happens
+when the pragma executes, including in a subsequently discarded argument.
+The payload itself is retained verbatim for the observation. -/
+def checkPragma (cfg : PreCfg) (fc : FileCtx) (pack : List Nat)
+    (ts : List Tok) : Except PreError (List Nat) := do
+  if !cfg.ext.pragmaPack ∨ (ts.head?.map (·.spell)) ≠ some (bs "pack") then
+    return pack
+  let line := (ts.head?.map (·.line)).getD 0
+  let err := fileErr fc .directive line "malformed #pragma pack"
+  let value (t : Tok) : Except PreError Nat := do
+    match parseIntConst cfg.ext.binaryLiterals t.spell with
+    | some v =>
+      if t.kind = .ppNumber ∧
+          !(t.spell.any (fun c => c = 85 ∨ c = 117 ∨ c = 76 ∨ c = 108)) ∧
+          v.v ∈ [1, 2, 4, 8, 16] then pure v.v.toNat else throw err
+    | none => throw err
+  match ts.tail with
+  | lp :: more =>
+    if !isPunct lp "(" then throw err
+    match more with
+    | rp :: [] =>
+      if isPunct rp ")" then return 0 :: pack.tail else throw err
+    | op :: rp :: [] =>
+      if !isPunct rp ")" then throw err
+      if op.spell = bs "pop" then
+        if pack.length ≤ 1 then throw err else return pack.tail
+      else if op.spell = bs "push" then
+        if pack.length ≥ 8 then throw err else return pack.headD 0 :: pack
+      else return (← value op) :: pack.tail
+    | op :: comma :: n :: rp :: [] =>
+      if op.spell ≠ bs "push" ∨ !isPunct comma "," ∨ !isPunct rp ")" ∨ pack.length ≥ 8 then throw err
+      return (← value n) :: pack
+    | _ => throw err
+  | [] => throw err
+
+/-- Emit semantic tokens and render each executed event once, at its first
+surviving stream position. Events cannot contain expansion items. -/
 def emitText (cfg : PreCfg) (fc : FileCtx) : Nat → PState → List Tok → Except PreError PState
   | _, st, [] => .ok st
   | 0, _, t :: _ => .error (fileErr fc .fuel t.line "emit fuel")
   | fuel + 1, st, t :: rest =>
-    if t.kind = .pragmaBegin then
-      let body := rest.takeWhile (·.kind ≠ .pragmaEnd)
-      let rest' := (rest.drop body.length).drop 1
-      match phase4Pragma cfg fc st body with
-      | some st' => emitText cfg fc fuel st' rest'
-      | none => emitText cfg fc fuel { st with out := (pragmaOut body).reverse ++ st.out } rest'
-    else if t.kind = .other ∧ (t.spell = [39] ∨ t.spell = [34]) then
-      .error (fileErr fc .lexical t.line "unmatched quote (§6.4p3)")
-    else emitText cfg fc fuel { st with out := ⟨t.kind, t.spell⟩ :: st.out } rest
+    match t.pragma with
+    | some ev =>
+      if st.seenPragmas.contains ev.id then emitText cfg fc fuel st rest
+      else
+        let rendered := ⟨.pragmaBegin, []⟩ :: ev.payload ++ [⟨.pragmaEnd, []⟩]
+        emitText cfg fc fuel { st with
+          out := rendered.reverse ++ st.out,
+          seenPragmas := ev.id :: st.seenPragmas } rest
+    | none =>
+      if t.kind = .other ∧ (t.spell = [39] ∨ t.spell = [34]) then
+        .error (fileErr fc .lexical t.line "unmatched quote (§6.4p3)")
+      else emitText cfg fc fuel { st with out := ⟨t.kind, t.spell⟩ :: st.out } rest
 
 /-! ### The phase-4 driver -/
 
 def ExpCtx.ofState (cfg : PreCfg) (fs : FileSys) (fc : FileCtx) (st : PState) (inIf : Bool) : ExpCtx :=
   { cfg := cfg, macros := st.macros, pushed := st.pushed, file := fc.presumed, lineDelta := fc.lineDelta, inIf := inIf,
+    nextPragma := st.nextPragma, path := fc.path, onceFiles := st.once, pack := st.pack,
+    checkPragma := CSem.Pre.checkPragma cfg fc,
     hasInc := fun next h =>
       match headerOf h with
       | some (q, n) => (searchHeader cfg fs fc q next n).isSome
@@ -313,7 +355,9 @@ def ExpCtx.ofState (cfg : PreCfg) (fs : FileSys) (fc : FileCtx) (st : PState) (i
 
 /-- Propagate the effects of expansion, including argument prescanning. -/
 def PState.afterExpansion (st : PState) (ex : Expansion) : PState :=
-  { st with macros := ex.ctx.macros, pushed := ex.ctx.pushed, counter := ex.counter }
+  { st with
+    macros := ex.ctx.macros, pushed := ex.ctx.pushed, counter := ex.counter,
+    nextPragma := ex.ctx.nextPragma, once := ex.ctx.onceFiles, pack := ex.ctx.pack }
 
 def isActive : List CondFrame → Bool
   | [] => true
@@ -472,11 +516,18 @@ def procFile (cfg : PreCfg) (fs : FileSys) : Nat → PState → FileCtx → List
             | some st' => procFile cfg fs fuel st' fc rest' false conds
             | none =>
               let isStdc : Bool := match args.head? with | some o => o.spell = bs "STDC" | none => false
-              let (st, body) ← if cfg.pragmaExpand ∧ ¬isStdc then do
+              let (st, body) ← if cfg.pragmaExpand ((args.head?.map (·.spell)).getD []) ∧ ¬isStdc then do
                   let ex ← expand (ExpCtx.ofState cfg fs fc st false) fuel st.counter args.tail []
                   pure ((st.afterExpansion ex), args.take 1 ++ ex.tokens)
                 else pure (st, args)
-              procFile cfg fs fuel { st with out := (pragmaOut body).reverse ++ st.out } fc rest' false conds
+              -- A recognized operand may itself be macro-replaced. Execute
+              -- that resulting phase-4 action before processing more source.
+              match phase4Pragma cfg fc st body with
+              | some st' => procFile cfg fs fuel st' fc rest' false conds
+              | none =>
+                if isMacroPragma cfg body then throw (err .directive "malformed macro-stack pragma")
+                let pack ← checkPragma cfg fc st.pack body
+                procFile cfg fs fuel { st with pack := pack, out := (pragmaOut body).reverse ++ st.out } fc rest' false conds
           else if cfg.ext.hashBang ∧ bof ∧ fc.isMain ∧ isPunct d "!" then
             procFile cfg fs fuel st fc rest' false conds
           else

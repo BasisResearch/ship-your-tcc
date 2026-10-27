@@ -247,4 +247,45 @@ the image invokes the patched compiler with `-std=c11`. -/
 #guard ppFails cfgIso testFS "#define P 123\n_Pragma(P)\n"
 #guard ppFails cfgIso testFS "_Pragma(\"once\" \"once\")\n"
 
+/-! ### Opaque pragma events through argument reuse, # and ##. -/
+def event (body : String) : List PPToken :=
+  [⟨.pragmaBegin, []⟩] ++ toksOf cfgIso body ++ [⟨.pragmaEnd, []⟩]
+
+def eventsAre (src : String) (expected : List PPToken) : Bool :=
+  match runPP Tcc.cfgTcc testFS "", runPP Tcc.cfgTcc testFS src with
+  | some pre, some out => out == pre ++ expected
+  | _, _ => false
+
+#guard eventsAre "#pragma unknown __COUNTER__\n__COUNTER__\n"
+  (event "unknown __COUNTER__" ++ toksOf cfgIso "0")
+#guard eventsAre "#define X 7\n#pragma unknown X\n"
+  (event "unknown X")
+#guard eventsAre "#define D(x) before x middle x after\nD(_Pragma(\"pack(push,1)\") word)\n"
+  (toksOf cfgIso "before" ++ event "pack(push,1)" ++ toksOf cfgIso "word middle word after")
+#guard eventsAre "#define S0(x) #x\n#define S(x) S0(x)\nS(_Pragma(\"pack(push,1)\") word) after\n"
+  (event "pack(push,1)" ++ toksOf cfgIso "\"word\" after")
+#guard eventsAre "#define C0(a,b) a##b\n#define C(a,b) C0(a,b)\nC(_Pragma(\"pack(push,1)\"),word) after\n"
+  (event "pack(push,1)" ++ toksOf cfgIso "word after")
+#guard eventsAre "_Pragma(_Pragma(\"unknown inner\") \"unknown outer\") after\n"
+  (event "unknown inner" ++ event "unknown outer" ++ toksOf cfgIso "after")
+#guard eventsAre "#define C0(a,b) a##b\n#define C(a,b) C0(a,b)\nC(_Pragma(\"unknown left\") ab,_Pragma(\"unknown right\") cd) after\n"
+  (event "unknown right" ++ event "unknown left" ++ toksOf cfgIso "abcd after")
+#guard ppFails cfgIso testFS "_Pragma(u8\"unknown\")\n"
+#guard ppFails cfgIso testFS "_Pragma(u\"unknown\")\n"
+#guard ppFails cfgIso testFS "_Pragma(U\"unknown\")\n"
+#guard ppFails Tcc.cfgTcc testFS "#pragma pack(1U)\n"
+#guard ppFails Tcc.cfgTcc testFS "#pragma pack(1L)\n"
+#guard ppFails Tcc.cfgTcc testFS "#pragma pack(3)\n"
+#guard ppFails Tcc.cfgTcc testFS "_Pragma(\"pack(3)\")\n"
+#guard ppFails Tcc.cfgTcc testFS "#pragma pack(pop)\n"
+#guard eventsAre "#define N 2\n_Pragma(\"pack(push,N)\")\n_Pragma(\"pack(pop)\")\n"
+  (event "pack(push,2)" ++ event "pack(pop)")
+#guard ppIs Tcc.cfgTcc
+  ⟨testFS.files ++ [(bs "/once-operator.h", bs "_Pragma(\"once\")\n__COUNTER__\n")]⟩
+  "#include \"once-operator.h\"\n#include \"once-operator.h\"\n__COUNTER__\n" "0 1"
+#guard ppIs Tcc.cfgTcc testFS "#define X 11\n#define NAME \"X\"\n#pragma push_macro(NAME)\n#undef X\n#define X 22\n#pragma pop_macro(NAME)\nX\n" "11"
+#guard ppIs Tcc.cfgTcc testFS "#define X 11\n#define NAME \"X\"\n_Pragma(\"push_macro(NAME)\")\n#undef X\n#define X 22\n_Pragma(\"pop_macro(NAME)\")\nX\n" "11"
+#guard ppFails Tcc.cfgTcc testFS "#pragma push_macro(42)\n"
+#guard ppFails Tcc.cfgTcc testFS "_Pragma(\"pop_macro(42)\")\n"
+
 end CSem.Pre.Test

@@ -43,7 +43,7 @@ def cfgIso : PreCfg where
   maxIncludeDepth := 15
   maxIfDepth := 63
   charSigned := true
-  pragmaExpand := false
+  pragmaExpand := fun _ => false
   ext := extNone
 
 end CSem.Pre

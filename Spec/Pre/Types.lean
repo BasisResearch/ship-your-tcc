@@ -46,6 +46,13 @@ structure PPToken where
   spell : Bytes
   deriving DecidableEq, Repr, Inhabited
 
+/-- A single execution of a pragma retained for later phases. Its identity
+survives cached argument reuse; its payload is opaque to macro operators. -/
+structure PragmaEvent where
+  id : Nat
+  payload : List PPToken
+  deriving Repr, Inhabited
+
 /-- What went wrong. The specification stops at the first error: a violated
 constraint of §6.10 (a diagnostic is required, §5.1.1.3), undefined
 behaviour the specification chooses to reject (each site names its
@@ -141,6 +148,8 @@ structure Ext where
   (tcc, gcc). newlib's own headers need it: `<limits.h>` included first
   defines `ARG_MAX` twice differently (results/pre/f2-diff.md). -/
   redefine : Bool
+  /-- Validate the implementation's pack stack choices in compiler mode. -/
+  pragmaPack : Bool := false
   deriving Repr, Inhabited
 
 /-- The implementation's choices for phases 1–4.
@@ -191,9 +200,13 @@ structure PreCfg where
   expression (implementation-defined); `charSigned` is whether plain `char`
   is signed (tcc RV64: unsigned). -/
   charSigned : Bool
-  /-- §6.10.6p1: whether the tokens of a non-`STDC` pragma after its first
-  token are macro-replaced (tcc: yes). -/
-  pragmaExpand : Bool
+  /-- §6.10.6p1: whether operands of this non-`STDC` pragma are
+  macro-replaced. Ignored pragmas need not expand their operands. -/
+  pragmaExpand : Bytes → Bool
+  /-- Order of retained events lifted out of different arguments by #/##.
+  Their effects have already executed during prescan; tcc reports the last
+  argument first when a subsequent macro transforms those arguments. -/
+  pragmaEventsRightToLeft : Bool := false
   ext : Ext
 
 end CSem.Pre

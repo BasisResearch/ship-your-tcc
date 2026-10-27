@@ -41,6 +41,8 @@ structure Tok where
   ws : Bool
   line : Nat
   hs : List Bytes
+  /-- Zero-width phase-4 event, never an operand of # or ##. -/
+  pragma : Option PragmaEvent := none
   deriving Repr, Inhabited
 
 /-- The output of phase 3: a token or a retained new-line. -/

@@ -85,6 +85,13 @@ structure ExpCtx where
   lineDelta : Int
   inIf : Bool
   hasInc : Bool → Bytes → Bool
+  nextPragma : Nat := 0
+  path : Bytes := []
+  onceFiles : List (List Bytes) := []
+  pack : List Nat := [0]
+  /-- Supplied by the phase-4 driver for implementation-defined validation;
+  it runs at execution, including during argument prescan. -/
+  checkPragma : List Nat → List Tok → Except PreError (List Nat) := fun p _ => .ok p
 
 def ExpCtx.err (ctx : ExpCtx) (k : ErrKind) (line : Nat) (msg : String) : PreError :=
   ⟨k, ctx.file, line, msg⟩
@@ -160,6 +167,15 @@ and paste results use its line, while substituted arguments retain their
 own token locations. Its white space goes to the first result token. -/
 def substitute (ctx : ExpCtx) (m : MacroDef) (raw : List (List Tok))
     (exps : List (Nat × List Tok)) (hs : List Bytes) (inv : Tok) : Except PreError (List Tok) := do
+  -- An already executed event has zero width for # and ##. Lift it ahead
+  -- of the transformed replacement, retaining its identity and exact payload.
+  let transforms := m.items.any (fun it => match it with | .str .. | .paste => true | _ => false)
+  let eventArgs := if ctx.cfg.pragmaEventsRightToLeft then raw.reverse else raw
+  let events := if transforms then eventArgs.flatten.filter (·.pragma.isSome) else []
+  let raw := if transforms then raw.map (List.filter (·.pragma.isNone)) else raw
+  let lifted := events.filterMap (fun t => t.pragma.map (·.id))
+  let exps := if transforms then exps.map (fun (i, ts) =>
+    (i, ts.filter (fun t => !(t.pragma.any (fun ev => lifted.contains ev.id))))) else exps
   let getRaw (i : Nat) : List Tok := raw.getD i []
   let getExp (i : Nat) : List Tok := ((exps.find? (·.1 = i)).map (·.2)).getD []
   let items ← m.items.mapM (fun it =>
@@ -180,7 +196,7 @@ def substitute (ctx : ExpCtx) (m : MacroDef) (raw : List (List Tok))
       else pure (SItem.tok { comma with line := inv.line } :: (getExp i).map SItem.tok))
   let pasted ← pasteAll ctx inv.line items.flatten [] false
   let toks := pasted.filterMap (fun x => match x with | .tok t => some t | _ => none)
-  pure (setWs inv.ws (toks.map (fun t => { t with hs := hsUnion t.hs hs })))
+  pure (events ++ setWs inv.ws (toks.map (fun t => { t with hs := hsUnion t.hs hs })))
 
 /-- The parameters whose expanded argument is needed, in order of first use. -/
 def neededArgs (items : List RItem) : List Nat :=
@@ -281,12 +297,22 @@ def destringize (s : Bytes) : Bytes :=
     | [], acc => acc.reverse
   go inner []
 
-def markerTok (k : PPKind) (t : Tok) : Tok := { t with kind := k, spell := [] }
+/-- Events are a single opaque expansion item. Brackets are rendered only
+at the output boundary, so a macro cannot stringify or paste their payload. -/
+def eventTok (ctx : ExpCtx) (t : Tok) (ps : List Tok) : Tok :=
+  { t with
+    kind := .pragmaBegin, spell := [],
+    pragma := some ⟨ctx.nextPragma, ps.map (fun p => ⟨p.kind, p.spell⟩)⟩ }
 
 /-- The tokens of a `_Pragma` operand, lexed by phase 3 (§6.10.9). -/
 def pragmaToks (ctx : ExpCtx) (t : Tok) (s : Bytes) : Except PreError (List Tok) := do
   let items ← phase3 ctx.cfg ctx.file ((destringize s).map (fun c => (⟨c, t.line⟩ : PChar)))
   pure (items.filterMap (fun i => match i with | .tok x => some { x with line := t.line } | .nl _ => none))
+
+/-- Names whose implementation-defined action changes the macro stack. -/
+def isMacroPragma (cfg : PreCfg) (ts : List Tok) : Bool :=
+  cfg.ext.pushPopMacro ∧ ((ts.head?.map (·.spell)) = some (bs "push_macro") ∨
+    (ts.head?.map (·.spell)) = some (bs "pop_macro"))
 
 /-- Execute a macro-stack pragma immediately, so rescanning sees its effect.
 The spelling in the string operand is destringized before identifier lookup. -/
@@ -389,13 +415,31 @@ def expand (ctx : ExpCtx) : Nat → Nat → List Tok → List Tok → Except Pre
               match splitArgs 0 true more 0 [] [] with
               | some ([inner], _, rest') => do
                 let ex ← expand ctx fuel ctr inner []
-                match ex.tokens with
+                let acc := (ex.tokens.filter (·.pragma.isSome)).reverse ++ acc
+                match ex.tokens.filter (·.pragma.isNone) with
                 | [s] =>
-                  if s.kind = .strLit then do
+                  if s.kind = .strLit ∧ (s.spell.head? = some 34 ∨ s.spell.take 2 = [76, 34]) then do
                     let ps ← pragmaToks ex.ctx t s.spell
+                    let ex ← if ex.ctx.cfg.pragmaExpand ((ps.head?.map (·.spell)).getD []) ∧
+                        (ps.head?.map (·.spell)) ≠ some (bs "STDC") then do
+                      let body ← expand ex.ctx fuel ex.counter ps.tail []
+                      pure { body with tokens := ps.take 1 ++ body.tokens }
+                    else pure { ex with tokens := ps }
+                    let ps := ex.tokens
                     match macroPragma ex.ctx ps with
                     | some ctx' => expand ctx' fuel ex.counter rest' acc
-                    | none => expand ex.ctx fuel ex.counter rest' (markerTok .pragmaEnd t :: ps.reverse ++ markerTok .pragmaBegin t :: acc)
+                    | none =>
+                      if isMacroPragma ex.ctx.cfg ps then
+                        throw (ex.ctx.err .directive t.line "malformed macro-stack pragma")
+                      else if ex.ctx.cfg.ext.pragmaOnce ∧ ps.length = 1 ∧
+                          (ps.head?.map (·.spell)) = some (bs "once") then
+                        expand { ex.ctx with onceFiles := FileSys.normComponents ex.ctx.path :: ex.ctx.onceFiles }
+                          fuel ex.counter rest' acc
+                      else
+                        let pack ← ex.ctx.checkPragma ex.ctx.pack ps
+                        let ev := eventTok ex.ctx t ps
+                        expand { ex.ctx with nextPragma := ex.ctx.nextPragma + 1, pack := pack }
+                          fuel ex.counter rest' (ev :: acc)
                   else .error (ctx.err .directive t.line "_Pragma operand must expand to a string literal (§6.10.9)")
                 | _ => .error (ctx.err .directive t.line "_Pragma operand must expand to one string literal (§6.10.9)")
               | _ => .error (ctx.err .directive t.line "_Pragma needs ( string-literal ) (§6.10.9)")

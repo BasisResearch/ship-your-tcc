@@ -255,3 +255,39 @@
   the host cross-target configuration for runtime support. No phase-7 float
   conversion is part of the raw stream; this is diagnostic host execution,
   not evidence that the Sail binary computes the new interface.
+
+- F2 pragma spec repair (2026-10-27): bracket markers cannot participate in
+  macro substitution as ordinary tokens. An expanded argument needs one
+  opaque event identity across reuse; #/## must lift that event out before
+  transforming semantic tokens. Two-argument paste exposed another distinct
+  issue: tcc lifts cached events in reverse argument order. Preserve that
+  configured order without rerunning the already executed pragma effects.
+- The new nested `_Pragma` operand probes are not successful raw observations:
+  both ordinary implementations accept them, but both decorated observers
+  refuse them. `_Pragma("unknown __COUNTER__") __COUNTER__` also changes
+  behavior under observation: final counter 1 observed versus 2 plain.
+  These three independent observer noninterference failures are retained in
+  `results/pre/pragma-observer-residuals.json`; do not change the spec or
+  observers to count them as strict successes. Their independent ISO spec
+  regression remains accepted, and the whole-run Statement remains open.
+- A single pragma expansion switch is insufficient. Ignored directive
+  operands must stay raw, while pack and macro-stack operands do expand.
+  Expanding push_macro(NAME)/pop_macro(NAME) without then executing the
+  resulting phase-4 action still leaves the macro unrestored. Both directive
+  and operator forms have independent exact-token regressions.
+- Pragma repair build attempts 1 and 2 are failed receipts, not validation:
+  multiline record-update fields must align after `with`, and inside
+  `ExpCtx.ofState` the unqualified validator name resolves to the record
+  projection. Qualify `CSem.Pre.checkPragma`. No budget changes were used.
+- A comparison started while its pinned test file was still being edited
+  correctly failed `input changed during run`; discard that attempt. Freeze
+  fixture/test inputs before comparing. Corpus regeneration also requires
+  `build/compcert-tests`; copy the existing local source into this worktree
+  before invoking the existing collector, rather than fetching new sources.
+- This pragma worker's final `git add ... && git commit ...` is blocked by
+  read-only Git metadata: it cannot create
+  `.git/worktrees/sol-c11-trigraph/index.lock`. Final source/evidence is
+  validated by frozen request/result `f2-pragmas-5` and left as a reviewable
+  worktree diff for the lead to commit, following MANAGER.md. No alternate
+  index/object store or permission workaround was attempted. Do not resend
+  semantic repair work merely to resolve this infrastructure limitation.

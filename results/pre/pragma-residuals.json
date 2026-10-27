@@ -1,0 +1,962 @@
+[
+  {
+    "lane": "negative",
+    "classification": "intentional negative fixture; joint diagnostic",
+    "file": "build/pre-token-cases/error-comment.c",
+    "source_sha256": "dd721310faa828477e6268bd9011509bf221902e19cd465d45ccec7a39bf869e",
+    "model_tokens": 0,
+    "reference_tokens": 0,
+    "spec_tokens": 0,
+    "observer_preserves_effects": true,
+    "model_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "reference_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "spec_error": "lexical\t/prog.c:1\tunterminated comment",
+    "model_diagnostics": "/prog.c:1: error: unexpected end of file in comment\n",
+    "reference_diagnostics": "/prog.c:1: error: unexpected end of file in comment\n",
+    "raw": "both-refused",
+    "spec": "spec-error",
+    "observations_sha256": {
+      "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "spec": "0f6bd519d2177745c684a911fffa80387098f06f0156fbbb23df662fb64e96f6"
+    }
+  },
+  {
+    "lane": "negative",
+    "classification": "intentional negative fixture; joint diagnostic",
+    "file": "build/pre-token-cases/error-directive.c",
+    "source_sha256": "a5ac4c6d1c3cf44fed2343a90214f6c324a17797e59d60c9840b70c6a52cc96a",
+    "model_tokens": 0,
+    "reference_tokens": 0,
+    "spec_tokens": 0,
+    "observer_preserves_effects": true,
+    "model_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "reference_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "spec_error": "error\t/prog.c:1\t#error no",
+    "model_diagnostics": "/prog.c:1: error: #error no\n",
+    "reference_diagnostics": "/prog.c:1: error: #error no\n",
+    "raw": "both-refused",
+    "spec": "spec-error",
+    "observations_sha256": {
+      "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "spec": "ca5d1a6ef278585abe6d2dad02ecbd22dc3756cb52406743337ccf7ef3f3a954"
+    }
+  },
+  {
+    "lane": "negative",
+    "classification": "intentional negative fixture; joint diagnostic",
+    "file": "build/pre-token-cases/error-include.c",
+    "source_sha256": "842a3799cbba85e3b834a4c3999f29852b57f1c831447cdad5ec743a673d7323",
+    "model_tokens": 0,
+    "reference_tokens": 0,
+    "spec_tokens": 0,
+    "observer_preserves_effects": true,
+    "model_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "reference_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "spec_error": "include\t/prog.c:1\theader not found (\u00a76.10.2p2)",
+    "model_diagnostics": "/prog.c:1: error: include file 'missing.h' not found\n",
+    "reference_diagnostics": "/prog.c:1: error: include file 'missing.h' not found\n",
+    "raw": "both-refused",
+    "spec": "spec-error",
+    "observations_sha256": {
+      "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "spec": "a8e9a7e1a968320c1a08d1aae3e2fd7bd4dda794676e96fd10ab5f89024baa0e"
+    }
+  },
+  {
+    "lane": "negative",
+    "classification": "intentional negative fixture; joint diagnostic",
+    "file": "build/pre-token-cases/error-macro.c",
+    "source_sha256": "de283001191f0ffe644a7392cfc0d7c363f6a906d1c17308758765e04dbfebdf",
+    "model_tokens": 0,
+    "reference_tokens": 0,
+    "spec_tokens": 0,
+    "observer_preserves_effects": true,
+    "model_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "reference_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "spec_error": "macro\t/prog.c:2\tunterminated argument list invoking macro (\u00a76.10.3p4)",
+    "model_diagnostics": "/prog.c:3: error: EOF in invocation of macro 'F'\n",
+    "reference_diagnostics": "/prog.c:3: error: EOF in invocation of macro 'F'\n",
+    "raw": "both-refused",
+    "spec": "spec-error",
+    "observations_sha256": {
+      "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "spec": "61e3109c55f40b017b9a5881484964aa940ace8b4a3809fe33047fc4e2c26f21"
+    }
+  },
+  {
+    "lane": "negative",
+    "classification": "intentional negative fixture; joint diagnostic",
+    "file": "build/pre-token-cases/error-pack-long.c",
+    "source_sha256": "41ebfc20416a2bb89a91f12e769b5fb1cac42db75bbbb055b290d07642ed95b1",
+    "model_tokens": 0,
+    "reference_tokens": 0,
+    "spec_tokens": 0,
+    "observer_preserves_effects": true,
+    "model_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "reference_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "spec_error": "directive\t/prog.c:1\tmalformed #pragma pack",
+    "model_diagnostics": "/prog.c:2: error: malformed #pragma directive\n",
+    "reference_diagnostics": "/prog.c:2: error: malformed #pragma directive\n",
+    "raw": "both-refused",
+    "spec": "spec-error",
+    "observations_sha256": {
+      "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "spec": "205c488d9c278afc36efee97b54e35c1f412277f319f1fe3ac81ae7756ff6935"
+    }
+  },
+  {
+    "lane": "negative",
+    "classification": "intentional negative fixture; joint diagnostic",
+    "file": "build/pre-token-cases/error-pack-operator.c",
+    "source_sha256": "4f07df311c8e6e14fc1fdfc6f4107164a31759e83c48ef0ff2e24dcfe8e5fc0a",
+    "model_tokens": 0,
+    "reference_tokens": 0,
+    "spec_tokens": 0,
+    "observer_preserves_effects": true,
+    "model_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "reference_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "spec_error": "directive\t/prog.c:1\tmalformed #pragma pack",
+    "model_diagnostics": "/prog.c:2: error: malformed #pragma directive\n",
+    "reference_diagnostics": "/prog.c:2: error: malformed #pragma directive\n",
+    "raw": "both-refused",
+    "spec": "spec-error",
+    "observations_sha256": {
+      "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "spec": "205c488d9c278afc36efee97b54e35c1f412277f319f1fe3ac81ae7756ff6935"
+    }
+  },
+  {
+    "lane": "negative",
+    "classification": "intentional negative fixture; joint diagnostic",
+    "file": "build/pre-token-cases/error-pack-overflow.c",
+    "source_sha256": "811b58f67928e429b07cc974baa6b55b00c9fe8bd6118d82d3c8ff79ae470a73",
+    "model_tokens": 0,
+    "reference_tokens": 0,
+    "spec_tokens": 0,
+    "observer_preserves_effects": true,
+    "model_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "reference_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "spec_error": "directive\t/prog.c:8\tmalformed #pragma pack",
+    "model_diagnostics": "/prog.c:9: error: out of pack stack\n",
+    "reference_diagnostics": "/prog.c:9: error: out of pack stack\n",
+    "raw": "both-refused",
+    "spec": "spec-error",
+    "observations_sha256": {
+      "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "spec": "99bd6228cafafb2703e5d8abaa64799579957c7a44fb6007c745dbc8d5c1123f"
+    }
+  },
+  {
+    "lane": "negative",
+    "classification": "intentional negative fixture; joint diagnostic",
+    "file": "build/pre-token-cases/error-pack-underflow.c",
+    "source_sha256": "962c890c81ed4c2467086be787b5daa10023eac09a6d9953f25c28e7e2346f19",
+    "model_tokens": 0,
+    "reference_tokens": 0,
+    "spec_tokens": 0,
+    "observer_preserves_effects": true,
+    "model_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "reference_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "spec_error": "directive\t/prog.c:1\tmalformed #pragma pack",
+    "model_diagnostics": "/prog.c:2: error: out of pack stack\n",
+    "reference_diagnostics": "/prog.c:2: error: out of pack stack\n",
+    "raw": "both-refused",
+    "spec": "spec-error",
+    "observations_sha256": {
+      "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "spec": "205c488d9c278afc36efee97b54e35c1f412277f319f1fe3ac81ae7756ff6935"
+    }
+  },
+  {
+    "lane": "negative",
+    "classification": "intentional negative fixture; joint diagnostic",
+    "file": "build/pre-token-cases/error-pack-unsigned.c",
+    "source_sha256": "e333c164588c88d3027b30f46c87a9ee95eac5baeec8dd2c3d080543d940f2d9",
+    "model_tokens": 0,
+    "reference_tokens": 0,
+    "spec_tokens": 0,
+    "observer_preserves_effects": true,
+    "model_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "reference_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "spec_error": "directive\t/prog.c:1\tmalformed #pragma pack",
+    "model_diagnostics": "/prog.c:2: error: malformed #pragma directive\n",
+    "reference_diagnostics": "/prog.c:2: error: malformed #pragma directive\n",
+    "raw": "both-refused",
+    "spec": "spec-error",
+    "observations_sha256": {
+      "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "spec": "205c488d9c278afc36efee97b54e35c1f412277f319f1fe3ac81ae7756ff6935"
+    }
+  },
+  {
+    "lane": "negative",
+    "classification": "intentional negative fixture; joint diagnostic",
+    "file": "build/pre-token-cases/error-pack.c",
+    "source_sha256": "1671805fa94261f4f75fa4c5463567c1f6fd21560c9a43bcb428c0115020a134",
+    "model_tokens": 0,
+    "reference_tokens": 0,
+    "spec_tokens": 0,
+    "observer_preserves_effects": true,
+    "model_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "reference_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "spec_error": "directive\t/prog.c:1\tmalformed #pragma pack",
+    "model_diagnostics": "/prog.c:2: error: malformed #pragma directive\n",
+    "reference_diagnostics": "/prog.c:2: error: malformed #pragma directive\n",
+    "raw": "both-refused",
+    "spec": "spec-error",
+    "observations_sha256": {
+      "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "spec": "205c488d9c278afc36efee97b54e35c1f412277f319f1fe3ac81ae7756ff6935"
+    }
+  },
+  {
+    "lane": "negative",
+    "classification": "intentional negative fixture; joint diagnostic",
+    "file": "build/pre-token-cases/error-paste.c",
+    "source_sha256": "41a07097774229ca1e65aa16fe9ce0ce462a1b0c9e52453e26cf9246389eab77",
+    "model_tokens": 0,
+    "reference_tokens": 0,
+    "spec_tokens": 0,
+    "observer_preserves_effects": true,
+    "model_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "reference_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "spec_error": "macro\t/prog.c:1\t'##' at the start of a replacement list (\u00a76.10.3.3p1)",
+    "model_diagnostics": "/prog.c:1: error: '##' cannot appear at either end of macro\n",
+    "reference_diagnostics": "/prog.c:1: error: '##' cannot appear at either end of macro\n",
+    "raw": "both-refused",
+    "spec": "spec-error",
+    "observations_sha256": {
+      "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "spec": "5ce67db496ea14b3840f356b34c6ede09fb81983a50a81a6302c3b37aacda429"
+    }
+  },
+  {
+    "lane": "negative",
+    "classification": "intentional negative fixture; joint diagnostic",
+    "file": "build/pre-token-cases/error-pop-macro-operator.c",
+    "source_sha256": "b90b47b376611a5c21c0ce756d508551e9c1193b87a556130d620641122b616b",
+    "model_tokens": 0,
+    "reference_tokens": 0,
+    "spec_tokens": 0,
+    "observer_preserves_effects": true,
+    "model_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "reference_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "spec_error": "directive\t/prog.c:1\tmalformed macro-stack pragma",
+    "model_diagnostics": "/prog.c:1: error: malformed #pragma directive\n",
+    "reference_diagnostics": "/prog.c:1: error: malformed #pragma directive\n",
+    "raw": "both-refused",
+    "spec": "spec-error",
+    "observations_sha256": {
+      "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "spec": "b27a83d0b0465df2a73a0a2e100f5c7e0fc9ecce3b94a971c2ee797430d609c3"
+    }
+  },
+  {
+    "lane": "negative",
+    "classification": "intentional negative fixture; joint diagnostic",
+    "file": "build/pre-token-cases/error-pragma-operand.c",
+    "source_sha256": "60abce65932a153c656b23d5de00d0503dbfaf8d6e0a4bffd6ae8a42358bbec3",
+    "model_tokens": 0,
+    "reference_tokens": 0,
+    "spec_tokens": 0,
+    "observer_preserves_effects": true,
+    "model_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "reference_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "spec_error": "directive\t/prog.c:1\t_Pragma operand must expand to a string literal (\u00a76.10.9)",
+    "model_diagnostics": "/prog.c:1: error: ordinary or wide string literal in _Pragma expected\n",
+    "reference_diagnostics": "/prog.c:1: error: ordinary or wide string literal in _Pragma expected\n",
+    "raw": "both-refused",
+    "spec": "spec-error",
+    "observations_sha256": {
+      "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "spec": "f05184392366737c6f8576c85b00964bce17302d5c38e3c4d8de2fca3d4688d9"
+    }
+  },
+  {
+    "lane": "negative",
+    "classification": "intentional negative fixture; joint diagnostic",
+    "file": "build/pre-token-cases/error-pragma-prefix-U.c",
+    "source_sha256": "efcbe8ec1c5b3fd19f4b54c3c83ee4ddbced40653c74f79a60cde6535a6b89de",
+    "model_tokens": 0,
+    "reference_tokens": 0,
+    "spec_tokens": 0,
+    "observer_preserves_effects": true,
+    "model_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "reference_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "spec_error": "directive\t/prog.c:1\t_Pragma operand must expand to a string literal (\u00a76.10.9)",
+    "model_diagnostics": "/prog.c:1: error: ordinary or wide string literal in _Pragma expected\n",
+    "reference_diagnostics": "/prog.c:1: error: ordinary or wide string literal in _Pragma expected\n",
+    "raw": "both-refused",
+    "spec": "spec-error",
+    "observations_sha256": {
+      "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "spec": "f05184392366737c6f8576c85b00964bce17302d5c38e3c4d8de2fca3d4688d9"
+    }
+  },
+  {
+    "lane": "negative",
+    "classification": "intentional negative fixture; joint diagnostic",
+    "file": "build/pre-token-cases/error-pragma-prefix-u.c",
+    "source_sha256": "a05ef969de9fcf797049626fc452fb5f95ea5561f7a645f0bf50662ce76ddead",
+    "model_tokens": 0,
+    "reference_tokens": 0,
+    "spec_tokens": 0,
+    "observer_preserves_effects": true,
+    "model_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "reference_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "spec_error": "directive\t/prog.c:1\t_Pragma operand must expand to a string literal (\u00a76.10.9)",
+    "model_diagnostics": "/prog.c:1: error: ordinary or wide string literal in _Pragma expected\n",
+    "reference_diagnostics": "/prog.c:1: error: ordinary or wide string literal in _Pragma expected\n",
+    "raw": "both-refused",
+    "spec": "spec-error",
+    "observations_sha256": {
+      "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "spec": "f05184392366737c6f8576c85b00964bce17302d5c38e3c4d8de2fca3d4688d9"
+    }
+  },
+  {
+    "lane": "negative",
+    "classification": "intentional negative fixture; joint diagnostic",
+    "file": "build/pre-token-cases/error-push-macro.c",
+    "source_sha256": "fdeac933c8a5310d5d286f176d619cf8a9c46e00aef19f2a9d30935253ecbd7a",
+    "model_tokens": 0,
+    "reference_tokens": 0,
+    "spec_tokens": 0,
+    "observer_preserves_effects": true,
+    "model_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "reference_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "spec_error": "directive\t/prog.c:1\tmalformed macro-stack pragma",
+    "model_diagnostics": "/prog.c:1: error: malformed #pragma directive\n",
+    "reference_diagnostics": "/prog.c:1: error: malformed #pragma directive\n",
+    "raw": "both-refused",
+    "spec": "spec-error",
+    "observations_sha256": {
+      "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "spec": "b27a83d0b0465df2a73a0a2e100f5c7e0fc9ecce3b94a971c2ee797430d609c3"
+    }
+  },
+  {
+    "lane": "negative",
+    "classification": "intentional negative fixture; joint diagnostic",
+    "file": "build/pre-token-cases/error-string.c",
+    "source_sha256": "9d5328f2c9ae31f0839bf9037362ade53000f715411715ef340c0b8c5e7e3812",
+    "model_tokens": 0,
+    "reference_tokens": 0,
+    "spec_tokens": 0,
+    "observer_preserves_effects": true,
+    "model_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "reference_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "spec_error": "lexical\t/prog.c:1\tunmatched quote (\u00a76.4p3)",
+    "model_diagnostics": "/prog.c:1: error: missing terminating \" character\n",
+    "reference_diagnostics": "/prog.c:1: error: missing terminating \" character\n",
+    "raw": "both-refused",
+    "spec": "spec-error",
+    "observations_sha256": {
+      "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "spec": "ce2f20e4bd51f2d87618504091189300732c106fbcb061ec7c1a8cee233c7c66"
+    }
+  },
+  {
+    "lane": "observer-residuals",
+    "classification": "observer noninterference failure: nested macro operand accepted plain, refused observed",
+    "file": "build/pre-token-cases/pragma-nested-macro.c",
+    "source_sha256": "d532ca29eecc86bd2b8d69bcdbed34b623adb6eb8da45000c0c50a25d867ca96",
+    "model_tokens": 0,
+    "reference_tokens": 0,
+    "spec_tokens": 493,
+    "observer_preserves_effects": false,
+    "model_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "reference_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "spec_error": null,
+    "model_diagnostics": "/prog.c:3: error: ordinary or wide string literal in _Pragma expected\n",
+    "reference_diagnostics": "/prog.c:3: error: ordinary or wide string literal in _Pragma expected\n",
+    "raw": "observer-effect-difference",
+    "observer_state": null,
+    "plain_state": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "spec": "compiler-refusal",
+    "observations_sha256": {
+      "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_reference": "ac8df76604b60726a1e71473a8353972434d6d015fd8858543ab38e67a7c2363",
+      "plain_model": "ac8df76604b60726a1e71473a8353972434d6d015fd8858543ab38e67a7c2363",
+      "spec": "f7fc284a01e5f7684f84984f94eea1570fb4eaf73ca2148925005d984c1c9be0"
+    }
+  },
+  {
+    "lane": "observer-residuals",
+    "classification": "observer noninterference failure: nested operand accepted plain, refused observed",
+    "file": "build/pre-token-cases/pragma-nested-operand.c",
+    "source_sha256": "1d55b5477f226a1f3dd307544e576b2c6ca8f4010b4c35975e9d3de7ebd9ef3d",
+    "model_tokens": 0,
+    "reference_tokens": 0,
+    "spec_tokens": 493,
+    "observer_preserves_effects": false,
+    "model_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "reference_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "spec_error": null,
+    "model_diagnostics": "/prog.c:1: error: ordinary or wide string literal in _Pragma expected\n",
+    "reference_diagnostics": "/prog.c:1: error: ordinary or wide string literal in _Pragma expected\n",
+    "raw": "observer-effect-difference",
+    "observer_state": null,
+    "plain_state": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "spec": "compiler-refusal",
+    "observations_sha256": {
+      "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_reference": "ac8df76604b60726a1e71473a8353972434d6d015fd8858543ab38e67a7c2363",
+      "plain_model": "ac8df76604b60726a1e71473a8353972434d6d015fd8858543ab38e67a7c2363",
+      "spec": "f7fc284a01e5f7684f84984f94eea1570fb4eaf73ca2148925005d984c1c9be0"
+    }
+  },
+  {
+    "lane": "observer-residuals",
+    "classification": "observer noninterference failure: ignored operator counter differs from plain execution",
+    "file": "build/pre-token-cases/pragma-operator-ignored-counter.c",
+    "source_sha256": "982d86653cd846695660cb275e4816600380d88bbd29352eefa4c3fe11f47fef",
+    "model_tokens": 489,
+    "reference_tokens": 489,
+    "spec_tokens": 489,
+    "observer_preserves_effects": false,
+    "model_error": null,
+    "reference_error": null,
+    "spec_error": null,
+    "model_diagnostics": "",
+    "reference_diagnostics": "",
+    "raw": "observer-effect-difference",
+    "observer_state": [
+      0,
+      0,
+      1,
+      0
+    ],
+    "plain_state": [
+      0,
+      0,
+      2,
+      0
+    ],
+    "spec": "exact",
+    "observations_sha256": {
+      "model": "9a7355c5ac74e8c63ce792c4895614500b58775d5fbb3822d392f30bb9eaf517",
+      "reference": "9a7355c5ac74e8c63ce792c4895614500b58775d5fbb3822d392f30bb9eaf517",
+      "plain_reference": "1d4403f3804c6160a415b918a97ba2a2751f545047fdadce87de863b3cddc65a",
+      "plain_model": "1d4403f3804c6160a415b918a97ba2a2751f545047fdadce87de863b3cddc65a",
+      "spec": "b7f6013f23d61ba786124bc09634727a937edb0a3bd1524ff9b30dc9f96436a7"
+    }
+  },
+  {
+    "lane": "corpus",
+    "classification": "constraint/phase-7 residual: spec retains other backslash; compiler-mode lexer refuses",
+    "file": "vendor/tinycc/tests/pp/03.c",
+    "source_sha256": "44df8d4fda9f3fe46473763364c672f0ae9b21c0afd5064a0edb67a0cd117c6a",
+    "model_tokens": 0,
+    "reference_tokens": 0,
+    "spec_tokens": 513,
+    "observer_preserves_effects": true,
+    "model_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "reference_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "spec_error": null,
+    "model_diagnostics": "/prog.c:12: error: stray '\\' in program\n",
+    "reference_diagnostics": "/prog.c:12: error: stray '\\' in program\n",
+    "raw": "both-refused",
+    "spec": "compiler-refusal",
+    "observations_sha256": {
+      "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "spec": "c829bd4c421587f9e1531e30d842417c13c4224afacb289090c98fab8be933fb"
+    }
+  },
+  {
+    "lane": "corpus",
+    "classification": "undefined signed overflow in #if: spec rejects; compiler accepts",
+    "file": "vendor/tinycc/tests/pp/21.c",
+    "source_sha256": "0a49cb120deb1bf1f47cc3bddbea316c375f3dbeff26fc2455be6539e0ac54d5",
+    "model_tokens": 546,
+    "reference_tokens": 546,
+    "spec_tokens": 0,
+    "observer_preserves_effects": true,
+    "model_error": null,
+    "reference_error": null,
+    "spec_error": "ifExpr\t/prog.c:57\tsigned overflow in #if (\u00a76.5p5)",
+    "model_diagnostics": "",
+    "reference_diagnostics": "",
+    "raw": "exact",
+    "state": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "spec": "spec-error",
+    "observations_sha256": {
+      "model": "0120ae171af467059557bfa2030ca9e8a334596ce7eebd01623c309806df7cae",
+      "reference": "0120ae171af467059557bfa2030ca9e8a334596ce7eebd01623c309806df7cae",
+      "plain_reference": "0120ae171af467059557bfa2030ca9e8a334596ce7eebd01623c309806df7cae",
+      "plain_model": "0120ae171af467059557bfa2030ca9e8a334596ce7eebd01623c309806df7cae",
+      "spec": "2d4441ff319e9e197506c6f262c12d7812d881d48cf0b4a5807c3c7d976ae6eb"
+    }
+  },
+  {
+    "lane": "corpus",
+    "classification": "macro-invocation boundary residual: spec rejects unterminated invocation; compiler accepts",
+    "file": "vendor/tinycc/tests/pp/22.c",
+    "source_sha256": "532323661da969f2476b5cf72abb03c196d9f0bad812acd738a8d16cd2fdb99f",
+    "model_tokens": 495,
+    "reference_tokens": 495,
+    "spec_tokens": 0,
+    "observer_preserves_effects": true,
+    "model_error": null,
+    "reference_error": null,
+    "spec_error": "macro\t/prog.c:4\tunterminated argument list invoking macro (\u00a76.10.3p4)",
+    "model_diagnostics": "",
+    "reference_diagnostics": "",
+    "raw": "exact",
+    "state": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "spec": "spec-error",
+    "observations_sha256": {
+      "model": "7e7ab96096016009c91fd607debf2d5af5b259ac89445b789c77af541436baa5",
+      "reference": "7e7ab96096016009c91fd607debf2d5af5b259ac89445b789c77af541436baa5",
+      "plain_reference": "7e7ab96096016009c91fd607debf2d5af5b259ac89445b789c77af541436baa5",
+      "plain_model": "7e7ab96096016009c91fd607debf2d5af5b259ac89445b789c77af541436baa5",
+      "spec": "825926b18c7b70c1c9ab0a730e2bbe1e7b8c9b8cf7cd6aa892f822bf9056a4c6"
+    }
+  },
+  {
+    "lane": "corpus",
+    "classification": "fixture/environment refusal: unavailable platform header",
+    "file": "vendor/tinycc/tests/tests2/114_bound_signal.c",
+    "source_sha256": "3e5be4736e50ceb49d7ecd75f02c4a93d29a82df4a93fb00b06624c297d79c15",
+    "model_tokens": 0,
+    "reference_tokens": 0,
+    "spec_tokens": 0,
+    "observer_preserves_effects": true,
+    "model_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "reference_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "spec_error": "include\t/prog.c:3\theader not found (\u00a76.10.2p2)",
+    "model_diagnostics": "/prog.c:3: error: include file 'semaphore.h' not found\n",
+    "reference_diagnostics": "/prog.c:3: error: include file 'semaphore.h' not found\n",
+    "raw": "both-refused",
+    "spec": "spec-error",
+    "observations_sha256": {
+      "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "spec": "de31feeb9834c3acc368421f26f08f6b3d80e4f8b0c7e1b4808c7b6410934a8c"
+    }
+  },
+  {
+    "lane": "corpus",
+    "classification": "fixture/environment refusal: unavailable platform header",
+    "file": "vendor/tinycc/tests/tests2/119_random_stuff.c",
+    "source_sha256": "53c7352434c1d6755c773696001c2b493817f8a827fc0628dec07189d98b9cb0",
+    "model_tokens": 0,
+    "reference_tokens": 0,
+    "spec_tokens": 0,
+    "observer_preserves_effects": true,
+    "model_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "reference_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "spec_error": "include\t/prog.c:30\theader not found (\u00a76.10.2p2)",
+    "model_diagnostics": "/prog.c:30: error: include file 'sys/mman.h' not found\n",
+    "reference_diagnostics": "/prog.c:30: error: include file 'sys/mman.h' not found\n",
+    "raw": "both-refused",
+    "spec": "spec-error",
+    "observations_sha256": {
+      "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "spec": "d4b2714ba0a64e3b2dfc20bc1c5437f6aefdd574f46223abd89006be8f9ba0dd"
+    }
+  },
+  {
+    "lane": "corpus",
+    "classification": "fixture/environment refusal: unavailable platform header",
+    "file": "vendor/tinycc/tests/tests2/145_winarm64_interlocked.c",
+    "source_sha256": "eaecd92bd7b6c658c0aaf7cd11d8ef6f237a88a25b47c8df50e05fc8b1e05320",
+    "model_tokens": 0,
+    "reference_tokens": 0,
+    "spec_tokens": 0,
+    "observer_preserves_effects": true,
+    "model_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "reference_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "spec_error": "include\t/prog.c:2\theader not found (\u00a76.10.2p2)",
+    "model_diagnostics": "/prog.c:2: error: include file 'windows.h' not found\n",
+    "reference_diagnostics": "/prog.c:2: error: include file 'windows.h' not found\n",
+    "raw": "both-refused",
+    "spec": "spec-error",
+    "observations_sha256": {
+      "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "spec": "ca1b4f7c1d534637ada1dd51e9d28ecbdd7327e12a941d11ecd352b119970c3b"
+    }
+  },
+  {
+    "lane": "corpus",
+    "classification": "fixture/environment refusal: unavailable relative/recursive C-file include",
+    "file": "vendor/tinycc/tests/tests2/18_include.c",
+    "source_sha256": "8b1e9e6c20fbaf69acce6a81d64aa43f82470483b17b253cbc8c78ab8136be9a",
+    "model_tokens": 0,
+    "reference_tokens": 0,
+    "spec_tokens": 0,
+    "observer_preserves_effects": true,
+    "model_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "reference_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "spec_error": "include\t/prog.c:42\theader not found (\u00a76.10.2p2)",
+    "model_diagnostics": "/prog.c:42: error: include file '../tests2/18_include2.h' not found\n",
+    "reference_diagnostics": "/prog.c:42: error: include file '../tests2/18_include2.h' not found\n",
+    "raw": "both-refused",
+    "spec": "spec-error",
+    "observations_sha256": {
+      "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "spec": "c0aa3638384d3478e2b57e73c968abeac17af81b3b41db12ea6fb7e4fcb5ddaf"
+    }
+  },
+  {
+    "lane": "corpus",
+    "classification": "fixture/environment refusal: unavailable relative/recursive C-file include",
+    "file": "vendor/tinycc/tests/tests2/95_bitfields.c",
+    "source_sha256": "272aac324fe52653f4421672bf9188c335f0d7d70f54d0f9b1d5c9189c5e29f9",
+    "model_tokens": 0,
+    "reference_tokens": 0,
+    "spec_tokens": 0,
+    "observer_preserves_effects": true,
+    "model_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "reference_error": [
+      "refuse",
+      {
+        "hex": "7463635f6572726f72"
+      }
+    ],
+    "spec_error": "include\t/prog.c:235\theader not found (\u00a76.10.2p2)",
+    "model_diagnostics": "/prog.c:235: error: include file '95_bitfields.c' not found\n",
+    "reference_diagnostics": "/prog.c:235: error: include file '95_bitfields.c' not found\n",
+    "raw": "both-refused",
+    "spec": "spec-error",
+    "observations_sha256": {
+      "model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_reference": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "plain_model": "4af1deee8b60ac4c20deb4aaf9ff4706671b29951e8175eaa33d602f50edf813",
+      "spec": "828269391f84cb01a2479c03a257828536f7c3cd8753bab55f748cdd3c49054b"
+    }
+  }
+]

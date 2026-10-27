@@ -1,0 +1,34 @@
+Running as unit: run-p3527134-i464319981.scope; invocation ID: e13c485516a1466d93fa5d8e4e73415c
+⚠ [42/96] Replayed Tcc.Model.Gen8
+warning: Tcc/Model/Gen8.lean:268:47: `String.get` has been deprecated: Use `String.Pos.Raw.get` instead
+
+Note: The updated constant is in a different namespace. Dot notation may need to be changed (e.g., from `x.get` to `String.Pos.Raw.get x`).
+✔ [74/96] Built Spec.Pre.Expand (974ms)
+✔ [75/96] Built Spec.Pre.IfExpr (718ms)
+✖ [76/96] Building Spec.Pre.Phase4 (999ms)
+trace: .> LEAN_PATH=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-trigraph/.lake/packages/Cli/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-trigraph/riscv-lean/lean-sail/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-trigraph/.lake/packages/ELFSage/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-trigraph/riscv-lean/Lean_RV64D_executable/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-trigraph/riscv-lean/lean_emulator/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-trigraph/.lake/build/lib/lean /data/home/kirancodes/.elan/toolchains/leanprover--lean4---v4.34.0/bin/lean /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-trigraph/Spec/Pre/Phase4.lean -o /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-trigraph/.lake/build/lib/lean/Spec/Pre/Phase4.olean -i /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-trigraph/.lake/build/lib/lean/Spec/Pre/Phase4.ilean -c /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-trigraph/.lake/build/ir/Spec/Pre/Phase4.c --setup /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-trigraph/.lake/build/ir/Spec/Pre/Phase4.setup.json --json
+warning: Spec/Pre/Phase4.lean:78:8: Variable name `l` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _l
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: Spec/Pre/Phase4.lean:140:37: Variable name `prev` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _prev
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+error: Spec/Pre/Phase4.lean:348:31: Application type mismatch: The argument
+  cfg
+has type
+  PreCfg
+but is expected to have type
+  ExpCtx
+in the application
+  checkPragma cfg
+✔ [84/96] Built Spec.Pre.IfExpr:c.o (927ms)
+✔ [94/96] Built Spec.Pre.Expand:c.o (2.1s)
+Some required targets logged failures:
+- Spec.Pre.Phase4
+error: build failed

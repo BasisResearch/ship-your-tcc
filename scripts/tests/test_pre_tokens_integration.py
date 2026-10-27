@@ -5,7 +5,7 @@ import tempfile
 import unittest
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 import pre_tokens_diff as h
-from gen_pre_token_cases import generate, CASES
+from gen_pre_token_cases import generate, CASES, OBSERVER_RESIDUALS
 
 @unittest.skipUnless(h.MODEL.exists() and h.REF.exists(), 'build tcc_pre_tokens and pre_tokens_ref first')
 class RawIntegration(unittest.TestCase):
@@ -26,6 +26,13 @@ class RawIntegration(unittest.TestCase):
                 self.assertEqual(model.error,ref.error)
                 self.assertEqual(model.tokens,ref.tokens)
                 self.assertEqual(model.state,ref.state)
+                rc,out,_=h.run([h.SPEC,'--cfg','run','--fslist',listing,p])
+                spec,err=h.spec_obs(rc,out)
+                if ref.error is None:
+                    self.assertIsNone(err)
+                    self.assertEqual(spec,ref.tokens)
+                else:
+                    self.assertIsNotNone(err)
             return model,ref
     def test_prefixes_and_no_concat(self):
         m,_=self.observe('prefixes')
@@ -70,6 +77,23 @@ class RawIntegration(unittest.TestCase):
         m,_=self.observe('pack-nested');self.assertEqual(m.state[:2],(1,2))
         m,plain=self.observe('pragma-ignored-counter',plain=True)
         self.assertEqual(m.tokens[-1],('N',b'0'));self.assertEqual(m.state,plain.state)
+    def test_pragma_compositions(self):
+        for name in CASES:
+            if (name.startswith('pragma-') or name.startswith('ordinary-')) and name not in OBSERVER_RESIDUALS:
+                with self.subTest(name=name):self.observe(name)
+        for name in ['pragma-paste-two','pragma-stringify-two']:
+            m,_=self.observe(name)
+            payload=[b for k,b in m.tokens if b in (b'left',b'right')]
+            self.assertEqual(payload,[b'right',b'left'])
+        m,_=self.observe('pragma-repeated-nonempty')
+        self.assertEqual(sum(k=='[' for k,b in m.tokens),1)
+        self.assertEqual(m.state[:2],(1,1))
+        for name in ['pragma-once-operator','pragma-once-prescan']:
+            m,_=self.observe(name)
+            self.assertEqual(m.tokens[-2:],[('N',b'0'),('N',b'1')])
+        m,_=self.observe('pragma-pop-argument')
+        self.assertEqual(m.tokens[-2:],[('N',b'11'),('N',b'11')])
+
     def test_include_and_line_state(self):
         for name in ['include','line-file','line-splice','line-macro','counter']:
             self.observe(name)
@@ -81,12 +105,27 @@ class RawIntegration(unittest.TestCase):
             if name.startswith('error-'):
                 with self.subTest(name=name):
                     m,r=self.observe(name);self.assertEqual(m.error[0],'refuse')
-    def test_comparator_default_rejects_refusal_and_residual(self):
-        for name,expected in [('prefixes',0),('error-comment',1),('pragma-unknown',1)]:
+    def test_observer_residuals_remain_failures(self):
+        for name in sorted(OBSERVER_RESIDUALS):
+            with self.subTest(name=name):
+                row=h.one(self.cases/(name+'.c'))
+                self.assertEqual(row['raw'],'observer-effect-difference')
+                self.assertFalse(row['observer_preserves_effects'])
+
+    def test_comparator_default_accepts_repaired_pragma_and_rejects_refusal(self):
+        for name,expected in [('prefixes',0),('error-comment',1),('pragma-unknown',0)]:
             with self.subTest(name=name),tempfile.TemporaryDirectory() as t:
                 rc,out,err=h.run([sys.executable,h.ROOT/'scripts/pre_tokens_diff.py',
                                  '--out',Path(t)/'report.json',self.cases/(name+'.c')])
                 self.assertEqual(rc,expected,(out,err))
+    def test_comparator_default_rejects_spec_residual(self):
+        with tempfile.TemporaryDirectory() as t:
+            p=Path(t)/'overflow.c'
+            p.write_text('#if 9223372036854775807 + 1\nyes\n#endif\n')
+            rc,out,err=h.run([sys.executable,h.ROOT/'scripts/pre_tokens_diff.py',
+                             '--out',Path(t)/'report.json',p])
+            self.assertEqual(rc,1,(out,err))
+
     def test_driver_failure_does_not_produce_success(self):
         for args in [[],['--unknown'],['--prog','/does/not/exist'],['--prog',str(self.cases/'empty.c'),'--fs','/does/not/exist']]:
             rc,out,_=h.run([h.MODEL,*args]);self.assertNotEqual(rc,0)

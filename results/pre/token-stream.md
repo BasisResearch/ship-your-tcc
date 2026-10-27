@@ -1,5 +1,10 @@
 # Exact phase-4 token observation (2026-10-27)
 
+Follow-up: [the pragma spec repair](pragma-spec.md) supersedes this baseline's
+spec pragma residuals and records three newly exposed observer/plain failures.
+The counts and receipts below describe the original 49-input run; the current
+fixture generator and reproduction lane use the follow-up's 79 inputs.
+
 `TccModel.preprocess` now runs the modeled tcc lexer, directive parser,
 macro expansion and pragma effect parser in C11 memory-output mode. Its
 outer `next()` calls disable TOK_NUM/TOK_STR conversion. The projection

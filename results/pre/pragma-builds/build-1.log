@@ -1,0 +1,22 @@
+Running as unit: run-p3512004-i464292692.scope; invocation ID: 55aa9970e7a34e81a6f522cf014033e4
+⚠ [30/96] Replayed Tcc.Model.Gen8
+warning: Tcc/Model/Gen8.lean:268:47: `String.get` has been deprecated: Use `String.Pos.Raw.get` instead
+
+Note: The updated constant is in a different namespace. Dot notation may need to be changed (e.g., from `x.get` to `String.Pos.Raw.get x`).
+✔ [62/96] Built Spec.Pre.Types (467ms)
+✔ [63/96] Built Spec.Pre.Iso (201ms)
+✔ [64/96] Built Spec.Pre.Tcc.Cfg (271ms)
+✔ [65/96] Built Spec.Pre.Iso:c.o (77ms)
+✔ [66/96] Built Spec.Pre.Tcc.Cfg:c.o (80ms)
+✔ [67/96] Built Spec.Pre.Phase12 (437ms)
+✔ [68/96] Built Spec.Pre.Tcc.ImageFS (503ms)
+✔ [69/96] Built Spec.Pre.Types:c.o (495ms)
+✔ [71/96] Built Spec.Pre.Phase12:c.o (179ms)
+✔ [72/96] Built Spec.Pre.Lex (586ms)
+✔ [73/96] Built Spec.Pre.Lex:c.o (663ms)
+✖ [74/96] Building Spec.Pre.Expand (816ms)
+trace: .> LEAN_PATH=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-trigraph/.lake/packages/Cli/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-trigraph/riscv-lean/lean-sail/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-trigraph/.lake/packages/ELFSage/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-trigraph/riscv-lean/Lean_RV64D_executable/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-trigraph/riscv-lean/lean_emulator/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-trigraph/.lake/build/lib/lean /data/home/kirancodes/.elan/toolchains/leanprover--lean4---v4.34.0/bin/lean /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-trigraph/Spec/Pre/Expand.lean -o /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-trigraph/.lake/build/lib/lean/Spec/Pre/Expand.olean -i /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-trigraph/.lake/build/lib/lean/Spec/Pre/Expand.ilean -c /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-trigraph/.lake/build/ir/Spec/Pre/Expand.c --setup /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-trigraph/.lake/build/ir/Spec/Pre/Expand.setup.json --json
+error: Spec/Pre/Expand.lean:302:45: unexpected identifier; expected '}'
+Some required targets logged failures:
+- Spec.Pre.Expand
+error: build failed

@@ -1,0 +1,36 @@
+Running as unit: run-p3539435-i464328747.scope; invocation ID: 70334a2f6d204d29921d0e2d2024219b
+⚠ [46/96] Replayed Tcc.Model.Gen8
+warning: Tcc/Model/Gen8.lean:268:47: `String.get` has been deprecated: Use `String.Pos.Raw.get` instead
+
+Note: The updated constant is in a different namespace. Dot notation may need to be changed (e.g., from `x.get` to `String.Pos.Raw.get x`).
+⚠ [78/96] Built Spec.Pre.Phase4 (984ms)
+warning: Spec/Pre/Phase4.lean:78:8: Variable name `l` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _l
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: Spec/Pre/Phase4.lean:140:37: Variable name `prev` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _prev
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+✔ [79/96] Built Spec.Pre.Main (264ms)
+✔ [80/96] Built Spec.Pre.Main:c.o (106ms)
+✔ [81/96] Built Spec.Pre.Compare (237ms)
+✔ [83/96] Built Spec.Pre (213ms)
+✔ [85/96] Built Tcc.Model.Preprocess (469ms)
+✔ [87/96] Built Spec.PreSpec (448ms)
+ℹ [88/96] Built Tcc.Model.PreAudit (262ms)
+info: Tcc/Model/PreAudit.lean:4:0: 'TccModel.preprocess' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Tcc/Model/PreAudit.lean:5:0: 'TccModel.PreprocessCorrect_Statement' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Tcc/Model/PreAudit.lean:6:0: 'TccModel.PragmaObservationEffects_Statement' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Tcc/Model/PreAudit.lean:7:0: 'TccModel.PreprocessObservationNoninterference_Statement' depends on axioms: [propext, Classical.choice, Quot.sound]
+✔ [89/96] Built Tcc.ModelPreMain (434ms)
+✔ [91/96] Built Spec.PreSpec:c.o (372ms)
+✔ [92/96] Built Spec.Pre.Phase4:c.o (1.7s)
+✔ [93/96] Built pre_spec:exe (221ms)
+✔ [94/96] Built tcc_pre_tokens:exe (247ms)
+✔ [95/96] Built Spec.Pre.Test (7.5s)
+Build completed successfully (96 jobs).

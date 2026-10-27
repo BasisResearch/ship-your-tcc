@@ -82,6 +82,18 @@ until the image is stable; no regeneration during this work.
 | F7 library | newlib ⊑ CSem for printf (`formatted.lem`), dlmalloc, string functions | per-function theorems | not started; public libc `strtold` has the recorded x87/binary128 ABI defect (patch 0004 fixes compiler literal parsing only) |
 | F8 compose | A + B + preprocessor + reset + library; witnesses | `tcc_run_correct`, `tcc_run_correct_witness_sum` | not started |
 
+F2 pragma follow-up (2026-10-27, review pending): the spec now keeps opaque,
+identified pragma events through argument reuse/stringification/paste, selects
+operand expansion by pragma name, and executes pack/once/macro-stack effects
+at their phase-4 positions. The focused strict lane has 59 exact successes;
+17 joint refusals have spec diagnostics. Three new observer/plain failures
+are explicitly outside that quota. The full 618-input diagnostic retains
+610 spec agreements and the same eight corpus residuals. Capped build,
+standard axiom audit and 18 Python tests pass; [pragma-spec.md](results/pre/pragma-spec.md)
+records the frozen receipts and independent classifications. All three
+preprocessing correctness/effects/noninterference Statements remain open;
+there is no refinement claim or Supported restriction.
+
 The F0 statement (`Tcc/CSem/Statement.lean`, lib `TccCSem`, built under
 `--csem`) has the §1 shape. Its provisional parts, each owed by a phase:
 

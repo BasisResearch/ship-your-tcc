@@ -1,0 +1,47 @@
+Running as unit: run-p3576279-i464364871.scope; invocation ID: b1ba241e5971402994246c65fced152d
+⚠ [30/96] Replayed Tcc.Model.Gen8
+warning: Tcc/Model/Gen8.lean:268:47: `String.get` has been deprecated: Use `String.Pos.Raw.get` instead
+
+Note: The updated constant is in a different namespace. Dot notation may need to be changed (e.g., from `x.get` to `String.Pos.Raw.get x`).
+✔ [62/96] Built Spec.Pre.Types (570ms)
+✔ [64/96] Built Spec.Pre.Iso (242ms)
+✔ [65/96] Built Spec.Pre.Tcc.Cfg (253ms)
+✔ [66/96] Built Spec.Pre.Phase12 (460ms)
+✔ [68/96] Built Spec.Pre.Tcc.ImageFS (546ms)
+✔ [70/96] Built Spec.Pre.Iso:c.o (699ms)
+✔ [71/96] Built Spec.Pre.Tcc.Cfg:c.o (694ms)
+✔ [72/96] Built Spec.Pre.Lex (706ms)
+✔ [74/96] Built Spec.Pre.Expand (1.0s)
+✔ [75/96] Built Spec.Pre.IfExpr (739ms)
+✔ [76/96] Built Spec.Pre.IfExpr:c.o (1.0s)
+⚠ [77/96] Built Spec.Pre.Phase4 (1.1s)
+warning: Spec/Pre/Phase4.lean:78:8: Variable name `l` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _l
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: Spec/Pre/Phase4.lean:140:37: Variable name `prev` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _prev
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+✔ [78/96] Built Spec.Pre.Main (299ms)
+✔ [79/96] Built Spec.Pre.Expand:c.o (2.1s)
+✔ [81/96] Built Spec.Pre.Compare (204ms)
+✔ [83/96] Built Spec.Pre (207ms)
+✔ [85/96] Built Spec.PreSpec (416ms)
+✔ [86/96] Built Tcc.Model.Preprocess (778ms)
+✔ [88/96] Built Spec.PreSpec:c.o (374ms)
+ℹ [89/96] Built Tcc.Model.PreAudit (231ms)
+info: Tcc/Model/PreAudit.lean:4:0: 'TccModel.preprocess' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Tcc/Model/PreAudit.lean:5:0: 'TccModel.PreprocessCorrect_Statement' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Tcc/Model/PreAudit.lean:6:0: 'TccModel.PragmaObservationEffects_Statement' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Tcc/Model/PreAudit.lean:7:0: 'TccModel.PreprocessObservationNoninterference_Statement' depends on axioms: [propext, Classical.choice, Quot.sound]
+✔ [90/96] Built Tcc.ModelPreMain (392ms)
+✔ [92/96] Built Spec.Pre.Phase4:c.o (1.7s)
+✔ [93/96] Built pre_spec:exe (2.3s)
+✔ [94/96] Built tcc_pre_tokens:exe (2.3s)
+✔ [95/96] Built Spec.Pre.Test (7.9s)
+Build completed successfully (96 jobs).

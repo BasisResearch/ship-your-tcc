@@ -1,0 +1,39 @@
+Running as unit: run-p3590633-i464338089.scope; invocation ID: d3753d86e361484cb69762526b41c9b7
+⚠ [40/96] Replayed Tcc.Model.Gen8
+warning: Tcc/Model/Gen8.lean:268:47: `String.get` has been deprecated: Use `String.Pos.Raw.get` instead
+
+Note: The updated constant is in a different namespace. Dot notation may need to be changed (e.g., from `x.get` to `String.Pos.Raw.get x`).
+✔ [72/96] Built Spec.Pre.Tcc.Cfg (323ms)
+✔ [73/96] Built Spec.Pre.Expand (991ms)
+✔ [74/96] Built Spec.Pre.Tcc.Cfg:c.o (977ms)
+✔ [75/96] Built Spec.Pre.IfExpr (776ms)
+⚠ [77/96] Built Spec.Pre.Phase4 (1.1s)
+warning: Spec/Pre/Phase4.lean:78:8: Variable name `l` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _l
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: Spec/Pre/Phase4.lean:140:37: Variable name `prev` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _prev
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+✔ [78/96] Built Spec.Pre.Main (257ms)
+✔ [80/96] Built Spec.Pre.Compare (223ms)
+✔ [82/96] Built Spec.Pre (203ms)
+✔ [83/96] Built Spec.Pre.Expand:c.o (2.5s)
+✔ [85/96] Built Spec.PreSpec (371ms)
+✔ [87/96] Built Tcc.Model.Preprocess (783ms)
+ℹ [89/96] Built Tcc.Model.PreAudit (235ms)
+info: Tcc/Model/PreAudit.lean:4:0: 'TccModel.preprocess' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Tcc/Model/PreAudit.lean:5:0: 'TccModel.PreprocessCorrect_Statement' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Tcc/Model/PreAudit.lean:6:0: 'TccModel.PragmaObservationEffects_Statement' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: Tcc/Model/PreAudit.lean:7:0: 'TccModel.PreprocessObservationNoninterference_Statement' depends on axioms: [propext, Classical.choice, Quot.sound]
+✔ [90/96] Built Spec.Pre.Phase4:c.o (1.6s)
+✔ [91/96] Built Tcc.ModelPreMain (387ms)
+✔ [93/96] Built pre_spec:exe (2.8s)
+✔ [94/96] Built tcc_pre_tokens:exe (2.8s)
+✔ [95/96] Built Spec.Pre.Test (8.6s)
+Build completed successfully (96 jobs).

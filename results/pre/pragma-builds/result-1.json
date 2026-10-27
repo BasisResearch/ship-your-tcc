@@ -1,0 +1,22 @@
+{
+  "request": "f2-pragmas-1",
+  "request_id": "f2-pragmas-1",
+  "exit": 1,
+  "log": "build/worker-build-f2-pragmas-1.log",
+  "command": [
+    "flock",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/lake.lock",
+    "systemd-run",
+    "--user",
+    "--scope",
+    "-p",
+    "MemoryMax=12G",
+    "lake",
+    "build",
+    "CSemPre",
+    "pre_spec",
+    "tcc_pre_tokens",
+    "Tcc.Model.PreAudit"
+  ],
+  "source_hashes_verified": true
+}

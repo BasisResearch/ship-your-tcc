@@ -235,6 +235,7 @@ def extTcc : Ext where
   emptyVariadic := true
   binaryLiterals := true
   redefine := true
+  pragmaPack := true
 
 /-- tcc's predefined text for `tcc -run` in the image. -/
 def predefsRun : String := {run}
@@ -259,7 +260,8 @@ def cfgTcc : PreCfg where
   maxIncludeDepth := 33
   maxIfDepth := 64
   charSigned := false
-  pragmaExpand := true
+  pragmaExpand := fun n => n = bs "pack" ∨ n = bs "comment" ∨ n = bs "push_macro" ∨ n = bs "pop_macro"
+  pragmaEventsRightToLeft := true
   ext := extTcc
 
 /-- The cross tcc's `tcc -E`, with the same file-system layout (the
@@ -268,6 +270,8 @@ are set by the driver to the host tcc's values. -/
 def cfgTccE : PreCfg :=
   {{ cfgTcc with
     predefs := bs predefsE
+    pragmaExpand := fun _ => true
+    ext := {{ extTcc with pragmaPack := false }}
     includePaths := [bs "/lib/tcc/include", bs "/include"]
     sysIncludePaths := [] }}
 

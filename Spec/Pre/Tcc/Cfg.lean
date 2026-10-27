@@ -51,6 +51,7 @@ def extTcc : Ext where
   emptyVariadic := true
   binaryLiterals := true
   redefine := true
+  pragmaPack := true
 
 /-- tcc's predefined text for `tcc -run` in the image. -/
 def predefsRun : String := "#define __TINYC__ 928\n#define __riscv 1\n#define __riscv_xlen 64\n#define __riscv_float_abi_soft 1\n#define __linux__ 1\n#define __linux 1\n#define __unix__ 1\n#define __unix 1\n#define __INT8_TYPE__ signed char\n#define __INT16_TYPE__ short int\n#define __INT32_TYPE__ int\n#define __UINT8_TYPE__ unsigned char\n#define __UINT16_TYPE__ short unsigned int\n#define __UINT32_TYPE__ unsigned int\n#define __UINT64_TYPE__ long unsigned int\n#define __INT_LEAST8_TYPE__ signed char\n#define __INT_LEAST16_TYPE__ short int\n#define __INT_LEAST32_TYPE__ int\n#define __INT_LEAST64_TYPE__ long int\n#define __UINT_LEAST8_TYPE__ unsigned char\n#define __UINT_LEAST16_TYPE__ short unsigned int\n#define __UINT_LEAST32_TYPE__ unsigned int\n#define __UINT_LEAST64_TYPE__ long unsigned int\n#define __INT_FAST8_TYPE__ int\n#define __INT_FAST16_TYPE__ int\n#define __INT_FAST32_TYPE__ int\n#define __INT_FAST64_TYPE__ long int\n#define __UINT_FAST8_TYPE__ unsigned int\n#define __UINT_FAST16_TYPE__ unsigned int\n#define __UINT_FAST32_TYPE__ unsigned int\n#define __UINT_FAST64_TYPE__ long unsigned int\n#define __INTMAX_TYPE__ long int\n#define __UINTMAX_TYPE__ long unsigned int\n#define __TCC_RUN__ 1\n#define __CHAR_UNSIGNED__ 1\n#define __SIZEOF_POINTER__ 8\n#define __SIZEOF_LONG__ 8\n#define __STDC__ 1\n#define __STDC_HOSTED__ 1\n#define __STDC_VERSION__ 201112L\n#include <tccdefs.h>\n#define __BASE_FILE__ \"/prog.c\"\n"
@@ -75,7 +76,8 @@ def cfgTcc : PreCfg where
   maxIncludeDepth := 33
   maxIfDepth := 64
   charSigned := false
-  pragmaExpand := true
+  pragmaExpand := fun n => n = bs "pack" ∨ n = bs "comment" ∨ n = bs "push_macro" ∨ n = bs "pop_macro"
+  pragmaEventsRightToLeft := true
   ext := extTcc
 
 /-- The cross tcc's `tcc -E`, with the same file-system layout (the
@@ -84,6 +86,8 @@ are set by the driver to the host tcc's values. -/
 def cfgTccE : PreCfg :=
   { cfgTcc with
     predefs := bs predefsE
+    pragmaExpand := fun _ => true
+    ext := { extTcc with pragmaPack := false }
     includePaths := [bs "/lib/tcc/include", bs "/include"]
     sysIncludePaths := [] }
 
