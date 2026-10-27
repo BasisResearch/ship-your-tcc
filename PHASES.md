@@ -135,3 +135,12 @@ Both patched CSem engines and strict GCC return 0. The full 33-case Sail suite
 retains the refusal; it is not successful agreement. Lead disposition: next
 worker repairs patched tcc and the exact compiler model; no Supported exclusion.
 Candidate CSem adoption may proceed after its own review/gates.
+
+Repin adoption, 2026-10-27: the current fork uses Cerberus 704c4e697845127bced66c93fa0763eb51527ca4
+and Lem e6d8db5680962f49060257d6c2bcb13c284b910f, retaining Lean 4.34.
+The historical F0 measurements above remain the original import evidence.
+The selected-member union repair removes the concrete adoption regression;
+its shared source, GCC/OCaml/Lean checks, 32 Sail observations, separate tcc
+continuation refusal and inherited semantic gaps are recorded in
+results/csem/union-init-2026-10-27.md. The integrated full gate passes; F1
+totality/IEEE/allocation/frontend and F2/F3 correctness obligations stay open.

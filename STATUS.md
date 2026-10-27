@@ -20,7 +20,7 @@ Takeover in progress, resumed 2026-10-27. The approved target is
 Mike Dodds's upstream follow-up is tracked in CSEM-UPSTREAM.md. README and
 ATTRIBUTION prominently credit Cerberus / Cambridge REMS and cerberus-lean /
 Mike Dodds / Oath. The scheduled repin evaluation is complete (results/csem/repin-2026-10-27.md);
-adoption awaits the valid-union initializer repair in the preserved candidate. Kiran owns
+the repaired repin is adopted at Cerberus 704c4e69 / Lem e6d8db56, retaining Lean 4.34. Kiran owns
 external bug reporting; no external contact is authorized or planned.
 
 | lane | recovery source | review and next check |
@@ -39,11 +39,11 @@ removed. Patch 0004 fixes compiler literals using exact integer rounding;
 public libc `strtold` still needs correction in the library lane. Matching refusals likewise do not satisfy the F3 success criterion.
 
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
-two at a time, following MANAGER.md. Slot 1 implements exact phase-4 token observation in sol-f2-tokens; the
-line-splice repair is integrated after focused/Sail checks and the full gate.
-Slot 2 has evaluated the scheduled upstream repin in sol-csem-repin: full
-gate passes, but adoption is deferred until its valid-union refusal is
-repaired. Main retains its current pin; tasks/f1-union-initializers.md is active. The compiler-handoff collector and strict model_diff consumer are integrated.
+two at a time, following MANAGER.md. Slot 1 repairs exact pragma specification residuals; slot 2 repairs valid
+nested-designator continuation in the compiler and model. The lead holds the
+raw-token integration while correcting three newly found observer failures.
+The line repair is integrated, and the scheduled CSem repin plus selected-member
+union initializer repair is adopted after its integrated full gate. The compiler-handoff collector and strict model_diff consumer are integrated.
 Fresh 1,412-input comparison: 1,308 arenas (1,299 generated), 104 refusals,
 zero mismatches/harness/model errors (results/model/handoff-integration.md). The RV64 reader and image filesystem are
 integrated; their fresh probes and remaining semantic gaps are documented.
@@ -103,7 +103,8 @@ in results/csem/ieee-recovery-review.json and tasks/f1-ieee-recovery.md.
 The repaired CSem union suite also exposes tcc's valid nested-designator
 continuation refusal (results/repro/tcc_designator_continuation.c). The next
 compiler/model task is tasks/f3-designator-continuation.md; this does not
-change Supported/Fits. The repin candidate's own final gate passes.
+change Supported/Fits. The repaired repin and its integrated full gate pass;
+remaining aggregate-value, anonymous-layout and IEEE gaps remain explicit.
 
 ## Needs user
 

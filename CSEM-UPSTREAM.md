@@ -3,9 +3,9 @@
 Maintained from 2026-10-27 following Mike Dodds's message. Kiran owns external
 communication; no report has been sent by this project. The initial entries concern
 our e7e9bb4 / 2d3a492 import; the current-upstream checks below concern the
-repin candidate in `vendor/CSEM_REV`. Reproduce on
-current upstream during the queued repin evaluation before calling an item an
-upstream bug. Keep fixed, superseded and rejected entries with their evidence.
+adopted pin in `vendor/CSEM_REV`. The scheduled repin evaluation is complete;
+distinguish its pristine-upstream captures from the locally repaired fork
+before calling an item an upstream bug. Keep fixed, superseded and rejected entries with their evidence.
 
 ## Bugs and limitations to triage
 
@@ -142,3 +142,11 @@ engines and strict GCC return 0; patched tcc/Sail refuses. The lead queued its
 compiler/model repair separately and explicitly permits review/adoption of
 this CSem candidate on its own semantics and gates. Keep the counterexample;
 never narrow Supported or count the refusal as agreement.
+
+Lead adoption, 2026-10-27: the selected-member repair and the rebased integrated
+full gate pass, so main now takes 704c4e69 / e6d8db56 on Lean 4.34. The initial
+defer decision remains above as dated history. The repaired union refusal no
+longer blocks adoption. General aggregate expressions, anonymous-union layout,
+IEEE and parser/totality work remain explicit. The valid-C tcc continuation
+counterexample is owned by tasks/f3-designator-continuation.md. No external
+message was sent; Kiran retains the bug-list handoff.

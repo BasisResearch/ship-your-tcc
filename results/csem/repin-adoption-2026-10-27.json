@@ -1,0 +1,14 @@
+{
+  "gate": "scripts/check.sh --csem",
+  "result": "pass",
+  "log_sha256": "dce39f816bbc00b63be8594054857b8d6ab46835acb5edceeed524a590df1987",
+  "pins": {
+    "vendor/CSEM_REV": "f4728490acefb712e9ea36f3c89ee387c98b31f8bb297f639ed71f520b92dfd6",
+    "lean-toolchain": "8733782dc070a99b312039cda424f601b80f3be6f6f512627da5ba25adc27632",
+    "csem/frontend/model/desugaring_init.lem": "bc81c6d2f3fd1986ef598bc7d9495c3a929fb55ea5cf736d883836f11e9816d4",
+    "csem/lean_frontend/generated/Desugaring_init.lean": "9a169d14f3142ddbdc0a11b7acfda6b4c20674d263e7f6e478279cf3f1c46863",
+    "csem/lean_frontend/CerbFS.lean": "b27b36e420ab3c3d1fc517bae6293e7cef938fe0ff370dcea6d4f75fe6d12e5a",
+    "Spec/ImageFiles.lean": "799f69aca3a56dbed62d3d7551650a20408bf851b80bf35c94235e0e773cb126",
+    "patches/0003-tcc-c11.patch": "8539b1c4dd9da4c6e571a45bef4d07b897587e507d7b6368f962996ac040fdad"
+  }
+}
