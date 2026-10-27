@@ -38,7 +38,11 @@ and triggers the existing unsupported-operation refusal in CSem. This is not
 an agreement or a change to Supported. `scripts/fs_diff.py` runs a fresh batch
 with source/runtime hashes and retained outputs. It requires eight exact
 one-branch agreements plus one separately classified missing-library case.
-The fresh batch is pending at this checkpoint.
+The fresh batch passed: eight exact one-branch agreements, with mkdir
+classified separately. All pinned input/runtime hashes remained unchanged.
+Raw outputs, per-case commands and hashes are in `fs-probes/`. This batch
+used the pre-ABI-integration executable; the combined RV64 configuration
+recheck is recorded separately below.
 
 ## Remaining obligations
 
@@ -56,3 +60,21 @@ must reconcile numeric flag/errno/stat layouts, including programs that inspect
 their values. The tests compare one CSem branch and do not prove all-branch
 refinement, stdio buffering equivalence or stdout/stderr interleaving. Library
 and ABI correctness remain F1/F7 work. No sum compile-cut artifacts changed.
+
+## Combined RV64 configuration validation
+
+After rebasing on the explicit RV64 reader, `scripts/check.sh --csem` passes:
+633 targets, 19 unit executables, 230 generated files reproduced, 113 baseline
+oracle classifications (90 MATCH, 18 UB_MATCH, 5 CERB_SKIP), and standard-only
+axiom cones. The image runner now selects `--impl tcc-rv64` and the 64-bit
+address-space top. `scripts/fs_recheck.py` checks the same eight exact byte/exit
+agreements plus the separate mkdir classification, with frozen input hashes.
+It reuses the captured Sail observations only after checking that base-image,
+source and embedded-file bytes match the original pins. New executable,
+runtime and output pins are in `fs-rv64-recheck/summary.json`; all nine new
+CSem outputs are retained. The Sail compiler image remains the one recorded
+in fs-probes, before the subsequent pragma-operand patch increment.
+
+The build-lock integration review found check.sh's worktree-relative default
+could permit overlapping capped builds. The main gate now derives its default
+from Git's common directory; all subsequent worktree builds use that lock.

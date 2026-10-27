@@ -1,0 +1,20 @@
+stat /prog.c 0 reg 1 dir 0 chr 0 perm 644 nlink 1 size 2315
+bytes read 2315
+fstat fd 0 reg 1 dir 0 chr 0 perm 644 nlink 1 size 2315
+stat /lib 0 reg 0 dir 1 chr 0 perm 755 nlink 3 size 0
+stat /lib/tcc 0 reg 0 dir 1 chr 0 perm 755 nlink 3 size 0
+stat / 0 reg 0 dir 1 chr 0 perm 755 nlink 4 size 0
+stat /missing -1 ENOENT
+stat /prog.c/ -1 ENOTDIR
+stat /missing/x -1 ENOENT
+stat /proc/self/fd/0 -1 ENOENT
+fstat 0 0 reg 0 dir 0 chr 1 perm 0 nlink 1 size 0
+fstat 1 0 reg 0 dir 0 chr 1 perm 0 nlink 1 size 0
+fstat 30 -1 EBADF
+unlink /lib -1 EISDIR
+unlink /missing/ -1 ENOTDIR
+unlink /missing -1 ENOENT
+unlink /prog.c 0
+stat after unlink -1 ENOENT
+fstat after unlink 0 reg 1 dir 0 chr 0 perm 644 nlink 0 size 2315
+read after unlink 10

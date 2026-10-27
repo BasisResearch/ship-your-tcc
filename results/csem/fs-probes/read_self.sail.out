@@ -1,0 +1,5 @@
+fd 3
+first read 32
+/* fs probe: read_self -- open+r
+last read 0 total 818 lines 25
+close 0

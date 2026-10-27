@@ -1,0 +1,11 @@
+first: /* fs probe: stdio -- fopen/fgets/fputs/fclose over the image's files */
+lines 34
+fclose 0
+fopen w ok
+fclose 0
+got: written by stdio
+got: second line
+missing NULL ENOENT
+nodir NULL ENOENT
+remove 0
+remove again -1 ENOENT

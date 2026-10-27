@@ -1,0 +1,22 @@
+open 3
+write 11
+lseek set 0
+read 5 [hello]
+lseek cur 6
+read 5 [world]
+read at eof 0
+lseek past end 20
+write 1
+lseek end 21
+lseek end-3 18
+close 0
+reopen 3 read 21 zeros 9 last X
+trunc open 3 write 2
+append open 3 write 2 pos 4
+append again 2 pos 6
+content 6 [abcdef]
+unlink 0
+reopen after unlink -1 ENOENT
+create in missing dir -1 ENOENT
+create in /lib 3 write 1
+read via relative 3 n 1

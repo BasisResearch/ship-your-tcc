@@ -1,0 +1,1 @@
+Defined {value: "Specified(0)", stdout: "fd 3\nfirst read 32\n/* fs probe: read_self -- open+r\nlast read 0 total 818 lines 25\nclose 0\n", stderr: "", blocked: "false"}

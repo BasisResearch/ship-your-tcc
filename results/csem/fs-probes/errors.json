@@ -1,0 +1,17 @@
+{
+  "probe": "errors",
+  "source_sha256": "040ff3cdc2a34e114ec0857c142d92bcfcdfffdabf9d3190015f87b80df47840",
+  "lean_command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-ad868c434f5f27398/scripts/csem_run_image.sh",
+    "--first",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-ad868c434f5f27398/c/tests/fs/errors.c"
+  ],
+  "sail_command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/scripts/run_tcc_sail.sh",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-ad868c434f5f27398/c/tests/fs/errors.c"
+  ],
+  "lean_exit": 0,
+  "sail_exit": 0,
+  "status": "AGREE_ONE_BRANCH",
+  "wall_s": 999.55
+}

@@ -1,0 +1,23 @@
+excl existing -1 EEXIST
+creat dir slash -1 EISDIR
+creat on dir -1 EISDIR
+write dir -1 EISDIR
+directory on file -1 ENOTDIR
+dir open 3
+read dir -1 EISDIR
+lseek end dir -1 EINVAL
+close dir 0 -
+write rdonly -1 EBADF
+lseek bad whence -1 EINVAL
+lseek negative -1 EINVAL
+close 0 -
+close again -1 EBADF
+close 99 -1 EBADF
+close -1 -1 EBADF
+read 40 -1 EBADF
+lseek stdout -1 ESPIPE
+read wronly -1 EBADF
+excl new 4 -
+open 27 failed EMFILE after 27, last fd 31
+close 10 0 -
+reuse 10 -

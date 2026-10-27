@@ -1,0 +1,17 @@
+{
+  "probe": "rename_link",
+  "source_sha256": "eb56f161b2a182899db2bb054dd1f78a5edc921db196e710c660a081cc125c90",
+  "lean_command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-ad868c434f5f27398/scripts/csem_run_image.sh",
+    "--first",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-ad868c434f5f27398/c/tests/fs/rename_link.c"
+  ],
+  "sail_command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/scripts/run_tcc_sail.sh",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-ad868c434f5f27398/c/tests/fs/rename_link.c"
+  ],
+  "lean_exit": 0,
+  "sail_exit": 0,
+  "status": "AGREE_ONE_BRANCH",
+  "wall_s": 414.72
+}

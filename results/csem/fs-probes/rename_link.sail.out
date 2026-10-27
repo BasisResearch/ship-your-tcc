@@ -1,0 +1,5 @@
+rename -1 EMLINK
+rename missing -1 EMLINK
+link -1 EMLINK
+stat a 0
+stat b -1 ENOENT

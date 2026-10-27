@@ -1,0 +1,17 @@
+{
+  "probe": "mkdir",
+  "source_sha256": "d32af23afa875d8189725662b2190de33de0e3764794a858cff42e580a93476a",
+  "lean_command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-ad868c434f5f27398/scripts/csem_run_image.sh",
+    "--first",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-ad868c434f5f27398/c/tests/fs/mkdir.c"
+  ],
+  "sail_command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/scripts/run_tcc_sail.sh",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-ad868c434f5f27398/c/tests/fs/mkdir.c"
+  ],
+  "lean_exit": 134,
+  "sail_exit": 125,
+  "status": "MISSING_LIBRARY",
+  "wall_s": 1247.82
+}

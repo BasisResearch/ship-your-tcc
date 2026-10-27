@@ -1,0 +1,20 @@
+[/prog.c] fd 3 size 1403 last 0
+[./prog.c] fd 3 size 1403 last 0
+[//prog.c] fd 3 size 1403 last 0
+[prog.c] fd 3 size 1403 last 0
+[/./prog.c] fd 3 size 1403 last 0
+[/../prog.c] fd 3 size 1403 last 0
+[../../prog.c] fd 3 size 1403 last 0
+[/include/../prog.c] fd 3 size 1403 last 0
+[/lib/tcc/../../prog.c] fd 3 size 1403 last 0
+[/usr/../prog.c] -1 ENOENT
+[/prog.c/x] -1 ENOTDIR
+[/prog.c/] -1 ENOTDIR
+[/prog.c/.] -1 ENOTDIR
+[/missing] -1 ENOENT
+[/missing/x] -1 ENOENT
+[] -1 ENOENT
+[/lib//tcc///include/stddef.h] fd 3 size 635 last 0
+[lib/tcc/include/../include/./stddef.h] fd 3 size 635 last 0
+[/lib] fd 3 size 0 last -1 EISDIR
+[/] fd 3 size 0 last -1 EISDIR

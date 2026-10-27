@@ -1,0 +1,17 @@
+{
+  "probe": "stdio",
+  "source_sha256": "f3747f8e51a88a2191e56dc5d37e30c6e665a4ee96d8d675e43e05610a4ed044",
+  "lean_command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-ad868c434f5f27398/scripts/csem_run_image.sh",
+    "--first",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-ad868c434f5f27398/c/tests/fs/stdio.c"
+  ],
+  "sail_command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/scripts/run_tcc_sail.sh",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-ad868c434f5f27398/c/tests/fs/stdio.c"
+  ],
+  "lean_exit": 0,
+  "sail_exit": 0,
+  "status": "AGREE_ONE_BRANCH",
+  "wall_s": 673.61
+}

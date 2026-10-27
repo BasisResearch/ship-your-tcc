@@ -1,0 +1,1 @@
+Defined {value: "Specified(0)", stdout: "first: /* fs probe: stdio -- fopen/fgets/fputs/fclose over the image's files */\nlines 34\nfclose 0\nfopen w ok\nfclose 0\ngot: written by stdio\ngot: second line\nmissing NULL ENOENT\nnodir NULL ENOENT\nremove 0\nremove again -1 ENOENT\n", stderr: "", blocked: "false"}

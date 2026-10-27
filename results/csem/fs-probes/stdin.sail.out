@@ -1,0 +1,5 @@
+getchar EOF
+read 0: 0
+write 0: -1 EBADF
+read 1: -1 EBADF
+fgets NULL

@@ -15,4 +15,4 @@ list=${CSEM_IMAGE_FS_LIST:-$HOME/Documents/code/ship-your-tcc/c/build/fs.list}
 [ -s "$list" ] || { echo "csem_run_image: no file list $list (build the image: c/Makefile)" >&2; exit 2; }
 args=$("$here/csem_image_libc_prep.sh")
 mapfile -t libc <<< "$args"
-exec "$here/csem_run.sh" "${libc[@]}" --image-fs-file "/prog.c=$src" --image-fs "$list" "${@:1:$#-1}" "$src"
+exec "$here/csem_run.sh" "${libc[@]}" --impl tcc-rv64 --address-space-top 18446744073709551615 --image-fs-file "/prog.c=$src" --image-fs "$list" "${@:1:$#-1}" "$src"
