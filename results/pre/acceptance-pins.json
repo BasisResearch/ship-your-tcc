@@ -1,0 +1,38 @@
+{
+  "negative_cli_checks": [
+    {
+      "args": [
+        "--only",
+        "no-such-file-xyz"
+      ],
+      "exit": 2
+    },
+    {
+      "args": [
+        "--jobs",
+        "0"
+      ],
+      "exit": 2
+    },
+    {
+      "args": [
+        "build/missing-input-xyz.c"
+      ],
+      "exit": 2
+    },
+    {
+      "args": [
+        "vendor/tinycc/tests/pp/21.c",
+        "--no-gcc"
+      ],
+      "exit": 1
+    }
+  ],
+  "sha256": {
+    "scripts/pre_diff.py": "4b7d105a011a237bfce2d3206af6a2ed8882bda9078c834c4de37deee6eb4611",
+    "scripts/tests/test_pre_diff.py": "fe5341e8ba63f0bab30374fd5c9310d905339836a53bae572afab56bc79d3643",
+    ".lake/build/bin/pre_spec": "e5c00313b622c65ff59b0a27b9197067557ac545b27a3d6b075dd3913330b283",
+    "build/cross/riscv64-tcc": "82010a6805ef092a8b167a58d7bb709421a7b68b52da5f5abd4fcb48429168af",
+    "results/pre/acceptance-recheck.tsv": "d0cec8d323cdf0d3878ff54c4cca5ae0b196c935da455bfc5d3f62ad7dbd5aa1"
+  }
+}

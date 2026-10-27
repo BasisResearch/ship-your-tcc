@@ -59,8 +59,11 @@ inherited assembler drafts remain in `build/recovery/assembler/`.
 F2 recheck after patch 0003: 585 token-equal inputs / 593 after UCN identity and `_Pragma`
 operand/effect repairs. The cross-host signed-character difference is already
 diagnosed; two UB examples and five fixture errors remain separately classified.
-The comparison acceptance contract and remaining C11 coverage are still work
-items, not changes to the C11 contract.
+The comparator now requires exact equality by default and fails on malformed
+protocol/crashes. Its 608-input diagnostic rerun has 600 exact tcc agreements
+and the same eight residuals (results/pre/acceptance-contract.md). A newly
+confirmed trigraph deviation needs a compiler patch and model reflection;
+remaining C11 coverage is work, not a change to the contract.
 
 Builds are serialized across these lanes, capped at 12 GB. The two inherited
 `results/review/*.json` handoffs are retained as dated records; all 345 hashes

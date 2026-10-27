@@ -32,11 +32,16 @@ they differ only where the -E text printed two tokens with nothing between
 them that re-lex as one (the printer's artefact, not the preprocessor's): a
 window of consecutive tokens on one side whose spellings concatenate to the
 spelling of a token on the other.
-Both sides failing (a spec error and a non-zero exit) counts as agreement.
+Joint errors and spacing-only matches are classifications, never exact agreement.
+The default exit succeeds only for exact tcc token equality on every input.
+--diagnostic permits semantic differences for triage, but never harness failures.
+GCC is an auxiliary comparison; --require-gcc also requires its exact equality.
 """
 import argparse
+import ast
 import concurrent.futures
 import os
+from pathlib import Path
 import re
 import shutil
 import subprocess
@@ -58,7 +63,7 @@ for d in sorted(os.listdir(os.path.expanduser('~/toolchains'))):
 def predefs_e():
     s = open(os.path.join(ROOT, 'Spec', 'Pre', 'Tcc', 'Cfg.lean')).read()
     m = re.search(r'def predefsE : String := (".*")\n', s)
-    return eval(m.group(1).replace('\\x', '\\x'))
+    return ast.literal_eval(m.group(1))
 
 
 def make_root(tmp):
@@ -81,17 +86,29 @@ def run(args, timeout=120, cwd=None):
         return 124, '', 'timeout'
 
 
-def parse_toks(out):
-    """pre_spec output -> (tokens, error)"""
+class HarnessError(RuntimeError):
+    pass
+
+
+def parse_toks(out, rc=0):
+    """Parse the closed pre_spec protocol and check exit/verdict consistency."""
     toks, err = [], None
-    for l in out.split('\n'):
-        if not l:
+    for line in out.splitlines():
+        if not line:
             continue
-        if l.startswith('!\t'):
-            err = l[2:]
+        if line.startswith('!\t'):
+            if err is not None or toks:
+                raise HarnessError('mixed or duplicate pre_spec error records')
+            err = line[2:]
+            if not err:
+                raise HarnessError('empty pre_spec error record')
             continue
-        k, _, s = l.partition('\t')
-        toks.append((k, s))
+        kind, sep, spelling = line.partition('\t')
+        if err is not None or not sep or kind not in {'H','I','N','C','S','P','O','[',']'}:
+            raise HarnessError('malformed pre_spec output: '+line[:120])
+        toks.append((kind, spelling))
+    if not ((rc == 0 and err is None) or (rc == 1 and err is not None)):
+        raise HarnessError('pre_spec exit/output disagreement: '+str(rc))
     return toks, err
 
 
@@ -111,7 +128,9 @@ def lex_text(text, tmpdir):
         f.write('\n'.join(lines) + '\n')
     rc, out, _ = run([PRE_SPEC, '--lex', path])
     os.unlink(path)
-    toks, err = parse_toks(out)
+    toks, err = parse_toks(out, rc)
+    if err is not None:
+        raise HarnessError('cannot tokenize successful preprocessor output: '+err)
     toks = [('[', '') if t == ('I', '__PRAGMA_BEGIN__') else (']', '') if t == ('I', '__PRAGMA_END__') else t
             for t in toks]
     return toks, err
@@ -159,9 +178,13 @@ def date_time(root):
     p = os.path.join(root, 'dt.c')
     with open(p, 'w') as f:
         f.write('__DATE__ __TIME__\n')
-    _, out, _ = run([TCC, '-std=c11', '-E', '-P', '-nostdinc', p])
+    rc, out, err = run([TCC, '-std=c11', '-E', '-P', '-nostdinc', p])
+    if rc != 0:
+        raise HarnessError('date/time probe failed: '+err[:120])
     m = re.search(r'"([^"]*)"\s*"([^"]*)"', out)
-    return (m.group(1), m.group(2)) if m else ('??? ?? ????', '??:??:??')
+    if not m:
+        raise HarnessError('malformed date/time probe output')
+    return m.group(1), m.group(2)
 
 
 def local_headers(path):
@@ -192,7 +215,9 @@ def one(path, root, tmpdir, want_gcc=True):
         date, time = date_time(root)
     src_rc, sout, _ = run([PRE_SPEC, '--cfg', 'E', '--fslist', os.path.join(root, 'fs.list'),
                            '--date', date, '--time', time, prog])
-    stoks, serr = parse_toks(sout)
+    stoks, serr = parse_toks(sout, src_rc)
+    if trc not in (0, 1):
+        raise HarnessError('unexpected tcc process status: '+str(trc))
     res = {'file': path, 'spec_err': serr, 'tcc_rc': trc, 'tcc_err': terr.strip().split('\n')[0] if trc else ''}
     if trc == 0:
         ttoks, lerr = lex_text(tout, tmpdir)
@@ -219,6 +244,8 @@ def one(path, root, tmpdir, want_gcc=True):
     if want_gcc and XGCC:
         grc, gout, gerr = run([XGCC, '-E', '-undef', '-nostdinc', '-std=c11'] + inc +
                               ['-include', os.path.join(root, 'predefs.h'), prog])
+        if grc not in (0, 1):
+            raise HarnessError('unexpected gcc process status: '+str(grc))
         if grc == 0:
             gtoks, _ = lex_text(gout, tmpdir)
             gtoks = norm_paths(gtoks, root)
@@ -272,10 +299,25 @@ def main():
     ap.add_argument('--only', default=None)
     ap.add_argument('--no-gcc', action='store_true')
     ap.add_argument('files', nargs='*')
+    ap.add_argument('--diagnostic', action='store_true', help='classify semantic differences; harness failures still fail')
+    ap.add_argument('--require-gcc', action='store_true', help='also require exact gcc equality')
     a = ap.parse_args()
+    if not 1 <= a.jobs <= 8:
+        ap.error('jobs must be 1..8')
+    if a.require_gcc and (a.no_gcc or not XGCC):
+        ap.error('--require-gcc needs the GCC oracle')
     files = a.files or default_files(a.corpus_dir)
     if a.only:
         files = [f for f in files if a.only in f]
+    if not files:
+        ap.error('empty input selection')
+    for f in files:
+        if not os.path.isfile(f):
+            ap.error('missing input: '+f)
+    if not a.files and not a.only:
+        for sub in ('compcert', 'csmith', 'tcc'):
+            if not any(Path(os.path.join(a.corpus_dir, sub)).glob('*.c')):
+                ap.error('missing/empty corpus: '+sub)
     tmp = tempfile.mkdtemp(prefix='pre_diff_')
     roots = [make_root(tmp) for _ in range(a.jobs)]
     results = []
@@ -290,6 +332,9 @@ def main():
                     r = free.pop()
                 try:
                     return one(f, r, tmp, not a.no_gcc)
+                except Exception as e:
+                    return dict(file=f, tcc='harness-error', gcc='harness-error',
+                                spec_n=0, tcc_n=0, spec_err='HARNESS: '+str(e))
                 finally:
                     with lock:
                         free.append(r)
@@ -310,7 +355,7 @@ def main():
     print('tcc:', dict(Counter(r['tcc'] for r in results)))
     print('gcc:', dict(Counter(r.get('gcc', '-') for r in results)))
     if a.out:
-        os.makedirs(os.path.dirname(a.out), exist_ok=True)
+        os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
         with open(a.out, 'w') as f:
             f.write('file\tvs_tcc\tvs_gcc\tspec_tokens\ttcc_tokens\tspec_error\ttcc_error\tgcc_error\ttcc_context\tgcc_context\n')
             for r in results:
@@ -319,6 +364,13 @@ def main():
                     r.get('spec_err') or '', r.get('tcc_err', ''), r.get('gcc_err', ''),
                     r.get('tcc_ctx', ''), r.get('gcc_ctx', ''))) + '\n')
 
+    if any(r['tcc'] == 'harness-error' for r in results):
+        return 1
+    if a.diagnostic:
+        print('Diagnostic classification only; differences/refusals are not agreements.')
+        return 0
+    return 0 if all(r['tcc'] == 'equal' and (not a.require_gcc or r.get('gcc') == 'equal') for r in results) else 1
+
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
