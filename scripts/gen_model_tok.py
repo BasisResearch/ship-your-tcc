@@ -64,7 +64,7 @@ def render(toks):
     # Patch 0003 reserves preprocessing tokens below TOK_IDENT; no existing
     # enum/architecture keyword number is shifted.
     header = open(os.path.join(SRC, 'tcc.h')).read()
-    for name, value in re.findall(r'^#define (TOK_(?:U(?:16|32)(?:STR|CHAR)|DG_\w+))\s+(0x[0-9a-f]+)', header, re.M):
+    for name, value in re.findall(r'^#define (TOK_(?:U(?:16|32)(?:STR|CHAR)|DG_\w+|PPLINE))\s+(0x[0-9a-f]+)', header, re.M):
         lines.append(f'@[inline] def {name} : Int32 := {value}')
     lines += [
         '',

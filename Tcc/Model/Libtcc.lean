@@ -127,7 +127,7 @@ def get_tok_str_st (s : TccSt) (v : Int32) (cv : Option CValue) : Option ByteArr
   else if v == TOK_CFLOAT then some "<float>".toUTF8
   else if v == TOK_CDOUBLE then some "<double>".toUTF8
   else if v == TOK_CLDOUBLE then some "<long double>".toUTF8
-  else if v == TOK_LINENUM then some "<linenumber>".toUTF8
+  else if v == TOK_LINENUM || v == TOK_PPLINE then some "<linenumber>".toUTF8
   else if v == TOK_LT then some "<".toUTF8
   else if v == TOK_GT then some ">".toUTF8
   else if v == TOK_DOTS then some "...".toUTF8

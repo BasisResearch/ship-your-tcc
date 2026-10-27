@@ -16,6 +16,7 @@ namespace Tcc.Model.C
 @[inline] def TOK_DG_RBRACE : Int32 := 0xd7
 @[inline] def TOK_DG_SHARP : Int32 := 0xd8
 @[inline] def TOK_DG_PASTE : Int32 := 0xd9
+@[inline] def TOK_PPLINE : Int32 := 0xda
 
 end Tcc.Model.C
 

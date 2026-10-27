@@ -106,3 +106,38 @@
   in its traced loop. Include `--trace-pcs` (even an empty file) for a bounded
   probe. The initial untraced diagnostic completed successfully, but the final
   accepted probe used `--trace-pcs` and a wall timeout on the final image.
+
+- C11 line-splice worker (2026-10-27): saving the token start alone does
+  not fix macro arguments: the argument reader consumes later physical
+  lines before substitution. Keep token-line metadata separate from the
+  physical lexer cursor and carry it through argument caches/rescanning.
+  Pasted tokens (including placemarkers) take the invocation line; copying
+  the first raw operand's line gave 301 for `C(\n__LI,\nNE__)` at line 300,
+  whereas GCC gives 300. The focused generator now covers this distinction.
+- A `_Pragma("pack(...) ")` regression placed inside an initializer is
+  rejected by GCC. The valid fixture puts it at a declaration boundary.
+  The first build request completed its Lean jobs but failed the lead's
+  post-build hash check because that fixture generator changed. Submit only
+  final frozen inputs and wait for the matching result. Do not reuse that
+  failed request as successful build evidence.
+- `c/tests/pre/line.c` is a preprocessing fixture with no main. Including it
+  in a successful-arena quota gives a matching linker refusal, not an arena.
+  Keep it in preprocessing comparisons; use executable fixtures for the
+  independent model arena requirement.
+- The line regression spec comparison must run after runtime/cross rebuilds
+  finish: a concurrent Makefile-triggered cross rebuild briefly removes
+  build/cross/riscv64-tcc and causes harness errors. The sequential rerun is
+  authoritative. It finds seven independent CSem.Pre macro-location
+  discrepancies: Expand.lean rewrites every argument and invocation to the
+  closing parenthesis line. Preserve the strict failures and C11 spec;
+  neither normalize the numbers nor change Supported to hide them.
+- Adding line metadata exposes an old raw-word assumption in GNU variadic
+  comma deletion (enabled by tcc even under -std=c11): payload 44 compares
+  equal to the comma token. Scanning backward through words corrupts the
+  token stream for an empty argument at #line 44. The repair walks complete
+  tokens with TOK_GET to find the comma. `c/tests/c11/line_varargs.c` covers
+  this collision, a present argument and a spliced __LINE__ argument.
+- Trace-mode Sail emits program bytes only on stdout. A no-output probe
+  correctly has empty stdout; an evidence-validator draft expecting the
+  untraced emulator's SUCCESS chatter failed. Check verified lead exit,
+  empty console, no fuel exhaustion and the expected trace cuts instead.

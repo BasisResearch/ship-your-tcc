@@ -18,6 +18,8 @@ import subprocess
 import sys
 import time
 
+from gen_line_fixtures import generate as generate_line_fixtures
+
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / 'build/test-c11'
 CASES = {
@@ -35,6 +37,8 @@ CASES = {
     'c/tests/c11/line_include.c': 'line elsewhere/relative.c 0\n',
     'results/repro/tcc_pragma_macro_operand.c': 'pragma operands 0\n',
     'results/repro/tcc_pp_trigraphs.c': 'trigraphs 0\n',
+    'results/repro/tcc_line_splice.c': '',
+    'c/tests/c11/line_varargs.c': '',
 }
 COMMANDS = []
 
@@ -67,6 +71,7 @@ def main():
     xpack = next((Path.home() / 'toolchains').glob('xpack-riscv-none-elf-gcc-15.2.0-*/bin'))
     cross += ['-I' + str(xpack.parent / 'riscv-none-elf/include')]
     cases = dict(CASES)
+    cases.update(generate_line_fixtures(OUT / 'line'))
     # Raw nonprinting bytes must stay raw through each stringification.
     raw = OUT / 'stringize_raw.c'
     raw.write_bytes(b'#include <stdio.h>\n#define S(x) #x\n#define X(x) S(x)\n'

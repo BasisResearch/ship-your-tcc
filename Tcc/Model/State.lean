@@ -133,6 +133,8 @@ structure TccSt where
   /-- the BufferedFile chain, current first (`file`, `file->prev`, ...) -/
   file : List BufferedFile := []
   tok : Int32 := 0
+  /-- Presumed line of the token start, independent of physical lookahead. -/
+  tok_line : Int32 := 0
   tokc : CValue := {}
   macro_ptr : Option TokPtr := none
   tokcstr : ByteArray := ByteArray.empty

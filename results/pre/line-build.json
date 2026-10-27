@@ -1,0 +1,1053 @@
+{
+  "generated_by": "results/pre/freeze_line_validation.py",
+  "request": {
+    "cwd": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line",
+    "revision": "b703367d545c5a5827562d7ef102e88be81d9bca",
+    "targets": [
+      "CSemPre",
+      "pre_spec",
+      "tcc_model"
+    ],
+    "command": "free -g # require available >=25GB; then flock \"$SYT_LAKE_LOCK\" systemd-run --user --scope -p MemoryMax=12G lake build CSemPre pre_spec tcc_model",
+    "sha256": {
+      "Spec/Pre/Compare.lean": "0b32cf154a2c62f108cd569d341119d78e1aacf55d91d9ecc833e397cf0b9928",
+      "Spec/Pre/Expand.lean": "35752e2ab7dfdb444b3af12aed7070d3dd209deb59449040833af0e6611fd438",
+      "Spec/Pre/IfExpr.lean": "31c3bf411e10f79b546e3757f5e0e075d84531cfbd2f8c7e3a00a051650ff12d",
+      "Spec/Pre/Iso.lean": "4b63ceab3ee9dd76a14beec681677a2aa5c236687a93b264db8a1f7291097582",
+      "Spec/Pre/Lex.lean": "7825966ebc53d20fc7e414e63cda73679dae54c722f7a9cc7f63d57733d9705d",
+      "Spec/Pre/Main.lean": "4519b1cca920d7a5b4cc2aee2494db048f424a163723d4416fd965a254a51e3c",
+      "Spec/Pre/Phase12.lean": "0a0709249f2df329a5eb38e74ac4d103641731d6946796d2a5dad8b7decad821",
+      "Spec/Pre/Phase4.lean": "a76bfd774bc62e2d5ec41f7e084c5323a2a58f56294138443c49028a15ba9e0f",
+      "Spec/Pre/Tcc/Cfg.lean": "12ded79b77e82089c1351d4cd4665c24d7c98d42742e56711420e16330fd603e",
+      "Spec/Pre/Tcc/ImageFS.lean": "543e8939bfd9d13e0588356d03d9a354f7b118bf623f456d2cde98d2611e69f2",
+      "Spec/Pre/Test.lean": "3c7ee9ccb894c3e5ad43cdcf423ee173e336d9628a41cedceb20b5c4832e32d2",
+      "Spec/Pre/Types.lean": "03536caa05fd9e3cb8113066ee45f6dee2ad8b2fcad0926b5dc20c81b0f78c6a",
+      "Spec/Pre.lean": "c9b4a6250fac407c54561563115ff6d5fb1931fe317922a203dbc33dd1c30513",
+      "Spec/PreSpec.lean": "62ec14ab24bab999e042dc22353b3c9fb780c1e73c338ab85745f927bf6f9a8f",
+      "Tcc/Model/Base.lean": "fe70936ded2b273f274b50cc70e82906c642f60d29409d05ca26603e203372ce",
+      "Tcc/Model/Elf.lean": "86e9c5b1f4f3b857abecfeb5165626f412077499535638f687e6f91a96265ecf",
+      "Tcc/Model/Gen1.lean": "fe08462b006e985b16076217fb7cae765aa923526115fed0e3bd7968593b32be",
+      "Tcc/Model/Gen2.lean": "123100220a3950e1d13879de3078837b3e572e2483675fd0ca2dae3aee1beea8",
+      "Tcc/Model/Gen3.lean": "fd6700d670b22f0b710a5f5b128a1acc0c6f26199fb8ffd0ebe131f13f370807",
+      "Tcc/Model/Gen4.lean": "e2ee73b47159e375e8c0d5570baba56134fb2fcb24c476554834c8336d1485d6",
+      "Tcc/Model/Gen5.lean": "2dfbeef1ace7ddeba17fbf7aad9148e4720b731c2df8811f72cfff691fb4107e",
+      "Tcc/Model/Gen6.lean": "ea63055e061369e695a0a266f03963a5623cec859eeba5b43f652aadbf21f61d",
+      "Tcc/Model/Gen7.lean": "2d3d170beeb29d7aa85bb349e99229d88a4847f92ccb41faa2520583be64f73b",
+      "Tcc/Model/Gen8.lean": "ca7181599c51b34fef24df1a5c0e0c591082769ac411f1c52bde71d3e92a563e",
+      "Tcc/Model/Ghost.lean": "4900187f172322317ad455446451626ffd535dfc530b5d45d9a80635f8cd3987",
+      "Tcc/Model/Host.lean": "69ee454169a0fce6e00cd56cfdf8e70e8dc7e4c6d906e10707a2772bd2bb9180",
+      "Tcc/Model/Libtcc.lean": "e8f039f1c37c212eec784efb598e9b8643a36a3beab3ffa9b1632dae620e2784",
+      "Tcc/Model/Link.lean": "bca83501267db6fd81769c9ffb74f26b97882058c0e39cf824d22405d2066ac4",
+      "Tcc/Model/Main.lean": "0091fb505add143679df0cc4a70140e1ce4c0eb027987dff43e30562b61f8dac",
+      "Tcc/Model/PpDir.lean": "3e568f0934fe34d5a1cc90c6d461eb72bd14aef76eae37c07e3062d8e401eeb1",
+      "Tcc/Model/PpLex.lean": "3840f99bf863f104aed496f25ff3056e8a5a124a9f4ae596391c57e07d016661",
+      "Tcc/Model/PpMacro.lean": "cb48b87852a0f90709c8296d4f91c4d088511dc6a0263d7685fcf98c91f619d8",
+      "Tcc/Model/Rec.lean": "e9c4370fbeb05e3acef60466e932106ea7b0c66ce0e8f550182f37ea4add9be4",
+      "Tcc/Model/Riscv.lean": "4302cc9e2a5fe66fd70c4821a9f6a926c2d93e95282cf699dca00bc91a41d5ac",
+      "Tcc/Model/Run.lean": "69aa48d19fb81f4e0414eb1877b7ae55d352f35b0bcfe863d4b4243257c2dd31",
+      "Tcc/Model/SoftFloat.lean": "5a1e3387c9a642e18f23b4e4875e0deced1af37552a79a7d0589b9c35f2e5fd9",
+      "Tcc/Model/State.lean": "76215505a1ce73a8def219adc026f61da7e95a8bd7c38e17d0c78dbfa404a525",
+      "Tcc/Model/Syms.lean": "5b873ab99b01ff805677f5f7df1d75911d7ad9fec965b1ee9d269286d30b6a41",
+      "Tcc/Model/Tie.lean": "bfcd00f452c2ba31fa4da21be386ec3056d5d5bfce8956c50601f2da296bc89a",
+      "Tcc/Model/TieStub.lean": "48f9c8f5b757507be9ad93a568134d81edb878da6dfd6a672b6ef77b6a48bc6a",
+      "Tcc/Model/Tok.lean": "ae7185ec4929199e063a2920ac88c19963e6baf1d3ab72b9b65ed050afebb91c",
+      "Tcc/Model/Types.lean": "ad3415bcffddb9fb4bb3ce6462240b1e2d2497a141f38d62d1f3ee682c9f1f2d",
+      "Tcc/ModelMain.lean": "4c90a94f7fc6e16016b13ff42f953acdd5b6d67ec377f1a46d6ddad03cac2470",
+      "c/tests/c11/line_varargs.c": "d1206422777407f9fd45644363ac6369a6884893e01284ffd73c390b9dfe2270",
+      "lake-manifest.json": "b018c14800c66b6f28bd51ed167f416ee544d9dd08d610c55aecdd74fab6968b",
+      "lakefile.toml": "3c79c221938be7f20f4d8a3a352a89beb3260e34c91090f6409d2bdf3b1c3e95",
+      "lean-toolchain": "8733782dc070a99b312039cda424f601b80f3be6f6f512627da5ba25adc27632",
+      "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+      "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+      "patches/0003-tcc-c11.patch": "339764213946bd593368936df56e1bdca99aa8cbb2a59bc95d7aac2f78b448a3",
+      "patches/0004-tcc-binary128-literals.patch": "4dfcc192c23a777b1b335e9052a416956886b1071c3de1e8da403b5b194e221e",
+      "results/repro/tcc_line_splice.c": "b4d4d6bfa80b6af210de441c2978014fb31e3ce9bdc42643061e0e8c207c2e4c",
+      "scripts/gen_line_fixtures.py": "6045f6c836f5db25b38dcbc98888db4d51a3ff174adca7e06a3ce64d0b0fb284",
+      "scripts/gen_model_tok.py": "cdd5efe88c1815fcc7b050d2dc697c961349829e03d372f48ff37bd3e505056f",
+      "scripts/test_tcc_c11.py": "16ddd721ff812f9f40896a196c2726114cfaf53d5d5cbc8982eb857b8d9b8a77"
+    },
+    "reason": "Final audited line repair: token provenance separate from cursor, macro stream metadata, pasted tokens use invocation line. All 86 C11 positives and 6 negatives pass host/GCC/-E/cross/ISA. Adds token-aware variadic comma deletion so line metadata 44 is never scanned as punctuation. Previous intermediate request passed; this request supersedes earlier IDs, all listed sources now frozen. Local systemd user bus denied. Please service capped targets; final pinned Sail probe to follow after arena comparisons.",
+    "result_path": "build/worker-build.result",
+    "created_ns": 1793129993991345888,
+    "request_id": "line-efe5693c1a5c8421062c53c9099364b39dd30f227d69005ecd3d26d40509cece"
+  },
+  "result": {
+    "request": "line-efe5693c1a5c8421062c53c9099364b39dd30f227d69005ecd3d26d40509cece",
+    "request_id": "line-efe5693c1a5c8421062c53c9099364b39dd30f227d69005ecd3d26d40509cece",
+    "exit": 0,
+    "log": "build/worker-build-line-efe5693c1a5c8421062c53c9099364b39dd30f227d69005ecd3d26d40509cece.log",
+    "command": [
+      "flock",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/build/lake.lock",
+      "systemd-run",
+      "--user",
+      "--scope",
+      "-p",
+      "MemoryMax=12G",
+      "lake",
+      "build",
+      "CSemPre",
+      "pre_spec",
+      "tcc_model"
+    ],
+    "source_hashes_verified": true
+  },
+  "sail_request": {
+    "cwd": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line",
+    "command": [
+      "timeout",
+      "180",
+      "/Users/kirancodes/Documents/code/ship-your-lua/riscv-lean/lean_emulator/.lake/build/bin/lean_riscv_emulator",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/line-sail.elf",
+      "--trace-pcs",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/line-sail.pcs",
+      "--max-steps",
+      "10000000"
+    ],
+    "sha256": {
+      "build/line-sail.elf": "6f69712e8fabc46b0a73d9532d6da41bc3c3902b546eb372c4d991a26de417d9",
+      "build/line-sail.pcs": "675717d5c283622e7042cd5f453d43554b07f832413042a155b2123fef992a45",
+      "build/test-c11/line/line_sail.c": "1705f628b333171a5613bec20cf970378a3b7d7114e40d7111898a46c92d48d4",
+      "patches/0003-tcc-c11.patch": "339764213946bd593368936df56e1bdca99aa8cbb2a59bc95d7aac2f78b448a3"
+    },
+    "stdout": "build/line-sail.raw",
+    "stderr": "build/line-sail.trace",
+    "expect_exit": 0,
+    "fast_reference": {
+      "compile_steps": 3363937,
+      "total_steps": 3364068,
+      "exit": 0
+    },
+    "emulator_sha256": "8989bde8a95345de658fb9c9111e15ce4a5561bc747dab28f798080f0778120b",
+    "reason": "Lead full Sail test requested; exact frozen ELF and PC list. Verify expected zero exit and matching compile cut. This is full compiler execution, not a full Sail arena dump.",
+    "request_id": "line-sail-0291d62cdd86298deae678c500cca26ea1c91d1ae7e2ca3b17940a4677f3985d"
+  },
+  "sail_result": {
+    "request_id": "line-sail-0291d62cdd86298deae678c500cca26ea1c91d1ae7e2ca3b17940a4677f3985d",
+    "exit": 0,
+    "command": [
+      "systemd-run",
+      "--user",
+      "--scope",
+      "-p",
+      "MemoryMax=12G",
+      "timeout",
+      "180",
+      "/Users/kirancodes/Documents/code/ship-your-lua/riscv-lean/lean_emulator/.lake/build/bin/lean_riscv_emulator",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/line-sail.elf",
+      "--trace-pcs",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/line-sail.pcs",
+      "--max-steps",
+      "10000000"
+    ],
+    "source_hashes_verified": true,
+    "trace_rows": 3,
+    "sha256": {
+      "build/line-sail.raw": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "build/line-sail.trace": "5b5311acadd3bedc13e50b559e6f4f1807167a223003d57bbd35bf264ec85805"
+    }
+  },
+  "sail_steps": {
+    "compile": 3363937,
+    "enter": 3363962,
+    "exit_entry": 3364063
+  },
+  "runtime_key": "d4744d617280447610d3e3b6c74428577ed9d833fb85d1362f1031d4fcfc1ef6",
+  "successful_arenas": 47,
+  "sha256": {
+    ".lake/build/bin/tcc_model": "e392cfd3b30fce20995570bdfd163a8b42cac850dea0ff2696b282907159b3ce",
+    "Spec/Pre.lean": "c9b4a6250fac407c54561563115ff6d5fb1931fe317922a203dbc33dd1c30513",
+    "Spec/Pre/Compare.lean": "0b32cf154a2c62f108cd569d341119d78e1aacf55d91d9ecc833e397cf0b9928",
+    "Spec/Pre/Expand.lean": "35752e2ab7dfdb444b3af12aed7070d3dd209deb59449040833af0e6611fd438",
+    "Spec/Pre/IfExpr.lean": "31c3bf411e10f79b546e3757f5e0e075d84531cfbd2f8c7e3a00a051650ff12d",
+    "Spec/Pre/Iso.lean": "4b63ceab3ee9dd76a14beec681677a2aa5c236687a93b264db8a1f7291097582",
+    "Spec/Pre/Lex.lean": "7825966ebc53d20fc7e414e63cda73679dae54c722f7a9cc7f63d57733d9705d",
+    "Spec/Pre/Main.lean": "4519b1cca920d7a5b4cc2aee2494db048f424a163723d4416fd965a254a51e3c",
+    "Spec/Pre/Phase12.lean": "0a0709249f2df329a5eb38e74ac4d103641731d6946796d2a5dad8b7decad821",
+    "Spec/Pre/Phase4.lean": "a76bfd774bc62e2d5ec41f7e084c5323a2a58f56294138443c49028a15ba9e0f",
+    "Spec/Pre/Tcc/Cfg.lean": "12ded79b77e82089c1351d4cd4665c24d7c98d42742e56711420e16330fd603e",
+    "Spec/Pre/Tcc/ImageFS.lean": "543e8939bfd9d13e0588356d03d9a354f7b118bf623f456d2cde98d2611e69f2",
+    "Spec/Pre/Test.lean": "3c7ee9ccb894c3e5ad43cdcf423ee173e336d9628a41cedceb20b5c4832e32d2",
+    "Spec/Pre/Types.lean": "03536caa05fd9e3cb8113066ee45f6dee2ad8b2fcad0926b5dc20c81b0f78c6a",
+    "Spec/PreSpec.lean": "62ec14ab24bab999e042dc22353b3c9fb780c1e73c338ab85745f927bf6f9a8f",
+    "Tcc/Model/Base.lean": "fe70936ded2b273f274b50cc70e82906c642f60d29409d05ca26603e203372ce",
+    "Tcc/Model/Elf.lean": "86e9c5b1f4f3b857abecfeb5165626f412077499535638f687e6f91a96265ecf",
+    "Tcc/Model/Gen1.lean": "fe08462b006e985b16076217fb7cae765aa923526115fed0e3bd7968593b32be",
+    "Tcc/Model/Gen2.lean": "123100220a3950e1d13879de3078837b3e572e2483675fd0ca2dae3aee1beea8",
+    "Tcc/Model/Gen3.lean": "fd6700d670b22f0b710a5f5b128a1acc0c6f26199fb8ffd0ebe131f13f370807",
+    "Tcc/Model/Gen4.lean": "e2ee73b47159e375e8c0d5570baba56134fb2fcb24c476554834c8336d1485d6",
+    "Tcc/Model/Gen5.lean": "2dfbeef1ace7ddeba17fbf7aad9148e4720b731c2df8811f72cfff691fb4107e",
+    "Tcc/Model/Gen6.lean": "ea63055e061369e695a0a266f03963a5623cec859eeba5b43f652aadbf21f61d",
+    "Tcc/Model/Gen7.lean": "2d3d170beeb29d7aa85bb349e99229d88a4847f92ccb41faa2520583be64f73b",
+    "Tcc/Model/Gen8.lean": "ca7181599c51b34fef24df1a5c0e0c591082769ac411f1c52bde71d3e92a563e",
+    "Tcc/Model/Ghost.lean": "4900187f172322317ad455446451626ffd535dfc530b5d45d9a80635f8cd3987",
+    "Tcc/Model/Host.lean": "69ee454169a0fce6e00cd56cfdf8e70e8dc7e4c6d906e10707a2772bd2bb9180",
+    "Tcc/Model/Libtcc.lean": "e8f039f1c37c212eec784efb598e9b8643a36a3beab3ffa9b1632dae620e2784",
+    "Tcc/Model/Link.lean": "bca83501267db6fd81769c9ffb74f26b97882058c0e39cf824d22405d2066ac4",
+    "Tcc/Model/Main.lean": "0091fb505add143679df0cc4a70140e1ce4c0eb027987dff43e30562b61f8dac",
+    "Tcc/Model/PpDir.lean": "3e568f0934fe34d5a1cc90c6d461eb72bd14aef76eae37c07e3062d8e401eeb1",
+    "Tcc/Model/PpLex.lean": "3840f99bf863f104aed496f25ff3056e8a5a124a9f4ae596391c57e07d016661",
+    "Tcc/Model/PpMacro.lean": "cb48b87852a0f90709c8296d4f91c4d088511dc6a0263d7685fcf98c91f619d8",
+    "Tcc/Model/Rec.lean": "e9c4370fbeb05e3acef60466e932106ea7b0c66ce0e8f550182f37ea4add9be4",
+    "Tcc/Model/Riscv.lean": "4302cc9e2a5fe66fd70c4821a9f6a926c2d93e95282cf699dca00bc91a41d5ac",
+    "Tcc/Model/Run.lean": "69aa48d19fb81f4e0414eb1877b7ae55d352f35b0bcfe863d4b4243257c2dd31",
+    "Tcc/Model/SoftFloat.lean": "5a1e3387c9a642e18f23b4e4875e0deced1af37552a79a7d0589b9c35f2e5fd9",
+    "Tcc/Model/State.lean": "76215505a1ce73a8def219adc026f61da7e95a8bd7c38e17d0c78dbfa404a525",
+    "Tcc/Model/Syms.lean": "5b873ab99b01ff805677f5f7df1d75911d7ad9fec965b1ee9d269286d30b6a41",
+    "Tcc/Model/Tie.lean": "bfcd00f452c2ba31fa4da21be386ec3056d5d5bfce8956c50601f2da296bc89a",
+    "Tcc/Model/TieStub.lean": "48f9c8f5b757507be9ad93a568134d81edb878da6dfd6a672b6ef77b6a48bc6a",
+    "Tcc/Model/Tok.lean": "ae7185ec4929199e063a2920ac88c19963e6baf1d3ab72b9b65ed050afebb91c",
+    "Tcc/Model/Types.lean": "ad3415bcffddb9fb4bb3ce6462240b1e2d2497a141f38d62d1f3ee682c9f1f2d",
+    "Tcc/ModelMain.lean": "4c90a94f7fc6e16016b13ff42f953acdd5b6d67ec377f1a46d6ddad03cac2470",
+    "build/image.syms": "21e01936e3d892b9b4b1422504a3e802f31fc519a0f1966344a9b101b1b861b7",
+    "build/line-cross-sail.log": "418c3cfd1c6bcade3209d9c16c6482df3c21cbc8dacecbd49d6ca1f4abcae9db",
+    "build/line-fast.trace": "38d1fe8bb4c17ba9efa2d959bf46b304b540d156ed03b70b68938765615f03ef",
+    "build/line-model-diff.log": "a013c1e05151a68c013fc696a6e5f6328c18d0035fb82f0d7d697c593b68ca28",
+    "build/line-pre-diff.log": "0a4e0cb231fc732cb8038f79cad683238339dbeccdc08e33794e66459c69d6b7",
+    "build/line-sail-ref.log": "17a978e175ad0c59bff90bc2d2bf4149a084eba336355f1a9c3c0789c1b6908b",
+    "build/line-sail.elf": "6f69712e8fabc46b0a73d9532d6da41bc3c3902b546eb372c4d991a26de417d9",
+    "build/line-sail.pcs": "675717d5c283622e7042cd5f453d43554b07f832413042a155b2123fef992a45",
+    "build/line-sail.raw": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build/line-sail.trace": "5b5311acadd3bedc13e50b559e6f4f1807167a223003d57bbd35bf264ec85805",
+    "build/line-varargs-sail.log": "90eb71f8061d6e348b22f582d125f693fc49b7239efa045666bf5670693fae12",
+    "build/rv64emu": "6ca682aa4032bbd7736fbb9b6550d1c8baeebc65ba0904fc5cc6193ec8c7ccce",
+    "build/static-gate.log": "ff9af378b8317b774df325e8e734ce03080b7e7d40755122d7ea3891b19c30e5",
+    "build/test-c11.log": "3efe690a599afa69d448c55496a640467cf91832f421e7f9917ac1fb1e95e200",
+    "build/test-c11/commands.json": "2673977a2f30524915910f1672c5863da4769319dac0b618f8c98cff5fbbf335",
+    "build/test-c11/line/line_arguments.c": "059bdb89f47218cb8d289c85d49ae3f9d2a4dfa32ee47153b1464a45fb8f94df",
+    "build/test-c11/line/line_boundary_0_1.c": "00a418b2d11089198cb2be6dfa4016c42a23c240be1cfd4dfdd5b49c71182084",
+    "build/test-c11/line/line_boundary_0_2.c": "6b07049335a3e075373f9ca61a7118207361640236239fa2365cb5a8d4b28b1f",
+    "build/test-c11/line/line_boundary_0_3.c": "eabf806f1d39d9e8536b57bab972f5e76f62fd417d7021bc277cebeb71fb11b9",
+    "build/test-c11/line/line_boundary_0_4.c": "fa5ff834d1b72dd78ea28f8708a4a3663bf2bbc8738b15d5a6cd6d2b90e068a6",
+    "build/test-c11/line/line_boundary_0_5.c": "0de1f50a82fac28a0392938cdabe6b4349c629c0b814f3b253fc348bfdf83f1c",
+    "build/test-c11/line/line_boundary_0_6.c": "c10583db148efc452419c909ca15ce1875de6fda9cd18975a1c4ade1ec2783f9",
+    "build/test-c11/line/line_boundary_0_7.c": "f5a97408b18aae9d5a61e4b8cc1c0d5d4e32eb65c61f51a86e83ca83150cbdb6",
+    "build/test-c11/line/line_boundary_0_8.c": "e3cce7924e80b0657763fefcd642c19d87aea90d902137b427ab97341d33866b",
+    "build/test-c11/line/line_boundary_0_9.c": "2202d4daf89a8894015fc82578180ca4b00c630738f64aec71ceecf0b1edea34",
+    "build/test-c11/line/line_boundary_1_1.c": "aaffc0f82409dcd8acc895bf4cee72f1dcf35cf87a8b4dfa29eb7082b6204252",
+    "build/test-c11/line/line_boundary_1_10.c": "290df07b3a3c25f9a5fafd4c4c8296a09ba6ca6cb4e7cee3db379d4e70ad59ac",
+    "build/test-c11/line/line_boundary_1_11.c": "218e0417c42adda9fde5af162bd6a6310c9839a7ad6505298fb4f1bd29cef1ee",
+    "build/test-c11/line/line_boundary_1_2.c": "6e8bf6750b09aaf70ff42f2268dce2c468a227b960c95886a31bfb5a2baad4f0",
+    "build/test-c11/line/line_boundary_1_3.c": "f12bf10f4aeac04c4cd73dd5973d3bb64a33dba48bc1032e1f7ab463832878c9",
+    "build/test-c11/line/line_boundary_1_4.c": "01a91a9cf6a893a3b03e103390d9193ee4d0134066970fe4ea9d5660705d4069",
+    "build/test-c11/line/line_boundary_1_5.c": "32015a89ffff8a37b83ac0959117527f4ab3eec2dfd0519f893c84b0c9f1d615",
+    "build/test-c11/line/line_boundary_1_6.c": "da09e9b8d1c7dcc4092bcc0c6a920bf46efc375b20c518c9212dc95540d315e4",
+    "build/test-c11/line/line_boundary_1_7.c": "614552a7026261cde28493a5530f3936477c18e8634826c67f09fcf72d025503",
+    "build/test-c11/line/line_boundary_1_8.c": "dee331665c74ff023a753976c00b2f1203544a8acad39e40be2ea1269248b6a8",
+    "build/test-c11/line/line_boundary_1_9.c": "ce1e00c8fc4fb3a33c264bb3d81b2ba63b06ec3f3db55d9b9d7960cd416a595f",
+    "build/test-c11/line/line_comments.c": "955e3cc1e3709f799d63465474c95f5857bf5847ff71e6b67d945a506f928b44",
+    "build/test-c11/line/line_counter.c": "d6d0cf305c32d8e1fbff02378ef9a7971cffacea896048a2f817605bf6fa174b",
+    "build/test-c11/line/line_crlf.c": "9e68b68a4e3835c7d6b343787eb30565faf86855774a4724229e6f94d7465164",
+    "build/test-c11/line/line_fixture.h": "f6d6898f779d66e27e939a874cf4f0b9be150187e56972d1741792405290c83e",
+    "build/test-c11/line/line_include.c": "5d0cf63c564b2535ca3333cb5efadda3ea7b90367d537efa7f79071921137f9f",
+    "build/test-c11/line/line_inside_token.c": "f0df0cca4dcdca120c279ece088c38d67e09d6ea7a6d97b59c9087ae07b59175",
+    "build/test-c11/line/line_mixed.c": "a0735dd2ccc474bc0b88ba14564158f9fe3fe167ec5f80994ced6e35695d516e",
+    "build/test-c11/line/line_paste_multiline.c": "03cfafb249dc48c24df4272f584fb88d46d875ac057a9dec94a57fdf1d0ef4cb",
+    "build/test-c11/line/line_paste_stringize.c": "69fd182607c204c64ebeaedf5379aa7625dff60ce260d280b33fd7a47239e427",
+    "build/test-c11/line/line_pragma.c": "9e93a812df587c5ac05a60ff6376f120fff26fcc7f69f79819e0decaec0eab7b",
+    "build/test-c11/line/line_repeated.c": "37e1761b485d8d4b11a6b83100cbfb3d54c8c691714f3d785101fe5b80a7d1b9",
+    "build/test-c11/line/line_rescan.c": "e9230e38a6a773725ea562be377111732b6153869bda0e3c1a421ba855c77ceb",
+    "build/test-c11/line/line_sail.c": "1705f628b333171a5613bec20cf970378a3b7d7114e40d7111898a46c92d48d4",
+    "build/test-c11/line/line_single.c": "84cb01cfbf88ca0144eafd8e333505b65c93d123d44962ed8baab8647699abaa",
+    "build/test-c11/line/line_trigraph.c": "667480bacb35035a2b1e13005812af1d6c10b68a2657b4f67ef6f725076930ae",
+    "build/test-c11/line/line_wrappers.c": "5607567d7f84803709722f5d0511d8e3edfeb68199ecd51f2e3198c23b97352a",
+    "build/worker-build-line-efe5693c1a5c8421062c53c9099364b39dd30f227d69005ecd3d26d40509cece.log": "4837446af2431a2cd167100a137ddfb837c53373e54adbd976d25991104298c6",
+    "c/build/base.elf": "73897e99aada3df0d498d1b8bd395c0b4ee2d8a5cefd91e3a5e3ccad3d98bb17",
+    "c/src/gen_embed.sh": "68534ee3a238c143bf4e749fcb0ea43e8b53933c4a9d6843422d995c879d7d76",
+    "c/tests/c11/digraphs.c": "a3e2dedc112edd426e441b1dcf9ad04e96cbe01b66a29ce9f258cb74795d06a4",
+    "c/tests/c11/line_include.c": "3b806943edf80f2123f8d152150595daaf57ba22ef0567da5caa4e40dfcd341c",
+    "c/tests/c11/line_varargs.c": "d1206422777407f9fd45644363ac6369a6884893e01284ffd73c390b9dfe2270",
+    "c/tests/c11/pragma.c": "8791af9c4d3610dbbd3e47a99a477cd0c74e8235fb014d6d66fbcd5dacdbad2c",
+    "c/tests/c11/ucn.c": "ef69e0ffc0520c8e9b1ad5fe89c9fabe77b0b773b0350ca8f1af1dfa73131206",
+    "c/tests/c11/union.c": "a8f66609526b08e0748138b135429acfc46a4b2f95b93565c9df39ae30b2ea02",
+    "c/tests/c11/utf_literals.c": "ed390832b178e5fd18e7387d2e7a0d47907b5b835ede4035c14f60adf0324b32",
+    "lake-manifest.json": "b018c14800c66b6f28bd51ed167f416ee544d9dd08d610c55aecdd74fab6968b",
+    "lakefile.toml": "3c79c221938be7f20f4d8a3a352a89beb3260e34c91090f6409d2bdf3b1c3e95",
+    "lean-toolchain": "8733782dc070a99b312039cda424f601b80f3be6f6f512627da5ba25adc27632",
+    "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+    "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+    "patches/0003-tcc-c11.patch": "339764213946bd593368936df56e1bdca99aa8cbb2a59bc95d7aac2f78b448a3",
+    "patches/0004-tcc-binary128-literals.patch": "4dfcc192c23a777b1b335e9052a416956886b1071c3de1e8da403b5b194e221e",
+    "results/pre/freeze_line_validation.py": "3fa2b201cf02d52f575303fd54dc465033c55706b3c3164693a7c1fe7838edd9",
+    "results/pre/line-arenas.json": "2c4ae40e08d6d2e4c103ee74fdd5a148bf51c257e052ce828b634cc148f3648d",
+    "results/pre/line-spec.tsv": "95856da4a29e0212de555f801d1401b663b54bafa3ac4e096bcf0f5e6fe9f98a",
+    "results/repro/tcc_line_splice.c": "b4d4d6bfa80b6af210de441c2978014fb31e3ce9bdc42643061e0e8c207c2e4c",
+    "results/repro/tcc_pp_digraphs.c": "089c4338cae721f30f6fae79b8bed4901f11f1c951d221a03767df7a37e046ee",
+    "results/repro/tcc_pp_trigraphs.c": "81b52fb9b821a9103cfe48a6fe3d3f8092c13478ae090b2082c530f3db574395",
+    "results/repro/tcc_pragma_macro_operand.c": "75fb0e1133edd3b2606d085e5fbd307cce44044fa14642369a8805ed8d4a9f32",
+    "scripts/gen_line_fixtures.py": "6045f6c836f5db25b38dcbc98888db4d51a3ff174adca7e06a3ce64d0b0fb284",
+    "scripts/gen_model_tok.py": "cdd5efe88c1815fcc7b050d2dc697c961349829e03d372f48ff37bd3e505056f",
+    "scripts/model_diff.py": "defdc64d303cc839b7d77d8413390950358e5bbe2ef617104bae306b553b7f20",
+    "scripts/test_tcc_c11.py": "16ddd721ff812f9f40896a196c2726114cfaf53d5d5cbc8982eb857b8d9b8a77",
+    "vendor/TINYCC_REV": "76ca376f1f96cf1b316713d8f94d91c8629445929d1e7474792fd76610bce1c0"
+  },
+  "fs_list_sha256": "b570b3f51e30358ad9e834cd295a6be391b78a0b52aa0529191c612c956e3759",
+  "embedded_files": [
+    {
+      "image": "/lib/tcc/include/float.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/tccinclude/float.h",
+      "sha256": "54d8ab2bcbc9e925acbe8a0fb873343234a7637fa94a283c58821b7dd5eaeca5"
+    },
+    {
+      "image": "/lib/tcc/include/stdalign.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/tccinclude/stdalign.h",
+      "sha256": "8a411cf23f6a4aebbee8b62266b718d0c62710169bbed3cab4c84dc3541d3b7c"
+    },
+    {
+      "image": "/lib/tcc/include/stdarg.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/tccinclude/stdarg.h",
+      "sha256": "c8f36632bb6a181d1499d8693cd1096d7eff927bf50dd54d62069d58c8aa1960"
+    },
+    {
+      "image": "/lib/tcc/include/stdatomic.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/tccinclude/stdatomic.h",
+      "sha256": "b54ab923ee04514bd7260cec8165b5901ea9df549b29861c1de1b429bcec55ac"
+    },
+    {
+      "image": "/lib/tcc/include/stdbool.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/tccinclude/stdbool.h",
+      "sha256": "de87aff995f53b7b949b1a0a9ed41b9f403000d54d2aae88f1685f0c3edd905a"
+    },
+    {
+      "image": "/lib/tcc/include/stddef.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/tccinclude/stddef.h",
+      "sha256": "8749a475d01fb10f67e29b3750809a285dabf3e9a401b3c085e69575cdb97cf7"
+    },
+    {
+      "image": "/lib/tcc/include/stdnoreturn.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/tccinclude/stdnoreturn.h",
+      "sha256": "1ba7a435dca82dbdfc95c6c4c4547ce173be39c1c3320d5c09e9f8f858e8f9b6"
+    },
+    {
+      "image": "/lib/tcc/include/tccdefs.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/tccinclude/tccdefs.h",
+      "sha256": "3bbcf6cc77af60bf2f56e1bce14a18ff100b75a0207129a31c9dde115862dc8a"
+    },
+    {
+      "image": "/lib/tcc/include/tgmath.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/tccinclude/tgmath.h",
+      "sha256": "5ebf958646a1f69c815cce2c660471b068c613d97e8a561d5e729896918ef37d"
+    },
+    {
+      "image": "/lib/tcc/include/varargs.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/tccinclude/varargs.h",
+      "sha256": "c475b0c8fa47a2938b78cb681337a84749c86e7c9889caec9432041c56b0331d"
+    },
+    {
+      "image": "/lib/tcc/libtcc1.a",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/libtcc1.a",
+      "sha256": "56f08642e73ccb93b16562cc8966a882bcdfd6a7eeea5753c54c5c56005b0ecd"
+    },
+    {
+      "image": "/lib/tcc/runmain.o",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/runmain.o",
+      "sha256": "4017a23f26930deeec0eaac61643f1996994b0e7eb9738fe7847f781154ab9ee"
+    },
+    {
+      "image": "/lib/libc.a",
+      "host": "/data/home/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/../../../../riscv-none-elf/lib/rv64i/lp64/libc.a",
+      "sha256": "e6d56536913c89a22a25e2d84a0bc2ed920cba5973b9aad0426ea83e4270e4e3"
+    },
+    {
+      "image": "/lib/libm.a",
+      "host": "/data/home/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/../../../../riscv-none-elf/lib/rv64i/lp64/libm.a",
+      "sha256": "2f0f0a317218452fe275347509e466257272cc8f4ac8c098470cbbba9b8ee395"
+    },
+    {
+      "image": "/lib/libgcc.a",
+      "host": "/data/home/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv64i/lp64/libgcc.a",
+      "sha256": "afbf7180cc9d4cb6d6179c279dcfe5a32650db41b1d9d059c389d4753a9b4867"
+    },
+    {
+      "image": "/include/_ansi.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/_ansi.h",
+      "sha256": "b07edf6829bdf3ff2ec375a226e16d0a16c343b7f58b81d0df5f2a7726f4afc5"
+    },
+    {
+      "image": "/include/_newlib_version.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/_newlib_version.h",
+      "sha256": "b1497ce93aa26f196a6ea4998429ffe263e4c92dead3d0cf019909eb4ed40aae"
+    },
+    {
+      "image": "/include/_syslist.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/_syslist.h",
+      "sha256": "fbb0b4c1e5169368021fa9f6328c943796031563a374450d8f9853985eb73642"
+    },
+    {
+      "image": "/include/alloca.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/alloca.h",
+      "sha256": "4016dd727d8db2dc991a6e9140632b1af4d77ab5531491d970e25c3d7785ca9d"
+    },
+    {
+      "image": "/include/ar.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/ar.h",
+      "sha256": "6bc98c4a4632b8a4574963f5d96e203e88c0882e5754171bc93e118a27476616"
+    },
+    {
+      "image": "/include/argz.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/argz.h",
+      "sha256": "bfde28cd64b47d004d599dbb5e79a73dffdd2ca2d91b5fd0646552963658df13"
+    },
+    {
+      "image": "/include/assert.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/assert.h",
+      "sha256": "82cdd4cda886d1430198879eec1ae12902db206c27e05e0d1105f5b1b79d8250"
+    },
+    {
+      "image": "/include/complex.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/complex.h",
+      "sha256": "50d60a9a10884db16a1bca7f5e60568970c31f8d0cbf00e399493e61d3213e8b"
+    },
+    {
+      "image": "/include/cpio.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/cpio.h",
+      "sha256": "8e34deafedd4f28abe2a5381e770b063344770d079fdec1c21dc25586508e064"
+    },
+    {
+      "image": "/include/ctype.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/ctype.h",
+      "sha256": "38057a8bef7fa893ad14b50b871c5f4c924c984fbe5e70290c69933cf62e5c39"
+    },
+    {
+      "image": "/include/devctl.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/devctl.h",
+      "sha256": "97e87d4edb0a6d554b331c3f0e284d3cde588d76b4d6f3510523854c5af949e8"
+    },
+    {
+      "image": "/include/dirent.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/dirent.h",
+      "sha256": "fd87749378cf8a161984b71f7422a8fd37faf2220585b7fc8d551607d14ffbad"
+    },
+    {
+      "image": "/include/elf.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/elf.h",
+      "sha256": "98462ee2441ffa4ccb39f7b26fb78f35dac5abd1e1fd6d87dff25c4d5ea8525b"
+    },
+    {
+      "image": "/include/envlock.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/envlock.h",
+      "sha256": "c0e51020778daa2d28e4f6a06f80dec81d5211d706c409bc9b06e94033d2b134"
+    },
+    {
+      "image": "/include/envz.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/envz.h",
+      "sha256": "3f7831d69269a125ac73ecf63f0a160cad784848f68a87c9cd00d6c6124696a5"
+    },
+    {
+      "image": "/include/errno.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/errno.h",
+      "sha256": "5c06bea0901c2c2e1078e7bf66ab9a461d9b4dc5dac4f92d8c1745a5d8455070"
+    },
+    {
+      "image": "/include/fastmath.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/fastmath.h",
+      "sha256": "72066780eefc558a9309c885d9a091a5cdcf74fd0884fed114ab5b3f172d5a77"
+    },
+    {
+      "image": "/include/fcntl.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/fcntl.h",
+      "sha256": "637889253928e98bc028dbdcd58560492aed8e981eff349c43a8e7e6a45f75f5"
+    },
+    {
+      "image": "/include/fenv.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/fenv.h",
+      "sha256": "e8358c25f2d3f2bcd3e0db08c3bc47b9af6281c0680478b3dc4079a9677bf643"
+    },
+    {
+      "image": "/include/fnmatch.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/fnmatch.h",
+      "sha256": "e67e1ee199119fc678ebeaa3b1493807afd5a465f356126d440fd91459a58b30"
+    },
+    {
+      "image": "/include/ftw.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/ftw.h",
+      "sha256": "e14c9929a7012846da4ea3f07646a119aafe4a81eedce1b394562eca76ad357d"
+    },
+    {
+      "image": "/include/getopt.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/getopt.h",
+      "sha256": "483cff5a5a42dc5d2545870701f17032a2b904aa8126e696a0ce7468727f6d12"
+    },
+    {
+      "image": "/include/glob.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/glob.h",
+      "sha256": "3b35901b558cd3c67e04c8b0126380497ea72b80f306be7091212c4b11fb03e6"
+    },
+    {
+      "image": "/include/grp.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/grp.h",
+      "sha256": "4d29bb3868e8344cc761480b3df11d6b939be16e49674967b4194c6f11da7a79"
+    },
+    {
+      "image": "/include/iconv.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/iconv.h",
+      "sha256": "b80f8dc5c213d16f88319f6858d64e4a43514a65885152e72374105e1c48cd0f"
+    },
+    {
+      "image": "/include/ieeefp.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/ieeefp.h",
+      "sha256": "a50d6710396764116c6f27d4978ec04d1cd702fcedbd5dc51f14c954d8b44cf6"
+    },
+    {
+      "image": "/include/inttypes.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/inttypes.h",
+      "sha256": "aca1c88d508b7aad3c0eb9048c7255d6c6c2aac8bc83e754407d73e3f2734788"
+    },
+    {
+      "image": "/include/langinfo.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/langinfo.h",
+      "sha256": "c636fdcac9e64e6196ba3711b72ecd67a867032c1a6f1806789b4442795defd0"
+    },
+    {
+      "image": "/include/libgen.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/libgen.h",
+      "sha256": "b61a3d372b8c81975711c8af5bca37b6be518497bd3579980688deeff90e9a21"
+    },
+    {
+      "image": "/include/limits.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/limits.h",
+      "sha256": "dcf3931988fb7722b402421d645ca42cc4a6d188b9119733f12d47f626182463"
+    },
+    {
+      "image": "/include/locale.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/locale.h",
+      "sha256": "042a30b0368a06a5f74c1a6590bc000aa0ba798b77d2e1547760ad10d9f3c7e1"
+    },
+    {
+      "image": "/include/machine/_arc4random.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/machine/_arc4random.h",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "image": "/include/machine/_default_types.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/machine/_default_types.h",
+      "sha256": "bda328d0f4a44e2ed176aef5b5c6c3c7dc23ed1b2886114814b031a5a3272ab2"
+    },
+    {
+      "image": "/include/machine/_endian.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/machine/_endian.h",
+      "sha256": "94d364aa821147729e09735b5de64fbd0719bb3896936f40276d39687c2a1ccb"
+    },
+    {
+      "image": "/include/machine/_fpmath.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/machine/_fpmath.h",
+      "sha256": "85ebe1406f2ed24a1d2b49272d110a7b87ed2a8aeeac0b44f0d7a14c0caa2c3d"
+    },
+    {
+      "image": "/include/machine/_time.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/machine/_time.h",
+      "sha256": "0f07279d1bd56ec38fd77dd0b028de47bcb483956a84bd7b9a0cab9d30dbbbb0"
+    },
+    {
+      "image": "/include/machine/_types.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/machine/_types.h",
+      "sha256": "359bd4562d052a2a2d6db9e09e0e9c89259cfd0fce52d3f43f57e82f486b2fe2"
+    },
+    {
+      "image": "/include/machine/ansi.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/machine/ansi.h",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "image": "/include/machine/endian.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/machine/endian.h",
+      "sha256": "6aa58d274806ddfcda505f3f4e75c05ddcc8cee7f7e1f91d1680877fbba416ed"
+    },
+    {
+      "image": "/include/machine/fastmath.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/machine/fastmath.h",
+      "sha256": "936e28dd72a5f0d4f3f14710bf4ef8316723791efc9f95764d8949c24183278b"
+    },
+    {
+      "image": "/include/machine/ieee.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/machine/ieee.h",
+      "sha256": "02ad8872d0933da5fd8c3369b7b18782536e0e502ca16a217c00e9d9ca1cfb16"
+    },
+    {
+      "image": "/include/machine/ieeefp.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/machine/ieeefp.h",
+      "sha256": "fb72c83096b4c69b7a6a5638b1f3c4c6eea78cc2bb09ebaaf494c27021a7111d"
+    },
+    {
+      "image": "/include/machine/malloc.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/machine/malloc.h",
+      "sha256": "9df6d785c145e8bfa00a547215f0c28ff366d61f909b39fe75a0089684bd2215"
+    },
+    {
+      "image": "/include/machine/param.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/machine/param.h",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "image": "/include/machine/setjmp-dj.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/machine/setjmp-dj.h",
+      "sha256": "aef1d38163a43cd8e10511eeb0f9c98478c758cc08e813e27d90548fc53aab9c"
+    },
+    {
+      "image": "/include/machine/setjmp.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/machine/setjmp.h",
+      "sha256": "5cc079a78c7d20112f993992c1a7734f7b5b50892ea121c75989eba0dc5015fc"
+    },
+    {
+      "image": "/include/machine/stdlib.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/machine/stdlib.h",
+      "sha256": "6d6ae3d7b32ce3afd6ee48fabd4734b67750466a33906dfb2045cf0c25e2b915"
+    },
+    {
+      "image": "/include/machine/syscall.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/machine/syscall.h",
+      "sha256": "f335516b585b57347199396f50bb6294c4055bff156d41221ffe7f2cc465e01c"
+    },
+    {
+      "image": "/include/machine/termios.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/machine/termios.h",
+      "sha256": "d6e16ee56b728aff179afd72ac18247320a64c124e43060a9d96261be2ea462c"
+    },
+    {
+      "image": "/include/machine/time.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/machine/time.h",
+      "sha256": "d427e178c244be599fe622a692c75ed72fc19feac0c35419319a2ea10f395251"
+    },
+    {
+      "image": "/include/machine/types.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/machine/types.h",
+      "sha256": "803fce1d52cf3b316bcbf89b150b63a9914cf1df71d8a03c696cc85b05ca76f0"
+    },
+    {
+      "image": "/include/malloc.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/malloc.h",
+      "sha256": "aad92d8a71b1172d57742f7a5606e56ec4aabb0d21c9a1df10633d18920f99f8"
+    },
+    {
+      "image": "/include/math.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/math.h",
+      "sha256": "4664b586bd21cf61248ba25382938ca8c01e028d45561e5b4969dc1a565f24aa"
+    },
+    {
+      "image": "/include/memory.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/memory.h",
+      "sha256": "d1337084b8c75d08e9c9f81a2a76e02f8e8578743dc637ea26142c0f8286d472"
+    },
+    {
+      "image": "/include/ndbm.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/ndbm.h",
+      "sha256": "d85ccb4e0036db8861197c34a143df07a70b2cb5b6bb01b00d25b0d98e839627"
+    },
+    {
+      "image": "/include/newlib-nano/newlib.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/newlib-nano/newlib.h",
+      "sha256": "e4cd554be666d161510f49ba4b6b31998c5712df5451d9b2c30d934e7e68066f"
+    },
+    {
+      "image": "/include/newlib.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/newlib.h",
+      "sha256": "d3dd4671e02eba17ee5a566226c5c75a8b66a7692f658c06908d2c55f2b6f45b"
+    },
+    {
+      "image": "/include/paths.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/paths.h",
+      "sha256": "2253a2b8bf9de9a97592265172554cb6473f4d92dffcf719157a66c67f8e51f3"
+    },
+    {
+      "image": "/include/pthread.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/pthread.h",
+      "sha256": "d1b807bc13aaec027adf5ac7e7a51680ee024c83bf344477608cdd9e309510e8"
+    },
+    {
+      "image": "/include/pwd.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/pwd.h",
+      "sha256": "0179686dd9fdfd37f808e65c3d14ffb57b3d0622d4670378f86f0f72fd54008d"
+    },
+    {
+      "image": "/include/reent.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/reent.h",
+      "sha256": "f2c48fec1627351389258215d761f1623fb11a3cc678553ce660b02a51155f3a"
+    },
+    {
+      "image": "/include/regdef.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/regdef.h",
+      "sha256": "214b8ecc61d9dad5dade1ce8c065e7f8c679d0bd4b9bb20df66674da3a735025"
+    },
+    {
+      "image": "/include/regex.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/regex.h",
+      "sha256": "f32acb42ca8cb3c1aae36b85c8207c53105328fdd5041bb9f731e38373a011ee"
+    },
+    {
+      "image": "/include/sched.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sched.h",
+      "sha256": "90c1a364702c9dfca5948117b750b4daf028c88ec7dd14c42a2de85fb16edea7"
+    },
+    {
+      "image": "/include/search.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/search.h",
+      "sha256": "368fc7696d2f6a9fac057e68127118579114e5a5efbe15c77a14a2c124fa975c"
+    },
+    {
+      "image": "/include/setjmp.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/setjmp.h",
+      "sha256": "4a304bfadfd921fab78f12536f86a95a1095e702c07ede1d74d79b51f6346c4e"
+    },
+    {
+      "image": "/include/signal.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/signal.h",
+      "sha256": "b94b6a878fd4aaaf9576cebaff67dd46a5777722f72f1488e29477237b34e63d"
+    },
+    {
+      "image": "/include/spawn.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/spawn.h",
+      "sha256": "ae271a292c536663fc9ead32b38ad1e89299a5a46f977e132379c5c10e26feb9"
+    },
+    {
+      "image": "/include/ssp/ssp.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/ssp/ssp.h",
+      "sha256": "b05cad3f48e1262008efc23bb1b2ebca12188db1b0a7649561abb21f9ea7e5ac"
+    },
+    {
+      "image": "/include/ssp/stdio.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/ssp/stdio.h",
+      "sha256": "f4336810da86f0c90db72f8f5e023051f3622bec1bce5b282f86da8e8839a662"
+    },
+    {
+      "image": "/include/ssp/stdlib.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/ssp/stdlib.h",
+      "sha256": "23d71b538aec492ba94ef8039539ab28b521e16b9109f3a178b40f1e8b3058a9"
+    },
+    {
+      "image": "/include/ssp/string.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/ssp/string.h",
+      "sha256": "69e59721ee0025e6a788332ac956df1498c3121246e461f1e99ea500849bc54d"
+    },
+    {
+      "image": "/include/ssp/strings.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/ssp/strings.h",
+      "sha256": "fa72b18650e0d090211cc5ac010e48f80b55be2611d0eedb40de386f2cf6155f"
+    },
+    {
+      "image": "/include/ssp/unistd.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/ssp/unistd.h",
+      "sha256": "31ba4d6e767664480f8f119e26462ae95cc510459ebd6bb98570eed0f7aa47cc"
+    },
+    {
+      "image": "/include/ssp/wchar.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/ssp/wchar.h",
+      "sha256": "f686f738b83c9a06a2fe1b5e86413bb70e515d0ba95843055136f660b9e6d48e"
+    },
+    {
+      "image": "/include/stdatomic.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/stdatomic.h",
+      "sha256": "2f2fee1c6f8e6a8cbc39f9aa87bf7e615c64244bfad0dc255dcdf522b6cc5d77"
+    },
+    {
+      "image": "/include/stdint.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/stdint.h",
+      "sha256": "703366dd277eb10da3396c1afa48d5d48b4fe7bd636825c5e311150b45c84cf5"
+    },
+    {
+      "image": "/include/stdio.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/stdio.h",
+      "sha256": "a5ee836c8b571154e6bf4b0310a2598b88fe3c1b6f6ee93f136db0aeaed33461"
+    },
+    {
+      "image": "/include/stdio_ext.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/stdio_ext.h",
+      "sha256": "3fb4d03726a2861626f0573565c43f64da70b52ea08b7a0443d055e3e9351869"
+    },
+    {
+      "image": "/include/stdlib.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/stdlib.h",
+      "sha256": "1ff268cd3a95114b45b40730652314c471e94c4ee4efee9d66d3f0b51908cf7f"
+    },
+    {
+      "image": "/include/string.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/string.h",
+      "sha256": "89c7939a7ca30d5d42b6500b381b2f2f10ed3b0d6981b8cacba16b27b6d5353c"
+    },
+    {
+      "image": "/include/strings.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/strings.h",
+      "sha256": "8fbb28689d0dc82ea61c557cfb51dfb8e4162d741f740c4e14f9c62a3c1e7315"
+    },
+    {
+      "image": "/include/sys/_default_fcntl.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/_default_fcntl.h",
+      "sha256": "dd0fefd360955b1043db061eb1dad35b9cefee09676c453b55785cd95f6ce713"
+    },
+    {
+      "image": "/include/sys/_intsup.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/_intsup.h",
+      "sha256": "060c543302bdace78e1ca672deb7073012e1068ddd315b6439945fac3b7f3ffc"
+    },
+    {
+      "image": "/include/sys/_locale.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/_locale.h",
+      "sha256": "966d7882bfb0a73aba7a978b248b01d842d2768e817bdbebfeb930bb9a9fc7e8"
+    },
+    {
+      "image": "/include/sys/_pthreadtypes.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/_pthreadtypes.h",
+      "sha256": "59b1bd07f2c9a4007b6d02445fb67c59c7998c04563c6e0b9d906cc3ffb008f2"
+    },
+    {
+      "image": "/include/sys/_sigset.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/_sigset.h",
+      "sha256": "17fa65dc839d59cb25ee0bf541883c02a6efa95eb6fba059606bb06bf9986053"
+    },
+    {
+      "image": "/include/sys/_stdint.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/_stdint.h",
+      "sha256": "f8b5f922456d9c69f371cbf9f9409bf20eb5f7913413f2f66e818309c80d7f6b"
+    },
+    {
+      "image": "/include/sys/_timespec.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/_timespec.h",
+      "sha256": "f194f0c28947b740a7fd332d33dfa20504d927fad4fb4a2f554ab7b7f55d3626"
+    },
+    {
+      "image": "/include/sys/_timeval.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/_timeval.h",
+      "sha256": "a9d67ec7ab5fbcf8a8d3765b820c3479091d56fff7fdd063649a55db72dc7caf"
+    },
+    {
+      "image": "/include/sys/_types.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/_types.h",
+      "sha256": "cafdb33d45c40becc0ee6b8a81af7938fd1236194b0f760299a57e6d0df5116c"
+    },
+    {
+      "image": "/include/sys/_tz_structs.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/_tz_structs.h",
+      "sha256": "59d97bed29abb3cf499f2af1b2c9d399a1ef92355c140e020bee072fa89ce05b"
+    },
+    {
+      "image": "/include/sys/asm.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/asm.h",
+      "sha256": "65e2f2fc77b96110726fd599cdde04b5d58c77ff5d3f4f119a8607d800c1c89c"
+    },
+    {
+      "image": "/include/sys/cdefs.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/cdefs.h",
+      "sha256": "2622b5693eb6cdbd4f6b32956f5c50397679321640aae681e514b496aa6e5204"
+    },
+    {
+      "image": "/include/sys/config.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/config.h",
+      "sha256": "73e6de212d7e8d65ce7fa07ee41306750a00e4012ef03cd4af2b87afd6ee3e06"
+    },
+    {
+      "image": "/include/sys/custom_file.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/custom_file.h",
+      "sha256": "7a8f3cc9612d591c93281dc05188d874e2dc7ebfce430f6f44e16b9b1e499bc7"
+    },
+    {
+      "image": "/include/sys/dir.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/dir.h",
+      "sha256": "9d6ef62c7e7334875ba348cdf7ccde7d33d6d7366f70168f93055947d9b7512e"
+    },
+    {
+      "image": "/include/sys/dirent.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/dirent.h",
+      "sha256": "42c07480bc4933770c090490e7a5a094d66dfc68b74fc05cc23f76571da4e596"
+    },
+    {
+      "image": "/include/sys/endian.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/endian.h",
+      "sha256": "f3c87468fc294bf906f211907c71b5cfe0e6d10bb941c2d22941dc5ebb45c8b9"
+    },
+    {
+      "image": "/include/sys/errno.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/errno.h",
+      "sha256": "a32de6b5fc826e83d22443c10816394189f1dd34f20b8f69c133937ed38be2a9"
+    },
+    {
+      "image": "/include/sys/fcntl.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/fcntl.h",
+      "sha256": "471e655eee7e30a4a8c5c34a465c0891c85a0bed33a26bd555d7538a91bd6e9b"
+    },
+    {
+      "image": "/include/sys/features.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/features.h",
+      "sha256": "835f38a1b152705c540bb9f1009cf512eb51cc8bd40eef4c80d21c41d60543d8"
+    },
+    {
+      "image": "/include/sys/fenv.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/fenv.h",
+      "sha256": "6753cfbfa42120d1e799fa68a85d235a0d49416a5a283bab21647c3d9eeaa310"
+    },
+    {
+      "image": "/include/sys/file.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/file.h",
+      "sha256": "c4e08fdb66f877ddc18fc704b7127aea39766f08593fa833d7f385beea0b5a35"
+    },
+    {
+      "image": "/include/sys/iconvnls.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/iconvnls.h",
+      "sha256": "55910f50cdbab6bdd6f978955e53bd52aa9d2bd98e1c24dfb4d659d1e55ffd66"
+    },
+    {
+      "image": "/include/sys/lock.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/lock.h",
+      "sha256": "0b65d3b16445aefd880ec841839385a5821c23044771db96929394cb8d407ff1"
+    },
+    {
+      "image": "/include/sys/param.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/param.h",
+      "sha256": "8eb31b517f0b881db30ffc4a418c10e1ad6649def163c8d7c118b1d67e6a568a"
+    },
+    {
+      "image": "/include/sys/queue.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/queue.h",
+      "sha256": "7d41aaf63093a6e49c0b6866a1feeb15a25ca24a7ea207beb00158d630d70b86"
+    },
+    {
+      "image": "/include/sys/reent.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/reent.h",
+      "sha256": "dec217a5d0e96db3a801f6c75e8ef5edffdcf40c6143facfcf5e3c4ed0e35632"
+    },
+    {
+      "image": "/include/sys/resource.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/resource.h",
+      "sha256": "fc816c589ce2a1e575e55d407b3755c9aefd420b21c800b83a45852b9a6e5be7"
+    },
+    {
+      "image": "/include/sys/sched.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/sched.h",
+      "sha256": "126bf49c40354daddaf2fb7b996191a92e679f1268266dbe9fb6b87867176338"
+    },
+    {
+      "image": "/include/sys/select.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/select.h",
+      "sha256": "6094de986c613b638cdd8fadc8dc4c1cc5f1efb88ace3d6d90bb79665635aab4"
+    },
+    {
+      "image": "/include/sys/signal.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/signal.h",
+      "sha256": "48ed7fe472041a5c3e7dc4abe8be2f09a41d9405d7b6f523f7006f10c82e4404"
+    },
+    {
+      "image": "/include/sys/stat.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/stat.h",
+      "sha256": "bbc6fc82341ba0a62f39a71b092ba4c949028b3ee20b3bb417cbba6e54ae19a0"
+    },
+    {
+      "image": "/include/sys/stdio.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/stdio.h",
+      "sha256": "cdef5d61edd073f43debfcea5602eb25df03948b23f0d8757916d350cb141266"
+    },
+    {
+      "image": "/include/sys/string.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/string.h",
+      "sha256": "ce8cdd56234815fd89e75beec74a6cd1140ba13e9e0c8d27e1a4d0f4306ef7c6"
+    },
+    {
+      "image": "/include/sys/syslimits.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/syslimits.h",
+      "sha256": "4c9868c2d77e8e607c64620270d6b8da6b20b611ec36b36c19467a44ef4a8632"
+    },
+    {
+      "image": "/include/sys/time.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/time.h",
+      "sha256": "a7d13ccc843a0495bdebd6bce5fbdfa3412cf31b1b67e730d6462bf12baa7e74"
+    },
+    {
+      "image": "/include/sys/timeb.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/timeb.h",
+      "sha256": "971d6507b637c34d4770a79d11ce574f8b182c22379ad0368928048f066ebe36"
+    },
+    {
+      "image": "/include/sys/times.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/times.h",
+      "sha256": "0d7ede865cbadca9bce06a3facaba84c07196a60a94c118410473d23d95da06b"
+    },
+    {
+      "image": "/include/sys/timespec.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/timespec.h",
+      "sha256": "7c41c5283a623556ec4b2b6350632899c4de2a957808e207c14e7f155677dc96"
+    },
+    {
+      "image": "/include/sys/tree.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/tree.h",
+      "sha256": "3429d3370703537ddd340ca018ea49c3fb818dc4460619a42c2a011df4673fd0"
+    },
+    {
+      "image": "/include/sys/types.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/types.h",
+      "sha256": "d96d4ca54d24160823da9f9ec0f4bbc201a82e677d0ada7b1d6be3baf0ee1fe7"
+    },
+    {
+      "image": "/include/sys/unistd.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/unistd.h",
+      "sha256": "f45923d0f0e2c528a71bcb506f1b42f55563cf23086cfafd8f3cec051b0fc37e"
+    },
+    {
+      "image": "/include/sys/utime.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/utime.h",
+      "sha256": "c12e60c1e9416c2d8f56ca355748e800d42d397cf170310f551e2ba1e95a8884"
+    },
+    {
+      "image": "/include/sys/wait.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/sys/wait.h",
+      "sha256": "4640660d3b9f319438eed0cac09f0ec90758ccfab245df45799481693950903b"
+    },
+    {
+      "image": "/include/tar.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/tar.h",
+      "sha256": "bc82f051dfea3ae855fdec8bebbb06a62174db21746d8acf112b10908ac5ddce"
+    },
+    {
+      "image": "/include/termios.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/termios.h",
+      "sha256": "fc13c1c649a2530491bed09e072743a931822b0faa826efb34e98bafd7373fa8"
+    },
+    {
+      "image": "/include/tgmath.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/tgmath.h",
+      "sha256": "5a71d896e9084d3b937c3a2042e2ecf8675c70ec7eabc5e0d2d375412e79a1d1"
+    },
+    {
+      "image": "/include/threads.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/threads.h",
+      "sha256": "840f0806416fc3974fd3f3101f7d63ed5886d2b2f1cd6b045081eb2d05b19f0e"
+    },
+    {
+      "image": "/include/time.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/time.h",
+      "sha256": "443934a804fa16f85c8f09f3640d582e77b0f51e54967f3daca110edd65b5398"
+    },
+    {
+      "image": "/include/unctrl.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/unctrl.h",
+      "sha256": "5b822526f95d9e1e2d7e4107aff8b439c9a1b5186012c9edaf873d7584534d74"
+    },
+    {
+      "image": "/include/unistd.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/unistd.h",
+      "sha256": "efcfd48d7eb25091d58704b910529a9247689f29a3c8316c6d3514d8c20d5e69"
+    },
+    {
+      "image": "/include/utime.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/utime.h",
+      "sha256": "73f81d9e6172f1df1359d5cbee51a9ab30df8bbe20848ecfafede8ef41393f64"
+    },
+    {
+      "image": "/include/utmp.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/utmp.h",
+      "sha256": "0cf902b1dcfa51852a3127a012ef4e77182510b0c5c89dab89d522656366e237"
+    },
+    {
+      "image": "/include/wchar.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/wchar.h",
+      "sha256": "81914f70278d767781f525888745c1d1881c73b3ded49ec908b619e2c3724062"
+    },
+    {
+      "image": "/include/wctype.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/wctype.h",
+      "sha256": "c089dfe2b8933841a79223c13de0b63281fb1c34ca032c390a5ab991e18cb4e4"
+    },
+    {
+      "image": "/include/wordexp.h",
+      "host": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/build/fs/include/wordexp.h",
+      "sha256": "67da110845b7dfea01fe40a87485cd6197e3d28253e9313aad08cb034e242c3b"
+    }
+  ],
+  "limitation": "Full Sail compiler/program exit; complete arena equality uses independent rv64emu reference. Seven strict CSem macro-location differences retained."
+}

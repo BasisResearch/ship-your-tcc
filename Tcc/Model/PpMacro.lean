@@ -83,6 +83,8 @@ def next_nomacro (R : Rec) : M Unit := do
   for _ in [0:fuel] do
     match lbl with
     | .redo =>
+      let line := (← curFile).line_num
+      modify fun s => { s with tok_line := line }
       c ← rd p
       if c == 32 || c == 9 then
         setTok c
@@ -376,6 +378,7 @@ def next_nomacro (R : Rec) : M Unit := do
 def macro_arg_subst (R : Rec) (nested0 : Option SymId) (macro_str0 : TokPtr) (args : SymId) :
     M (TokArr × Option SymId) := do
   let fuel ← fuelM
+  let subst_line := (← get).tok_line
   let mut nested := nested0
   let mut ms := macro_str0
   let mut str : TokenString := {}
@@ -399,13 +402,15 @@ def macro_arg_subst (R : Rec) (nested0 : Option SymId) (macro_str0 : TokPtr) (ar
           if st.get == TOK_EOF then break
           let (t2, cv2, st') := TOK_GET st {}
           st := st'
+          if t2 == TOK_PPLINE then continue
           let sb ← get_tok_str t2 (some cv2)
           for ch in sb.data do
             if t2 == TOK_PPSTR && (ch == 92 || ch == 34) then cs := cs.push 92
             cs := cs.push ch
         cs := (cs.push 34).push 0
         modify fun s => { s with tokcstr := cs }
-        str := tok_str_add2 str TOK_PPSTR ((default : CValue).setStr cs (Int32.ofNat cs.size))
+        modify fun s => { s with tok_line := subst_line }
+        str := tok_str_add2_line str TOK_PPSTR ((default : CValue).setStr cs (Int32.ofNat cs.size)) subst_line
       else
         expect R "macro parameter after '#'"
     else if t ≥ TOK_IDENT then
@@ -423,9 +428,15 @@ def macro_arg_subst (R : Rec) (nested0 : Option SymId) (macro_str0 : TokPtr) (ar
         if t2 == TOK_PPJOIN || t1 == TOK_PPJOIN then
           if t1 == TOK_PPJOIN && t0 == 44 && (← get).gnu_ext != 0 && sx.type.t != 0 then
             let c := str.str[(str.len - 1).toNat']!
+            let mut scan : TokPtr := { arr := str.str }
+            let mut comma := 0
             for _ in [0:fuel] do
-              str := { str with len := str.len - 1 }
-              if str.str[str.len.toNat']! == 44 then break
+              if scan.pos ≥ str.len.toNat' then break
+              let start := scan.pos
+              let (token, _, scan') := TOK_GET scan {}
+              scan := scan'
+              if token == 44 then comma := start
+            str := { str with len := Int32.ofNat comma }
             if st.get == TOK_EOF then
               pure ()
             else
@@ -453,9 +464,11 @@ def macro_arg_subst (R : Rec) (nested0 : Option SymId) (macro_str0 : TokPtr) (ar
           st := st'
           str := tok_str_add2 str t3 cv3
       else
-        str := tok_str_add str t
+        modify fun s => { s with tok_line := subst_line }
+        str := tok_str_add2_line str t cval subst_line
     else
-      str := tok_str_add2 str t cval
+      modify fun s => { s with tok_line := subst_line }
+      str := tok_str_add2_line str t cval subst_line
     if t != 32 then
       t0 := t1; t1 := t
   str := tok_str_add str 0
@@ -464,6 +477,7 @@ def macro_arg_subst (R : Rec) (nested0 : Option SymId) (macro_str0 : TokPtr) (ar
 /-- `macro_twosharps(ptr0)` -/
 def macro_twosharps (R : Rec) (ptr0 : TokPtr) : M TokArr := do
   let fuel ← fuelM
+  let saved_tok_line := (← get).tok_line
   let mut ms1 : TokenString := {}
   modify fun s => { s with tokcstr := ByteArray.empty }
   let mut ptr := ptr0
@@ -471,20 +485,25 @@ def macro_twosharps (R : Rec) (ptr0 : TokPtr) : M TokArr := do
     let (t1', cv1, ptr') := TOK_GET ptr {}
     ptr := ptr'
     let mut t1 := t1'
+    if t1 == TOK_PPLINE then
+      modify fun s => { s with tok_line := cv1.i.toUInt32.toInt32 }
+      continue
+    let mut line := (← get).tok_line
     if t1 == 0 then break
     for _ in [0:fuel] do
       let mut n := 0
       let mut t2 : Int32 := 0
       for _ in [0:fuel] do
         t2 := ptr.get n
-        if t2 != 32 then break
-        n := n + 1
+        if t2 != 32 && t2 != TOK_PPLINE then break
+        n := n + (if t2 == TOK_PPLINE then 2 else 1)
       if t2 != TOK_PPJOIN then break
-      ptr := { ptr with pos := ptr.pos + n }
+      line := saved_tok_line
+      ptr := { ptr with pos := ptr.pos + n + 1 }
       for _ in [0:fuel] do
-        ptr := { ptr with pos := ptr.pos + 1 }
         t2 := ptr.get
-        if !(t2 == 32 || t2 == TOK_PPJOIN) then break
+        if !(t2 == 32 || t2 == TOK_PPJOIN || t2 == TOK_PPLINE) then break
+        ptr := { ptr with pos := ptr.pos + (if t2 == TOK_PPLINE then 2 else 1) }
       let (t2', cv2, ptr') := TOK_GET ptr {}
       ptr := ptr'
       if t2' == TOK_PLCHLDR then continue
@@ -503,7 +522,8 @@ def macro_twosharps (R : Rec) (ptr0 : TokPtr) : M TokArr := do
       for _ in [0:fuel] do
         next_nomacro R
         let st ← get
-        ms1 := tok_str_add2 ms1 st.tok st.tokc
+        modify fun s => { s with tok_line := line }
+        ms1 := tok_str_add2_line ms1 st.tok st.tokc line
         let f ← curFile
         if f.buf.get! f.buf_ptr == 0 then break
         ms1 := tok_str_add ms1 32
@@ -515,8 +535,10 @@ def macro_twosharps (R : Rec) (ptr0 : TokPtr) : M TokArr := do
       tcc_close
       modify fun s => { s with tokcstr := ByteArray.empty }
     if t1 != TOK_PLCHLDR then
-      ms1 := tok_str_add2 ms1 t1 cv1
+      modify fun s => { s with tok_line := line }
+      ms1 := tok_str_add2_line ms1 t1 cv1 line
   ms1 := tok_str_add ms1 0
+  modify fun s => { s with tok_line := saved_tok_line }
   return ms1.str.extract 0 ms1.len.toNat'
 
 /-- `peek_file(ws_str)` -/
@@ -570,11 +592,18 @@ def next_argstream (R : Rec) (nested0 : Option SymId) (ws0 : Option TokenString)
         let t := m.get
         if t == 0 then break
         if ws0.isSome then
+          if t == TOK_PPLINE then
+            m := { m with pos := m.pos + 2 }
+            continue
           if t != 32 then found := some t; break
           m := { m with pos := m.pos + 1 }
         else
-          let (tk, cv, mp') := TOK_GET mp st.tokc
+          let (tk, cv, mp') := TOK_GET m (← get).tokc
           modify fun s => { s with tok := tk, tokc := cv, macro_ptr := some mp' }
+          if tk == TOK_PPLINE then
+            modify fun s => { s with tok_line := cv.i.toUInt32.toInt32 }
+            m := mp'
+            continue
           return (tk, nested, ws0)
       match found with
       | some t => return (t, nested, ws0)
@@ -601,6 +630,7 @@ def next_argstream (R : Rec) (nested0 : Option SymId) (ws0 : Option TokenString)
 def macro_subst_tok (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) (s : SymId) :
     M (TokenString × Option SymId × Int32) := do
   let fuel ← fuelM
+  let subst_line := (← get).tok_line
   let sx ← getSym s
   let v := sx.v
   let mut tok_str := tok_str0
@@ -615,7 +645,8 @@ def macro_subst_tok (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) 
       nested := nested'
       if t != 40 then
         modify fun s => { s with parse_flags := saved_parse_flags }
-        tok_str := tok_str_add2_spc tok_str v {}
+        modify fun s => { s with tok_line := subst_line }
+        tok_str := tok_str_add2_line tok_str v {} subst_line
         if saved_parse_flags &&& PARSE_FLAG_SPACES != 0 then
           let ws := ws.getD {}
           for i in [0:ws.len.toNat'] do
@@ -651,7 +682,7 @@ def macro_subst_tok (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) 
             if tt == 40 then parlevel := parlevel + 1
             if tt == 41 then parlevel := parlevel - 1
             if tt == 32 then str := { str with need_spc := str.need_spc ||| 1 }
-            else str := tok_str_add2_spc str tt (← get).tokc
+            else str := tok_str_add2_line str tt (← get).tokc (← get).tok_line
             let (t', n', _) ← next_argstream R nested none
             tt := t'; nested := n'
           str := tok_str_add str TOK_EOF
@@ -669,6 +700,7 @@ def macro_subst_tok (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) 
         if doneArgs then break
         i := 1
       -- now subst each arg
+      modify fun s => { s with tok_line := subst_line }
       let (ms, nested') ← macro_arg_subst R nested { arr := mstr } args
       nested := nested'
       mstr := ms
@@ -680,9 +712,11 @@ def macro_subst_tok (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) 
         sym_free a
         a := a1
       modify fun s => { s with parse_flags := saved_parse_flags }
+    modify fun s => { s with tok_line := subst_line }
     -- process '##'s
     let jstr ← if sx.type.t &&& MACRO_JOIN != 0 then macro_twosharps R { arr := mstr } else pure mstr
     let top := nested.getD 0
+    modify fun s => { s with tok_line := subst_line }
     let sa ← sym_push2 top v 0 0
     let (ts, nested', ret) ← R.macro_subst tok_str (some sa) { arr := jstr }
     tok_str := ts
@@ -699,7 +733,7 @@ def macro_subst_tok (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) 
     let mut cstrval : ByteArray := ByteArray.empty
     let mut add := true
     if v == Tok.TOK___LINE__ || v == Tok.TOK___COUNTER__ then
-      let n ← if v == Tok.TOK___LINE__ then pure (← curFile).line_num
+      let n ← if v == Tok.TOK___LINE__ then pure (← get).tok_line
               else modifyGet fun s => (s.pp_counter, { s with pp_counter := s.pp_counter + 1 })
       cstrval := cfmt "%d" [.i n.toInt]
       t := TOK_PPNUM
@@ -716,12 +750,13 @@ def macro_subst_tok (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) 
     else add := false
     if add then
       let cv := (default : CValue).setStr (cstrval.push 0) (Int32.ofNat (cstrval.size + 1))
-      tok_str := tok_str_add2_spc tok_str t cv
+      tok_str := tok_str_add2_line tok_str t cv (← get).tok_line
     return (tok_str, nested, 0)
 
 /-- `_Pragma`: expand the operand, destringize only quote/backslash,
 then run the existing pragma parser on isolated file/token/macro buffers. -/
 def pragma_operator (R : Rec) (nested0 : Option SymId) : M (Option SymId) := do
+  let saved_tok_line := (← get).tok_line
   let mut nested := nested0
   let flags := (← get).parse_flags
   modify fun s => { s with parse_flags := s.parse_flags &&& ~~~(PARSE_FLAG_TOK_STR ||| PARSE_FLAG_SPACES ||| PARSE_FLAG_LINEFEED) }
@@ -779,7 +814,8 @@ def pragma_operator (R : Rec) (nested0 : Option SymId) : M (Option SymId) := do
   modify fun s => { s with
     macro_stack := saved.macro_stack, macro_ptr := saved.macro_ptr,
     tokstr_buf := saved.tokstr_buf, unget_buf := saved.unget_buf,
-    include_stack := saved.include_stack, tok_flags := saved.tok_flags, parse_flags := flags }
+    include_stack := saved.include_stack, tok_flags := saved.tok_flags, parse_flags := flags,
+    tok_line := saved_tok_line }
   if result.len != 0 then
     result := tok_str_add result 0
     let _ ← begin_macro .heap result.str 0 1
@@ -833,6 +869,7 @@ def parse_string_concat (R : Rec) : M Unit := do
 def macro_subst (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) (macro_str0 : TokPtr) :
     M (TokenString × Option SymId × Int32) := do
   let fuel ← fuelM
+  let saved_tok_line := (← get).tok_line
   let mut tok_str := tok_str0
   let mut nested := nested0
   let mut ms := macro_str0
@@ -842,6 +879,9 @@ def macro_subst (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) (mac
     ms := ms'
     let mut t := t0
     if t == 0 || t == TOK_EOF then break
+    if t == TOK_PPLINE then
+      modify fun s => { s with tok_line := cval.i.toUInt32.toInt32 }
+      continue
     let mut noSubst := false
     if t == (← get).tok_pragma_op && nosubst == 0 && (← get).parse_flags &&& PARSE_FLAG_PREPROCESS != 0 then
       let id ← begin_macro .heap ms.arr ms.pos 2
@@ -886,9 +926,10 @@ def macro_subst (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) (mac
     else
       noSubst := true
     if noSubst then
-      tok_str := tok_str_add2_spc tok_str t cval
+      tok_str := tok_str_add2_line tok_str t cval (← get).tok_line
       if nosubst != 0 && t != 40 then nosubst := 0
       if t == Tok.TOK_DEFINED && (← get).pp_expr != 0 then nosubst := 1
+  modify fun s => { s with tok_line := saved_tok_line }
   return (tok_str, nested, nosubst)
 
 /-- `next()`, including patch 0003's common convert path. Macro tokens
@@ -903,6 +944,9 @@ def next (R : Rec) : M Unit := do
       if TOK_HAS_VALUE t then
         let (tk, cv, mp') := tok_get mp st.tokc
         modify fun s => { s with tok := tk, tokc := cv, macro_ptr := some mp' }
+        if t == TOK_PPLINE then
+          modify fun s => { s with tok_line := cv.i.toUInt32.toInt32 }
+          continue
         if t == TOK_LINENUM then
           modFile fun f => { f with line_num := cv.i.toUInt32.toInt32 }
           continue

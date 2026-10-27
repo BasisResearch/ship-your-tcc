@@ -197,7 +197,7 @@ def TOK_CLDOUBLE : Int32 := 0xcc
 def TOK_PPNUM : Int32 := 0xcd
 def TOK_PPSTR : Int32 := 0xce
 def TOK_LINENUM : Int32 := 0xcf
-@[inline] def TOK_HAS_VALUE (t : Int32) : Bool := t ≥ TOK_CCHAR && t ≤ TOK_U32CHAR
+@[inline] def TOK_HAS_VALUE (t : Int32) : Bool := (t ≥ TOK_CCHAR && t ≤ TOK_U32CHAR) || t == TOK_PPLINE
 @[inline] def TOK_IS_STR (t : Int32) : Bool :=
   t == TOK_STR || t == TOK_LSTR || t == TOK_U16STR || t == TOK_U32STR
 @[inline] def TOK_STR_SIZE (t : Int32) : Int32 :=
@@ -528,6 +528,7 @@ structure MacroFrame where
   id : Nat := 0
   prev_ptr : Option TokPtr := none
   save_line_num : Int32 := 0
+  save_tok_line : Int32 := 0
   alloc : Int32 := 0
   /-- the frame's string (`str->str`) -/
   str : TokPtr := {}

@@ -283,7 +283,7 @@ def packBytes (b : ByteArray) : Array Int32 := Id.run do
 /-- `tok_str_add2(s, t, cv)` -/
 def tok_str_add2 (s : TokenString) (t : Int32) (cv : CValue) : TokenString := Id.run do
   let mut s := tok_str_add s t
-  if t == TOK_CINT || t == TOK_CUINT || t == TOK_CCHAR || t == TOK_LCHAR || t == TOK_U16CHAR || t == TOK_U32CHAR || t == TOK_CFLOAT || t == TOK_LINENUM then
+  if t == TOK_CINT || t == TOK_CUINT || t == TOK_CCHAR || t == TOK_LCHAR || t == TOK_U16CHAR || t == TOK_U32CHAR || t == TOK_CFLOAT || t == TOK_LINENUM || t == TOK_PPLINE then
     s := tok_str_add s (cv.tab 0).toInt32
   else if t == TOK_PPNUM || t == TOK_PPSTR || TOK_IS_STR t then
     let size := cv.strSize
@@ -314,6 +314,12 @@ def tok_str_add2_spc (s : TokenString) (t : Int32) (cv : CValue) : TokenString :
   let s := if s.need_spc == 3 then tok_str_add s 32 else s
   tok_str_add2 { s with need_spc := 2 } t cv
 
+/-- Macro token provenance does not move the physical input cursor. -/
+def tok_str_add2_line (s : TokenString) (t : Int32) (cv : CValue) (line : Int32) : TokenString :=
+  let s := if s.need_spc == 3 then tok_str_add s 32 else s
+  let s := tok_str_add2 { s with need_spc := 2 } TOK_PPLINE (CValue.ofI line.toInt64.toUInt64)
+  tok_str_add2 s t cv
+
 /-- unpack `n` bytes from int words starting at word `w0` -/
 def unpackBytes (a : TokArr) (w0 n : Nat) : ByteArray := Id.run do
   let mut out := ByteArray.empty
@@ -328,7 +334,7 @@ def tok_get (p : TokPtr) (cv0 : CValue) : Int32 × CValue × TokPtr := Id.run do
   let mut q := p.pos + 1
   let mut cv := cv0
   let at_ (k : Nat) : Int32 := p.arr[k]?.getD 0
-  if t == TOK_CINT || t == TOK_CCHAR || t == TOK_LCHAR || t == TOK_U16CHAR || t == TOK_U32CHAR || t == TOK_LINENUM then
+  if t == TOK_CINT || t == TOK_CCHAR || t == TOK_LCHAR || t == TOK_U16CHAR || t == TOK_U32CHAR || t == TOK_LINENUM || t == TOK_PPLINE then
     cv := cv.setI (at_ q).toInt64.toUInt64; q := q + 1
   else if t == TOK_CUINT then
     cv := cv.setI (at_ q).toUInt32.toUInt64; q := q + 1
@@ -366,6 +372,7 @@ def begin_macro (ref : TSRef) (arr : TokArr) (pos : Nat) (alloc : Int32) : M Nat
     id := id
     prev_ptr := s.macro_ptr
     save_line_num := ln
+    save_tok_line := s.tok_line
     alloc := alloc
     str := ({ arr := arr, pos := pos } : TokPtr) }
   set { s with macro_stack := fr :: s.macro_stack, macro_ptr := some { arr := arr, pos := pos } }
@@ -376,7 +383,7 @@ def end_macro : M Unit := do
   let s ← get
   match s.macro_stack with
   | fr :: rest =>
-    set { s with macro_stack := rest, macro_ptr := fr.prev_ptr }
+    set { s with macro_stack := rest, macro_ptr := fr.prev_ptr, tok_line := fr.save_tok_line }
     modFile fun f => { f with line_num := fr.save_line_num }
     if fr.alloc == 0 then
       match fr.ref with

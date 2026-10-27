@@ -1,0 +1,38 @@
+file	vs_tcc	vs_gcc	spec_tokens	tcc_tokens	spec_error	tcc_error	gcc_error	tcc_context	gcc_context
+results/repro/tcc_line_splice.c	equal	equal	18	18					
+build/test-c11/line/line_arguments.c	diff	diff	68	68				static int a = 502 ; static int b = | static int a = 501 ; static int b =	static int a = 502 ; static int b = | static int a = 501 ; static int b =
+build/test-c11/line/line_boundary_0_1.c	equal	equal	18	18					
+build/test-c11/line/line_boundary_0_2.c	equal	equal	18	18					
+build/test-c11/line/line_boundary_0_3.c	equal	equal	18	18					
+build/test-c11/line/line_boundary_0_4.c	equal	equal	18	18					
+build/test-c11/line/line_boundary_0_5.c	equal	equal	18	18					
+build/test-c11/line/line_boundary_0_6.c	equal	equal	18	18					
+build/test-c11/line/line_boundary_0_7.c	equal	equal	18	18					
+build/test-c11/line/line_boundary_0_8.c	equal	equal	18	18					
+build/test-c11/line/line_boundary_0_9.c	equal	equal	18	18					
+build/test-c11/line/line_boundary_1_1.c	equal	equal	18	18					
+build/test-c11/line/line_boundary_1_10.c	equal	equal	18	18					
+build/test-c11/line/line_boundary_1_11.c	equal	equal	18	18					
+build/test-c11/line/line_boundary_1_2.c	equal	equal	18	18					
+build/test-c11/line/line_boundary_1_3.c	equal	equal	18	18					
+build/test-c11/line/line_boundary_1_4.c	equal	equal	18	18					
+build/test-c11/line/line_boundary_1_5.c	equal	equal	18	18					
+build/test-c11/line/line_boundary_1_6.c	equal	equal	18	18					
+build/test-c11/line/line_boundary_1_7.c	equal	equal	18	18					
+build/test-c11/line/line_boundary_1_8.c	equal	equal	18	18					
+build/test-c11/line/line_boundary_1_9.c	equal	equal	18	18					
+build/test-c11/line/line_comments.c	diff	diff	54	54				; static int b = ( 712 + ( 0 ) ) | ; static int b = ( 710 + ( 0 ) )	; static int b = ( 712 + ( 0 ) ) | ; static int b = ( 710 + ( 0 ) )
+build/test-c11/line/line_counter.c	diff	diff	52	52				a = ( ( 0 + 601 ) + ( 0 + | a = ( ( 0 + 600 ) + ( 0 +	a = ( ( 0 + 601 ) + ( 0 + | a = ( ( 0 + 600 ) + ( 0 +
+build/test-c11/line/line_crlf.c	equal	equal	18	18					
+build/test-c11/line/line_include.c	equal	equal	48	48					
+build/test-c11/line/line_inside_token.c	equal	equal	18	18					
+build/test-c11/line/line_mixed.c	equal	equal	18	18					
+build/test-c11/line/line_paste_multiline.c	diff	diff	44	44				static int a = 852 + 852 ; static int | static int a = 850 + 850 ; static int	static int a = 852 + 852 ; static int | static int a = 850 + 850 ; static int
+build/test-c11/line/line_paste_stringize.c	equal	equal	60	60					
+build/test-c11/line/line_pragma.c	equal	equal	32	32					
+build/test-c11/line/line_repeated.c	equal	equal	18	18					
+build/test-c11/line/line_rescan.c	diff	diff	34	34				static int a = ( 881 + ( 881 ) ) | static int a = ( 880 + ( 881 ) )	static int a = ( 881 + ( 881 ) ) | static int a = ( 880 + ( 881 ) )
+build/test-c11/line/line_sail.c	diff	diff	64	64				400 ; static int c = 502 ; static int d = | 400 ; static int c = 501 ; static int d =	400 ; static int c = 502 ; static int d = | 400 ; static int c = 501 ; static int d =
+build/test-c11/line/line_single.c	equal	equal	18	18					
+build/test-c11/line/line_trigraph.c	equal	equal	18	18					
+build/test-c11/line/line_wrappers.c	diff	diff	50	50				; static int b = ( 411 + ( 0 ) ) | ; static int b = ( 410 + ( 0 ) )	; static int b = ( 411 + ( 0 ) ) | ; static int b = ( 410 + ( 0 ) )
