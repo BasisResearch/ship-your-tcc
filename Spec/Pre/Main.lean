@@ -30,13 +30,26 @@ def initState (cfg : PreCfg) : PState :=
   { macros := initMacros cfg, counter := 0, once := [], pushed := [], out := [] }
 
 /-- C11 translation phases 1–4 of the main source file `src`. -/
-def phases14 (cfg : PreCfg) (fs : FileSys) (src : Bytes) : Except PreError (List PPToken) := do
+def phases14WithOrigins (cfg : PreCfg) (fs : FileSys) (src : Bytes) : Except PreError PreprocessingResult := do
   let fuel := fuelBound cfg fs src
   let pre ← phases123 cfg cfg.predefsName cfg.predefs
-  let st ← procFile cfg fs fuel (initState cfg)
-    ⟨cfg.predefsName, cfg.predefsName, 0, none, 2, false⟩ pre true []
+  let initial := { (initState cfg) with sources :=
+    [⟨cfg.predefsName, FileSys.normComponents cfg.predefsName, cfg.predefs, none⟩] }
+  let st ← procFile cfg fs fuel initial
+    ⟨cfg.predefsName, cfg.predefsName, 0, none, 2, false, []⟩ pre true []
   let main ← phases123 cfg cfg.mainName src
-  let st ← procFile cfg fs fuel st ⟨cfg.mainName, cfg.mainName, 0, none, 1, true⟩ main true []
-  pure st.out.reverse
+  let st := { st with sources :=
+    ⟨cfg.mainName, FileSys.normComponents cfg.mainName, src, none⟩ :: st.sources }
+  let st ← procFile cfg fs fuel st ⟨cfg.mainName, cfg.mainName, 0, none, 1, true, []⟩ main true []
+  pure ⟨st.locatedOut.reverse, st.sources.reverse, st.pack⟩
+
+/-- The strict F2 stream is the erasure of the provenance-carrying run.
+Spellings, pragma boundaries and their order are unchanged. -/
+def phases14 (cfg : PreCfg) (fs : FileSys) (src : Bytes) : Except PreError (List PPToken) :=
+  (phases14WithOrigins cfg fs src).map PreprocessingResult.erase
+
+/-- Structural erasure, not a proof of C11 preprocessing correctness. -/
+theorem phases14WithOrigins_erase (cfg : PreCfg) (fs : FileSys) (src : Bytes) :
+    (phases14WithOrigins cfg fs src).map PreprocessingResult.erase = phases14 cfg fs src := rfl
 
 end CSem.Pre

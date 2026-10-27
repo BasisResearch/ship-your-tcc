@@ -1,0 +1,38 @@
+[
+  {
+    "case": "basic",
+    "exit": 0,
+    "diagnostic": "",
+    "accepted": true
+  },
+  {
+    "case": "ucn-utf8",
+    "exit": 0,
+    "diagnostic": "",
+    "accepted": true
+  },
+  {
+    "case": "pack",
+    "exit": 1,
+    "diagnostic": "unimplemented-pack-layout",
+    "accepted": false
+  },
+  {
+    "case": "pack-active",
+    "exit": 1,
+    "diagnostic": "unimplemented-pack-layout",
+    "accepted": false
+  },
+  {
+    "case": "line-library-plant",
+    "exit": 1,
+    "diagnostic": "library-identity-mismatch",
+    "accepted": false
+  },
+  {
+    "case": "library-line-alias",
+    "exit": 1,
+    "diagnostic": "library-identity-mismatch",
+    "accepted": false
+  }
+]

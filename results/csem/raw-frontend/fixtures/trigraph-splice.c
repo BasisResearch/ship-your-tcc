@@ -1,0 +1,4 @@
+??=define X 1
+int va??/
+lue=X;
+char *s="??/n";

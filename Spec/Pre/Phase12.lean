@@ -25,7 +25,7 @@ Each character of the result remembers the physical line it came from
 (1-based): `__LINE__` (§6.10.8.1) and `#line` (§6.10.4) are about physical
 lines.
 -/
-import Spec.Pre.Types
+import Spec.Pre.Provenance
 
 namespace CSem.Pre
 
@@ -33,6 +33,7 @@ namespace CSem.Pre
 structure PChar where
   c : UInt8
   line : Nat
+  physical : Option (SourcePoint × SourcePoint) := none
   deriving Repr, Inhabited, DecidableEq
 
 /-- §5.2.1.1: the character a trigraph `??x` stands for. -/
@@ -70,11 +71,11 @@ def phase1 (cfg : PreCfg) (src : Bytes) : Bytes := phase1Go cfg.trigraphs src []
 /-- Phase 2 on a byte list: delete backslash–new-line, number the lines. -/
 def phase2Go : Bytes → Nat → List PChar → List PChar
   | [], _, acc => acc.reverse
-  | [c], ln, acc => (⟨c, ln⟩ :: acc).reverse
+  | [c], ln, acc => (⟨c, ln, none⟩ :: acc).reverse
   | c :: d :: rest, ln, acc =>
     if c = 92 ∧ d = 10 then phase2Go rest (ln + 1) acc
-    else if c = 10 then phase2Go (d :: rest) (ln + 1) (⟨10, ln⟩ :: acc)
-    else phase2Go (d :: rest) ln (⟨c, ln⟩ :: acc)
+    else if c = 10 then phase2Go (d :: rest) (ln + 1) (⟨10, ln, none⟩ :: acc)
+    else phase2Go (d :: rest) ln (⟨c, ln, none⟩ :: acc)
 termination_by l => l.length
 
 /-- Translation phase 2; a non-empty file gets a final new-line if it lacks
@@ -83,9 +84,49 @@ def phase2 (b : Bytes) : List PChar :=
   let cs := phase2Go b 1 []
   match cs.getLast? with
   | none => []
-  | some l => if l.c = 10 then cs else cs ++ [⟨10, l.line⟩]
+  | some l => if l.c = 10 then cs else cs ++ [⟨10, l.line, none⟩]
 
 /-- Phases 1 and 2. -/
-def phases12 (cfg : PreCfg) (src : Bytes) : List PChar := phase2 (phase1 cfg src)
+def advancePoint (p : SourcePoint) (c : UInt8) : SourcePoint :=
+  if c = 10 then ⟨p.offset + 1, p.line + 1, 1⟩
+  else ⟨p.offset + 1, p.line, p.column + 1⟩
+
+/-- Phase 1 retaining the entire physical span of CRLF and trigraphs. -/
+def locatedPhase1 (tri : Bool) : Bytes → SourcePoint → List PChar → List PChar
+  | [], _, acc => acc.reverse
+  | [c], p, acc => (⟨c, p.line, some (p, advancePoint p c)⟩ :: acc).reverse
+  | c :: d :: rest, p, acc =>
+    let q := advancePoint p c
+    if c = 13 ∧ d = 10 then
+      let e := advancePoint q d
+      locatedPhase1 tri rest e (⟨10, p.line, some (p, e)⟩ :: acc)
+    else if tri ∧ c = 63 ∧ d = 63 then
+      match rest with
+      | x :: rest' =>
+        match trigraphOf x with
+        | some r =>
+          let e := advancePoint (advancePoint q d) x
+          locatedPhase1 tri rest' e (⟨r, p.line, some (p, e)⟩ :: acc)
+        | none => locatedPhase1 tri (d :: x :: rest') q (⟨c, p.line, some (p, q)⟩ :: acc)
+      | [] => locatedPhase1 tri [d] q (⟨c, p.line, some (p, q)⟩ :: acc)
+    else locatedPhase1 tri (d :: rest) q (⟨c, p.line, some (p, q)⟩ :: acc)
+termination_by cs => cs.length
+
+/-- Phase 2 drops splice characters without dropping the surviving bytes'
+physical positions. The optional terminal newline has a zero-width span. -/
+def locatedPhase2 : List PChar → List PChar → List PChar
+  | [], acc => acc.reverse
+  | [c], acc => (c :: acc).reverse
+  | c :: d :: rest, acc =>
+    if c.c = 92 ∧ d.c = 10 then locatedPhase2 rest acc
+    else locatedPhase2 (d :: rest) (c :: acc)
+termination_by cs => cs.length
+
+def phases12 (cfg : PreCfg) (src : Bytes) : List PChar :=
+  let cs := locatedPhase2 (locatedPhase1 cfg.trigraphs src ⟨0, 1, 1⟩ []) []
+  match cs.getLast? with
+  | none => []
+  | some l => if l.c = 10 then cs else
+    cs ++ [⟨10, l.line, l.physical.map (fun (_, e) => (e, e))⟩]
 
 end CSem.Pre

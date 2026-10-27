@@ -1,0 +1,198 @@
+{
+  "pins": {
+    "oracle": "a71dd0968846b72196506a7ce78cd300cb39c6a8a8b10e87945a44c30517d091",
+    "raw": "d00d8e1f1d852d3a7fb03daf2648cdc8443f4095e97d1328150ca43a39ef7ada",
+    "text": "ba3eaaafc3f92a57be4102ce1522fe77c12847f0a577517197535627d220c634",
+    "csem_rev": "cerberus-lean 704c4e697845127bced66c93fa0763eb51527ca4\nlem-lean e6d8db5680962f49060257d6c2bcb13c284b910f\n# cerberus-lean: OathTech/cerberus-lean, branch mdd/cerberus-lean,\n# commit 2026-10-26 17:26:39 UTC (lead-fetched current snapshot 2026-10-27).\n# lem-lean: OathTech/lem-lean, branch mdd/lean-backend,\n# commit 2026-10-22 01:33:30 UTC; matching LemLib and generator.\n# Upstream targets Lean 4.35.0; this fork retains approved Lean 4.34.0.\n# Imported with scripts/csem_import.sh; local replay and validation recorded\n# in csem/PORT-4.34.md and results/csem/repin-2026-10-27.md.\n",
+    "fslist": "e16cc427f575026eb9cc649eea0aaa61e6c951afe590486e53a6f7917db87946",
+    "headers": {
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/header-0.h": "92d2f22dc171846a9092a544470541f955bd670e90a64364dcd3604348b9dcb1",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/header-1.h": "c350ab14318e0e93e6434a2b53dde0ad12db80fe330245a4a622c7b8f1ef470c",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/header-2.h": "bc81910e1cc1aaf0b72d4db387310570d7ff1a079bdcb00d4e0bf2f1aa459b12",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/header-3.h": "e78c364fbf6eb044809ca8ede2083cf20b39a7a7a9009ecd77dfba16806a91cb",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/header-4.h": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    }
+  },
+  "rows": [
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/basic.c",
+      "source_sha256": "2ad75d95660563887d8d3f1d0ae1dcf18c2379cbd83a5c72f5ab276351ee6949",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "02632e228a67dd0f78eefcdc6b3172a2939211164552a17c01fa92fdc1cc8068",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/include.c",
+      "source_sha256": "6768107bb87a442cedf4c07a600e191a88cb161f8d9b2c15d0cffa1431940f32",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "b7ebb687e7d08ece8bd11cf516db34ffb7f023c67e5d2cba0f8a27febfc3e28b",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/macro-locations.c",
+      "source_sha256": "1282dd7e2491857d9413293e2a5336425a3d1af824a88c60cd41e035537a8b14",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "95c65b2441630e2853437a57444f8308538de330b090045d1b9804d832e246fe",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/trigraph-splice.c",
+      "source_sha256": "baf27224413265766da9885d47f9f157b567435f1d505df4c54f34f1c3214b55",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "f2e39bf3d26a9468b64449b2b1a5b120034723f48852857cc4429e738b3619ae",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/no-rephase.c",
+      "source_sha256": "e43b237c8baa76163fc94d8e965c8f4ecc1cf5eba0a5a196c9d50ca08388bab2",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "f757faa3dc8b34194b3314ebe598571a965a31fc86078e6edbbb5ca65ccc5c31",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/ucn.c",
+      "source_sha256": "5db0c529fc212efa21d1bedf8ac16b271a42fdacd3c95c00971bed698423b521",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "031d7033ac6da93761337cbe9a91b43530ecca92f5db9bbd581bf27d3f97aa63",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/ucn-utf8.c",
+      "source_sha256": "a82c4ef9225535fbe77540c8131133346e0a0b56a5d4ef0e0a2bd32844784a56",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "5dfc18056d68b3f6c968512c159d66c946974c3d1ad36f9211bae677a7f5a290",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/ucn-macros.c",
+      "source_sha256": "5cbb0281e5bc631ac9c25d91eace6125e3314755f7471231aae7b8a2bec3f2a9",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "07f9f7bd553d144bcc4a7222b49828e9828941bab2e591360c897068169933d6",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/utf8-typedef.c",
+      "source_sha256": "4c3e92d3541320ad43a0c9dd41a57d41bda136f3ada6d84bbf8ae447319526a3",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "9df3cfcf2fbae2c1e0fa37ad6d18694bfb4c8a4af57d0bc256a9ddea5567ff19",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/numbers.c",
+      "source_sha256": "e4d3228172f7bc24cfea1a736ae71d535eab9a62235c864ba140073312df3d45",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "afbeb4afd54b53e8db53971eb42eae452bdb3c2bba3f1b44322de6a3389e9206",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+      "source_sha256": "42994ffdf869d7897a189229a97c77e8d1dbe0e7f0f7d1ec14fbb3fb1e42c585",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "238b9aa0aa8b699ce47ac8516c6fe7e28af081d55c1576246063371a50932b98",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/line.c",
+      "source_sha256": "760b00be59893a9afa64464e10e8690f49b6f84a8dd3637e4b3e2ccf1a272f5e",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "685530f0a56ee963045432e6fa80f193d9c0b27c2106d2f5f14617f3a183b38f",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack.c",
+      "source_sha256": "6e44f0ebafee10f4fe3d9d1647c2ab29004bfaac5bfc085c7942bcc0a4456076",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "fa40cad4301595e61b9255fc691ad757e2b47fd8aee853dbe4f75bc920c93e91",
+      "library_disagreements": 0,
+      "pragma_events": 2,
+      "status": "AGREE"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c",
+      "source_sha256": "1e59b2ae271358f1e0dd6c984f55ef20703b8c59f9e5dbd958b6337f38e4b6c4",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "aeff0d2ed2b1cdb1b07c459be39fba585b4c024bf59f7efc19b4df22d340796b",
+      "library_disagreements": 0,
+      "pragma_events": 1,
+      "status": "AGREE"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pragma-adjacent.c",
+      "source_sha256": "b6ea77c17ae08995e4ff1d798e90210c0acb87a6c849a25cf88c4f18c0af1ece",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "a24a3a14149dcb451f5462e216495c5f1ca05b1278e46b9c6eb41748fba8c992",
+      "library_disagreements": 0,
+      "pragma_events": 1,
+      "status": "AGREE"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/library.c",
+      "source_sha256": "80ba0e98e0c70348e3b7f1add2127f7507a885a6453ec1699dfbfb516010181a",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "907ed43ea943536b35b68a66b0d66fd5c1004e5c6fb19f6e1d9a14ff1ae50cc8",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/line-library-plant.c",
+      "source_sha256": "92196c5e9449acbd8bb0e195bca30be32725b0fee220f0729b88c6daf9a475fc",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "f56219b98f572dc22da44df067df6467bc5959e2de84e5f5e4a0818daeaa76c2",
+      "library_disagreements": 3,
+      "pragma_events": 0,
+      "status": "AGREE"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/library-line-alias.c",
+      "source_sha256": "a12b0ab77a34173bbbecdea2792784c66e8a7601d79a875c30bae057a0d0285f",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "4570f1af93b2f01fb1a8ef955e34b7f0b4a790d384067407485dea6af2cf6f8c",
+      "library_disagreements": 3,
+      "pragma_events": 0,
+      "status": "AGREE"
+    }
+  ]
+}

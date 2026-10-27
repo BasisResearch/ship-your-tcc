@@ -1,0 +1,1224 @@
+{
+  "tag": "TUnit",
+  "decls": [
+    {
+      "tag": "EDecl_decl",
+      "decl": {
+        "tag": "Declaration_base",
+        "attrs": { "tag": "Attrs", "attrs": [] },
+        "specifiers": {
+          "tag": "Specifiers",
+          "storage_classes": [],
+          "type_specifiers": [
+            {
+              "tag": "TSpec",
+              "loc": {
+                "tag": "Loc_region",
+                "begin": {
+                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "line": 1,
+                  "col": 1,
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "lexing_line": 2
+                },
+                "end": {
+                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "line": 1,
+                  "col": 5,
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "lexing_line": 2
+                },
+                "cursor": "NoCursor"
+              },
+              "spec": "TSpec_char"
+            }
+          ],
+          "type_qualifiers": [],
+          "function_specifiers": [],
+          "alignment_specifiers": []
+        },
+        "init_declarators": [
+          {
+            "tag": "InitDecl",
+            "loc": {
+              "tag": "Loc_region",
+              "begin": {
+                "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                "line": 1,
+                "col": 6,
+                "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                "lexing_line": 4
+              },
+              "end": {
+                "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                "line": 1,
+                "col": 18,
+                "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                "lexing_line": 12
+              },
+              "cursor": "NoCursor"
+            },
+            "declarator": {
+              "tag": "Declarator",
+              "pointer": {
+                "tag": "PDecl",
+                "loc": {
+                  "tag": "Loc_region",
+                  "begin": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "line": 1,
+                    "col": 6,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "lexing_line": 4
+                  },
+                  "end": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "line": 1,
+                    "col": 7,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "lexing_line": 4
+                  },
+                  "cursor": "NoCursor"
+                },
+                "type_qualifiers": [],
+                "pointer": null
+              },
+              "direct": {
+                "tag": "DDecl_identifier",
+                "attrs": { "tag": "Attrs", "attrs": [] },
+                "id": {
+                  "loc": {
+                    "tag": "Loc_region",
+                    "begin": {
+                      "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "line": 1,
+                      "col": 7,
+                      "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "lexing_line": 6
+                    },
+                    "end": {
+                      "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "line": 1,
+                      "col": 8,
+                      "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "lexing_line": 6
+                    },
+                    "cursor": "NoCursor"
+                  },
+                  "name": "a"
+                }
+              }
+            },
+            "initializer": {
+              "tag": "Init_expr",
+              "expr": {
+                "tag": "CabsExpression",
+                "loc": {
+                  "tag": "Loc_region",
+                  "begin": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "line": 1,
+                    "col": 9,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "lexing_line": 10
+                  },
+                  "end": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "line": 1,
+                    "col": 18,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "lexing_line": 12
+                  },
+                  "cursor": "NoCursor"
+                },
+                "expr": {
+                  "tag": "CabsEstring",
+                  "val": [
+                    "CabsEncPrefix_u8",
+                    [
+                      [
+                        {
+                          "tag": "Loc_region",
+                          "begin": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 1,
+                            "col": 9,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 10
+                          },
+                          "end": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 1,
+                            "col": 14,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 10
+                          },
+                          "cursor": "NoCursor"
+                        },
+                        [ "a" ]
+                      ],
+                      [
+                        {
+                          "tag": "Loc_region",
+                          "begin": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 1,
+                            "col": 15,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 12
+                          },
+                          "end": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 1,
+                            "col": 18,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 12
+                          },
+                          "cursor": "NoCursor"
+                        },
+                        [ "b" ]
+                      ]
+                    ]
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "tag": "EDecl_decl",
+      "decl": {
+        "tag": "Declaration_base",
+        "attrs": { "tag": "Attrs", "attrs": [] },
+        "specifiers": {
+          "tag": "Specifiers",
+          "storage_classes": [],
+          "type_specifiers": [
+            {
+              "tag": "TSpec",
+              "loc": {
+                "tag": "Loc_region",
+                "begin": {
+                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "line": 2,
+                  "col": 1,
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "lexing_line": 16
+                },
+                "end": {
+                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "line": 2,
+                  "col": 9,
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "lexing_line": 16
+                },
+                "cursor": "NoCursor"
+              },
+              "spec": "TSpec_unsigned"
+            },
+            {
+              "tag": "TSpec",
+              "loc": {
+                "tag": "Loc_region",
+                "begin": {
+                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "line": 2,
+                  "col": 10,
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "lexing_line": 18
+                },
+                "end": {
+                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "line": 2,
+                  "col": 15,
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "lexing_line": 18
+                },
+                "cursor": "NoCursor"
+              },
+              "spec": "TSpec_short"
+            }
+          ],
+          "type_qualifiers": [],
+          "function_specifiers": [],
+          "alignment_specifiers": []
+        },
+        "init_declarators": [
+          {
+            "tag": "InitDecl",
+            "loc": {
+              "tag": "Loc_region",
+              "begin": {
+                "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                "line": 2,
+                "col": 16,
+                "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                "lexing_line": 20
+              },
+              "end": {
+                "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                "line": 2,
+                "col": 27,
+                "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                "lexing_line": 28
+              },
+              "cursor": "NoCursor"
+            },
+            "declarator": {
+              "tag": "Declarator",
+              "pointer": {
+                "tag": "PDecl",
+                "loc": {
+                  "tag": "Loc_region",
+                  "begin": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "line": 2,
+                    "col": 16,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "lexing_line": 20
+                  },
+                  "end": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "line": 2,
+                    "col": 17,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "lexing_line": 20
+                  },
+                  "cursor": "NoCursor"
+                },
+                "type_qualifiers": [],
+                "pointer": null
+              },
+              "direct": {
+                "tag": "DDecl_identifier",
+                "attrs": { "tag": "Attrs", "attrs": [] },
+                "id": {
+                  "loc": {
+                    "tag": "Loc_region",
+                    "begin": {
+                      "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "line": 2,
+                      "col": 17,
+                      "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "lexing_line": 22
+                    },
+                    "end": {
+                      "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "line": 2,
+                      "col": 18,
+                      "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "lexing_line": 22
+                    },
+                    "cursor": "NoCursor"
+                  },
+                  "name": "b"
+                }
+              }
+            },
+            "initializer": {
+              "tag": "Init_expr",
+              "expr": {
+                "tag": "CabsExpression",
+                "loc": {
+                  "tag": "Loc_region",
+                  "begin": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "line": 2,
+                    "col": 19,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "lexing_line": 26
+                  },
+                  "end": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "line": 2,
+                    "col": 27,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "lexing_line": 28
+                  },
+                  "cursor": "NoCursor"
+                },
+                "expr": {
+                  "tag": "CabsEstring",
+                  "val": [
+                    "CabsEncPrefix_u",
+                    [
+                      [
+                        {
+                          "tag": "Loc_region",
+                          "begin": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 2,
+                            "col": 19,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 26
+                          },
+                          "end": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 2,
+                            "col": 23,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 26
+                          },
+                          "cursor": "NoCursor"
+                        },
+                        [ "c" ]
+                      ],
+                      [
+                        {
+                          "tag": "Loc_region",
+                          "begin": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 2,
+                            "col": 24,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 28
+                          },
+                          "end": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 2,
+                            "col": 27,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 28
+                          },
+                          "cursor": "NoCursor"
+                        },
+                        [ "d" ]
+                      ]
+                    ]
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "tag": "EDecl_decl",
+      "decl": {
+        "tag": "Declaration_base",
+        "attrs": { "tag": "Attrs", "attrs": [] },
+        "specifiers": {
+          "tag": "Specifiers",
+          "storage_classes": [],
+          "type_specifiers": [
+            {
+              "tag": "TSpec",
+              "loc": {
+                "tag": "Loc_region",
+                "begin": {
+                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "line": 3,
+                  "col": 1,
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "lexing_line": 32
+                },
+                "end": {
+                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "line": 3,
+                  "col": 9,
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "lexing_line": 32
+                },
+                "cursor": "NoCursor"
+              },
+              "spec": "TSpec_unsigned"
+            }
+          ],
+          "type_qualifiers": [],
+          "function_specifiers": [],
+          "alignment_specifiers": []
+        },
+        "init_declarators": [
+          {
+            "tag": "InitDecl",
+            "loc": {
+              "tag": "Loc_region",
+              "begin": {
+                "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                "line": 3,
+                "col": 10,
+                "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                "lexing_line": 34
+              },
+              "end": {
+                "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                "line": 3,
+                "col": 21,
+                "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                "lexing_line": 42
+              },
+              "cursor": "NoCursor"
+            },
+            "declarator": {
+              "tag": "Declarator",
+              "pointer": {
+                "tag": "PDecl",
+                "loc": {
+                  "tag": "Loc_region",
+                  "begin": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "line": 3,
+                    "col": 10,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "lexing_line": 34
+                  },
+                  "end": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "line": 3,
+                    "col": 11,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "lexing_line": 34
+                  },
+                  "cursor": "NoCursor"
+                },
+                "type_qualifiers": [],
+                "pointer": null
+              },
+              "direct": {
+                "tag": "DDecl_identifier",
+                "attrs": { "tag": "Attrs", "attrs": [] },
+                "id": {
+                  "loc": {
+                    "tag": "Loc_region",
+                    "begin": {
+                      "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "line": 3,
+                      "col": 11,
+                      "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "lexing_line": 36
+                    },
+                    "end": {
+                      "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "line": 3,
+                      "col": 12,
+                      "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "lexing_line": 36
+                    },
+                    "cursor": "NoCursor"
+                  },
+                  "name": "c"
+                }
+              }
+            },
+            "initializer": {
+              "tag": "Init_expr",
+              "expr": {
+                "tag": "CabsExpression",
+                "loc": {
+                  "tag": "Loc_region",
+                  "begin": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "line": 3,
+                    "col": 13,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "lexing_line": 40
+                  },
+                  "end": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "line": 3,
+                    "col": 21,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "lexing_line": 42
+                  },
+                  "cursor": "NoCursor"
+                },
+                "expr": {
+                  "tag": "CabsEstring",
+                  "val": [
+                    "CabsEncPrefix_U",
+                    [
+                      [
+                        {
+                          "tag": "Loc_region",
+                          "begin": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 3,
+                            "col": 13,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 40
+                          },
+                          "end": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 3,
+                            "col": 17,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 40
+                          },
+                          "cursor": "NoCursor"
+                        },
+                        [ "e" ]
+                      ],
+                      [
+                        {
+                          "tag": "Loc_region",
+                          "begin": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 3,
+                            "col": 18,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 42
+                          },
+                          "end": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 3,
+                            "col": 21,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 42
+                          },
+                          "cursor": "NoCursor"
+                        },
+                        [ "f" ]
+                      ]
+                    ]
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "tag": "EDecl_decl",
+      "decl": {
+        "tag": "Declaration_base",
+        "attrs": { "tag": "Attrs", "attrs": [] },
+        "specifiers": {
+          "tag": "Specifiers",
+          "storage_classes": [],
+          "type_specifiers": [
+            {
+              "tag": "TSpec",
+              "loc": {
+                "tag": "Loc_region",
+                "begin": {
+                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "line": 4,
+                  "col": 1,
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "lexing_line": 46
+                },
+                "end": {
+                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "line": 4,
+                  "col": 4,
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "lexing_line": 46
+                },
+                "cursor": "NoCursor"
+              },
+              "spec": "TSpec_int"
+            }
+          ],
+          "type_qualifiers": [],
+          "function_specifiers": [],
+          "alignment_specifiers": []
+        },
+        "init_declarators": [
+          {
+            "tag": "InitDecl",
+            "loc": {
+              "tag": "Loc_region",
+              "begin": {
+                "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                "line": 4,
+                "col": 5,
+                "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                "lexing_line": 48
+              },
+              "end": {
+                "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                "line": 4,
+                "col": 16,
+                "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                "lexing_line": 56
+              },
+              "cursor": "NoCursor"
+            },
+            "declarator": {
+              "tag": "Declarator",
+              "pointer": {
+                "tag": "PDecl",
+                "loc": {
+                  "tag": "Loc_region",
+                  "begin": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "line": 4,
+                    "col": 5,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "lexing_line": 48
+                  },
+                  "end": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "line": 4,
+                    "col": 6,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "lexing_line": 48
+                  },
+                  "cursor": "NoCursor"
+                },
+                "type_qualifiers": [],
+                "pointer": null
+              },
+              "direct": {
+                "tag": "DDecl_identifier",
+                "attrs": { "tag": "Attrs", "attrs": [] },
+                "id": {
+                  "loc": {
+                    "tag": "Loc_region",
+                    "begin": {
+                      "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "line": 4,
+                      "col": 6,
+                      "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "lexing_line": 50
+                    },
+                    "end": {
+                      "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "line": 4,
+                      "col": 7,
+                      "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "lexing_line": 50
+                    },
+                    "cursor": "NoCursor"
+                  },
+                  "name": "d"
+                }
+              }
+            },
+            "initializer": {
+              "tag": "Init_expr",
+              "expr": {
+                "tag": "CabsExpression",
+                "loc": {
+                  "tag": "Loc_region",
+                  "begin": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "line": 4,
+                    "col": 8,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "lexing_line": 54
+                  },
+                  "end": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "line": 4,
+                    "col": 16,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "lexing_line": 56
+                  },
+                  "cursor": "NoCursor"
+                },
+                "expr": {
+                  "tag": "CabsEstring",
+                  "val": [
+                    "CabsEncPrefix_L",
+                    [
+                      [
+                        {
+                          "tag": "Loc_region",
+                          "begin": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 4,
+                            "col": 8,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 54
+                          },
+                          "end": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 4,
+                            "col": 12,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 54
+                          },
+                          "cursor": "NoCursor"
+                        },
+                        [ "g" ]
+                      ],
+                      [
+                        {
+                          "tag": "Loc_region",
+                          "begin": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 4,
+                            "col": 13,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 56
+                          },
+                          "end": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 4,
+                            "col": 16,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 56
+                          },
+                          "cursor": "NoCursor"
+                        },
+                        [ "h" ]
+                      ]
+                    ]
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "tag": "EDecl_decl",
+      "decl": {
+        "tag": "Declaration_base",
+        "attrs": { "tag": "Attrs", "attrs": [] },
+        "specifiers": {
+          "tag": "Specifiers",
+          "storage_classes": [],
+          "type_specifiers": [
+            {
+              "tag": "TSpec",
+              "loc": {
+                "tag": "Loc_region",
+                "begin": {
+                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "line": 5,
+                  "col": 1,
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "lexing_line": 60
+                },
+                "end": {
+                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "line": 5,
+                  "col": 4,
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "lexing_line": 60
+                },
+                "cursor": "NoCursor"
+              },
+              "spec": "TSpec_int"
+            }
+          ],
+          "type_qualifiers": [],
+          "function_specifiers": [],
+          "alignment_specifiers": []
+        },
+        "init_declarators": [
+          {
+            "tag": "InitDecl",
+            "loc": {
+              "tag": "Loc_region",
+              "begin": {
+                "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                "line": 5,
+                "col": 5,
+                "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                "lexing_line": 62
+              },
+              "end": {
+                "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                "line": 5,
+                "col": 21,
+                "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                "lexing_line": 74
+              },
+              "cursor": "NoCursor"
+            },
+            "declarator": {
+              "tag": "Declarator",
+              "pointer": null,
+              "direct": {
+                "tag": "DDecl_identifier",
+                "attrs": { "tag": "Attrs", "attrs": [] },
+                "id": {
+                  "loc": {
+                    "tag": "Loc_region",
+                    "begin": {
+                      "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "line": 5,
+                      "col": 5,
+                      "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "lexing_line": 62
+                    },
+                    "end": {
+                      "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "line": 5,
+                      "col": 6,
+                      "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "lexing_line": 62
+                    },
+                    "cursor": "NoCursor"
+                  },
+                  "name": "x"
+                }
+              }
+            },
+            "initializer": {
+              "tag": "Init_expr",
+              "expr": {
+                "tag": "CabsExpression",
+                "loc": {
+                  "tag": "Loc_region",
+                  "begin": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "line": 5,
+                    "col": 7,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "lexing_line": 66
+                  },
+                  "end": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "line": 5,
+                    "col": 21,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "lexing_line": 74
+                  },
+                  "cursor": {
+                    "tag": "PointCursor",
+                    "pos": {
+                      "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "line": 5,
+                      "col": 16,
+                      "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "lexing_line": 72
+                    }
+                  }
+                },
+                "expr": {
+                  "tag": "CabsEbinary",
+                  "op": "CabsAdd",
+                  "lhs": {
+                    "tag": "CabsExpression",
+                    "loc": {
+                      "tag": "Loc_region",
+                      "begin": {
+                        "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                        "line": 5,
+                        "col": 7,
+                        "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                        "lexing_line": 66
+                      },
+                      "end": {
+                        "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                        "line": 5,
+                        "col": 16,
+                        "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                        "lexing_line": 70
+                      },
+                      "cursor": {
+                        "tag": "PointCursor",
+                        "pos": {
+                          "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                          "line": 5,
+                          "col": 11,
+                          "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                          "lexing_line": 68
+                        }
+                      }
+                    },
+                    "expr": {
+                      "tag": "CabsEbinary",
+                      "op": "CabsAdd",
+                      "lhs": {
+                        "tag": "CabsExpression",
+                        "loc": {
+                          "tag": "Loc_region",
+                          "begin": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 5,
+                            "col": 7,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 66
+                          },
+                          "end": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 5,
+                            "col": 11,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 66
+                          },
+                          "cursor": "NoCursor"
+                        },
+                        "expr": {
+                          "tag": "CabsEconst",
+                          "val": {
+                            "tag": "CabsCharacter_const",
+                            "val": [ "CabsPrefix_L", "a" ]
+                          }
+                        }
+                      },
+                      "rhs": {
+                        "tag": "CabsExpression",
+                        "loc": {
+                          "tag": "Loc_region",
+                          "begin": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 5,
+                            "col": 12,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 70
+                          },
+                          "end": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 5,
+                            "col": 16,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 70
+                          },
+                          "cursor": "NoCursor"
+                        },
+                        "expr": {
+                          "tag": "CabsEconst",
+                          "val": {
+                            "tag": "CabsCharacter_const",
+                            "val": [ "CabsPrefix_u", "b" ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "rhs": {
+                    "tag": "CabsExpression",
+                    "loc": {
+                      "tag": "Loc_region",
+                      "begin": {
+                        "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                        "line": 5,
+                        "col": 17,
+                        "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                        "lexing_line": 74
+                      },
+                      "end": {
+                        "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                        "line": 5,
+                        "col": 21,
+                        "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                        "lexing_line": 74
+                      },
+                      "cursor": "NoCursor"
+                    },
+                    "expr": {
+                      "tag": "CabsEconst",
+                      "val": {
+                        "tag": "CabsCharacter_const",
+                        "val": [ "CabsPrefix_U", "c" ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "tag": "EDecl_decl",
+      "decl": {
+        "tag": "Declaration_base",
+        "attrs": { "tag": "Attrs", "attrs": [] },
+        "specifiers": {
+          "tag": "Specifiers",
+          "storage_classes": [],
+          "type_specifiers": [
+            {
+              "tag": "TSpec",
+              "loc": {
+                "tag": "Loc_region",
+                "begin": {
+                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "line": 6,
+                  "col": 1,
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "lexing_line": 78
+                },
+                "end": {
+                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "line": 6,
+                  "col": 5,
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                  "lexing_line": 78
+                },
+                "cursor": "NoCursor"
+              },
+              "spec": "TSpec_char"
+            }
+          ],
+          "type_qualifiers": [],
+          "function_specifiers": [],
+          "alignment_specifiers": []
+        },
+        "init_declarators": [
+          {
+            "tag": "InitDecl",
+            "loc": {
+              "tag": "Loc_region",
+              "begin": {
+                "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                "line": 6,
+                "col": 6,
+                "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                "lexing_line": 80
+              },
+              "end": {
+                "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                "line": 6,
+                "col": 27,
+                "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                "lexing_line": 90
+              },
+              "cursor": "NoCursor"
+            },
+            "declarator": {
+              "tag": "Declarator",
+              "pointer": {
+                "tag": "PDecl",
+                "loc": {
+                  "tag": "Loc_region",
+                  "begin": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "line": 6,
+                    "col": 6,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "lexing_line": 80
+                  },
+                  "end": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "line": 6,
+                    "col": 7,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "lexing_line": 80
+                  },
+                  "cursor": "NoCursor"
+                },
+                "type_qualifiers": [],
+                "pointer": null
+              },
+              "direct": {
+                "tag": "DDecl_identifier",
+                "attrs": { "tag": "Attrs", "attrs": [] },
+                "id": {
+                  "loc": {
+                    "tag": "Loc_region",
+                    "begin": {
+                      "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "line": 6,
+                      "col": 7,
+                      "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "lexing_line": 82
+                    },
+                    "end": {
+                      "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "line": 6,
+                      "col": 8,
+                      "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                      "lexing_line": 82
+                    },
+                    "cursor": "NoCursor"
+                  },
+                  "name": "e"
+                }
+              }
+            },
+            "initializer": {
+              "tag": "Init_expr",
+              "expr": {
+                "tag": "CabsExpression",
+                "loc": {
+                  "tag": "Loc_region",
+                  "begin": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "line": 6,
+                    "col": 9,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "lexing_line": 86
+                  },
+                  "end": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "line": 6,
+                    "col": 27,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                    "lexing_line": 90
+                  },
+                  "cursor": "NoCursor"
+                },
+                "expr": {
+                  "tag": "CabsEstring",
+                  "val": [
+                    null,
+                    [
+                      [
+                        {
+                          "tag": "Loc_region",
+                          "begin": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 6,
+                            "col": 9,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 86
+                          },
+                          "end": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 6,
+                            "col": 15,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 86
+                          },
+                          "cursor": "NoCursor"
+                        },
+                        [ "\\x41" ]
+                      ],
+                      [
+                        {
+                          "tag": "Loc_region",
+                          "begin": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 6,
+                            "col": 16,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 88
+                          },
+                          "end": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 6,
+                            "col": 22,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 88
+                          },
+                          "cursor": "NoCursor"
+                        },
+                        [ "\\101" ]
+                      ],
+                      [
+                        {
+                          "tag": "Loc_region",
+                          "begin": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 6,
+                            "col": 23,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 90
+                          },
+                          "end": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "line": 6,
+                            "col": 27,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/prefixes.c",
+                            "lexing_line": 90
+                          },
+                          "cursor": "NoCursor"
+                        },
+                        [ "\\?" ]
+                      ]
+                    ]
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "digest": "a51fd434b2b7bf24a5e1da85930f0d75"
+}

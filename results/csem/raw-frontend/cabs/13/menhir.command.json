@@ -1,0 +1,7 @@
+[
+  "build/csem-704c4e69-e6d8db56/cerberus-lean/_build/default/backend/driver/main.exe",
+  "--runtime=build/csem-704c4e69-e6d8db56/cerberus-lean/_build/install/default",
+  "--cpp=/usr/bin/python3 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/scripts/raw_frontend_cat.py",
+  "--cabs-json",
+  "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c"
+]

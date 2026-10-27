@@ -1,0 +1,127 @@
+{
+  "tag": "TUnit",
+  "decls": [
+    {
+      "tag": "EDecl_decl",
+      "decl": {
+        "tag": "Declaration_base",
+        "attrs": { "tag": "Attrs", "attrs": [] },
+        "specifiers": {
+          "tag": "Specifiers",
+          "storage_classes": [],
+          "type_specifiers": [
+            {
+              "tag": "TSpec",
+              "loc": {
+                "tag": "Loc_region",
+                "begin": {
+                  "file": "presumed.c",
+                  "line": 400,
+                  "col": 1,
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/line.c",
+                  "lexing_line": 2
+                },
+                "end": {
+                  "file": "presumed.c",
+                  "line": 400,
+                  "col": 4,
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/line.c",
+                  "lexing_line": 2
+                },
+                "cursor": "NoCursor"
+              },
+              "spec": "TSpec_int"
+            }
+          ],
+          "type_qualifiers": [],
+          "function_specifiers": [],
+          "alignment_specifiers": []
+        },
+        "init_declarators": [
+          {
+            "tag": "InitDecl",
+            "loc": {
+              "tag": "Loc_region",
+              "begin": {
+                "file": "presumed.c",
+                "line": 400,
+                "col": 5,
+                "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/line.c",
+                "lexing_line": 4
+              },
+              "end": {
+                "file": "presumed.c",
+                "line": 400,
+                "col": 14,
+                "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/line.c",
+                "lexing_line": 8
+              },
+              "cursor": "NoCursor"
+            },
+            "declarator": {
+              "tag": "Declarator",
+              "pointer": null,
+              "direct": {
+                "tag": "DDecl_identifier",
+                "attrs": { "tag": "Attrs", "attrs": [] },
+                "id": {
+                  "loc": {
+                    "tag": "Loc_region",
+                    "begin": {
+                      "file": "presumed.c",
+                      "line": 400,
+                      "col": 5,
+                      "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/line.c",
+                      "lexing_line": 4
+                    },
+                    "end": {
+                      "file": "presumed.c",
+                      "line": 400,
+                      "col": 10,
+                      "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/line.c",
+                      "lexing_line": 4
+                    },
+                    "cursor": "NoCursor"
+                  },
+                  "name": "value"
+                }
+              }
+            },
+            "initializer": {
+              "tag": "Init_expr",
+              "expr": {
+                "tag": "CabsExpression",
+                "loc": {
+                  "tag": "Loc_region",
+                  "begin": {
+                    "file": "presumed.c",
+                    "line": 400,
+                    "col": 11,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/line.c",
+                    "lexing_line": 8
+                  },
+                  "end": {
+                    "file": "presumed.c",
+                    "line": 400,
+                    "col": 14,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/line.c",
+                    "lexing_line": 8
+                  },
+                  "cursor": "NoCursor"
+                },
+                "expr": {
+                  "tag": "CabsEconst",
+                  "val": {
+                    "tag": "CabsInteger_const",
+                    "val": [ "400", null ]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "digest": "853009083313a601c5a6155897c83a53"
+}

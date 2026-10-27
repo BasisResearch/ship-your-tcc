@@ -1,0 +1,36 @@
+{
+  "positive": [
+    "basic",
+    "include",
+    "macro-locations",
+    "trigraph-splice",
+    "no-rephase",
+    "ucn",
+    "ucn-utf8",
+    "ucn-macros",
+    "utf8-typedef",
+    "numbers",
+    "prefixes",
+    "line",
+    "pack",
+    "pack-active",
+    "pragma-adjacent",
+    "library",
+    "line-library-plant",
+    "library-line-alias"
+  ],
+  "invalid": [
+    "number-octal",
+    "number-suffix",
+    "number-tail",
+    "number-exponent",
+    "character-empty",
+    "character-escape",
+    "string-escape",
+    "identifier-surrogate",
+    "identifier-initial-combining",
+    "character-surrogate",
+    "pack-invalid",
+    "adjacent-prefixes"
+  ]
+}

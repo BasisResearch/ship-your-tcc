@@ -37,6 +37,7 @@ structure FileCtx where
   foundAt : Option Nat
   level : Nat
   isMain : Bool
+  includes : List SourceSpan := []
 
 /-- One level of conditional inclusion (§6.10.1). `active`: the current group
 is processed; `taken`: some group of this `#if` has been processed;
@@ -57,12 +58,26 @@ structure PState where
   pushed : List (Bytes × Option MacroDef)
   /-- the output so far, reversed -/
   out : List PPToken
+  locatedOut : List LocatedPPToken := []
+  sources : List SourceFile := []
   nextPragma : Nat := 0
   seenPragmas : List Nat := []
   pack : List Nat := [0]
 
 def fileErr (fc : FileCtx) (k : ErrKind) (line : Nat) (msg : String) : PreError :=
   ⟨k, fc.presumed, line, msg⟩
+
+/-- Apply #line labels separately from physical file identity. Called before
+expansion/definition, so definitions and arguments keep their own file context. -/
+def FileCtx.locate (fc : FileCtx) (t : Tok) : Tok :=
+  let origin := match t.origin with
+    | .source site => .source { site with
+        presumed := fc.presumed,
+        line := ((site.physical.start.line : Int) + fc.lineDelta).toNat,
+        endLine := ((site.physical.stop.line : Int) + fc.lineDelta).toNat,
+        includes := fc.includes }
+    | o => o
+  { t with origin }
 
 /-- Split off the tokens of the current line (up to the next new-line), and
 the physical line of that new-line. -/
@@ -187,7 +202,7 @@ def sameBody : List Tok → List Tok → Bool
   | [], [] => true
   | a :: as, b :: bs' =>
     a.kind = b.kind ∧ a.spell = b.spell ∧ sameBody as bs' ∧
-      (as.isEmpty ∨ (as.head!.ws = bs'.head!.ws))
+      (as.isEmpty ∨ (as.head?.map (·.ws)) = (bs'.head?.map (·.ws)))
   | _, _ => false
 
 def sameDef (a b : MacroDef) : Bool :=
@@ -275,6 +290,10 @@ def headerOf (s : Bytes) : Option (Bool × Bytes) :=
 def pragmaOut (ts : List Tok) : List PPToken :=
   ⟨.pragmaBegin, []⟩ :: ts.map (fun t => ⟨t.kind, t.spell⟩) ++ [⟨.pragmaEnd, []⟩]
 
+/-- Decorate an observed pragma without putting metadata into its operands. -/
+def locatedPragma (o : Origin) (body : List LocatedPPToken) : List LocatedPPToken :=
+  ⟨⟨.pragmaBegin, []⟩, o⟩ :: body ++ [⟨⟨.pragmaEnd, []⟩, o⟩]
+
 /-- Pragmas executed in phase 4 (`once`, `push_macro`, `pop_macro`, when
 enabled): `some st'`; others: `none` (they go to the output). -/
 def phase4Pragma (cfg : PreCfg) (fc : FileCtx) (st : PState) (ts : List Tok) : Option PState :=
@@ -334,13 +353,18 @@ def emitText (cfg : PreCfg) (fc : FileCtx) : Nat → PState → List Tok → Exc
       if st.seenPragmas.contains ev.id then emitText cfg fc fuel st rest
       else
         let rendered := ⟨.pragmaBegin, []⟩ :: ev.payload ++ [⟨.pragmaEnd, []⟩]
+        let located := locatedPragma t.origin
+          (ev.payload.zipIdx.map (fun (p, i) => ⟨p, t.pragmaOrigins.getD i t.origin⟩))
         emitText cfg fc fuel { st with
           out := rendered.reverse ++ st.out,
+          locatedOut := located.reverse ++ st.locatedOut,
           seenPragmas := ev.id :: st.seenPragmas } rest
     | none =>
       if t.kind = .other ∧ (t.spell = [39] ∨ t.spell = [34]) then
         .error (fileErr fc .lexical t.line "unmatched quote (§6.4p3)")
-      else emitText cfg fc fuel { st with out := ⟨t.kind, t.spell⟩ :: st.out } rest
+      else emitText cfg fc fuel { st with
+        out := ⟨t.kind, t.spell⟩ :: st.out,
+        locatedOut := ⟨⟨t.kind, t.spell⟩, t.origin⟩ :: st.locatedOut } rest
 
 /-! ### The phase-4 driver -/
 
@@ -377,6 +401,8 @@ def procFile (cfg : PreCfg) (fs : FileSys) : Nat → PState → FileCtx → List
     | .tok h :: rest =>
       if isHashTok h.kind h.spell then
         let (ln, nlLine, rest') := takeLine rest []
+        let h := fc.locate h
+        let ln := ln.map fc.locate
         let line := h.line
         let err (k : ErrKind) (m : String) := fileErr fc k line m
         let active := isActive conds
@@ -474,7 +500,13 @@ def procFile (cfg : PreCfg) (fs : FileSys) : Nat → PState → FileCtx → List
                   throw (err .limit "#include nested too deeply (§5.2.4.1)")
                 else do
                   let items' ← phases123 cfg path contents
-                  let fc' : FileCtx := ⟨path, path, 0, foundAt, fc.level + 1, false⟩
+                  let stack := match h.origin.site with
+                    | some site => site.physical :: fc.includes
+                    | none => fc.includes
+                  let fc' : FileCtx := ⟨path, path, 0, foundAt, fc.level + 1, false, stack⟩
+                  let visit : SourceFile := ⟨path, FileSys.normComponents path, contents,
+                    h.origin.site.map (·.physical)⟩
+                  let st := { st with sources := visit :: st.sources }
                   let st ← procFile cfg fs fuel st fc' items' true []
                   procFile cfg fs fuel st fc rest' false conds
           else if name = bs "line" ∨ (cfg.ext.linemarker ∧ d.kind = .ppNumber) then do
@@ -527,7 +559,11 @@ def procFile (cfg : PreCfg) (fs : FileSys) : Nat → PState → FileCtx → List
               | none =>
                 if isMacroPragma cfg body then throw (err .directive "malformed macro-stack pragma")
                 let pack ← checkPragma cfg fc st.pack body
-                procFile cfg fs fuel { st with pack := pack, out := (pragmaOut body).reverse ++ st.out } fc rest' false conds
+                let located := locatedPragma (.pragma h.origin)
+                  (body.map (fun t => ⟨⟨t.kind, t.spell⟩, t.origin⟩))
+                procFile cfg fs fuel { st with
+                  pack := pack, out := (pragmaOut body).reverse ++ st.out,
+                  locatedOut := located.reverse ++ st.locatedOut } fc rest' false conds
           else if cfg.ext.hashBang ∧ bof ∧ fc.isMain ∧ isPunct d "!" then
             procFile cfg fs fuel st fc rest' false conds
           else
@@ -538,7 +574,7 @@ def procFile (cfg : PreCfg) (fs : FileSys) : Nat → PState → FileCtx → List
       else do
         let (txt, rest') := takeText (.tok h :: rest) true []
         let ctx := ExpCtx.ofState cfg fs fc st false
-        let ex ← expand ctx fuel st.counter txt []
+        let ex ← expand ctx fuel st.counter (txt.map fc.locate) []
         let st ← emitText cfg fc (ex.tokens.length + 1) (st.afterExpansion ex) ex.tokens
         procFile cfg fs fuel st fc rest' false conds
 

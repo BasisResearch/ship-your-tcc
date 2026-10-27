@@ -174,7 +174,7 @@ def charConstVal (cfg : PreCfg) (s : Bytes) : Option Val :=
         | [c] => some ⟨false, if cfg.charSigned ∧ c ≥ 128 then (c : Int) - 256 else c⟩
         | _ => some ⟨false, wrapI32 ((us.foldl (fun a c => a * 256 + c) 0 : Nat) : Int)⟩
     else
-      let c : Int := us.getLast!
+      let c : Int := us.getLast?.getD 0
       if pre = bs "L" then some ⟨false, wrapI32 c⟩          -- wchar_t: int
       else if pre = bs "u" then some ⟨false, c % 65536⟩     -- char16_t
       else some ⟨false, c % (2 ^ 32)⟩                        -- char32_t

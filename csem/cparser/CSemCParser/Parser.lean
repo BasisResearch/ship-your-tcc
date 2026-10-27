@@ -1,5 +1,5 @@
 import CSemCParser.Lexer
-import Std.Data.HashSet
+import Std.Data.TreeSet
 
 /-! # The C grammar: tokens → Cabs (port of csem/parsers/c/c_parser.mly)
 
@@ -78,7 +78,9 @@ namespace CSemCParser
 
 open CerbLocation (Pos Loc Cursor)
 
-abbrev Ctx := Std.HashSet String
+/-- Ordered typedef membership avoids the opaque native String.hash seam.
+The grammar observes only membership, insertion and erasure. -/
+abbrev Ctx := Std.TreeSet String compare
 
 /-- `Lexer_feedback.cerb_builtin_types`, prefixed `__cerbty_`: the initial
 typedef names. -/

@@ -105,7 +105,7 @@ def main (args : List String) : IO UInt32 := do
   let src ← readBytes file
   if o.lex then
     let result := if o.printed then
-        phase3 cfg (bs file) (src.map fun c => (⟨c, 0⟩ : PChar))
+        phase3 cfg (bs file) (src.map fun c => (⟨c, 0, none⟩ : PChar))
       else phases123 cfg (bs file) src
     match result with
     | .ok items =>

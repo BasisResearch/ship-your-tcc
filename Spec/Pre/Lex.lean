@@ -43,6 +43,8 @@ structure Tok where
   hs : List Bytes
   /-- Zero-width phase-4 event, never an operand of # or ##. -/
   pragma : Option PragmaEvent := none
+  origin : Origin := .unavailable
+  pragmaOrigins : List Origin := []
   deriving Repr, Inhabited
 
 /-- The output of phase 3: a token or a retained new-line. -/
@@ -132,7 +134,7 @@ def ppNumTail (cfg : PreCfg) : Nat → List PChar → Bytes → Bytes × List PC
       let sign : Bool := match rest with
         | q :: _ => (p.c = 101 ∨ p.c = 69 ∨ p.c = 112 ∨ p.c = 80) ∧ (q.c = 43 ∨ q.c = 45)
         | [] => false
-      if sign then ppNumTail cfg fuel rest.tail ((rest.head!).c :: p.c :: acc)
+      if sign then ppNumTail cfg fuel rest.tail (((rest.head?.map (·.c)).getD 0) :: p.c :: acc)
       else if isDigit p.c ∨ isIdStart cfg p.c ∨ p.c = 46 then ppNumTail cfg fuel rest (p.c :: acc)
       else
         let n := ucnLen cs
@@ -298,7 +300,12 @@ def lexGo (cfg : PreCfg) (file : Bytes) :
         lexGo cfg file fuel (skipLineComment fuel rest) true bol ctx acc
       else
         let (k, s, r) := lexToken cfg (ctx = .expectHdr) (fuel + 1) cs
-        let t : Tok := { kind := k, spell := s, ws := ws || bol, line := p.line, hs := [] }
+        let last := (cs.take s.length).getLast?
+        let origin := match p.physical, last.bind (·.physical) with
+          | some (b, _), some (_, e) =>
+            Origin.source ⟨⟨file, FileSys.normComponents file, b, e⟩, file, b.line, e.line, []⟩
+          | _, _ => Origin.unavailable
+        let t : Tok := { kind := k, spell := s, ws := ws || bol, line := p.line, hs := [], origin }
         lexGo cfg file fuel r false false (nextHdrCtx cfg ctx bol k s) (.tok t :: acc)
 
 /-- Translation phase 3 on the output of phase 2. -/
@@ -315,7 +322,7 @@ def lexOne (cfg : PreCfg) (b : Bytes) : Option (PPKind × Bytes) :=
   match b with
   | [] => none
   | _ =>
-    let cs := b.map (fun c => (⟨c, 0⟩ : PChar))
+    let cs := b.map (fun c => (⟨c, 0, none⟩ : PChar))
     match lexGo cfg [] (cs.length + 1) cs false false .none [] with
     | .ok [.tok t] => if t.spell = b then some (t.kind, t.spell) else none
     | _ => none

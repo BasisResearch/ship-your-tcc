@@ -1,0 +1,97 @@
+{
+  "tag": "TUnit",
+  "decls": [
+    {
+      "tag": "EDecl_decl",
+      "decl": {
+        "tag": "Declaration_base",
+        "attrs": { "tag": "Attrs", "attrs": [] },
+        "specifiers": {
+          "tag": "Specifiers",
+          "storage_classes": [],
+          "type_specifiers": [
+            {
+              "tag": "TSpec",
+              "loc": {
+                "tag": "Loc_region",
+                "begin": {
+                  "file": "/runtime/libc/include/plant.h",
+                  "line": 3,
+                  "col": 1,
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/line-library-plant.c",
+                  "lexing_line": 2
+                },
+                "end": {
+                  "file": "/runtime/libc/include/plant.h",
+                  "line": 3,
+                  "col": 4,
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/line-library-plant.c",
+                  "lexing_line": 2
+                },
+                "cursor": "NoCursor"
+              },
+              "spec": "TSpec_int"
+            }
+          ],
+          "type_qualifiers": [],
+          "function_specifiers": [],
+          "alignment_specifiers": []
+        },
+        "init_declarators": [
+          {
+            "tag": "InitDecl",
+            "loc": {
+              "tag": "Loc_region",
+              "begin": {
+                "file": "/runtime/libc/include/plant.h",
+                "line": 3,
+                "col": 5,
+                "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/line-library-plant.c",
+                "lexing_line": 4
+              },
+              "end": {
+                "file": "/runtime/libc/include/plant.h",
+                "line": 3,
+                "col": 9,
+                "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/line-library-plant.c",
+                "lexing_line": 4
+              },
+              "cursor": "NoCursor"
+            },
+            "declarator": {
+              "tag": "Declarator",
+              "pointer": null,
+              "direct": {
+                "tag": "DDecl_identifier",
+                "attrs": { "tag": "Attrs", "attrs": [] },
+                "id": {
+                  "loc": {
+                    "tag": "Loc_region",
+                    "begin": {
+                      "file": "/runtime/libc/include/plant.h",
+                      "line": 3,
+                      "col": 5,
+                      "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/line-library-plant.c",
+                      "lexing_line": 4
+                    },
+                    "end": {
+                      "file": "/runtime/libc/include/plant.h",
+                      "line": 3,
+                      "col": 9,
+                      "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/line-library-plant.c",
+                      "lexing_line": 4
+                    },
+                    "cursor": "NoCursor"
+                  },
+                  "name": "user"
+                }
+              }
+            },
+            "initializer": null
+          }
+        ]
+      }
+    }
+  ],
+  "digest": "9ab0ec604d7a155118a89f0b4fe37a82"
+}

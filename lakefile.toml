@@ -403,7 +403,7 @@ root = "CoreQuoteRunner"
 
 [[lean_lib]]
 name = "CSemConeReport"
-roots = ["scripts.csem_cone"]
+roots = ["scripts.csem_cone", "scripts.raw_frontend_audit"]
 # Exact unconverted phase-4 stream, independent of the -E printer.
 [[lean_exe]]
 name = "tcc_pre_tokens"
@@ -426,3 +426,9 @@ roots = ["CoreQuoteVisitor"]
 name = "ieee-integration-test"
 srcDir = "csem/lean_frontend/test"
 root = "Unit.IEEEIntegrationTest"
+
+# Raw-source preprocessing -> positioned phase-7 tokens -> Cabs (pure path).
+[[lean_exe]]
+name = "csem_raw"
+srcDir = "lean/RawFrontEnd"
+root = "RawFrontEndMain"

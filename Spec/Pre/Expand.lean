@@ -129,31 +129,31 @@ inductive SItem
   deriving Repr, Inhabited
 
 /-- §6.10.3.3p3: concatenate two operands of `##`. -/
-def glue (ctx : ExpCtx) (line : Nat) : SItem → SItem → Except PreError SItem
-  | .pm, .tok t => .ok (.tok { t with line := line })
-  | .tok t, .pm => .ok (.tok { t with line := line })
+def glue (ctx : ExpCtx) (inv : Tok) : SItem → SItem → Except PreError SItem
+  | .pm, .tok t => .ok (.tok { t with line := inv.line, origin := .paste inv.origin t.origin .unavailable })
+  | .tok t, .pm => .ok (.tok { t with line := inv.line, origin := .paste inv.origin t.origin .unavailable })
   | .pm, x => .ok x
   | x, .pm => .ok x
   | .tok a, .tok b =>
     match lexOne ctx.cfg (a.spell ++ b.spell) with
-    | some (k, s) => .ok (.tok { a with kind := k, spell := s, hs := hsInter a.hs b.hs, line := line })
-    | none => .error (ctx.err .macro line
+    | some (k, s) => .ok (.tok { a with kind := k, spell := s, hs := hsInter a.hs b.hs, line := inv.line, origin := .paste inv.origin a.origin b.origin })
+    | none => .error (ctx.err .macro inv.line
         s!"pasting does not give a valid preprocessing token (§6.10.3.3p3)")
-  | _, _ => .error (ctx.err .macro line "'##' operand")
+  | _, _ => .error (ctx.err .macro inv.line "'##' operand")
 
 /-- Apply the `##` operators left to right; `pend`: a `##` is waiting for
 its right operand. -/
-def pasteAll (ctx : ExpCtx) (line : Nat) : List SItem → List SItem → Bool → Except PreError (List SItem)
+def pasteAll (ctx : ExpCtx) (inv : Tok) : List SItem → List SItem → Bool → Except PreError (List SItem)
   | [], out, _ => .ok out.reverse
-  | .paste :: rest, out, _ => pasteAll ctx line rest out true
+  | .paste :: rest, out, _ => pasteAll ctx inv rest out true
   | x :: rest, out, pend =>
     if pend then
       match out with
       | l :: out' => do
-        let r ← glue ctx line l x
-        pasteAll ctx line rest (r :: out') false
-      | [] => .error (ctx.err .macro line "'##' at the start of a replacement list")
-    else pasteAll ctx line rest (x :: out) false
+        let r ← glue ctx inv l x
+        pasteAll ctx inv rest (r :: out') false
+      | [] => .error (ctx.err .macro inv.line "'##' at the start of a replacement list")
+    else pasteAll ctx inv rest (x :: out) false
 
 def setWs (ws : Bool) : List Tok → List Tok
   | [] => []
@@ -176,25 +176,28 @@ def substitute (ctx : ExpCtx) (m : MacroDef) (raw : List (List Tok))
   let lifted := events.filterMap (fun t => t.pragma.map (·.id))
   let exps := if transforms then exps.map (fun (i, ts) =>
     (i, ts.filter (fun t => !(t.pragma.any (fun ev => lifted.contains ev.id))))) else exps
+  let argument (i : Nat) (t : Tok) : Tok :=
+    { t with origin := .argument inv.origin i t.origin }
   let getRaw (i : Nat) : List Tok := raw.getD i []
   let getExp (i : Nat) : List Tok := ((exps.find? (·.1 = i)).map (·.2)).getD []
   let items ← m.items.mapM (fun it =>
     match it with
-    | .tok t => pure [SItem.tok { t with line := inv.line }]
+    | .tok t => pure [SItem.tok { t with line := inv.line, origin := .replacement inv.origin t.origin }]
     | .paste => pure [SItem.paste]
     | .str i ws =>
       match stringize ctx.cfg (getRaw i) with
-      | some s => pure [SItem.tok { kind := .strLit, spell := s, ws := ws, line := inv.line, hs := [] }]
+      | some s => pure [SItem.tok { kind := .strLit, spell := s, ws := ws, line := inv.line, hs := [], origin := .stringify inv.origin ((getRaw i).map (·.origin)) }]
       | none => throw (ctx.err .macro inv.line "'#' does not give a valid string literal (§6.10.3.2p2)")
     | .param i ws plain =>
-      if plain then pure ((setWs ws (getExp i)).map SItem.tok)
+      if plain then pure ((setWs ws ((getExp i).map (argument i))).map SItem.tok)
       else
-        let r := getRaw i
+        let r := (getRaw i).map (argument i)
         if r.isEmpty then pure [SItem.pm] else pure ((setWs ws r).map SItem.tok)
     | .commaPaste comma i =>
       if (getRaw i).isEmpty then pure []
-      else pure (SItem.tok { comma with line := inv.line } :: (getExp i).map SItem.tok))
-  let pasted ← pasteAll ctx inv.line items.flatten [] false
+      else pure (SItem.tok { comma with line := inv.line, origin := .replacement inv.origin comma.origin } ::
+        ((getExp i).map (argument i)).map SItem.tok))
+  let pasted ← pasteAll ctx inv items.flatten [] false
   let toks := pasted.filterMap (fun x => match x with | .tok t => some t | _ => none)
   pure (events ++ setWs inv.ws (toks.map (fun t => { t with hs := hsUnion t.hs hs })))
 
@@ -239,6 +242,7 @@ def numTok (t : Tok) (n : Nat) : Tok :=
 
 /-- The token a dynamic predefined macro expands to (§6.10.8.1). -/
 def builtinTok (ctx : ExpCtx) (ctr : Nat) (b : Builtin) (t : Tok) : Nat × Tok :=
+  let t := { t with origin := .builtin t.origin }
   match b with
   | .line => (ctr, { t with kind := .ppNumber, spell := bs (toString ((t.line : Int) + ctx.lineDelta)) })
   | .file => (ctr, { t with kind := .strLit, spell := quoted ctx.file })
@@ -302,12 +306,13 @@ at the output boundary, so a macro cannot stringify or paste their payload. -/
 def eventTok (ctx : ExpCtx) (t : Tok) (ps : List Tok) : Tok :=
   { t with
     kind := .pragmaBegin, spell := [],
-    pragma := some ⟨ctx.nextPragma, ps.map (fun p => ⟨p.kind, p.spell⟩)⟩ }
+    pragma := some ⟨ctx.nextPragma, ps.map (fun p => ⟨p.kind, p.spell⟩)⟩,
+    origin := .pragma t.origin, pragmaOrigins := ps.map (·.origin) }
 
 /-- The tokens of a `_Pragma` operand, lexed by phase 3 (§6.10.9). -/
 def pragmaToks (ctx : ExpCtx) (t : Tok) (s : Bytes) : Except PreError (List Tok) := do
-  let items ← phase3 ctx.cfg ctx.file ((destringize s).map (fun c => (⟨c, t.line⟩ : PChar)))
-  pure (items.filterMap (fun i => match i with | .tok x => some { x with line := t.line } | .nl _ => none))
+  let items ← phase3 ctx.cfg ctx.file ((destringize s).map (fun c => (⟨c, t.line, none⟩ : PChar)))
+  pure (items.filterMap (fun i => match i with | .tok x => some { x with line := t.line, origin := .pragma t.origin } | .nl _ => none))
 
 /-- Names whose implementation-defined action changes the macro stack. -/
 def isMacroPragma (cfg : PreCfg) (ts : List Tok) : Bool :=

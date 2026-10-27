@@ -1,0 +1,199 @@
+{
+  "tag": "TUnit",
+  "decls": [
+    {
+      "tag": "EDecl_decl",
+      "decl": {
+        "tag": "Declaration_base",
+        "attrs": { "tag": "Attrs", "attrs": [] },
+        "specifiers": {
+          "tag": "Specifiers",
+          "storage_classes": [],
+          "type_specifiers": [
+            {
+              "tag": "TSpec",
+              "loc": {
+                "tag": "Loc_region",
+                "begin": {
+                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c",
+                  "line": 2,
+                  "col": 1,
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c",
+                  "lexing_line": 2
+                },
+                "end": {
+                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c",
+                  "line": 2,
+                  "col": 26,
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c",
+                  "lexing_line": 20
+                },
+                "cursor": "NoCursor"
+              },
+              "spec": {
+                "tag": "TSpec_struct",
+                "attrs": { "tag": "Attrs", "attrs": [] },
+                "id": {
+                  "loc": {
+                    "tag": "Loc_region",
+                    "begin": {
+                      "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c",
+                      "line": 2,
+                      "col": 8,
+                      "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c",
+                      "lexing_line": 4
+                    },
+                    "end": {
+                      "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c",
+                      "line": 2,
+                      "col": 9,
+                      "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c",
+                      "lexing_line": 4
+                    },
+                    "cursor": "NoCursor"
+                  },
+                  "name": "S"
+                },
+                "members": [
+                  {
+                    "tag": "Struct_declaration",
+                    "attrs": { "tag": "Attrs", "attrs": [] },
+                    "type_specifiers": [
+                      {
+                        "tag": "TSpec",
+                        "loc": {
+                          "tag": "Loc_region",
+                          "begin": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c",
+                            "line": 2,
+                            "col": 11,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c",
+                            "lexing_line": 8
+                          },
+                          "end": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c",
+                            "line": 2,
+                            "col": 15,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c",
+                            "lexing_line": 8
+                          },
+                          "cursor": "NoCursor"
+                        },
+                        "spec": "TSpec_char"
+                      }
+                    ],
+                    "type_qualifiers": [],
+                    "alignment_specifiers": [],
+                    "declarators": [
+                      {
+                        "tag": "SDecl_simple",
+                        "declarator": {
+                          "tag": "Declarator",
+                          "pointer": null,
+                          "direct": {
+                            "tag": "DDecl_identifier",
+                            "attrs": { "tag": "Attrs", "attrs": [] },
+                            "id": {
+                              "loc": {
+                                "tag": "Loc_region",
+                                "begin": {
+                                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c",
+                                  "line": 2,
+                                  "col": 16,
+                                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c",
+                                  "lexing_line": 10
+                                },
+                                "end": {
+                                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c",
+                                  "line": 2,
+                                  "col": 17,
+                                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c",
+                                  "lexing_line": 10
+                                },
+                                "cursor": "NoCursor"
+                              },
+                              "name": "c"
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "tag": "Struct_declaration",
+                    "attrs": { "tag": "Attrs", "attrs": [] },
+                    "type_specifiers": [
+                      {
+                        "tag": "TSpec",
+                        "loc": {
+                          "tag": "Loc_region",
+                          "begin": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c",
+                            "line": 2,
+                            "col": 19,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c",
+                            "lexing_line": 14
+                          },
+                          "end": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c",
+                            "line": 2,
+                            "col": 22,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c",
+                            "lexing_line": 14
+                          },
+                          "cursor": "NoCursor"
+                        },
+                        "spec": "TSpec_int"
+                      }
+                    ],
+                    "type_qualifiers": [],
+                    "alignment_specifiers": [],
+                    "declarators": [
+                      {
+                        "tag": "SDecl_simple",
+                        "declarator": {
+                          "tag": "Declarator",
+                          "pointer": null,
+                          "direct": {
+                            "tag": "DDecl_identifier",
+                            "attrs": { "tag": "Attrs", "attrs": [] },
+                            "id": {
+                              "loc": {
+                                "tag": "Loc_region",
+                                "begin": {
+                                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c",
+                                  "line": 2,
+                                  "col": 23,
+                                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c",
+                                  "lexing_line": 16
+                                },
+                                "end": {
+                                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c",
+                                  "line": 2,
+                                  "col": 24,
+                                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/cases-v2/pack-active.c",
+                                  "lexing_line": 16
+                                },
+                                "cursor": "NoCursor"
+                              },
+                              "name": "i"
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "type_qualifiers": [],
+          "function_specifiers": [],
+          "alignment_specifiers": []
+        },
+        "init_declarators": []
+      }
+    }
+  ],
+  "digest": "963657e8b4d4d2aa777c72ab25293cb3"
+}

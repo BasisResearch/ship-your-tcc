@@ -150,6 +150,10 @@ if [ -f lakefile.toml ] || [ -f lakefile.lean ]; then
     SYT_LAKE_LOCK="$lock" scripts/csem_gates.sh || fail "CSem gates (scripts/csem_gates.sh)"
     echo "== (8b) axioms of the F0 statement over CSem"
     audit scripts/axioms_csem.lean "$std"
+    echo "== (8c) raw frontend build and axiom/purity census"
+    flock "$lock" systemd-run --user --scope -q -p MemoryMax=12G lake build csem_raw CSemConeReport \
+      || fail "raw frontend build"
+    audit scripts/raw_frontend_audit.lean "$std"
   fi
   if [ "${1:-}" = "--compile-cut" ]; then
     # opt-in: the evaluator run of tcc's compile phase (TccCompileCut, ~2.5 CPU-hours

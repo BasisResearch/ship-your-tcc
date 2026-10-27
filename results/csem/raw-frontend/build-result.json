@@ -1,0 +1,24 @@
+{
+  "request": "raw-frontend-9",
+  "request_id": "raw-frontend-9",
+  "exit": 0,
+  "log": "build/worker-build-raw-frontend-9.log",
+  "command": [
+    "flock",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/lake.lock",
+    "systemd-run",
+    "--user",
+    "--scope",
+    "-p",
+    "MemoryMax=12G",
+    "lake",
+    "build",
+    "csem_raw",
+    "csem_cparse",
+    "pre_spec",
+    "Tcc.Model.PreAudit",
+    "CSemConeReport"
+  ],
+  "source_hashes_verified": true,
+  "lead_review_required": "This is the raw frontend task on integrated exact-token F2/designator main e96e2fd. Prior preprocessing work is committed and gated; do not resume old worker requests.\nThe adopted pin-addressed toolchain is shared read-only. Do not mutate opam/pristine/oracle directories.\nBuild requests must freeze sources through receipt. New root gate explicitly builds model/preprocessor targets after rebases.\nThe lead is integrating pure IEEE from ea4198f independently; its shared Core/float changes are not a reason to implement host floats in the raw frontend.\nDo not edit STATUS/PHASES. Keep provenance, literal spelling, library-origin distinctions and exact Cabs comparison explicit.\n\n2026-10-27 21:43 review: Phase7.token currently leaves UCN/UTF-8 identifier equivalence as a downstream obligation. Please exercise both spellings of the same valid non-ASCII identifier through declaration/use and macro expansion; implement the pure phase-7 identity conversion rather than merely retaining two different parser names. Preserve raw spelling separately for F2. For pragma schedules, never expose an apparently successful executable raw frontend that silently ignores pack effects: consume them in a real adapter, or return a named unimplemented diagnostic and retain that whole-C obligation explicitly. An opaque schedule alone does not implement pack layout. Full-Cabs tests should keep genuine source/provenance fields, with any virtual lexer coordinate convention stated in the report.\n\nPure IEEE semantics are now adopted on main (2f2dd9e, after integrated full gate). No need to rebase your dirty/frozen sources mid-check; lead will integrate your final candidate and verify with the new semantic tree. Float source spellings must reach Cabs intact; value decoding remains in the now-pure configured CSem interpretation, never host Float.\n\n22:07 lead review: current report/Phase7 still says UCN identity is downstream; this has NOT addressed the 21:43 review. Implement identity now (valid UCN and UTF-8 spellings declaration/use, macro cases) before final freeze. Raw spellings/provenance must remain available. `frontEnd` currently returns successful Cabs while dropping nonempty pack schedules; do not publish that as the executable semantic adapter. Keep detailed run as a parsing/audit result, but have frontEnd return an explicit unsupported-layout diagnostic via a detailed checked entry for pack until implemented; this is an OPEN whole-C gap, not a Supported exclusion. Prefer implementing actual layout if feasible. `PragmaConnection_Statement` with an arbitrary caller-chosen withEffects is vacuously satisfied by identity and does not state layout correctness; replace it with a genuine named semantic layout relation whose reference meaning is fixed/explicit and cannot be picked as identity. Review tasks/f1-raw-frontend.md completion criterion. Do not finalize solely by listing actionable UCN work as an obligation.\n"
+}

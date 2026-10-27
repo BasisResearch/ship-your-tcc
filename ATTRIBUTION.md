@@ -168,3 +168,7 @@ The anonymous-container qualifier extension in patch 0003 and
 qualification routines (same LGPL provenance as the model). It accumulates
 qualifiers on successful anonymous paths; the independent CSem worker's
 type-selection counterexamples motivated the repair. No library proof was reused.
+
+| Component | Reuse |
+|---|---|
+| Raw-source frontend connection (`Spec/Pre/Provenance.lean`, `CSemCParser/Phase7.lean`, `Tcc/CSem/RawFrontEnd.lean`) | Local composition of this project's C11 preprocessing spec with its existing port of Cerberus's `c_lexer.mll` literal/number rules and `c_parser.mly` string-prefix merge. Reuses the existing pure `CerberusFresh.MD5` over raw bytes; upstream and Lem pins remain in `vendor/CSEM_REV`. No machine/library routine proof or instruction-identity claim is added. |
