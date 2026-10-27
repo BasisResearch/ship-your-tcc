@@ -38,12 +38,12 @@ pushes main without force. Record unsuccessful approaches in
 The launcher follows 4ct-digest's MANAGER.md/codexwork.sh workflow, adapted
 to this project's two-worker limit and shared Lean build lock.
 
-Current assignments, 2026-10-27: the raw-source frontend checkpoint is under
-lead integration after worker review/gate. Slot 1 next runs
-`tasks/f1-allocation-oracle.md` in sol-csem-repin (branch sol/f1-allocation);
-slot 2 finishes anonymous-member semantics in sol-c11-line. The lead repairs
-compiler anonymous-container qualifiers. Pure IEEE and direct source-literal
-rounding are adopted; raw pack/layout and library-identity gaps remain explicit.
+Current assignments, 2026-10-27: slot 1 runs bounded allocation recovery in
+sol-csem-repin. Slot 2 runs tasks/f3-ghost-cabs.md in sol-f2-tokens, after the
+raw frontend adoption. The lead integrates the reviewed anonymous-member
+semantics with pure IEEE. Compiler qualifiers and direct source-literal
+rounding are adopted. The next independent F1 task is
+tasks/f1-library-identity.md; pack/layout consumption remains required.
 
 Frozen build requests use the shared 12 GB lock. Changed inputs invalidate
 a request; freeze a new hash manifest before retrying. Infrastructure limits

@@ -41,9 +41,10 @@ public libc `strtold` still needs correction in the library lane. Matching refus
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
 two at a time, following MANAGER.md. Slot 1 runs bounded allocation recovery after its reviewed raw frontend
 checkpoint passed integrated validation. Slot 2
-repairs anonymous-member semantics (CSEM-07).
-The pure IEEE implementation is integrated after the combined gate; the lead
-repairs anonymous-container qualifier inheritance in the compiler/model. Exact-token/pragma integration is now
+constructs ghost Cabs from modeled compiler parser actions. The lead combines
+the reviewed anonymous-member repair with IEEE.
+The pure IEEE implementation is integrated after the combined gate; the compiler/model
+anonymous-container qualifier repair is also adopted. Exact-token/pragma integration is now
 validated with the nested-designator repair: strengthened full gate, 147
 positive/14 invalid C11 checks, 18 protocol tests, 64 focused positives and
 17 joint rejections. The 619-input corpus has 613 raw/611 spec agreements;
@@ -145,8 +146,9 @@ explicitly diagnoses missing pack consumption and library-identity mismatch;
 these remain whole-C obligations, not Supported restrictions or a universal
 F0 substitution. Four named connection Statements remain open. Fresh pins
 and logs are in results/csem/raw-frontend/integration/. Allocation recovery
-continues in external Sol slot 1; slot 2's anonymous CSem repair awaits combined
-integration with IEEE.
+continues in external Sol slot 1; the reviewed anonymous CSem repair is under
+lead integration with IEEE. Slot 2 now runs the independent ghost-Cabs task.
+Runtime-library identity consumption is queued as tasks/f1-library-identity.md.
 
 Compiler anonymous-container qualifiers are repaired and gated: old full Sail
 selects the wrong const/volatile pointer types; repaired Sail and GCC agree.
