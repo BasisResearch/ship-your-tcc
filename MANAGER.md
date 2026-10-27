@@ -41,3 +41,8 @@ to this project's two-worker limit and shared Lean build lock.
 Queued 2026-10-27: after tasks/f3-c11-model.md and tasks/f1-rv64-config.md
 land, assign tasks/csem-repin.md before another CSem semantic-change task.
 Keep both current slots on their existing pin; see CSEM-UPSTREAM.md.
+
+Current F3 continuation: tasks/f3-c11-finish.md (slot 1), plus the independent
+reference collector task tasks/f3-reference-handoff.md (slot 2). The original
+RV64-config task is integrated. Repin evaluation stays next after C11 model
+integration; do not assign another CSem semantic-change task before it.

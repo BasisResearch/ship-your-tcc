@@ -28,7 +28,7 @@ external bug reporting; no external contact is authorized or planned.
 | C11 patches | new `codex-c11` worktree; existing F2 reproducers | patch 0003 integrated: 7/7 full compiler Sail reproducers; combined 0003/0004 host/cross tests and main gate pass |
 | F1 grammar | `agent-a31b97b8f1c090141` | integrated: main capped build and full comparison pass, 614 exact Cabs agreements / 664 inputs; 41 joint rejections, 9 preprocessing failures |
 | F1 pure seams | `agent-a249bbaa5b1df80ec` | digest retirement integrated; main's full CSem gate passes: 19 unit executables, 113 baseline oracle results; remaining partial/native seams inventoried |
-| F1 ABI/allocation | `agent-a4ab6bbd8c0be5325` | Sol slot 2 reviews source into a fresh worktree; stale generated copies/results preserved for audit |
+| F1 ABI/allocation | `agent-a4ab6bbd8c0be5325` | RV64 configuration reader integrated after capped build/full gate; 10/15 probes agree, float/bitfield/enum/stdin gaps remain; allocator recovery still open |
 | F1 filesystem | `agent-ad868c434f5f27398` | lead replaced synthetic fstat paths with a descriptor builtin; build and stat/create/error probes pass; Core-parser gate and rename/link discrepancy need repair |
 | F1 IEEE | `agent-a45cb08cf87ce958c` | review standalone arithmetic; connection to CSem remains open |
 | F3 compiler model | `agent-a05464165befb7074` (recovery merged) | patch 0004 validated on main; Sol slot 1 now mirrors patch 0003 and C11 arguments |
@@ -39,9 +39,11 @@ removed. Patch 0004 fixes compiler literals using exact integer rounding;
 public libc `strtold` still needs correction in the library lane. Matching refusals likewise do not satisfy the F3 success criterion.
 
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
-two at a time, following MANAGER.md. Slot 1 mirrors the patched C11 compiler
-in TccModel; slot 2 recovers the RV64 implementation configuration. The lead
-reviews/builds worker results and completes filesystem recovery and F2 checks.
+two at a time, following MANAGER.md. Slot 1 finishes the patched C11 model and mirrors the additional pragma-operand
+repair; slot 2 makes fast arena collection stop at compiler handoff. The RV64
+configuration reader is integrated; its fresh probe residuals are documented
+in results/csem/f1-config.md. The lead reviews/builds worker results and
+completes filesystem recovery and F2 checks.
 Built-in agents remain stopped.
 
 Before patch 0003, the binary128-fixed model gave 1,557 identical arenas /

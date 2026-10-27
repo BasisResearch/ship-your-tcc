@@ -20,12 +20,12 @@ upstream bug. Keep fixed, superseded and rejected entries with their evidence.
 |---|---|---|
 | PATCH-01 | Total Lean MD5 and explicit per-translation-unit `Digest` reader, replacing native MD5/global state | Landed: `f6c474d`, `b1f4cbb`; `results/csem/f1b-seams.md`: 18 vectors, cross-TU identity, 19 unit executables and 113 oracle classifications. A seam retirement, not a claim that upstream MD5 returns incorrect hashes. |
 | PATCH-02 | Lean 4.34 proof adaptations without raised budgets | Landed; `csem/PORT-4.34.md` identifies source changes and rationale. Offer separately from our repository layout changes. |
-| PATCH-03 | Explicit implementation-configuration reader for RV64I/lp64 | Sol slot 2 in progress; review/gates outstanding. Compare upstream configuration abstractions before proposing. |
+| PATCH-03 | Explicit implementation-configuration reader for RV64I/lp64 | Integrated after review, capped build and full gate; `results/csem/f1-config.md`. Compare upstream configuration abstractions before proposing. Floating execution and bitfields remain open. |
 | PATCH-04 | Pure image filesystem with descriptor-based `fstat` | Lead recovery in progress; Core-parser gate and `rename_link` probe unresolved. Not ready to send. |
 | PATCH-05 | Lean C parser and fail-closed Cabs comparison harness | Landed executable parser: 614 exact agreements / 664 inputs; remaining forms and F2 integration open. This is our new frontend, not an upstream parser correctness claim. |
 
 The tcc C11 deviations (patch 0003), newlib binary128 conversion defect
-(patch 0004 / F7), our F2 UCN and `_Pragma` gaps, and our model cache-key bug
+(patch 0004 / F7), our F2 UCN and `_Pragma` repairs, and our model cache-key bug
 belong to other components. Do not report them as cerberus-lean bugs.
 
 ## Scheduled repin evaluation
