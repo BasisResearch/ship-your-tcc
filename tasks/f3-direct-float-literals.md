@@ -13,9 +13,11 @@ Inspect the actual strtof/strtod/compiler conversion path; avoid rounding throug
 Reuse the existing exact integer literal parser from patch0004 and its model where applicable.
 Repair compiler literal handling and the matching Lean compiler model for all three target formats.
 Do not change CSem precision or treat failed literals as unsupported; public libc is a separate F7 task.
-Files: patches/0004-tcc-binary128-literals.patch (or dedicated justified patch), Tcc/Model/PpLex.lean,
+Files: patches/0004-tcc-binary128-literals.patch (or dedicated justified patch), Tcc/Model/PpDir.lean and SoftFloat.lean,
 focused generated vectors, C11 reproducers and cross/compiler-Sail harness.
 Exercise decimal/hex, signed zero, subnormal boundaries, ties, carry, huge exponents and suffixes.
+Current hex parsing accumulates bn[4] then rounds through binary128 before narrowing; inspect sticky-bit
+loss and double rounding too. The model currently mirrors that algorithm and decimal strtof=(float)strtod.
 No host float decoding, reference output, or native Float can enter the pure model.
 Build model/preprocessor executables explicitly after rebases; complete full gate and axiom checks.
 Retain fresh GCC/reference/compiler Sail values and independent model arenas with complete pins.
