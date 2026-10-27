@@ -1,0 +1,58 @@
+{
+  "shared_source_sha256": "bc81c6d2f3fd1986ef598bc7d9495c3a929fb55ea5cf736d883836f11e9816d4",
+  "pins": {
+    "cerberus": "704c4e697845127bced66c93fa0763eb51527ca4",
+    "lem": "e6d8db5680962f49060257d6c2bcb13c284b910f",
+    "lean": "4.34.0"
+  },
+  "focused": {
+    "checks": 34,
+    "conforming": 33,
+    "legacy_excess_initializer_control": 1,
+    "patched_ocaml_lean_gcc_exact": 34,
+    "pristine_upstream_refusals": 23,
+    "pristine_defined": 11
+  },
+  "sail": {
+    "other_cases": 32,
+    "other_cases_exit": 0,
+    "other_cases_steps": 5845289,
+    "c11_union_stdout": "union 0\n",
+    "override_repro_stdout": "0 0 1 0\n",
+    "full_33_case_suite": "REFUSAL (independent valid-C tcc continuation bug)",
+    "minimal_non_union_continuation": "REFUSAL; GCC strict and both patched CSem engines return 0"
+  },
+  "parser": {
+    "corpus": 664,
+    "agree": 614,
+    "both_reject": 41,
+    "cpp_fail": 9,
+    "focused_agree": 35
+  },
+  "full_gates": [
+    {
+      "request": "csem-union-full-gate-20261027-04",
+      "exit": 0
+    },
+    {
+      "request": "csem-union-full-gate-20261027-05",
+      "exit": 0
+    }
+  ],
+  "baseline": {
+    "match": 90,
+    "ub_match": 18,
+    "oracle_skip": 5,
+    "total": 113
+  },
+  "remaining_gaps": [
+    "anonymous union layout flattening",
+    "aggregate-expression initialization (first-member failure on pristine and patched)",
+    "aggregate-copy followed by descendant override: GCC/model0 versus Clang7; not claimed fixed",
+    "inactive-tail unspecified conditional behavior",
+    "independent tcc and exact-model nested positional-continuation repair"
+  ],
+  "lead_disposition": "Checkpoint CSem candidate for its own semantics/gate review; retain compiler refusal, next task fixes tcc and exact model; no Supported narrowing",
+  "dead_ends": "tasks/DEAD-ENDS.md",
+  "no_push_or_merge": true
+}

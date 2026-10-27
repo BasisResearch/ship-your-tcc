@@ -1,0 +1,40 @@
+{
+  "sha256": {
+    "csem/frontend/model/desugaring_init.lem": "bc81c6d2f3fd1986ef598bc7d9495c3a929fb55ea5cf736d883836f11e9816d4",
+    "csem/lean_frontend/generated/Desugaring_init.lean": "9a169d14f3142ddbdc0a11b7acfda6b4c20674d263e7f6e478279cf3f1c46863",
+    "csem/lean_frontend/lem_sync.sha256": "b8763f87c7b1bb1a3c8bfc4676b50295564a428b4e217819a9070b7ff60d934d",
+    "vendor/CSEM_REV": "f4728490acefb712e9ea36f3c89ee387c98b31f8bb297f639ed71f520b92dfd6",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/csem-704c4e69-e6d8db56/fork-oracle/35c37e31bcded116afaf9b9190e78a04581c21e37186adc8600714df103006f9/frontend/model/desugaring_init.lem": "bc81c6d2f3fd1986ef598bc7d9495c3a929fb55ea5cf736d883836f11e9816d4",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/csem-704c4e69-e6d8db56/fork-oracle/35c37e31bcded116afaf9b9190e78a04581c21e37186adc8600714df103006f9/ocaml_frontend/generated/desugaring_init.ml": "023c38b2ae35c217c9904931e60ada58444543855619b5251b6d4bfdb2b510c8",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/csem-704c4e69-e6d8db56/fork-oracle/35c37e31bcded116afaf9b9190e78a04581c21e37186adc8600714df103006f9/_build/default/backend/driver/main.exe": "569d88b19c4b561eb9af252768c0034463ffe61863a399221161ba4fd28510f2",
+    ".lake/build/bin/csem_run": "b7511409afc20ce43448fdfece9f3cabd4b100bc2af5a24e81d36c1b4fbe2fff",
+    "scripts/run_tcc_sail.sh": "9a7737b4ac7a3578db6d1597a1c8224800e912cae30592e95c772f7637737ac8",
+    "c/src/gen_embed.sh": "68534ee3a238c143bf4e749fcb0ea43e8b53933c4a9d6843422d995c879d7d76",
+    "c/build/base.elf": "87d99fbc4bc53b082991ae785f9dfe341c67827ee9c26eb152ba957834904acb",
+    "c/build/tcc.o": "afbd374f367fb0d55cd9bea2d5e30dd7781b3e971bea60b56e5c5ff6f5f85745",
+    "c/tests/c11/union.c": "a8f66609526b08e0748138b135429acfc46a4b2f95b93565c9df39ae30b2ea02",
+    "results/repro/tcc_union_designator_override.c": "b46c875972bfc984f5eb76eb87c24152af5e8af3a515c643fa977bbc2e41cc12",
+    "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+    "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+    "patches/0003-tcc-c11.patch": "c04d8ea9ea276ccd9e9fa48ead302a045ce2d3a1eaa9335c458dd1ee3d887f75",
+    "patches/0004-tcc-binary128-literals.patch": "4dfcc192c23a777b1b335e9052a416956886b1071c3de1e8da403b5b194e221e",
+    "/Users/kirancodes/Documents/code/ship-your-lua/riscv-lean/lean_emulator/.lake/build/bin/lean_riscv_emulator": "8989bde8a95345de658fb9c9111e15ce4a5561bc747dab28f798080f0778120b"
+  },
+  "shared_source_identical": true,
+  "ocaml_projection": [
+    "frontend/model/desugaring_init.lem"
+  ],
+  "pristine_upstream_commit": "704c4e697845127bced66c93fa0763eb51527ca4",
+  "sail_arguments": {
+    "TCC_ARGS": "\"-w\",\"-std=c11\",",
+    "MAX_STEPS": 100000000,
+    "wall_timeout_seconds": 1800
+  },
+  "no_proof_or_sum_cut_changes": true,
+  "final_sail_sources": {
+    "csem/tests/union-init-batch.c": "b4e66a6e2103597ab3096436313fff421544f18d424814a708e6d17b24849a2c",
+    "results/csem/union-init-2026-10-27/other-cases.c": "28c7228236a1d72be04c97297ffed45d00aa79a60f58f4ef7284dae3ad05ad8e",
+    "results/csem/union-init-2026-10-27/residuals/tcc-continuation.c": "207d48f4e803b9a1280ef8170b95b7252b26fd19cb234b17abb0fe1d675a4b77"
+  },
+  "other_cases_wall_timeout_seconds": 2400
+}

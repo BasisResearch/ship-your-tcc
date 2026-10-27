@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # csem_toolchain.sh — build the CSem generator toolchain and the OCaml oracle.
 #
-#   scripts/csem_toolchain.sh [switch|oracle|all]     (default: all)
+#   scripts/csem_toolchain.sh [switch|oracle|fork-oracle|all]     (default: all)
 #
 # switch: an opam switch at $CSEM_SWITCH with OCaml 5.4.0, lem pinned to
 #   lem-lean at vendor/CSEM_REV (the fork's README recipe), and the deps of
@@ -43,4 +43,14 @@ if [ "$what" = oracle ] || [ "$what" = all ]; then
   cap opam exec --switch="$CSEM_SWITCH" -- make prelude-src
   cap opam exec --switch="$CSEM_SWITCH" -- dune build -j 8 backend/driver/main.exe cerberus-lib.install cerberus.install
   "$CSEM_ORACLE" --version
+fi
+
+# A semantic source repair must be checked on both generated engines. Build
+# the local fork separately; never overwrite the pristine upstream oracle.
+if [ "$what" = fork-oracle ]; then
+  free -g
+  available=$(free -g | awk '/^Mem:/ {print $7}')
+  [ "$available" -ge 25 ] || { echo "csem_toolchain: wait for >=25 GB available" >&2; exit 2; }
+  lock=${SYT_LAKE_LOCK:-$_main/build/lake.lock}
+  flock "$lock" systemd-run --user --scope -p MemoryMax=12G "$_repo/scripts/csem_fork_oracle.sh" --build
 fi

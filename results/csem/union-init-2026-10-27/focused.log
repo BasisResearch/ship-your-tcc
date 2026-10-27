@@ -1,0 +1,36 @@
+union-init: result-checker plants passed
+w_c_array PASS
+w_c_elem_static PASS
+w_c_elem_auto PASS
+w_struct_member PASS
+w_mixed_a_c PASS
+w_mixed_c_a PASS
+w_positional_then_c PASS
+w_nested PASS
+w_array_of_unions PASS
+w_string PASS
+w_scalar_second PASS
+w_coverage_union3_003_shape PASS
+w_compound_literal PASS
+w_in_struct_designated PASS
+ctl_positional PASS
+ctl_first_twice PASS
+ctl_positional_then_first PASS
+ctl_first_struct_partial PASS
+ctl_first_is_array PASS
+ctl_first_designated_static PASS
+ctl_array_first PASS
+ctl_anonymous PASS
+ctl_in_struct_first PASS
+ctl_assign_not_init PASS
+override-tree PASS
+member-types PASS
+continuation PASS
+braces PASS
+implicit-pointer PASS
+incomplete-array PASS
+ctl_in_struct_positional PASS
+union-second PASS
+strings PASS
+c11-active-members PASS
+union-init: 34/34 specified outcomes agree

@@ -1,0 +1,48 @@
+{
+  "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/union-init-2026-10-27/residuals/aggregate-value-first.c",
+  "sha256": "6f980c1f745a39836f1c81e6f533d2aaab5a4e2c64f86e3925df85438824494b",
+  "pristine": {
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/default/backend/driver/main.exe",
+      "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/csem-704c4e69-e6d8db56/fork-oracle/35c37e31bcded116afaf9b9190e78a04581c21e37186adc8600714df103006f9/_build/install/default",
+      "--exec",
+      "--nolibc",
+      "--batch",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/union-init-2026-10-27/residuals/aggregate-value-first.c"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "(debug 0): constructValue_aux: is WRONG for union ==> always assigning the first member\n/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/union-init-2026-10-27/residuals/aggregate-value-first.c:6:21: error: constraint violation: initializing 'signed int' with an expression with a non arithmetic type 'struct pair'\n  union U u = {.s = p};\n                    ^ \n\u00a76.7.9#11, sentence 2: \n11   The initializer for a scalar shall be a single expression, optionally enclosed in braces. The\n     initial value of the object is that of the expression (after conversion); the same type\n     constraints and conversions as for simple assignment apply, taking the type of the scalar\n     to be the unqualified version of its declared type.\n\n\u00a76.5.16.1#1, bullet 1: \n1   One of the following shall hold:112)\n    -- the left operand has atomic, qualified, or unqualified arithmetic type, and the right has\n       arithmetic type;\n    -- the left operand has an atomic, qualified, or unqualified version of a structure or union\n       type compatible with the type of the right;\n    -- the left operand has atomic, qualified, or unqualified pointer type, and (considering\n       the type the left operand would have after lvalue conversion) both operands are\n       pointers to qualified or unqualified versions of compatible types, and the type pointed\n       to by the left has all the qualifiers of the type pointed to by the right;\n    -- the left operand has atomic, qualified, or unqualified pointer type, and (considering\n       the type the left operand would have after lvalue conversion) one operand is a pointer\n       to an object type, and the other is a pointer to a qualified or unqualified version of\n       void, and the type pointed to by the left has all the qualifiers of the type pointed to\n       by the right;\n    -- the left operand is an atomic, qualified, or unqualified pointer, and the right is a null\n       pointer constant; or\n    -- the left operand has type atomic, qualified, or unqualified _Bool, and the right is a\n       pointer.\nTime spent: 0.029343 seconds\n"
+  },
+  "ocaml": {
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/csem-704c4e69-e6d8db56/fork-oracle/35c37e31bcded116afaf9b9190e78a04581c21e37186adc8600714df103006f9/_build/default/backend/driver/main.exe",
+      "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/csem-704c4e69-e6d8db56/fork-oracle/35c37e31bcded116afaf9b9190e78a04581c21e37186adc8600714df103006f9/_build/install/default",
+      "--exec",
+      "--nolibc",
+      "--batch",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/union-init-2026-10-27/residuals/aggregate-value-first.c"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/union-init-2026-10-27/residuals/aggregate-value-first.c:6:21: error: constraint violation: initializing 'signed int' with an expression with a non arithmetic type 'struct pair'\n  union U u = {.s = p};\n                    ^ \n\u00a76.7.9#11, sentence 2: \n11   The initializer for a scalar shall be a single expression, optionally enclosed in braces. The\n     initial value of the object is that of the expression (after conversion); the same type\n     constraints and conversions as for simple assignment apply, taking the type of the scalar\n     to be the unqualified version of its declared type.\n\n\u00a76.5.16.1#1, bullet 1: \n1   One of the following shall hold:112)\n    -- the left operand has atomic, qualified, or unqualified arithmetic type, and the right has\n       arithmetic type;\n    -- the left operand has an atomic, qualified, or unqualified version of a structure or union\n       type compatible with the type of the right;\n    -- the left operand has atomic, qualified, or unqualified pointer type, and (considering\n       the type the left operand would have after lvalue conversion) both operands are\n       pointers to qualified or unqualified versions of compatible types, and the type pointed\n       to by the left has all the qualifiers of the type pointed to by the right;\n    -- the left operand has atomic, qualified, or unqualified pointer type, and (considering\n       the type the left operand would have after lvalue conversion) one operand is a pointer\n       to an object type, and the other is a pointer to a qualified or unqualified version of\n       void, and the type pointed to by the left has all the qualifiers of the type pointed to\n       by the right;\n    -- the left operand is an atomic, qualified, or unqualified pointer, and the right is a null\n       pointer constant; or\n    -- the left operand has type atomic, qualified, or unqualified _Bool, and the right is a\n       pointer.\nTime spent: 0.027825 seconds\n"
+  },
+  "lean": {
+    "command": [
+      "scripts/csem_run.sh",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/union-init-2026-10-27/residuals/aggregate-value-first.c"
+    ],
+    "exit": 1,
+    "stdout": "Error {msg: \"typechecking failed at /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/union-init-2026-10-27/residuals/aggregate-value-first.c:6:21-22\"}\n",
+    "stderr": "cerberus-lean switches: []\n"
+  },
+  "gcc": {
+    "command": [
+      "scripts/run_gcc_native.sh",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/union-init-2026-10-27/residuals/aggregate-value-first.c"
+    ],
+    "exit": 7,
+    "stdout": "",
+    "stderr": ""
+  }
+}

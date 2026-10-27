@@ -1,0 +1,2 @@
+tcc_sail: tcc did not run the program (exit 1):
+/prog.c:5: error: too many initializers

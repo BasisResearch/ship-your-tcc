@@ -64,6 +64,17 @@ done
 python3 csem/scripts/test_stops.py --lean-bin "$_repo/.lake/build/bin/stop-test" \
   || fail "structured stop codec/capture plants"
 
+# Require the OCaml engine built from these exact shared source bytes, rather
+# than treating current pristine upstream's item-U refusal as a comparison.
+fork=$(scripts/csem_fork_oracle.sh --path) || fail "matching shared-source OCaml engine required"
+export CSEM_ORACLE="$fork/_build/default/backend/driver/main.exe"
+export CSEM_RUNTIME="$fork/_build/install/default"
+
+echo "== csem (3b) C11 union initializer specified outcomes"
+python3 scripts/gen_union_c11_observation.py --check || fail "C11 union observation fixture drift"
+python3 scripts/gen_union_suite.py --check || fail "union suite batch fixture drift"
+python3 csem/scripts/check_union_initializers.py --selftest || fail "C11 union initialization"
+
 echo "== csem (4) purity, totality, axiom census, sorry token"
 csem/scripts/check_exec_purity.sh --selftest | tail -1 || fail "exec purity selftest"
 csem/scripts/check_exec_purity.sh || fail "exec purity"

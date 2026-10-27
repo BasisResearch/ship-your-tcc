@@ -118,3 +118,20 @@ Repin candidate 704c4e69/e6d8db56 passes its full 4.34 gate and focused
 comparisons, but adoption is deferred for a valid non-first union-initializer
 refusal. Repair on the preserved candidate via tasks/f1-union-initializers.md;
 no Supported restriction or user decision is needed. The main pin stays old.
+
+The preserved repin candidate now has a local shared-source CSEM-05 repair
+(`results/csem/union-init-2026-10-27.md`): patched OCaml and regenerated Lean
+agree with GCC on 34 focused checks (33 C11 cases and one inherited
+excess-initializer control). Fresh patched tcc/Sail passes the original union
+regression and C11 test. Full gate and final focused Sail suite are recorded
+in that report; main's old pin remains until lead review/adoption. Anonymous
+union layout and aggregate-expression initializer gaps remain whole-C
+obligations, with no change to Supported/Fits or the frozen sum cuts.
+
+Independent compiler obligation exposed by the repaired CSem: valid nested
+positional continuation is refused by tcc (a minimal non-union struct/array
+reproducer is `results/csem/union-init-2026-10-27/residuals/tcc-continuation.c`).
+Both patched CSem engines and strict GCC return 0. The full 33-case Sail suite
+retains the refusal; it is not successful agreement. Lead disposition: next
+worker repairs patched tcc and the exact compiler model; no Supported exclusion.
+Candidate CSem adoption may proceed after its own review/gates.

@@ -1,0 +1,7 @@
+results/csem/union-init-2026-10-27/residuals/aggregate-value-override.c:6:26: warning: initializer partially overrides prior initialization of this subobject [-Winitializer-overrides]
+    6 |   union U u = {.s = p, .s.a = 3};
+      |                          ^~~~~~
+results/csem/union-init-2026-10-27/residuals/aggregate-value-override.c:6:21: note: previous initialization is here
+    6 |   union U u = {.s = p, .s.a = 3};
+      |                     ^
+1 warning generated.

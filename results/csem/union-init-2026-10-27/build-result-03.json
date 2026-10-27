@@ -1,0 +1,21 @@
+{
+  "request": "csem-union-build-20261027-03",
+  "request_id": "csem-union-build-20261027-03",
+  "exit": 0,
+  "log": "build/worker-build-csem-union-build-20261027-03.log",
+  "command": [
+    "flock",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/lake.lock",
+    "systemd-run",
+    "--user",
+    "--scope",
+    "-p",
+    "MemoryMax=12G",
+    "lake",
+    "build",
+    "CerberusLean",
+    "csem_run",
+    "csem_cparse"
+  ],
+  "source_hashes_verified": true
+}

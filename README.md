@@ -310,3 +310,15 @@ parameters owed by F1–F6 (results/csem/f0-validation.md).
 * `results/`: measurements.
 * `abstractions/`: the abstraction gate.
 * `scripts/check.sh`: the gate.
+
+The preserved 2026-10-27 repin candidate now implements C11 union
+selected-member initialization in the shared Lem source. Patched OCaml and
+regenerated Lean match GCC on 34 focused checks (33 conforming C11 cases and
+one inherited excess-initializer control); all 35 focused parser inputs agree.
+Fresh patched tcc/Sail passes the existing union test and original override
+reproducer. The full gates and combined conforming Sail suite are recorded in
+[the union repair report](results/csem/union-init-2026-10-27.md), which also
+lists the remaining anonymous-layout, aggregate-expression and inactive-tail
+gaps. A valid nested-continuation case remains a separate tcc refusal,
+recorded as a compiler/model repair obligation. Main keeps its old pin until lead review; Supported/Fits and the frozen
+sum cuts are unchanged.

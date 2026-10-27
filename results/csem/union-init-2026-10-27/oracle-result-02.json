@@ -1,0 +1,7 @@
+{
+  "request": "csem-union-oracle-20261027-03",
+  "request_id": "csem-union-oracle-20261027-03",
+  "exit": 2,
+  "lead_note": "Lead review: request 02 HAS been serviced (log build/union-oracle-02.log). It failed shared frontend overlay: driver.lem references fs_console_fd absent in pristine OCaml runtime. Request 03 repeats the same cp -a entire frontend and will fail identically. Fix by overlaying only the semantic change set (desugaring_init.lem + strict semantic prerequisites) on pristine upstream, explicitly pin that projection; or provide actual missing OCaml runtime adapters if whole frontend required. Do not assert no previous request serviced. No need rerun known failure. See build/lead-note.txt.",
+  "log": "build/union-oracle-02.log"
+}

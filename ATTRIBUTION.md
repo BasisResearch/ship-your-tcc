@@ -110,3 +110,11 @@ shares one field description between the existing JSON value and total wire
 rendering, reusing Lean's `Lean.Json.renderString` (Apache-2.0, Lean contributors).
 Exact pins, patch dispositions and limitations are in
 `results/csem/repin-2026-10-27.md`; the frozen `sum.c` proof artifacts were not changed.
+
+The 2026-10-27 union initializer repair extends Cerberus's shared
+`desugaring_init.lem`; the character-string expansion reuses the old initializer
+walker's character-list construction in Cerberus `cabs_to_ail.lem`. Positive
+fixtures retain the upstream refusal witness shapes and reuse our existing
+`c/tests/c11/union.c` through `scripts/gen_union_c11_observation.py`. The local
+changes and tests follow the surrounding BSD-2-Clause license; no library
+machine proofs were copied or claimed instruction-identical in this task.

@@ -1,0 +1,7 @@
+== c/tests/c11/union.c: DIFFER (oracle exit 0, 1.1s; csem_run exit 0, 3.2s)
+  oracle:        48 Undefined {ub: "UB_CERB004_unspecified__conditional", stderr: "", loc: "<32:10--32:45>"}
+  csem_run:      47 Undefined {ub: "UB_CERB004_unspecified__conditional", stderr: "", loc: "<32:10--32:45>"}
+      1 Undefined {ub: "UB_CERB004_unspecified__conditional", stderr: "", loc: "<32cerberus-lean switches: []
+== results/repro/tcc_union_designator_override.c: agree (oracle exit 0, 0.4s; csem_run exit 0, 2.2s)
+  oracle:         1 Defined {value: "Specified(0)", stdout: "0 0 1 0\n", stderr: "", blocked: "false"}
+  csem_run:       1 Defined {value: "Specified(0)", stdout: "0 0 1 0\n", stderr: "", blocked: "false"}

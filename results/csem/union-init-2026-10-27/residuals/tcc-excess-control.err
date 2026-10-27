@@ -1,0 +1,1 @@
+csem/tests/union-init/ctl_in_struct_positional.c:3: error: too many initializers

@@ -2628,7 +2628,8 @@ partial def wip_desugar_initializer_ [LemFuel] [CerberusFresh.Digest] [CerbImplC
                       (stExpect_bind
                         (desugar_init tagDefs1 funcs ((dur == Static) || (dur == Thread)) current_ty
                           init)
-                        (fun (p : (ctype × Fmap init_path (expression Unit) × init_position)) =>
+                        (fun (p :
+                          (ctype × Fmap init_path (Option (expression Unit)) × init_position)) =>
                           match p with
                           | (current_ty', init_st, _) =>
                             stExpect_return

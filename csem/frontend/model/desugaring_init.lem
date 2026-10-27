@@ -306,27 +306,6 @@ let rec go_top_of_block pos =
   end
 
 
-(* FORK (item U, 2026-10-20): the text of the union-designator refusal. ASCII only, assembled
-   from the same pieces on both engines (the member names as the C source spells them, the
-   union's tag name from its symbol description), so the oracle's Failure(...) and the Lean
-   PANIC line carry it byte-identically (scripts/check_union_init_refusals.sh compares them). *)
-let union_designator_refusal tag_sym first_ident ident =
-  let (Symbol.Identifier _ first_str) = first_ident in
-  let (Symbol.Identifier _ memb_str) = ident in
-  let tag_str =
-    match Symbol.symbol_description tag_sym with
-      | Symbol.SD_Id str -> "union " ^ str
-      | Symbol.SD_unnamed_tag _ -> "an unnamed union"
-      | _ -> "a union"
-    end in
-  "Desugaring_init.moveTo_aux: refused - union initializer designating a member other than the first ("
-  ^ tag_str ^ ": designator ." ^ memb_str ^ ", first member " ^ first_str ^ "); "
-  ^ "C17 6.7.9#17-19 (a designator selects the member to initialize, in list order; subobjects not initialized explicitly are initialized implicitly); "
-  ^ "upstream's desugaring_init.lem constructValue_aux builds every braced union initializer as the FIRST member whatever the designators say "
-  ^ "('TODO: this is only correct if the first member was the one initialised' b9aeedcb4 :576; "
-  ^ "'constructValue_aux: is WRONG for union ==> always assigning the first member' :592) "
-  ^ "- the fork refuses rather than decides (item U, 2026-10-20)"
-
 let rec moveTo_aux tagDefs funcs is_top (ty_acc, cursor_acc) desigs =
   let moveTo_aux = moveTo_aux tagDefs funcs false in
   match desigs with
@@ -380,22 +359,8 @@ let rec moveTo_aux tagDefs funcs is_top (ty_acc, cursor_acc) desigs =
           | Ctype _ (Union tag_sym) ->
               match find_union_member tagDefs ident tag_sym with
                 | Just new_ty ->
-                    (* FORK REFUSAL (item U, 2026-10-20; [USER 2026-10-20]: where upstream left a
-                       case to a TODO, the fork leaves it or REFUSES LOUDLY, never answering
-                       silently wrong). constructValue_aux (below) builds EVERY braced union
-                       initializer as the FIRST member, whatever the designators say - the
-                       init-map key Elem_union carries no member identity - so a designator
-                       naming any other member is silently wrong (C17 6.7.9#17-19). This arm
-                       is the one place the designated member is decidable. `error` is
-                       Cerb_debug.error in the generated OCaml and failwithI in the generated
-                       Lean: one text on both engines. Record:
-                       lean_frontend/docs/2026-10-20_union-init-refusal-record.md *)
-                    let ((first_ident, _), _) = lookup_union_members tagDefs tag_sym in
-                    if ident <> first_ident then
-                      error (union_designator_refusal tag_sym first_ident ident)
-                    else
-                      let elem' = <| is_block= is_top; is_overflowing= false; kind= Init_union tag_sym ident |> in
-                      moveTo_aux (new_ty, elem' :: cursor_acc) desigs'
+                    let elem' = <| is_block= is_top; is_overflowing= false; kind= Init_union tag_sym ident |> in
+                    moveTo_aux (new_ty, elem' :: cursor_acc) desigs'
                 | Nothing ->
                     E.constraint_violation loc (Constraint.IllegalMemberDesignator ident ty_acc)
               end
@@ -429,7 +394,7 @@ end
 type init_element =
   | Elem_array of integer
   | Elem_member of Symbol.identifier
-  | Elem_union
+  | Elem_union of Symbol.identifier
 type init_path = list init_element
 
 let stringFromInit_element = function
@@ -437,8 +402,8 @@ let stringFromInit_element = function
       "[" ^ show n ^ "]"
   | Elem_member ident ->
       "." ^ show ident
-  | Elem_union ->
-      ".UNION"
+  | Elem_union ident ->
+      ".UNION." ^ show ident
 end
 
 
@@ -449,13 +414,15 @@ instance (SetType init_element)
           (0 : nat)
       | Elem_member _ ->
           1
-      | Elem_union ->
+      | Elem_union _ ->
           2
     end in
     match (elem1, elem2) with
       | (Elem_array n1, Elem_array n2) ->
           setElemCompare n1 n2
       | (Elem_member ident1, Elem_member ident2) ->
+          setElemCompare ident1 ident2
+      | (Elem_union ident1, Elem_union ident2) ->
           setElemCompare ident1 ident2
       | _ ->
           setElemCompare (ord elem1) (ord elem2)
@@ -476,11 +443,81 @@ let to_init_path cursor =
       | Init_struct _ _ ident _ ->
           Elem_member ident
       | Init_union _ ident ->
-          Elem_union
+          Elem_union ident
     end in
   List.map aux (List.reverse cursor)
 
-let rec interp_initializer_aux tagDefs funcs is_static_or_thread inits_acc is_inner max_index pos = function
+(* C11 6.7.9p19: a new initializer replaces the addressed subobject;
+   selecting a different union member also replaces the previous member's
+   entire subtree. Selecting another descendant of the SAME member retains
+   its siblings. The path comparison stops at the first unequal component,
+   so unions in different array elements/struct fields remain independent.
+   Use the map's comparator: derived structural equality includes identifier
+   source locations, which differ between a declaration and its designators. *)
+let rec init_path_overridden fresh old =
+  match (fresh, old) with
+    | ([], _) -> true
+    | (_, []) -> false
+    | (x :: xs, y :: ys) ->
+        if setElemCompare x y = EQ then init_path_overridden xs ys
+        else match (x, y) with
+          | (Elem_union _, Elem_union _) -> true
+          | _ -> false
+        end
+  end
+
+let clear_initializer path init_map =
+  List.foldl (fun acc old ->
+    if init_path_overridden path old then Map.delete old acc else acc
+  ) init_map (Set_extra.toList (Map.domain init_map))
+
+(* Nothing marks an explicitly initialized aggregate. It preserves the
+   selected member even when its contents are entirely implicit (e.g. an
+   empty list extension); Just holds an explicit scalar expression. *)
+type initializer_map = map init_path (maybe (AilSyntax.expression unit))
+
+let rec union_member_below path candidate =
+  match (path, candidate) with
+    | ([], Elem_union ident :: _) -> Just ident
+    | (x :: xs, y :: ys) ->
+        if setElemCompare x y = EQ then union_member_below xs ys else Nothing
+    | _ -> Nothing
+  end
+
+let selected_union_member path init_map first_ident =
+  List.foldl (fun selected candidate ->
+    match union_member_below path candidate with
+      | Just ident -> ident
+      | Nothing -> selected
+    end
+  ) first_ident (Set_extra.toList (Map.domain init_map))
+
+(* Reuse the character-list expansion of cabs_to_ail.lem's old initializer
+   walker, but at the selected subobject rather than at its outer type. *)
+let expand_character_initializer ty init =
+  let string_opt = match init with
+    | Cabs.Init_expr (CabsExpression loc (CabsEstring (Nothing, strs))) -> Just (loc, strs)
+    | Cabs.Init_list _ [(Nothing, Cabs.Init_expr (CabsExpression loc (CabsEstring (Nothing, strs))))] -> Just (loc, strs)
+    | _ -> Nothing
+  end in
+  match (unatomic ty, string_opt) with
+    | (Ctype _ (Array elem_ty size_opt), Just (loc, strs)) ->
+        if AilTypesAux.is_array_of_character ty then
+          let chars = List.concat (List.map snd strs) ++ ["\\0"] in
+          let chars = match size_opt with
+            | Just n -> List.take (natFromInteger n) chars
+            | Nothing -> chars
+          end in
+          Cabs.Init_list loc (List.map (fun ch ->
+            (Nothing, Cabs.Init_expr (CabsExpression loc
+              (CabsEconst (CabsCharacter_const (Nothing, ch)))))
+          ) chars)
+        else init
+    | _ -> init
+  end
+
+let rec interp_initializer_aux tagDefs funcs is_static_or_thread inits_acc is_inner max_index pos init =
+  match expand_character_initializer pos.ty init with
   | Cabs.Init_expr e ->
       funcs.desugar_expression e >>= fun d_e ->
       funcs.is_initializer_constant_expression_or_string_literal d_e >>= function
@@ -502,7 +539,8 @@ let rec interp_initializer_aux tagDefs funcs is_static_or_thread inits_acc is_in
           if cursor_overflowing pos.cursor then
             inits_acc
           else
-            Map.insert (to_init_path pos.cursor) d_e inits_acc in
+            let path = to_init_path pos.cursor in
+            Map.insert path (Just d_e) (clear_initializer path inits_acc) in
         E.return (max_index, inits_acc', false, pos)
   | Cabs.Init_list loc xs ->
       if AilTypesAux.is_scalar (unatomic pos.ty) then
@@ -515,6 +553,11 @@ let rec interp_initializer_aux tagDefs funcs is_static_or_thread inits_acc is_in
       else
         (* NOTE: we go on step down (an mark the opening of a block { ... }) *)
         (* NOTE: this moves the cursor to the first member/index of the struct/array *)
+        let aggregate_pos = pos in
+        let path = to_init_path pos.cursor in
+        let inits_acc =
+          if cursor_overflowing pos.cursor then inits_acc
+          else Map.insert path Nothing (clear_initializer path inits_acc) in
         liftM (go_down_entering_block tagDefs pos) >>= fun pos ->
         (* NOTE: for each element of the init list *)
         on_list (max_index, inits_acc, pos) (fun is_last (max_index, inits_acc, pos) (desigs_opt, init) ->
@@ -524,7 +567,7 @@ let rec interp_initializer_aux tagDefs funcs is_static_or_thread inits_acc is_in
           let max_index' =
             if is_inner then
               max_index
-            else match pos'.cursor with
+            else match List.reverse pos'.cursor with
               | [] -> max_index
               | elem :: _ ->
                   match elem.kind with
@@ -538,34 +581,19 @@ let rec interp_initializer_aux tagDefs funcs is_static_or_thread inits_acc is_in
           (* NOTE: the max_index doesn't matter here because we can only have an aray with unknown size at the top-level *)
           interp_initializer_aux tagDefs funcs is_static_or_thread inits_acc true 0 pos' init
             >>= fun (_, inits_acc', finished_list, pos') ->
-          begin if is_last then
-            if not is_inner then
-              (* NOTE: the whole initiliazer_ has been interpreted *)
-              E.return pos'
-            else
-              (* NOTE: if we are dealing with the LAST element of the init list *)
-              (* NOTE: we move the cursor back to the level of the block we just opened *)
-              go_top_of_block pos' >>= fun pos' ->
-              (* NOTE: we move up from this block *)
-              (* TODO: if we were overflowing before entering the block we need to STILL be overflowing *)
-              liftM (go_up (unmark_as_overflowing pos')) >>= fun pos' ->
-              liftM (do_next_in_same_level tagDefs pos') >>= fun pos' ->
-              E.return pos'
+          begin if is_last || cursor_overflowing pos'.cursor then
+            E.return pos'
+          else if finished_list then
+            (* A braced initializer consumes its whole subobject. Only the
+               parent advances; a child never escapes its own brace frame. *)
+            liftM (do_next_in_same_level tagDefs pos')
           else
-            (* NOTE: otherwise (not the last element), we move to the next (logical) position *)
-            if cursor_overflowing pos'.cursor then
-              (* NOTE: if there is another initialiser in the list,
-                we are un excess (we'll ignore, maybe warn) *)
-              E.return pos'
-            else if finished_list then
-              E.return pos'
-            else
-              liftM (go_next tagDefs pos')
+            liftM (go_next tagDefs pos')
           end >>= fun pos' ->
           (* NOTE: in the union, the bindings of the second map take precedence *)
           E.return (max_index', inits_acc', pos')
         ) xs >>= fun (max_index, inits, pos) ->
-        E.return (max_index, inits, true, pos)
+        E.return (max_index, inits, true, aggregate_pos)
 end
 
 let interp_initializer_ tagDefs funcs is_static_or_thread pos xs =
@@ -586,7 +614,7 @@ let desugar_init tagDefs funcs is_static_or_thread ty init =
   E.return (ty', init_map, last_pos)
 
 
-val constructValue: map Symbol.sym tag_definition -> map init_path (AilSyntax.expression unit) -> Ctype.ctype -> AilSyntax.expression unit
+val constructValue: map Symbol.sym tag_definition -> initializer_map -> Ctype.ctype -> AilSyntax.expression unit
 let rec constructValue_aux tagDefs path init_map (Ctype.Ctype _ ty as cty) =
   let loc = Loc.other "Cabs_to_ail.constructValue" in
   let wrap_expr expr_ = AilSyntax.AnnotatedExpression () [] loc expr_ in
@@ -608,7 +636,6 @@ let rec constructValue_aux tagDefs path init_map (Ctype.Ctype _ ty as cty) =
                 )
               else () in
               let membrs = List.map (fun (memb_ident, (_, _, _, memb_ty)) ->
-                (* TODO: this is only correct if the first member was the one initialised *)
                 (memb_ident, Just (constructValue_aux tagDefs (path ++ [Elem_member memb_ident]) init_map memb_ty))
               ) xs in
               wrap_expr (AilSyntax.AilEstruct tag_sym membrs)
@@ -617,18 +644,14 @@ let rec constructValue_aux tagDefs path init_map (Ctype.Ctype _ ty as cty) =
         end
     | Ctype.Union tag_sym ->
         match Map.lookup tag_sym tagDefs with
-          | Just (Union_definition _ _ isAnonymous ((first_memb_ident, (_, _, _, first_memb_ty)) :: _)) ->
-              let () = if isAnonymous then
-                Debug.print_debug 2 [] (fun () ->
-                  "constructValue_aux: this may be WRONG ==> anonymous Union"
-                )
-              else () in
-              let () = Debug.print_debug 0 [] (fun () ->
-                "constructValue_aux: is WRONG for union ==> always assigning the first member"
-              ) in
-              wrap_expr begin
-                AilSyntax.AilEunion tag_sym first_memb_ident
-                  (Just (constructValue_aux tagDefs (path ++ [Elem_union]) init_map first_memb_ty))
+          | Just (Union_definition _ _ _ ((first_memb_ident, _) :: _)) ->
+              let memb_ident = selected_union_member path init_map first_memb_ident in
+              match find_union_member tagDefs memb_ident tag_sym with
+                | Just memb_ty ->
+                    wrap_expr (AilSyntax.AilEunion tag_sym memb_ident
+                      (Just (constructValue_aux tagDefs (path ++ [Elem_union memb_ident]) init_map memb_ty)))
+                | Nothing ->
+                    error "constructValue_aux: selected union member missing"
               end
           | _ ->
               error "constructValue_aux, Union"
@@ -638,10 +661,8 @@ let rec constructValue_aux tagDefs path init_map (Ctype.Ctype _ ty as cty) =
         constructValue_aux tagDefs path init_map ty'
     | _ ->
         match Map.lookup path init_map with
-          | Nothing ->
-              mk_zeroInit tagDefs cty
-          | Just e ->
-              e
+          | Just (Just e) -> e
+          | _ -> mk_zeroInit tagDefs cty
         end
   end
 

@@ -1,0 +1,27 @@
+Running as unit: run-p3266941-i463986553.scope; invocation ID: 91853dec5bf54a6b9daaf07e4a870607
+make: Entering directory '/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/csem-704c4e69-e6d8db56/fork-oracle/35c37e31bcded116afaf9b9190e78a04581c21e37186adc8600714df103006f9'
+[MKDIR] ocaml_frontend/generated
+[LEM] generating files in [ocaml_frontend/generated] (log in [ocaml_frontend/lem.log])
+[SED] patching things up in [ocaml_frontend/generated]
+[STAMP] recording lem-sync content stamp
+check_lem_sync: recorded ocaml_frontend/lem_sync.sha256 (src 99ad18832f159eda6a7531beed8a96ada13e9ebbf337417203304a023f66ebc8, gen 66393143bb969174be8de0939572e811a5730c5f2c5dc2f1604b38fd57da6276)
+make: Leaving directory '/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/csem-704c4e69-e6d8db56/fork-oracle/35c37e31bcded116afaf9b9190e78a04581c21e37186adc8600714df103006f9'
+Warning: one state has shift/reduce conflicts.
+Warning: one state has reduce/reduce conflicts.
+Warning: one shift/reduce conflict was arbitrarily resolved.
+Warning: 4 reduce/reduce conflicts were arbitrarily resolved.
+check_lem_sync: OK (src 99ad18832f159eda6a7531beed8a96ada13e9ebbf337417203304a023f66ebc8, gen 66393143bb969174be8de0939572e811a5730c5f2c5dc2f1604b38fd57da6276)
+Warning: one state has shift/reduce conflicts.
+Warning: one state has reduce/reduce conflicts.
+Warning: one shift/reduce conflict was arbitrarily resolved.
+Warning: 4 reduce/reduce conflicts were arbitrarily resolved.
+Read 1203 sample input sentences and 1203 error messages.
+Warning: one state has shift/reduce conflicts.
+Warning: one state has reduce/reduce conflicts.
+Warning: one shift/reduce conflict was arbitrarily resolved.
+Warning: 3 reduce/reduce conflicts were arbitrarily resolved.
+Warning: one state has shift/reduce conflicts.
+Warning: one state has reduce/reduce conflicts.
+Warning: one shift/reduce conflict was arbitrarily resolved.
+Warning: 4 reduce/reduce conflicts were arbitrarily resolved.
+/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/csem-704c4e69-e6d8db56/fork-oracle/35c37e31bcded116afaf9b9190e78a04581c21e37186adc8600714df103006f9

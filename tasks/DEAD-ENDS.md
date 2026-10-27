@@ -164,3 +164,41 @@
   (`results/csem/repin-2026-10-27/probes/union-second.c`). The old oracle gives
   7 and the new oracle refuses. This is a concrete adoption concern, not
   grounds to narrow Supported or add a refusal disjunct to the theorem.
+- CSem union repair, 2026-10-27: carrying member names and pruning paths is
+  insufficient if nested lists advance the cursor before returning to their
+  parent. The parent then advances again or leaves its brace frame; a union
+  in a struct becomes `AilEinvalid`. Return each braced initializer's own
+  aggregate position and let its parent advance exactly once.
+- CSem initializer paths: derived structural equality compares identifier
+  source locations as well as spellings. It disagrees with the initializer
+  map comparator, loses nested selections and deletes same-member siblings.
+  Use `setElemCompare` for path component identity; do not use `x = y` here.
+- The first fresh union Sail probes hit a 240-second wall timeout before a
+  traced exit. They are infrastructure limits, not semantic observations;
+  retain them separately and use the longer bounded runs for acceptance.
+- Patched OCaml oracle: overlaying all local frontend files onto upstream
+  fails Lem's OCaml check on the unrelated Lean-only `fs_console_fd` seam
+  (`driver.lem:360`). Overlay the identical shared semantic repair
+  `desugaring_init.lem` only; preserve pristine sources for unrelated seams.
+  The content-addressed helper records that exact input, without modifying
+  the pristine oracle or pretending its refusal is repaired semantics.
+- The inherited `ctl_in_struct_positional.c` supplies excess positional
+  initializers to a scalar-first union. GCC warns and CSem accepts it, but
+  patched tcc correctly rejects it. Keep its legacy engine comparison; do not
+  include it in a conforming C11 Sail batch or call that rejection a tcc bug.
+- `csem_programs.sh` merges stderr/stdout and can report textual DIFFER when a
+  diagnostic interrupts a verdict. Separate captures of the original C11
+  union program are byte-identical (48 unspecified-conditional executions).
+- Both combined Sail batches stopped at the VALID nested positional
+  continuation at line 167, before the excess-initializer control. The first
+  diagnosis blaming that control was wrong. The minimal non-union struct/array
+  program passes strict GCC and both CSem engines but is refused by patched
+  tcc/Sail. Keep the full failing valid case; do not hide it behind a reduced
+  successful runtime batch. Lead queued a separate compiler/exact-model repair.
+- Aggregate-copy override: do not infer support from `.s=p,.s.a=3` returning
+  zero on GCC and CSem. Clang returns 7, while the no-override first-member
+  `.s=p` still fails in pristine and patched CSem. Keep it an independently
+  recorded aggregate-expression gap requiring standards review.
+- This union continuation's `git add` also hit read-only worktree Git metadata
+  (`.git/worktrees/sol-csem-repin/index.lock`). Use the unique frozen commit
+  request for lead review; no alternate index/object-store workaround.

@@ -1,0 +1,11 @@
+{
+  "request": "csem-union-full-gate-20261027-05",
+  "request_id": "csem-union-full-gate-20261027-05",
+  "exit": 0,
+  "log": "build/worker-build-csem-union-full-gate-20261027-05.log",
+  "command": [
+    "scripts/check.sh",
+    "--csem"
+  ],
+  "source_hashes_verified": true
+}

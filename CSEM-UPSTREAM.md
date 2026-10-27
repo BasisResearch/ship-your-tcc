@@ -64,7 +64,7 @@ Small complete reproducers and raw old/current oracle captures are in
 | CSEM-03 / PATCH-02 | Upstream now supplies typed `of_decide_eq_true` bridges at the Utils/Defacto sites, the extra contradiction simplifications in memory erasure, and zeta reduction in `toList_bal`. All three groups compile on 4.34; the old port patches are absorbed, with our existing reader parameters retained. |
 | CSEM-04 | `link-header.c` still reports undeclared `link` with the current pristine runtime. Our image-runtime header/proxy correction remains necessary. |
 | PATCH-03 / PATCH-04 / PATCH-05 | Explicit RV64 implementation parameters, image FS and Lean C grammar remain local work. Upstream still refuses filesystem operations rather than modelling this image. |
-| CSEM-05 (new) | `union-second.c` is valid C11 with two `int` members and `.b = 7`. The old oracle returns `Specified(7)`; current upstream refuses before execution (exit 125). The refusal prevents a known general union-initializer miscompilation, but also rejects this valid case. This is a limitation, not a repaired union semantics; retain it in the whole-C obligations. |
+| CSEM-05 | **Pristine current upstream:** `union-second.c` remains refused (exit 125); 23/34 focused inputs are refused. **Local repair:** shared `desugaring_init.lem` carries selected member names through traversal, ordered subtree overrides and value construction. Patched OCaml and generated Lean match GCC on all 34 focused checks (33 C11 cases plus one inherited excess-initializer control). See `results/csem/union-init-2026-10-27.md`. Anonymous-member representation and aggregate-expression initialization remain separate gaps; no Supported restriction was added. |
 | upstream arithmetic fix | `bool-float.c` changes from `Specified(0)` to the C11-required `Specified(1)` for `(_Bool)0.5`. `bool-pointer-call.c` remains `Specified(1)` in the default calling convention. |
 | upstream overlap refusal | `memcpy-overlap.c` changes from a defined answer to an explicit refusal. The overlapping call has undefined C behaviour; a refusal is not a successful UB classification. |
 
@@ -109,3 +109,36 @@ pin until the valid-union regression is repaired by
 `tasks/f1-union-initializers.md`; this requires implementation, not a change
 to Supported or a user decision. Kiran's list is ready for him to relay.
 No external message has been sent.
+
+### CSEM-05 local semantic repair, 2026-10-27
+
+PATCH-07 is the shared initializer change in `desugaring_init.lem`, generated
+with the candidate's matching Lem pin. Non-first selection is implemented,
+including same-member descendant accumulation, member switching, replacement
+of braced aggregates, nested unions/structs/arrays, omitted descendants,
+character strings and incomplete outer arrays. Nested list cursor ownership
+and name-based path comparison are necessary parts of this repair.
+
+The local OCaml engine is a separate content-addressed build that overlays
+that exact shared source onto pristine upstream; it does not overwrite the
+pristine oracle or replay unrelated Lean filesystem seams. Pristine outcomes
+remain separately labelled in the report. The historical repin recommendation
+above describes the unmodified candidate; adoption still requires the repaired
+candidate's gates and lead review. Kiran owns external communication; nothing
+has been sent upstream.
+
+CSEM-06 (separate, freshly checked): general aggregate-expression initializer
+handling remains incomplete. `residuals/aggregate-value-first.c` uses the first
+union member and therefore never needs the retired non-first guard. Pristine
+current OCaml, patched OCaml and Lean all reject `.s=p` with a typed scalar
+initialization error; GCC returns 7. Nested union-valued initialization is
+likewise rejected locally. With a subsequent `.s.a=3`, GCC/model return 0 but
+Clang returns 7; that agreement with GCC does not establish correct aggregate
+copy semantics. Exact probes and captures are in the union repair report.
+
+The focused validation also found a separate **tcc**, not Cerberus, valid-C
+positional-continuation refusal, minimized without a union. Both patched CSem
+engines and strict GCC return 0; patched tcc/Sail refuses. The lead queued its
+compiler/model repair separately and explicitly permits review/adoption of
+this CSem candidate on its own semantics and gates. Keep the counterexample;
+never narrow Supported or count the refusal as agreement.

@@ -523,39 +523,6 @@ partial def go_top_of_block (pos : init_position) :
   | DInit_ok pos' => go_top_of_block pos'
   | DInit_internal_error msg => internal_error0 msg
 
-/- FORK (item U, 2026-10-20): the text of the union-designator refusal. ASCII only, assembled
-   from the same pieces on both engines (the member names as the C source spells them, the
-   union's tag name from its symbol description), so the oracle's Failure(...) and the Lean
-   PANIC line carry it byte-identically (scripts/check_union_init_refusals.sh compares them). -/
-def union_designator_refusal (tag_sym : sym) (first_ident : identifier) (ident : identifier) :
-    String :=
-  match first_ident with
-  | (Identifier _ first_str) =>
-    (match ident with
-     | (Identifier _ memb_str) =>
-       (let tag_str :=
-          match symbol_description0 tag_sym with
-          | SD_Id str => String.append "union " str
-          | SD_unnamed_tag _ => "an unnamed union"
-          | _ => "a union";
-        String.append
-          "Desugaring_init.moveTo_aux: refused - union initializer designating a member other than the first ("
-          (String.append tag_str
-            (String.append ": designator ."
-              (String.append memb_str
-                (String.append ", first member "
-                  (String.append first_str
-                    (String.append "); "
-                      (String.append
-                        "C17 6.7.9#17-19 (a designator selects the member to initialize, in list order; subobjects not initialized explicitly are initialized implicitly); "
-                        (String.append
-                          "upstream's desugaring_init.lem constructValue_aux builds every braced union initializer as the FIRST member whatever the designators say "
-                          (String.append
-                            "('TODO: this is only correct if the first member was the one initialised' b9aeedcb4 :576; "
-                            (String.append
-                              "'constructValue_aux: is WRONG for union ==> always assigning the first member' :592) "
-                              "- the fork refuses rather than decides (item U, 2026-10-20)"))))))))))))
-
 partial def moveTo_aux (tagDefs1 : Fmap sym tag_definition0) (funcs : desugaring_init_funcs)
     (is_top : Bool) (p : (ctype × List init_cursor_elem)) (desigs : List designator) :
     state_with_markers → exceptM ((ctype × List init_cursor_elem) × state_with_markers)
@@ -639,32 +606,11 @@ partial def moveTo_aux (tagDefs1 : Fmap sym tag_definition0) (funcs : desugaring
         | Ctype _ (Union0 tag_sym) =>
           (match find_union_member tagDefs1 ident tag_sym with
            | some new_ty =>
-             (/- FORK REFUSAL (item U, 2026-10-20; [USER 2026-10-20]: where upstream left a
-                       case to a TODO, the fork leaves it or REFUSES LOUDLY, never answering
-                       silently wrong). constructValue_aux (below) builds EVERY braced union
-                       initializer as the FIRST member, whatever the designators say - the
-                       init-map key Elem_union carries no member identity - so a designator
-                       naming any other member is silently wrong (C17 6.7.9#17-19). This arm
-                       is the one place the designated member is decidable. `error` is
-                       Cerb_debug.error in the generated OCaml and failwithI in the generated
-                       Lean: one text on both engines. Record:
-                       lean_frontend/docs/2026-10-20_union-init-refusal-record.md -/
-             match lookup_union_members tagDefs1 tag_sym with
-             | ((first_ident, _), _) =>
-               (lem_if (match ident with
-                        | (Identifier _ str1) =>
-                          (match first_ident with
-                           | (Identifier _ str2) => not (str1 == str2))) then
-                 (failwithI (union_designator_refusal tag_sym first_ident ident) :
-                   state_with_markers → exceptM
-                   ((ctype × List init_cursor_elem) × state_with_markers)
-                   (CerbLocation.Loc × cause))
-               else
-                 let elem' :=
-                   (({ is_block := is_top,
-                       is_overflowing := false,
-                       kind := (Init_union tag_sym ident) } : init_cursor_elem));
-                 moveTo_aux1 (new_ty, (elem' :: cursor_acc)) desigs'))
+             (let elem' :=
+                (({ is_block := is_top,
+                    is_overflowing := false,
+                    kind := (Init_union tag_sym ident) } : init_cursor_elem));
+              moveTo_aux1 (new_ty, (elem' :: cursor_acc)) desigs')
            | none =>
              (fun (_ : state_with_markers) =>
                fail0
@@ -702,72 +648,22 @@ partial def on_list { a b : Type } (pos : a)
 inductive init_element : Type where
   | Elem_array : Int → init_element
   | Elem_member : identifier → init_element
-  | Elem_union : init_element
+  | Elem_union : identifier → init_element
+  deriving BEq, Ord
 export init_element (Elem_array Elem_member Elem_union)
 instance : Inhabited init_element where
-  default := Elem_union
-/- lem: equality and comparison for these types, matching OCaml's
-   polymorphic (=) and compare: structural equality; nullary constructors
-   before non-nullary ones, declaration order within each group; fields
-   compared left to right; leaf fields by their Lean BEq/Ord instances. -/
-/- lem: constructor rank for OCaml's polymorphic compare: nullary
-   constructors (immediates) sort below non-nullary ones (blocks);
-   declaration order within each group. -/
-def init_element.ctor_rank_ocaml : init_element → Nat
-  | .Elem_array _ => 1
-  | .Elem_member _ => 2
-  | .Elem_union => 0
-mutual
-def init_element.beq_derived (cmpx_ cmpy_ : init_element) : Bool :=
-  match cmpx_, cmpy_ with
-  | .Elem_array x1, .Elem_array y1 => x1 == y1
-  | .Elem_member x1, .Elem_member y1 => x1 == y1
-  | .Elem_union, .Elem_union => true
-  | _, _ => false
-termination_by structural cmpx_
-def init_element.compare_derived (cmpx_ cmpy_ : init_element) : Ordering :=
-  match cmpx_, cmpy_ with
-  | .Elem_array x1, .Elem_array y1 => Ord.compare x1 y1
-  | .Elem_member x1, .Elem_member y1 => Ord.compare x1 y1
-  | xg, yg => Ord.compare (init_element.ctor_rank_ocaml xg) (init_element.ctor_rank_ocaml yg)
-termination_by structural cmpx_
-end
-
-instance : BEq init_element where
-  beq := init_element.beq_derived
-instance : Ord init_element where
-  compare := init_element.compare_derived
+  default := Elem_array default
 instance (priority := 500) : Lem_Basic_classes.SetType init_element where
-  setElemCompare x y :=
-    match init_element.compare_derived x y with
-    | .lt => LemOrdering.LT
-    | .eq => LemOrdering.EQ
-    | .gt => LemOrdering.GT
+  setElemCompare := defaultCompare
 instance (priority := 500) : Lem_Basic_classes.Eq0 init_element where
-  isEqual := init_element.beq_derived
-  isInequal x y := !(init_element.beq_derived x y)
+  isEqual x y := x == y
+  isInequal x y := !(x == y)
 instance (priority := 500) : Lem_Basic_classes.Ord0 init_element where
-  compare x y :=
-    match init_element.compare_derived x y with
-    | .lt => LemOrdering.LT
-    | .eq => LemOrdering.EQ
-    | .gt => LemOrdering.GT
-  isLess x y :=
-    match init_element.compare_derived x y with
-    | .lt => true
-    | _ => false
-  isLessEqual x y :=
-    match init_element.compare_derived x y with
-    | .gt => false
-    | _ => true
-  isGreater x y :=
-    match init_element.compare_derived x y with
-    | .gt => true
-    | _ => false
-  isGreaterEqual x y :=
-    match init_element.compare_derived x y with
-    | .lt => false
-    | _ => true
+  compare := defaultCompare
+  isLess := defaultLess
+  isLessEqual := defaultLessEq
+  isGreater := defaultGreater
+  isGreaterEqual := defaultGreaterEq
 abbrev init_path := List init_element
 
 def stringFromInit_element : init_element → String :=
@@ -778,7 +674,10 @@ def stringFromInit_element : init_element → String :=
       String.append "."
         (match ident with
          | Identifier _ str => str)
-    | Elem_union => ".UNION"
+    | Elem_union ident =>
+      String.append ".UNION."
+        (match ident with
+         | Identifier _ str => str)
 
 instance : SetType init_element where
 
@@ -788,10 +687,15 @@ instance : SetType init_element where
           match x with
           | Elem_array _ => (0 : Nat)
           | Elem_member _ => 1
-          | Elem_union => 2;
+          | Elem_union _ => 2;
       match elem1, elem2 with
       | Elem_array n1, Elem_array n2 => defaultCompare n1 n2
       | Elem_member ident1, Elem_member ident2 =>
+        (match ident1 with
+         | (Identifier _ str1) =>
+           (match ident2 with
+            | (Identifier _ str2) => defaultCompare str1 str2))
+      | Elem_union ident1, Elem_union ident2 =>
         (match ident1 with
          | (Identifier _ str1) =>
            (match ident2 with
@@ -806,171 +710,361 @@ def to_init_path (cursor1 : List init_cursor_elem) : List init_element :=
       match elem1.kind with
       | Init_array n _ => Elem_array n
       | Init_struct _ _ ident _ => Elem_member ident
-      | Init_union _ ident => Elem_union);
+      | Init_union _ ident => Elem_union ident);
   List.map aux (List.reverse cursor1)
+
+/- C11 6.7.9p19: a new initializer replaces the addressed subobject;
+   selecting a different union member also replaces the previous member's
+   entire subtree. Selecting another descendant of the SAME member retains
+   its siblings. The path comparison stops at the first unequal component,
+   so unions in different array elements/struct fields remain independent.
+   Use the map's comparator: derived structural equality includes identifier
+   source locations, which differ between a declaration and its designators. -/
+partial def init_path_overridden (fresh1 : List init_element) (old : List init_element) : Bool :=
+  match fresh1, old with
+  | [], _ => true
+  | _, [] => false
+  | x :: xs, y :: ys =>
+    (lem_if (let ord : init_element → Nat :=
+               fun (x : init_element) =>
+                 match x with
+                 | Elem_array _ => (0 : Nat)
+                 | Elem_member _ => 1
+                 | Elem_union _ => 2;
+             match x, y with
+             | Elem_array n1, Elem_array n2 => defaultCompare n1 n2
+             | Elem_member ident1, Elem_member ident2 =>
+               (match ident1 with
+                | (Identifier _ str1) =>
+                  (match ident2 with
+                   | (Identifier _ str2) => defaultCompare str1 str2))
+             | Elem_union ident1, Elem_union ident2 =>
+               (match ident1 with
+                | (Identifier _ str1) =>
+                  (match ident2 with
+                   | (Identifier _ str2) => defaultCompare str1 str2))
+             | _, _ => defaultCompare (ord x) (ord y)) == LemOrdering.EQ then
+      init_path_overridden xs ys
+    else
+      match x, y with
+      | Elem_union _, Elem_union _ => true
+      | _, _ => false)
+
+def clear_initializer { a : Type } (path : List init_element)
+    (init_map : Fmap (List init_element) a) :
+    Fmap (List init_element) a :=
+  List.foldl
+    (fun (acc : Fmap (List init_element) a) (old : List init_element) =>
+      lem_if init_path_overridden path old then
+        (fmapDeleteBy
+          (lexicographicCompareBy (fun (elem1 : init_element) (elem2 : init_element)=>
+            let ord : init_element → Nat :=
+              fun (x : init_element) =>
+                match x with
+                | Elem_array _ => (0 : Nat)
+                | Elem_member _ => 1
+                | Elem_union _ => 2;
+            match elem1, elem2 with
+            | Elem_array n1, Elem_array n2 => defaultCompare n1 n2
+            | Elem_member ident1, Elem_member ident2 =>
+              (match ident1 with
+               | (Identifier _ str1) =>
+                 (match ident2 with
+                  | (Identifier _ str2) => defaultCompare str1 str2))
+            | Elem_union ident1, Elem_union ident2 =>
+              (match ident1 with
+               | (Identifier _ str1) =>
+                 (match ident2 with
+                  | (Identifier _ str2) => defaultCompare str1 str2))
+            | _, _ => defaultCompare (ord elem1) (ord elem2))) old acc)
+      else
+        acc) init_map
+    (setToList
+      ((fmapDomainBy
+        (lexicographicCompareBy (fun (elem1 : init_element) (elem2 : init_element)=>
+          let ord : init_element → Nat :=
+            fun (x : init_element) =>
+              match x with
+              | Elem_array _ => (0 : Nat)
+              | Elem_member _ => 1
+              | Elem_union _ => 2;
+          match elem1, elem2 with
+          | Elem_array n1, Elem_array n2 => defaultCompare n1 n2
+          | Elem_member ident1, Elem_member ident2 =>
+            (match ident1 with
+             | (Identifier _ str1) =>
+               (match ident2 with
+                | (Identifier _ str2) => defaultCompare str1 str2))
+          | Elem_union ident1, Elem_union ident2 =>
+            (match ident1 with
+             | (Identifier _ str1) =>
+               (match ident2 with
+                | (Identifier _ str2) => defaultCompare str1 str2))
+          | _, _ => defaultCompare (ord elem1) (ord elem2))) init_map)))
+
+/- Nothing marks an explicitly initialized aggregate. It preserves the
+   selected member even when its contents are entirely implicit (e.g. an
+   empty list extension); Just holds an explicit scalar expression. -/
+abbrev initializer_map := Fmap init_path (Option (expression Unit))
+
+partial def union_member_below (path : List init_element) (candidate : List init_element) :
+    Option identifier :=
+  match path, candidate with
+  | [], Elem_union ident :: _ => some ident
+  | x :: xs, y :: ys =>
+    (lem_if (let ord : init_element → Nat :=
+               fun (x : init_element) =>
+                 match x with
+                 | Elem_array _ => (0 : Nat)
+                 | Elem_member _ => 1
+                 | Elem_union _ => 2;
+             match x, y with
+             | Elem_array n1, Elem_array n2 => defaultCompare n1 n2
+             | Elem_member ident1, Elem_member ident2 =>
+               (match ident1 with
+                | (Identifier _ str1) =>
+                  (match ident2 with
+                   | (Identifier _ str2) => defaultCompare str1 str2))
+             | Elem_union ident1, Elem_union ident2 =>
+               (match ident1 with
+                | (Identifier _ str1) =>
+                  (match ident2 with
+                   | (Identifier _ str2) => defaultCompare str1 str2))
+             | _, _ => defaultCompare (ord x) (ord y)) == LemOrdering.EQ then
+      union_member_below xs ys
+    else
+      none)
+  | _, _ => none
+
+def selected_union_member { a : Type } (path : List init_element)
+    (init_map : Fmap (List init_element) a) (first_ident : identifier) :
+    identifier :=
+  List.foldl
+    (fun (selected : identifier) (candidate : List init_element) =>
+      match union_member_below path candidate with
+      | some ident => ident
+      | none => selected) first_ident
+    (setToList
+      ((fmapDomainBy
+        (lexicographicCompareBy (fun (elem1 : init_element) (elem2 : init_element)=>
+          let ord : init_element → Nat :=
+            fun (x : init_element) =>
+              match x with
+              | Elem_array _ => (0 : Nat)
+              | Elem_member _ => 1
+              | Elem_union _ => 2;
+          match elem1, elem2 with
+          | Elem_array n1, Elem_array n2 => defaultCompare n1 n2
+          | Elem_member ident1, Elem_member ident2 =>
+            (match ident1 with
+             | (Identifier _ str1) =>
+               (match ident2 with
+                | (Identifier _ str2) => defaultCompare str1 str2))
+          | Elem_union ident1, Elem_union ident2 =>
+            (match ident1 with
+             | (Identifier _ str1) =>
+               (match ident2 with
+                | (Identifier _ str2) => defaultCompare str1 str2))
+          | _, _ => defaultCompare (ord elem1) (ord elem2))) init_map)))
+
+/- Reuse the character-list expansion of cabs_to_ail.lem's old initializer
+   walker, but at the selected subobject rather than at its outer type. -/
+def expand_character_initializer (ty1 : ctype) (init : initializer_) : initializer_ :=
+  let string_opt :=
+    match init with
+    | Init_expr (CabsExpression loc1 (CabsEstring (none, strs))) => some (loc1, strs)
+    | Init_list _ [(none, Init_expr (CabsExpression loc1 (CabsEstring (none, strs))))] =>
+      some (loc1, strs)
+    | _ => none;
+  match unatomic ty1, string_opt with
+  | Ctype _ (Array0 elem_ty size_opt), some (loc1, strs) =>
+    (lem_if is_array_of_character ty1 then
+      let chars := List.flatten (List.map Prod.snd strs) ++ ["\\0"];
+      let chars :=
+        match size_opt with
+        | some n => List.take (Int.natAbs (lemIntFromInteger n)) chars
+        | none => chars;
+      Init_list loc1
+        (List.map
+          (fun (ch : String) =>
+            (none, Init_expr (CabsExpression loc1 (CabsEconst (CabsCharacter_const (none, ch))))))
+          chars)
+    else
+      init)
+  | _, _ => init
 
 partial def interp_initializer_aux (tagDefs1 : Fmap sym tag_definition0)
     (funcs : desugaring_init_funcs) (is_static_or_thread : Bool)
-    (inits_acc : Fmap (List init_element) (expression Unit)) (is_inner : Bool) (max_index : Int)
-    (pos : init_position) :
-    initializer_ → state_with_markers → exceptM
-        ((Int × Fmap (List init_element) (expression Unit) × Bool × init_position) ×
+    (inits_acc : Fmap (List init_element) (Option (expression Unit))) (is_inner : Bool)
+    (max_index : Int) (pos : init_position) (init : initializer_) :
+    state_with_markers → exceptM
+        ((Int × Fmap (List init_element) (Option (expression Unit)) × Bool × init_position) ×
           state_with_markers) error :=
-  fun (x : initializer_) =>
-    match x with
-    | Init_expr e =>
-      stExpect_bind (funcs.desugar_expression e) (fun (d_e : expression Unit) =>
-        stExpect_bind
-          (stExpect_bind (funcs.is_initializer_constant_expression_or_string_literal d_e)
-            (fun (x : Bool) =>
-              match x with
-              | false =>
-                (lem_if is_static_or_thread then /- STD §6.7.9#4 -/
-                  fun (_ : state_with_markers) =>
-                    fail0
-                      ((match d_e with
-                        | (AnnotatedExpression _ _ loc1 _) => loc1),
-                        DESUGAR
-                          (Desugar_ConstraintViolation
-                            IllegalStorageClassStaticOrThreadInitializer))
-                else
-                  stExpect_return ())
-              | true => stExpect_return ()))
-          (fun (u : Unit) =>
-            match u with
-            | () =>
-              (lem_if false /- is_compound_literal OR string literal -/ then
-                internal_error0 "TODO: explode the elements"
+  match expand_character_initializer pos.ty init with
+  | Init_expr e =>
+    stExpect_bind (funcs.desugar_expression e) (fun (d_e : expression Unit) =>
+      stExpect_bind
+        (stExpect_bind (funcs.is_initializer_constant_expression_or_string_literal d_e)
+          (fun (x : Bool) =>
+            match x with
+            | false =>
+              (lem_if is_static_or_thread then /- STD §6.7.9#4 -/
+                fun (_ : state_with_markers) =>
+                  fail0
+                    ((match d_e with
+                      | (AnnotatedExpression _ _ loc1 _) => loc1),
+                      DESUGAR
+                        (Desugar_ConstraintViolation IllegalStorageClassStaticOrThreadInitializer))
               else
-                stExpect_bind
-                  (/- NOTE: we dealing with a scalar, so we go down to a leaf -/ go_bottom tagDefs1
-                    pos)
-                  (fun (pos : init_position) =>
-                    let inits_acc' :=
-                      lem_if cursor_overflowing pos.cursor then
-                        inits_acc
-                      else
-                        (fmapAddBy
-                          (lexicographicCompareBy
-                            (fun (elem1 : init_element) (elem2 : init_element)=>
-                              let ord : init_element → Nat :=
-                                fun (x : init_element) =>
-                                  match x with
-                                  | Elem_array _ => (0 : Nat)
-                                  | Elem_member _ => 1
-                                  | Elem_union => 2;
-                              match elem1, elem2 with
-                              | Elem_array n1, Elem_array n2 => defaultCompare n1 n2
-                              | Elem_member ident1, Elem_member ident2 =>
-                                (match ident1 with
-                                 | (Identifier _ str1) =>
-                                   (match ident2 with
-                                    | (Identifier _ str2) => defaultCompare str1 str2))
-                              | _, _ => defaultCompare (ord elem1) (ord elem2)))
-                          (to_init_path pos.cursor) d_e inits_acc);
-                    stExpect_return (max_index, inits_acc', false, pos)))))
-    | Init_list loc1 xs =>
-      (lem_if is_scalar (unatomic pos.ty) then
-        match xs with
-        | [(none, Init_expr e)] =>
-          interp_initializer_aux tagDefs1 funcs is_static_or_thread inits_acc is_inner max_index pos
-            (Init_expr e)
-        | _ =>
-          (fun (_ : state_with_markers) =>
-            fail0
-              (loc1,
-                DESUGAR
-                  (Desugar_UndefinedBehaviour UB081_scalar_initializer_not_single_expression)))
-      else
+                stExpect_return ())
+            | true => stExpect_return ()))
+        (fun (u : Unit) =>
+          match u with
+          | () =>
+            (lem_if false /- is_compound_literal OR string literal -/ then
+              internal_error0 "TODO: explode the elements"
+            else
+              stExpect_bind
+                (/- NOTE: we dealing with a scalar, so we go down to a leaf -/ go_bottom tagDefs1
+                  pos)
+                (fun (pos : init_position) =>
+                  let inits_acc' :=
+                    lem_if cursor_overflowing pos.cursor then
+                      inits_acc
+                    else
+                      let path := to_init_path pos.cursor;
+                      (fmapAddBy
+                        (lexicographicCompareBy (fun (elem1 : init_element) (elem2 : init_element)=>
+                          let ord : init_element → Nat :=
+                            fun (x : init_element) =>
+                              match x with
+                              | Elem_array _ => (0 : Nat)
+                              | Elem_member _ => 1
+                              | Elem_union _ => 2;
+                          match elem1, elem2 with
+                          | Elem_array n1, Elem_array n2 => defaultCompare n1 n2
+                          | Elem_member ident1, Elem_member ident2 =>
+                            (match ident1 with
+                             | (Identifier _ str1) =>
+                               (match ident2 with
+                                | (Identifier _ str2) => defaultCompare str1 str2))
+                          | Elem_union ident1, Elem_union ident2 =>
+                            (match ident1 with
+                             | (Identifier _ str1) =>
+                               (match ident2 with
+                                | (Identifier _ str2) => defaultCompare str1 str2))
+                          | _, _ => defaultCompare (ord elem1) (ord elem2))) path (some d_e)
+                        (clear_initializer path inits_acc));
+                  stExpect_return (max_index, inits_acc', false, pos)))))
+  | Init_list loc1 xs =>
+    (lem_if is_scalar (unatomic pos.ty) then
+      match xs with
+      | [(none, Init_expr e)] =>
+        interp_initializer_aux tagDefs1 funcs is_static_or_thread inits_acc is_inner max_index pos
+          (Init_expr e)
+      | _ =>
+        (fun (_ : state_with_markers) =>
+          fail0
+            (loc1,
+              DESUGAR (Desugar_UndefinedBehaviour UB081_scalar_initializer_not_single_expression)))
+    else /- NOTE: we go on step down (an mark the opening of a block { ... }) -/ /- NOTE: this moves the cursor to the first member/index of the struct/array -/
+      let aggregate_pos := pos;
+      let path := to_init_path pos.cursor;
+      let inits_acc :=
+        lem_if cursor_overflowing pos.cursor then
+          inits_acc
+        else
+          (fmapAddBy
+            (lexicographicCompareBy (fun (elem1 : init_element) (elem2 : init_element)=>
+              let ord : init_element → Nat :=
+                fun (x : init_element) =>
+                  match x with
+                  | Elem_array _ => (0 : Nat)
+                  | Elem_member _ => 1
+                  | Elem_union _ => 2;
+              match elem1, elem2 with
+              | Elem_array n1, Elem_array n2 => defaultCompare n1 n2
+              | Elem_member ident1, Elem_member ident2 =>
+                (match ident1 with
+                 | (Identifier _ str1) =>
+                   (match ident2 with
+                    | (Identifier _ str2) => defaultCompare str1 str2))
+              | Elem_union ident1, Elem_union ident2 =>
+                (match ident1 with
+                 | (Identifier _ str1) =>
+                   (match ident2 with
+                    | (Identifier _ str2) => defaultCompare str1 str2))
+              | _, _ => defaultCompare (ord elem1) (ord elem2))) path none
+            (clear_initializer path inits_acc));
+      stExpect_bind (liftM1 (go_down_entering_block tagDefs1 pos)) (fun (pos : init_position) =>
         stExpect_bind
-          (/- NOTE: we go on step down (an mark the opening of a block { ... }) -/ /- NOTE: this moves the cursor to the first member/index of the struct/array -/ liftM1
-            (go_down_entering_block tagDefs1 pos))
-          (fun (pos : init_position) =>
-            stExpect_bind
-              (/- NOTE: for each element of the init list -/ on_list (max_index, inits_acc, pos)
-                (fun (is_last : Bool)
-                  (p : (Int × Fmap (List init_element) (expression Unit) × init_position))
-                  (p0 : (Option (List designator) × initializer_)) =>
-                  match is_last, p, p0 with
-                  | is_last, (max_index, inits_acc, pos), (desigs_opt, init) =>
+          (/- NOTE: for each element of the init list -/ on_list (max_index, inits_acc, pos)
+            (fun (is_last : Bool)
+              (p : (Int × Fmap (List init_element) (Option (expression Unit)) × init_position))
+              (p0 : (Option (List designator) × initializer_)) =>
+              match is_last, p, p0 with
+              | is_last, (max_index, inits_acc, pos), (desigs_opt, init) =>
+                stExpect_bind
+                  (/- NOTE: we move to the position specified by the designators -/ moveTo tagDefs1
+                    funcs pos desigs_opt)
+                  (fun (pos' :
+                    init_position) => /- this keeps track of the largest index used when initialising an array with unknown size -/
+                    let max_index' :=
+                      lem_if is_inner then
+                        max_index
+                      else
+                        match List.reverse pos'.cursor with
+                        | [] => max_index
+                        | elem1 :: _ =>
+                          (match elem1.kind with
+                           | Init_array idx none =>
+                             (lem_if intGtb idx max_index then idx else max_index)
+                           | _ => max_index);
                     stExpect_bind
-                      (/- NOTE: we move to the position specified by the designators -/ moveTo
-                        tagDefs1 funcs pos desigs_opt)
-                      (fun (pos' :
-                        init_position) => /- this keeps track of the largest index used when initialising an array with unknown size -/
-                        let max_index' :=
-                          lem_if is_inner then
-                            max_index
-                          else
-                            match pos'.cursor with
-                            | [] => max_index
-                            | elem1 :: _ =>
-                              (match elem1.kind with
-                               | Init_array idx none =>
-                                 (lem_if intGtb idx max_index then idx else max_index)
-                               | _ => max_index);
-                        stExpect_bind
-                          (/- NOTE: we recursively interpret the inner initializer (this may move the cursor) -/ /- NOTE: the max_index doesn't matter here because we can only have an aray with unknown size at the top-level -/ interp_initializer_aux
-                            tagDefs1 funcs is_static_or_thread inits_acc true ((0 : Int)) pos' init)
-                          (fun (p :
-                            (Int × Fmap (List init_element) (expression Unit) × Bool ×
-                              init_position)) =>
-                            match p with
-                            | (_, inits_acc', finished_list, pos') =>
-                              stExpect_bind
-                                (lem_if is_last then
-                                  lem_if not
-                                      is_inner then /- NOTE: the whole initiliazer_ has been interpreted -/
-                                    stExpect_return pos'
-                                  else
-                                    stExpect_bind
-                                      (/- NOTE: if we are dealing with the LAST element of the init list -/ /- NOTE: we move the cursor back to the level of the block we just opened -/ go_top_of_block
-                                        pos')
-                                      (fun (pos' : init_position) =>
-                                        stExpect_bind
-                                          (/- NOTE: we move up from this block -/ /- TODO: if we were overflowing before entering the block we need to STILL be overflowing -/ liftM1
-                                            (go_up (unmark_as_overflowing pos')))
-                                          (fun (pos' : init_position) =>
-                                            stExpect_bind
-                                              (liftM1 (do_next_in_same_level tagDefs1 pos'))
-                                              (fun (pos' : init_position) => stExpect_return pos')))
-                                else /- NOTE: otherwise (not the last element), we move to the next (logical) position -/ lem_if cursor_overflowing
-                                    pos'.cursor then
-                                  /- NOTE: if there is another initialiser in the list,
-                we are un excess (we'll ignore, maybe warn) -/
-                                  stExpect_return pos'
-                                else lem_if finished_list then
-                                  stExpect_return pos'
-                                else
-                                  liftM1 (go_next tagDefs1 pos'))
-                                (fun (pos' :
-                                  init_position) => /- NOTE: in the union, the bindings of the second map take precedence -/
-                                  stExpect_return (max_index', inits_acc', pos'))))) xs)
-              (fun (p : (Int × Fmap (List init_element) (expression Unit) × init_position)) =>
-                match p with
-                | (max_index, inits, pos) => stExpect_return (max_index, inits, true, pos))))
+                      (/- NOTE: we recursively interpret the inner initializer (this may move the cursor) -/ /- NOTE: the max_index doesn't matter here because we can only have an aray with unknown size at the top-level -/ interp_initializer_aux
+                        tagDefs1 funcs is_static_or_thread inits_acc true ((0 : Int)) pos' init)
+                      (fun (p :
+                        (Int × Fmap (List init_element) (Option (expression Unit)) × Bool ×
+                          init_position)) =>
+                        match p with
+                        | (_, inits_acc', finished_list, pos') =>
+                          stExpect_bind
+                            (lem_if is_last || cursor_overflowing pos'.cursor then
+                              stExpect_return pos'
+                            else lem_if finished_list then
+                              /- A braced initializer consumes its whole subobject. Only the
+               parent advances; a child never escapes its own brace frame. -/
+                              liftM1 (do_next_in_same_level tagDefs1 pos')
+                            else
+                              liftM1 (go_next tagDefs1 pos'))
+                            (fun (pos' :
+                              init_position) => /- NOTE: in the union, the bindings of the second map take precedence -/
+                              stExpect_return (max_index', inits_acc', pos'))))) xs)
+          (fun (p : (Int × Fmap (List init_element) (Option (expression Unit)) × init_position)) =>
+            match p with
+            | (max_index, inits, pos) => stExpect_return (max_index, inits, true, aggregate_pos))))
 
 def interp_initializer_ (tagDefs1 : Fmap sym tag_definition0) (funcs : desugaring_init_funcs)
     (is_static_or_thread : Bool) (pos : init_position) (xs : initializer_) :
     state_with_markers → exceptM
-        ((Int × Fmap (List init_element) (expression Unit) × init_position) × state_with_markers)
-        error :=
+        ((Int × Fmap (List init_element) (Option (expression Unit)) × init_position) ×
+          state_with_markers) error :=
   stExpect_bind
     (interp_initializer_aux tagDefs1 funcs is_static_or_thread fmapEmpty false ((0 : Int)) pos xs)
-    (fun (p : (Int × Fmap (List init_element) (expression Unit) × Bool × init_position)) =>
+    (fun (p : (Int × Fmap (List init_element) (Option (expression Unit)) × Bool × init_position)) =>
       match p with
       | (max_index, inits, _, last_pos) => stExpect_return (max_index, inits, last_pos))
 
 def desugar_init (tagDefs1 : Fmap sym tag_definition0) (funcs : desugaring_init_funcs)
     (is_static_or_thread : Bool) (ty1 : ctype) (init : initializer_) :
     state_with_markers → exceptM
-        ((ctype × Fmap (List init_element) (expression Unit) × init_position) × state_with_markers)
-        error :=
+        ((ctype × Fmap (List init_element) (Option (expression Unit)) × init_position) ×
+          state_with_markers) error :=
   let pos :=
     (({ block_ty := ty1, ty := ty1, cursor := ([] : List init_cursor_elem), in_block := false } :
       init_position));
   stExpect_bind (interp_initializer_ tagDefs1 funcs is_static_or_thread pos init)
-    (fun (p : (Int × Fmap (List init_element) (expression Unit) × init_position)) =>
+    (fun (p : (Int × Fmap (List init_element) (Option (expression Unit)) × init_position)) =>
       match p with
       | (size, init_map, last_pos) =>
         (let ty' :=
@@ -980,7 +1074,8 @@ def desugar_init (tagDefs1 : Fmap sym tag_definition0) (funcs : desugaring_init_
            | _ => ty1;
          stExpect_return (ty', init_map, last_pos)))
 partial def constructValue_aux (tagDefs1 : Fmap ail_identifier tag_definition0)
-    (path : List init_element) (init_map : Fmap (List init_element) (expression Unit)) (c : ctype) :
+    (path : List init_element) (init_map : Fmap (List init_element) (Option (expression Unit)))
+    (c : ctype) :
     expression Unit :=
   match tagDefs1, path, init_map, c with
   | tagDefs1, path, init_map, cty@(Ctype _ ty1) =>
@@ -1013,9 +1108,7 @@ partial def constructValue_aux (tagDefs1 : Fmap ail_identifier tag_definition0)
                 List.map
                   (fun (p : (identifier × (attributes × Option alignment × qualifiers × ctype))) =>
                     match p with
-                    | (memb_ident,
-                      (_, _, _,
-                        memb_ty)) => /- TODO: this is only correct if the first member was the one initialised -/
+                    | (memb_ident, (_, _, _, memb_ty)) =>
                       (memb_ident,
                         some
                           (constructValue_aux tagDefs1 (path ++ [Elem_member memb_ident]) init_map
@@ -1025,29 +1118,17 @@ partial def constructValue_aux (tagDefs1 : Fmap ail_identifier tag_definition0)
      | Union0 tag_sym =>
        (match (fmapLookupBy (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2) tag_sym
             tagDefs1) with
-        | some
-          (Union_definition _ _ isAnonymous ((first_memb_ident, (_, _, _, first_memb_ty)) :: _)) =>
-          ((lemSeq
-            (fun _ =>
-              lem_if isAnonymous then
-                CerbDebug.print_debug_pure 2 ([] : List domain) (fun (u : Unit) =>
-                  match u with
-                  | () => "constructValue_aux: this may be WRONG ==> anonymous Union")
-              else
-                ())
-            (fun _ =>
-              (lemSeq
-                (fun _ =>
-                  CerbDebug.print_debug_pure 0 ([] : List domain) (fun (u : Unit) =>
-                    match u with
-                    | () =>
-                      "constructValue_aux: is WRONG for union ==> always assigning the first member"))
-                (fun _ =>
-                  wrap_expr
-                    (AilEunion tag_sym first_memb_ident
-                      (some
-                        (constructValue_aux tagDefs1 (path ++ [Elem_union]) init_map
-                          first_memb_ty))))))))
+        | some (Union_definition _ _ _ ((first_memb_ident, _) :: _)) =>
+          (let memb_ident := selected_union_member path init_map first_memb_ident;
+           match find_union_member tagDefs1 memb_ident tag_sym with
+           | some memb_ty =>
+             wrap_expr
+               (AilEunion tag_sym memb_ident
+                 (some
+                   (constructValue_aux tagDefs1 (path ++ [Elem_union memb_ident]) init_map
+                     memb_ty)))
+           | none =>
+             (failwithI "constructValue_aux: selected union member missing" : expression Unit))
         | _ => (failwithI "constructValue_aux, Union" : expression Unit))
      | Atomic ty' => /- TODO: check this -/ constructValue_aux tagDefs1 path init_map ty'
      | _ =>
@@ -1058,7 +1139,7 @@ partial def constructValue_aux (tagDefs1 : Fmap ail_identifier tag_definition0)
                   match x with
                   | Elem_array _ => (0 : Nat)
                   | Elem_member _ => 1
-                  | Elem_union => 2;
+                  | Elem_union _ => 2;
               match elem1, elem2 with
               | Elem_array n1, Elem_array n2 => defaultCompare n1 n2
               | Elem_member ident1, Elem_member ident2 =>
@@ -1066,11 +1147,16 @@ partial def constructValue_aux (tagDefs1 : Fmap ail_identifier tag_definition0)
                  | (Identifier _ str1) =>
                    (match ident2 with
                     | (Identifier _ str2) => defaultCompare str1 str2))
+              | Elem_union ident1, Elem_union ident2 =>
+                (match ident1 with
+                 | (Identifier _ str1) =>
+                   (match ident2 with
+                    | (Identifier _ str2) => defaultCompare str1 str2))
               | _, _ => defaultCompare (ord elem1) (ord elem2))) path init_map) with
-        | none => mk_zeroInit tagDefs1 cty
-        | some e => e))
+        | some (some e) => e
+        | _ => mk_zeroInit tagDefs1 cty))
 
 def constructValue (tagDefs1 : Fmap ail_identifier tag_definition0)
-    (init_map : Fmap (List init_element) (expression Unit)) (ty1 : ctype) :
+    (init_map : Fmap (List init_element) (Option (expression Unit))) (ty1 : ctype) :
     expression Unit :=
   constructValue_aux tagDefs1 ([] : List init_element) init_map ty1

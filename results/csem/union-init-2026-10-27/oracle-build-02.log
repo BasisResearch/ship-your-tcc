@@ -1,0 +1,8 @@
+Running as unit: run-p3210530-i463988696.scope; invocation ID: a2332c22338547dcbbf1ba2a8f070335
+make: Entering directory '/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/union-oracle-02'
+[MKDIR] ocaml_frontend/generated
+[LEM] generating files in [ocaml_frontend/generated] (log in [ocaml_frontend/lem.log])
+File "frontend/model/driver.lem", line 360, character 13 to line 360, character 28
+  Type error: unbound variable for targets {ocaml}: fs_console_fd
+make: *** [Makefile:231: ocaml_frontend/generated/utils.ml] Error 1
+make: Leaving directory '/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/union-oracle-02'

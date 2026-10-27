@@ -1,0 +1,37 @@
+artifacts: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/f1a/run-zvsw1eav
+adhoc	csem/tests/union-init-batch.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/braces.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/c11-active-members.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/continuation.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/ctl_anonymous.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/ctl_array_first.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/ctl_assign_not_init.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/ctl_first_designated_static.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/ctl_first_is_array.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/ctl_first_struct_partial.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/ctl_first_twice.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/ctl_in_struct_first.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/ctl_in_struct_positional.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/ctl_positional.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/ctl_positional_then_first.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/implicit-pointer.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/incomplete-array.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/member-types.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/override-tree.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/strings.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/union-second.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/w_array_of_unions.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/w_c_array.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/w_c_elem_auto.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/w_c_elem_static.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/w_compound_literal.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/w_coverage_union3_003_shape.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/w_in_struct_designated.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/w_mixed_a_c.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/w_mixed_c_a.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/w_nested.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/w_positional_then_c.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/w_scalar_second.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/w_string.c	AGREE	lean 0 ms
+adhoc	csem/tests/union-init/w_struct_member.c	AGREE	lean 0 ms
+adhoc AGREE=35 total=35

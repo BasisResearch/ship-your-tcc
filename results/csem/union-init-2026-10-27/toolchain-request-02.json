@@ -1,0 +1,17 @@
+{
+  "request": "csem-union-oracle-20261027-02",
+  "request_id": "csem-union-oracle-20261027-02",
+  "purpose": "Supersedes withdrawn 01. Isolated patched OCaml oracle from IMMUTABLE frontend tar; current matching pins and generator; no DNS, no pristine mutation.",
+  "commands": [
+    [
+      "bash",
+      "build/union-oracle-02.sh"
+    ]
+  ],
+  "sha256": {
+    "build/union-oracle-02.sh": "8100c732c80a2fefd1aa6f1cd19830fd7658d267ca1c3c251525a49c6a29ce76",
+    "build/union-frontend-02.tar": "6cd13929f3256a6ceb9e2b924ef3f586963fd9950093917f49aade70a9eb3bc3"
+  },
+  "cap": "free -g >=25GB; flock shared SYT_LAKE_LOCK; systemd-run --user --scope -p MemoryMax=12G",
+  "result": "build/worker-toolchain.result"
+}

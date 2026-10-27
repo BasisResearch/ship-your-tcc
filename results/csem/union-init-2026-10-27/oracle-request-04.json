@@ -1,0 +1,20 @@
+{
+  "request": "csem-union-oracle-20261027-04",
+  "request_id": "csem-union-oracle-20261027-04",
+  "purpose": "Supersedes 03. 02 failed because unrelated local Lean-only FS seams cannot generate OCaml. Overlay ONLY the shared semantic repair desugaring_init.lem onto pristine current upstream. This is the identical source used for generated Lean; hash-keyed helper validates it. Remaining local Lean-only seams are not involved in union initialization.",
+  "commands": [
+    [
+      "bash",
+      "scripts/csem_fork_oracle.sh",
+      "--build"
+    ]
+  ],
+  "sha256": {
+    "scripts/csem_fork_oracle.sh": "520e7de2924fb9fe5a641d1bdcc06b711cac35e2d38694f53424ee69fc4e6cc1",
+    "scripts/csem_env.sh": "d07848c8e542dd495bf13ce7ab0a7b4399bb5c3e6ff8178587b1e36ce1eb1978",
+    "vendor/CSEM_REV": "f4728490acefb712e9ea36f3c89ee387c98b31f8bb297f639ed71f520b92dfd6",
+    "csem/frontend/model/desugaring_init.lem": "bc81c6d2f3fd1986ef598bc7d9495c3a929fb55ea5cf736d883836f11e9816d4"
+  },
+  "cap": "free -g >=25GB; flock shared SYT_LAKE_LOCK; systemd-run --user --scope -p MemoryMax=12G",
+  "result": "build/worker-toolchain.result"
+}
