@@ -32,7 +32,7 @@ UNIT=(core-parser-test effects-proof-test totality-proof-test fresh-int-test pp-
       fuel-exemplar-test monadic-failstop-test allocator-soundness-test float-literal-test
       are-compatible-test many-restatement-test opaque-failure-test enum-data-test
       run-digest-test cabs-import-test match-pattern-arity-test memory-access-test
-      reconstruct-legacy-test pnvi-arms-test stop-test core-quote-test)
+      reconstruct-legacy-test pnvi-arms-test stop-test core-quote-test ieee-test ieee-integration-test)
 
 echo "== csem (1) copy-set sync, lem-sync stamp"
 csem/tools/check_handwritten_sync.sh || fail "hand-written copies drifted (scripts/csem_regen.sh)"
@@ -48,6 +48,7 @@ echo "== csem (3) unit executables"
 for t in "${UNIT[@]}"; do
   args=()
   case "$t" in
+    ieee-test) args=(native 1000 17);;
     monadic-failstop-test) args=(2 17);;
     core-quote-test) args=(--local-controls);;
     match-pattern-arity-test|pnvi-arms-test) args=(17);;
@@ -83,6 +84,13 @@ python3 csem/scripts/test_exec_totality.py | tail -1 || fail "exec totality plan
 csem/scripts/check_theorem_axioms.sh | grep '^check_theorem_axioms' || fail "axiom census"
 [ "${PIPESTATUS[0]}" = 0 ] || fail "axiom census"
 csem/scripts/check_sorry_token.sh || fail "sorry token"
+
+echo "== csem (4b) semantic native-seam census"
+free -g
+[ "$(free -g | awk '/^Mem:/ {print $7}')" -ge 25 ] || fail "need >=25 GB before census"
+lock=${SYT_LAKE_LOCK:-$_main/build/lake.lock}
+flock "$lock" systemd-run --user --scope -p MemoryMax=12G lake env lean scripts/csem_cone.lean > build/csem-cone.log 2>&1 || fail "native-seam census (build/csem-cone.log)"
+grep -E '^counts |^native floating ' build/csem-cone.log
 
 echo "== csem (5) generator drift"
 csem_have_toolchain || fail "matching pinned generator required for the repin gate (scripts/csem_toolchain.sh)"

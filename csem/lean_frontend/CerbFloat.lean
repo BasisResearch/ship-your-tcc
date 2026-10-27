@@ -1,454 +1,69 @@
 import CerbStopSites
 import LemLib
-/-
-  Floating-point operations for Cerberus.
-  Corresponds to: util/cerb_floating.ml and OCaml float builtins.
+import CerbIEEE
 
-  Maps Cerberus float to Lean's Float (IEEE 754 double).
-  This is a leaf module — no imports from generated code.
--/
+/-! Pure floating seams. Values retain their format and object bits. Arithmetic
+uses the recovered `CerbIEEE.Fast` operations, proved equal to `Float.Model`.
+No machine summary is imported here. The libgcc/image connection is an open
+obligation, independently of the definitional arithmetic specification. -/
+namespace CerbIEEE.FVal
 
--- Ord Float — a total, reflexive order (sem:N8 fix: the previous
--- `if x<y .lt else if x==y .eq else .gt` returned .gt for EVERY NaN
--- comparison, including `compare nan nan` — irreflexive, an unlawful
--- order once a float keys a set). Mirrors OCaml Stdlib.compare's key
--- properties: NaN equals itself and sorts below every non-NaN value
--- (+0.0/-0.0 compare equal here — OCaml's compare distinguishes them).
--- DECLARED UNREACHABLE (zero-discrepancy Z-62, charter §2.7): this instance
--- and the `floatMul/Add/Sub/Div/of_int/floatEq/Lt/Le` helpers are referenced
--- only from generated/Defacto_memory.lean and generated/Float.lean (grep),
--- never from the concrete exec cone (`CerbMem.opFval` uses the Float ops
--- directly); no `Set Float`/`compare` on floats exists in the exec cone
--- (AilSyntax compares the literal STRING). Mirror `Stdlib.compare`'s ±0.0
--- distinction if a float-keyed set ever enters an exec path.
-instance : Ord Float where
-  compare x y :=
-    if x < y then .lt
-    else if y < x then .gt
-    else match x.isNaN, y.isNaN with
-      | true,  true  => .eq
-      | true,  false => .lt
-      | false, true  => .gt
-      | false, false => .eq
+instance : Inhabited FVal := ⟨⟨.binary64, CerbIEEE.zero .binary64 false⟩⟩
+instance : BEq FVal := ⟨cmp₂ CerbIEEE.eq⟩
+instance : Add FVal := ⟨lift₂ CerbIEEE.add⟩
+instance : Sub FVal := ⟨lift₂ CerbIEEE.sub⟩
+instance : Mul FVal := ⟨lift₂ CerbIEEE.mul⟩
+instance : Div FVal := ⟨lift₂ CerbIEEE.div⟩
+instance : Neg FVal := ⟨fun v => ⟨v.fmt, CerbIEEE.neg v.fmt v.bits⟩⟩
+instance (n : Nat) : OfNat FVal n := ⟨⟨.binary64, CerbIEEE.ofInt .binary64 n⟩⟩
+instance : OfScientific FVal := ⟨fun m neg e =>
+  ⟨.binary64, CerbIEEE.ofDecimal .binary64 false m (if neg then -(e : Int) else e)⟩⟩
+def isNaN (v : FVal) : Bool := CerbIEEE.isNaN v.fmt v.bits
+def isInf (v : FVal) : Bool := CerbIEEE.isInf v.fmt v.bits
+instance : Ord FVal where
+  compare a b :=
+    if a.isNaN then (if b.isNaN then .eq else .lt)
+    else if b.isNaN then .gt
+    else if cmp₂ CerbIEEE.lt a b then .lt
+    else if cmp₂ CerbIEEE.lt b a then .gt else .eq
+end CerbIEEE.FVal
 
 namespace CerbFloat
+open CerbIEEE
+abbrev Value := FVal
 
-def floatEq (x y : Float) : Bool := x == y
-def floatLt (x y : Float) : Bool := x < y
-def floatLe (x y : Float) : Bool := x <= y
+def floatEq (x y : Value) : Bool := FVal.cmp₂ CerbIEEE.eq x y
+def floatLt (x y : Value) : Bool := FVal.cmp₂ CerbIEEE.lt x y
+def floatLe (x y : Value) : Bool := FVal.cmp₂ CerbIEEE.le x y
+def floatAdd (x y : Value) : Value := x + y
+def floatSub (x y : Value) : Value := x - y
+def floatMul (x y : Value) : Value := x * y
+def floatDiv (x y : Value) : Value := x / y
+def of_int (n : Int) : Value := ⟨.binary64, CerbIEEE.ofInt .binary64 n⟩
 
-def floatAdd (x y : Float) : Float := x + y
-def floatSub (x y : Float) : Float := x - y
-/-- ISO-fix register R6 — ADMITTED [USER 2026-10-03] as the canonical
-    unambiguous-mistake case: no semantic ambiguity, just fix it
-    (VALIDATION.md §2; record docs/2026-10-03_total-arith-and-bookkeeping-record.md
-    §4, §8). The
-    OCaml target of lem's `Float.floatMul` is `Cerb_floating.mul`, which
-    upstream defines as `(+.)` — literally addition (util/cerb_floating.ml:5;
-    add/sub/div on the neighbouring lines are correct: a copy-paste slip;
-    filed upstream as #1009 — tray 01, docs/2026-08-19_upstream-float-mul.md). This
-    port multiplies. UNREACHABLE from execution and from the front end: in the
-    kernel constant-dependency closure of the exec entries and of the front-end
-    entries (tests/failure-probes/FailureReach.lean) `CerbFloat.floatMul` is
-    absent from both; its only users are the generated Defacto_memory
-    `impl_op_fval` (the defacto model, not the concrete model that executes)
-    and float.lem's `NumMult` instance, which no lem code in either cone
-    applies. The concrete model's own op_fval (impl_mem.ml:2529-2537, mirrored
-    by CerbMem.opFval) uses `*.` directly and is not affected. -/
--- ISO-fix register R6 (ADMITTED [USER 2026-10-03])
-def floatMul (x y : Float) : Float := x * y
-def floatDiv (x y : Float) : Float := x / y
+def ofStringAs (fmt : FFormat) (s : String) : Value :=
+  match ofLiteral fmt s with
+  | some bits => ⟨fmt, bits⟩
+  | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.floatParse s!"CerbFloat.ofStringAs: malformed literal {s}")))
 
-/-- Corresponds to: float_of_int in OCaml -/
-def of_int (n : Int) : Float := Float.ofInt n
+/-- Untyped Core/legacy Float literals are binary64; C literals use `strFval`
+which selects the configured format before parsing any digits. -/
+def of_string (s : String) : Value := ofStringAs .binary64 s
 
-/-! ## String → Float parsing — correctly rounded (semantics-audit repairs, 2026-09-11)
+def formatIEEE (conv : Char) (minus plus space hash zero : Bool) (width : Nat)
+    (precision : Option Nat) (v : Value) : String :=
+  CerbIEEE.format { conv, minus, plus, space, hash, zero, width, precision } v.fmt v.bits
 
-    MIRROR TARGETS. The strings reaching `of_string` are C floating-literal
-    texts, fed from exactly two places:
+def formatFixed (prec : Nat) (v : Value) : String :=
+  CerbIEEE.format { conv := 'f', precision := some prec } v.fmt v.bits
 
-    * `translation.lem:207-209` (`A.ConstantFloating (str, _)` → `Mem.str_fval str`):
-      the raw literal text from the C lexer WITHOUT its suffix (the lexer
-      separates `f`/`F`/`l`/`L` into `suffix_opt`; `cabs_json.ml:93-94`
-      `json_of_cabs_floating_constant (s, suffix_opt)`). On the OCaml side
-      the concrete model's `Impl_mem.str_fval`
-      (memory/concrete/impl_mem.ml:2523-2524) is `float_of_string str`; the
-      lem-level `Float.of_string` (frontend/model/float.lem:82; defacto
-      model only, outside the exec cone) is `Cerb_floating.of_string`
-      (util/cerb_floating.ml:8-16), which strips one trailing `f` and calls
-      the same `float_of_string`. We accept one trailing `f`/`F`/`l`/`L`
-      (charter 2026-09-11 D1 goal); neither feeding site produces one.
-    * `CoreParser.lean` (`lexNumLit`): a normalised decimal
-      `D+ [. D*] [e[+|-]D+]`, optionally negated (Core text dumps, including
-      the pinned `tests/libc/libc.core`).
+def string_of_float (v : Value) : String :=
+  let s := CerbIEEE.format { conv := 'g', precision := some 12 } v.fmt v.bits
+  if v.isNaN || v.isInf || s.contains '.' || s.contains 'e' then s else s ++ "."
 
-    `float_of_string` is `caml_float_of_string` (OCaml 5.4.0
-    runtime/floats.c:376-425):
-    * hexadecimal `0x…`: `caml_float_of_hex` (floats.c:286-374) — the exact
-      mantissa in a 60-bit accumulator with round-to-odd on the excess digits
-      (:342-345), ONE int64→double conversion (:355) and then `ldexp` (:369).
-      For a result in the NORMAL range `ldexp` is exact, so the result is the
-      correctly rounded binary64 value; for a result in the SUBNORMAL range
-      `ldexp` rounds a second time (double rounding) — OBSERVED on the fork
-      oracle (record `docs/2026-09-11_semantics-audit-repairs-record.md`
-      §D1 row 106) and ADMITTED as ISO-fix register R5 [USER 2026-09-15]:
-      the marker block at `roundToBinary64Bits` below; the pin is
-      `tests/immaculate/nolibc/r5-hex-subnormal-double-rounding.c`.
-    * decimal: the C library's `strtod` (glibc: correctly rounded, every
-      range, ties-to-even).
-
-    THIS MODULE computes, for every well-formed literal (decimal or hex,
-    sign, optional suffix), THE IEEE 754-2019 binary64 value nearest to the
-    literal's exact rational value under round-to-nearest-even, with gradual
-    underflow to subnormals and signed zero, and overflow to ±inf — in exact
-    `Nat` arithmetic on `num/den`, assembled bit by bit with `Float.ofBits`.
-    NO `Float` arithmetic happens before that final assembly:
-    `Float.ofNat`/`Float.scaleB`/`Float.ofScientific` — the pre-2026-09-11
-    implementation — WERE the defect (finding 4 of the 2026-09-11 semantics
-    audit: `Float.ofNat` of a 1041-bit hex mantissa is `inf` before scaling;
-    `Float.ofScientific` truncates twice before a third rounding). The only
-    numerals are the binary64 format parameters of IEEE 754-2019 §3.4,
-    named below. Any residual difference from the oracle is a BUG
-    (VALIDATION.md §0–§1; the former "deliberate, documented divergence"
-    wording is withdrawn) unless it is the ONE register entry R5 below; the
-    differential pins are `tests/float/081-105` and the R5 immaculate row.
-
-    Malformed input (including OCaml's own "inf"/"nan" spellings, which no
-    feeding site produces): `float_of_string` raises `Failure`; mirrored
-    with `panic!` (same observable class — abort with a message; nothing
-    catches it on either side). A decimal exponent marker without digits
-    (`1e`, `1e+`) is malformed here as it is for `strtod` (the OCaml wrapper
-    requires the whole string to be consumed, floats.c:420-421). -/
-
-/-! ### IEEE 754-2019 §3.4 binary64 parameters (table 3.5) — the conversion's only numerals -/
-
-/-- precision p = 53 (IEEE 754-2019 §3.4, table 3.5, binary64). -/
-private def binary64Precision : Nat := 53
-/-- exponent field width w = 11 bits (§3.4, table 3.5). -/
-private def binary64ExpWidth : Nat := 11
-/-- emax = 1023 (§3.4, table 3.5); the exponent bias equals emax (§3.4). -/
-private def binary64Emax : Int := 1023
-private def binary64Bias : Int := binary64Emax
-/-- emin = 1 − emax = −1022 (§3.4). -/
-private def binary64Emin : Int := 1 - binary64Emax
-/-- trailing-significand (fraction) width p − 1 = 52 bits (§3.4). -/
-private def binary64FracBits : Nat := binary64Precision - 1
-/-- exponent of the least significant bit of a subnormal, emin − (p − 1) = −1074
-    (§3.4: subnormals are 0.f · 2^emin). -/
-private def binary64MinQuantumExp : Int := binary64Emin - (binary64FracBits : Int)
-/-- the all-ones exponent field 2^w − 1 (§3.4: infinities and NaNs). -/
-private def binary64ExpFieldMax : Nat := 2 ^ binary64ExpWidth - 1
-
-private def signBits (neg : Bool) : UInt64 :=
-  if neg then (1 : UInt64) <<< UInt64.ofNat (binary64ExpWidth + binary64FracBits) else 0
-
-/-- ±inf: sign · all-ones exponent · zero fraction (§3.4). -/
-private def infBits (neg : Bool) : UInt64 :=
-  signBits neg ||| (UInt64.ofNat binary64ExpFieldMax <<< UInt64.ofNat binary64FracBits)
-
--- ISO-fix register R5 (VALIDATION.md §2, [USER 2026-09-15] accepted the
--- recommendation to keep the correctly rounded conversion): this routine
--- rounds ONCE, to the target precision, for every result including
--- subnormals. The oracle's `caml_float_of_hex` (OCaml 5.4.0
--- runtime/floats.c:355 `f = (double) (int64_t) m;` then :369 `f = ldexp(f,
--- exp);`) rounds a hexadecimal mantissa of more than 53 significant bits
--- to 53 bits and then AGAIN to the subnormal's shorter precision — double
--- rounding, wrong by one quantum when the first rounding lands on a tie of
--- the second. ISO C11 §6.4.4.2#3 (last sentence): "For hexadecimal
--- floating constants when FLT_RADIX is a power of 2, the result is
--- correctly rounded." Second oracles agreeing with Lean: gcc (exit 1 on the
--- pin) and Python `float.fromhex`. SCOPE of the divergence: hexadecimal
--- literals with more than 53 significant bits whose value is subnormal and
--- whose 53-bit pre-rounding lands on a tie; normal-range results and every
--- decimal literal are unaffected (`strtod` rounds once). The defect is the
--- OCaml RUNTIME's, inherited by Cerberus through `float_of_string`
--- (`Impl_mem.str_fval`, impl_mem.ml:2523-2524) — upstream-tray ocaml/01
--- (OCaml) + 40 (Cerberus-facing, INHERITED). Pinned Lean-right/oracle-wrong
--- in tests/immaculate: r5-hex-subnormal-double-rounding (DIFF, L=Specified(1));
--- it flips to MATCH and the entry RETIRES when the runtime is fixed.
-/-- Bits of the binary64 nearest, ties-to-even (IEEE 754-2019 §4.3.1), to
-    `(-1)^neg · num / den` (`den > 0`), assembled per §3.4 as
-    sign · biased exponent · trailing significand. Exact `Nat` arithmetic:
-    the binade E is found from the two bit lengths plus one comparison, the
-    significand is truncated at the format's quantum (2^(E−52), or 2^−1074 in
-    the subnormal range) with the remainder deciding the rounding; a carry
-    to 2^53 renormalises; an exponent field of 2^w−1 or more is +/−inf. -/
-private def roundToBinary64Bits (neg : Bool) (num den : Nat) : UInt64 :=
-  if num == 0 then signBits neg
-  else
-    -- E with 2^E ≤ num/den < 2^(E+1): the candidate log2 num − log2 den is E or E+1
-    let e0 : Int := (Nat.log2 num : Int) - (Nat.log2 den : Int)
-    let atLeast (e : Int) : Bool :=  -- den · 2^e ≤ num ?
-      if e ≥ 0 then den * 2 ^ e.toNat ≤ num else den ≤ num * 2 ^ (-e).toNat
-    let E : Int := if atLeast e0 then e0 else e0 - 1
-    -- the quantum 2^qe of the result's least significant bit
-    let qe : Int := max (E - (binary64FracBits : Int)) binary64MinQuantumExp
-    -- q = ⌊num · 2^(−qe) / den⌋, remainder r for the tie/sticky decision
-    let (n, d) := if qe ≤ 0 then (num * 2 ^ (-qe).toNat, den) else (num, den * 2 ^ qe.toNat)
-    let q := n / d
-    let r := n % d
-    let q := if 2 * r > d then q + 1
-             else if 2 * r < d then q
-             else if q % 2 == 0 then q else q + 1
-    let hidden := 2 ^ binary64FracBits
-    if q < hidden then
-      -- subnormal (or zero after rounding): exponent field 0, fraction q at 2^−1074
-      signBits neg ||| UInt64.ofNat q
-    else
-      -- normal; a carry to 2^p means significand 1.0 one binade up
-      let (q, qe) := if q == 2 * hidden then (hidden, qe + 1) else (q, qe)
-      let expField : Int := qe + (binary64FracBits : Int) + binary64Bias
-      if expField ≥ (binary64ExpFieldMax : Int) then infBits neg
-      else
-        signBits neg
-          ||| (UInt64.ofNat expField.toNat <<< UInt64.ofNat binary64FracBits)
-          ||| UInt64.ofNat (q - hidden)
-
-/-- Bits of the binary64 nearest to `(-1)^neg · m · base^e` where `m < base^mBound`
-    (`base ≥ 2`). The two guards keep the exact arithmetic bounded by the FORMAT,
-    not by the literal's exponent text (a literal `1e999999999` must not build
-    10^999999999): with `m ≥ 1`, `e > emax + 1` gives `m · base^e ≥ 2^(emax+2) >
-    2^(emax+1)`, already above every finite value's rounding range → ±inf;
-    `e + mBound < (emin − (p−1)) − 1` gives `m · base^e < base^(e+mBound) ≤
-    2^(e+mBound) < 2^−1075`, below half the smallest subnormal → ±0. Everything
-    else is rounded exactly. -/
-private def scaledToBits (neg : Bool) (m : Nat) (base : Nat) (e : Int) (mBound : Nat) : UInt64 :=
-  if m == 0 then signBits neg
-  else if e > binary64Emax + 1 then infBits neg
-  else if e + (mBound : Int) < binary64MinQuantumExp - 1 then signBits neg
-  else if e ≥ 0 then roundToBinary64Bits neg (m * base ^ e.toNat) 1
-  else roundToBinary64Bits neg m (base ^ (-e).toNat)
-
-/-- Decimal-digit run → (value, digit count). -/
-private def digitsToNat (s : List Char) : Nat × Nat :=
-  s.foldl (fun (acc, k) c => (acc * 10 + (c.toNat - '0'.toNat), k + 1)) (0, 0)
-
-private def isHexDigit (c : Char) : Bool :=
-  c.isDigit || ('a' ≤ c && c ≤ 'f') || ('A' ≤ c && c ≤ 'F')
-
-private def hexVal (c : Char) : Nat :=
-  if c.isDigit then c.toNat - '0'.toNat
-  else if 'a' ≤ c && c ≤ 'f' then c.toNat - 'a'.toNat + 10
-  else c.toNat - 'A'.toNat + 10
-
-/-- Optional signed decimal exponent after a marker: `[+|-] D+` → (value, rest);
-    `none` if no digit follows (malformed, as for strtod). -/
-private def parseExponent (rest : List Char) : Option (Int × List Char) :=
-  let (neg, rest) := match rest with
-    | '+' :: r => (false, r)
-    | '-' :: r => (true, r)
-    | r => (false, r)
-  let digits := rest.takeWhile Char.isDigit
-  if digits.isEmpty then none
-  else
-    let v : Int := digits.foldl (fun a c => a * 10 + (c.toNat - '0'.toNat)) (0 : Int)
-    some (if neg then -v else v, rest.drop digits.length)
-
-/-- Decimal C floating literal (sign already stripped): `D* [. D*] [(e|E) [+|-] D+]`
-    with at least one digit → exact `(m, e10, nd)` with value `m · 10^e10` and
-    `m < 10^nd`. `none` on malformed input. -/
-private def parseDecimal (cs : List Char) : Option (Nat × Int × Nat) := do
-  let intPart := cs.takeWhile Char.isDigit
-  let cs := cs.drop intPart.length
-  let (fracPart, cs) :=
-    match cs with
-    | '.' :: rest => (rest.takeWhile Char.isDigit, rest.drop (rest.takeWhile Char.isDigit).length)
-    | _ => ([], cs)
-  if intPart.isEmpty && fracPart.isEmpty then failure
-  let (exp10, cs) ← match cs with
-    | 'e' :: rest | 'E' :: rest => parseExponent rest
-    | _ => some ((0 : Int), cs)
-  if !cs.isEmpty then failure
-  let (intVal, intLen) := digitsToNat intPart
-  let (fracVal, fracLen) := digitsToNat fracPart
-  return (intVal * 10 ^ fracLen + fracVal, exp10 - fracLen, intLen + fracLen)
-
-/-- Hexadecimal C floating literal after the `0x`/`0X` (sign already stripped):
-    `H* [. H*] [(p|P) [+|-] D+]` with at least one hex digit → exact `(m, e2, nb)`
-    with value `m · 2^e2` and `m < 2^nb`. The binary exponent is mandatory in C
-    (§6.4.4.2) but `caml_float_of_hex` tolerates its absence as `p0` (floats.c:
-    the `exp` initialiser :293), mirrored. `none` on malformed input. -/
-private def parseHex (cs : List Char) : Option (Nat × Int × Nat) := do
-  let intPart := cs.takeWhile isHexDigit
-  let cs := cs.drop intPart.length
-  let (fracPart, cs) :=
-    match cs with
-    | '.' :: rest => (rest.takeWhile isHexDigit, rest.drop (rest.takeWhile isHexDigit).length)
-    | _ => ([], cs)
-  if intPart.isEmpty && fracPart.isEmpty then failure
-  let (p, cs) ← match cs with
-    | 'p' :: rest | 'P' :: rest => parseExponent rest
-    | _ => some ((0 : Int), cs)
-  if !cs.isEmpty then failure
-  let digits := intPart ++ fracPart
-  let mantissa := digits.foldl (fun a c => a * 16 + hexVal c) 0
-  return (mantissa, p - 4 * fracPart.length, 4 * digits.length)
-
-/-- Corresponds to: `Impl_mem.str_fval` = `float_of_string` (impl_mem.ml:2523-2524)
-    / `Cerb_floating.of_string` (util/cerb_floating.ml:8-16) — see the section
-    comment for the two mirror targets and the correctly-rounded contract. One
-    trailing `f`/`F`/`l`/`L` is dropped; a leading `-`/`+` sets the sign (a
-    negative zero is a negative zero); `0x`/`0X` selects the hexadecimal form.
-    Malformed input: OCaml raises `Failure` — mirrored with `panic!`. -/
-def of_string (s : String) : Float :=
-  let s' := if s.endsWith "f" || s.endsWith "F" || s.endsWith "l" || s.endsWith "L"
-    then (s.dropEnd 1).copy
-    else s
-  let cs := s'.toList
-  let (neg, cs) := match cs with
-    | '-' :: rest => (true, rest)
-    | '+' :: rest => (false, rest)
-    | _ => (false, cs)
-  let bits : Option UInt64 := match cs with
-    | '0' :: 'x' :: rest | '0' :: 'X' :: rest =>
-      (parseHex rest).map fun (m, e2, nb) => scaledToBits neg m 2 e2 nb
-    | _ =>
-      (parseDecimal cs).map fun (m, e10, nd) => scaledToBits neg m 10 e10 nd
-  match bits with
-  | some b => Float.ofBits b
-  | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.floatParse s!"CerbFloat.of_string: {s} (OCaml Cerb_floating.of_string raises Failure)")))
-
-/-! ## Exact decimal formatting (arc-10 S3, pp-placeholder text class)
-
-OCaml's float→text goes through C printf: `string_of_float f =
-valid_float_lexem (format_float "%.12g" f)` (OCaml stdlib.ml) and
-`Decode.format_string_of_float prec f = Printf.sprintf "%.<prec>f" f`
-(ocaml_frontend/decode.ml:228-232). glibc prints the CORRECTLY-ROUNDED
-decimal form of the exact binary value (ties: round-half-even). We
-reproduce that exactly with integer arithmetic on the IEEE-754
-decomposition: |f| = m·2^e with m,e integers, so any scaled value
-m·2^e·10^p is a ratio of integers and can be rounded half-even exactly.
-Verified against OCaml 5.4.0 (= glibc printf) reference outputs in
-test/Unit/PPTest.lean. -/
-
-/-- IEEE-754 double decomposition: (sign, m, e) with |f| = m·2^e (m = 0
-    iff f = ±0). Finite inputs only (callers branch on nan/inf first). -/
-private def decomposeFinite (f : Float) : Bool × Nat × Int :=
-  let bits := f.toBits
-  let sign := bits >>> 63 == 1
-  let expField := ((bits >>> 52) &&& 0x7FF).toNat
-  let mantissa := (bits &&& 0xFFFFFFFFFFFFF).toNat
-  if expField == 0 then (sign, mantissa, -1074)          -- subnormal / zero
-  else (sign, mantissa + (1 <<< 52), (expField : Int) - 1075)
-
-/-- round-half-even of m·2^e·10^p (all exact) to a Nat. -/
-private def scaledRound (m : Nat) (e : Int) (p : Int) : Nat :=
-  let num := m * (if e ≥ 0 then 2 ^ e.toNat else 1)
-               * (if p ≥ 0 then 10 ^ p.toNat else 1)
-  let den := (if e < 0 then 2 ^ (-e).toNat else 1)
-               * (if p < 0 then 10 ^ (-p).toNat else 1)
-  let q := num / den
-  let r := num % den
-  if 2 * r > den then q + 1
-  else if 2 * r < den then q
-  else if q % 2 == 0 then q else q + 1
-
-/-- C printf `%.<prec>f` of a double, exactly (glibc: correctly rounded,
-    half-even on the exact binary value). Mirror target:
-    Decode.format_string_of_float (ocaml_frontend/decode.ml:228-232).
-    inf: "inf"/"-inf" like glibc %f. A NaN is REFUSED (contract
-    enforcement, thin-surface tests D1, 2026-09-28): glibc and OCaml print
-    "-nan" or "nan" by the NaN's sign bit (measured: OCaml
-    `Printf.sprintf "%f" (infinity -. infinity)` = "-nan"), and Lean has no
-    portable access to it — `Float.toBits` canonicalizes every NaN to
-    0x7ff8000000000000 (measured) — so printing one would guess. (A NaN's
-    stored bytes are already canonical: named deviation N2, VALIDATION §2b.) -/
-def formatFixed (prec : Nat) (f : Float) : String :=
-  if f.isNaN then failwithI (CerbStop.render (.refusal (CerbStopSites.refusal .floatFormat (some "%f")
-      "CerbFloat.formatFixed: refused — printing a NaN with %f is not supported: its text depends on the NaN's sign bit, which Lean cannot read (Float.toBits canonicalizes NaNs); CONTRACT.md §3"
-      ⟨"preservation of the NaN sign bit through the floating-point runtime", by decide⟩
-      ⟨"CONTRACT.md §3", by decide⟩)))
-  else if f.isInf then (if f < 0 then "-inf" else "inf")
-  else
-    let (sign, m, e) := decomposeFinite f
-    let scaled := scaledRound m e (prec : Int)
-    let ip := scaled / 10 ^ prec
-    let fp := scaled % 10 ^ prec
-    let sgn := if sign then "-" else ""
-    if prec == 0 then sgn ++ toString ip
-    else
-      let fpStr := toString fp
-      let pad := String.ofList (List.replicate (prec - fpStr.length) '0')
-      sgn ++ toString ip ++ "." ++ pad ++ fpStr
-
-/-- Number of decimal digits of a Nat (1 for 0). -/
-private def numDigits (n : Nat) : Nat := (toString n).length
-
-/-- Corresponds to: string_of_float in OCaml — EXACT mirror of
-    `valid_float_lexem (format_float "%.12g" f)` (OCaml stdlib.ml):
-    C `%.12g` = round to 12 significant decimal digits (half-even on the
-    exact value); use `%e` style iff the decimal exponent X < -4 or
-    X ≥ 12; strip trailing fraction zeros; exponent `e±dd` (≥ 2 digits);
-    then valid_float_lexem appends "." iff the result is a plain integer
-    lexeme. A NaN prints "nan" whatever its sign (OCaml prints "-nan" for a
-    negative NaN; Lean cannot read the sign, see formatFixed). Used only by
-    the pretty-printers, which no verdict reads (served-surface audit). -/
-def string_of_float (f : Float) : String :=
-  if f.isNaN then "nan"
-  else if f.isInf then (if f < 0 then "-inf" else "inf")
-  else
-    let (sign, m, e) := decomposeFinite f
-    let sgn := if sign then "-" else ""
-    if m == 0 then sgn ++ "0."
-    else
-      -- decimal exponent X (10^X ≤ |f| < 10^(X+1)): probe at a fixed wide
-      -- scale (10^400 puts even the smallest subnormal ≥ 10^76), then
-      -- correct after the 12-digit rounding.
-      let probe := scaledRound m e 400
-      let X0 : Int := (numDigits probe : Int) - 1 - 400
-      let n0 := scaledRound m e (11 - X0)
-      let (n1, X) : Nat × Int :=
-        if numDigits n0 > 12 then (n0 / 10, X0 + 1)      -- overflow: n0 = 10^12
-        else if numDigits n0 < 12 then (scaledRound m e (11 - (X0 - 1)), X0 - 1)
-        else (n0, X0)
-      -- strip trailing zeros (%g without '#')
-      let rec strip (n : Nat) (fuel : Nat) : Nat :=
-        match fuel with
-        | 0 => n
-        | fuel + 1 => if n % 10 == 0 && n ≥ 10 then strip (n / 10) fuel else n
-      let ds := toString (strip n1 12)
-      if X < -4 || X ≥ 12 then
-        -- %e style: d[.ddd]e±XX
-        let mant :=
-          if ds.length == 1 then ds
-          else (ds.take 1).toString ++ "." ++ (ds.drop 1).toString
-        let xa := (if X < 0 then -X else X).toNat
-        let xs := toString xa
-        let xs := if xs.length < 2 then "0" ++ xs else xs
-        sgn ++ mant ++ "e" ++ (if X < 0 then "-" else "+") ++ xs
-      else if X ≥ 0 then
-        if (ds.length : Int) ≤ X then
-          -- all digits before the point; valid_float_lexem appends "."
-          sgn ++ ds ++ String.ofList (List.replicate (X + 1 - ds.length).toNat '0') ++ "."
-        else if (ds.length : Int) == X + 1 then
-          sgn ++ ds ++ "."
-        else
-          sgn ++ (ds.take (X + 1).toNat).toString ++ "." ++ (ds.drop (X + 1).toNat).toString
-      else
-        -- -4 ≤ X < 0: 0.00ddd
-        sgn ++ "0." ++ String.ofList (List.replicate (-X - 1).toNat '0') ++ ds
-
-/-- Truncate a Float toward zero to an integer — corresponds to zarith's
-    `Z.of_float` (used by ivfromfloat, impl_mem.ml:2553-2554): truncation
-    toward zero, keeping the sign; raises Z.Overflow on nan/inf (mirrored
-    with panic! — nothing catches Z.Overflow on the OCaml path either).
-    Implemented bit-exactly from the IEEE 754 representation (NOT via
-    Float.toUInt64, which clamps negatives to 0). -/
-def truncToInt (f : Float) : Int :=
-  let bits := f.toBits
-  let expBits := ((bits >>> 52) &&& 0x7FF).toNat
-  let mantBits := (bits &&& 0xFFFFFFFFFFFFF).toNat
-  if expBits == 0x7FF then
-    failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.floatToInt "CerbFloat.truncToInt: nan/inf (OCaml Z.of_float raises Z.Overflow)")))
-  else
-    let mant := if expBits == 0 then mantBits else mantBits + (1 <<< 52)
-    -- unbiased exponent minus mantissa width: value = mant · 2^(expBits−1075)
-    let mag : Nat :=
-      if expBits ≥ 1075 then mant <<< (expBits - 1075)
-      else mant >>> (1075 - expBits)   -- floor of |f| = trunc toward 0 of f
-    if bits >>> 63 == 1 then -(mag : Int) else (mag : Int)
-
-/-- Corresponds to: int_of_float in OCaml (truncation toward zero). -/
-def to_int (f : Float) : Int := truncToInt f
-
+def truncToInt (v : Value) : Int :=
+  match CerbIEEE.toInt? v.fmt v.bits with
+  | some n => n
+  | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.floatToInt "CerbFloat.truncToInt: non-finite Core value")))
+def to_int (v : Value) : Int := truncToInt v
 end CerbFloat

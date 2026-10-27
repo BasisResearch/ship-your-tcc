@@ -417,8 +417,8 @@ partial def view74 (x : CerbMem.Provenance) : Shape :=
   | .Prov_some a0 => .node "CerbMem.Provenance.Prov_some" #[(view32 a0)]
   | .Prov_symbolic a0 => .node "CerbMem.Provenance.Prov_symbolic" #[(view32 a0)]
   | .Prov_device  => .node "CerbMem.Provenance.Prov_device" #[]
-partial def view75 (x : Float) : Shape :=
-  .scalar (if x.isNaN then "NaN" else "Float.bits") (toString x.toBits.toNat)
+partial def view75 (x : CerbIEEE.FVal) : Shape :=
+  .scalar "IEEE.bits" (toString x.fmt.width ++ "/" ++ toString x.bits.toNat)
 partial def view76 (x : CerbMem.PointerValue) : Shape :=
   match x with
   | .PV a0 a1 => .node "CerbMem.PointerValue.PV" #[(view74 a0), (view77 a1)]
@@ -742,6 +742,11 @@ partial def view93 (x : ctor) : Shape :=
   | .CivXOR  => .node "ctor.CivXOR" #[]
   | .Cspecified  => .node "ctor.Cspecified" #[]
   | .Cunspecified  => .node "ctor.Cunspecified" #[]
+  | .Cfvconvert  => .node "ctor.Cfvconvert" #[]
+  | .CfvconvertLoaded  => .node "ctor.CfvconvertLoaded" #[]
+  | .CfvfromintTyped  => .node "ctor.CfvfromintTyped" #[]
+  | .CfvfromintTypedLoaded  => .node "ctor.CfvfromintTypedLoaded" #[]
+  | .Cfvneg  => .node "ctor.Cfvneg" #[]
   | .Cfvfromint  => .node "ctor.Cfvfromint" #[]
   | .Civfromfloat  => .node "ctor.Civfromfloat" #[]
   | .CivNULLcap a0 => .node "ctor.CivNULLcap" #[(view51 a0)]
@@ -1114,7 +1119,6 @@ partial def view171 (x : sym × ctype) : Shape :=
   | .mk a0 a1 => .node "Prod.mk" #[(view2 a0), (view33 a1)]
 end
 -- END DATATYPE VISITOR
--- 638 model constructors; 172 instantiated types; 75 model + 6 container heads.
 
 def unwrap {α : Type} : Except String α → IO α
   | .ok x => pure x
@@ -1201,12 +1205,12 @@ def active : sym → sym → LemOrdering :=
   @Lem_Map.MapKeyType.mapKeyCompare sym (@Lem_Map.instMapKeyTypeOfSetType sym instSetTypeSym_1)
 def structural : sym → sym → LemOrdering :=
   @Lem_Map.MapKeyType.mapKeyCompare sym (@Lem_Map.instMapKeyTypeOfSetType sym instSetTypeSym)
-def floatExpr (x : Float) : generic_pexpr Unit sym :=
+def floatExpr (x : CerbFloat.Value) : generic_pexpr Unit sym :=
   .Pexpr [.Amarker 81] () (.PEval (.Vobject (.OVfloating x)))
 def sample (bits : UInt64) : file core_run_annotation :=
   { emptyFile with
     main := some symbol,
-    globs := [(symbol, .GlobalDef (.BTy_unit, .Ctype [] .Void0) (.Expr [] (.Epure (floatExpr (Float.ofBits bits)))))],
+    globs := [(symbol, .GlobalDef (.BTy_unit, .Ctype [] .Void0) (.Expr [] (.Epure (floatExpr ((⟨.binary64, bits.toBitVec⟩ : CerbFloat.Value))))))],
     enumDefs := .mk active (.Node .Empty symbol .Char0 .Empty 91),
     stdlib := .mk active .Empty }
 
@@ -1214,7 +1218,7 @@ def listSample (xs : List Nat) : file core_run_annotation :=
   { sample 0 with
     globs := [(symbol, .GlobalDef (.BTy_unit, .Ctype [] .Void0)
       (.Expr [] (.Epure (.Pexpr [] () (.PEctor .Carray
-        (xs.map fun n => floatExpr (Float.ofBits n.toUInt64)))))))] }
+        (xs.map fun n => floatExpr ((⟨.binary64, BitVec.ofNat 64 n⟩ : CerbFloat.Value))))))))] }
 
 def control (name : String) : Except String (file core_run_annotation × file core_run_annotation × Bool) := do
   let base := sample 0
@@ -1251,14 +1255,14 @@ def emitControl (name path : String) : IO Unit := do
   IO.FS.writeFile path source
 
 def localControls : IO Unit := do
-  let f := sample (Float.ofBits 0x7ff8000000000001).toBits
+  let f := sample 0xfff8000000000001
   match CerbQuote.moduleSource [] (CerbQuote.translatedProvenance f) f with
-  | .ok _ => throw (IO.userError "NaN was not refused")
-  | .error e => require (e.construct == "globs.Float.NaN") "NaN refusal does not name the construct"
+  | .ok _ => pure ()
+  | .error e => throw (IO.userError e.message)
   let alias : sym := .Symbol "quote-control" 7 (.SD_Id "absent-alias")
   let a : Fmap sym Nat := .mk active (.Node .Empty symbol 1 .Empty 1)
   let b : Fmap sym Nat := .mk structural (.Node .Empty symbol 1 .Empty 1)
   require (fmapLookupBy active alias a == some 1 && fmapLookupBy active alias b == none) "absent alias comparator control"
-  IO.println "CORE_QUOTE_CONTROL NaN named refusal; absent alias distinguishes explicit instances"
+  IO.println "CORE_QUOTE_CONTROL exact NaN quotation; absent alias distinguishes explicit instances"
 
 end CoreQuoteTest

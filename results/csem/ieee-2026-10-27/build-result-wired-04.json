@@ -1,0 +1,24 @@
+{
+  "request": "csem-ieee-wired-04",
+  "request_id": "csem-ieee-wired-04",
+  "exit": 1,
+  "log": "build/worker-build-csem-ieee-wired-04.log",
+  "command": [
+    "flock",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/lake.lock",
+    "systemd-run",
+    "--user",
+    "--scope",
+    "-p",
+    "MemoryMax=12G",
+    "lake",
+    "build",
+    "CerberusLean",
+    "csem_run",
+    "TccCSem",
+    "ieee-test",
+    "pp-test",
+    "float-literal-test"
+  ],
+  "source_hashes_verified": true
+}

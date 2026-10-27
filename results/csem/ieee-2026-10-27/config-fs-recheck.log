@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/repin-focused.py", line 55, in <module>
+    for name in fsfiles:assert sha(Path(name))==pins[name],name
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: /data/home/kirancodes/Documents/code/ship-your-tcc/c/build/base.elf

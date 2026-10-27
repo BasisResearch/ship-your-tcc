@@ -782,11 +782,37 @@ def step_eval_pexpr_lemFuel [LemFuel] [CerbImplCfg.Impl] (lemFuel : Nat)
                  exception_undef_return (PEval (Vloaded (LVspecified oval)))
                | Cunspecified, some [Vctype ty1] =>
                  exception_undef_return (PEval (Vloaded (LVunspecified ty1)))
+               | Cfvconvert,
+                 some [Vctype (Ctype _ (Basic (Floating ft))), Vobject (OVfloating x)] =>
+                 exception_undef_return (PEval (Vobject (OVfloating (CerbMem.convertFval ft x))))
+               | CfvconvertLoaded,
+                 some
+                   [Vctype (Ctype _ (Basic (Floating ft))), Vloaded (LVspecified (OVfloating x))] =>
+                 exception_undef_return
+                   (PEval (Vloaded (LVspecified (OVfloating (CerbMem.convertFval ft x)))))
+               | CfvconvertLoaded, some [Vctype ty1, Vloaded (LVunspecified _)] =>
+                 exception_undef_return (PEval (Vloaded (LVunspecified ty1)))
+               | CfvfromintTyped,
+                 some [Vctype (Ctype _ (Basic (Floating ft))), Vobject (OVinteger x)] =>
+                 exception_undef_return (PEval (Vobject (OVfloating (CerbMem.fvfromintTyped ft x))))
+               | CfvfromintTypedLoaded,
+                 some
+                   [Vctype (Ctype _ (Basic (Floating ft))), Vloaded (LVspecified (OVinteger x))] =>
+                 exception_undef_return
+                   (PEval (Vloaded (LVspecified (OVfloating (CerbMem.fvfromintTyped ft x)))))
+               | CfvfromintTypedLoaded, some [Vctype ty1, Vloaded (LVunspecified _)] =>
+                 exception_undef_return (PEval (Vloaded (LVunspecified ty1)))
+               | Cfvneg, some [Vobject (OVfloating fv)] =>
+                 exception_undef_return (PEval (Vobject (OVfloating (CerbMem.negFval fv))))
                | Cfvfromint, some [Vobject (OVinteger ival)] =>
                  exception_undef_return (PEval (Vobject (OVfloating (CerbMem.fvfromint ival))))
                | Civfromfloat,
                  some [Vctype (Ctype _ (Basic (Integer ity))), Vobject (OVfloating fval)] =>
-                 exception_undef_return (PEval (Vobject (OVinteger (CerbMem.ivfromfloat ity fval))))
+                 (lem_if CerbMem.finiteFval fval then
+                   exception_undef_return
+                     (PEval (Vobject (OVinteger (CerbMem.ivfromfloat ity fval))))
+                 else
+                   except_return (undef loc1 [UB017_out_of_range_floating_integer_conversion]))
                | CivNULLcap is_signed, some [] =>
                  exception_undef_return (PEval (Vobject (OVinteger (CerbMem.nullCap is_signed))))
                | _, some cvals =>

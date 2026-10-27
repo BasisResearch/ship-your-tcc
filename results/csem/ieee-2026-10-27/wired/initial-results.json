@@ -1,0 +1,75 @@
+[
+  {
+    "file": "csem/tests/ieee/bytes.c",
+    "command": [
+      "scripts/csem_run.sh",
+      "--first",
+      "--impl",
+      "tcc-rv64",
+      "csem/tests/ieee/bytes.c"
+    ],
+    "exit": 0,
+    "sha256": "9ffe977ea61bf305827f36bca6aabb1419cc0db514d7689e48d1a8240519a305"
+  },
+  {
+    "file": "csem/tests/ieee/formats.c",
+    "command": [
+      "scripts/csem_run.sh",
+      "--first",
+      "--impl",
+      "tcc-rv64",
+      "csem/tests/ieee/formats.c"
+    ],
+    "exit": 0,
+    "sha256": "b3c2dabfaece925e35ac9c81ee2d4bda03fe07b9cb4c732a3b95f4907d2a0c08"
+  },
+  {
+    "file": "csem/tests/ieee/nan-bytes.c",
+    "command": [
+      "scripts/csem_run.sh",
+      "--first",
+      "--impl",
+      "tcc-rv64",
+      "csem/tests/ieee/nan-bytes.c"
+    ],
+    "exit": 0,
+    "sha256": "00d37a125dfa9ca8da28751809bf3941c29a80f3b3f78eba3ed1c9fae792c637"
+  },
+  {
+    "file": "csem/tests/ieee/nonfinite-int-ub.c",
+    "command": [
+      "scripts/csem_run.sh",
+      "--first",
+      "--impl",
+      "tcc-rv64",
+      "csem/tests/ieee/nonfinite-int-ub.c"
+    ],
+    "exit": 1,
+    "sha256": "5412257e94ee5551f54c961044622f7cafe1e5a386deee6364337d62bdce24ea"
+  },
+  {
+    "file": "csem/tests/ieee/printf.c",
+    "command": [
+      "scripts/csem_run.sh",
+      "--libc",
+      "--first",
+      "--impl",
+      "tcc-rv64",
+      "csem/tests/ieee/printf.c"
+    ],
+    "exit": 0,
+    "sha256": "e4213fca8ff75a86a0e635bfac0037904c273f1576e133c13be55842c2717ddf"
+  },
+  {
+    "file": "csem/tests/ieee/rounding.c",
+    "command": [
+      "scripts/csem_run.sh",
+      "--first",
+      "--impl",
+      "tcc-rv64",
+      "csem/tests/ieee/rounding.c"
+    ],
+    "exit": 0,
+    "sha256": "4e23928ebbd9ccebaf6fcba2f2f073e00415b290ad9004d199caf766944b1e17"
+  }
+]

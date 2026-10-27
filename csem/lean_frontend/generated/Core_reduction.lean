@@ -1338,7 +1338,7 @@ instance (priority := 500) : Lem_Basic_classes.Ord0 action_step where
     match action_step.compare_derived x y with
     | .lt => false
     | _ => true
-def step_action (_lemReader_enum_definitions : Fmap sym integerType)
+def step_action [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (e_annots : List annot)
     (full_eval_pexpr1 : generic_pexpr Unit sym → core_run_state → exceptM
       (t0 value × core_run_state) core_run_cause) (is_excluded : Option Nat)

@@ -138,3 +138,21 @@ model's byte encoding are local additions to the TinyCC-derived macro engine;
 they retain its LGPL-2.1-or-later provenance. The Lua abstraction inventory
 and mandatory tool table were consulted; no library machine proof was copied
 or claimed instruction-identical in this integration.
+
+IEEE recovery (2026-10-27): `CerbIEEE.lean`, `test/Unit/IEEETest.lean` and
+`test/ieee/{gen_vectors,sail_probe_print}.c` were copied from the preserved,
+uncommitted `agent-a45cb08cf87ce958c` worktree, with its four original SHA-256
+hashes verified against `results/csem/ieee-recovery-review.json`. That source
+was read only and remains unchanged. The recovered arithmetic reuses Lean
+4.34's `Float.Model.UnpackedFloat` (Lean contributors, Apache-2.0), with the
+closed-form rounding shift proved equal to the core shift. The
+`model_shiftRight_succ` proof reuses the shape of ship-your-lua's
+`Lua/Num/F64.lean` `F64.shiftRight_succ`; its abstraction inventory was run
+before proof work. The `*_model` / `*_ofBits` bridges share the specification
+used by Lua's `SF`/`SfRef`/`F64.*_eq_model` abstractions. No libgcc machine
+summary was imported, relocated or claimed byte-identical: the actual
+image/helper connection remains an explicit F7 obligation. NaN widening
+policy, frontend integration, new tests and harness repairs are local changes
+under the surrounding project licenses. Fresh evidence, including failures
+and the correction to the draft's NaN policy, is in
+`results/csem/ieee-2026-10-27.md`.

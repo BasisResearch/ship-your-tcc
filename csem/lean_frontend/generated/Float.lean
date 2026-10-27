@@ -17,17 +17,17 @@ open Lem_Num Lem_Pervasives Lem_List Lem_Set Lem_Map Lem_Maybe Lem_Function
 
 /- lem: replaced by its target representation: 
 
-abbrev  float := Float
+abbrev  float := CerbFloat.Value
  -/
 /- Relational operations -/
 
-instance : Eq0 Float where
+instance : Eq0 CerbFloat.Value where
 
     isEqual := CerbFloat.floatEq
 
     isInequal x y := not (CerbFloat.floatEq x y)
 
-instance : Ord0 Float where
+instance : Ord0 CerbFloat.Value where
 
     compare := defaultCompare
 
@@ -41,23 +41,23 @@ instance : Ord0 Float where
 
 /- Arithmetic Operations -/
 
-instance : NumAdd Float where
+instance : NumAdd CerbFloat.Value where
 
     numAdd := CerbFloat.floatAdd
 
-instance : NumMinus Float where
+instance : NumMinus CerbFloat.Value where
 
     numMinus := CerbFloat.floatSub
 
-instance : NumMult Float where
+instance : NumMult CerbFloat.Value where
 
     numMult := CerbFloat.floatMul
 
-instance : NumDivision Float where
+instance : NumDivision CerbFloat.Value where
 
     numDivision := CerbFloat.floatDiv
 
 /- Conversions -/
 
-def of_integer (x : Int) : Float := CerbFloat.of_int (lemIntFromInteger x)
-def to_integer (x : Float) : Int := (CerbFloat.to_int x)
+def of_integer (x : Int) : CerbFloat.Value := CerbFloat.of_int (lemIntFromInteger x)
+def to_integer (x : CerbFloat.Value) : Int := (CerbFloat.to_int x)

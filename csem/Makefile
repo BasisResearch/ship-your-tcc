@@ -364,11 +364,17 @@ lean-prelude-src: $(LEM_SRC_LEAN)
     $(LEM_SRC_LEAN) 2> lean_frontend/lem.log || (>&2 cat lean_frontend/lem.log; exit 1)
 	@# Workaround: Lem generates bogus `import Operators` from `open SEU.Operators` in core_run.lem
 	$(Q)sed -i'' -e '/^import Operators$$/d' $(LEAN_SRC_DIR)/Core_run.lean
+	$(Q)$(MAKE) --no-print-directory lean-handwritten-src
+	@echo "[STAMP] recording Lean lem-sync content stamp"
+	$(Q)tools/check_lem_sync.sh --record-lean
+
+.PHONY: lean-handwritten-src
+# The manifest is authoritative also when only a handwritten seam changed.
+# This target does not certify .lem output; the full drift check still does.
+lean-handwritten-src:
 	@echo "[COPY] $(words $(LEAN_HANDWRITTEN)) hand-written Lean files ($(LEAN_HANDWRITTEN_MANIFEST)) into [$(LEAN_SRC_DIR)]"
 	$(Q)cp $(addprefix lean_frontend/,$(LEAN_HANDWRITTEN)) $(LEAN_SRC_DIR)/
 	$(Q)tools/check_handwritten_sync.sh
-	@echo "[STAMP] recording Lean lem-sync content stamp"
-	$(Q)tools/check_lem_sync.sh --record-lean
 
 # Native C objects linked into lean_frontend executables (lakefile.toml
 # moreLinkArgs). Compiled with the toolchain's leanc (hermetic clang).

@@ -58,7 +58,7 @@ example :
 /-- The wrapper at ANY instance fuel is definitionally the worker started
     there (fuel-parameter arc: `∀ n, @f ⟨n⟩ = f_lemFuel n`; no default
     constant exists). -/
-example (n : Nat) : @zeros_aux a ⟨n⟩ = @zeros_aux_lemFuel a n := rfl
+example [i : CerbImplCfg.Impl] (n : Nat) : @zeros_aux a ⟨n⟩ i = @zeros_aux_lemFuel a i n := rfl
 
 /-- At any nonzero fuel, the integer case computes — SYMBOLIC in the fuel,
     the tagDefs map, the annotations, and the integer type. Impossible over

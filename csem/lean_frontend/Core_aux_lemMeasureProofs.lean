@@ -168,7 +168,7 @@ theorem loadedValueFromMemValue_measure_sufficient (mem_val : CerbMem.MemValue) 
     loadedValueFromMemValue_lemFuel lemFuel mem_val = loadedValueFromMemValue mem_val :=
   loadedValueFromMemValue_stable_aux (CerbMem.memValueSize mem_val) mem_val lemFuel (CerbMem.memValueSize mem_val) (Nat.le_refl _) lemMeasureLe (Nat.le_refl _)
 
-theorem memValueFromValue_stable_aux (k : Nat) :
+theorem memValueFromValue_stable_aux [CerbImplCfg.Impl] (k : Nat) :
     ∀ (ed : Fmap sym integerType) (td : Fmap sym (CerbLocation.Loc × tag_definition)) (ty1 : ctype) (cval : value) (f g : Nat),
     ctype.lemSize ty1 ≤ k → ctype.lemSize ty1 ≤ f → ctype.lemSize ty1 ≤ g →
     memValueFromValue_lemFuel f ed td ty1 cval = memValueFromValue_lemFuel g ed td ty1 cval := by
@@ -192,7 +192,7 @@ theorem memValueFromValue_stable_aux (k : Nat) :
         split <;> (try simp (disch := size_lt) only [key])
 
 /-- THE OBLIGATION, exactly as Core_aux_auxiliary.lean states and delegates it. -/
-theorem memValueFromValue_measure_sufficient (_lemReader_enum_definitions : Fmap sym integerType) (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
+theorem memValueFromValue_measure_sufficient [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType) (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (ty1 : ctype) (cval : value) (lemFuel : Nat) (lemMeasureLe : ctype.lemSize ty1 ≤ lemFuel) :
     memValueFromValue_lemFuel lemFuel _lemReader_enum_definitions _lemReader_tagDefs ty1 cval = memValueFromValue _lemReader_enum_definitions _lemReader_tagDefs ty1 cval :=
   memValueFromValue_stable_aux (ctype.lemSize ty1) _lemReader_enum_definitions _lemReader_tagDefs ty1 cval lemFuel (ctype.lemSize ty1)

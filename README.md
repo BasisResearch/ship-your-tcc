@@ -337,3 +337,11 @@ have 1,339 independent fast arenas and three complete native Sail arena
 matches; refusals and assembly gaps stay separate. See
 [the integration report](results/pre/combined-integration-2026-10-27.md).
 Preprocessing correctness and binary refinement remain open obligations.
+
+2026-10-27 IEEE recovery: CSem's floating execution now uses pure configured
+binary32/64/128 values and exact object bytes. The semantic kernel/runtime
+cones contain zero native floating constants; the 113-program baseline is
+unchanged. Fresh arithmetic, literal, printf and Sail evidence, with the
+retained target literal-accuracy, binary128 printf and sqrtl discrepancies,
+is in [the recovery report](results/csem/ieee-2026-10-27.md). Image/library and
+conversion-field proof connections remain explicit obligations in PHASES.md.

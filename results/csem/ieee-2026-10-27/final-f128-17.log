@@ -1,0 +1,14 @@
+f128 fixdi	5278	nan:0	mismatch:0
+f128 fixsi	4899	nan:0	mismatch:0
+f128 add	10000	nan:482	mismatch:0
+f128 sub	10000	nan:482	mismatch:0
+f128 mul	10000	nan:482	mismatch:0
+f128 div	10000	nan:504	mismatch:0
+f128 sqrt	10000	nan:5262	mismatch:0
+f128 cmp	10000	nan:0	mismatch:0
+f128 floatdi	10000	nan:0	mismatch:0
+f128 floatsi	10000	nan:0	mismatch:0
+f128 extenddf	10000	nan:118	mismatch:0
+f128 truncdf	10000	nan:323	mismatch:0
+f128 extendsf	10000	nan:47	mismatch:0
+f128 truncsf	10000	nan:323	mismatch:0

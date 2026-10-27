@@ -1,3 +1,12 @@
+> ship-your-tcc IEEE update (2026-10-27): the historical native-float
+> dispositions below are superseded in this fork by pure configured binary32,
+> binary64 and binary128 values. NaN signs/payloads survive object copies and
+> `%f` of a NaN is defined. Arithmetic/narrowing use the RV64 canonical NaN;
+> widening preserves sign/payload and quiets signalling inputs. N2 and the
+> NaN-print refusal are closed here; N3's rounded libc dump remains open.
+> The RV64 helper proof connection and target literal-accuracy discrepancy
+> remain explicit obligations; see `results/csem/ieee-2026-10-27.md`.
+
 # The cerberus-lean contract
 
 Status: **adopted 2026-09-29**; the operator decisions are in §5. Author: the orchestrator [AGENT], on the
@@ -103,7 +112,7 @@ feature-attributed; each refusal has a witness), **OUT OF SCOPE** (not an input 
 | Core dynamics (driver, reduction, pure eval) | SUPPORTED | Tier A/B lanes, pristine 835/28/7/2, gcc oracle, csmith corpus | none known; this is where the report found nothing |
 | Concrete memory model | SUPPORTED | CerbMem mirror with cites; immaculate lane; allocator soundness theorem | the SC receipt buffer is disabled by default (WP0) |
 | Function pointers | SUPPORTED, including round trips through integers and `void*` (libc's `atexit` uses one); their numeric value — through an integer conversion, their bytes or `%p` — is named deviation N1 | `zd-funptr-*` rows, libc_exec `040`/`041` | none |
-| Integer/float/layout implementation choices | SUPPORTED (LP64); printing a NaN with `%f` REFUSED (its text depends on the NaN's sign bit, which Lean cannot read); a NaN's sign and payload bits in memory are named deviation N2; float constants in the libc Lean loads are rounded to 12 digits in one place (named deviation N3) | CerberusImpl, CerbFloat, float/bytes lanes | other ABIs OUT OF SCOPE (D6) |
+| Integer/float/layout implementation choices | SUPPORTED through configured pure IEEE 32/64/128; signed NaNs print and object copies retain their bits (N2 closed); float constants in the libc Lean loads are rounded to 12 digits in one place (named deviation N3) | CerberusImpl, CerbFloat, float/bytes lanes | other ABIs OUT OF SCOPE (D6) |
 | libc (the oracle's libc.co, loaded) | functions written in C (`runtime/libc/src/*.c`): SUPPORTED — they run through the same Core semantics as user code — but thinly tested (§3.2); the 36 **builtins** of `runtime/libcore/std.core` (hand-implemented in each engine): one state each, §3.1 (D4) | libc_exec lane, libxml2 lanes | a UB raised inside a libc C body is reported at `<unknown location>` by Lean and at the libc source location by the oracle (VALIDATION §3, Z1-A1: an open bug with a named mover) |
 | Filesystem (CerbFS) | **REFUSED** (D2) — every filesystem operation, including `read` on any fd; `write`/`vprintf` on fds 1/2 are served (the driver routes them to the stdout/stderr records, never reaching CerbFS) | `zd-fs-*`, `zd-f1-truncate-negative-length`, `zd-z2f01-lseek-whence` pinned refusals | none |
 | Standard input / environment / argv | stdin REFUSED (every read reaches CerbFS, D2; the oracle models an empty stdin); `getenv` served by libc C code; argv SUPPORTED | `zd-fs-stdin-read` pinned refusal; argv lane (5 programs) | UTF-8 `--args` unmeasured |

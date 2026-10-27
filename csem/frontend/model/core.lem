@@ -212,6 +212,11 @@ type ctor =  (* data constructors *)
  | CivXOR (* bitwise XOR *)
  | Cspecified (* non-unspecified loaded value *)
  | Cunspecified (* unspecified loaded value *)
+ | Cfvconvert
+ | CfvconvertLoaded
+ | CfvfromintTyped
+ | CfvfromintTypedLoaded
+ | Cfvneg
  | Cfvfromint (* cast integer to floating value *)
  | Civfromfloat (* cast floating to integer value *)
  | CivNULLcap of bool (* CHERI: null capability *)

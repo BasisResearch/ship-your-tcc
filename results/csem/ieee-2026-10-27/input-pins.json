@@ -1,0 +1,22 @@
+{
+  "vendor/CSEM_REV": "f4728490acefb712e9ea36f3c89ee387c98b31f8bb297f639ed71f520b92dfd6",
+  "vendor/TINYCC_REV": "76ca376f1f96cf1b316713d8f94d91c8629445929d1e7474792fd76610bce1c0",
+  "lean-toolchain": "8733782dc070a99b312039cda424f601b80f3be6f6f512627da5ba25adc27632",
+  "c/build/base.elf": "8213f3fa8f8dd618830fb132a971992b95037889facae9d6dac1b2410c6fa589",
+  "c/build/fs.list": "b09e7cbf760f18b38aca4e2503944f2bf7aa23ff315edfed860cc7b18dc1a61b",
+  "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+  "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+  "patches/0003-tcc-c11.patch": "8539b1c4dd9da4c6e571a45bef4d07b897587e507d7b6368f962996ac040fdad",
+  "patches/0004-tcc-binary128-literals.patch": "4dfcc192c23a777b1b335e9052a416956886b1071c3de1e8da403b5b194e221e",
+  "csem/tests/ieee/formats.c": "b3c2dabfaece925e35ac9c81ee2d4bda03fe07b9cb4c732a3b95f4907d2a0c08",
+  "csem/tests/ieee/literal-rounding.c": "83fbb30ca040a1d9d39a7c3706ff5651e3a25b5af56262dee5fcaf56fcb4a3fc",
+  "csem/tests/ieee/nan-conversions.c": "96367e671dc30d2d7fdf90c64e2ab76e84432aff326e50a7b6df4d03eafadcb5",
+  "csem/tests/ieee/nan-bytes.c": "00d37a125dfa9ca8da28751809bf3941c29a80f3b3f78eba3ed1c9fae792c637",
+  "csem/tests/ieee/bytes.c": "9ffe977ea61bf305827f36bca6aabb1419cc0db514d7689e48d1a8240519a305",
+  "csem/tests/ieee/rounding.c": "4e23928ebbd9ccebaf6fcba2f2f073e00415b290ad9004d199caf766944b1e17",
+  "csem/tests/ieee/printf.c": "e4213fca8ff75a86a0e635bfac0037904c273f1576e133c13be55842c2717ddf",
+  "csem/tests/ieee/nonfinite-int-ub.c": "2228bbf101273211d9db358adaa1d55cd0e48af131110a5800731223b6355477",
+  "csem/lean_frontend/test/ieee/sail_probe_print.c": "1363e3350096d551262268aaf3551a1890312c5009c51d9d9e03060b09dfef65",
+  "csem/lean_frontend/test/ieee/nan_policy.c": "737c22511299b6361a63a3e52f5b6c7e3a498d6b7d8ffd6c3971669d2c9fdbdb",
+  "csem/lean_frontend/test/ieee/gen_vectors.c": "fa4bc7e949aa7317421441819bd40eb1b35085a59ccbe6a105afacbe721cac4f"
+}

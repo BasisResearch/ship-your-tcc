@@ -1,0 +1,25 @@
+{
+  "request": "csem-ieee-nan-tests-12",
+  "request_id": "csem-ieee-nan-tests-12",
+  "exit": 1,
+  "log": "build/worker-build-csem-ieee-nan-tests-12.log",
+  "command": [
+    "flock",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/lake.lock",
+    "systemd-run",
+    "--user",
+    "--scope",
+    "-p",
+    "MemoryMax=12G",
+    "lake",
+    "build",
+    "CerberusLean",
+    "CerberusLeanTest",
+    "csem_run",
+    "TccCSem",
+    "ieee-test",
+    "ieee-integration-test",
+    "core-quote-test"
+  ],
+  "source_hashes_verified": true
+}

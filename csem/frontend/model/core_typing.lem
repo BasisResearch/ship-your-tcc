@@ -128,6 +128,30 @@ let rec infer_pattern (Pattern annots pat) =
             E.fail loc TooGeneral
         | (Cunspecified, _) ->
             error "infer_pattern: Cunspecified: wrong number of arguments"
+        | (Cfvconvert, [ty; x]) ->
+            typecheck_pattern BTy_ctype ty >>= fun (env1, ty1) ->
+            typecheck_pattern (BTy_object OTy_floating) x >>= fun (env2, x1) ->
+            E.return (env_union env1 env2, InferredType_object OTy_floating, Pattern annots (CaseCtor Cfvconvert [ty1; x1]))
+        | (Cfvconvert, _) -> error "Cfvconvert: bad pattern"
+        | (CfvconvertLoaded, [ty; x]) ->
+            typecheck_pattern BTy_ctype ty >>= fun (env1, ty1) ->
+            typecheck_pattern (BTy_loaded OTy_floating) x >>= fun (env2, x1) ->
+            E.return (env_union env1 env2, InferredType_loaded OTy_floating, Pattern annots (CaseCtor CfvconvertLoaded [ty1; x1]))
+        | (CfvconvertLoaded, _) -> error "CfvconvertLoaded: bad pattern"
+        | (CfvfromintTyped, [ty; x]) ->
+            typecheck_pattern BTy_ctype ty >>= fun (env1, ty1) ->
+            typecheck_pattern (BTy_object OTy_integer) x >>= fun (env2, x1) ->
+            E.return (env_union env1 env2, InferredType_object OTy_floating, Pattern annots (CaseCtor CfvfromintTyped [ty1; x1]))
+        | (CfvfromintTyped, _) -> error "CfvfromintTyped: bad pattern"
+        | (CfvfromintTypedLoaded, [ty; x]) ->
+            typecheck_pattern BTy_ctype ty >>= fun (env1, ty1) ->
+            typecheck_pattern (BTy_loaded OTy_integer) x >>= fun (env2, x1) ->
+            E.return (env_union env1 env2, InferredType_loaded OTy_floating, Pattern annots (CaseCtor CfvfromintTypedLoaded [ty1; x1]))
+        | (CfvfromintTypedLoaded, _) -> error "CfvfromintTypedLoaded: bad pattern"
+        | (Cfvneg, [x]) ->
+            typecheck_pattern (BTy_object OTy_floating) x >>= fun (env2, x1) ->
+            E.return (env2, InferredType_object OTy_floating, Pattern annots (CaseCtor Cfvneg [x1]))
+        | (Cfvneg, _) -> error "Cfvneg: bad pattern"
         | (Cfvfromint, [pat]) ->
             typecheck_pattern (BTy_object OTy_integer) pat >>= fun (env, tpat) ->
             E.return (env, InferredType_object OTy_floating, Pattern annots (CaseCtor Cfvfromint [tpat]))
@@ -288,6 +312,30 @@ and typecheck_pattern expected_bTy (Pattern annots pat) =
         | (Cunspecified, _, _) ->
             error "typecheck_pattern: Cunspecified: wrong number of arguments"
 
+        | (Cfvconvert, BTy_object OTy_floating, [ty; x]) ->
+            typecheck_pattern BTy_ctype ty >>= fun (env1, ty1) ->
+            typecheck_pattern (BTy_object OTy_floating) x >>= fun (env2, x1) ->
+            E.return (env_union env1 env2, Pattern annots (CaseCtor Cfvconvert [ty1; x1]))
+        | (Cfvconvert, _, _) -> error "Cfvconvert: bad pattern"
+        | (CfvconvertLoaded, BTy_loaded OTy_floating, [ty; x]) ->
+            typecheck_pattern BTy_ctype ty >>= fun (env1, ty1) ->
+            typecheck_pattern (BTy_loaded OTy_floating) x >>= fun (env2, x1) ->
+            E.return (env_union env1 env2, Pattern annots (CaseCtor CfvconvertLoaded [ty1; x1]))
+        | (CfvconvertLoaded, _, _) -> error "CfvconvertLoaded: bad pattern"
+        | (CfvfromintTyped, BTy_object OTy_floating, [ty; x]) ->
+            typecheck_pattern BTy_ctype ty >>= fun (env1, ty1) ->
+            typecheck_pattern (BTy_object OTy_integer) x >>= fun (env2, x1) ->
+            E.return (env_union env1 env2, Pattern annots (CaseCtor CfvfromintTyped [ty1; x1]))
+        | (CfvfromintTyped, _, _) -> error "CfvfromintTyped: bad pattern"
+        | (CfvfromintTypedLoaded, BTy_loaded OTy_floating, [ty; x]) ->
+            typecheck_pattern BTy_ctype ty >>= fun (env1, ty1) ->
+            typecheck_pattern (BTy_loaded OTy_integer) x >>= fun (env2, x1) ->
+            E.return (env_union env1 env2, Pattern annots (CaseCtor CfvfromintTypedLoaded [ty1; x1]))
+        | (CfvfromintTypedLoaded, _, _) -> error "CfvfromintTypedLoaded: bad pattern"
+        | (Cfvneg, BTy_object OTy_floating, [x]) ->
+            typecheck_pattern (BTy_object OTy_floating) x >>= fun (env2, x1) ->
+            E.return (env2, Pattern annots (CaseCtor Cfvneg [x1]))
+        | (Cfvneg, _, _) -> error "Cfvneg: bad pattern"
         | (Cfvfromint, BTy_object OTy_floating, [pat]) ->
             typecheck_pattern (BTy_object OTy_integer) pat >>= fun (env, tpat) ->
             E.return (env, Pattern annots (CaseCtor Cfvfromint [tpat]))
@@ -552,6 +600,30 @@ let rec infer_pexpr tagDefs env ((Pexpr annot _ pexpr_ as pexpr) : generic_pexpr
               end
           | (Cunspecified, [pe]) ->
               error "Core_typing, Cunspecified non-trivial"
+          | (Cfvconvert, [ty; x]) ->
+              typecheck_pexpr tagDefs env BTy_ctype ty >>= fun ty1 ->
+              typecheck_pexpr tagDefs env (BTy_object OTy_floating) x >>= fun x1 ->
+              E.return (Pexpr annot (InferredType_object OTy_floating) (PEctor Cfvconvert [ty1; x1]))
+          | (Cfvconvert, _) -> error "Cfvconvert: bad expression"
+          | (CfvconvertLoaded, [ty; x]) ->
+              typecheck_pexpr tagDefs env BTy_ctype ty >>= fun ty1 ->
+              typecheck_pexpr tagDefs env (BTy_loaded OTy_floating) x >>= fun x1 ->
+              E.return (Pexpr annot (InferredType_loaded OTy_floating) (PEctor CfvconvertLoaded [ty1; x1]))
+          | (CfvconvertLoaded, _) -> error "CfvconvertLoaded: bad expression"
+          | (CfvfromintTyped, [ty; x]) ->
+              typecheck_pexpr tagDefs env BTy_ctype ty >>= fun ty1 ->
+              typecheck_pexpr tagDefs env (BTy_object OTy_integer) x >>= fun x1 ->
+              E.return (Pexpr annot (InferredType_object OTy_floating) (PEctor CfvfromintTyped [ty1; x1]))
+          | (CfvfromintTyped, _) -> error "CfvfromintTyped: bad expression"
+          | (CfvfromintTypedLoaded, [ty; x]) ->
+              typecheck_pexpr tagDefs env BTy_ctype ty >>= fun ty1 ->
+              typecheck_pexpr tagDefs env (BTy_loaded OTy_integer) x >>= fun x1 ->
+              E.return (Pexpr annot (InferredType_loaded OTy_floating) (PEctor CfvfromintTypedLoaded [ty1; x1]))
+          | (CfvfromintTypedLoaded, _) -> error "CfvfromintTypedLoaded: bad expression"
+          | (Cfvneg, [x]) ->
+              typecheck_pexpr tagDefs env (BTy_object OTy_floating) x >>= fun x1 ->
+              E.return (Pexpr annot (InferredType_object OTy_floating) (PEctor Cfvneg [x1]))
+          | (Cfvneg, _) -> error "Cfvneg: bad expression"
           | (Cunspecified, _) ->
               error "infer_pexpr: Cunspecified: wrong number of arguments"
           | _ ->
@@ -969,6 +1041,30 @@ and typecheck_pexpr tagDefs (env: typing_env) (bTy: core_base_type) (Pexpr annot
               ret_ctor Cunspecified <$> typecheck_pexpr tagDefs env BTy_ctype pe
           | (Cunspecified, _, _) ->
               E.fail loc (MismatchExpected "Cunspecified" bTy "loaded object")
+          | (Cfvconvert, BTy_object OTy_floating, [ty; x]) ->
+              typecheck_pexpr tagDefs env BTy_ctype ty >>= fun ty1 ->
+              typecheck_pexpr tagDefs env (BTy_object OTy_floating) x >>= fun x1 ->
+              E.return (PEctor Cfvconvert [ty1; x1])
+          | (Cfvconvert, _, _) -> error "Cfvconvert: bad expression"
+          | (CfvconvertLoaded, BTy_loaded OTy_floating, [ty; x]) ->
+              typecheck_pexpr tagDefs env BTy_ctype ty >>= fun ty1 ->
+              typecheck_pexpr tagDefs env (BTy_loaded OTy_floating) x >>= fun x1 ->
+              E.return (PEctor CfvconvertLoaded [ty1; x1])
+          | (CfvconvertLoaded, _, _) -> error "CfvconvertLoaded: bad expression"
+          | (CfvfromintTyped, BTy_object OTy_floating, [ty; x]) ->
+              typecheck_pexpr tagDefs env BTy_ctype ty >>= fun ty1 ->
+              typecheck_pexpr tagDefs env (BTy_object OTy_integer) x >>= fun x1 ->
+              E.return (PEctor CfvfromintTyped [ty1; x1])
+          | (CfvfromintTyped, _, _) -> error "CfvfromintTyped: bad expression"
+          | (CfvfromintTypedLoaded, BTy_loaded OTy_floating, [ty; x]) ->
+              typecheck_pexpr tagDefs env BTy_ctype ty >>= fun ty1 ->
+              typecheck_pexpr tagDefs env (BTy_loaded OTy_integer) x >>= fun x1 ->
+              E.return (PEctor CfvfromintTypedLoaded [ty1; x1])
+          | (CfvfromintTypedLoaded, _, _) -> error "CfvfromintTypedLoaded: bad expression"
+          | (Cfvneg, BTy_object OTy_floating, [x]) ->
+              typecheck_pexpr tagDefs env (BTy_object OTy_floating) x >>= fun x1 ->
+              E.return (PEctor Cfvneg [x1])
+          | (Cfvneg, _, _) -> error "Cfvneg: bad expression"
           | (Cfvfromint, BTy_object OTy_floating, [pe]) ->
               ret_ctor Cfvfromint <$> typecheck_pexpr tagDefs env (BTy_object OTy_integer) pe
           | (Cfvfromint, _, _) ->

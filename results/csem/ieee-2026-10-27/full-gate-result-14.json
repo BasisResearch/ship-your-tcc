@@ -1,0 +1,11 @@
+{
+  "request": "csem-ieee-full-gate-14",
+  "request_id": "csem-ieee-full-gate-14",
+  "exit": 0,
+  "log": "build/worker-build-csem-ieee-full-gate-14.log",
+  "command": [
+    "scripts/check.sh",
+    "--csem"
+  ],
+  "source_hashes_verified": true
+}

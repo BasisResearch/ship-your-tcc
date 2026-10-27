@@ -21,7 +21,8 @@ theorem loadedValueFromMemValue_measure_sufficient (mem_val : CerbMem.MemValue) 
   Core_aux_lemMeasureProofs.loadedValueFromMemValue_measure_sufficient mem_val lemFuel lemMeasureLe
 
 /- lem: fuel_measure obligation for `memValueFromValue` (generated; declare {lean} fuel_measure val memValueFromValue = `lemSize ty1`): the worker is fuel-STABLE at the measure (equal to the wrapper at every fuel at or above it). The proof is hand-written in `Core_aux_lemMeasureProofs.memValueFromValue_measure_sufficient`, stated with exactly these binders; a missing or mistyped theorem fails the build (a `sorry` is the sorry/axiom gates' job). -/
-theorem memValueFromValue_measure_sufficient (_lemReader_enum_definitions : Fmap sym integerType)
+theorem memValueFromValue_measure_sufficient [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (ty1 : ctype) (cval : value)
     (lemFuel : Nat) (lemMeasureLe : (ctype.lemSize ty1) ≤ lemFuel) :
     memValueFromValue_lemFuel lemFuel _lemReader_enum_definitions _lemReader_tagDefs ty1 cval =

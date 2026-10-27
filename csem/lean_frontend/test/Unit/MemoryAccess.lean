@@ -41,7 +41,7 @@ def ty (t : ctype) : String :=
 def value : MemValue → String
   | .MVunspecified t => "unspec:" ++ ty t
   | .MVinteger t (.IV _ n) => (if t == .Bool0 then "b:" else "i:") ++ toString n
-  | .MVfloating _ f => s!"f:{f.toBits}"
+  | .MVfloating _ f => s!"f:{f.bits.toNat.toUInt64}"
   | .MVpointer _ p => "p:" ++ pv p
   | .MVarray vs => "a:" ++ String.intercalate "," (vs.map value)
   | .MVstruct _ _ => "UNEXPECTED_STRUCT"
@@ -127,7 +127,7 @@ def scenarios [LemFuel] [CerbGlobal.Switches] (st : MemState) : IO MemState := d
   let st ← run "updated-int" (load si 4) st
   let st ← run "ptr-write" (store pt 8 (.MVpointer si (ptr 4))) st
   let st ← run "ptr-read" (load pt 8) st
-  let st ← run "float-write" (store dt 16 (.MVfloating (.RealFloating .Double) (Float.ofBits 9223372036854775808))) st
+  let st ← run "float-write" (store dt 16 (.MVfloating (.RealFloating .Double) ((⟨.binary64, 9223372036854775808#64⟩ : CerbIEEE.FVal)))) st
   let st ← run "float-read" (load dt 16) st
   let st ← run "array-write" (store arrTy 24 (.MVarray ([1,2,3,4].map bv))) st
   let st ← run "array-read" (load arrTy 24) st

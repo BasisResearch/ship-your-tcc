@@ -1,0 +1,2 @@
+printf double (CerbIEEE.HexStyle.glibc)	37000	nan:0	mismatch:0
+printf binary128 (CerbIEEE.HexStyle.glibc)	9139	nan:0	mismatch:0

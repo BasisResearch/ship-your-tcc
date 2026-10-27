@@ -154,6 +154,8 @@ def eval_integer_value (ival : CerbMem.IntegerValue) : Option Int :=
     | () => none)
 /- Floating value constructors -/
 
+/- Format-sensitive floating operations (shared AST; pure Lean interpretation). -/
+
 /- Floating value destructors -/
 
 /- Predicates on floating values -/

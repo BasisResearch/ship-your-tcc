@@ -29,7 +29,7 @@ type length_modifier =
   | LM_j
   | LM_z
   | LM_t
-(*   | LM_L *)
+  | LM_L
 
 type conversion_specifier =
   | CS_di
@@ -37,7 +37,7 @@ type conversion_specifier =
   | CS_u
   | CS_x
   | CS_X
-  | CS_f (* | CS_F | CS_e | CS_E | CS_g | CS_G | CS_a | CS_A *)
+  | CS_f of char
   | CS_c
   | CS_s
   | CS_p
@@ -130,7 +130,7 @@ let lengthModifier =
   <|> (char #'j'           >> return LM_j)
   <|> (char #'z'           >> return LM_z)
   <|> (char #'t'           >> return LM_t)
-(*  <|> (char #'L'           >> return LM_L) *)
+  <|> (char #'L'           >> return LM_L)
 
 
 val conversionSpecifier: parserM conversion_specifier
@@ -140,7 +140,7 @@ let conversionSpecifier =
   <|> (char #'u' >> return CS_u)
   <|> (char #'x' >> return CS_x)
   <|> (char #'X' >> return CS_X)
-  <|> (char #'f' >> return CS_f)
+  <|> ((char #'f' <|> char #'F' <|> char #'e' <|> char #'E' <|> char #'g' <|> char #'G' <|> char #'a' <|> char #'A') >>= fun c -> return (CS_f c))
   <|> (char #'c' >> return CS_c)
   <|> (char #'s' >> return CS_s)
   <|> (char #'p' >> return CS_p)
@@ -226,7 +226,7 @@ let justify p_opt cspec fs fw str =
   (* see (§7.21.6.1#6 flag 0) *)
   let j = if elem cspec [CS_di; CS_o; CS_u; CS_x; CS_X] then
             if fs.flag_zero && not (fs.flag_minus) && isNothing p_opt then #'0' else #' '
-          else if elem cspec [CS_f] then
+          else if elem cspec [CS_f #'f'] then
             if fs.flag_zero && not (fs.flag_minus) then #'0' else #' '
           else
             #' ' in
@@ -276,7 +276,7 @@ let isSignedConversion = function
   | CS_u       -> false
   | CS_x       -> false
   | CS_X       -> false
-  | CS_f       -> true (* TODO: check *)
+  | CS_f _     -> true (* TODO: check *)
   | CS_c       -> false
   | CS_s       -> false (* TODO: check *)
   | CS_p       -> false
@@ -422,6 +422,9 @@ let load_character_array elem_ty ptrval prec_n_opt =
   
 
 
+val format_ieee: char -> bool -> bool -> bool -> bool -> bool -> nat -> maybe nat -> Float.float -> string
+declare lean target_rep function format_ieee = `CerbFloat.formatIEEE`
+
 val format_string_of_float: nat -> Float.float -> string
 declare ocaml target_rep function format_string_of_float = `Decode.format_string_of_float`
 declare lean target_rep function format_string_of_float = `CerbPP.format_string_of_float`
@@ -443,9 +446,9 @@ let is_illtyped_conversion expected_ty arg_ty =
 (* TODO: need the length modifier to perform the loads using the proper ctype *)
 val convert: Loc.t ->
              (Ctype.ctype -> (*Ctype.ctype -> *)Mem.mem_value -> Mem.memM (either Errors.error (Undefined.t Core.value))) ->
-             maybe precision -> maybe length_modifier -> conversion_specifier -> flags -> list (Ctype.ctype * Mem.pointer_value) ->
+             maybe precision -> maybe field_width -> maybe length_modifier -> conversion_specifier -> flags -> list (Ctype.ctype * Mem.pointer_value) ->
              Mem.memM (either Errors.error (U.t (bool * list char * list (Ctype.ctype * Mem.pointer_value))))
-let convert loc eval_conv prec_opt lm_opt cspec flags args =
+let convert loc eval_conv prec_opt fw_opt lm_opt cspec flags args =
   let prec = match prec_opt with
     | Just (P_num z) ->
         z
@@ -605,35 +608,24 @@ let convert loc eval_conv prec_opt lm_opt cspec flags args =
           let str = showNonNegativeWithBasis true 16 (naturalFromInteger n) in
           replicate (prec - length str) #'0' ++ str
         ) (fun _ -> [])
-    | CS_f ->
-        let prec =
-          match prec_opt with
-            | Just (P_num z) ->
-              z
-            | Just (P_asterisk) ->
-                error "TODO: Formatted.convert, * prec" (* TODO *)
-            | Nothing ->
-                (* STD §7.21.6.1#8 *)
-                6
-          end in
-        let do_output =
-          (* TODO: check *)
-          let (expected_ty_opt, conv_ty_opt) =
-          ( Just (fun z -> z = Ctype.Ctype [] (Ctype.Basic (Ctype.Floating (Ctype.RealFloating Ctype.Double))))
-          , Nothing ) in
-          aux expected_ty_opt conv_ty_opt (fun _ -> []) (fun xs ->
-            String.toCharList (format_string_of_float prec xs)
-          ) in
-        match lm_opt with
-          | Just lm ->
-              (* NOTE: that LM_l is allowed (with no effect) *)
-              if List.elem lm [LM_hh; LM_h; LM_ll; LM_j; LM_z; LM_t] then
-                Mem.return (Right (U.Undef loc [U.UB158_invalid_length_modifier]))
-              else
-                do_output
-          | Nothing ->
-              do_output
-        end
+    | CS_f conv ->
+        let prec = match prec_opt with
+          | Just (P_num z) -> Just z
+          | Just P_asterisk -> error "Formatted: unresolved precision argument"
+          | Nothing -> Nothing
+        end in
+        let width = match fw_opt with
+          | Just (FW_num z) -> z
+          | Just FW_asterisk -> error "Formatted: unresolved width argument"
+          | Nothing -> 0
+        end in
+        let ft = if lm_opt = Just LM_L then Ctype.LongDouble else Ctype.Double in
+        if List.elem lm_opt [Just LM_hh; Just LM_h; Just LM_ll; Just LM_j; Just LM_z; Just LM_t] then
+          Mem.return (Right (U.Undef loc [U.UB158_invalid_length_modifier]))
+        else
+          aux (Just (fun z -> z = Ctype.Ctype [] (Ctype.Basic (Ctype.Floating (Ctype.RealFloating ft))))) Nothing
+            (fun _ -> []) (fun xs -> String.toCharList
+              (format_ieee conv flags.flag_minus flags.flag_plus flags.flag_space flags.flag_hash flags.flag_zero width prec xs))
     | CS_c ->
         (* see (§7.21.6.1#8 c) *)
         match lm_opt with
@@ -740,13 +732,19 @@ let rec printf_aux loc eval_conv acc fs ty_ptrvals =
     | (F_text str :: fs, ty_ptrvals) ->
         printf_aux loc eval_conv (acc ++ str) fs ty_ptrvals
     | (F_conv cp :: fs, ty_ptrvals) ->
-        convert loc eval_conv cp.cp_precision cp.cp_length_modifier cp.cp_conversion_specifier cp.cp_flags ty_ptrvals >>= function
+        convert loc eval_conv cp.cp_precision cp.cp_field_width cp.cp_length_modifier cp.cp_conversion_specifier cp.cp_flags ty_ptrvals >>= function
           | Right (U.Defined (is_zero, str, ty_ptrvals')) ->
+              let floating = match cp.cp_conversion_specifier with
+                | CS_f _ -> true
+                | _ -> false
+              end in
+              if floating then printf_aux loc eval_conv (acc ++ str) fs ty_ptrvals'
+              else
               let hash_CSs =
                 if Global.is_CHERI () then
-                  [CS_o; CS_x; CS_X; CS_f; CS_p] (* NON-STD: CHERI supports # for the %p conversion specifier *)
+                  [CS_o; CS_x; CS_X; CS_f #'f'; CS_p] (* NON-STD: CHERI supports # for the %p conversion specifier *)
                 else
-                  [CS_o; CS_x; CS_X; CS_f] in
+                  [CS_o; CS_x; CS_X; CS_f #'f'] in
               if cp.cp_flags.flag_plus && not (isSignedConversion cp.cp_conversion_specifier) then
                 (* TODO: add a proper UB variant *)
                 Mem.return (Right (U.undef loc [U.DUMMY "+ flag with unsigned conversion"]))
@@ -755,7 +753,7 @@ let rec printf_aux loc eval_conv acc fs ty_ptrvals =
                       && not (List.elem cp.cp_conversion_specifier hash_CSs) then
                 Mem.return (Right (U.undef loc [U.UB157]))
               else if    cp.cp_flags.flag_zero
-                      && not (List.elem cp.cp_conversion_specifier [CS_di; CS_o; CS_u; CS_x; CS_X; CS_f]) then
+                      && not (List.elem cp.cp_conversion_specifier [CS_di; CS_o; CS_u; CS_x; CS_X; CS_f #'f']) then
                 Mem.return (Right (U.undef loc [U.UB157]))
               else
                 let expanded  = expand is_zero cp.cp_flags cp.cp_conversion_specifier str in

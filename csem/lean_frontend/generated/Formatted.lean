@@ -10,6 +10,7 @@ import CerbDecode
 import CerbDebug
 import CerbPP
 import CerbUtils
+import CerbFloat
 import Decode
 import Implementation
 import Undefined
@@ -200,8 +201,9 @@ inductive length_modifier : Type where
   | LM_j : length_modifier
   | LM_z : length_modifier
   | LM_t : length_modifier
+  | LM_L : length_modifier
   deriving BEq, Ord
-export length_modifier (LM_hh LM_h LM_l LM_ll LM_j LM_z LM_t)
+export length_modifier (LM_hh LM_h LM_l LM_ll LM_j LM_z LM_t LM_L)
 instance : Inhabited length_modifier where
   default := LM_hh
 instance (priority := 500) : Lem_Basic_classes.SetType length_modifier where
@@ -215,7 +217,6 @@ instance (priority := 500) : Lem_Basic_classes.Ord0 length_modifier where
   isLessEqual := defaultLessEq
   isGreater := defaultGreater
   isGreaterEqual := defaultGreaterEq
-/-   | LM_L -/
 
 inductive conversion_specifier : Type where
   | CS_di : conversion_specifier
@@ -223,27 +224,93 @@ inductive conversion_specifier : Type where
   | CS_u : conversion_specifier
   | CS_x : conversion_specifier
   | CS_X : conversion_specifier
-  | CS_f : conversion_specifier /- | CS_F | CS_e | CS_E | CS_g | CS_G | CS_a | CS_A -/
+  | CS_f : Char → conversion_specifier
   | CS_c : conversion_specifier
   | CS_s : conversion_specifier
   | CS_p : conversion_specifier
   | CS_n : conversion_specifier
   | CS_percent : conversion_specifier
-  deriving BEq, Ord
 export conversion_specifier (CS_di CS_o CS_u CS_x CS_X CS_f CS_c CS_s CS_p CS_n CS_percent)
 instance : Inhabited conversion_specifier where
   default := CS_di
+/- lem: equality and comparison for these types, matching OCaml's
+   polymorphic (=) and compare: structural equality; nullary constructors
+   before non-nullary ones, declaration order within each group; fields
+   compared left to right; leaf fields by their Lean BEq/Ord instances. -/
+/- lem: constructor rank for OCaml's polymorphic compare: nullary
+   constructors (immediates) sort below non-nullary ones (blocks);
+   declaration order within each group. -/
+def conversion_specifier.ctor_rank_ocaml : conversion_specifier → Nat
+  | .CS_di => 0
+  | .CS_o => 1
+  | .CS_u => 2
+  | .CS_x => 3
+  | .CS_X => 4
+  | .CS_f _ => 10
+  | .CS_c => 5
+  | .CS_s => 6
+  | .CS_p => 7
+  | .CS_n => 8
+  | .CS_percent => 9
+mutual
+def conversion_specifier.beq_derived (cmpx_ cmpy_ : conversion_specifier) : Bool :=
+  match cmpx_, cmpy_ with
+  | .CS_di, .CS_di => true
+  | .CS_o, .CS_o => true
+  | .CS_u, .CS_u => true
+  | .CS_x, .CS_x => true
+  | .CS_X, .CS_X => true
+  | .CS_f x1, .CS_f y1 => x1 == y1
+  | .CS_c, .CS_c => true
+  | .CS_s, .CS_s => true
+  | .CS_p, .CS_p => true
+  | .CS_n, .CS_n => true
+  | .CS_percent, .CS_percent => true
+  | _, _ => false
+termination_by structural cmpx_
+def conversion_specifier.compare_derived (cmpx_ cmpy_ : conversion_specifier) : Ordering :=
+  match cmpx_, cmpy_ with
+  | .CS_f x1, .CS_f y1 => Ord.compare x1 y1
+  | xg, yg =>
+    Ord.compare (conversion_specifier.ctor_rank_ocaml xg) (conversion_specifier.ctor_rank_ocaml yg)
+termination_by structural cmpx_
+end
+
+instance : BEq conversion_specifier where
+  beq := conversion_specifier.beq_derived
+instance : Ord conversion_specifier where
+  compare := conversion_specifier.compare_derived
 instance (priority := 500) : Lem_Basic_classes.SetType conversion_specifier where
-  setElemCompare := defaultCompare
+  setElemCompare x y :=
+    match conversion_specifier.compare_derived x y with
+    | .lt => LemOrdering.LT
+    | .eq => LemOrdering.EQ
+    | .gt => LemOrdering.GT
 instance (priority := 500) : Lem_Basic_classes.Eq0 conversion_specifier where
-  isEqual x y := x == y
-  isInequal x y := !(x == y)
+  isEqual := conversion_specifier.beq_derived
+  isInequal x y := !(conversion_specifier.beq_derived x y)
 instance (priority := 500) : Lem_Basic_classes.Ord0 conversion_specifier where
-  compare := defaultCompare
-  isLess := defaultLess
-  isLessEqual := defaultLessEq
-  isGreater := defaultGreater
-  isGreaterEqual := defaultGreaterEq
+  compare x y :=
+    match conversion_specifier.compare_derived x y with
+    | .lt => LemOrdering.LT
+    | .eq => LemOrdering.EQ
+    | .gt => LemOrdering.GT
+  isLess x y :=
+    match conversion_specifier.compare_derived x y with
+    | .lt => true
+    | _ => false
+  isLessEqual x y :=
+    match conversion_specifier.compare_derived x y with
+    | .gt => false
+    | _ => true
+  isGreater x y :=
+    match conversion_specifier.compare_derived x y with
+    | .gt => true
+    | _ => false
+  isGreaterEqual x y :=
+    match conversion_specifier.compare_derived x y with
+    | .lt => false
+    | _ => true
 
 instance : Eq0 conversion_specifier where
 
@@ -400,32 +467,41 @@ def lengthModifier : parserM length_modifier :=
                                           (ParserM (fun (cs : List Char) =>
                                             match parse
                                                 (parse_mplus
-                                                  (parse_bind (string0 ['h', 'h'])
-                                                    (fun (_ : List Char) => parse_return LM_hh))
-                                                  (parse_bind (parse_char 'h') (fun (_ : Char) =>
-                                                    parse_return LM_h))) cs with
+                                                  (ParserM (fun (cs : List Char) =>
+                                                    match parse
+                                                        (parse_mplus
+                                                          (parse_bind (string0 ['h', 'h'])
+                                                            (fun (_ : List Char) =>
+                                                              parse_return LM_hh))
+                                                          (parse_bind (parse_char 'h')
+                                                            (fun (_ : Char) => parse_return LM_h)))
+                                                        cs with
+                                                    | [] =>
+                                                      ([] : List (length_modifier × List Char))
+                                                    | (x :: _) => [x]))
+                                                  (parse_bind (string0 ['l', 'l'])
+                                                    (fun (_ : List Char) => parse_return LM_ll)))
+                                                cs with
                                             | [] => ([] : List (length_modifier × List Char))
                                             | (x :: _) => [x]))
-                                          (parse_bind (string0 ['l', 'l']) (fun (_ : List Char) =>
-                                            parse_return LM_ll))) cs with
+                                          (parse_bind (parse_char 'l') (fun (_ : Char) =>
+                                            parse_return LM_l))) cs with
                                     | [] => ([] : List (length_modifier × List Char))
                                     | (x :: _) => [x]))
-                                  (parse_bind (parse_char 'l') (fun (_ : Char) =>
-                                    parse_return LM_l))) cs with
+                                  (parse_bind (parse_char 'j') (fun (_ : Char) =>
+                                    parse_return LM_j))) cs with
                             | [] => ([] : List (length_modifier × List Char))
                             | (x :: _) => [x]))
-                          (parse_bind (parse_char 'j') (fun (_ : Char) => parse_return LM_j)))
+                          (parse_bind (parse_char 'z') (fun (_ : Char) => parse_return LM_z)))
                         cs with
                     | [] => ([] : List (length_modifier × List Char))
                     | (x :: _) => [x]))
-                  (parse_bind (parse_char 'z') (fun (_ : Char) => parse_return LM_z))) cs with
+                  (parse_bind (parse_char 't') (fun (_ : Char) => parse_return LM_t))) cs with
             | [] => ([] : List (length_modifier × List Char))
-            | (x :: _) => [x])) (parse_bind (parse_char 't') (fun (_ : Char) => parse_return LM_t)))
+            | (x :: _) => [x])) (parse_bind (parse_char 'L') (fun (_ : Char) => parse_return LM_L)))
         cs with
     | [] => ([] : List (length_modifier × List Char))
     | (x :: _) => [x])
-/-  <|> (char #'L'           >> return LM_L) -/
-
 def conversionSpecifier : parserM conversion_specifier :=
   ParserM (fun (cs : List Char) =>
     match parse
@@ -519,8 +595,101 @@ def conversionSpecifier : parserM conversion_specifier :=
                                                     | [] =>
                                                       ([] : List (conversion_specifier × List Char))
                                                     | (x :: _) => [x]))
-                                                  (parse_bind (parse_char 'f') (fun (_ : Char) =>
-                                                    parse_return CS_f))) cs with
+                                                  (parse_bind
+                                                    (ParserM (fun (cs : List Char) =>
+                                                      match parse
+                                                          (parse_mplus
+                                                            (ParserM (fun (cs : List Char) =>
+                                                              match parse
+                                                                  (parse_mplus
+                                                                    (ParserM
+                                                                      (fun (cs : List Char) =>
+                                                                        match parse
+                                                                            (parse_mplus
+                                                                              (ParserM
+                                                                                (fun (cs : List
+                                                                                  Char) =>
+                                                                                  match parse
+                                                                                      (parse_mplus
+                                                                                        (ParserM
+                                                                                          (fun (cs :
+                                                                                            List
+                                                                                            Char) =>
+                                                                                            match parse
+                                                                                                (parse_mplus
+                                                                                                  (ParserM
+                                                                                                    (fun (cs :
+                                                                                                      List
+                                                                                                      Char) =>
+                                                                                                      match parse
+                                                                                                          (parse_mplus
+                                                                                                            (ParserM
+                                                                                                              (fun (cs :
+                                                                                                                List
+                                                                                                                Char) =>
+                                                                                                                match parse
+                                                                                                                    (parse_mplus
+                                                                                                                      (parse_char
+                                                                                                                        'f')
+                                                                                                                      (parse_char
+                                                                                                                        'F'))
+                                                                                                                    cs with
+                                                                                                                | [] =>
+                                                                                                                  ([] :
+                                                                                                                    List
+                                                                                                                    (Char ×
+                                                                                                                      List
+                                                                                                                      Char))
+                                                                                                                | (x ::
+                                                                                                                  _) =>
+                                                                                                                  [x]))
+                                                                                                            (parse_char
+                                                                                                              'e'))
+                                                                                                          cs with
+                                                                                                      | [] =>
+                                                                                                        ([] :
+                                                                                                          List
+                                                                                                          (Char ×
+                                                                                                            List
+                                                                                                            Char))
+                                                                                                      | (x ::
+                                                                                                        _) =>
+                                                                                                        [x]))
+                                                                                                  (parse_char
+                                                                                                    'E'))
+                                                                                                cs with
+                                                                                            | [] =>
+                                                                                              ([] :
+                                                                                                List
+                                                                                                (Char ×
+                                                                                                  List
+                                                                                                  Char))
+                                                                                            | (x ::
+                                                                                              _) =>
+                                                                                              [x]))
+                                                                                        (parse_char
+                                                                                          'g'))
+                                                                                      cs with
+                                                                                  | [] =>
+                                                                                    ([] : List
+                                                                                      (Char × List
+                                                                                        Char))
+                                                                                  | (x :: _) =>
+                                                                                    [x]))
+                                                                              (parse_char 'G'))
+                                                                            cs with
+                                                                        | [] =>
+                                                                          ([] : List
+                                                                            (Char × List Char))
+                                                                        | (x :: _) => [x]))
+                                                                    (parse_char 'a')) cs with
+                                                              | [] => ([] : List (Char × List Char))
+                                                              | (x :: _) => [x])) (parse_char 'A'))
+                                                          cs with
+                                                      | [] => ([] : List (Char × List Char))
+                                                      | (x :: _) => [x]))
+                                                    (fun (c : Char) => parse_return (CS_f c))))
+                                                cs with
                                             | [] => ([] : List (conversion_specifier × List Char))
                                             | (x :: _) => [x]))
                                           (parse_bind (parse_char 'c') (fun (_ : Char) =>
@@ -596,7 +765,7 @@ def justify (p_opt : Option precision) (cspec : conversion_specifier) (fs : flag
   let j :=
     lem_if elem cspec [CS_di, CS_o, CS_u, CS_x, CS_X] then
       lem_if fs.flag_zero && (not fs.flag_minus && isNothing p_opt) then '0' else ' '
-    else lem_if elem cspec [CS_f] then
+    else lem_if elem cspec [CS_f 'f'] then
       lem_if fs.flag_zero && not fs.flag_minus then '0' else ' '
     else
       ' ';
@@ -642,7 +811,7 @@ def isSignedConversion : conversion_specifier → Bool :=
     | CS_u => false
     | CS_x => false
     | CS_X => false
-    | CS_f => true /- TODO: check -/
+    | CS_f _ => true /- TODO: check -/
     | CS_c => false
     | CS_s => false /- TODO: check -/
     | CS_p => false
@@ -865,8 +1034,8 @@ def convert [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (eval_conv : ctype → CerbMem.MemValue → ndM (Sum (CerbLocation.Loc × cause) (t0 value)) String
       mem_error (mem_constraint CerbMem.IntegerValue) CerbMem.MemState)
-    (prec_opt : Option precision) (lm_opt : Option length_modifier) (cspec : conversion_specifier)
-    (flags3 : flags) (args : List (ctype × CerbMem.PointerValue)) :
+    (prec_opt : Option precision) (fw_opt : Option field_width) (lm_opt : Option length_modifier)
+    (cspec : conversion_specifier) (flags3 : flags) (args : List (ctype × CerbMem.PointerValue)) :
     ndM
         (Sum (CerbLocation.Loc × cause)
           (t0 (Bool × List Char × List (ctype × CerbMem.PointerValue)))) String mem_error
@@ -876,11 +1045,12 @@ def convert [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     | some (P_num z) => z
     | some P_asterisk => (failwithI "TODO: Formatted.convert, * prec" : Nat) /- TODO -/
     | none => 1;
-  let aux : Option (ctype → Bool) → Option ctype → (Int → List Char) → (Float → List Char) → ndM
+  let aux : Option (ctype → Bool) → Option ctype → (Int → List Char) →
+    (CerbFloat.Value → List Char) → ndM
     (Sum (CerbLocation.Loc × cause) (t0 (Bool × List Char × List (ctype × CerbMem.PointerValue))))
     String mem_error (mem_constraint CerbMem.IntegerValue) CerbMem.MemState :=
     (fun (expected_pred_opt : Option (ctype → Bool)) (_conv_ty_opt : Option ctype)
-      (cont_int : Int → List Char) (cont_floating : Float → List Char) => /- TODO: wip -/
+      (cont_int : Int → List Char) (cont_floating : CerbFloat.Value → List Char) => /- TODO: wip -/
       match args with
       | [] => nd_return (Sum.inr (undef loc1 [UB153a_insufficient_arguments_for_format]))
       | (arg_ty, arg_ptr) :: args' =>
@@ -1014,7 +1184,11 @@ def convert [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
            (some
              (wrap_is_compatible
                (is_compatible_with_ptrdiff_t _lemReader_enum_definitions _lemReader_tagDefs)), none)
-         | none => (some (fun (z : ctype) => ctypeEqual z default_ty), none)));
+         | none => (some (fun (z : ctype) => ctypeEqual z default_ty), none)
+         | some LM_L =>
+           (failwithI
+             "Incomplete Pattern at File \"frontend/model/formatted.lem\", line 553, character 5 to line 570, character 7" :
+             (Option (ctype → Bool) × Option ctype))));
   match cspec with
   | CS_di =>
     (match mk_diouxX_expected_and_conv true with
@@ -1026,7 +1200,7 @@ def convert [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
              (fun (z : List Char) => '-' :: z)
            else
              (fun (x : List Char)=> x)) (List.replicate (prec - List.length str) '0' ++ str))
-         (fun (_ : Float) => ([] : List Char)))
+         (fun (_ : CerbFloat.Value) => ([] : List Char)))
   | CS_o =>
     (match mk_diouxX_expected_and_conv false with
      | (expected_pred_opt, conv_ty_opt) => /- see (§7.21.6.1#8 o,u,x,X) -/
@@ -1034,7 +1208,7 @@ def convert [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
          (fun (n : Int) => /- TODO: conversion (n is unsigned int here) -/
            let str := showNonNegativeWithBasis false 8 (Int.natAbs n);
            List.replicate (prec - List.length str) '0' ++ str)
-         (fun (_ : Float) => ([] : List Char)))
+         (fun (_ : CerbFloat.Value) => ([] : List Char)))
   | CS_u =>
     (match mk_diouxX_expected_and_conv false with
      | (expected_pred_opt, conv_ty_opt) => /- see (§7.21.6.1#8 o,u,x,X) -/
@@ -1042,7 +1216,7 @@ def convert [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
          (fun (n : Int) => /- TODO: conversion (n is unsigned int here) -/
            let str := showNonNegativeWithBasis false 10 (Int.natAbs n);
            List.replicate (prec - List.length str) '0' ++ str)
-         (fun (_ : Float) => ([] : List Char)))
+         (fun (_ : CerbFloat.Value) => ([] : List Char)))
   | CS_x =>
     (match mk_diouxX_expected_and_conv false with
      | (expected_pred_opt, conv_ty_opt) => /- see (§7.21.6.1#8 o,u,x,X) -/
@@ -1050,7 +1224,7 @@ def convert [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
          (fun (n : Int) => /- TODO: conversion (n is unsigned int here) -/
            let str := showNonNegativeWithBasis false 16 (Int.natAbs n);
            List.replicate (prec - List.length str) '0' ++ str)
-         (fun (_ : Float) => ([] : List Char)))
+         (fun (_ : CerbFloat.Value) => ([] : List Char)))
   | CS_X =>
     (match mk_diouxX_expected_and_conv false with
      | (expected_pred_opt, conv_ty_opt) => /- see (§7.21.6.1#8 o,u,x,X) -/
@@ -1058,28 +1232,32 @@ def convert [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
          (fun (n : Int) => /- TODO: conversion (n is unsigned int here) -/
            let str := showNonNegativeWithBasis true 16 (Int.natAbs n);
            List.replicate (prec - List.length str) '0' ++ str)
-         (fun (_ : Float) => ([] : List Char)))
-  | CS_f =>
+         (fun (_ : CerbFloat.Value) => ([] : List Char)))
+  | CS_f conv =>
     (let prec :=
        match prec_opt with
-       | some (P_num z) => z
-       | some P_asterisk => (failwithI "TODO: Formatted.convert, * prec" : Nat) /- TODO -/
-       | none => /- STD §7.21.6.1#8 -/ 6;
-     let do_output :=/- TODO: check -/
-       match some (fun (z : ctype) =>
-           ctypeEqual z (Ctype ([] : List annot) (Basic (Floating (RealFloating Double))))),
-           none with
-       | expected_ty_opt, conv_ty_opt =>
-         aux expected_ty_opt conv_ty_opt (fun (_ : Int) => ([] : List Char)) (fun (xs : Float) =>
-           String.toList (CerbPP.format_string_of_float prec xs));
-     match lm_opt with
-     | some lm =>
-       (/- NOTE: that LM_l is allowed (with no effect) -/ lem_if Lem_List.elem lm
-           [LM_hh, LM_h, LM_ll, LM_j, LM_z, LM_t] then
-         nd_return (Sum.inr (Undef loc1 [UB158_invalid_length_modifier]))
-       else
-         do_output)
-     | none => do_output)
+       | some (P_num z) => some z
+       | some P_asterisk => (failwithI "Formatted: unresolved precision argument" : Option Nat)
+       | none => none;
+     let width :=
+       match fw_opt with
+       | some (FW_num z) => z
+       | some FW_asterisk => (failwithI "Formatted: unresolved width argument" : Nat)
+       | none => 0;
+     let ft :=
+       lem_if (maybeEqualBy (fun x y => x == y) lm_opt (some LM_L)) then LongDouble else Double;
+     lem_if Lem_List.elem lm_opt
+         [some LM_hh, some LM_h, some LM_ll, some LM_j, some LM_z, some LM_t] then
+       nd_return (Sum.inr (Undef loc1 [UB158_invalid_length_modifier]))
+     else
+       aux
+         (some (fun (z : ctype) =>
+           ctypeEqual z (Ctype ([] : List annot) (Basic (Floating (RealFloating ft)))))) none
+         (fun (_ : Int) => ([] : List Char))
+         (fun (xs : CerbFloat.Value) =>
+           String.toList
+             (CerbFloat.formatIEEE conv flags3.flag_minus flags3.flag_plus flags3.flag_space
+               flags3.flag_hash flags3.flag_zero width prec xs)))
   | CS_c =>
     (/- see (§7.21.6.1#8 c) -/
     match lm_opt with
@@ -1092,7 +1270,7 @@ def convert [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     | none =>
       aux (some (fun (z : ctype) => ctypeEqual z signed_int)) (some unsigned_char)
         (fun (n : Int) => [CerbUtils.encode_character_constant n])
-        (fun (_ : Float) => ([] : List Char)))
+        (fun (_ : CerbFloat.Value) => ([] : List Char)))
   | CS_s =>
     (/- TODO: I don't like it ==> should rewrite it -/
     match lm_opt with
@@ -1208,44 +1386,53 @@ def printf_aux [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
   | F_conv cp :: fs, ty_ptrvals =>
     nd_bind
       ((convert _lemReader_enum_definitions _lemReader_tagDefs) loc1 eval_conv cp.cp_precision
-        cp.cp_length_modifier cp.cp_conversion_specifier cp.cp_flags ty_ptrvals)
+        cp.cp_field_width cp.cp_length_modifier cp.cp_conversion_specifier cp.cp_flags ty_ptrvals)
       (fun (x : Sum (CerbLocation.Loc × cause)
         (t0 (Bool × List Char × List (ctype × CerbMem.PointerValue)))) =>
         match x with
         | Sum.inr (Defined (is_zero, str, ty_ptrvals')) =>
-          (let hash_CSs :=
-             lem_if CerbGlobal.is_CHERI () then
-               [CS_o, CS_x, CS_X, CS_f,
-                 CS_p] /- NON-STD: CHERI supports # for the %p conversion specifier -/
-             else
-               [CS_o, CS_x, CS_X, CS_f];
-           lem_if cp.cp_flags.flag_plus && not
-               (isSignedConversion
-                 cp.cp_conversion_specifier) then /- TODO: add a proper UB variant -/
-             nd_return
-               (Sum.inr
-                 (undef loc1
-                   [DUMMY
-                     "+ flag with unsigned conversion"])) /- TODO: CS_F | CS_e | CS_E | CS_g | CS_G | CS_a | CS_A -/
-           else lem_if cp.cp_flags.flag_hash && not
-               (Lem_List.elem cp.cp_conversion_specifier hash_CSs) then
-             nd_return (Sum.inr (undef loc1 [UB157]))
-           else lem_if cp.cp_flags.flag_zero && not
-               (Lem_List.elem cp.cp_conversion_specifier [CS_di, CS_o, CS_u, CS_x, CS_X, CS_f]) then
-             nd_return (Sum.inr (undef loc1 [UB157]))
+          (let floating :=
+             match cp.cp_conversion_specifier with
+             | CS_f _ => true
+             | _ => false;
+           lem_if floating then
+             (printf_aux _lemReader_enum_definitions _lemReader_tagDefs) loc1 eval_conv (acc ++ str)
+               fs ty_ptrvals'
            else
-             let expanded := expand is_zero cp.cp_flags cp.cp_conversion_specifier str;
-             let justified :=
-               match cp.cp_field_width with
-               | none => expanded
-               | some (FW_num fw) =>
-                 (lem_if natLtb (List.length expanded) fw then
-                   justify cp.cp_precision cp.cp_conversion_specifier cp.cp_flags fw expanded
-                 else
-                   expanded)
-               | some FW_asterisk => (failwithI "TODO: formatted.lem 6" : List Char);
-             (printf_aux _lemReader_enum_definitions _lemReader_tagDefs) loc1 eval_conv
-               (acc ++ justified) fs ty_ptrvals')
+             let hash_CSs :=
+               lem_if CerbGlobal.is_CHERI () then
+                 [CS_o, CS_x, CS_X, CS_f 'f',
+                   CS_p] /- NON-STD: CHERI supports # for the %p conversion specifier -/
+               else
+                 [CS_o, CS_x, CS_X, CS_f 'f'];
+             lem_if cp.cp_flags.flag_plus && not
+                 (isSignedConversion
+                   cp.cp_conversion_specifier) then /- TODO: add a proper UB variant -/
+               nd_return
+                 (Sum.inr
+                   (undef loc1
+                     [DUMMY
+                       "+ flag with unsigned conversion"])) /- TODO: CS_F | CS_e | CS_E | CS_g | CS_G | CS_a | CS_A -/
+             else lem_if cp.cp_flags.flag_hash && not
+                 (Lem_List.elem cp.cp_conversion_specifier hash_CSs) then
+               nd_return (Sum.inr (undef loc1 [UB157]))
+             else lem_if cp.cp_flags.flag_zero && not
+                 (Lem_List.elem cp.cp_conversion_specifier
+                   [CS_di, CS_o, CS_u, CS_x, CS_X, CS_f 'f']) then
+               nd_return (Sum.inr (undef loc1 [UB157]))
+             else
+               let expanded := expand is_zero cp.cp_flags cp.cp_conversion_specifier str;
+               let justified :=
+                 match cp.cp_field_width with
+                 | none => expanded
+                 | some (FW_num fw) =>
+                   (lem_if natLtb (List.length expanded) fw then
+                     justify cp.cp_precision cp.cp_conversion_specifier cp.cp_flags fw expanded
+                   else
+                     expanded)
+                 | some FW_asterisk => (failwithI "TODO: formatted.lem 6" : List Char);
+               (printf_aux _lemReader_enum_definitions _lemReader_tagDefs) loc1 eval_conv
+                 (acc ++ justified) fs ty_ptrvals')
         | Sum.inr (Error loc1 str) => nd_return (Sum.inr (Error loc1 str))
         | Sum.inr (Undef loc1 ubs) => nd_return (Sum.inr (Undef loc1 ubs))
         | Sum.inl err =>

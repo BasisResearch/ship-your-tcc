@@ -185,7 +185,7 @@ roots = [
   "CerbLocation",
   "CerberusFresh",
   "CerbGlobal",
-  "CerbFloat",
+  "CerbIEEE", "CerbFloat",
   "CerbUtils",
   "CerbPP",
   "CerbQuote",
@@ -427,3 +427,8 @@ name = "CoreQuoteSupport"
 srcDir = "test/CoreQuote"
 roots = ["CoreQuoteCompare"]
 libName = "CoreQuoteCompare"
+
+[[lean_exe]]
+name = "ieee-test"
+srcDir = "test"
+root = "Unit.IEEETest"

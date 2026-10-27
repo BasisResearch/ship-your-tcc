@@ -1,0 +1,3 @@
+literal f32 (strtof)	3032	nan:0	mismatch:0
+literal f64 (strtod)	3032	nan:0	mismatch:0
+literal f128 (strtof128)	3032	nan:0	mismatch:0

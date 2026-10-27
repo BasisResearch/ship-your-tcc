@@ -200,6 +200,11 @@ let export_ctor loc = function
      E.return Cspecified
  | Cunspecified ->
      E.return Cunspecified
+ | Cfvconvert -> E.return Cfvconvert
+ | CfvconvertLoaded -> E.return CfvconvertLoaded
+ | CfvfromintTyped -> E.return CfvfromintTyped
+ | CfvfromintTypedLoaded -> E.return CfvfromintTypedLoaded
+ | Cfvneg -> E.return Cfvneg
  | Cfvfromint ->
      E.return Cfvfromint
  | Civfromfloat ->

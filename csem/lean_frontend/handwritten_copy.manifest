@@ -31,6 +31,7 @@ CerbDriverConfig.lean
 CerbEscape.lean
 CerberusFresh.lean
 CerberusImpl.lean
+CerbIEEE.lean
 CerbFloat.lean
 CerbFS.lean
 CerbFuel.lean

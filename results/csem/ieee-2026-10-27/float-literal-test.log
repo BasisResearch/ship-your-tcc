@@ -1,0 +1,3 @@
+test: CerbFloat.of_string binary64 bit patterns (correctly rounded, ties-to-even)
+42 literal pins checked
+All float-literal pins passed

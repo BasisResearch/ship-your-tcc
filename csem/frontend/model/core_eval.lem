@@ -682,10 +682,26 @@ let rec step_eval_pexpr n loc parent_call_loc_opt core_extern env mem_st_opt fil
           | (Cunspecified, Just [Vctype ty]) ->
               EU.return $ PEval (Vloaded (LVunspecified ty))
 
+          | (Cfvconvert, Just [Vctype (Ctype.Ctype _ (Ctype.Basic (Ctype.Floating ft))); Vobject (OVfloating x)]) ->
+              EU.return $ PEval (Vobject (OVfloating (Mem.convert_fval ft x)))
+          | (CfvconvertLoaded, Just [Vctype (Ctype.Ctype _ (Ctype.Basic (Ctype.Floating ft))); Vloaded (LVspecified (OVfloating x))]) ->
+              EU.return $ PEval (Vloaded (LVspecified (OVfloating (Mem.convert_fval ft x))))
+          | (CfvconvertLoaded, Just [Vctype ty; Vloaded (LVunspecified _)]) ->
+              EU.return $ PEval (Vloaded (LVunspecified ty))
+          | (CfvfromintTyped, Just [Vctype (Ctype.Ctype _ (Ctype.Basic (Ctype.Floating ft))); Vobject (OVinteger x)]) ->
+              EU.return $ PEval (Vobject (OVfloating (Mem.fvfromint_typed ft x)))
+          | (CfvfromintTypedLoaded, Just [Vctype (Ctype.Ctype _ (Ctype.Basic (Ctype.Floating ft))); Vloaded (LVspecified (OVinteger x))]) ->
+              EU.return $ PEval (Vloaded (LVspecified (OVfloating (Mem.fvfromint_typed ft x))))
+          | (CfvfromintTypedLoaded, Just [Vctype ty; Vloaded (LVunspecified _)]) ->
+              EU.return $ PEval (Vloaded (LVunspecified ty))
+          | (Cfvneg, Just [Vobject (OVfloating fv)]) ->
+              EU.return $ PEval (Vobject (OVfloating (Mem.neg_fval fv)))
           | (Cfvfromint, Just [Vobject (OVinteger ival)]) ->
               EU.return $ PEval (Vobject (OVfloating (Mem.fvfromint ival)))
           | (Civfromfloat, Just [Vctype (Ctype.Ctype _ (Ctype.Basic (Ctype.Integer ity))); Vobject (OVfloating fval)]) ->
-              EU.return $ PEval (Vobject (OVinteger (Mem.ivfromfloat ity fval)))
+              if Mem.finite_fval fval then
+                EU.return $ PEval (Vobject (OVinteger (Mem.ivfromfloat ity fval)))
+              else Exception.return (Undefined.undef loc [Undefined.UB017_out_of_range_floating_integer_conversion])
 
           | (CivNULLcap is_signed, Just []) ->
               EU.return $ PEval (Vobject (OVinteger (Mem.null_cap is_signed)))

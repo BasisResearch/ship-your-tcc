@@ -388,6 +388,18 @@ declare lean target_rep function one_fval = `CerbMem.oneFval`
 declare ocaml target_rep function str_fval = `Impl_mem.str_fval`
 declare lean target_rep function str_fval = `CerbMem.strFval`
 
+(* Format-sensitive floating operations (shared AST; pure Lean interpretation). *)
+val str_fval_typed: Ctype.floatingType -> string -> floating_value
+declare lean target_rep function str_fval_typed = `CerbMem.strFvalTyped`
+val convert_fval: Ctype.floatingType -> floating_value -> floating_value
+declare lean target_rep function convert_fval = `CerbMem.convertFval`
+val fvfromint_typed: Ctype.floatingType -> integer_value -> floating_value
+declare lean target_rep function fvfromint_typed = `CerbMem.fvfromintTyped`
+val neg_fval: floating_value -> floating_value
+declare lean target_rep function neg_fval = `CerbMem.negFval`
+val finite_fval: floating_value -> bool
+declare lean target_rep function finite_fval = `CerbMem.finiteFval`
+
 (* Floating value destructors *)
 val case_fval: forall 'a. floating_value -> (unit -> 'a) -> (Float.float -> 'a) -> 'a
 declare ocaml target_rep function case_fval = `Impl_mem.case_fval`

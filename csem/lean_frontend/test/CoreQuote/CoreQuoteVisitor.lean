@@ -10,7 +10,7 @@ import Core_run_aux
 open Lean Meta Elab Command
 namespace CoreQuoteVisitor
 
-private def leaves : List Name := [``Nat, ``Int, ``String, ``Float, ``Bool, ``Unit, ``PUnit]
+private def leaves : List Name := [``Nat, ``Int, ``String, ``CerbIEEE.FVal, ``Bool, ``Unit, ``PUnit]
 
 private def ctorFields (ty : Expr) (ctor : Name) : MetaM (Array Expr) := do
   let .const n levels := ty.getAppFn | throwError "unnamed type {ty}"
@@ -48,7 +48,7 @@ run_cmd liftTermElabM do
     let .const n _ := ty.getAppFn | throwError "unnamed visitor type {ty}"
     IO.println s!"partial def view{i} (x : {← ppExpr ty}) : Shape :="
     if leaves.contains n then
-      if n == ``Float then IO.println "  .scalar (if x.isNaN then \"NaN\" else \"Float.bits\") (toString x.toBits.toNat)"
+      if n == ``CerbIEEE.FVal then IO.println "  .scalar \"IEEE.bits\" (toString x.fmt.width ++ \"/\" ++ toString x.bits.toNat)"
       else if n == ``Unit || n == ``PUnit then IO.println "  let _ := x; .node \"Unit.unit\" #[]"
       else if n == ``String then IO.println "  .scalar \"String\" x"
       else IO.println s!"  .scalar \"{n}\" (toString x)"
@@ -82,7 +82,7 @@ run_cmd liftTermElabM do
           let .str _ shortName := ctor | throwError "unexpected constructor name {ctor}"
           IO.println s!"  | .{shortName} {String.intercalate " " vars.toList} => .node \"{ctor}\" #[{String.intercalate ", " args.toList}]"
   IO.println "end\n-- END DATATYPE VISITOR"
-  unless ctors == 638 && heads.size == 81 do
+  unless ctors == 643 && heads.size == 81 do
     throwError "inventory drift: {ctors} model constructors, {heads.size} container/model heads"
   IO.println s!"-- {ctors} model constructors; {types.size} instantiated types; 75 model + 6 container heads."
 

@@ -80,3 +80,9 @@ declare {lean} reader_consumer val Mem.bitwise_or_ival = instance impl_params
 declare {lean} reader_consumer val Mem.bitwise_xor_ival = instance impl_params
 
 declare {lean} reader_consumer val Builtins.translate_errno = instance impl_params
+
+declare {lean} reader_consumer val Mem.str_fval = instance impl_params
+declare {lean} reader_consumer val Mem.convert_fval = instance impl_params
+declare {lean} reader_consumer val Mem.fvfromint_typed = instance impl_params
+declare {lean} reader_consumer val Mem.floating_value_mval = instance impl_params
+declare {lean} reader_consumer val Mem.str_fval_typed = instance impl_params

@@ -92,12 +92,21 @@ def path (parent : NameMap Name) (n : Name) : String := Id.run do
     | none => break
   return " <- ".intercalate ps.toList
 
+/-- Native IEEE execution must not re-enter either semantic closure. Lean's
+pure model namespace is allowed; native Float/Float32 types and operations are not. -/
+def nativeFloating (n : Name) : Bool :=
+  let s := n.toString
+  (s == "Float" || s.startsWith "Float." || s == "Float32" || s.startsWith "Float32.") &&
+    !(s.startsWith "Float.Model" || s.startsWith "Float32.Model")
+
 def report (env : Environment) (title : String) (roots : List Name) (runtime all : Bool) :
     IO Unit := do
   let (cone, parent) := closure env roots runtime
   IO.println s!"== {title}: cone of {roots}: {cone.size} constants"
   let mut rows : Array (String × String × String) := #[]
+  let mut native : Array Name := #[]
   for n in cone do
+    if nativeFloating n then native := native.push n
     if let some ci := env.find? n then
       let fs := flags env n ci
       if !fs.isEmpty then
@@ -110,6 +119,9 @@ def report (env : Environment) (title : String) (roots : List Name) (runtime all
   let has (s : String) (f : String) := (f.splitOn s).length > 1
   let count (p : String → Bool) := (rows.filter fun r => p r.2.2).size
   IO.println s!"counts ({title}): PARTIAL {count (has "PARTIAL")}, OPAQUE {count (has "OPAQUE")}, EXTERN(opaque) {count (has "EXTERN(opaque)")}, IMPLBY {count (has "IMPLBY")}, UNSAFE {count (has "UNSAFE")}, AXIOM {count (has "AXIOM")}; Lean-core primitives EXTERN(def) {count (has "EXTERN(def)")}, EXTERN(ctor) {count (has "EXTERN(ctor)")}"
+  IO.println s!"native floating ({title}): {native.size}"
+  unless native.isEmpty do
+    throw (IO.userError s!"native floating seam re-entered {title}: {native.toList}")
 
 def run (roots : List Name) : CoreM Unit := do
   let env ← getEnv

@@ -1,0 +1,18 @@
+=== PPTest: arc-10 S3 pretty-printer mirrors ===
+test: ppCtype mirrors Pp_core_ctype.pp_ctype
+  ✓ PASS
+test: stringFromCore_value mirrors Pp_core.pp_value
+  ✓ PASS
+test: CerbFloat.string_of_float / formatFixed vs OCaml transcript
+  ✓ PASS
+PASS batch escaping: all 256 bytes match OCaml
+PASS batch escaping: all 256 byte carriers match OCaml
+PASS batch escaping: empty bytes
+PASS batch escaping: empty byte carriers
+PASS batch escaping: empty text
+PASS batch escaping: text controls and delimiters
+PASS batch escaping: UTF-8 sequence carried as bytes
+PASS batch escaping: UTF-8 text
+PASS batch escaping: model-failure text uses the same adapter
+PASS batch escaping: embedded verdict remains escaped payload
+All PP tests passed

@@ -1306,7 +1306,7 @@ def impl_case_mem_value { a : Type } [Inhabited a] (mval : impl_mem_value) (funs
   | MVcomposite _ _ => (failwithI "TODO: Defacto_memory.impl_case_mem_value, MVcomposite" : a)
 
 def impl_case_fval { a : Type } (fval : impl_floating_value) (funspec : Unit → a)
-    (fconcrete : Float → a) :
+    (fconcrete : CerbFloat.Value → a) :
     a :=
   match fval with
   | FVunspecified => funspec ()

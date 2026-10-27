@@ -200,3 +200,31 @@ The typed ghost Cabs connection is queued as tasks/f3-ghost-cabs.md after the
 raw frontend/provenance interface. It must instrument the modeled compiler
 parser independently, not copy the spec parser output. The current generic
 ghost tree and dropped folded expressions do not establish parser agreement.
+
+IEEE recovery, 2026-10-27 (review candidate; full gate passes): the preserved draft is integrated
+through pure format-carrying values, direct 32/64/128 literal and integer
+rounding, explicit Core conversions/negation, default argument promotions,
+format-aware object bytes and floating printf. The selected upstream pins,
+C11, Supported/Fits and frozen sum cuts are unchanged. `CerbIEEE` shares
+`Float.Model` with the existing Lua SF/F64 specification; no machine summary
+is reused. Fresh tests replace the historical draft's missing report.
+
+Open IEEE connections are explicit typed definitions:
+
+| obligation | supplies | status |
+|---|---|---|
+| `CerbIEEE.FormatConversionValue_Statement` | field-level proof that the RV64 payload-preserving NaN extension still denotes the core model's NaN; finite rounding path is `convert_not_nan` | open; raw widening/narrowing Sail bits retained |
+| `Tcc.CSem.IEEE.RV64LibgccIEEE_Statement calls` | instantiate `SailCalls` with actual image-pinned lp64 helper runs, code/stack/frame preconditions, then prove `RuntimeAgreement` | open F7; no abstract relation is asserted to describe an image |
+| `Tcc.CSem.IEEE.NewlibIEEE_Statement calls` | image-pinned sqrt and floating printf calls agree with pure IEEE, with ABI/resources/stdio frames supplied by F7 | open; nine finite sqrtl discrepancies and binary128 printf precision/range loss are observed on Sail |
+| `Tcc.CSem.IEEE.TccLiteralIEEE_Statement parseLiteral` | connect target/compiler-model literal parsing to the selected direct-RNE IEEE literal function | open; fresh tcc/Sail `rounding.c` returns 1 where CSem returns 0; retained as a target/spec literal-accuracy discrepancy requiring repair or explicit standards/configuration reconciliation, never a Supported exclusion |
+
+The fresh tcc/Sail continuation passes NaN bytes and conversions but its
+long-double printf line narrows to binary64 precision/range; the independent
+xgcc/Sail probe reproduces the library behavior. CSem keeps full binary128.
+Nine finite binary128 `sqrtl` results in a 32-input xgcc/Sail library probe
+differ from the pure model and same-input host `sqrtq`. These are recorded
+F7 library discrepancies, not a passing Sail comparison. The inherited N3
+rounded libc Core dump and the partial Core/frontend parsers remain separate
+obligations. The runtime native-seam census remains diagnostic for other
+seams; its new floating check rejects native Float/Float32 in either cone.
+See `results/csem/ieee-2026-10-27.md` for final gate status and exact counts.

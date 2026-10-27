@@ -555,7 +555,7 @@ def mk_translation_stdlib (p : (Fmap String sym × Fmap sym (generic_fun_map_dec
              (failwithI "mkcall_loaded_fvfromint called on a non floating type" : generic_pexpr Unit
                sym)
            else
-             mk_call "loaded_fvfromint" [mk_ail_ctype_pe ty1, pe]),
+             Pexpr ([] : List annot) () (PEctor CfvfromintTypedLoaded [mk_ail_ctype_pe ty1, pe])),
          mkcall_loaded_ivfromfloat := (fun (ty1 : ctype) (pe : generic_pexpr Unit sym) =>
            lem_if not (is_integer ty1) then
              (failwithI "mkcall_loaded_ivfromfloat called on a non integer type" : generic_pexpr
@@ -567,7 +567,7 @@ def mk_translation_stdlib (p : (Fmap String sym × Fmap sym (generic_fun_map_dec
              mk_call "conv_loaded_int" [pe1, pe2]),
          mkcall_loaded_fvfromint_ :=
            (fun (pe1 : generic_pexpr Unit sym) (pe2 : generic_pexpr Unit sym) =>
-             mk_call "loaded_fvfromint" [pe1, pe2]),
+             Pexpr ([] : List annot) () (PEctor CfvfromintTypedLoaded [pe1, pe2])),
          mkcall_loaded_ivfromfloat_ :=
            (fun (pe1 : generic_pexpr Unit sym) (pe2 : generic_pexpr Unit sym) =>
              mk_call "loaded_ivfromfloat" [pe1, pe2]),
@@ -612,14 +612,14 @@ def conv_loaded_arith (stdlib1 : translation_stdlib) (ty_src : ctype) (ty_dst : 
     else /- NOTE: this case will occurs in particular if ty_dst is an atomic type -/
       (failwithI "Translation_aux.conv_loaded_arith, not (is_arithmetic ty_dst)" : generic_pexpr
         Unit sym)
-      /-      C.Pexpr [] () (C.PEctor C.Cfvfromint [Caux.mk_ail_ctype_pe ty_dst; pe]) -/
+      /-      C.Pexpr [] () (C.PEctor C.CfvfromintTyped [Caux.mk_ail_ctype_pe ty_dst; pe]) -/
   else lem_if is_floating ty_src then
     lem_if is_integer ty_dst then
       stdlib1.mkcall_loaded_ivfromfloat ty_dst
         pe
         /-      C.Pexpr [] () (C.PEctor C.Civfromfloat [Caux.mk_ail_ctype_pe ty_dst; pe]) -/
-    else lem_if is_floating ty_dst then /- TODO: floating vs floating conversion -/
-      pe
+    else lem_if is_floating ty_dst then
+      Pexpr ([] : List annot) () (PEctor CfvconvertLoaded [mk_ail_ctype_pe ty_dst, pe])
     else /- NOTE: this case will occurs in particular if ty_dst is an atomic type -/
       (failwithI "Translation_aux.conv_loaded_arith, not (is_arithmetic ty_dst)" : generic_pexpr
         Unit sym)
@@ -647,7 +647,7 @@ def conv_arith (stdlib1 : translation_stdlib) (ty_src : ctype) (ty_dst : ctype)
     lem_if is_integer ty_dst then
       stdlib1.mkcall_conv_int ty_dst pe
     else lem_if is_floating ty_dst then
-      Pexpr ([] : List annot) () (PEctor Cfvfromint [mk_ail_ctype_pe ty_dst, pe])
+      Pexpr ([] : List annot) () (PEctor CfvfromintTyped [mk_ail_ctype_pe ty_dst, pe])
     else /- NOTE: this case will occurs in particular if ty_dst is an atomic type -/
       (failwithI "Translation_aux.conv_arith, not (is_arithmetic ty_dst)" : generic_pexpr Unit sym)
   else lem_if is_floating ty_src then
@@ -658,8 +658,8 @@ def conv_arith (stdlib1 : translation_stdlib) (ty_src : ctype) (ty_dst : ctype)
         (mk_integer_pe ((0 : Int))) (mk_integer_pe ((1 : Int)))
     else lem_if is_integer ty_dst then
       Pexpr ([] : List annot) () (PEctor Civfromfloat [mk_ail_ctype_pe ty_dst, pe])
-    else lem_if is_floating ty_dst then /- TODO: floating vs floating conversion -/
-      pe
+    else lem_if is_floating ty_dst then
+      Pexpr ([] : List annot) () (PEctor Cfvconvert [mk_ail_ctype_pe ty_dst, pe])
     else /- NOTE: this case will occurs in particular if ty_dst is an atomic type -/
       (failwithI "Translation_aux.conv_arith, not (is_arithmetic ty_dst)" : generic_pexpr Unit sym)
   else /- NOTE: this case will occurs in particular if ty_src is an atomic type -/

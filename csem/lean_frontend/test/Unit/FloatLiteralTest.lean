@@ -34,7 +34,7 @@ def hex64 (b : UInt64) : String :=
   "0x" ++ String.ofList (List.replicate (16 - ds.length) '0') ++ String.ofList ds
 
 def pin (lit : String) (expected : UInt64) : IO Bool := do
-  let got := (CerbFloat.of_string lit).toBits
+  let got := (CerbFloat.of_string lit).bits.toNat.toUInt64
   if got == expected then
     return true
   else

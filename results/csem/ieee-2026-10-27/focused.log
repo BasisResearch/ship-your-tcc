@@ -1,0 +1,8 @@
+formats DEFINED_ZERO
+bytes DEFINED_ZERO
+rounding DEFINED_ZERO
+nan-bytes DEFINED_ZERO
+printf DEFINED_ZERO
+nan-conversions DEFINED_ZERO
+literal-rounding DEFINED_ZERO
+nonfinite-int-ub UB017

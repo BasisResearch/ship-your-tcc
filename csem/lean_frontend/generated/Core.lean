@@ -792,11 +792,17 @@ inductive ctor : Type where
   | CivXOR : ctor /- bitwise XOR -/
   | Cspecified : ctor /- non-unspecified loaded value -/
   | Cunspecified : ctor /- unspecified loaded value -/
+  | Cfvconvert : ctor
+  | CfvconvertLoaded : ctor
+  | CfvfromintTyped : ctor
+  | CfvfromintTypedLoaded : ctor
+  | Cfvneg : ctor
   | Cfvfromint : ctor /- cast integer to floating value -/
   | Civfromfloat : ctor /- cast floating to integer value -/
   | CivNULLcap : Bool → ctor
 export ctor (Cnil Ccons Ctuple Carray Civmax Civmin Civsizeof Civalignof CivCOMPL CivAND CivOR
-    CivXOR Cspecified Cunspecified Cfvfromint Civfromfloat CivNULLcap)
+    CivXOR Cspecified Cunspecified Cfvconvert CfvconvertLoaded CfvfromintTyped CfvfromintTypedLoaded
+    Cfvneg Cfvfromint Civfromfloat CivNULLcap)
 instance : Inhabited ctor where
   default := Ccons
 /- lem: equality and comparison for these types, matching OCaml's
@@ -807,7 +813,7 @@ instance : Inhabited ctor where
    constructors (immediates) sort below non-nullary ones (blocks);
    declaration order within each group. -/
 def ctor.ctor_rank_ocaml : ctor → Nat
-  | .Cnil _ => 15
+  | .Cnil _ => 20
   | .Ccons => 0
   | .Ctuple => 1
   | .Carray => 2
@@ -821,9 +827,14 @@ def ctor.ctor_rank_ocaml : ctor → Nat
   | .CivXOR => 10
   | .Cspecified => 11
   | .Cunspecified => 12
-  | .Cfvfromint => 13
-  | .Civfromfloat => 14
-  | .CivNULLcap _ => 16
+  | .Cfvconvert => 13
+  | .CfvconvertLoaded => 14
+  | .CfvfromintTyped => 15
+  | .CfvfromintTypedLoaded => 16
+  | .Cfvneg => 17
+  | .Cfvfromint => 18
+  | .Civfromfloat => 19
+  | .CivNULLcap _ => 21
 mutual
 def ctor.beq_derived (cmpx_ cmpy_ : ctor) : Bool :=
   match cmpx_, cmpy_ with
@@ -841,6 +852,11 @@ def ctor.beq_derived (cmpx_ cmpy_ : ctor) : Bool :=
   | .CivXOR, .CivXOR => true
   | .Cspecified, .Cspecified => true
   | .Cunspecified, .Cunspecified => true
+  | .Cfvconvert, .Cfvconvert => true
+  | .CfvconvertLoaded, .CfvconvertLoaded => true
+  | .CfvfromintTyped, .CfvfromintTyped => true
+  | .CfvfromintTypedLoaded, .CfvfromintTypedLoaded => true
+  | .Cfvneg, .Cfvneg => true
   | .Cfvfromint, .Cfvfromint => true
   | .Civfromfloat, .Civfromfloat => true
   | .CivNULLcap x1, .CivNULLcap y1 => x1 == y1

@@ -328,3 +328,47 @@ The explicit capped rebuild removed both minimal incomplete-array
 mismatches (implicit int and explicit int); the valid char/fixed-array controls
 still match. No compiler/model semantic edit was needed. Full comparisons
 are repeated and retained separately from the stale-binary history.
+
+
+- IEEE recovery (2026-10-27): the draft test runner did not compile on 4.34
+  because six mixed Nat/UInt literal additions lacked operand types. Correct
+  the runner, never treat its historical missing report as test evidence.
+- Recovered `gen_vectors printf` ignored quadmath failures on a format with
+  trailing literal text and reused stale output; its 4,000-byte buffer also
+  silently truncated large binary128 fixed output. Render a single quadmath
+  conversion, append the literal tail separately, check the return and use
+  a sufficient buffer. The two failed host runs are retained as harness errors.
+- Canonicalizing every conversion NaN is wrong for RV64 libgcc extensions.
+  Raw volatile-operand Sail probes preserve shifted payload/sign on widening
+  and canonicalize narrowing. Native Float.toBits cannot validate these payloads.
+  GCC also folds `NaN * 1` to a copy; compare volatile-operand helper calls
+  separately from the compiler's observed expression result.
+- Newlib sqrtl differs on nine finite binary128 results in the 32-input Sail
+  probe. Retain the failed full comparison and same-input host sqrtq replay;
+  do not filter those rows into a successful library claim. Regenerating host
+  vectors with the same PRNG seed does not replay identical rows: the host and
+  Sail generators consume random conversion inputs in different orders.
+- The full recovered tcc/Sail printf probe exceeded 900 seconds with no traced
+  program exit. The first focused batch used nonembedded include paths and
+  was rejected. Its inline replacement completed 31,317,491 steps but stopped
+  honestly at `rounding=1`; formats/bytes passed. Keep that literal-accuracy
+  discrepancy and run later probes separately, without weakening CSem.
+- Frozen build handoff `command` is not executed by the ordinary worker build
+  service. Empty targets triggered a default build, not visitor generation.
+  Use the `IEEEVisitor` Lake library target and install its marked output with
+  `csem/tools/gen_core_quote_visitor.py`. Inventory is freshly 643 constructors,
+  not the old 638. Superseded source manifests are not successful build evidence.
+- The old combined repin/config/FS recheck correctly rejected the changed main
+  `c/build/base.elf` hash. Do not waive that check or recycle its historical
+  Sail records as fresh image evidence. This IEEE task uses independent runs.
+- The passing final continuation's `printf=0` is only the C function's return,
+  not printf-output agreement. Its binary128 line loses the final precision
+  bits and prints `inf` for `1e4000L`; the independent xgcc/Sail probe reproduces
+  that newlib path. Preserve the model/target byte difference and the explicit
+  `NewlibIEEE_Statement`; do not round CSem through binary64 to hide it.
+- The final same-source continuation makes the remaining printf mismatch
+  unambiguous: five binary64 formatting fields agree, while binary128 fixed,
+  hexadecimal and wide-exponent fields lose precision/range. Its zero return
+  is retained separately from output equality. A minimal literal probe prints
+  `3f800000 3f800000` on tcc/Sail versus CSem `3f800001 3f800000`; these two
+  observed discrepancies block claiming the corresponding library/literal links.

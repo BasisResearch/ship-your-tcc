@@ -6,6 +6,7 @@ import CerbPP
 import LemLib.Map_extra
 import CerbDebug
 import CerberusFresh
+import CerbImplCfg
 import CerbMem
 import CerbGlobal
 import Global
@@ -203,7 +204,8 @@ def valueFromMemValue (mem_val : CerbMem.MemValue) : (core_object_type × value)
           (OTy_struct sym1, Vloaded (LVspecified (OVstruct sym1 xs))))
         (fun (sym1 : sym) (ident : identifier) (mem_val : CerbMem.MemValue) =>
           (OTy_union sym1, Vloaded (LVspecified (OVunion sym1 ident mem_val))))))
-def memValueFromValue_lemFuel (lemFuel : Nat) (_lemReader_enum_definitions : Fmap sym integerType)
+def memValueFromValue_lemFuel [CerbImplCfg.Impl] (lemFuel : Nat)
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (ty1 : ctype)
     (cval : value) :
     Option CerbMem.MemValue :=
@@ -291,13 +293,14 @@ def memValueFromValue_lemFuel (lemFuel : Nat) (_lemReader_enum_definitions : Fma
                       (String.append ", " (String.append (CerbPP.stringFromCore_value cval) ")")))))
             (fun _ => none)))))
 
-def memValueFromValue (_lemReader_enum_definitions : Fmap sym integerType)
+def memValueFromValue [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (ty1 : ctype)
     (cval : value) :
     Option CerbMem.MemValue :=
   memValueFromValue_lemFuel (ctype.lemSize ty1) _lemReader_enum_definitions _lemReader_tagDefs ty1
     cval
-theorem memValueFromValue_lemFuel_zero (_lemReader_enum_definitions : Fmap sym integerType)
+theorem memValueFromValue_lemFuel_zero [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (ty1 : ctype)
     (cval : value) :
     memValueFromValue_lemFuel 0 _lemReader_enum_definitions _lemReader_tagDefs ty1 cval =
@@ -600,8 +603,8 @@ def seq_rmw { a : Type } [Default a] (loc1 : CerbLocation.Loc) (with_forward : B
 /- for a given Ctype returns the corresponding "zero" value -/
 /- val     zeros: AilSyntax.tag_definition -> ctype -> pexpr -/
 /- see §6.7.9#10 -/
-def zeros_aux_lemFuel { a : Type } (lemFuel : Nat) (tagDefs1 : Fmap sym (a × tag_definition))
-    (c : ctype) :
+def zeros_aux_lemFuel { a : Type } [CerbImplCfg.Impl] (lemFuel : Nat)
+    (tagDefs1 : Fmap sym (a × tag_definition)) (c : ctype) :
     CerbMem.MemValue :=
   match lemFuel with
   | 0 => (CerbMem.zerosFuelExhausted ())
@@ -658,9 +661,11 @@ def zeros_aux_lemFuel { a : Type } (lemFuel : Nat) (tagDefs1 : Fmap sym (a × ta
         | _ =>
           (failwithI "Core_aux.zeros should only be called on complete types" : CerbMem.MemValue)))
 
-def zeros_aux { a : Type } [LemFuel] : Fmap sym (a × tag_definition) → ctype → CerbMem.MemValue :=
+def zeros_aux { a : Type } [LemFuel] [CerbImplCfg.Impl] :
+    Fmap sym (a × tag_definition) → ctype → CerbMem.MemValue :=
   zeros_aux_lemFuel LemFuel.fuel
-theorem zeros_aux_lemFuel_zero { a : Type } (tagDefs1 : Fmap sym (a × tag_definition)) (c : ctype) :
+theorem zeros_aux_lemFuel_zero { a : Type } [CerbImplCfg.Impl]
+    (tagDefs1 : Fmap sym (a × tag_definition)) (c : ctype) :
     zeros_aux_lemFuel 0 tagDefs1 c = (CerbMem.zerosFuelExhausted ()) :=
   rfl
 
@@ -672,7 +677,8 @@ theorem zeros_aux_lemFuel_zero { a : Type } (tagDefs1 : Fmap sym (a × tag_defin
    existing failwith invariant branches (a well-formed program never
    reaches it). -/
 
-def zeros [LemFuel] (tagDefs1 : Fmap sym (CerbLocation.Loc × tag_definition)) (ty1 : ctype) :
+def zeros [LemFuel] [CerbImplCfg.Impl] (tagDefs1 : Fmap sym (CerbLocation.Loc × tag_definition))
+    (ty1 : ctype) :
     generic_pexpr Unit sym := /- TODO: yucky -/
   Pexpr ([] : List annot) ()
     /-
@@ -1404,6 +1410,11 @@ def subst_pattern_val_lemFuel { a : Type } (lemFuel : Nat) (g : generic_pattern 
              | CivXOR => "ivXOR"
              | Cspecified => "specified"
              | Cunspecified => "unspecified"
+             | Cfvconvert => "Cfvconvert"
+             | CfvconvertLoaded => "CfvconvertLoaded"
+             | CfvfromintTyped => "CfvfromintTyped"
+             | CfvfromintTypedLoaded => "CfvfromintTypedLoaded"
+             | Cfvneg => "Cfvneg"
              | Cfvfromint => "fvfromint"
              | Civfromfloat => "ivfromfloat"
              | CivNULLcap is_signed =>
@@ -1814,6 +1825,11 @@ def unsafe_subst_pattern_lemFuel { a : Type } (lemFuel : Nat) (g : generic_patte
              | CivXOR => "ivXOR"
              | Cspecified => "specified"
              | Cunspecified => "unspecified"
+             | Cfvconvert => "Cfvconvert"
+             | CfvconvertLoaded => "CfvconvertLoaded"
+             | CfvfromintTyped => "CfvfromintTyped"
+             | CfvfromintTypedLoaded => "CfvfromintTypedLoaded"
+             | Cfvneg => "Cfvneg"
              | Cfvfromint => "fvfromint"
              | Civfromfloat => "ivfromfloat"
              | CivNULLcap is_signed =>
@@ -2896,6 +2912,11 @@ def update_env_aux_lemFuel { a : Type } [MapKeyType a] (lemFuel : Nat) (g : gene
              | CivXOR => "ivXOR"
              | Cspecified => "specified"
              | Cunspecified => "unspecified"
+             | Cfvconvert => "Cfvconvert"
+             | CfvconvertLoaded => "CfvconvertLoaded"
+             | CfvfromintTyped => "CfvfromintTyped"
+             | CfvfromintTypedLoaded => "CfvfromintTypedLoaded"
+             | Cfvneg => "Cfvneg"
              | Cfvfromint => "fvfromint"
              | Civfromfloat => "ivfromfloat"
              | CivNULLcap is_signed =>

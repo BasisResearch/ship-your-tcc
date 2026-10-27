@@ -74,7 +74,15 @@ inductive IntegerValue where
 
 /-- floating_value = float — impl_mem.ml:306-308
     The concrete model uses raw OCaml floats -/
-abbrev FloatingValue := Float
+abbrev FloatingValue := CerbIEEE.FVal
+
+/-- Configured IEEE representation, selected before literal/integer rounding. -/
+def floatingFormat [CerbImplCfg.Impl] (fty : floatingType) : CerbIEEE.FFormat :=
+  match CerberusImpl.format_fty fty with
+  | .binary32 => .binary32
+  | .binary64 => .binary64
+  | .binary128 => .binary128
+
 
 /-- mem_value — impl_mem.ml:310-317
     7 constructors (no MVdelayed/MVcomposite — those are defacto model only) -/
@@ -959,20 +967,8 @@ def memValueToBytes_lemFuel [CerbImplCfg.Impl] (lemFuel : Nat) (enumDefs : EnumD
     (funptrmap, rawBytes.map fun v =>
       { prov := prov, copyOffset := none, value := v })
   | .MVfloating fty fv =>
-    -- impl_mem.ml:1151-1156: Int64.bits_of_float over sizeof(fty) bytes
-    -- (= 8 for all real floating types, DefaultImpl 8/8/8 hack — see
-    -- CerberusImpl.sizeof_fty)
-    let sz := match CerberusImpl.sizeof_fty fty with
-      | some n => n
-      | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.serializeFloat "CerbMem.memValueToBytes: the concrete memory model requires a complete implementation sizeof FLOAT")))
-    -- :1153-1155 `bytes_of_int true 8 (Z.of_int64 (Int64.bits_of_float fval))`:
-    -- the SIGNED int64 reading of the bit pattern (so the assert's range
-    -- is [-2^63, 2^63-1]); the bytes are the same two's complement
-    -- named-deviation register N2 (VALIDATION.md §2b): Lean's Float.toBits
-    -- canonicalizes every NaN to 0x7ff8000000000000, so a stored NaN loses
-    -- the sign and payload that Int64.bits_of_float keeps (impl_mem.ml:1190).
-    let bits : Int := fv.toBits.toInt64.toInt
-    let rawBytes := intToBytes true bits sz
+    let v := fv.to (floatingFormat fty)
+    let rawBytes := (CerbIEEE.toBytesLE v.fmt v.bits).map (fun b => some b)
     (funptrmap, rawBytes.map fun v => { prov := .Prov_none, copyOffset := none, value := v })
   | .MVpointer _ (.PV prov base) =>
     -- impl_mem.ml:1157-1192
@@ -1087,17 +1083,8 @@ def memValueToBytes_append_lemFuel [CerbImplCfg.Impl] (lemFuel : Nat) (enumDefs 
     (funptrmap, rawBytes.map fun v =>
       { prov := prov, copyOffset := none, value := v })
   | .MVfloating fty fv =>
-    let sz := match CerberusImpl.sizeof_fty fty with
-      | some n => n
-      | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.serializeFloat "CerbMem.memValueToBytes: the concrete memory model requires a complete implementation sizeof FLOAT")))
-    -- :1153-1155 `bytes_of_int true 8 (Z.of_int64 (Int64.bits_of_float fval))`:
-    -- the SIGNED int64 reading of the bit pattern (so the assert's range
-    -- is [-2^63, 2^63-1]); the bytes are the same two's complement
-    -- named-deviation register N2 (VALIDATION.md §2b): Lean's Float.toBits
-    -- canonicalizes every NaN to 0x7ff8000000000000, so a stored NaN loses
-    -- the sign and payload that Int64.bits_of_float keeps (impl_mem.ml:1190).
-    let bits : Int := fv.toBits.toInt64.toInt
-    let rawBytes := intToBytes true bits sz
+    let v := fv.to (floatingFormat fty)
+    let rawBytes := (CerbIEEE.toBytesLE v.fmt v.bits).map (fun b => some b)
     (funptrmap, rawBytes.map fun v => { prov := .Prov_none, copyOffset := none, value := v })
   | .MVpointer _ (.PV prov base) =>
     match base with
@@ -1302,8 +1289,8 @@ def reconstructValueAbst_lemFuel [CerbImplCfg.Impl] [CerbGlobal.Switches] (lemFu
     (.NoTaint,
       match bytesToInt bytes false with
       | some n =>
-        let bits : UInt64 := n.toNat.toUInt64
-        .MVfloating fty (Float.ofBits bits)
+        let fmt := floatingFormat fty
+        .MVfloating fty ⟨fmt, BitVec.ofNat _ n.toNat⟩
       | none => .MVunspecified ty)
   | Ctype _ (.Pointer _ pointeeCty) =>
     -- impl_mem.ml:1030-1093; the taint is `NoTaint (* PNVI-ae-udi *)`
@@ -1899,11 +1886,31 @@ theorem leIval_isSome (v1 v2 : IntegerValue) : (leIval v1 v2).isSome = true := b
 
 def zeroFval : FloatingValue := 0.0
 def oneFval : FloatingValue := 1.0
-def strFval (s : String) : FloatingValue := CerbFloat.of_string s
+def strFval [CerbImplCfg.Impl] (s : String) : FloatingValue :=
+  let ft := if s.endsWith "f" || s.endsWith "F" then realFloatingType.Float0
+    else if s.endsWith "l" || s.endsWith "L" then realFloatingType.LongDouble
+    else realFloatingType.Double
+  CerbFloat.ofStringAs (floatingFormat (.RealFloating ft)) s
+
+def strFvalTyped [CerbImplCfg.Impl] (fty : floatingType) (s : String) : FloatingValue :=
+  CerbFloat.ofStringAs (floatingFormat fty) s
+
+def convertFval [CerbImplCfg.Impl] (fty : floatingType) (v : FloatingValue) : FloatingValue :=
+  v.to (floatingFormat fty)
+
+def fvfromintTyped [CerbImplCfg.Impl] (fty : floatingType) (iv : IntegerValue) : FloatingValue :=
+  match iv with
+  | .IV _ n =>
+    let fmt := floatingFormat fty
+    ⟨fmt, CerbIEEE.ofInt fmt n⟩
+
+def negFval (v : FloatingValue) : FloatingValue := -v
+
+def finiteFval (v : FloatingValue) : Bool := !v.isNaN && !v.isInf
 
 /-- case_fval — impl_mem.ml:2526-2527
     In the concrete model, always calls fconcrete -/
-def caseFval {α : Type} (fv : FloatingValue) (_ : Unit → α) (onConcrete : Float → α) : α :=
+def caseFval {α : Type} (fv : FloatingValue) (_ : Unit → α) (onConcrete : FloatingValue → α) : α :=
   onConcrete fv
 
 def opFval (op : floating_operator) (v1 v2 : FloatingValue) : FloatingValue :=
@@ -1912,11 +1919,11 @@ def opFval (op : floating_operator) (v1 v2 : FloatingValue) : FloatingValue :=
   | .FloatMul => v1 * v2 | .FloatDiv => v1 / v2
 
 def eqFval (v1 v2 : FloatingValue) : Bool := v1 == v2
-def ltFval (v1 v2 : FloatingValue) : Bool := v1 < v2
-def leFval (v1 v2 : FloatingValue) : Bool := v1 <= v2
+def ltFval (v1 v2 : FloatingValue) : Bool := CerbFloat.floatLt v1 v2
+def leFval (v1 v2 : FloatingValue) : Bool := CerbFloat.floatLe v1 v2
 
 def fvfromint (iv : IntegerValue) : FloatingValue :=
-  match iv with | .IV _ n => Float.ofInt n
+  match iv with | .IV _ n => CerbFloat.of_int n
 /-- ivfromfloat — impl_mem.ml:2553-2554: `IV (Prov_none, Z.of_float fval)`.
     Z.of_float truncates toward ZERO keeping the sign (verified against
     zarith: of_float (-2.9) = -2); CerbFloat.truncToInt mirrors that
@@ -1930,7 +1937,7 @@ def ivfromfloat (_ : integerType) (fv : FloatingValue) : IntegerValue :=
 
 def unspecifiedMval (ty : ctype) : MemValue := .MVunspecified ty
 def integerValueMval (ity : integerType) (iv : IntegerValue) : MemValue := .MVinteger ity iv
-def floatingValueMval (fty : floatingType) (fv : FloatingValue) : MemValue := .MVfloating fty fv
+def floatingValueMval [CerbImplCfg.Impl] (fty : floatingType) (fv : FloatingValue) : MemValue := .MVfloating fty (convertFval fty fv)
 def pointerMval (ty : ctype) (pv : PointerValue) : MemValue := .MVpointer ty pv
 def arrayMval (elems : List MemValue) : MemValue := .MVarray elems
 def structMval (tag : sym) (members : List (identifier × ctype × MemValue)) : MemValue := .MVstruct tag members

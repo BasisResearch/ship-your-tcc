@@ -1,0 +1,20 @@
+{
+  "request": "csem-ieee-visitor-09",
+  "request_id": "csem-ieee-visitor-09",
+  "exit": 0,
+  "log": "build/worker-build-csem-ieee-visitor-09.log",
+  "command": [
+    "flock",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/lake.lock",
+    "systemd-run",
+    "--user",
+    "--scope",
+    "-p",
+    "MemoryMax=12G",
+    "lake",
+    "build",
+    "IEEEVisitor",
+    "ieee-test"
+  ],
+  "source_hashes_verified": true
+}

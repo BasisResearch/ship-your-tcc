@@ -1,0 +1,19 @@
+f64 add	20000	nan:1016	mismatch:0
+f64 sub	20000	nan:1013	mismatch:0
+f64 mul	20000	nan:1019	mismatch:0
+f64 div	20000	nan:1051	mismatch:0
+f64 sqrt	20000	nan:9537	mismatch:0
+f64 cmp(6)	20000	nan:0	mismatch:0
+f64 ofInt(i64)	20000	nan:0	mismatch:0
+f64 toInt(i64)	13641	nan:0	mismatch:0
+f64->f32	20000	nan:662	mismatch:0
+bytes roundtrip	20000	nan:0	mismatch:0
+f32 add	20000	nan:732	mismatch:0
+f32 sub	20000	nan:731	mismatch:0
+f32 mul	20000	nan:731	mismatch:0
+f32 div	20000	nan:779	mismatch:0
+f32 sqrt	20000	nan:9452	mismatch:0
+f32 cmp(6)	20000	nan:0	mismatch:0
+f32 ofInt(i64)	20000	nan:0	mismatch:0
+f32 toInt(i64)	15824	nan:0	mismatch:0
+f32->f64	20000	nan:458	mismatch:0

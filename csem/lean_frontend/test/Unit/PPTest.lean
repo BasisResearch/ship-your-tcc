@@ -99,7 +99,7 @@ def testCoreValue : IO Bool := do
   return ok
 
 /-- OCaml 5.4.0 reference transcript (string_of_float), 2026-08-20. -/
-def sfCases : List (Float × String) := [
+def sfCases : List (CerbFloat.Value × String) := [
   (1.0, "1."),
   (0.5, "0.5"),
   (3.14, "3.14"),
@@ -121,7 +121,7 @@ def sfCases : List (Float × String) := [
 ]
 
 /-- OCaml 5.4.0 reference transcript (Printf.sprintf "%.*f"), 2026-08-20. -/
-def ffCases : List (Nat × Float × String) := [
+def ffCases : List (Nat × CerbFloat.Value × String) := [
   (6, 3.14, "3.140000"),
   (0, 2.5, "2"),      -- half-even down
   (0, 3.5, "4"),      -- half-even up
@@ -148,7 +148,7 @@ def testFloats : IO Bool := do
   ok := (← check "inf" (CerbFloat.string_of_float (1.0 / 0.0)) "inf") && ok
   ok := (← check "-inf" (CerbFloat.string_of_float (-1.0 / 0.0)) "-inf") && ok
   ok := (← check "nan" (CerbFloat.string_of_float (0.0 / 0.0)) "nan") && ok
-  ok := (← check "nan (sign-bit pattern)" (CerbFloat.string_of_float (Float.ofBits 0xfff8000000000000)) "nan") && ok
+  ok := (← check "nan (sign-bit pattern)" (CerbFloat.string_of_float ((⟨.binary64, 0xfff8000000000000#64⟩ : CerbFloat.Value))) "-nan") && ok
   ok := (← check "%f inf" (format_string_of_float 6 (1.0 / 0.0)) "inf") && ok
   if ok then IO.println "  ✓ PASS"
   return ok

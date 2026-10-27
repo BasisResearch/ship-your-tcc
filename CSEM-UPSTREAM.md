@@ -183,3 +183,14 @@ incorrect bitfield values; it remains required by our whole-compiler target.
 pristine pin/binary hash and separate raw captures for these checks.
 `designator/csem.json` records the corresponding local repaired-engine results:
 52 exact defined agreements / 58, six semantic gaps. No external report sent.
+
+2026-10-27 local IEEE recovery (not sent upstream): native floating execution
+is replaced in this fork by configured pure 32/64/128 interchange values.
+Shared Lem AST/translation/formatting sources now retain real formats through
+casts, arguments, arithmetic and printf. New floating primitives have pure
+Lean target interpretations; the existing native OCaml oracle remains a
+baseline testing oracle, not the RV64 floating specification. The recovered
+NaN-conversion policy was corrected from fresh raw Sail evidence. The helper
+proof connection, conversion-field proof, literal-accuracy discrepancy and
+nine finite newlib sqrtl discrepancies remain explicit in PHASES.md and
+`results/csem/ieee-2026-10-27.md`; there is no all-C correctness claim.

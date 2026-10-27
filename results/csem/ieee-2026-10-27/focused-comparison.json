@@ -1,0 +1,86 @@
+[
+  {
+    "program": "formats",
+    "lean": {
+      "stdout": "",
+      "exit": 0
+    },
+    "tcc_sail": {
+      "stdout": "",
+      "exit": 0
+    },
+    "status": "EXACT_AGREEMENT"
+  },
+  {
+    "program": "bytes",
+    "lean": {
+      "stdout": "",
+      "exit": 0
+    },
+    "tcc_sail": {
+      "stdout": "",
+      "exit": 0
+    },
+    "status": "EXACT_AGREEMENT"
+  },
+  {
+    "program": "nan-bytes",
+    "lean": {
+      "stdout": "",
+      "exit": 0
+    },
+    "tcc_sail": {
+      "stdout": "",
+      "exit": 0
+    },
+    "status": "EXACT_AGREEMENT"
+  },
+  {
+    "program": "nan-conversions",
+    "lean": {
+      "stdout": "",
+      "exit": 0
+    },
+    "tcc_sail": {
+      "stdout": "",
+      "exit": 0
+    },
+    "status": "EXACT_AGREEMENT"
+  },
+  {
+    "program": "rounding",
+    "lean": {
+      "stdout": "",
+      "exit": 0
+    },
+    "tcc_sail": {
+      "stdout": "",
+      "exit": 1
+    },
+    "status": "DIRECT_RNE_LITERAL_DISCREPANCY"
+  },
+  {
+    "program": "literal-rounding",
+    "lean": {
+      "stdout": "3f800001 3f800000\n",
+      "exit": 0
+    },
+    "tcc_sail": {
+      "stdout": "3f800000 3f800000\n",
+      "exit": 0
+    },
+    "status": "DIRECT_RNE_LITERAL_DISCREPANCY"
+  },
+  {
+    "program": "printf",
+    "lean": {
+      "stdout": "[+0.10][-0001.50][1.250e-01][1.000][-0x0p+0]\n[1.000000000000000000000000000000000193][0x1.0000000000000000000000000001p+0][1.2677E+30][1e+4000]\n",
+      "exit": 0
+    },
+    "tcc_sail": {
+      "stdout": "[+0.10][-0001.50][1.250e-01][1.000][-0x0p+0]\n[1.000000000000000000000000000000000000][0x1p+0][1.2677E+30][inf]\n",
+      "exit": 0
+    },
+    "status": "NEWLIB_BINARY128_PRINTF_DISCREPANCY"
+  }
+]

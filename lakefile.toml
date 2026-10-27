@@ -178,7 +178,7 @@ roots = [
   "CerbLocation",
   "CerberusFresh",
   "CerbGlobal",
-  "CerbFloat",
+  "CerbIEEE", "CerbFloat",
   "CerbUtils",
   "CerbPP", "CerbQuote", "CerbDriverConfig", "CerbStop", "CerbStopSites",
   "CerbMem",
@@ -408,3 +408,21 @@ roots = ["scripts.csem_cone"]
 [[lean_exe]]
 name = "tcc_pre_tokens"
 root = "Tcc.ModelPreMain"
+
+
+[[lean_exe]]
+name = "ieee-test"
+srcDir = "csem/lean_frontend/test"
+root = "Unit.IEEETest"
+
+# Datatype-derived Core quotation visitor; its build output replaces the marked
+# block in Unit/CoreQuoteTest.lean after Core datatype changes.
+[[lean_lib]]
+name = "IEEEVisitor"
+srcDir = "csem/lean_frontend/test/CoreQuote"
+roots = ["CoreQuoteVisitor"]
+
+[[lean_exe]]
+name = "ieee-integration-test"
+srcDir = "csem/lean_frontend/test"
+root = "Unit.IEEEIntegrationTest"

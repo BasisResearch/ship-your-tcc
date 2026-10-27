@@ -246,6 +246,73 @@ partial def typecheck_pattern (expected_bTy : core_base_type) (g : generic_patte
         | Cunspecified, _, _ =>
           (failwithI "typecheck_pattern: Cunspecified: wrong number of arguments" : exceptM
             (typing_env × generic_pattern sym) (CerbLocation.Loc × cause))
+        | Cfvconvert, BTy_object OTy_floating, [ty1, x] =>
+          except_bind (typecheck_pattern BTy_ctype ty1)
+            (fun (p : (typing_env × generic_pattern sym)) =>
+              match p with
+              | (env1, ty1) =>
+                except_bind (typecheck_pattern (BTy_object OTy_floating) x)
+                  (fun (p : (typing_env × generic_pattern sym)) =>
+                    match p with
+                    | (env2, x1) =>
+                      except_return
+                        (env_union env1 env2, Pattern annots1 (CaseCtor Cfvconvert [ty1, x1]))))
+        | Cfvconvert, _, _ =>
+          (failwithI "Cfvconvert: bad pattern" : exceptM (typing_env × generic_pattern sym)
+            (CerbLocation.Loc × cause))
+        | CfvconvertLoaded, BTy_loaded OTy_floating, [ty1, x] =>
+          except_bind (typecheck_pattern BTy_ctype ty1)
+            (fun (p : (typing_env × generic_pattern sym)) =>
+              match p with
+              | (env1, ty1) =>
+                except_bind (typecheck_pattern (BTy_loaded OTy_floating) x)
+                  (fun (p : (typing_env × generic_pattern sym)) =>
+                    match p with
+                    | (env2, x1) =>
+                      except_return
+                        (env_union env1 env2,
+                          Pattern annots1 (CaseCtor CfvconvertLoaded [ty1, x1]))))
+        | CfvconvertLoaded, _, _ =>
+          (failwithI "CfvconvertLoaded: bad pattern" : exceptM (typing_env × generic_pattern sym)
+            (CerbLocation.Loc × cause))
+        | CfvfromintTyped, BTy_object OTy_floating, [ty1, x] =>
+          except_bind (typecheck_pattern BTy_ctype ty1)
+            (fun (p : (typing_env × generic_pattern sym)) =>
+              match p with
+              | (env1, ty1) =>
+                except_bind (typecheck_pattern (BTy_object OTy_integer) x)
+                  (fun (p : (typing_env × generic_pattern sym)) =>
+                    match p with
+                    | (env2, x1) =>
+                      except_return
+                        (env_union env1 env2,
+                          Pattern annots1 (CaseCtor CfvfromintTyped [ty1, x1]))))
+        | CfvfromintTyped, _, _ =>
+          (failwithI "CfvfromintTyped: bad pattern" : exceptM (typing_env × generic_pattern sym)
+            (CerbLocation.Loc × cause))
+        | CfvfromintTypedLoaded, BTy_loaded OTy_floating, [ty1, x] =>
+          except_bind (typecheck_pattern BTy_ctype ty1)
+            (fun (p : (typing_env × generic_pattern sym)) =>
+              match p with
+              | (env1, ty1) =>
+                except_bind (typecheck_pattern (BTy_loaded OTy_integer) x)
+                  (fun (p : (typing_env × generic_pattern sym)) =>
+                    match p with
+                    | (env2, x1) =>
+                      except_return
+                        (env_union env1 env2,
+                          Pattern annots1 (CaseCtor CfvfromintTypedLoaded [ty1, x1]))))
+        | CfvfromintTypedLoaded, _, _ =>
+          (failwithI "CfvfromintTypedLoaded: bad pattern" : exceptM
+            (typing_env × generic_pattern sym) (CerbLocation.Loc × cause))
+        | Cfvneg, BTy_object OTy_floating, [x] =>
+          except_bind (typecheck_pattern (BTy_object OTy_floating) x)
+            (fun (p : (typing_env × generic_pattern sym)) =>
+              match p with
+              | (env2, x1) => except_return (env2, Pattern annots1 (CaseCtor Cfvneg [x1])))
+        | Cfvneg, _, _ =>
+          (failwithI "Cfvneg: bad pattern" : exceptM (typing_env × generic_pattern sym)
+            (CerbLocation.Loc × cause))
         | Cfvfromint, BTy_object OTy_floating, [pat] =>
           except_bind (typecheck_pattern (BTy_object OTy_integer) pat)
             (fun (p : (typing_env × generic_pattern sym)) =>
@@ -475,6 +542,76 @@ partial def infer_pattern (g : generic_pattern sym) :
         | Cunspecified, _ =>
           (failwithI "infer_pattern: Cunspecified: wrong number of arguments" : exceptM
             (typing_env × inferred × generic_pattern sym) (CerbLocation.Loc × cause))
+        | Cfvconvert, [ty1, x] =>
+          except_bind (typecheck_pattern BTy_ctype ty1)
+            (fun (p : (typing_env × generic_pattern sym)) =>
+              match p with
+              | (env1, ty1) =>
+                except_bind (typecheck_pattern (BTy_object OTy_floating) x)
+                  (fun (p : (typing_env × generic_pattern sym)) =>
+                    match p with
+                    | (env2, x1) =>
+                      except_return
+                        (env_union env1 env2, InferredType_object OTy_floating,
+                          Pattern annots1 (CaseCtor Cfvconvert [ty1, x1]))))
+        | Cfvconvert, _ =>
+          (failwithI "Cfvconvert: bad pattern" : exceptM
+            (typing_env × inferred × generic_pattern sym) (CerbLocation.Loc × cause))
+        | CfvconvertLoaded, [ty1, x] =>
+          except_bind (typecheck_pattern BTy_ctype ty1)
+            (fun (p : (typing_env × generic_pattern sym)) =>
+              match p with
+              | (env1, ty1) =>
+                except_bind (typecheck_pattern (BTy_loaded OTy_floating) x)
+                  (fun (p : (typing_env × generic_pattern sym)) =>
+                    match p with
+                    | (env2, x1) =>
+                      except_return
+                        (env_union env1 env2, InferredType_loaded OTy_floating,
+                          Pattern annots1 (CaseCtor CfvconvertLoaded [ty1, x1]))))
+        | CfvconvertLoaded, _ =>
+          (failwithI "CfvconvertLoaded: bad pattern" : exceptM
+            (typing_env × inferred × generic_pattern sym) (CerbLocation.Loc × cause))
+        | CfvfromintTyped, [ty1, x] =>
+          except_bind (typecheck_pattern BTy_ctype ty1)
+            (fun (p : (typing_env × generic_pattern sym)) =>
+              match p with
+              | (env1, ty1) =>
+                except_bind (typecheck_pattern (BTy_object OTy_integer) x)
+                  (fun (p : (typing_env × generic_pattern sym)) =>
+                    match p with
+                    | (env2, x1) =>
+                      except_return
+                        (env_union env1 env2, InferredType_object OTy_floating,
+                          Pattern annots1 (CaseCtor CfvfromintTyped [ty1, x1]))))
+        | CfvfromintTyped, _ =>
+          (failwithI "CfvfromintTyped: bad pattern" : exceptM
+            (typing_env × inferred × generic_pattern sym) (CerbLocation.Loc × cause))
+        | CfvfromintTypedLoaded, [ty1, x] =>
+          except_bind (typecheck_pattern BTy_ctype ty1)
+            (fun (p : (typing_env × generic_pattern sym)) =>
+              match p with
+              | (env1, ty1) =>
+                except_bind (typecheck_pattern (BTy_loaded OTy_integer) x)
+                  (fun (p : (typing_env × generic_pattern sym)) =>
+                    match p with
+                    | (env2, x1) =>
+                      except_return
+                        (env_union env1 env2, InferredType_loaded OTy_floating,
+                          Pattern annots1 (CaseCtor CfvfromintTypedLoaded [ty1, x1]))))
+        | CfvfromintTypedLoaded, _ =>
+          (failwithI "CfvfromintTypedLoaded: bad pattern" : exceptM
+            (typing_env × inferred × generic_pattern sym) (CerbLocation.Loc × cause))
+        | Cfvneg, [x] =>
+          except_bind (typecheck_pattern (BTy_object OTy_floating) x)
+            (fun (p : (typing_env × generic_pattern sym)) =>
+              match p with
+              | (env2, x1) =>
+                except_return
+                  (env2, InferredType_object OTy_floating, Pattern annots1 (CaseCtor Cfvneg [x1])))
+        | Cfvneg, _ =>
+          (failwithI "Cfvneg: bad pattern" : exceptM (typing_env × inferred × generic_pattern sym)
+            (CerbLocation.Loc × cause))
         | Cfvfromint, [pat] =>
           except_bind (typecheck_pattern (BTy_object OTy_integer) pat)
             (fun (p : (typing_env × generic_pattern sym)) =>
@@ -779,6 +916,57 @@ partial def infer_pexpr { a bty : Type } [Inhabited a] (tagDefs1 : Fmap sym (a �
            | none => core_typing_effect_fail loc1 (CoreTyping_TODO "Cunspecified, not oTy"))
         | Cunspecified, [pe] =>
           (failwithI "Core_typing, Cunspecified non-trivial" : exceptM (generic_pexpr inferred sym)
+            (CerbLocation.Loc × cause))
+        | Cfvconvert, [ty1, x] =>
+          except_bind (typecheck_pexpr tagDefs1 env1 BTy_ctype ty1)
+            (fun (ty1 : generic_pexpr inferred sym) =>
+              except_bind (typecheck_pexpr tagDefs1 env1 (BTy_object OTy_floating) x)
+                (fun (x1 : generic_pexpr inferred sym) =>
+                  except_return
+                    (Pexpr annot1 (InferredType_object OTy_floating)
+                      (PEctor Cfvconvert [ty1, x1]))))
+        | Cfvconvert, _ =>
+          (failwithI "Cfvconvert: bad expression" : exceptM (generic_pexpr inferred sym)
+            (CerbLocation.Loc × cause))
+        | CfvconvertLoaded, [ty1, x] =>
+          except_bind (typecheck_pexpr tagDefs1 env1 BTy_ctype ty1)
+            (fun (ty1 : generic_pexpr inferred sym) =>
+              except_bind (typecheck_pexpr tagDefs1 env1 (BTy_loaded OTy_floating) x)
+                (fun (x1 : generic_pexpr inferred sym) =>
+                  except_return
+                    (Pexpr annot1 (InferredType_loaded OTy_floating)
+                      (PEctor CfvconvertLoaded [ty1, x1]))))
+        | CfvconvertLoaded, _ =>
+          (failwithI "CfvconvertLoaded: bad expression" : exceptM (generic_pexpr inferred sym)
+            (CerbLocation.Loc × cause))
+        | CfvfromintTyped, [ty1, x] =>
+          except_bind (typecheck_pexpr tagDefs1 env1 BTy_ctype ty1)
+            (fun (ty1 : generic_pexpr inferred sym) =>
+              except_bind (typecheck_pexpr tagDefs1 env1 (BTy_object OTy_integer) x)
+                (fun (x1 : generic_pexpr inferred sym) =>
+                  except_return
+                    (Pexpr annot1 (InferredType_object OTy_floating)
+                      (PEctor CfvfromintTyped [ty1, x1]))))
+        | CfvfromintTyped, _ =>
+          (failwithI "CfvfromintTyped: bad expression" : exceptM (generic_pexpr inferred sym)
+            (CerbLocation.Loc × cause))
+        | CfvfromintTypedLoaded, [ty1, x] =>
+          except_bind (typecheck_pexpr tagDefs1 env1 BTy_ctype ty1)
+            (fun (ty1 : generic_pexpr inferred sym) =>
+              except_bind (typecheck_pexpr tagDefs1 env1 (BTy_loaded OTy_integer) x)
+                (fun (x1 : generic_pexpr inferred sym) =>
+                  except_return
+                    (Pexpr annot1 (InferredType_loaded OTy_floating)
+                      (PEctor CfvfromintTypedLoaded [ty1, x1]))))
+        | CfvfromintTypedLoaded, _ =>
+          (failwithI "CfvfromintTypedLoaded: bad expression" : exceptM (generic_pexpr inferred sym)
+            (CerbLocation.Loc × cause))
+        | Cfvneg, [x] =>
+          except_bind (typecheck_pexpr tagDefs1 env1 (BTy_object OTy_floating) x)
+            (fun (x1 : generic_pexpr inferred sym) =>
+              except_return (Pexpr annot1 (InferredType_object OTy_floating) (PEctor Cfvneg [x1])))
+        | Cfvneg, _ =>
+          (failwithI "Cfvneg: bad expression" : exceptM (generic_pexpr inferred sym)
             (CerbLocation.Loc × cause))
         | Cunspecified, _ =>
           (failwithI "infer_pexpr: Cunspecified: wrong number of arguments" : exceptM
@@ -1337,6 +1525,46 @@ partial def typecheck_pexpr { a bty : Type } [Inhabited a]
              except_fmap (ret_ctor Cunspecified) (typecheck_pexpr tagDefs1 env1 BTy_ctype pe)
            | Cunspecified, _, _ =>
              core_typing_effect_fail loc1 (MismatchExpected "Cunspecified" bTy "loaded object")
+           | Cfvconvert, BTy_object OTy_floating, [ty1, x] =>
+             except_bind (typecheck_pexpr tagDefs1 env1 BTy_ctype ty1)
+               (fun (ty1 : generic_pexpr inferred sym) =>
+                 except_bind (typecheck_pexpr tagDefs1 env1 (BTy_object OTy_floating) x)
+                   (fun (x1 : generic_pexpr inferred sym) =>
+                     except_return (PEctor Cfvconvert [ty1, x1])))
+           | Cfvconvert, _, _ =>
+             (failwithI "Cfvconvert: bad expression" : exceptM (generic_pexpr_ inferred sym) error)
+           | CfvconvertLoaded, BTy_loaded OTy_floating, [ty1, x] =>
+             except_bind (typecheck_pexpr tagDefs1 env1 BTy_ctype ty1)
+               (fun (ty1 : generic_pexpr inferred sym) =>
+                 except_bind (typecheck_pexpr tagDefs1 env1 (BTy_loaded OTy_floating) x)
+                   (fun (x1 : generic_pexpr inferred sym) =>
+                     except_return (PEctor CfvconvertLoaded [ty1, x1])))
+           | CfvconvertLoaded, _, _ =>
+             (failwithI "CfvconvertLoaded: bad expression" : exceptM (generic_pexpr_ inferred sym)
+               error)
+           | CfvfromintTyped, BTy_object OTy_floating, [ty1, x] =>
+             except_bind (typecheck_pexpr tagDefs1 env1 BTy_ctype ty1)
+               (fun (ty1 : generic_pexpr inferred sym) =>
+                 except_bind (typecheck_pexpr tagDefs1 env1 (BTy_object OTy_integer) x)
+                   (fun (x1 : generic_pexpr inferred sym) =>
+                     except_return (PEctor CfvfromintTyped [ty1, x1])))
+           | CfvfromintTyped, _, _ =>
+             (failwithI "CfvfromintTyped: bad expression" : exceptM (generic_pexpr_ inferred sym)
+               error)
+           | CfvfromintTypedLoaded, BTy_loaded OTy_floating, [ty1, x] =>
+             except_bind (typecheck_pexpr tagDefs1 env1 BTy_ctype ty1)
+               (fun (ty1 : generic_pexpr inferred sym) =>
+                 except_bind (typecheck_pexpr tagDefs1 env1 (BTy_loaded OTy_integer) x)
+                   (fun (x1 : generic_pexpr inferred sym) =>
+                     except_return (PEctor CfvfromintTypedLoaded [ty1, x1])))
+           | CfvfromintTypedLoaded, _, _ =>
+             (failwithI "CfvfromintTypedLoaded: bad expression" : exceptM
+               (generic_pexpr_ inferred sym) error)
+           | Cfvneg, BTy_object OTy_floating, [x] =>
+             except_bind (typecheck_pexpr tagDefs1 env1 (BTy_object OTy_floating) x)
+               (fun (x1 : generic_pexpr inferred sym) => except_return (PEctor Cfvneg [x1]))
+           | Cfvneg, _, _ =>
+             (failwithI "Cfvneg: bad expression" : exceptM (generic_pexpr_ inferred sym) error)
            | Cfvfromint, BTy_object OTy_floating, [pe] =>
              except_fmap (ret_ctor Cfvfromint)
                (typecheck_pexpr tagDefs1 env1 (BTy_object OTy_integer) pe)

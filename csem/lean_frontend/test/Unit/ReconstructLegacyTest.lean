@@ -18,8 +18,8 @@ closure quantifier. They no longer claim equality to the old diagnostic text.
 
 The reference-to-reference equations hold for EVERY diagnostic parameter. The
 historical instance freezes the six direct messages, not transitive layout or
-decoding helpers called by the references. Success computations and fuel leaves
-are unchanged. The indexed reference retains its pre-C1 array slicing; the
+decoding helpers called by the references. The IEEE recovery changes the shared floating leaf decoder to configured
+interchange bits; traversal, diagnostics and fuel leaves stay pinned. The indexed reference retains its pre-C1 array slicing; the
 linear reference retains its pre-S2 recursion. Neither is a driver implementation.
 
 The axiom census retains the seven existing theorem entries. Kernel replay checks
@@ -99,8 +99,8 @@ def reconstructValueLegacy_lemFuel (diagnostics : ReconstructionDiagnostics) (le
     -- impl_mem.ml:974-985
     match bytesToInt bytes false with
     | some n =>
-      let bits : UInt64 := n.toNat.toUInt64
-      .MVfloating fty (Float.ofBits bits)
+      let fmt := floatingFormat fty
+      .MVfloating fty ⟨fmt, BitVec.ofNat _ n.toNat⟩
     | none => .MVunspecified ty
   | Ctype _ (.Pointer _ pointeeCty) =>
     -- impl_mem.ml:995-1058. MVpointer stores the POINTEE type: every
@@ -282,8 +282,8 @@ def reconstructValueLegacy_indexed_lemFuel (diagnostics : ReconstructionDiagnost
   | Ctype _ (.Basic (.Floating fty)) =>
     match bytesToInt bytes false with
     | some n =>
-      let bits : UInt64 := n.toNat.toUInt64
-      .MVfloating fty (Float.ofBits bits)
+      let fmt := floatingFormat fty
+      .MVfloating fty ⟨fmt, BitVec.ofNat _ n.toNat⟩
     | none => .MVunspecified ty
   | Ctype _ (.Pointer _ pointeeCty) =>
     match bytesToInt bytes false with
@@ -422,8 +422,8 @@ private def reconstructValueFrozen_lemFuel (lemFuel : Nat) (enumDefs : EnumDefs)
   | Ctype _ (.Basic (.Floating fty)) =>
     match bytesToInt bytes false with
     | some n =>
-      let bits : UInt64 := n.toNat.toUInt64
-      .MVfloating fty (Float.ofBits bits)
+      let fmt := floatingFormat fty
+      .MVfloating fty ⟨fmt, BitVec.ofNat _ n.toNat⟩
     | none => .MVunspecified ty
   | Ctype _ (.Pointer _ pointeeCty) =>
     match bytesToInt bytes false with
@@ -523,8 +523,8 @@ private def reconstructValueFrozen_indexed_lemFuel (lemFuel : Nat) (enumDefs : E
   | Ctype _ (.Basic (.Floating fty)) =>
     match bytesToInt bytes false with
     | some n =>
-      let bits : UInt64 := n.toNat.toUInt64
-      .MVfloating fty (Float.ofBits bits)
+      let fmt := floatingFormat fty
+      .MVfloating fty ⟨fmt, BitVec.ofNat _ n.toNat⟩
     | none => .MVunspecified ty
   | Ctype _ (.Pointer _ pointeeCty) =>
     match bytesToInt bytes false with

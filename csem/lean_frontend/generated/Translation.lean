@@ -67,17 +67,6 @@ def force_core_object_type_of_ctype (ty1 : ctype) : core_object_type :=
   | /- BISECT-IGNORE -/ none =>
     (failwithI "Translation.force_core_object_type_of_ctype: Nothing" : core_object_type)
 
-def floating_conversion_TODO { a : Type } (to_ty : ctype) (from_ty : ctype) (z : a) :
-    a := /- NOTE: our current implementation of floating types has them all behave like double -/
-  (lemSeq
-    (fun _ =>
-      CerbDebug.warn [DB_elaboration] (fun (u : Unit) =>
-        match u with
-        | () =>
-          String.append "casts between floating types is currently a NOP: "
-            (String.append (CerbPP.stringFromCore_ctype to_ty)
-              (String.append " <== " (CerbPP.stringFromCore_ctype from_ty))))) (fun _ => z))
-
 def with_wrapI_or_catch_exceptional_condition [CerbImplCfg.Impl]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (result_ty : ctype)
@@ -240,9 +229,14 @@ def translate_constant_lemFuel [CerbImplCfg.Impl] (lemFuel : Nat)
          (Vloaded
            (LVspecified
              (OVinteger ((CerbMem.minIval _lemReader_enum_definitions _lemReader_tagDefs) ity))))
-     | ConstantFloating
-       (str, _) => /- TODO: when we support float vs double, we'll need to inspect the suffix -/
-       mk_value_pe (Vloaded (LVspecified (OVfloating (CerbMem.strFval str))))
+     | ConstantFloating (str, suffix) =>
+       (let rt :=
+          match suffix with
+          | none => Double
+          | some Fsuf_F => Float0
+          | some Fsuf_L => LongDouble;
+        mk_value_pe
+          (Vloaded (LVspecified (OVfloating (CerbMem.strFvalTyped (RealFloating rt) str)))))
      | ConstantCharacter (_, str) => /- NOTE: making an implementation fix here (ASCII) -/
        mk_value_pe
          (Vloaded
@@ -850,7 +844,10 @@ def translate_postfix [CerberusFresh.Digest] [CerbImplCfg.Impl]
                                                  (RealFloating
                                                    _)) => /- NOTE: we are not modelling floating UBs -/
                                                mk_op_pe core_op obj_wrp.sym_pe
-                                                 (mk_floating_value_pe CerbMem.oneFval)
+                                                 (Pexpr ([] : List annot) ()
+                                                   (PEctor Cfvconvert
+                                                     [mk_ail_ctype_pe result_ty,
+                                                       mk_floating_value_pe CerbMem.oneFval]))
                                              | Pointer _ ref_ty =>
                                                mk_array_shift obj_wrp.sym_pe ref_ty
                                                  (mk_integer_pe ptr_shift_const)
@@ -1096,7 +1093,9 @@ def translate_function_call [CerberusFresh.Digest] [CerbImplCfg.Impl]
                                                      stdlib1.mkcall_loaded_fvfromint_
                                                        expect_param_ty_pe arg_sym_pe
                                                    else
-                                                     arg_sym_pe
+                                                     Pexpr ([] : List annot) ()
+                                                       (PEctor CfvconvertLoaded
+                                                         [expect_param_ty_pe, arg_sym_pe])
                                                  else lem_if is_pointer expect_param_ty &&
                                                      arg_is_null then
                                                    mk_specified_pe (mk_nullptr_pe expect_param_ty)
@@ -1252,13 +1251,20 @@ def translate_function_call [CerberusFresh.Digest] [CerbImplCfg.Impl]
                                                                     (prom_ty,
                                                                       stdlib1.mkcall_conv_loaded_int
                                                                         prom_ty arg_sym_pe)
-                                                                  else lem_if is_floating
-                                                                      arg_ty then
-                                                                    (Ctype ([] : List annot)
-                                                                      (Basic
-                                                                        (Floating
-                                                                          (RealFloating Double))),
-                                                                      arg_sym_pe)
+                                                                  else lem_if (maybeEqualBy
+                                                                      (fun x y => x == y)
+                                                                      (corresponding_real_type
+                                                                        arg_ty) (some Float0)) then
+                                                                    let ty1 :=
+                                                                      Ctype ([] : List annot)
+                                                                        (Basic
+                                                                          (Floating
+                                                                            (RealFloating Double)));
+                                                                    (ty1,
+                                                                      Pexpr ([] : List annot) ()
+                                                                        (PEctor CfvconvertLoaded
+                                                                          [mk_ail_ctype_pe ty1,
+                                                                            arg_sym_pe]))
                                                                   else
                                                                     (arg_ty, arg_sym_pe) with
                                                                 | (conv_ty, conv_value) =>
@@ -2048,12 +2054,28 @@ def translate_expression_lemFuel [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.I
      let usual_arithmetic_conversion_aux : Bool → ctype → ctype → generic_pexpr Unit sym →
        generic_pexpr Unit sym → (generic_pexpr Unit sym × generic_pexpr Unit sym) :=
        (fun (is_TMP_new : Bool) (ty1 : ctype) (ty2 : ctype) (e1 : pexpr) (e2 : pexpr) =>
-         match corresponding_real_type ty1,
-             corresponding_real_type
-               ty2 with /- TODO/NOTE: we convert (long double, double and float) to Ocaml float! This is not the C11 behaviour! -/
-         | some _, some _ => (e1, e2)
-         | some _, _ => (e1, Pexpr ([] : List annot) () (PEctor Cfvfromint [e2]))
-         | _, some _ => (Pexpr ([] : List annot) () (PEctor Cfvfromint [e1]), e2)
+         let r1 := corresponding_real_type ty1;
+         let r2 := corresponding_real_type ty2;
+         let rt :=
+           lem_if (maybeEqualBy (fun x y => x == y) r1 (some LongDouble)) ||
+               (maybeEqualBy (fun x y => x == y) r2 (some LongDouble)) then
+             LongDouble
+           else lem_if (maybeEqualBy (fun x y => x == y) r1 (some Double)) ||
+               (maybeEqualBy (fun x y => x == y) r2 (some Double)) then
+             Double
+           else
+             Float0;
+         let result_ty := Ctype ([] : List annot) (Basic (Floating (RealFloating rt)));
+         match corresponding_real_type ty1, corresponding_real_type ty2 with
+         | some _, some _ =>
+           (Pexpr ([] : List annot) () (PEctor Cfvconvert [mk_ail_ctype_pe result_ty, e1]),
+             Pexpr ([] : List annot) () (PEctor Cfvconvert [mk_ail_ctype_pe result_ty, e2]))
+         | some _, _ =>
+           (Pexpr ([] : List annot) () (PEctor Cfvconvert [mk_ail_ctype_pe result_ty, e1]),
+             Pexpr ([] : List annot) () (PEctor CfvfromintTyped [mk_ail_ctype_pe result_ty, e2]))
+         | _, some _ =>
+           (Pexpr ([] : List annot) () (PEctor CfvfromintTyped [mk_ail_ctype_pe result_ty, e1]),
+             Pexpr ([] : List annot) () (PEctor Cfvconvert [mk_ail_ctype_pe result_ty, e2]))
          | none, none =>
            (let mk_conv_int1 : integerType → generic_pexpr Unit sym → generic_pexpr Unit sym :=
               (fun (ity : integerType) (pe : generic_pexpr Unit sym) =>
@@ -2178,7 +2200,11 @@ def translate_expression_lemFuel [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.I
                                   (mk_case_pe e_wrp.sym_pe
                                     [(mk_specified_pat obj_wrp.sym_pat,
                                       (let expr1 :=
-                                         mk_op_pe OpSub zero_pe (mk_conversion obj_wrp.sym_pe);
+                                         lem_if is_floating result_ty then
+                                           Pexpr ([] : List annot) ()
+                                             (PEctor Cfvneg [obj_wrp.sym_pe])
+                                         else
+                                           mk_op_pe OpSub zero_pe (mk_conversion obj_wrp.sym_pe);
                                        mk_specified_pe
                                          ((with_wrapI_or_catch_exceptional_condition
                                            _lemReader_enum_definitions _lemReader_tagDefs) result_ty
@@ -2812,7 +2838,11 @@ def translate_expression_lemFuel [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.I
                                          (mk_pure_e
                                            (stdlib1.mkcall_loaded_fvfromint cast_ty e_wrp.sym_pe))
                                      else /- cast_ty is floating since it is an arithmetic type -/
-                                       floating_conversion_TODO cast_ty e_ty core_e
+                                       mk_wseq_e e_wrp.sym_pat core_e
+                                         (mk_pure_e
+                                           (Pexpr ([] : List annot) ()
+                                             (PEctor CfvconvertLoaded
+                                               [mk_ail_ctype_pe cast_ty, e_wrp.sym_pe])))
                                    else lem_if is_pointer cast_ty && is_arithmetic
                                        e_ty then /- making a pointer from an integer -/
                                      let ref_ty :=(fromJustI
@@ -3394,7 +3424,14 @@ def translate_expression_lemFuel [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.I
                                      (mk_pure_e
                                        (stdlib1.mkcall_loaded_fvfromint result_ty e_wrp.sym_pe))))
                            else
-                             return0 (floating_conversion_TODO result_ty e_ty core_e))
+                             bind1 (wrapped_fresh_symbol (BTy_loaded OTy_floating))
+                               (fun (e_wrp : wrapped_symbol) =>
+                                 return0
+                                   (mk_sseq_e e_wrp.sym_pat core_e
+                                     (mk_pure_e
+                                       (Pexpr ([] : List annot) ()
+                                         (PEctor CfvconvertLoaded
+                                           [mk_ail_ctype_pe result_ty, e_wrp.sym_pe]))))))
                          else lem_if is_pointer result_ty then
                            (lem_if is_integer e_ty && is_null_pointer_constant expr1 then
                              match referenced_type result_ty with

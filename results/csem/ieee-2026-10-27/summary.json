@@ -1,0 +1,362 @@
+{
+  "native": {
+    "checks": 369465,
+    "mismatches": 0,
+    "rows": [
+      {
+        "name": "f64 add",
+        "total": 20000,
+        "nan": 1016,
+        "mismatch": 0
+      },
+      {
+        "name": "f64 sub",
+        "total": 20000,
+        "nan": 1013,
+        "mismatch": 0
+      },
+      {
+        "name": "f64 mul",
+        "total": 20000,
+        "nan": 1019,
+        "mismatch": 0
+      },
+      {
+        "name": "f64 div",
+        "total": 20000,
+        "nan": 1051,
+        "mismatch": 0
+      },
+      {
+        "name": "f64 sqrt",
+        "total": 20000,
+        "nan": 9537,
+        "mismatch": 0
+      },
+      {
+        "name": "f64 cmp(6)",
+        "total": 20000,
+        "nan": 0,
+        "mismatch": 0
+      },
+      {
+        "name": "f64 ofInt(i64)",
+        "total": 20000,
+        "nan": 0,
+        "mismatch": 0
+      },
+      {
+        "name": "f64 toInt(i64)",
+        "total": 13641,
+        "nan": 0,
+        "mismatch": 0
+      },
+      {
+        "name": "f64->f32",
+        "total": 20000,
+        "nan": 662,
+        "mismatch": 0
+      },
+      {
+        "name": "bytes roundtrip",
+        "total": 20000,
+        "nan": 0,
+        "mismatch": 0
+      },
+      {
+        "name": "f32 add",
+        "total": 20000,
+        "nan": 732,
+        "mismatch": 0
+      },
+      {
+        "name": "f32 sub",
+        "total": 20000,
+        "nan": 731,
+        "mismatch": 0
+      },
+      {
+        "name": "f32 mul",
+        "total": 20000,
+        "nan": 731,
+        "mismatch": 0
+      },
+      {
+        "name": "f32 div",
+        "total": 20000,
+        "nan": 779,
+        "mismatch": 0
+      },
+      {
+        "name": "f32 sqrt",
+        "total": 20000,
+        "nan": 9452,
+        "mismatch": 0
+      },
+      {
+        "name": "f32 cmp(6)",
+        "total": 20000,
+        "nan": 0,
+        "mismatch": 0
+      },
+      {
+        "name": "f32 ofInt(i64)",
+        "total": 20000,
+        "nan": 0,
+        "mismatch": 0
+      },
+      {
+        "name": "f32 toInt(i64)",
+        "total": 15824,
+        "nan": 0,
+        "mismatch": 0
+      },
+      {
+        "name": "f32->f64",
+        "total": 20000,
+        "nan": 458,
+        "mismatch": 0
+      }
+    ]
+  },
+  "f128": {
+    "checks": 130177,
+    "mismatches": 0,
+    "rows": [
+      {
+        "name": "f128 fixdi",
+        "total": 5278,
+        "nan": 0,
+        "mismatch": 0
+      },
+      {
+        "name": "f128 fixsi",
+        "total": 4899,
+        "nan": 0,
+        "mismatch": 0
+      },
+      {
+        "name": "f128 add",
+        "total": 10000,
+        "nan": 482,
+        "mismatch": 0
+      },
+      {
+        "name": "f128 sub",
+        "total": 10000,
+        "nan": 482,
+        "mismatch": 0
+      },
+      {
+        "name": "f128 mul",
+        "total": 10000,
+        "nan": 482,
+        "mismatch": 0
+      },
+      {
+        "name": "f128 div",
+        "total": 10000,
+        "nan": 504,
+        "mismatch": 0
+      },
+      {
+        "name": "f128 sqrt",
+        "total": 10000,
+        "nan": 5262,
+        "mismatch": 0
+      },
+      {
+        "name": "f128 cmp",
+        "total": 10000,
+        "nan": 0,
+        "mismatch": 0
+      },
+      {
+        "name": "f128 floatdi",
+        "total": 10000,
+        "nan": 0,
+        "mismatch": 0
+      },
+      {
+        "name": "f128 floatsi",
+        "total": 10000,
+        "nan": 0,
+        "mismatch": 0
+      },
+      {
+        "name": "f128 extenddf",
+        "total": 10000,
+        "nan": 118,
+        "mismatch": 0
+      },
+      {
+        "name": "f128 truncdf",
+        "total": 10000,
+        "nan": 323,
+        "mismatch": 0
+      },
+      {
+        "name": "f128 extendsf",
+        "total": 10000,
+        "nan": 47,
+        "mismatch": 0
+      },
+      {
+        "name": "f128 truncsf",
+        "total": 10000,
+        "nan": 323,
+        "mismatch": 0
+      }
+    ]
+  },
+  "literals": {
+    "checks": 9096,
+    "mismatches": 0,
+    "rows": [
+      {
+        "name": "literal f32 (strtof)",
+        "total": 3032,
+        "nan": 0,
+        "mismatch": 0
+      },
+      {
+        "name": "literal f64 (strtod)",
+        "total": 3032,
+        "nan": 0,
+        "mismatch": 0
+      },
+      {
+        "name": "literal f128 (strtof128)",
+        "total": 3032,
+        "nan": 0,
+        "mismatch": 0
+      }
+    ]
+  },
+  "printf": {
+    "checks": 46139,
+    "mismatches": 0,
+    "rows": [
+      {
+        "name": "printf double (CerbIEEE.HexStyle.glibc)",
+        "total": 37000,
+        "nan": 0,
+        "mismatch": 0
+      },
+      {
+        "name": "printf binary128 (CerbIEEE.HexStyle.glibc)",
+        "total": 9139,
+        "nan": 0,
+        "mismatch": 0
+      }
+    ]
+  },
+  "sail_vectors": {
+    "checks": 422,
+    "mismatches": 9,
+    "rows": [
+      {
+        "name": "f128 add",
+        "total": 32,
+        "nan": 1,
+        "mismatch": 0
+      },
+      {
+        "name": "f128 sub",
+        "total": 32,
+        "nan": 1,
+        "mismatch": 0
+      },
+      {
+        "name": "f128 mul",
+        "total": 32,
+        "nan": 1,
+        "mismatch": 0
+      },
+      {
+        "name": "f128 div",
+        "total": 32,
+        "nan": 1,
+        "mismatch": 0
+      },
+      {
+        "name": "f128 sqrt",
+        "total": 32,
+        "nan": 16,
+        "mismatch": 9
+      },
+      {
+        "name": "f128 cmp",
+        "total": 32,
+        "nan": 0,
+        "mismatch": 0
+      },
+      {
+        "name": "f128 fixdi",
+        "total": 21,
+        "nan": 0,
+        "mismatch": 0
+      },
+      {
+        "name": "f128 fixsi",
+        "total": 17,
+        "nan": 0,
+        "mismatch": 0
+      },
+      {
+        "name": "f128 floatdi",
+        "total": 32,
+        "nan": 0,
+        "mismatch": 0
+      },
+      {
+        "name": "f128 floatsi",
+        "total": 32,
+        "nan": 0,
+        "mismatch": 0
+      },
+      {
+        "name": "f128 extenddf",
+        "total": 32,
+        "nan": 0,
+        "mismatch": 0
+      },
+      {
+        "name": "f128 truncdf",
+        "total": 32,
+        "nan": 1,
+        "mismatch": 0
+      },
+      {
+        "name": "f128 extendsf",
+        "total": 32,
+        "nan": 1,
+        "mismatch": 0
+      },
+      {
+        "name": "f128 truncsf",
+        "total": 32,
+        "nan": 1,
+        "mismatch": 0
+      }
+    ]
+  },
+  "acceptance": {
+    "request_id": "csem-ieee-full-gate-17",
+    "full_gate": "PASS",
+    "full_gate_log_sha256": "ce4bde64d14bbfacafe1540134890b23d4701e590c11a1b865d07a41fa86eb0d",
+    "source_hashes_verified": true,
+    "native_floating_kernel": 0,
+    "native_floating_runtime": 0,
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "baseline": {
+      "MATCH": 90,
+      "UB_MATCH": 18,
+      "CERB_SKIP": 5
+    }
+  }
+}

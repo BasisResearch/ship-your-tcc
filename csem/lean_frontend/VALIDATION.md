@@ -1,3 +1,8 @@
+> 2026-10-27 ship-your-tcc IEEE recovery: historical native-float evidence
+> and refusal counts below are not current acceptance evidence for this fork.
+> Fresh arithmetic/format/byte/NaN/Sail comparisons and remaining obligations
+> are recorded in `results/csem/ieee-2026-10-27.md`. No draft test count is inherited.
+
 # VALIDATION — why you should trust this semantics
 
 **Documentation check, 2026-09-25:** implementation `bb487dda7c56981e76d67f53ae16e874cfe5ed61`;

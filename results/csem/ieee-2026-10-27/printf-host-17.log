@@ -1,0 +1,10 @@
+MISMATCH printf binary128 (CerbIEEE.HexStyle.glibc): %-14.5g| c00540e24dd2f1aa0000006afb806cd7: want [-80.221000] got [-80.221       |]
+MISMATCH printf binary128 (CerbIEEE.HexStyle.glibc): %-+20.10e| c00540e24dd2f1aa0000006afb806cd7: want [-0x1.40e24dd2f1aa0000006afb806cd7p+6] got [-8.0221000000e+01   |]
+MISMATCH printf binary128 (CerbIEEE.HexStyle.glibc): %-14.5g| 403b8eba3a3f140d2000001789661d5a: want [ 1795708800959828480.000022] got [1.7957e+18    |]
+MISMATCH printf binary128 (CerbIEEE.HexStyle.glibc): %-+20.10e| 403b8eba3a3f140d2000001789661d5a: want [0x1.8eba3a3f140d2000001789661d5ap+60] got [+1.7957088010e+18   |]
+MISMATCH printf binary128 (CerbIEEE.HexStyle.glibc): %-14.5g| 3fff0000000000000000000000000001: want [ 1.000000] got [1             |]
+MISMATCH printf binary128 (CerbIEEE.HexStyle.glibc): %-+20.10e| 3fff0000000000000000000000000001: want [0x1.0000000000000000000000000001p+0] got [+1.0000000000e+00   |]
+MISMATCH printf binary128 (CerbIEEE.HexStyle.glibc): %-14.5g| c0057bdb22d0e560400000465155b9af: want [-94.964000] got [-94.964       |]
+MISMATCH printf binary128 (CerbIEEE.HexStyle.glibc): %-+20.10e| c0057bdb22d0e560400000465155b9af: want [-0x1.7bdb22d0e560400000465155b9afp+6] got [-9.4964000000e+01   |]
+printf double (CerbIEEE.HexStyle.glibc)	37000	nan:0	mismatch:0
+printf binary128 (CerbIEEE.HexStyle.glibc)	9139	nan:0	mismatch:674

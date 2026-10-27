@@ -41,12 +41,15 @@ private def qString (s : String) : Result := .ok (.atom (reprStr s))
 private def qBool (b : Bool) : Result := .ok (.atom (if b then "Bool.true" else "Bool.false"))
 private def qUnit (_ : Unit) : Result := .ok (.atom "()")
 
-/-- Reject before `toBits`: the pinned Float implementation canonicalizes NaNs. -/
-def quoteFloat (f : Float) : Result :=
-  if f.isNaN then
-    .error ⟨"Float.NaN", "Float.toBits canonicalizes NaNs; their representation cannot be quoted"⟩
-  else
-    .ok (node "Float.ofBits" [.atom (toString f.toBits.toNat)])
+/-- Quote the format and exact interchange bits, including signed NaNs. -/
+def quoteFloat (f : CerbFloat.Value) : Result :=
+  let fm := match f.fmt with
+    | .binary32 => "CerbIEEE.FFormat.binary32"
+    | .binary64 => "CerbIEEE.FFormat.binary64"
+    | .binary128 => "CerbIEEE.FFormat.binary128"
+  .ok (.atom ("({ fmt := _root_." ++ fm ++ ", bits := _root_.BitVec.ofNat " ++
+    toString f.fmt.width ++ " " ++ toString f.bits.toNat ++ " } : _root_.CerbIEEE.FVal)"))
+
 
 private def qList {α : Type} (elementType : String) (q : α → Result) (xs : List α) : Result := do
   let values ← xs.mapM q
@@ -403,6 +406,11 @@ private def q_ctor : (ctor) → Result
   | ctor.CivXOR => return typedNode "(ctor)" "ctor.CivXOR" []
   | ctor.Cspecified => return typedNode "(ctor)" "ctor.Cspecified" []
   | ctor.Cunspecified => return typedNode "(ctor)" "ctor.Cunspecified" []
+  | ctor.Cfvconvert => return typedNode "(ctor)" "ctor.Cfvconvert" []
+  | ctor.CfvconvertLoaded => return typedNode "(ctor)" "ctor.CfvconvertLoaded" []
+  | ctor.CfvfromintTyped => return typedNode "(ctor)" "ctor.CfvfromintTyped" []
+  | ctor.CfvfromintTypedLoaded => return typedNode "(ctor)" "ctor.CfvfromintTypedLoaded" []
+  | ctor.Cfvneg => return typedNode "(ctor)" "ctor.Cfvneg" []
   | ctor.Cfvfromint => return typedNode "(ctor)" "ctor.Cfvfromint" []
   | ctor.Civfromfloat => return typedNode "(ctor)" "ctor.Civfromfloat" []
   | ctor.CivNULLcap x0 => return typedNode "(ctor)" "ctor.CivNULLcap" [← qBool x0]

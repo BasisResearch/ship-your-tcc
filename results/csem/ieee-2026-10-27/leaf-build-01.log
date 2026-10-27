@@ -1,0 +1,32 @@
+Running as unit: run-p3868044-i464639497.scope; invocation ID: 8a0e5bd4cdba40c2b900d51d43af7893
+✔ [2/6] Built CerbIEEE (1.6s)
+✖ [3/6] Building Unit.IEEETest (826ms)
+trace: .> LEAN_PATH=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/packages/Cli/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/riscv-lean/lean-sail/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/packages/ELFSage/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/riscv-lean/Lean_RV64D_executable/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/riscv-lean/lean_emulator/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/lib/lean /data/home/kirancodes/.elan/toolchains/leanprover--lean4---v4.34.0/bin/lean /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/csem/lean_frontend/test/Unit/IEEETest.lean -o /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/lib/lean/Unit/IEEETest.olean -i /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/lib/lean/Unit/IEEETest.ilean -c /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/ir/Unit/IEEETest.c --setup /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/ir/Unit/IEEETest.setup.json --json
+error: csem/lean_frontend/test/Unit/IEEETest.lean:86:61: failed to synthesize instance of type class
+  HAdd Nat UInt64 UInt64
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+error: csem/lean_frontend/test/Unit/IEEETest.lean:89:23: failed to synthesize instance of type class
+  HAdd Nat UInt64 ?m.157
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+error: csem/lean_frontend/test/Unit/IEEETest.lean:92:23: failed to synthesize instance of type class
+  HAdd Nat UInt64 ?m.231
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+error: csem/lean_frontend/test/Unit/IEEETest.lean:121:72: failed to synthesize instance of type class
+  HAdd Nat UInt32 ?m.111
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+error: csem/lean_frontend/test/Unit/IEEETest.lean:124:23: failed to synthesize instance of type class
+  HAdd Nat UInt32 ?m.154
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+error: csem/lean_frontend/test/Unit/IEEETest.lean:127:23: failed to synthesize instance of type class
+  HAdd Nat UInt32 ?m.221
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+✔ [5/6] Built CerbIEEE:c.o (1.8s)
+Some required targets logged failures:
+- Unit.IEEETest
+error: build failed

@@ -1247,6 +1247,11 @@ let rec subst_pattern_val (Pattern _ pat) cval expr =
               "specified"
           | Cunspecified ->
               "unspecified"
+          | Cfvconvert -> "Cfvconvert"
+          | CfvconvertLoaded -> "CfvconvertLoaded"
+          | CfvfromintTyped -> "CfvfromintTyped"
+          | CfvfromintTypedLoaded -> "CfvfromintTypedLoaded"
+          | Cfvneg -> "Cfvneg"
           | Cfvfromint ->
               "fvfromint"
           | Civfromfloat ->
@@ -1548,6 +1553,11 @@ let rec unsafe_subst_pattern (Pattern _ pat) pe' expr =
               "specified"
           | Cunspecified ->
               "unspecified"
+          | Cfvconvert -> "Cfvconvert"
+          | CfvconvertLoaded -> "CfvconvertLoaded"
+          | CfvfromintTyped -> "CfvfromintTyped"
+          | CfvfromintTypedLoaded -> "CfvfromintTypedLoaded"
+          | Cfvneg -> "Cfvneg"
           | Cfvfromint ->
               "fvfromint"
           | Civfromfloat ->
@@ -2556,6 +2566,11 @@ let rec update_env_aux (Pattern _ pat) cval env =
               "specified"
           | Cunspecified ->
               "unspecified"
+          | Cfvconvert -> "Cfvconvert"
+          | CfvconvertLoaded -> "CfvconvertLoaded"
+          | CfvfromintTyped -> "CfvfromintTyped"
+          | CfvfromintTypedLoaded -> "CfvfromintTypedLoaded"
+          | Cfvneg -> "Cfvneg"
           | Cfvfromint ->
               "fvfromint"
           | Civfromfloat ->

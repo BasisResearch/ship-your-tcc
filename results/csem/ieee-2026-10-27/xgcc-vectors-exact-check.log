@@ -1,0 +1,23 @@
+MISMATCH f128 sqrt: sqrt	402fd000020405115000000041000122	0	401758a68b0a32b9d7a033e94ccdca1e
+MISMATCH f128 sqrt: sqrt	403c000080000a014800810004022000	0	401d6a0a40ea69199142ad5b16d8f808
+MISMATCH f128 sqrt: sqrt	3fd820403000030010c0140090ba2000	0	3feb802ac848907fc0694521eba00c78
+MISMATCH f128 sqrt: sqrt	38a844fdbf7653008cdddd0dacb07fa6	0	3c5397ea819b30a58ce37fd8233baa89
+MISMATCH f128 sqrt: sqrt	416928d73b63ead92ab9c54d462cbb4c	0	40b413aa422acf13919888b6bfc06696
+MISMATCH f128 sqrt: sqrt	403d0028810000100004008010100020	0	401e00143fb2fe1f5a72082754016f0f
+MISMATCH f128 sqrt: sqrt	3ff4080180a00240000c040000000008	0	3ff96fa7f5e7549228a0f88115633dee
+MISMATCH f128 sqrt: sqrt	3a7bf2336465a2ec9a403cb20aca52a9	0	3d3d6520675dce6d21e08ff92850fc3f
+MISMATCH f128 extendsf: extendsf	ffc3daaa	0	ffff87b5540000000000000000000000
+f128 add	32	nan:1	mismatch:0
+f128 sub	32	nan:1	mismatch:0
+f128 mul	32	nan:1	mismatch:0
+f128 div	32	nan:1	mismatch:0
+f128 sqrt	32	nan:16	mismatch:9
+f128 cmp	32	nan:0	mismatch:0
+f128 fixdi	21	nan:0	mismatch:0
+f128 fixsi	17	nan:0	mismatch:0
+f128 floatdi	32	nan:0	mismatch:0
+f128 floatsi	32	nan:0	mismatch:0
+f128 extenddf	32	nan:0	mismatch:0
+f128 truncdf	32	nan:1	mismatch:0
+f128 extendsf	32	nan:1	mismatch:1
+f128 truncsf	32	nan:1	mismatch:0

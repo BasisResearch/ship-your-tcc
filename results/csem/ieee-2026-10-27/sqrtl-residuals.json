@@ -1,0 +1,56 @@
+[
+  {
+    "input": "402fd000020405115000000041000122",
+    "sail": "401758a68b0a32b9d7a033e94ccdca1e",
+    "host": "401758a68b0a32b9d7a033e94ccdca1d",
+    "classification": "finite newlib sqrtl differs from pure IEEE and host sqrtq; F7 open"
+  },
+  {
+    "input": "403c000080000a014800810004022000",
+    "sail": "401d6a0a40ea69199142ad5b16d8f808",
+    "host": "401d6a0a40ea69199142ad5b16d8f807",
+    "classification": "finite newlib sqrtl differs from pure IEEE and host sqrtq; F7 open"
+  },
+  {
+    "input": "3fd820403000030010c0140090ba2000",
+    "sail": "3feb802ac848907fc0694521eba00c78",
+    "host": "3feb802ac848907fc0694521eba00c77",
+    "classification": "finite newlib sqrtl differs from pure IEEE and host sqrtq; F7 open"
+  },
+  {
+    "input": "38a844fdbf7653008cdddd0dacb07fa6",
+    "sail": "3c5397ea819b30a58ce37fd8233baa89",
+    "host": "3c5397ea819b30a58ce37fd8233baa88",
+    "classification": "finite newlib sqrtl differs from pure IEEE and host sqrtq; F7 open"
+  },
+  {
+    "input": "416928d73b63ead92ab9c54d462cbb4c",
+    "sail": "40b413aa422acf13919888b6bfc06696",
+    "host": "40b413aa422acf13919888b6bfc06695",
+    "classification": "finite newlib sqrtl differs from pure IEEE and host sqrtq; F7 open"
+  },
+  {
+    "input": "403d0028810000100004008010100020",
+    "sail": "401e00143fb2fe1f5a72082754016f0f",
+    "host": "401e00143fb2fe1f5a72082754016f0e",
+    "classification": "finite newlib sqrtl differs from pure IEEE and host sqrtq; F7 open"
+  },
+  {
+    "input": "3ff4080180a00240000c040000000008",
+    "sail": "3ff96fa7f5e7549228a0f88115633dee",
+    "host": "3ff96fa7f5e7549228a0f88115633ded",
+    "classification": "finite newlib sqrtl differs from pure IEEE and host sqrtq; F7 open"
+  },
+  {
+    "input": "3a7bf2336465a2ec9a403cb20aca52a9",
+    "sail": "3d3d6520675dce6d21e08ff92850fc3f",
+    "host": "3d3d6520675dce6d21e08ff92850fc3e",
+    "classification": "finite newlib sqrtl differs from pure IEEE and host sqrtq; F7 open"
+  },
+  {
+    "input": "3ffc060e0401001a800063208410800a",
+    "sail": "3ffd6e4b85802d48c1196e7ea35d66e1",
+    "host": "3ffd6e4b85802d48c1196e7ea35d66e0",
+    "classification": "finite newlib sqrtl differs from pure IEEE and host sqrtq; F7 open"
+  }
+]

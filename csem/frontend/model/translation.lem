@@ -50,14 +50,6 @@ let force_core_object_type_of_ctype ty =
   end
 
 
-let floating_conversion_TODO to_ty from_ty z =
-  (* NOTE: our current implementation of floating types has them all behave like double *)
-  let () = Debug.warn [Debug.DB_elaboration] (fun () ->
-    "casts between floating types is currently a NOP: " ^
-    Pp.stringFromCore_ctype to_ty ^ " <== " ^
-    Pp.stringFromCore_ctype from_ty
-  ) in
-  z
 
 
 let with_wrapI_or_catch_exceptional_condition result_ty iop promoted1_pe promoted2_pe default_pe_opt =
@@ -204,9 +196,13 @@ let rec translate_constant cst =
         Caux.mk_value_pe (C.Vloaded (C.LVspecified (C.OVinteger (Mem.max_ival ity))))
     | A.ConstantInteger (A.IConstantMin ity) ->
         Caux.mk_value_pe (C.Vloaded (C.LVspecified (C.OVinteger (Mem.min_ival ity))))
-    | A.ConstantFloating (str, _) ->
-        (* TODO: when we support float vs double, we'll need to inspect the suffix *)
-        Caux.mk_value_pe (C.Vloaded (C.LVspecified (C.OVfloating (Mem.str_fval str))))
+    | A.ConstantFloating (str, suffix) ->
+        let rt = match suffix with
+          | Nothing -> Ctype.Double
+          | Just A.Fsuf_F -> Ctype.Float
+          | Just A.Fsuf_L -> Ctype.LongDouble
+        end in
+        Caux.mk_value_pe (C.Vloaded (C.LVspecified (C.OVfloating (Mem.str_fval_typed (Ctype.RealFloating rt) str))))
     | A.ConstantCharacter (_, str) ->
         (* NOTE: making an implementation fix here (ASCII) *)
         Caux.mk_value_pe (C.Vloaded (C.LVspecified (C.OVinteger (Mem.integer_ival (Decode.decode_character_constant str)))))
@@ -728,7 +724,7 @@ match Ctype.unatomic_ ty with
                       end
   | Ctype.Basic (Ctype.Floating (Ctype.RealFloating _)) ->
                       (* NOTE: we are not modelling floating UBs *)
-                      Caux.mk_op_pe core_op obj_wrp.E.sym_pe (Caux.mk_floating_value_pe Mem.one_fval)
+                      Caux.mk_op_pe core_op obj_wrp.E.sym_pe (C.Pexpr [] () (C.PEctor C.Cfvconvert [Caux.mk_ail_ctype_pe result_ty; Caux.mk_floating_value_pe Mem.one_fval]))
   | Ctype.Pointer _ ref_ty ->
                       Caux.mk_array_shift obj_wrp.E.sym_pe ref_ty (Caux.mk_integer_pe ptr_shift_const)
   | (*BISECT-IGNORE*) _ ->
@@ -922,7 +918,7 @@ let translate_function_call loc annots is_used translate_expr stdlib e es =
       if AilTypesAux.is_integer arg_ty then
         stdlib.mkcall_loaded_fvfromint_ expect_param_ty_pe arg_sym_pe
       else
-        arg_sym_pe
+        C.Pexpr [] () (C.PEctor C.CfvconvertLoaded [expect_param_ty_pe; arg_sym_pe])
     else if AilTypesAux.is_pointer expect_param_ty && arg_is_null then
       Caux.mk_specified_pe (Caux.mk_nullptr_pe expect_param_ty)
     else
@@ -987,8 +983,9 @@ let translate_function_call loc annots is_used translate_expr stdlib e es =
       if AilTypesAux.is_integer arg_ty then
         let prom_ty = fromJust "translation: default arguments promotion" (AilTypesAux.promotion (Implementation.integerImpl ()) arg_ty) in
         (prom_ty, stdlib.mkcall_conv_loaded_int prom_ty arg_sym_pe)
-      else if AilTypesAux.is_floating arg_ty then
-        (Ctype.Ctype [] (Ctype.Basic (Ctype.Floating (Ctype.RealFloating Ctype.Double))), arg_sym_pe)
+      else if AilTypesAux.corresponding_real_type arg_ty = Just Ctype.Float then
+        let ty = Ctype.Ctype [] (Ctype.Basic (Ctype.Floating (Ctype.RealFloating Ctype.Double))) in
+        (ty, C.Pexpr [] () (C.PEctor C.CfvconvertLoaded [Caux.mk_ail_ctype_pe ty; arg_sym_pe]))
       else
         (arg_ty, arg_sym_pe)
     in E.return ( conv_ty :: rev_arg_tys
@@ -1414,14 +1411,22 @@ let rec translate_expression translate_block_opt is_used ctx variadic_env stdlib
     mk_conversion e in
   (* STD §6.3.1.8 *)
   let usual_arithmetic_conversion_aux is_TMP_new (ty1: Ctype.ctype) (ty2: Ctype.ctype) (e1: C.pexpr) (e2: C.pexpr) : C.pexpr * C.pexpr =
+    let r1 = AilTypesAux.corresponding_real_type ty1 in
+    let r2 = AilTypesAux.corresponding_real_type ty2 in
+    let rt = if r1 = Just Ctype.LongDouble || r2 = Just Ctype.LongDouble then Ctype.LongDouble
+             else if r1 = Just Ctype.Double || r2 = Just Ctype.Double then Ctype.Double
+             else Ctype.Float in
+    let result_ty = Ctype.Ctype [] (Ctype.Basic (Ctype.Floating (Ctype.RealFloating rt))) in
     match (AilTypesAux.corresponding_real_type ty1, AilTypesAux.corresponding_real_type ty2) with
-      (* TODO/NOTE: we convert (long double, double and float) to Ocaml float! This is not the C11 behaviour! *)
       | (Just _, Just _) ->
-          (e1, e2)
+          (C.Pexpr [] () (C.PEctor C.Cfvconvert [Caux.mk_ail_ctype_pe result_ty; e1]),
+           C.Pexpr [] () (C.PEctor C.Cfvconvert [Caux.mk_ail_ctype_pe result_ty; e2]))
       | (Just _, _) ->
-          (e1, C.Pexpr [] () (C.PEctor C.Cfvfromint [e2]))
+          (C.Pexpr [] () (C.PEctor C.Cfvconvert [Caux.mk_ail_ctype_pe result_ty; e1]),
+           C.Pexpr [] () (C.PEctor C.CfvfromintTyped [Caux.mk_ail_ctype_pe result_ty; e2]))
       | (_, Just _) ->
-          (C.Pexpr [] () (C.PEctor C.Cfvfromint [e1]), e2)
+          (C.Pexpr [] () (C.PEctor C.CfvfromintTyped [Caux.mk_ail_ctype_pe result_ty; e1]),
+           C.Pexpr [] () (C.PEctor C.Cfvconvert [Caux.mk_ail_ctype_pe result_ty; e2]))
       | (Nothing, Nothing) ->
           let mk_conv_int ity pe =
             if is_TMP_new then
@@ -1540,7 +1545,9 @@ let rec translate_expression translate_block_opt is_used ctx variadic_env stdlib
                   Caux.mk_case_pe e_wrp.E.sym_pe
                     [ ( Caux.mk_specified_pat obj_wrp.E.sym_pat
                       , let expr =
-                          Caux.mk_op_pe C.OpSub zero_pe (mk_conversion obj_wrp.E.sym_pe) in
+                          if AilTypesAux.is_floating result_ty then
+                            C.Pexpr [] () (C.PEctor C.Cfvneg [obj_wrp.E.sym_pe])
+                          else Caux.mk_op_pe C.OpSub zero_pe (mk_conversion obj_wrp.E.sym_pe) in
                         Caux.mk_specified_pe (
                           with_wrapI_or_catch_exceptional_condition result_ty C.IOpSub
                             zero_pe (mk_conversion obj_wrp.E.sym_pe) (Just expr)
@@ -1921,7 +1928,8 @@ else if AilTypesAux.is_arithmetic cast_ty && AilTypesAux.is_arithmetic e_ty then
                 Caux.mk_pure_e (stdlib.mkcall_loaded_fvfromint cast_ty e_wrp.E.sym_pe)
               )
     else (* cast_ty is floating since it is an arithmetic type *)
-              floating_conversion_TODO cast_ty e_ty core_e
+              Caux.mk_wseq_e e_wrp.E.sym_pat core_e
+                (Caux.mk_pure_e (C.Pexpr [] () (C.PEctor C.CfvconvertLoaded [Caux.mk_ail_ctype_pe cast_ty; e_wrp.E.sym_pe])))
 
 else if AilTypesAux.is_pointer cast_ty && AilTypesAux.is_arithmetic e_ty then
             (* making a pointer from an integer *)
@@ -2342,7 +2350,9 @@ end                       )
                       (Caux.mk_pure_e (stdlib.mkcall_loaded_fvfromint result_ty e_wrp.E.sym_pe))
                   end
                 else
-                  E.return (floating_conversion_TODO result_ty e_ty core_e)
+                  E.wrapped_fresh_symbol (C.BTy_loaded C.OTy_floating) >>= fun e_wrp ->
+                  E.return (Caux.mk_sseq_e e_wrp.E.sym_pat core_e
+                    (Caux.mk_pure_e (C.Pexpr [] () (C.PEctor C.CfvconvertLoaded [Caux.mk_ail_ctype_pe result_ty; e_wrp.E.sym_pe]))))
               end
             else if AilTypesAux.is_pointer result_ty then
               begin

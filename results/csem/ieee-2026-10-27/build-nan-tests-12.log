@@ -1,0 +1,497 @@
+Running as unit: run-p347405-i465351656.scope; invocation ID: 062fabd259c94c9e9720d9f6dc1e8502
+⚠ [21/515] Replayed LemLib.Word
+warning: csem/lemlib/LemLib/Word.lean:197:12: Variable name `len` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _len
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [30/515] Replayed LemLib.List_extra
+warning: csem/lemlib/LemLib/List_extra.lean:39:9: Variable name `xs` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _xs
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lemlib/LemLib/List_extra.lean:47:4: Variable name `x` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _x
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [33/515] Replayed LemLib.Machine_word
+warning: csem/lemlib/LemLib/Machine_word.lean:40:39: Variable name `x` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _x
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [40/515] Replayed Symbol
+warning: csem/lean_frontend/generated/Symbol.lean:148:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Symbol.lean:163:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Symbol.lean:389:11: Variable name `d` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _d
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/Symbol.lean:451:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Symbol.lean:485:0: unused `termination_by`, function is not recursive
+⚠ [41/515] Replayed IntegerType
+warning: csem/lean_frontend/generated/IntegerType.lean:69:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/IntegerType.lean:76:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/IntegerType.lean:163:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/IntegerType.lean:170:0: unused `termination_by`, function is not recursive
+⚠ [44/515] Replayed Annot
+warning: csem/lean_frontend/generated/Annot.lean:76:10: Variable name `attrs` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _attrs
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/Annot.lean:130:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Annot.lean:137:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Annot.lean:212:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Annot.lean:217:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Annot.lean:337:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Annot.lean:353:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Annot.lean:479:10: Variable name `loc1` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _loc1
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/Annot.lean:573:15: Variable name `l` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _l
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [45/515] Replayed Ctype
+warning: csem/lean_frontend/generated/Ctype.lean:612:15: Variable name `annots1` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _annots1
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [50/515] Replayed Undefined
+warning: csem/lean_frontend/generated/Undefined.lean:1316:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Undefined.lean:1325:0: unused `termination_by`, function is not recursive
+⚠ [51/515] Replayed Nondeterminism
+warning: csem/lean_frontend/generated/Nondeterminism.lean:74:11: Variable name `x` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _x
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/Nondeterminism.lean:76:11: Variable name `x` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _x
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/Nondeterminism.lean:76:13: Variable name `y` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _y
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/Nondeterminism.lean:105:22: Variable name `x4` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _x4
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/Nondeterminism.lean:181:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Nondeterminism.lean:134:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Nondeterminism.lean:187:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Nondeterminism.lean:175:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Nondeterminism.lean:318:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Nondeterminism.lean:404:50: Variable name `msg` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _msg
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/Nondeterminism.lean:409:54: Variable name `m1` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _m1
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/Nondeterminism.lean:410:5: Variable name `m2` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _m2
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/Nondeterminism.lean:498:43: Variable name `x` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _x
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/Nondeterminism.lean:498:51: Variable name `m` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _m
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/Nondeterminism.lean:503:56: Variable name `m` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _m
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [53/515] Replayed Cn
+warning: csem/lean_frontend/generated/Cn.lean:59:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Cn.lean:64:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Cn.lean:107:7: Variable name `sym1` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _sym1
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/Cn.lean:409:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Cn.lean:420:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Cn.lean:1632:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Cn.lean:1641:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Cn.lean:1707:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Cn.lean:1714:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Cn.lean:1922:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Cn.lean:1938:0: unused `termination_by`, function is not recursive
+⚠ [54/515] Replayed Cabs
+warning: csem/lean_frontend/generated/Cabs.lean:3513:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Cabs.lean:3494:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Cabs.lean:3477:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Cabs.lean:3533:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Cabs.lean:3508:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Cabs.lean:3481:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Cabs.lean:3679:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Cabs.lean:3667:0: unused `termination_by`, function is not recursive
+⚠ [55/515] Replayed AilSyntax
+warning: csem/lean_frontend/generated/AilSyntax.lean:459:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/AilSyntax.lean:464:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/AilSyntax.lean:579:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/AilSyntax.lean:586:0: unused `termination_by`, function is not recursive
+⚠ [57/515] Replayed IntegerImpl
+warning: csem/lean_frontend/generated/IntegerImpl.lean:74:27: Variable name `x2` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _x2
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/IntegerImpl.lean:75:30: Variable name `x3` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _x3
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/IntegerImpl.lean:88:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/IntegerImpl.lean:112:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/IntegerImpl.lean:228:28: Variable name `n` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _n
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/IntegerImpl.lean:230:30: Variable name `n` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _n
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/IntegerImpl.lean:282:28: Variable name `n` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _n
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/IntegerImpl.lean:284:30: Variable name `n` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _n
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [58/515] Replayed Implementation
+warning: csem/lean_frontend/generated/Implementation.lean:759:31: Variable name `tag_sym` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _tag_sym
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [61/515] Replayed Constraint
+warning: csem/lean_frontend/generated/Constraint.lean:139:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Constraint.lean:146:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Constraint.lean:716:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Constraint.lean:937:0: unused `termination_by`, function is not recursive
+⚠ [62/515] Replayed TypingError
+warning: csem/lean_frontend/generated/TypingError.lean:55:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/TypingError.lean:61:0: unused `termination_by`, function is not recursive
+⚠ [63/515] Replayed ErrorMonad
+warning: csem/lean_frontend/generated/ErrorMonad.lean:27:26: Variable name `x1` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _x1
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/ErrorMonad.lean:36:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/ErrorMonad.lean:40:0: unused `termination_by`, function is not recursive
+⚠ [64/515] Replayed AilTypesAux
+warning: csem/lean_frontend/generated/AilTypesAux.lean:313:73: Variable name `impl2` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _impl2
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/AilTypesAux.lean:681:31: Variable name `impl2` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _impl2
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/AilTypesAux.lean:681:77: Variable name `ty2` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _ty2
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/AilTypesAux.lean:837:13: Variable name `qs1` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _qs1
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/AilTypesAux.lean:837:41: Variable name `qs2` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _qs2
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/AilTypesAux.lean:933:27: Variable name `bty2` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _bty2
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/AilTypesAux.lean:940:27: Variable name `n2` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _n2
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/AilTypesAux.lean:948:19: Variable name `ret_qs2` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _ret_qs2
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/AilTypesAux.lean:961:64: Variable name `ret_qs2` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _ret_qs2
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/AilTypesAux.lean:965:76: Variable name `ret_qs2` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _ret_qs2
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/AilTypesAux.lean:973:56: Variable name `ret_qs2` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _ret_qs2
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/AilTypesAux.lean:985:17: Variable name `ref_qs2` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _ref_qs2
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/AilTypesAux.lean:1099:40: Variable name `ref_qs2` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _ref_qs2
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/AilTypesAux.lean:1111:40: Variable name `ref_qs2` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _ref_qs2
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/AilTypesAux.lean:1140:40: Variable name `ref_qs2` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _ref_qs2
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [65/515] Replayed Mem_common
+warning: csem/lean_frontend/generated/Mem_common.lean:99:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Mem_common.lean:106:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Mem_common.lean:356:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Mem_common.lean:364:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Mem_common.lean:438:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Mem_common.lean:443:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Mem_common.lean:592:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Mem_common.lean:612:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Mem_common.lean:857:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Mem_common.lean:866:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Mem_common.lean:996:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Mem_common.lean:1011:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Mem_common.lean:1185:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Mem_common.lean:1190:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Mem_common.lean:1292:19: Variable name `ty1` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _ty1
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [76/515] Replayed Cabs_to_ail_aux
+warning: csem/lean_frontend/generated/Cabs_to_ail_aux.lean:150:14: Variable name `elem_ty` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _elem_ty
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/Cabs_to_ail_aux.lean:219:9: Variable name `ret_qs2` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _ret_qs2
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [77/515] Replayed Scope_table
+warning: csem/lean_frontend/generated/Scope_table.lean:46:14: Variable name `ms` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _ms
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+ℹ [81/515] Replayed LemLibTheorems
+info: csem/lemlib/LemLibTheorems.lean:518:0: 'LemLibTheorems.PsetJoin.join_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: csem/lemlib/LemLibTheorems.lean:519:0: 'LemLibTheorems.PmapJoin.join_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: csem/lemlib/LemLibTheorems.lean:520:0: 'LemLibTheorems.lemListZip_eq' depends on axioms: [propext]
+info: csem/lemlib/LemLibTheorems.lean:521:0: 'LemLibTheorems.lemListUnzip_eq' depends on axioms: [propext]
+info: csem/lemlib/LemLibTheorems.lean:522:0: 'LemLibTheorems.lemListFoldr_eq' depends on axioms: [propext, Quot.sound]
+info: csem/lemlib/LemLibTheorems.lean:523:0: 'LemLibTheorems.lemListDeleteFirst_eq' depends on axioms: [propext, Quot.sound]
+info: csem/lemlib/LemLibTheorems.lean:524:0: 'LemLibTheorems.lemListUpdate_eq' depends on axioms: [propext]
+info: csem/lemlib/LemLibTheorems.lean:525:0: 'LemLibTheorems.lemListCatMaybes_eq' depends on axioms: [propext]
+info: csem/lemlib/LemLibTheorems.lean:526:0: 'LemLibTheorems.lemListMapi_eq' depends on axioms: [propext]
+info: csem/lemlib/LemLibTheorems.lean:527:0: 'LemLibTheorems.lemListInit_eq' depends on axioms: [propext]
+info: csem/lemlib/LemLibTheorems.lean:528:0: 'LemLibTheorems.lemListZipSameLength_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: csem/lemlib/LemLibTheorems.lean:529:0: 'LemLibTheorems.lemInsertBy_eq' depends on axioms: [propext]
+info: csem/lemlib/LemLibTheorems.lean:530:0: 'LemLibTheorems.lemStringConcat_eq' depends on axioms: [propext, Quot.sound]
+info: csem/lemlib/LemLibTheorems.lean:531:0: 'LemLibTheorems.lemShowListAux_eq' depends on axioms: [propext, Quot.sound]
+info: csem/lemlib/LemLibTheorems.lean:532:0: 'LemLibTheorems.BeqLattice.cmpBEq_eq_decide' depends on axioms: [propext]
+info: csem/lemlib/LemLibTheorems.lean:533:0: 'LemLibTheorems.BeqLattice.setTypeBridge_eq_core' depends on axioms: [propext]
+info: csem/lemlib/LemLibTheorems.lean:534:0: 'LemLibTheorems.BeqLattice.mapKeyBridge_eq_core' depends on axioms: [propext]
+info: csem/lemlib/LemLibTheorems.lean:535:0: 'LemLibTheorems.BeqLattice.nat_old_eq_new' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: csem/lemlib/LemLibTheorems.lean:536:0: 'LemLibTheorems.BeqLattice.int_old_eq_new' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: csem/lemlib/LemLibTheorems.lean:537:0: 'LemLibTheorems.BeqLattice.string_old_eq_new' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: csem/lemlib/LemLibTheorems.lean:538:0: 'LemLibTheorems.BeqLattice.char_old_eq_new' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: csem/lemlib/LemLibTheorems.lean:539:0: 'LemLibTheorems.BeqLattice.bool_old_eq_new' depends on axioms: [propext]
+info: csem/lemlib/LemLibTheorems.lean:540:0: 'LemLibTheorems.BeqLattice.int32_old_eq_new' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: csem/lemlib/LemLibTheorems.lean:541:0: 'LemLibTheorems.BeqLattice.int64_old_eq_new' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: csem/lemlib/LemLibTheorems.lean:542:0: 'LemLibTheorems.BeqLattice.unit_old_eq_new' does not depend on any axioms
+info: csem/lemlib/LemLibTheorems.lean:543:0: 'LemLibTheorems.BeqLattice.int8_old_eq_new' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: csem/lemlib/LemLibTheorems.lean:544:0: 'LemLibTheorems.BeqLattice.int16_old_eq_new' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: csem/lemlib/LemLibTheorems.lean:545:0: 'LemLibTheorems.BeqLattice.isize_old_eq_new' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: csem/lemlib/LemLibTheorems.lean:546:0: 'LemLibTheorems.BeqLattice.uint8_old_eq_new' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: csem/lemlib/LemLibTheorems.lean:547:0: 'LemLibTheorems.BeqLattice.uint16_old_eq_new' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: csem/lemlib/LemLibTheorems.lean:548:0: 'LemLibTheorems.BeqLattice.uint32_old_eq_new' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: csem/lemlib/LemLibTheorems.lean:549:0: 'LemLibTheorems.BeqLattice.uint64_old_eq_new' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: csem/lemlib/LemLibTheorems.lean:550:0: 'LemLibTheorems.BeqLattice.usize_old_eq_new' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: csem/lemlib/LemLibTheorems.lean:551:0: 'LemLibTheorems.BeqLattice.bitVec_old_eq_new' depends on axioms: [propext, Classical.choice, Quot.sound]
+info: csem/lemlib/LemLibTheorems.lean:552:0: 'LemLibTheorems.BeqLattice.ordering_old_eq_new' depends on axioms: [propext]
+info: csem/lemlib/LemLibTheorems.lean:553:0: 'LemLibTheorems.BeqLattice.isEqual_unit' does not depend on any axioms
+⚠ [83/515] Replayed Ctype_aux
+warning: csem/lean_frontend/generated/Ctype_aux.lean:40:31: Variable name `tds` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _tds
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/Ctype_aux.lean:121:13: Variable name `qs1` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _qs1
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/Ctype_aux.lean:121:41: Variable name `qs2` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _qs2
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/Ctype_aux.lean:444:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Ctype_aux.lean:451:0: unused `termination_by`, function is not recursive
+⚠ [84/515] Replayed Dlist
+warning: csem/lean_frontend/generated/Dlist.lean:22:25: Variable name `x0` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _x0
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/Dlist.lean:31:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Dlist.lean:35:0: unused `termination_by`, function is not recursive
+⚠ [88/515] Replayed AilTyping
+warning: csem/lean_frontend/generated/AilTyping.lean:156:39: Variable name `loc1` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _loc1
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [89/515] Replayed GenTypesAux
+warning: csem/lean_frontend/generated/GenTypesAux.lean:190:43: Variable name `ref_qs2` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _ref_qs2
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [96/515] Replayed Monadic_parsing
+warning: csem/lean_frontend/generated/Monadic_parsing.lean:20:27: Variable name `x13` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _x13
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: csem/lean_frontend/generated/Monadic_parsing.lean:29:0: unused `termination_by`, function is not recursive
+warning: csem/lean_frontend/generated/Monadic_parsing.lean:33:0: unused `termination_by`, function is not recursive
+ℹ [150/515] Replayed Unit.EnumDataTest
+info: csem/lean_frontend/test/Unit/EnumDataTest.lean:116:0: 'EnumDataTest.sizeof_enum_pin' depends on axioms: [propext, Classical.choice, Quot.sound]
+⚠ [296/515] Replayed Sail.Sail
+warning: Sail/Sail.lean:34:5: Ambiguous namespace `PreSail`: it is interpreted as `_root_.Sail.ConcurrencyInterfaceV1.PreSail` because this `open` occurs inside `namespace Sail.ConcurrencyInterfaceV1`, while `_root_.PreSail` is silently not opened. Specify the namespace unambiguously, e.g. `_root_.Sail.ConcurrencyInterfaceV1.PreSail`. The warning can sometimes also be addressed by moving the `open` outside of the surrounding `namespace`.
+
+Note: This linter can be disabled with `set_option linter.ambiguousOpen false`
+⚠ [383/598] Replayed Vsa.Densify.Resp
+warning: Vsa/Densify/Resp.lean:195:58: `letFun` has been deprecated: Use `have` instead.
+warning: Vsa/Densify/Resp.lean:198:78: `letFun` has been deprecated: Use `have` instead.
+warning: Vsa/Densify/Resp.lean:203:10: `letFun` has been deprecated: Use `have` instead.
+warning: Vsa/Densify/Resp.lean:206:62: `letFun` has been deprecated: Use `have` instead.
+warning: Vsa/Densify/Resp.lean:209:82: `letFun` has been deprecated: Use `have` instead.
+warning: Vsa/Densify/Resp.lean:215:11: `letFun` has been deprecated: Use `have` instead.
+warning: Vsa/Densify/Resp.lean:298:37: `dif_pos` has been deprecated: Use `dite_eq_left` instead
+warning: Vsa/Densify/Resp.lean:304:37: `dif_neg` has been deprecated: Use `dite_eq_right` instead
+⚠ [384/598] Replayed Vsa.Densify.Transport
+warning: Vsa/Densify/Transport.lean:121:40: `if_neg` has been deprecated: Use `ite_eq_right` instead
+warning: Vsa/Densify/Transport.lean:127:41: `if_false` has been deprecated: Use `ite_false` instead
+warning: Vsa/Densify/Transport.lean:129:12: `if_pos` has been deprecated: Use `ite_eq_left` instead
+warning: Vsa/Densify/Transport.lean:129:23: `if_pos` has been deprecated: Use `ite_eq_left` instead
+warning: Vsa/Densify/Transport.lean:130:12: `if_neg` has been deprecated: Use `ite_eq_right` instead
+warning: Vsa/Densify/Transport.lean:130:23: `if_neg` has been deprecated: Use `ite_eq_right` instead
+warning: Vsa/Densify/Transport.lean:166:23: `if_pos` has been deprecated: Use `ite_eq_left` instead
+⚠ [385/598] Replayed Vsa.Densify.Tactic
+warning: Vsa/Densify/Tactic.lean:172:40: `Lean.levelOne` has been deprecated: Use `Lean.Level.one` instead
+
+Note: The updated constant is in a different namespace. Dot notation may need to be changed (e.g., from `x.levelOne` to `Level.one x`).
+warning: Vsa/Densify/Tactic.lean:172:50: `Lean.levelOne` has been deprecated: Use `Lean.Level.one` instead
+
+Note: The updated constant is in a different namespace. Dot notation may need to be changed (e.g., from `x.levelOne` to `Level.one x`).
+✖ [395/598] Building CerbIEEE (1.6s)
+trace: .> LEAN_PATH=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/packages/Cli/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/riscv-lean/lean-sail/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/packages/ELFSage/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/riscv-lean/Lean_RV64D_executable/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/riscv-lean/lean_emulator/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/lib/lean /data/home/kirancodes/.elan/toolchains/leanprover--lean4---v4.34.0/bin/lean /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/csem/lean_frontend/generated/CerbIEEE.lean -o /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/lib/lean/CerbIEEE.olean -i /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/lib/lean/CerbIEEE.ilean -c /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/ir/CerbIEEE.c --setup /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/ir/CerbIEEE.setup.json --json
+error: csem/lean_frontend/generated/CerbIEEE.lean:497:17: unexpected token '/--'; expected '#guard_msgs', 'abbrev', 'add_decl_doc', 'axiom', 'binder_predicate', 'builtin_cbv_simproc', 'builtin_cbv_simproc_decl', 'builtin_dsimproc', 'builtin_dsimproc_decl', 'builtin_grind_propagator', 'builtin_initialize', 'builtin_simproc', 'builtin_simproc_decl', 'cbv_simproc', 'cbv_simproc_decl', 'class', 'coinductive', 'declare_simp_like_tactic', 'declare_syntax_cat', 'def', 'dsimproc', 'dsimproc_decl', 'elab', 'elab_rules', 'example', 'grind_propagator', 'inductive', 'infix', 'infixl', 'infixr', 'initialize', 'instance', 'macro', 'macro_rules', 'notation', 'opaque', 'postfix', 'prefix', 'recommended_spelling', 'register_error_explanation', 'register_tactic_tag', 'register_try?_tactic', 'simproc', 'simproc_decl', 'structure', 'syntax', 'tactic_extension', 'theorem' or 'unif_hint'
+Some required targets logged failures:
+- CerbIEEE
+error: build failed

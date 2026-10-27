@@ -137,7 +137,7 @@ inductive bitwise_operation : Type where
 /- shift? -/
 inductive impl_floating_value : Type where
   | FVunspecified : impl_floating_value
-  | FVconcrete : Float → impl_floating_value
+  | FVconcrete : CerbFloat.Value → impl_floating_value
 /- WARN: using Ocaml float representation -/
 /- The mem_value represents what can be stored in memory. -/
 /- the types below exist so that when looking at the representations of mem_values one knows what mapping to use -/
