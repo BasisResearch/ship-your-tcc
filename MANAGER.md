@@ -38,15 +38,14 @@ pushes main without force. Record unsuccessful approaches in
 The launcher follows 4ct-digest's MANAGER.md/codexwork.sh workflow, adapted
 to this project's two-worker limit and shared Lean build lock.
 
-Queued 2026-10-27: after tasks/f3-c11-model.md and tasks/f1-rv64-config.md
-land, assign tasks/csem-repin.md before another CSem semantic-change task.
-Keep both current slots on their existing pin; see CSEM-UPSTREAM.md.
+Current assignments, 2026-10-27: slot 1 runs `tasks/f1-ieee-recovery.md`
+in sol-csem-repin; slot 2 runs `tasks/f3-designator-continuation.md` in
+sol-c11-line. The lead validates the combined raw-token and pragma repair
+in sol-f2-tokens. The scheduled repin and selected-member union repair have
+landed through their integrated gate; current pins are in vendor/CSEM_REV.
 
-Current assignments on Oct 27: slot 1 runs `tasks/f2-token-stream.md` in
-sol-f2-tokens, on the reviewed line repair while its landing gate completes.
-Slot 2 has evaluated the repin; retain main's old pin until the valid-union
-regression is repaired by `tasks/f1-union-initializers.md` on the candidate.
-The generic path task and recovered IEEE task remain queued. Frozen build
-requests use the shared 12 GB lock. Changed inputs invalidate a request;
-freeze a new hash manifest before retrying. Infrastructure limits are handled
-by the lead service, not by uncapped builds or user permission requests.
+Frozen build requests use the shared 12 GB lock. Changed inputs invalidate
+a request; freeze a new hash manifest before retrying. Infrastructure limits
+are handled by the lead service, not by uncapped builds or user permission
+requests. The adopted pin-addressed opam/oracle toolchain is shared read-only;
+workers must not repin or mutate it during independent semantic tasks.

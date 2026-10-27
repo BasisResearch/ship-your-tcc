@@ -30,7 +30,7 @@ external bug reporting; no external contact is authorized or planned.
 | F1 pure seams | `agent-a249bbaa5b1df80ec` | digest retirement integrated; main's full CSem gate passes: 19 unit executables, 113 baseline oracle results; remaining partial/native seams inventoried |
 | F1 ABI/allocation | `agent-a4ab6bbd8c0be5325` | RV64 configuration reader integrated after capped build/full gate; 10/15 probes agree, float/bitfield/enum/stdin gaps remain; allocator recovery still open |
 | F1 filesystem | `agent-ad868c434f5f27398` | integrated after full gate: descriptor fstat, structural state ordering and link proxy repaired; eight exact Sail byte/exit agreements, repeated with RV64 config; mkdir remains a separate missing-library gap |
-| F1 IEEE | `agent-a45cb08cf87ce958c` | review standalone arithmetic; connection to CSem remains open |
+| F1 IEEE | `agent-a45cb08cf87ce958c` | external Sol slot 1 reviewing standalone arithmetic and connecting it to CSem; validation remains open |
 | F3 compiler model | `agent-a05464165befb7074` (recovery merged) | patched C11 model integrated after capped build and combined full gate; 1,670 independent fast arenas including 1,051 generated successes; four full Sail arenas now agree; all-corpus Sail equality remains open |
 
 F3 review found reference-derived long-double bytes supplied to the model.
@@ -39,9 +39,11 @@ removed. Patch 0004 fixes compiler literals using exact integer rounding;
 public libc `strtold` still needs correction in the library lane. Matching refusals likewise do not satisfy the F3 success criterion.
 
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
-two at a time, following MANAGER.md. Slot 1 repairs exact pragma specification residuals; slot 2 repairs valid
+two at a time, following MANAGER.md. Slot 1 recovers and connects pure IEEE arithmetic to CSem; slot 2 repairs valid
 nested-designator continuation in the compiler and model. The lead holds the
-raw-token integration while correcting three newly found observer failures.
+combined raw-token/pragma integration for final validation. Its three observer
+counterexamples now pass direct model/reference checks; the integrated gate
+and regression tests remain pending.
 The line repair is integrated, and the scheduled CSem repin plus selected-member
 union initializer repair is adopted after its integrated full gate. The compiler-handoff collector and strict model_diff consumer are integrated.
 Fresh 1,412-input comparison: 1,308 arenas (1,299 generated), 104 refusals,
