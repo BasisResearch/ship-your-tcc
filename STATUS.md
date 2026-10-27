@@ -136,11 +136,6 @@ explicit pack-layout connection; anonymous-member review requires hiding
 physical container names from source expressions/designators. Worker receipts
 now surface these lead notes before finalization.
 
-## Needs user
-
-None currently. Implementation defects and unfinished obligations are work
-items, not requests to weaken the target.
-
 Raw frontend checkpoint 604256c (rebased ceb85b6) passes its worker gate,
 18 independent full-Cabs comparisons and unchanged F2/parser baselines. Its
 combined gate with adopted IEEE/literal changes is running before landing.
@@ -148,3 +143,8 @@ The checked entry explicitly diagnoses unimplemented pack consumption and
 library-identity mismatches; this is not a Supported restriction or universal
 F0 substitution. Allocation recovery proceeds independently in external Sol
 slot 1; the reviewed task rejects the draft's unbounded/negative-size answers.
+
+## Needs user
+
+None currently. Implementation defects and unfinished obligations are work
+items, not requests to weaken the target.
