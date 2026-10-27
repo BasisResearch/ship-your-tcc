@@ -88,7 +88,7 @@ components keep their own licences.
 
 | here | source | changes |
 |---|---|---|
-| `patches/0003-tcc-c11.patch` | this project, completing the recovered `results/review/c11-wip/0003-draft.patch` (handoff commit a2f61de); applied after 0001/0002 to TinyCC 43c7708, under TinyCC's LGPL-2.1-or-later | UTF literal types/concatenation, digraph spelling, `_Pragma`, UCN spelling/identity, presumed filenames, stringification, union overrides; no copied library proof |
+| `patches/0003-tcc-c11.patch` | this project, completing the recovered `results/review/c11-wip/0003-draft.patch` (handoff commit a2f61de); applied after 0001/0002 to TinyCC 43c7708, under TinyCC's LGPL-2.1-or-later | UTF literal types/concatenation, digraph spelling, `_Pragma`, UCN spelling/identity, presumed filenames, stringification, union overrides, C11 trigraph refill/string-input handling; no copied library proof |
 | `scripts/test_tcc_c11.py`, `c/tests/c11/` | this project; reuse existing `scripts/test_tcc_patch.sh`, `scripts/run_tcc_sail.sh` and their already-attributed sister-project runtime/Sail harness | host/GCC and preprocessing checks, cross objects and ISA checks, generated buffer-boundary fixtures, full compiler on Sail |
 
 The F1 image-filesystem fork (`CerbFS`, Lem driver/runtime proxies and

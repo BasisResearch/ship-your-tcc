@@ -42,13 +42,10 @@ Queued 2026-10-27: after tasks/f3-c11-model.md and tasks/f1-rv64-config.md
 land, assign tasks/csem-repin.md before another CSem semantic-change task.
 Keep both current slots on their existing pin; see CSEM-UPSTREAM.md.
 
-Current F3 continuation: tasks/f3-c11-finish.md (slot 1), plus the independent
-reference collector task tasks/f3-reference-handoff.md (slot 2). The original
-RV64-config task is integrated. Repin evaluation stays next after C11 model
-integration; do not assign another CSem semantic-change task before it.
-
-Active after C11-model integration on Oct 27: slot 1 runs
-tasks/f2-c11-trigraphs.md in sol-c11-trigraph; slot 2 runs the scheduled
-tasks/csem-repin.md in sol-csem-repin. The lead handles reference-handoff
-harness integration. Both worker caches were ordinary/reflink copies, not
-hard links. Frozen build requests are serviced under the shared 12 GB lock.
+Current assignments after C11-model integration on Oct 27: slot 1 runs
+`tasks/f2-line-splice.md` in sol-c11-line; slot 2 continues the scheduled
+repin with `tasks/csem-repin-continue.md` in sol-csem-repin. Trigraph and
+handoff collector work are integrated. The next independent F2 assignment is
+`tasks/f2-token-stream.md`; shared path traversal waits for the repin work.
+Frozen build requests are serviced under the shared 12 GB lock. A changed
+input invalidates the request; freeze a new hash manifest before retrying.

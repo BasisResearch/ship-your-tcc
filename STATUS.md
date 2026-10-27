@@ -19,7 +19,7 @@ Takeover in progress, resumed 2026-10-27. The approved target is
 
 Mike Dodds's upstream follow-up is tracked in CSEM-UPSTREAM.md. README and
 ATTRIBUTION prominently credit Cerberus / Cambridge REMS and cerberus-lean /
-Mike Dodds / Oath. Repin evaluation is queued in tasks/csem-repin.md now that
+Mike Dodds / Oath. Repin evaluation is active in tasks/csem-repin.md now that
 the original RV64-config and C11-model tasks have landed; it uses a fresh worktree. Kiran owns
 external bug reporting; no external contact is authorized or planned.
 
@@ -31,7 +31,7 @@ external bug reporting; no external contact is authorized or planned.
 | F1 ABI/allocation | `agent-a4ab6bbd8c0be5325` | RV64 configuration reader integrated after capped build/full gate; 10/15 probes agree, float/bitfield/enum/stdin gaps remain; allocator recovery still open |
 | F1 filesystem | `agent-ad868c434f5f27398` | integrated after full gate: descriptor fstat, structural state ordering and link proxy repaired; eight exact Sail byte/exit agreements, repeated with RV64 config; mkdir remains a separate missing-library gap |
 | F1 IEEE | `agent-a45cb08cf87ce958c` | review standalone arithmetic; connection to CSem remains open |
-| F3 compiler model | `agent-a05464165befb7074` (recovery merged) | patched C11 model integrated after capped build and combined full gate; 1,670 independent fast arenas including 1,051 generated successes; Sail arena equality remains open |
+| F3 compiler model | `agent-a05464165befb7074` (recovery merged) | patched C11 model integrated after capped build and combined full gate; 1,670 independent fast arenas including 1,051 generated successes; one full Sail arena now agrees; all-corpus Sail equality remains open |
 
 F3 review found reference-derived long-double bytes supplied to the model.
 Such runs cannot establish independent byte equality. That input is now
@@ -39,8 +39,8 @@ removed. Patch 0004 fixes compiler literals using exact integer rounding;
 public libc `strtold` still needs correction in the library lane. Matching refusals likewise do not satisfy the F3 success criterion.
 
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
-two at a time, following MANAGER.md. Slot 1 repairs the newly confirmed C11
-trigraph deviation in tcc/config/model; slot 2 evaluates the queued upstream
+two at a time, following MANAGER.md. Slot 1 repairs the confirmed C11
+physical-line splice deviation in tcc/model; slot 2 evaluates the scheduled upstream
 repin in sol-csem-repin, with the main pin unchanged until review. The compiler-handoff collector and strict model_diff consumer are integrated.
 Fresh 1,412-input comparison: 1,308 arenas (1,299 generated), 104 refusals,
 zero mismatches/harness/model errors (results/model/handoff-integration.md). The RV64 reader and image filesystem are
@@ -65,9 +65,10 @@ operand/effect repairs. The cross-host signed-character difference is already
 diagnosed; two UB examples and five fixture errors remain separately classified.
 The comparator now requires exact equality by default and fails on malformed
 protocol/crashes. Its 608-input diagnostic rerun has 600 exact tcc agreements
-and the same eight residuals (results/pre/acceptance-contract.md). A newly
-confirmed trigraph deviation needs a compiler patch and model reflection;
-remaining C11 coverage is work, not a change to the contract. The include
+and the same eight residuals (results/pre/acceptance-contract.md). The trigraph patch/config/model repair is integrated after the full gate:
+48 positive and 6 negative C11 cases, 28 independent arenas, and one complete
+4 MiB Sail arena match (results/model/trigraph-sail-arena.md).
+Further C11 coverage remains work, not a change to the contract. The include
 filesystem also incorrectly normalizes away missing directories before lookup
 (results/pre/path-resolution.md); a shared traversal repair is queued after repin.
 

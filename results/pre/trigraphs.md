@@ -121,3 +121,10 @@ to make this pass. An internal-token observation path is the next F2 task.
 The existing local-header fixture discovery also only scans raw #include,
 so trigraph-created include directives need explicit fixture handling.
 Final Sail raw output, trace and PC list are retained beside this report.
+
+Lead integration: the full `scripts/check.sh --csem` gate passed after
+rebasing the recovered change: 633 build targets, all unit/axiom checks,
+230 generated files checked and 113 baseline oracle outcomes unchanged.
+The lead then captured and compared the complete 4 MiB Sail arena, including
+entry/code metadata; see results/model/trigraph-sail-arena.md. The earlier
+trace-only claim above describes the worker's original evidence.

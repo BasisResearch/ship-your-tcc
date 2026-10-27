@@ -1,0 +1,19 @@
+{
+  "status": "equal",
+  "evidence": "native Sail observation; not a theorem",
+  "compared_bytes": 4194304,
+  "model_payload_bytes": 13652,
+  "arena_sha256": "f72e4ff4583c33e2c6a907acacc5e416972da3684eabd98e319195360edd40ac",
+  "model_arena_sha256": "15397646a3054fc5b958efbec6b6f65dd0a3c5d1280444efb68771c6e488b936",
+  "trace_sha256": "87ac9f8f83cf05459481424904d0b678e0cee3d6264ea766c7430bfefba785b9",
+  "capture_manifest_sha256": "ae09dfa3eabc1d0183a0570c6dd84aa720c52506f232611cee6f1647c2d1d7ab",
+  "elf_sha256": "bba8522efe6295b1ca698f986a3adb7b0d29f37f956aa1c97389b948114da218",
+  "source_sha256": "d6552f6881b1c8361e211fd3237871594f7b3397318ca5660d4fa8749cd7ff26",
+  "steps": 3390238,
+  "pc": 2147490632,
+  "handoff": {
+    "x10": 2252341788,
+    "x14": 2252341248,
+    "x15": 540
+  }
+}
