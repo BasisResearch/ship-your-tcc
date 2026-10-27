@@ -161,3 +161,9 @@ Two fresh designator cases also have complete 4 MiB native Sail/model arena
 equality (3,341,630 and 3,366,690 instructions; handoff registers agree).
 Their retained offline evidence is results/model/designator/native-captures/;
 all-corpus native equality and the generic proof obligations remain open.
+
+The raw frontend connection is queued as tasks/f1-raw-frontend.md after the
+exact-token F2 integration. The current parser consumes preprocessed bytes;
+phase-4 PPToken intentionally contains only kind/spelling. A provenance-
+carrying connection is still needed for Cabs locations and library-origin
+handling; token equality alone does not supply that connection.
