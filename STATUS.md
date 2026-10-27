@@ -42,7 +42,10 @@ The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
 two at a time, following MANAGER.md. Slot 1 connects pure IEEE arithmetic to
 CSem; slot 2 repairs anonymous-member semantics (CSEM-07). The lead reviews
 the committed exact-token/pragma candidate after rebasing onto the designator
-repair; its combined gate and C11 checks are running. Candidate evidence:
+repair. Its C11 checks and old default gate pass, but review found that the
+non-default model executable was stale after rebase. The candidate gate now
+explicitly builds the model/observers; comparisons are being repeated.
+Candidate evidence:
 64 strict positives, 17 negatives, 613 raw/611 spec agreements across 619
 inputs, three independent arenas and two full compiler Sail reproducers.
 Three correctness/noninterference Statements remain open. The designator
@@ -114,6 +117,12 @@ independent arenas, and three full compiler Sail runs including the complete
 498 refusals, seven assembly gaps and six CSem gaps remain separate. This
 does not change Supported/Fits. The repaired repin and its integrated full gate pass;
 remaining aggregate-value, anonymous-layout and IEEE gaps remain explicit.
+
+The IEEE and anonymous-member lanes have exposed further compiler/library
+discrepancies. Follow-up tasks are `tasks/f3-direct-float-literals.md` and
+`tasks/f3-anonymous-members.md`; each requires minimized independent evidence
+and preserves the whole-C contract. Newlib binary128 printf/sqrtl remain F7
+obligations, separate from pure IEEE arithmetic.
 
 ## Needs user
 

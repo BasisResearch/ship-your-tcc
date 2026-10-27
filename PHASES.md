@@ -167,3 +167,10 @@ exact-token F2 integration. The current parser consumes preprocessed bytes;
 phase-4 PPToken intentionally contains only kind/spelling. A provenance-
 carrying connection is still needed for Cabs locations and library-origin
 handling; token equality alone does not supply that connection.
+
+Review correction: the default gate did not build non-default compiler-model
+executables after rebasing. The F2 candidate now extends that gate and repeats
+its comparisons with rebuilt binaries; initial combined arena counts are not
+accepted as current-source evidence. Concrete anonymous-member compiler and
+float-literal rounding follow-ups are queued in tasks/f3-anonymous-members.md
+and tasks/f3-direct-float-literals.md. Binary128 printf/sqrtl remain F7 work.
