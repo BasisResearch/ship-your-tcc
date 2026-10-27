@@ -1,0 +1,40 @@
+{
+  "revision": "2f2dd9eb83f88a1e3a910439c518fe7b2f7eb719",
+  "status": "four target literal accuracy discrepancies; zero exits do not mean agreement",
+  "expected": [
+    "3f800001",
+    "3ff0000000000001",
+    "3fff0000000000000000000000000001",
+    "3f800001"
+  ],
+  "source_sha256": "cb86bf202eab06b20cadb1fe58c2fc7a205ef0a59bf12edc66db740c207a3ec3",
+  "pins": {
+    "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+    "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+    "patches/0003-tcc-c11.patch": "3fe7b107132d23104c9b6988645a8d9f1d96cc7d282433fd4e666830a17526e7",
+    "patches/0004-tcc-binary128-literals.patch": "4dfcc192c23a777b1b335e9052a416956886b1071c3de1e8da403b5b194e221e",
+    "c/build/base.elf": "940dd749e1ddd82c58088214a83a571c2737974cdc376aca0b5103ef12dfb4ca",
+    "scripts/run_tcc_sail.sh": "9a7737b4ac7a3578db6d1597a1c8224800e912cae30592e95c772f7637737ac8",
+    "scripts/run_xgcc_sail.sh": "cecc19e9c4afbddc0c9d479a1b3b0e44de7449a94e2e159255f1fe3648882dd9"
+  },
+  "files": {
+    "tcc.err": "ee92e0742890ef0b2360b73eedca8d556e8b43b62bfce8daf2afe4e777c855d5",
+    "xgcc.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "xgcc-pcs.gz": "070f0320110922f5dc99d847d4bcc609b21596fb59c1c94f91f32c632449393a",
+    "xgcc.out": "0aec728f0d361a3c6a0d5f7cce4e1b05ef5b309847fb7ddf06de140b12a0de8f",
+    "xgcc-prog.elf.gz": "89f8ca815b591ee6b3580d3223d5950997b9c9b55a4e46d0420aaff7083741f8",
+    "exact-rational.json": "4413358018187c53437c054c238a792d521aa475eda2fb3b1ff024eda9db399e",
+    "tcc.out": "08e0d4cc5c288c5a9f30d59a17f1f9755f7e19fd97d20c6e5b06f65aa5c7627d",
+    "tcc-raw.gz": "e2240fbe41714a8ec35e6a210ce3eb7009830acfdc32594606344dd8327f61a2",
+    "tcc.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "xgcc-trace.gz": "f702fca6236182ab00e2bb7cba0ac84251ee39cbb50e60516dfb5a1e1edd0d2b",
+    "tcc-trace.gz": "1f0305ac7f752be4b21865455d9229aa72c2d378b103fe9689524193cd9156d1",
+    "tcc-prog.elf.gz": "d693efda2f06709f6355d8f3125aef83b9ec8d63eca5f464ce1982c7708dc5b4",
+    "xgcc.meta": "a602e9616d89d52919dc6c870add3c90fc2654c2dc53c9423a7748806fcb1cc7",
+    "tcc.meta": "42559748a8ab19d4295db150c2d7651c91e65d01891cbfd74d7a67b44adb9a47",
+    "tcc-pcs.gz": "d271c101b6f1cb3de971a4fc4b12c72e1ce6c58ca1cadae53460243491bf63e8",
+    "xgcc.err": "54e16045ff6de74cc8af8e42e40ff21f4d1200c4dfd6cd0d0fb33d45354d58e9",
+    "commands.json": "6c9a824b56a2c52b14be8ce1f4aa3062be4433f65486df65fa932279adec72b3",
+    "xgcc-raw.gz": "62f5e210e472110052f01d3e12c9e3fcf9603e8b7bb06fd94db6714aa831b5c3"
+  }
+}

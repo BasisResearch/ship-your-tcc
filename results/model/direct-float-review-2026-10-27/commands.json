@@ -1,0 +1,36 @@
+[
+  {
+    "name": "tcc",
+    "command": [
+      "scripts/run_tcc_sail.sh",
+      "results/repro/tcc_float_literal_direct_rounding.c"
+    ],
+    "exit": 0,
+    "env": {
+      "KEEP_WORK": "1",
+      "MAX_STEPS": "100000000",
+      "ORACLE_META": "/data/home/kirancodes/Documents/code/ship-your-tcc/results/model/direct-float-review-2026-10-27/tcc.meta",
+      "TCC_ARGS": "\"-std=c11\",\"-w\","
+    },
+    "source_sha256": "cb86bf202eab06b20cadb1fe58c2fc7a205ef0a59bf12edc66db740c207a3ec3",
+    "elf_sha256": "90f1261840043326b3f3f261f2d72efa2b02a3c2139c628f9bf2f81a8d7af18d",
+    "stdout": "3f800000\n3ff0000000000000\n3fff0000000000000000000000000000\n3f800000\n"
+  },
+  {
+    "name": "xgcc",
+    "command": [
+      "scripts/run_xgcc_sail.sh",
+      "results/repro/tcc_float_literal_direct_rounding.c"
+    ],
+    "exit": 0,
+    "env": {
+      "KEEP_WORK": "1",
+      "MAX_STEPS": "100000000",
+      "ORACLE_META": "/data/home/kirancodes/Documents/code/ship-your-tcc/results/model/direct-float-review-2026-10-27/xgcc.meta",
+      "XGCC_EXTRA": "-std=c11"
+    },
+    "source_sha256": "cb86bf202eab06b20cadb1fe58c2fc7a205ef0a59bf12edc66db740c207a3ec3",
+    "elf_sha256": "04f7995809fd2184daef7265962861ddc929d3c20665010f03032df6ba076dc6",
+    "stdout": "3f800001\n3ff0000000000001\n3fff0000000000000000000000000001\n3f800001\n"
+  }
+]
