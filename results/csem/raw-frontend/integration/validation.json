@@ -1,0 +1,43 @@
+{
+  "tested_revision": "679594645b116367f61e056313bad707b6ba685f",
+  "gate_exit": 0,
+  "focused_methods": 22,
+  "full_cabs": 18,
+  "f2": {
+    "raw": {
+      "exact": 616,
+      "both-refused": 6
+    },
+    "spec": {
+      "exact": 614,
+      "compiler-refusal": 1,
+      "spec-error": 7
+    }
+  },
+  "corpus_inputs": 622,
+  "new_inputs": [
+    "c/tests/model/float_direct.c",
+    "c/tests/model/float_direct_sail.c",
+    "c/tests/c11/anonymous_qualifiers.c"
+  ],
+  "binary_pins": {
+    "oracle": "a71dd0968846b72196506a7ce78cd300cb39c6a8a8b10e87945a44c30517d091",
+    "raw": "5d9617288daefd504d4ee1ae45af9b09aad4edee6417d9f8032bbc555ce7e908",
+    "text": "ba3eaaafc3f92a57be4102ce1522fe77c12847f0a577517197535627d220c634",
+    "csem_rev": "cerberus-lean 704c4e697845127bced66c93fa0763eb51527ca4\nlem-lean e6d8db5680962f49060257d6c2bcb13c284b910f\n# cerberus-lean: OathTech/cerberus-lean, branch mdd/cerberus-lean,\n# commit 2026-10-26 17:26:39 UTC (lead-fetched current snapshot 2026-10-27).\n# lem-lean: OathTech/lem-lean, branch mdd/lean-backend,\n# commit 2026-10-22 01:33:30 UTC; matching LemLib and generator.\n# Upstream targets Lean 4.35.0; this fork retains approved Lean 4.34.0.\n# Imported with scripts/csem_import.sh; local replay and validation recorded\n# in csem/PORT-4.34.md and results/csem/repin-2026-10-27.md.\n",
+    "fslist": "f0c48706791627b6e38394de3b80ceb1db3f60295fdc614208ae25a0bd7c5dc0",
+    "headers": {
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/integrated-cases/header-0.h": "92d2f22dc171846a9092a544470541f955bd670e90a64364dcd3604348b9dcb1",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/integrated-cases/header-1.h": "c350ab14318e0e93e6434a2b53dde0ad12db80fe330245a4a622c7b8f1ef470c",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/integrated-cases/header-2.h": "bc81910e1cc1aaf0b72d4db387310570d7ff1a079bdcb00d4e0bf2f1aa459b12",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/integrated-cases/header-3.h": "e78c364fbf6eb044809ca8ede2083cf20b39a7a7a9009ecd77dfba16806a91cb",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/raw-frontend/integrated-cases/header-4.h": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    }
+  },
+  "limitations": [
+    "Pack layout consumption and runtime library identity connection remain open.",
+    "F0 frontend is not globally replaced.",
+    "No compiler correctness or general C11 theorem is asserted."
+  ],
+  "source_files": 1767
+}

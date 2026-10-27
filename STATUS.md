@@ -39,8 +39,8 @@ removed. Patch 0004 fixes compiler literals using exact integer rounding;
 public libc `strtold` still needs correction in the library lane. Matching refusals likewise do not satisfy the F3 success criterion.
 
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
-two at a time, following MANAGER.md. Slot 1's reviewed raw frontend checkpoint
-is under lead integration; its next task is the allocation oracle. Slot 2
+two at a time, following MANAGER.md. Slot 1 runs bounded allocation recovery after its reviewed raw frontend
+checkpoint passed integrated validation. Slot 2
 repairs anonymous-member semantics (CSEM-07).
 The pure IEEE implementation is integrated after the combined gate; the lead
 repairs anonymous-container qualifier inheritance in the compiler/model. Exact-token/pragma integration is now
@@ -136,13 +136,17 @@ consumption remains explicitly unimplemented. Anonymous-member CSem review
 now distinguishes private container paths from source-visible names. Worker receipts
 now surface these lead notes before finalization.
 
-Raw frontend checkpoint 604256c (rebased ceb85b6) passes its worker gate,
-18 independent full-Cabs comparisons and unchanged F2/parser baselines. Its
-combined gate with adopted IEEE/literal changes is running before landing.
-The checked entry explicitly diagnoses unimplemented pack consumption and
-library-identity mismatches; this is not a Supported restriction or universal
-F0 substitution. Allocation recovery proceeds independently in external Sol
-slot 1; the reviewed task rejects the draft's unbounded/negative-size answers.
+Raw frontend integration is adopted after its combined full CSem gate: pure
+raw bytes reach provenance-carrying positioned tokens/Cabs with UCN/UTF-8
+identity and pure per-TU digest. All 22 focused methods and 18 independent
+full-Cabs comparisons pass. The current 622-input preprocessing corpus has
+616 raw/614 spec exact agreements, with residuals separate. The checked entry
+explicitly diagnoses missing pack consumption and library-identity mismatch;
+these remain whole-C obligations, not Supported restrictions or a universal
+F0 substitution. Four named connection Statements remain open. Fresh pins
+and logs are in results/csem/raw-frontend/integration/. Allocation recovery
+continues in external Sol slot 1; slot 2's anonymous CSem repair awaits combined
+integration with IEEE.
 
 Compiler anonymous-container qualifiers are repaired and gated: old full Sail
 selects the wrong const/volatile pointer types; repaired Sail and GCC agree.

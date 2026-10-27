@@ -173,7 +173,7 @@ ATTRIBUTION records reuse of the existing pure MD5 and Cerberus lexer/grammar.
 - systemd and Git metadata are serviced by the lead's frozen request protocol;
   no uncapped build, alternate index/object store, push or main merge is used.
 
-## Proposed ledger text (not applied)
+## Worker handoff ledger text (historical)
 
 F1/F2: provenance-preserving raw preprocessing now connects directly to
 positioned Lean parser tokens/Cabs with pure per-TU Digest and UCN/UTF-8 name
@@ -196,3 +196,28 @@ across all 619 inputs, with the same separately classified residuals. The
 freezer passes against the current executable hashes. Git add is denied by
 read-only worktree index metadata; the exact frozen review commit request is
 served by the lead, with no alternate index or object store.
+
+
+## Adopted integration, 2026-10-27
+
+The candidate was rebased onto the adopted pure IEEE, direct source-literal
+rounding and compiler anonymous-qualifier repairs. The final full CSem gate
+passes at `6795946`; all 22 focused methods pass. The 18 full-Cabs / MD5
+agreements use the exact raw/text binaries produced by that gate. The final
+preprocessing corpus has **622 inputs: 616 exact raw and 614 exact spec**,
+with six joint raw refusals, one compiler refusal and seven specification
+errors retained separately. Three added inputs exercise direct float rounding
+and anonymous-container qualifiers; no observer or harness failure occurred.
+The original 664-file grammar baseline above remains the unchanged baseline.
+
+`raw-frontend/integration/` freezes fresh source and executable hashes,
+full-Cabs outputs and source copies, corpus classifications and gate logs.
+The first integrated focused run rejected a stale C observer; rebuilding it
+resolved the diagnostic. Its failed log is retained alongside the successful
+run. The earlier gate before the qualifier rebase is also retained separately.
+Evidence-only rebasing onto main does not change the verified semantic pins.
+
+This adopts the raw parsing/audit and checked connection implementation, with
+pack-layout consumption, library-identity connection and the four named
+Statements still open. It does not install a universal F0 frontend, restrict
+Supported/Fits, or establish preprocessing/compiler correctness.
