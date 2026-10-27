@@ -39,11 +39,15 @@ removed. Patch 0004 fixes compiler literals using exact integer rounding;
 public libc `strtold` still needs correction in the library lane. Matching refusals likewise do not satisfy the F3 success criterion.
 
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
-two at a time, following MANAGER.md. Slot 1 recovers and connects pure IEEE arithmetic to CSem; slot 2 finishes the combined raw-token/pragma integration, including a nested
-macro -E regression. Its 89 C11 positives/six negatives now pass, including
-round trips; strict combined observation and final gate checks remain pending. The nested-designator compiler/model repair is integrated after its gate
-with the adopted CSem pin. Two fresh complete native Sail arena comparisons pass
-for representative designator cases (results/model/designator/native-captures).
+two at a time, following MANAGER.md. Slot 1 connects pure IEEE arithmetic to
+CSem; slot 2 repairs anonymous-member semantics (CSEM-07). The lead reviews
+the committed exact-token/pragma candidate after rebasing onto the designator
+repair; its combined gate and C11 checks are running. Candidate evidence:
+64 strict positives, 17 negatives, 613 raw/611 spec agreements across 619
+inputs, three independent arenas and two full compiler Sail reproducers.
+Three correctness/noninterference Statements remain open. The designator
+repair is integrated and has two fresh complete 4 MiB native arena matches
+(results/model/designator/native-captures).
 The line repair is integrated, and the scheduled CSem repin plus selected-member
 union initializer repair is adopted after its integrated full gate. The compiler-handoff collector and strict model_diff consumer are integrated.
 Fresh 1,412-input comparison: 1,308 arenas (1,299 generated), 104 refusals,
