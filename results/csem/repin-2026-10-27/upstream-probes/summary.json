@@ -1,0 +1,242 @@
+[
+  {
+    "probe": "gnu-cleanup",
+    "engine": "old",
+    "mode": "parse",
+    "exit": 1,
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-src/cerberus-lean/_build/default/backend/driver/main.exe",
+      "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-src/cerberus-lean/_build/install/default",
+      "--cabs-json",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/repin-2026-10-27/probes/gnu-cleanup.c"
+    ],
+    "source_sha256": "1ae14d6e8f3c6a822f44fe20e6e78d722063ff282a587cdcfc50b59855361fd1",
+    "stdout": "Cabs JSON retained in .out",
+    "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/repin-2026-10-27/probes/gnu-cleanup.c:2:24: error: unexpected token after 'x' and before '__attribute__'\nPlease add error message for state 716 to parsers/c/c_parser_error.messages\nint main(void) { int x __attribute__((cleanup(f))) = 0; return x; }\n                       ^~~~~~~~~~~~~ \n"
+  },
+  {
+    "probe": "gnu-cleanup",
+    "engine": "current",
+    "mode": "parse",
+    "exit": 1,
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/default/backend/driver/main.exe",
+      "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/install/default",
+      "--cabs-json",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/repin-2026-10-27/probes/gnu-cleanup.c"
+    ],
+    "source_sha256": "1ae14d6e8f3c6a822f44fe20e6e78d722063ff282a587cdcfc50b59855361fd1",
+    "stdout": "Cabs JSON retained in .out",
+    "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/repin-2026-10-27/probes/gnu-cleanup.c:2:24: error: unexpected token after 'x' and before '__attribute__'\nPlease add error message for state 716 to parsers/c/c_parser_error.messages\nint main(void) { int x __attribute__((cleanup(f))) = 0; return x; }\n                       ^~~~~~~~~~~~~ \n"
+  },
+  {
+    "probe": "knr",
+    "engine": "old",
+    "mode": "parse",
+    "exit": 1,
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-src/cerberus-lean/_build/default/backend/driver/main.exe",
+      "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-src/cerberus-lean/_build/install/default",
+      "--cabs-json",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/repin-2026-10-27/probes/knr.c"
+    ],
+    "source_sha256": "7be866be8f70852470ae18c19d7d4b8e96e573ed4d666130ae33bb0e4323cbe0",
+    "stdout": "Cabs JSON retained in .out",
+    "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/repin-2026-10-27/probes/knr.c:1:1: error: found K&R-style declaration (unsupported)\nint f(x) int x; { return x; }\n^~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n"
+  },
+  {
+    "probe": "knr",
+    "engine": "current",
+    "mode": "parse",
+    "exit": 1,
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/default/backend/driver/main.exe",
+      "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/install/default",
+      "--cabs-json",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/repin-2026-10-27/probes/knr.c"
+    ],
+    "source_sha256": "7be866be8f70852470ae18c19d7d4b8e96e573ed4d666130ae33bb0e4323cbe0",
+    "stdout": "Cabs JSON retained in .out",
+    "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/repin-2026-10-27/probes/knr.c:1:1: error: found K&R-style declaration (unsupported)\nint f(x) int x; { return x; }\n^~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n"
+  },
+  {
+    "probe": "union-second",
+    "engine": "old",
+    "mode": "exec",
+    "exit": 0,
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-src/cerberus-lean/_build/default/backend/driver/main.exe",
+      "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-src/cerberus-lean/_build/install/default",
+      "--nolibc",
+      "--exec",
+      "--batch",
+      "--mode=exhaustive",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/repin-2026-10-27/probes/union-second.c"
+    ],
+    "source_sha256": "d08b163512b407ae7dc12caef991db4b86b87db932fa6e7a64c5123b715c8168",
+    "stdout": "Defined {value: \"Specified(7)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+    "stderr": "(debug 0): constructValue_aux: is WRONG for union ==> always assigning the first member\nTime spent: 0.030227 seconds\n"
+  },
+  {
+    "probe": "union-second",
+    "engine": "current",
+    "mode": "exec",
+    "exit": 125,
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/default/backend/driver/main.exe",
+      "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/install/default",
+      "--nolibc",
+      "--exec",
+      "--batch",
+      "--mode=exhaustive",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/repin-2026-10-27/probes/union-second.c"
+    ],
+    "source_sha256": "d08b163512b407ae7dc12caef991db4b86b87db932fa6e7a64c5123b715c8168",
+    "stdout": "",
+    "stderr": "internal error: Desugaring_init.moveTo_aux: refused - union initializer designating a member other than the first (union U: designator .b, first member a); C17 6.7.9#17-19 (a designator selects the member to initialize, in list order; subobjects not initialized explicitly are initialized implicitly); upstream's desugaring_init.lem constructValue_aux builds every braced union initializer as the FIRST member whatever the designators say ('TODO: this is only correct if the first member was the one initialised' b9aeedcb4 :576; 'constructValue_aux: is WRONG for union ==> always assigning the first member' :592) - the fork refuses rather than decides (item U, 2026-10-20)\ncerberus: internal error, uncaught exception:\n          Failure(\"internal error: Desugaring_init.moveTo_aux: refused - union initializer designating a member other than the first (union U: designator .b, first member a); C17 6.7.9#17-19 (a designator selects the member to initialize, in list order; subobjects not initialized explicitly are initialized implicitly); upstream's desugaring_init.lem constructValue_aux builds every braced union initializer as the FIRST member whatever the designators say ('TODO: this is only correct if the first member was the one initialised' b9aeedcb4 :576; 'constructValue_aux: is WRONG for union ==> always assigning the first member' :592) - the fork refuses rather than decides (item U, 2026-10-20)\")\n          Raised at Stdlib.failwith in file \"stdlib.ml\", line 29, characters 17-33\n          Called from Cerb_frontend__Desugaring_init.moveTo.(fun) in file \"ocaml_frontend/generated/desugaring_init.ml\", line 430, characters 6-66\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__Cabs_to_ail_effect.catch.(fun) in file \"ocaml_frontend/generated/cabs_to_ail_effect.ml\", line 345, characters 9-12\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 19, characters 24-29\n          Called from Cerb_frontend__State_exception.state_except_eval.(fun) in file \"ocaml_frontend/generated/state_exception.ml\", line 94, characters 94-99\n          Called from Cerb_backend__Pipeline.c_frontend.desugar in file \"backend/common/pipeline.ml\", lines 210-211, characters 4-23\n          Called from Cerb_backend__Pipeline.c_frontend.(fun) in file \"backend/common/pipeline.ml\", line 260, characters 2-20\n          Called from Cerb_backend__Pipeline.c_frontend_and_elaboration in file \"backend/common/pipeline.ml\", line 265, characters 2-73\n          Called from Dune__exe__Main.frontend in file \"backend/driver/main.ml\", line 29, characters 4-60\n          Called from Dune__exe__Main.cerberus.main.(fun) in file \"backend/driver/main.ml\", line 158, characters 6-47\n          Called from Cerb_frontend__Exception.except_foldlM.(fun) in file \"ocaml_frontend/generated/exception.ml\", line 69, characters 18-25\n          Called from Dune__exe__Main.cerberus.(fun) in file \"backend/driver/main.ml\", line 318, characters 8-24\n          Called from Dune__exe__Main.cerberus in file \"backend/driver/main.ml\", lines 313-339, characters 8-15\n          Called from Cmdliner_term.app.(fun) in file \"cmdliner_term.ml\", line 22, characters 19-24\n          Called from Cmdliner_eval.run_parser in file \"cmdliner_eval.ml\", line 41, characters 7-16\n"
+  },
+  {
+    "probe": "bool-float",
+    "engine": "old",
+    "mode": "exec",
+    "exit": 0,
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-src/cerberus-lean/_build/default/backend/driver/main.exe",
+      "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-src/cerberus-lean/_build/install/default",
+      "--nolibc",
+      "--exec",
+      "--batch",
+      "--mode=exhaustive",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/repin-2026-10-27/probes/bool-float.c"
+    ],
+    "source_sha256": "b6b7eb1d8e17c2576c822168d6b5f20cb1746e21b19ae5e29560e93a532ab73c",
+    "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+    "stderr": "Time spent: 0.029416 seconds\n"
+  },
+  {
+    "probe": "bool-float",
+    "engine": "current",
+    "mode": "exec",
+    "exit": 0,
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/default/backend/driver/main.exe",
+      "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/install/default",
+      "--nolibc",
+      "--exec",
+      "--batch",
+      "--mode=exhaustive",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/repin-2026-10-27/probes/bool-float.c"
+    ],
+    "source_sha256": "b6b7eb1d8e17c2576c822168d6b5f20cb1746e21b19ae5e29560e93a532ab73c",
+    "stdout": "Defined {value: \"Specified(1)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+    "stderr": "Time spent: 0.028490 seconds\n"
+  },
+  {
+    "probe": "bool-pointer-call",
+    "engine": "old",
+    "mode": "exec",
+    "exit": 0,
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-src/cerberus-lean/_build/default/backend/driver/main.exe",
+      "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-src/cerberus-lean/_build/install/default",
+      "--nolibc",
+      "--exec",
+      "--batch",
+      "--mode=exhaustive",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/repin-2026-10-27/probes/bool-pointer-call.c"
+    ],
+    "source_sha256": "61abc922d9a118331fb287f6b25b8681228c881ed5b20720ce6eb69f9d96aa17",
+    "stdout": "Defined {value: \"Specified(1)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+    "stderr": "Time spent: 0.032233 seconds\n"
+  },
+  {
+    "probe": "bool-pointer-call",
+    "engine": "current",
+    "mode": "exec",
+    "exit": 0,
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/default/backend/driver/main.exe",
+      "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/install/default",
+      "--nolibc",
+      "--exec",
+      "--batch",
+      "--mode=exhaustive",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/repin-2026-10-27/probes/bool-pointer-call.c"
+    ],
+    "source_sha256": "61abc922d9a118331fb287f6b25b8681228c881ed5b20720ce6eb69f9d96aa17",
+    "stdout": "Defined {value: \"Specified(1)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+    "stderr": "Time spent: 0.035242 seconds\n"
+  },
+  {
+    "probe": "memcpy-overlap",
+    "engine": "old",
+    "mode": "exec",
+    "exit": 0,
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-src/cerberus-lean/_build/default/backend/driver/main.exe",
+      "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-src/cerberus-lean/_build/install/default",
+      "--nolibc",
+      "--exec",
+      "--batch",
+      "--mode=exhaustive",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/repin-2026-10-27/probes/memcpy-overlap.c"
+    ],
+    "source_sha256": "feb6ad1e3b241245c5c4a2a72d65b2eac5d638348bd96a7a16e5f17be95a25ba",
+    "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+    "stderr": "Time spent: 0.032339 seconds\n"
+  },
+  {
+    "probe": "memcpy-overlap",
+    "engine": "current",
+    "mode": "exec",
+    "exit": 125,
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/default/backend/driver/main.exe",
+      "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/install/default",
+      "--nolibc",
+      "--exec",
+      "--batch",
+      "--mode=exhaustive",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/repin-2026-10-27/probes/memcpy-overlap.c"
+    ],
+    "source_sha256": "feb6ad1e3b241245c5c4a2a72d65b2eac5d638348bd96a7a16e5f17be95a25ba",
+    "stdout": "",
+    "stderr": "cerberus: internal error, uncaught exception:\n          Failure(\"Concrete.memcpy: refused - memcpy on overlapping objects (allocation 1: destination [281474976710646, 281474976710648) and source [281474976710645, 281474976710647), n = 2); C17 7.24.2.1#2 undefined behaviour; upstream copies byte-wise under impl_mem.ml memcpy 'TODO: if ptrval1 and ptrval2 overlap ==> UB' (b9aeedcb4 :2636) - the fork refuses rather than decides (item G1, 2026-10-20)\")\n          Raised at Stdlib.failwith in file \"stdlib.ml\", line 29, characters 17-33\n          Called from Cerb_frontend__Impl_mem.Concrete.memcpy.overlap_refusal in file \"memory/concrete/impl_mem.ml\", lines 2729-2730, characters 6-134\n          Called from Cerb_frontend__Driver.perform_memop_request2 in file \"ocaml_frontend/generated/driver.ml\", line 751, characters 17-67\n          Called from Cerb_frontend__Driver.advance_step in file \"ocaml_frontend/generated/driver.ml\", line 994, characters 10-64\n          Called from Cerb_frontend__Driver.drive_nonmemory_steps_aux2.(fun) in file \"ocaml_frontend/generated/driver.ml\", line 1058, characters 12-37\n          Called from Cerb_frontend__Nondeterminism.nd_bind.(fun) in file \"ocaml_frontend/generated/nondeterminism.ml\", line 64, characters 26-31\n          Called from Cerb_frontend__Nondeterminism.nd_bind.(fun) in file \"ocaml_frontend/generated/nondeterminism.ml\", line 62, characters 11-19\n          Called from Cerb_frontend__Nondeterminism.nd_bind.(fun) in file \"ocaml_frontend/generated/nondeterminism.ml\", line 62, characters 11-19\n          Called from Cerb_frontend__Nondeterminism.nd_bind.(fun) in file \"ocaml_frontend/generated/nondeterminism.ml\", line 62, characters 11-19\n          Called from Cerb_frontend__Smt2.runND.aux in file \"ocaml_frontend/smt2.ml\", line 38, characters 10-18\n          Called from Cerb_frontend__Smt2.runND in file \"ocaml_frontend/smt2.ml\", line 140, characters 22-33\n          Called from Cerb_backend__Driver_ocaml.batch_drive in file \"backend/common/driver_ocaml.ml\", line 170, characters 15-115\n          Called from Cerb_backend__Pipeline.interp_backend in file \"backend/common/pipeline.ml\", line 610, characters 21-85\n          Called from Dune__exe__Main.cerberus in file \"backend/driver/main.ml\", lines 313-339, characters 8-15\n          Called from Cmdliner_term.app.(fun) in file \"cmdliner_term.ml\", line 22, characters 19-24\n          Called from Cmdliner_eval.run_parser in file \"cmdliner_eval.ml\", line 41, characters 7-16\n"
+  },
+  {
+    "probe": "link-header",
+    "engine": "old",
+    "mode": "exec",
+    "exit": 1,
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-src/cerberus-lean/_build/default/backend/driver/main.exe",
+      "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-src/cerberus-lean/_build/install/default",
+      "--nolibc",
+      "--exec",
+      "--batch",
+      "--mode=exhaustive",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/repin-2026-10-27/probes/link-header.c"
+    ],
+    "source_sha256": "d8cf3fa88142c917b08900d29da5d24165bd54219bcd312a6dfd0c56db6f6956",
+    "stdout": "",
+    "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/repin-2026-10-27/probes/link-header.c:2:25: error: use of undeclared identifier 'link'\nint main(void) { return link(\"/prog.c\", \"/copy.c\"); }\n                        ^\n\u00a76.5.1#2: \n2   An identifier is a primary expression, provided it has been declared as designating an\n    object (in which case it is an lvalue) or a function (in which case it is a function\n    designator).91)\nTime spent: 0.032163 seconds\n"
+  },
+  {
+    "probe": "link-header",
+    "engine": "current",
+    "mode": "exec",
+    "exit": 1,
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/default/backend/driver/main.exe",
+      "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/install/default",
+      "--nolibc",
+      "--exec",
+      "--batch",
+      "--mode=exhaustive",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/repin-2026-10-27/probes/link-header.c"
+    ],
+    "source_sha256": "d8cf3fa88142c917b08900d29da5d24165bd54219bcd312a6dfd0c56db6f6956",
+    "stdout": "",
+    "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/repin-2026-10-27/probes/link-header.c:2:25: error: use of undeclared identifier 'link'\nint main(void) { return link(\"/prog.c\", \"/copy.c\"); }\n                        ^\n\u00a76.5.1#2: \n2   An identifier is a primary expression, provided it has been declared as designating an\n    object (in which case it is an lvalue) or a function (in which case it is a function\n    designator).91)\nTime spent: 0.032078 seconds\n"
+  }
+]

@@ -1,0 +1,24 @@
+{
+  "kind": "config",
+  "probe": "p14_exit_negative",
+  "status": "SAME_OUTCOMES",
+  "old_status": "defined",
+  "command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+    "--impl",
+    "tcc-rv64",
+    "--address-space-top",
+    "18446744073709551615",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p14_exit_negative.c"
+  ],
+  "exit": 0,
+  "wall_seconds": 0.112,
+  "source_sha256": "fab6c11b57609609b5cb58b8e4fc6bbc95533d047b1d654020c10b975d43dc7d",
+  "outcomes": [
+    [
+      "exit=-1\n",
+      4294967295
+    ]
+  ],
+  "defined": true
+}

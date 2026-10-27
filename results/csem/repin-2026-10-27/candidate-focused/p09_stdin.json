@@ -1,0 +1,20 @@
+{
+  "kind": "config",
+  "probe": "p09_stdin",
+  "status": "CHANGED_OUTCOMES",
+  "old_status": "defined",
+  "command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+    "--libc",
+    "--impl",
+    "tcc-rv64",
+    "--address-space-top",
+    "18446744073709551615",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p09_stdin.c"
+  ],
+  "exit": 2,
+  "wall_seconds": 0.863,
+  "source_sha256": "589158eff9e196781feafd90173c0e353226f1d2c8375527b1200440ea2f533d",
+  "defined": false,
+  "outcomes": []
+}

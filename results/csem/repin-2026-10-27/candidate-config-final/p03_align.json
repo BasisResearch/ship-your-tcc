@@ -1,0 +1,24 @@
+{
+  "kind": "config",
+  "probe": "p03_align",
+  "status": "SAME_OUTCOMES",
+  "old_status": "defined",
+  "command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+    "--impl",
+    "tcc-rv64",
+    "--address-space-top",
+    "18446744073709551615",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p03_align.c"
+  ],
+  "exit": 0,
+  "wall_seconds": 0.161,
+  "source_sha256": "622521b6f26628bf029f78646c6c537d2780894620b68c54a7be06e6fc14d3e2",
+  "defined": true,
+  "outcomes": [
+    [
+      "align short=2 int=4 long=8 llong=8 ptr=8 float=4 double=8\ns1=4/2 s2=8/4 s3=16/8 s4=16/8\ns5=24/16 s6=16/8 s7=6/2 s8=8/4\n",
+      0
+    ]
+  ]
+}

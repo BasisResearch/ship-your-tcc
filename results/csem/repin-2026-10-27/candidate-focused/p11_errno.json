@@ -1,0 +1,24 @@
+{
+  "kind": "config",
+  "probe": "p11_errno",
+  "status": "SAME_OUTCOMES",
+  "old_status": "defined",
+  "command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+    "--impl",
+    "tcc-rv64",
+    "--address-space-top",
+    "18446744073709551615",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p11_errno.c"
+  ],
+  "exit": 0,
+  "wall_seconds": 0.166,
+  "source_sha256": "902bccc0cd6288954e2adaed9a70cdbe3f768d528ad0ec63ea774aa178f9d886",
+  "defined": true,
+  "outcomes": [
+    [
+      "EDOM=33 ERANGE=34 EILSEQ=138 ENOENT=2 EINVAL=22\nEXIT_SUCCESS=0 EXIT_FAILURE=1 errno=0\nset=34\n",
+      1
+    ]
+  ]
+}

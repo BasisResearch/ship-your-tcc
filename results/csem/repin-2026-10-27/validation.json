@@ -1,0 +1,59 @@
+{
+  "pins": {
+    "old_cerberus": "e7e9bb427a514b6053865c303c4af512907da75b",
+    "old_lem": "2d3a492758cb23dc4e417f2961983d25b36ce130",
+    "selected_cerberus": "704c4e697845127bced66c93fa0763eb51527ca4",
+    "selected_lem": "e6d8db5680962f49060257d6c2bcb13c284b910f",
+    "cerberus_branch": "mdd/cerberus-lean",
+    "lem_branch": "mdd/lean-backend",
+    "rollback": "61fd433430465aaa5562a22b6ed207761193441e",
+    "toolchain": "leanprover/lean4:v4.34.0",
+    "source": "lead-fetched local snapshots; no network by worker",
+    "cerberus_date": "2026-10-26T17:26:39Z",
+    "lem_date": "2026-10-22T01:33:30Z"
+  },
+  "build_request": "csem-repin-candidate-20261027-05",
+  "build_exit": 0,
+  "full_gate": {
+    "request": "csem-repin-full-gate-20261027-06",
+    "request_id": "csem-repin-full-gate-20261027-06",
+    "exit": 0,
+    "log": "build/worker-build-csem-repin-full-gate-20261027-06.log",
+    "command": [
+      "scripts/check.sh",
+      "--csem"
+    ],
+    "source_hashes_verified": true
+  },
+  "parser": {
+    "AGREE": 614,
+    "BOTH_REJECT": 41,
+    "CPP_FAIL": 9
+  },
+  "config": {
+    "SAME_OUTCOMES": 12,
+    "RESIDUAL": 3
+  },
+  "filesystem": {
+    "SAME_SAIL_OBSERVATION": 8,
+    "MISSING_LIBRARY": 1
+  },
+  "sum": {
+    "probe": "sum",
+    "exit": 0,
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+      "--libc",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/p3/sum.c"
+    ],
+    "stdout": "Defined {value: \"Specified(0)\", stdout: \"55\\n\", stderr: \"\", blocked: \"false\"}\n",
+    "stderr": "cerberus-lean switches: []\n"
+  },
+  "frozen_sum_artifact_diff_lines": 0,
+  "root_lean_toolchain": "leanprover/lean4:v4.34.0",
+  "adoption": "defer: valid supported C11 union initializer newly refused; active main pin remains e7e9bb4 / 2d3a492",
+  "recheck_scripts": {
+    "recheck-focused.py": "606ecdf00d67f6cb97a85d79c121c01f8aa9ae5dcd1fe9913800c1fc47515f6a",
+    "recheck-focused-v1.py": "3886585126e0db65509fd280940deb5b602a5e9d500ffb432e6a8126e0b47d4d"
+  }
+}

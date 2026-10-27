@@ -1,8 +1,9 @@
 # Cerberus / cerberus-lean follow-up for Kiran
 
 Maintained from 2026-10-27 following Mike Dodds's message. Kiran owns external
-communication; no report has been sent by this project. These entries concern
-the pin in `vendor/CSEM_REV`, not necessarily current upstream. Reproduce on
+communication; no report has been sent by this project. The initial entries concern
+our e7e9bb4 / 2d3a492 import; the current-upstream checks below concern the
+repin candidate in `vendor/CSEM_REV`. Reproduce on
 current upstream during the queued repin evaluation before calling an item an
 upstream bug. Keep fixed, superseded and rejected entries with their evidence.
 
@@ -43,3 +44,68 @@ schedule, not an external notification or an automatic unreviewed pin update.
 Started 2026-10-27 after both prerequisite integrations: external Sol slot 2,
 branch sol/csem-repin. The main pin remains unchanged pending the report and
 review. Slot 1's trigraph repair is independent of this CSem evaluation.
+
+## Current-upstream checks, 2026-10-27
+
+The lead-fetched `mdd/cerberus-lean` snapshot is
+`704c4e697845127bced66c93fa0763eb51527ca4` (2026-10-26 17:26:39 UTC),
+with lem-lean `mdd/lean-backend`
+`e6d8db5680962f49060257d6c2bcb13c284b910f` (2026-10-22 01:33:30 UTC).
+Its matching OCaml oracle was built in the repin worktree's isolated opam
+switch. These checks are local; nothing has been sent upstream.
+
+Small complete reproducers and raw old/current oracle captures are in
+`results/csem/repin-2026-10-27/probes/` and `upstream-probes/`.
+
+| entry | current-upstream disposition |
+|---|---|
+| CSEM-01 / PATCH-01 | Native MD5 and the per-TU mutable digest/barrier remain upstream. The local explicit digest reader was replayed and validated on the candidate. The new structured-stop protocol improves failure attribution, not kernel transparency. Native floats and partial parsers remain. |
+| CSEM-02 | `gnu-cleanup.c` still fails parsing at `__attribute__`; `knr.c` still reports unsupported K&R declarations, on both old and current OCaml oracles. These remain scope gaps relative to our approved target. |
+| CSEM-03 / PATCH-02 | Upstream now supplies typed `of_decide_eq_true` bridges at the Utils/Defacto sites, the extra contradiction simplifications in memory erasure, and zeta reduction in `toList_bal`. All three groups compile on 4.34; the old port patches are absorbed, with our existing reader parameters retained. |
+| CSEM-04 | `link-header.c` still reports undeclared `link` with the current pristine runtime. Our image-runtime header/proxy correction remains necessary. |
+| PATCH-03 / PATCH-04 / PATCH-05 | Explicit RV64 implementation parameters, image FS and Lean C grammar remain local work. Upstream still refuses filesystem operations rather than modelling this image. |
+| CSEM-05 (new) | `union-second.c` is valid C11 with two `int` members and `.b = 7`. The old oracle returns `Specified(7)`; current upstream refuses before execution (exit 125). The refusal prevents a known general union-initializer miscompilation, but also rejects this valid case. This is a limitation, not a repaired union semantics; retain it in the whole-C obligations. |
+| upstream arithmetic fix | `bool-float.c` changes from `Specified(0)` to the C11-required `Specified(1)` for `(_Bool)0.5`. `bool-pointer-call.c` remains `Specified(1)` in the default calling convention. |
+| upstream overlap refusal | `memcpy-overlap.c` changes from a defined answer to an explicit refusal. The overlapping call has undefined C behaviour; a refusal is not a successful UB classification. |
+
+The upstream axiom gate also fixes a previously vacuous check for modern
+per-declaration native-decision axioms and applies an exact, name-independent
+standard-axiom allowlist. Keep that strengthening when replaying our root-Lake
+integration. The full repin decision and measured gates belong in
+`results/csem/repin-2026-10-27.md`.
+
+### Additional repin findings
+
+* **PATCH-06, total stop encoding (local candidate).** Current upstream
+  `CerbStop.render` uses generic `Json.compress`. A fresh cone traversal adds
+  one kernel partial and two runtime partials (`Json.compress.go` and
+  `JsonNumber.countDigits.loop`). The candidate shares one strings/nulls/arrays
+  encoding description between `toJson` and total wire rendering, reusing
+  Lean's total string escaping. Its cone returns to the fresh baseline
+  43/100 partials. `Unit.StopTest` compares wire bytes with upstream's printer
+  on seven samples including Unicode and every control byte; the existing
+  cross-language codec/capture suite remains the gate. This is independent
+  of the image FS/RV64 choices and is a useful upstream-sized patch.
+* The repin exposed **our** stale `--libc` argument cache: old Cabs metadata
+  named the old runtime prefix, which current upstream correctly refused.
+  The wrapper now always asks a locked, content-addressed preparation helper
+  keyed by the oracle, pins, source/Core bytes, host preprocessor and resolved
+  runtime identity/content. Cached artifact hashes are checked. The exact
+  runtime-location guard is unchanged. Do not report that cache defect as an
+  upstream regression.
+
+The final 2026-10-27 candidate passed the root full gate on Lean 4.34,
+regenerated all 234 files with the matching generator, retained the 113-row
+oracle baseline, and preserved the focused configuration/FS/parser results.
+Both current OCaml (exit 125) and the repinned Lean (exit 134) refuse
+`union-second.c`; the old OCaml oracle returns 7. Recommendation: retain the
+active main pin until this valid C11 case is handled, rather than weakening
+Supported or the theorem. The tested candidate remains available for lead
+review; main was neither pushed nor merged by this worker.
+
+Lead disposition: evaluation completed and candidate checkpoint
+`1959dbfec1ee342afee03cec7b4a11de4bf24249` is preserved. Main keeps the old
+pin until the valid-union regression is repaired by
+`tasks/f1-union-initializers.md`; this requires implementation, not a change
+to Supported or a user decision. Kiran's list is ready for him to relay.
+No external message has been sent.

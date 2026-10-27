@@ -1,0 +1,24 @@
+{
+  "kind": "config",
+  "probe": "p08_argv",
+  "status": "SAME_OUTCOMES",
+  "old_status": "defined",
+  "command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+    "--impl",
+    "tcc-rv64",
+    "--address-space-top",
+    "18446744073709551615",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p08_argv.c"
+  ],
+  "exit": 0,
+  "wall_seconds": 0.123,
+  "source_sha256": "e983befc1f8e55804eb054cfe539a4b29454f30673ae7ee6dbea8dfcdfa8a4de",
+  "defined": true,
+  "outcomes": [
+    [
+      "argc=1\nargv[0]=/prog.c\nnull=1\n",
+      1
+    ]
+  ]
+}

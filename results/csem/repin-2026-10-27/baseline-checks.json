@@ -1,0 +1,24 @@
+[
+  {
+    "name": "regen-check",
+    "command": [
+      "bash",
+      "scripts/csem_regen.sh",
+      "--check"
+    ],
+    "started_utc": "2026-10-27T18:57:38.180277+00:00",
+    "exit": 0,
+    "wall_seconds": 45.19
+  },
+  {
+    "name": "static-gate",
+    "command": [
+      "bash",
+      "scripts/check.sh",
+      "--static-only"
+    ],
+    "started_utc": "2026-10-27T18:58:23.370519+00:00",
+    "exit": 0,
+    "wall_seconds": 5.145
+  }
+]

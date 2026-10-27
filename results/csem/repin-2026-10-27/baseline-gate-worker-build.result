@@ -1,0 +1,11 @@
+{
+  "request": "csem-repin-baseline-gate-20261027-02",
+  "request_id": "csem-repin-baseline-gate-20261027-02",
+  "exit": 0,
+  "log": "build/worker-build-csem-repin-baseline-gate-20261027-02.log",
+  "command": [
+    "scripts/check.sh",
+    "--csem"
+  ],
+  "source_hashes_verified": true
+}

@@ -1,0 +1,15 @@
+{
+  "kind": "filesystem",
+  "probe": "mkdir",
+  "status": "MISSING_LIBRARY",
+  "command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run_image.sh",
+    "--first",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/fs/mkdir.c"
+  ],
+  "exit": 134,
+  "wall_seconds": 5.881,
+  "source_sha256": "d32af23afa875d8189725662b2190de33de0e3764794a858cff42e580a93476a",
+  "sail_stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "sail_meta_sha256": "a2c321a2f1e508044794bdd44d4699c7e52fc2f28520dd4fa6359ac56e65b76e"
+}

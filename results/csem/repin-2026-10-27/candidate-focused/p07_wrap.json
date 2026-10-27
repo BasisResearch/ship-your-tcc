@@ -1,0 +1,24 @@
+{
+  "kind": "config",
+  "probe": "p07_wrap",
+  "status": "SAME_OUTCOMES",
+  "old_status": "defined",
+  "command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+    "--impl",
+    "tcc-rv64",
+    "--address-space-top",
+    "18446744073709551615",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p07_wrap.c"
+  ],
+  "exit": 0,
+  "wall_seconds": 0.133,
+  "source_sha256": "71e88d125fec4ae2e05cf4ee935d02264f42a143174772ec5758d9020c2798cf",
+  "defined": true,
+  "outcomes": [
+    [
+      "-56 4464 -294967296 -1\n-4 -1 -5\n253\n",
+      1
+    ]
+  ]
+}

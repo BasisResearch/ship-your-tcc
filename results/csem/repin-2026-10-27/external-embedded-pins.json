@@ -1,0 +1,23 @@
+{
+  "rows": [
+    {
+      "target": "/lib/libc.a",
+      "path": "/data/home/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/../../../../riscv-none-elf/lib/rv64i/lp64/libc.a",
+      "reference_key": "/data/home/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/../../../../riscv-none-elf/lib/rv64i/lp64/libc.a",
+      "sha256": "e6d56536913c89a22a25e2d84a0bc2ed920cba5973b9aad0426ea83e4270e4e3"
+    },
+    {
+      "target": "/lib/libm.a",
+      "path": "/data/home/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/../../../../riscv-none-elf/lib/rv64i/lp64/libm.a",
+      "reference_key": "/data/home/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/../../../../riscv-none-elf/lib/rv64i/lp64/libm.a",
+      "sha256": "2f0f0a317218452fe275347509e466257272cc8f4ac8c098470cbbba9b8ee395"
+    },
+    {
+      "target": "/lib/libgcc.a",
+      "path": "/data/home/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv64i/lp64/libgcc.a",
+      "reference_key": "/data/home/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv64i/lp64/libgcc.a",
+      "sha256": "afbf7180cc9d4cb6d6179c279dcfe5a32650db41b1d9d059c389d4753a9b4867"
+    }
+  ],
+  "note": "Supplementary post-measurement check against retained image hashes; current main base.elf is not recertified."
+}

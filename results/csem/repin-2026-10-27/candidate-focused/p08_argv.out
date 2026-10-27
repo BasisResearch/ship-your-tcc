@@ -1,0 +1,1 @@
+Defined {value: "Specified(1)", stdout: "argc=1\nargv[0]=/prog.c\nnull=1\n", stderr: "", blocked: "false"}

@@ -1,0 +1,24 @@
+{
+  "kind": "config",
+  "probe": "p12_pointer",
+  "status": "SAME_OUTCOMES",
+  "old_status": "defined",
+  "command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+    "--impl",
+    "tcc-rv64",
+    "--address-space-top",
+    "18446744073709551615",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p12_pointer.c"
+  ],
+  "exit": 0,
+  "wall_seconds": 0.13,
+  "source_sha256": "10e0034a12fdf5afde386feb8069b0cc4e59b41c28a94c12f0477d6e0587c4d7",
+  "outcomes": [
+    [
+      "null=0 bits=64 roundtrip=1\n",
+      0
+    ]
+  ],
+  "defined": true
+}

@@ -1,0 +1,9 @@
+make: Entering directory '/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/csem'
+[MKDIR] lean_frontend/generated
+[LEM] generating Lean files in [lean_frontend/generated] (log in [lean_frontend/lem.log])
+[COPY] 58 hand-written Lean files (lean_frontend/handwritten_copy.manifest) into [lean_frontend/generated]
+check_handwritten_sync: OK (58 hand-written files byte-identical to lean_frontend/generated/; manifest lean_frontend/handwritten_copy.manifest)
+[STAMP] recording Lean lem-sync content stamp
+check_lem_sync: recorded lean_frontend/lem_sync.sha256 (src d5a1639bc549df59528c20a5d5e8a83e8b7486380286b945d3b79d81eee00067, gen 2a6b6fbb5af4ff3ed8b0845565a4d1ea295b3a26516fbc41ae3228b3bbf3be36)
+make: Leaving directory '/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/csem'
+csem_regen: regenerated csem/lean_frontend/generated (234 files)

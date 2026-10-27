@@ -1,0 +1,10 @@
+fe9b497209b3651f2778e6e760f3e709ad092320 2026-10-27T18:49:03Z Review image filesystem recovery and add descriptor fstat
+54037303c8b9173afb9a7a820034fb86143cb4d6 2026-10-27T18:49:03Z Checkpoint inherited image filesystem model for review
+80e0c9b3329630e31df9e53b6a7f517135882613 2026-10-27T18:27:59Z Validate explicit RV64 configuration reader and record semantic gaps
+77f1dc93bc32d41b609f281f228615df731996c0 2026-10-27T18:27:59Z Checkpoint interrupted RV64 configuration recovery (unvalidated)
+723abac1c83512449da91f9cd50ecdaa176e4da0 2026-10-21T02:28:53Z Fix complete token dispatch and validate Cabs comparisons fail closed
+f6c474d4648fb0c2f17a086adc705b55fd560fcc 2026-10-21T01:58:58Z F1: retire native digest state and validate pure per-TU digest threading
+6783abc4475779713d678cfdb55e203fd2d931ba 2026-10-21T01:50:27Z F1: recover and build Lean C parser draft; record first Menhir comparison
+81b16e3420fdfafc409d0ad21427c66c5c7cc0aa 2026-10-21T00:08:42Z F0 done: fork gates on 4.34, check.sh --csem, records
+45e4d9994920eed7911fbfe348da1f62205e2a5f 2026-10-20T23:29:35Z csem: generated Lean, Lean 4.34.0 port, root-Lake libraries, csem_run
+bedac74a4862aa71dc06d7b92c3ebaa4a645b2c7 2026-10-20T23:11:02Z csem: import cerberus-lean e7e9bb4 and LemLib (lem-lean 2d3a492), pristine

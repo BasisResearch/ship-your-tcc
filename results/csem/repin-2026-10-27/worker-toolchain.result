@@ -1,0 +1,17 @@
+{
+  "request": "csem-repin-toolchain-20261027-02",
+  "exit": 0,
+  "log": "build/repin-toolchain-02.log",
+  "command": [
+    "flock",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/lake.lock",
+    "systemd-run",
+    "--user",
+    "--scope",
+    "-p",
+    "MemoryMax=12G",
+    "bash",
+    "build/repin-toolchain-02.sh"
+  ],
+  "source_hashes_verified": true
+}

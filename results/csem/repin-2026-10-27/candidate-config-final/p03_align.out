@@ -1,0 +1,1 @@
+Defined {value: "Specified(0)", stdout: "align short=2 int=4 long=8 llong=8 ptr=8 float=4 double=8\ns1=4/2 s2=8/4 s3=16/8 s4=16/8\ns5=24/16 s6=16/8 s7=6/2 s8=8/4\n", stderr: "", blocked: "false"}

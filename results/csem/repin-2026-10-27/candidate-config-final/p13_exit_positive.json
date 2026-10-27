@@ -1,0 +1,24 @@
+{
+  "kind": "config",
+  "probe": "p13_exit_positive",
+  "status": "SAME_OUTCOMES",
+  "old_status": "defined",
+  "command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+    "--impl",
+    "tcc-rv64",
+    "--address-space-top",
+    "18446744073709551615",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p13_exit_positive.c"
+  ],
+  "exit": 0,
+  "wall_seconds": 0.15,
+  "source_sha256": "a30d250a8f757ea27acc05cbbafa0ae922d47918abbf40bf428d755363966a37",
+  "defined": true,
+  "outcomes": [
+    [
+      "exit=305419896\n",
+      305419896
+    ]
+  ]
+}

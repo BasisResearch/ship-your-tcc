@@ -1,0 +1,1 @@
+Defined {value: "Specified(0)", stdout: "getchar EOF\nread 0: 0\nwrite 0: -1 EBADF\nread 1: -1 EBADF\nfgets NULL\n", stderr: "", blocked: "false"}

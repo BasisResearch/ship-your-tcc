@@ -1,0 +1,8 @@
+/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/repin-2026-10-27/probes/link-header.c:2:25: error: use of undeclared identifier 'link'
+int main(void) { return link("/prog.c", "/copy.c"); }
+                        ^
+§6.5.1#2: 
+2   An identifier is a primary expression, provided it has been declared as designating an
+    object (in which case it is an lvalue) or a function (in which case it is a function
+    designator).91)
+Time spent: 0.032163 seconds

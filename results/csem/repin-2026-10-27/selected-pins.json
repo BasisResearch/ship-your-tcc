@@ -1,0 +1,13 @@
+{
+  "old_cerberus": "e7e9bb427a514b6053865c303c4af512907da75b",
+  "old_lem": "2d3a492758cb23dc4e417f2961983d25b36ce130",
+  "selected_cerberus": "704c4e697845127bced66c93fa0763eb51527ca4",
+  "selected_lem": "e6d8db5680962f49060257d6c2bcb13c284b910f",
+  "cerberus_branch": "mdd/cerberus-lean",
+  "lem_branch": "mdd/lean-backend",
+  "rollback": "61fd433430465aaa5562a22b6ed207761193441e",
+  "toolchain": "leanprover/lean4:v4.34.0",
+  "source": "lead-fetched local snapshots; no network by worker",
+  "cerberus_date": "2026-10-26T17:26:39Z",
+  "lem_date": "2026-10-22T01:33:30Z"
+}

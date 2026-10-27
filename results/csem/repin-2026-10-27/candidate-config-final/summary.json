@@ -1,0 +1,496 @@
+{
+  "rows": [
+    {
+      "kind": "config",
+      "probe": "p01_char",
+      "status": "SAME_OUTCOMES",
+      "old_status": "defined",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+        "--impl",
+        "tcc-rv64",
+        "--address-space-top",
+        "18446744073709551615",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p01_char.c"
+      ],
+      "exit": 0,
+      "wall_seconds": 0.153,
+      "source_sha256": "86ab617f76e0c1506c3164a86f80a32e6649fd6b5a3599590f32a1a380014c77",
+      "defined": true,
+      "outcomes": [
+        [
+          "c=200 m=255 CHAR_MIN=0 CHAR_MAX=255\nlt0=0 gt127=1\n",
+          0
+        ]
+      ]
+    },
+    {
+      "kind": "config",
+      "probe": "p02_widths",
+      "status": "SAME_OUTCOMES",
+      "old_status": "defined",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+        "--impl",
+        "tcc-rv64",
+        "--address-space-top",
+        "18446744073709551615",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p02_widths.c"
+      ],
+      "exit": 0,
+      "wall_seconds": 0.166,
+      "source_sha256": "e3e3ef72af21b021e60894b070274e0beaf1e567d5121219e7f22d9477591ada",
+      "defined": true,
+      "outcomes": [
+        [
+          "short=2 int=4 long=8 llong=8 ptr=8 fptr=8\nsize_t=8 ptrdiff_t=8 wchar_t=4\nINT_MAX=2147483647 LONG_MAX=9223372036854775807 ULONG_MAX=18446744073709551615\nSHRT_MIN=-32768 USHRT_MAX=65535\n",
+          8
+        ]
+      ]
+    },
+    {
+      "kind": "config",
+      "probe": "p03_align",
+      "status": "SAME_OUTCOMES",
+      "old_status": "defined",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+        "--impl",
+        "tcc-rv64",
+        "--address-space-top",
+        "18446744073709551615",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p03_align.c"
+      ],
+      "exit": 0,
+      "wall_seconds": 0.161,
+      "source_sha256": "622521b6f26628bf029f78646c6c537d2780894620b68c54a7be06e6fc14d3e2",
+      "defined": true,
+      "outcomes": [
+        [
+          "align short=2 int=4 long=8 llong=8 ptr=8 float=4 double=8\ns1=4/2 s2=8/4 s3=16/8 s4=16/8\ns5=24/16 s6=16/8 s7=6/2 s8=8/4\n",
+          0
+        ]
+      ]
+    },
+    {
+      "kind": "config",
+      "probe": "p04_ldouble",
+      "status": "SAME_OUTCOMES",
+      "old_status": "defined",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+        "--impl",
+        "tcc-rv64",
+        "--address-space-top",
+        "18446744073709551615",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p04_ldouble.c"
+      ],
+      "exit": 0,
+      "wall_seconds": 0.169,
+      "source_sha256": "a26be2685d3b55f0e4e08fb4c896918aafc3d336a6b80661fe99466c1b5a7899",
+      "defined": true,
+      "outcomes": [
+        [
+          "sizeof=16 align=16 off=16 mant=53\nne=0\n",
+          53
+        ]
+      ]
+    },
+    {
+      "kind": "config",
+      "probe": "p05_bitfield",
+      "status": "RESIDUAL",
+      "old_status": "residual",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+        "--impl",
+        "tcc-rv64",
+        "--address-space-top",
+        "18446744073709551615",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p05_bitfield.c"
+      ],
+      "exit": 1,
+      "wall_seconds": 0.15,
+      "source_sha256": "beaa308ca110be810c782bb7d7ec117226adeb818f623dba4e036849b6f0fbbd",
+      "defined": false,
+      "outcomes": []
+    },
+    {
+      "kind": "config",
+      "probe": "p06_enum",
+      "status": "RESIDUAL",
+      "old_status": "residual",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+        "--impl",
+        "tcc-rv64",
+        "--address-space-top",
+        "18446744073709551615",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p06_enum.c"
+      ],
+      "exit": 1,
+      "wall_seconds": 0.127,
+      "source_sha256": "83bd64f96527333af0a06564eda4f78a166a37193c488fa803e3a577c35e6c20",
+      "defined": false,
+      "outcomes": []
+    },
+    {
+      "kind": "config",
+      "probe": "p07_wrap",
+      "status": "SAME_OUTCOMES",
+      "old_status": "defined",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+        "--impl",
+        "tcc-rv64",
+        "--address-space-top",
+        "18446744073709551615",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p07_wrap.c"
+      ],
+      "exit": 0,
+      "wall_seconds": 0.133,
+      "source_sha256": "71e88d125fec4ae2e05cf4ee935d02264f42a143174772ec5758d9020c2798cf",
+      "defined": true,
+      "outcomes": [
+        [
+          "-56 4464 -294967296 -1\n-4 -1 -5\n253\n",
+          1
+        ]
+      ]
+    },
+    {
+      "kind": "config",
+      "probe": "p08_argv",
+      "status": "SAME_OUTCOMES",
+      "old_status": "defined",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+        "--impl",
+        "tcc-rv64",
+        "--address-space-top",
+        "18446744073709551615",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p08_argv.c"
+      ],
+      "exit": 0,
+      "wall_seconds": 0.123,
+      "source_sha256": "e983befc1f8e55804eb054cfe539a4b29454f30673ae7ee6dbea8dfcdfa8a4de",
+      "defined": true,
+      "outcomes": [
+        [
+          "argc=1\nargv[0]=/prog.c\nnull=1\n",
+          1
+        ]
+      ]
+    },
+    {
+      "kind": "config",
+      "probe": "p09_stdin",
+      "status": "SAME_OUTCOMES",
+      "old_status": "defined",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+        "--libc",
+        "--impl",
+        "tcc-rv64",
+        "--address-space-top",
+        "18446744073709551615",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p09_stdin.c"
+      ],
+      "exit": 0,
+      "wall_seconds": 2.203,
+      "source_sha256": "589158eff9e196781feafd90173c0e353226f1d2c8375527b1200440ea2f533d",
+      "defined": true,
+      "outcomes": [
+        [
+          "eof=1 feof=1\n",
+          0
+        ]
+      ]
+    },
+    {
+      "kind": "config",
+      "probe": "p10_float",
+      "status": "RESIDUAL",
+      "old_status": "residual",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+        "--impl",
+        "tcc-rv64",
+        "--address-space-top",
+        "18446744073709551615",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p10_float.c"
+      ],
+      "exit": 134,
+      "wall_seconds": 0.246,
+      "source_sha256": "8f8a202710f9eaab2a0688d73859819e5c60d7abbce685256552858db3f61eaf",
+      "defined": false,
+      "outcomes": []
+    },
+    {
+      "kind": "config",
+      "probe": "p11_errno",
+      "status": "SAME_OUTCOMES",
+      "old_status": "defined",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+        "--impl",
+        "tcc-rv64",
+        "--address-space-top",
+        "18446744073709551615",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p11_errno.c"
+      ],
+      "exit": 0,
+      "wall_seconds": 0.195,
+      "source_sha256": "902bccc0cd6288954e2adaed9a70cdbe3f768d528ad0ec63ea774aa178f9d886",
+      "defined": true,
+      "outcomes": [
+        [
+          "EDOM=33 ERANGE=34 EILSEQ=138 ENOENT=2 EINVAL=22\nEXIT_SUCCESS=0 EXIT_FAILURE=1 errno=0\nset=34\n",
+          1
+        ]
+      ]
+    },
+    {
+      "kind": "config",
+      "probe": "p12_pointer",
+      "status": "SAME_OUTCOMES",
+      "old_status": "defined",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+        "--impl",
+        "tcc-rv64",
+        "--address-space-top",
+        "18446744073709551615",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p12_pointer.c"
+      ],
+      "exit": 0,
+      "wall_seconds": 0.137,
+      "source_sha256": "10e0034a12fdf5afde386feb8069b0cc4e59b41c28a94c12f0477d6e0587c4d7",
+      "defined": true,
+      "outcomes": [
+        [
+          "null=0 bits=64 roundtrip=1\n",
+          0
+        ]
+      ]
+    },
+    {
+      "kind": "config",
+      "probe": "p13_exit_positive",
+      "status": "SAME_OUTCOMES",
+      "old_status": "defined",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+        "--impl",
+        "tcc-rv64",
+        "--address-space-top",
+        "18446744073709551615",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p13_exit_positive.c"
+      ],
+      "exit": 0,
+      "wall_seconds": 0.15,
+      "source_sha256": "a30d250a8f757ea27acc05cbbafa0ae922d47918abbf40bf428d755363966a37",
+      "defined": true,
+      "outcomes": [
+        [
+          "exit=305419896\n",
+          305419896
+        ]
+      ]
+    },
+    {
+      "kind": "config",
+      "probe": "p14_exit_negative",
+      "status": "SAME_OUTCOMES",
+      "old_status": "defined",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+        "--impl",
+        "tcc-rv64",
+        "--address-space-top",
+        "18446744073709551615",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p14_exit_negative.c"
+      ],
+      "exit": 0,
+      "wall_seconds": 0.124,
+      "source_sha256": "fab6c11b57609609b5cb58b8e4fc6bbc95533d047b1d654020c10b975d43dc7d",
+      "defined": true,
+      "outcomes": [
+        [
+          "exit=-1\n",
+          4294967295
+        ]
+      ]
+    },
+    {
+      "kind": "config",
+      "probe": "p15_enum_c11",
+      "status": "SAME_OUTCOMES",
+      "old_status": "defined",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+        "--impl",
+        "tcc-rv64",
+        "--address-space-top",
+        "18446744073709551615",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p15_enum_c11.c"
+      ],
+      "exit": 0,
+      "wall_seconds": 0.125,
+      "source_sha256": "663d7b8554b71d40083ba25bcf273adc0f5c18d598925743476736601c50a65c",
+      "defined": true,
+      "outcomes": [
+        [
+          "size=4/4 align=4/4 unsigned=1/1\n",
+          0
+        ]
+      ]
+    }
+  ],
+  "sha256": {
+    "csem/runtime/dune": "602208a4657ae867d1828c810e2aadd2d0567ec577b7c7f13cb2fc5f5c6f9c7e",
+    "csem/runtime/libc/dune": "d1d5f0a2ca4cc5a53e8b068d3bb9f219fe5eaec29457f25032352271ed240095",
+    "csem/runtime/libcore/std.core": "6137789ff7a1ffa84f13a4964148c4b9c81340debae0ea72e856609ca5055366",
+    "csem/runtime/libcore/std_inner_arg_temps.core": "5910f73d116519cc38ba8ef5f32db92a9a060542993ae0cc314a30bde8ec7a00",
+    "csem/runtime/libcore/impls/i686-apple-darwin10-gcc-4.2.1.impl": "cf6fbe0be7dae96f6ce2c8cf7d7013b89d350da563e5179be8a2bb298d7ee24a",
+    "csem/runtime/libcore/impls/gcc_4.9.0_x86_64-apple-darwin10.8.0.impl": "c6e4bcab711860904ff0d27bc90392540a70cbb59c7c9f546164896482b3f813",
+    "csem/runtime/libcore/impls/tcc_rv64_lp64.impl": "9597e95c5c04739fa0bae6e057eee0e453cbad16cafffd616b05830b0a8d84b3",
+    "csem/runtime/libc/generators/gen_inttypes.c": "a968abf5b1b2a2b5ff7b64524e3d3f338098140c0a81e13b10e748f966cfb74d",
+    "csem/runtime/libc/src/math.c": "d7de0197293435b3aca709333df0303a3db7611a519cba72ebbd7143352e138d",
+    "csem/runtime/libc/src/internal.h": "db9342823a476783e48edde1408056b18f583031d771b483ed36f5f259863b44",
+    "csem/runtime/libc/src/uio.c": "643b3b55034fa4785f7198417f589d14764ef8d67700f055b380f41757d2108b",
+    "csem/runtime/libc/src/ctype.c": "200e33b957779371c9ce7961e89a5cab47010463d71e3aef2f02132523b67e7f",
+    "csem/runtime/libc/src/locale.c": "8081dfaee2f2dfa2b7ba7c262b9b39d2864b3266f1732186de0d2d8c0e106f29",
+    "csem/runtime/libc/src/LICENSE": "b42a219cf590815b592149c5f6a03b464e40f0ecf916d23b73849b1f44967bfa",
+    "csem/runtime/libc/src/internal.c": "e9367d12f84268d39befbf45a9d745c3a82c57796ed9eb79cc63200c03bb29f4",
+    "csem/runtime/libc/src/signal.c": "dfb77a914a911e798c83a1e2eebbfb020ee260530b1f8cc712aedf4ab32806e8",
+    "csem/runtime/libc/src/utime.c": "6a84906562a738c50297fe901576db914fd5b8b7f6c2c5ac3fe43be95ec3810e",
+    "csem/runtime/libc/src/time.c": "9f46bec27844ae5f224450c8bb29468e08700c64f525804ee19ada5175728540",
+    "csem/runtime/libc/src/vfscanf.c": "439b9fa1f97315fb555dd04e1cf8c4b04a1bd5bbabdf75ac59677968b37f633b",
+    "csem/runtime/libc/src/unistd.c": "e98a4483376c1d9a844fbec8c033b46398da4dcfc379a2cd09299f0cb7ed1b86",
+    "csem/runtime/libc/src/stdio.c": "6e242b632b76c9521a56f59b894143d508226bfc93a4edcd1e40412ae6e3572f",
+    "csem/runtime/libc/src/string.c": "5b3bbae54b5a755bd9ff38d01692ff72ca7ad80aa8fe151bab634e21015fe831",
+    "csem/runtime/libc/src/stdlib.c": "e5bd43ff9a2276e9842ceac6659b8954065d2808bc6d87bd97026fbdbcd6bdfb",
+    "csem/runtime/libc/src/stat.c": "0887338d4fcc40f8c1e66de21b42364a1d88ca07911563b63d85a8bebc7b40e6",
+    "csem/runtime/libc/include/complex.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/stdint.h": "61cc981d63a3867b3c3fb776c254d14d296bff341432b5523168800aa17dbeb8",
+    "csem/runtime/libc/include/setjmp.h": "a24fb35b83cda6471e98c8bb6060d88cc8c62159dc81af9df5e52e180262ed6d",
+    "csem/runtime/libc/include/locale.h": "3c4e0706504029894be6e6683ab798c096d4e6e808d890732c26c40a38d11a6c",
+    "csem/runtime/libc/include/fenv.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/tgmath.h": "38d4b43e7b1257fcfa8940e008956e281b3dcdfd49b8f308f79882bf6163f3b0",
+    "csem/runtime/libc/include/cheriintrin.h": "47260273f7d4d50c9094e0a93bedd4fa3322bd26bb3a95815633403a4241fca1",
+    "csem/runtime/libc/include/stdbool.h": "7a6885c9ee89d5bb257f90e729443d5b734d293c17b2c75cfc5109d5d091c535",
+    "csem/runtime/libc/include/string.h": "364d0d46dc43d57a6cad1db703f1c2bf0a7077fed5550501a721b0ba04661521",
+    "csem/runtime/libc/include/stddef.h": "0fb655b4e88e0960faa8bba272fa30d3040846edff8ed6ff94c747e9c4f57793",
+    "csem/runtime/libc/include/time.h": "dc7b012d7eb1f709b4f06523c94319a60d318a7b4378a0e7c9d0451efc47a4ed",
+    "csem/runtime/libc/include/stdatomic.h": "4df95fb6d2d483e4d54b3864953e67ad51fe865711784a03d55f30f33e5041e0",
+    "csem/runtime/libc/include/uchar.h": "b23b7945babaadd27064c31b553983a9362c8737ddb9bc3428f2ee0db88208e2",
+    "csem/runtime/libc/include/errno.h": "3cbfb7e76d42b090b6177f66e29e4f66af4e34b11c7c0b480ddc861fcaa9493f",
+    "csem/runtime/libc/include/stdalign.h": "6cc27997ca81c8f30f983941bf6981d295de45afde1c66bf65d40da599a69acc",
+    "csem/runtime/libc/include/builtins.h": "4e79613630ccb7ad9f2f9286c4ff170c36f30823281b4385c54d724012b041f0",
+    "csem/runtime/libc/include/stdarg.h": "3693833d23355cbd3aa8db7e268fd5fc093a0f285b296565589ab577d9d638f2",
+    "csem/runtime/libc/include/wchar.h": "c43bd4f9c3aa213269a72cd3b67e2ec03517783e4033f28ae65e533583d9dcf4",
+    "csem/runtime/libc/include/signal.h": "6d9ba74be11a518bab0729b244120e9a66353a40a4ef37b67f9d95eea2d2606b",
+    "csem/runtime/libc/include/stdio.h": "b07b59ada9ebcdc9d5228c267420deb0f82594191d030fc106dde0840c290ee6",
+    "csem/runtime/libc/include/wctype.h": "97697f45627617acc4acb283c45e3a1e9cde8160864b5059ce032afdfc2b1ddd",
+    "csem/runtime/libc/include/limits.h": "fa52e6767cbfc373045fff7b568629104eb3113a59c43a8a7d703fd23a7b059d",
+    "csem/runtime/libc/include/iso646.h": "ea2f92edf52e4e1cdb42b6e47985e38583f39051aef89580ab2607b983abc8d7",
+    "csem/runtime/libc/include/float.h": "3e142874e9c86f522a0cfd2524f53b7826557c865ae997fc93f759f0d03aad25",
+    "csem/runtime/libc/include/inttypes.h": "bbe6e5fe5ef7dd32f0131b30a55e138f2bed7bf38839a03108c84789cdab15b8",
+    "csem/runtime/libc/include/threads.h": "488563b8cf76cecf324ad82cc5fac7c460a6e48ace868c102cd26c75cde640fe",
+    "csem/runtime/libc/include/math.h": "55a57e9f9912e70dc2f27969c6039883544d87b0e96a1afaf22d2602d7d475ac",
+    "csem/runtime/libc/include/stdlib.h": "ac16165782898587739e13890be5814d0254f4a40a9b6259c1aa82d1e16dbf3d",
+    "csem/runtime/libc/include/assert.h": "78edd215cfde2e31abc1b48cf34c4ee8c07566adb352e030f0aaaa4117a81b15",
+    "csem/runtime/libc/include/stdnoreturn.h": "28551977076c271e67bc3b6a4c41ec8075584a6ebe10d2dfe6fec27923524d9a",
+    "csem/runtime/libc/include/ctype.h": "d6cb7480fc8903910c119f878766cc128b365b5d83f2e22545d12d71a68938ed",
+    "csem/runtime/libc/include/cheri/cheric.h": "85445c017b7a425b76814e79e408dc40ae6006529620d25eb5f01ee6eb1f2fd9",
+    "csem/runtime/libc/include/cerberus/any.h": "c96ee58eb5f4b4793b1279253142a5963b40bc8fc81dc837e98ad24e85df952c",
+    "csem/runtime/libc/include/cerberus/vip.h": "f3cb0e501423f4b3553fa5d62d07ffd4b3c202b13e1b9beed6e93070aea1cc99",
+    "csem/runtime/libc/include/posix/semaphore.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/complex.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/sched.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/ftw.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/ndbm.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/stdint.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/stropts.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/setjmp.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/locale.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/fenv.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/tgmath.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/nl_types.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/monetary.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/fmtmsg.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/spawn.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/aio.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/stdbool.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/tar.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/fcntl.h": "426f5fe21cfd6ba2712c05f9829117197c05a3a7a9d458418b5f53c1166ab580",
+    "csem/runtime/libc/include/posix/wordexp.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/poll.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/ulimit.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/trace.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/pthread.h": "b8cbd03395654968e634a8935dd7a797ad71c68c8cd50ea23d8a68623c49095e",
+    "csem/runtime/libc/include/posix/libgen.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/string.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/stddef.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/time.h": "c629acbe705a04e7ca87e369497c4156131ad7777e8c390c506dbb102ae41931",
+    "csem/runtime/libc/include/posix/netdb.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/strings.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/errno.h": "5f9a5dd94d00808ae959ce335d58976e21ee4a4e16a79276316109b8fad9085d",
+    "csem/runtime/libc/include/posix/mqueue.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/utime.h": "76c7334af395c453409a79c1357f4a3ec65229bca00f3afe47d19e6158baf156",
+    "csem/runtime/libc/include/posix/regex.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/stdarg.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/fnmatch.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/wchar.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/signal.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/pwd.h": "80b08eeff7621a7254f321910361ebbe485fa776c95776072107f76d3182b516",
+    "csem/runtime/libc/include/posix/dirent.h": "7a162c3bfef79e207ee16d4976565babe9abd35644c5a74761a6643c450d364e",
+    "csem/runtime/libc/include/posix/stdio.h": "c3b3f69c65c2e8b00f148eafc042e64d960b7a2dfd82249187607f106c426ed9",
+    "csem/runtime/libc/include/posix/wctype.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/glob.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/limits.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/cpio.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/iso646.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/utmpx.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/dlfcn.h": "ad22f2157941b1642717f1026d302fc8f501c833608d06c71128efda072f5c0d",
+    "csem/runtime/libc/include/posix/float.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/termios.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/syslog.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/inttypes.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/grp.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/unistd.h": "13828074c1b872d3ccc00aa18a850166551a2a6f19f9459df07de7882e99ee44",
+    "csem/runtime/libc/include/posix/math.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/search.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/stdlib.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/assert.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/iconv.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/langinfo.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/ctype.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/sys/statvfs.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/sys/ipc.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/sys/times.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/sys/un.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/sys/time.h": "fd64d87a4c932fb08d062ac47ec2ff95ea0e17a1321adb7cc4d063010e68cfcb",
+    "csem/runtime/libc/include/posix/sys/ioctl.h": "c7fe4d863c10b8bdf57e7871c4e305aed6f4d1f458777fa1cf26df59778145b8",
+    "csem/runtime/libc/include/posix/sys/cdefs.h": "94f5a351709fed4dd3e94708942c937f40075574ddf2a9ade684f35a6302a369",
+    "csem/runtime/libc/include/posix/sys/select.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/sys/utsname.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/sys/mman.h": "ac4b2e44f6cd28a104f3178ccb0ec5c6a4d294a2845ccb68465613e3a5bafd1b",
+    "csem/runtime/libc/include/posix/sys/msg.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/sys/resource.h": "278ba2e767a6370dade9e7dc3461bd89da193abb41f44766d5bb8ca03d100b08",
+    "csem/runtime/libc/include/posix/sys/stat.h": "f56770652e66ac532b59cb06f4d993de812cf4cff406a3edf1ded333ee0239af",
+    "csem/runtime/libc/include/posix/sys/types.h": "90caffaadbbceae75fdc4a0e1310b11855258266e396ec036090835f1f59f204",
+    "csem/runtime/libc/include/posix/sys/sem.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/sys/wait.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/sys/uio.h": "5f8a9065015196366394ce684d410e4cee87928003960275eedc4fb300cd59b4",
+    "csem/runtime/libc/include/posix/sys/socket.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/sys/shm.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/netinet/tcp.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/netinet/in.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/arpa/inet.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "csem/runtime/libc/include/posix/net/if.h": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".lake/build/bin/csem_run": "c49a278e6b2a1388c98293613eefcd7404b45e838c690f45e472cf868c4801cb"
+  },
+  "comparison": "Old/new CSem outcomes for identical source. FS also compared to hash-verified retained Sail bytes. Config Sail evidence is historical, not recertified."
+}

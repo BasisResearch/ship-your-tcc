@@ -1,0 +1,19 @@
+{
+  "kind": "config",
+  "probe": "p10_float",
+  "status": "RESIDUAL",
+  "old_status": "residual",
+  "command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+    "--impl",
+    "tcc-rv64",
+    "--address-space-top",
+    "18446744073709551615",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p10_float.c"
+  ],
+  "exit": 134,
+  "wall_seconds": 0.246,
+  "source_sha256": "8f8a202710f9eaab2a0688d73859819e5c60d7abbce685256552858db3f61eaf",
+  "defined": false,
+  "outcomes": []
+}

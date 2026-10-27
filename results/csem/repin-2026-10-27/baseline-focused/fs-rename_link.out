@@ -1,0 +1,1 @@
+Defined {value: "Specified(0)", stdout: "rename -1 EMLINK\nrename missing -1 EMLINK\nlink -1 EMLINK\nstat a 0\nstat b -1 ENOENT\n", stderr: "", blocked: "false"}

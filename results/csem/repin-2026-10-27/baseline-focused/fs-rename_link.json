@@ -1,0 +1,15 @@
+{
+  "kind": "filesystem",
+  "probe": "rename_link",
+  "status": "SAME_SAIL_OBSERVATION",
+  "command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run_image.sh",
+    "--first",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/fs/rename_link.c"
+  ],
+  "exit": 0,
+  "wall_seconds": 2.246,
+  "source_sha256": "eb56f161b2a182899db2bb054dd1f78a5edc921db196e710c660a081cc125c90",
+  "sail_stdout_sha256": "4a1502075fed63fb245cb2fd380fd8f14fa2f5fa5f6ce5eb71969acb65699def",
+  "sail_meta_sha256": "0849bfa739ab4fb9c9e31fac8180adb05c80960ce2c8ebaac817952e35ede37c"
+}

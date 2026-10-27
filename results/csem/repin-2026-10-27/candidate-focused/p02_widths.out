@@ -1,0 +1,1 @@
+Defined {value: "Specified(8)", stdout: "short=2 int=4 long=8 llong=8 ptr=8 fptr=8\nsize_t=8 ptrdiff_t=8 wchar_t=4\nINT_MAX=2147483647 LONG_MAX=9223372036854775807 ULONG_MAX=18446744073709551615\nSHRT_MIN=-32768 USHRT_MAX=65535\n", stderr: "", blocked: "false"}

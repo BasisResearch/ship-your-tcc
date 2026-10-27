@@ -1,0 +1,4 @@
+/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/repin-2026-10-27/probes/gnu-cleanup.c:2:24: error: unexpected token after 'x' and before '__attribute__'
+Please add error message for state 716 to parsers/c/c_parser_error.messages
+int main(void) { int x __attribute__((cleanup(f))) = 0; return x; }
+                       ^~~~~~~~~~~~~ 

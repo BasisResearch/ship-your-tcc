@@ -1,0 +1,25 @@
+{
+  "request": "csem-repin-baseline-20261027-01",
+  "request_id": "csem-repin-baseline-20261027-01",
+  "exit": 0,
+  "log": "build/worker-build-csem-repin-baseline-20261027-01.log",
+  "command": [
+    "flock",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/lake.lock",
+    "systemd-run",
+    "--user",
+    "--scope",
+    "-p",
+    "MemoryMax=12G",
+    "lake",
+    "build",
+    "LemLib",
+    "LemLibTests",
+    "CerberusLean",
+    "CerberusLeanTest",
+    "csem_run",
+    "csem_cparse",
+    "TccCSem"
+  ],
+  "source_hashes_verified": true
+}

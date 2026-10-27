@@ -1,0 +1,18 @@
+artifacts: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/f1a/run-m_6mggvl
+c-tests-tcc	c/tests/tcc/t42_builtins.c	CPP_FAIL	rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/tcc/t42_builtins.c:4:10: fatal error: alloca.h: No such file or directory     4 | #include <alloca.h>       |          ^~~~~~~~~~ compilation terminated.
+compcert	corpus/compcert/bench_aes.c	CPP_FAIL	rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/corpus/compcert/bench_aes.c:38:2: error: #error "unknown endianness"    38 | #error "unknown endianness"       |  ^~~~~
+tests2	vendor/tinycc/tests/tests2/106_versym.c	CPP_FAIL	rc=1 In file included from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/vendor/tinycc/tests/tests2/106_versym.c:2: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/install/defa
+tests2	vendor/tinycc/tests/tests2/114_bound_signal.c	CPP_FAIL	rc=1 In file included from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/vendor/tinycc/tests/tests2/114_bound_signal.c:2: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/instal
+tests2	vendor/tinycc/tests/tests2/115_bound_setjmp.c	CPP_FAIL	rc=1 In file included from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/vendor/tinycc/tests/tests2/115_bound_setjmp.c:3: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/instal
+tests2	vendor/tinycc/tests/tests2/116_bound_setjmp2.c	CPP_FAIL	rc=1 In file included from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/vendor/tinycc/tests/tests2/116_bound_setjmp2.c:3: /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/insta
+tests2	vendor/tinycc/tests/tests2/124_atomic_counter.c	CPP_FAIL	rc=1 In file included from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/vendor/tinycc/tests/tests2/threads.h:21,                  from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/vendor/tinycc/tests/tests2/124_atomic_coun
+tests2	vendor/tinycc/tests/tests2/144_tls.c	CPP_FAIL	rc=1 In file included from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/vendor/tinycc/tests/tests2/threads.h:21,                  from /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/vendor/tinycc/tests/tests2/144_tls.c:2: /d
+tests2	vendor/tinycc/tests/tests2/145_winarm64_interlocked.c	CPP_FAIL	rc=1 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/vendor/tinycc/tests/tests2/145_winarm64_interlocked.c:2:10: fatal error: windows.h: No such file or directory     2 | #include <windows.h>       |          ^~~~~~~~~~~ compilation terminated.
+c-tests AGREE=5 total=5
+c-tests-tcc AGREE=41 BOTH_REJECT=1 CPP_FAIL=1 total=43
+compcert AGREE=69 BOTH_REJECT=2 CPP_FAIL=1 total=72
+csmith AGREE=200 total=200
+fork-corpus AGREE=16 total=16
+minimal AGREE=113 total=113
+tcc AGREE=68 BOTH_REJECT=5 total=73
+tests2 AGREE=102 BOTH_REJECT=33 CPP_FAIL=7 total=142

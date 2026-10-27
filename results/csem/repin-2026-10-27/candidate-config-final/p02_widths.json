@@ -1,0 +1,24 @@
+{
+  "kind": "config",
+  "probe": "p02_widths",
+  "status": "SAME_OUTCOMES",
+  "old_status": "defined",
+  "command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+    "--impl",
+    "tcc-rv64",
+    "--address-space-top",
+    "18446744073709551615",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p02_widths.c"
+  ],
+  "exit": 0,
+  "wall_seconds": 0.166,
+  "source_sha256": "e3e3ef72af21b021e60894b070274e0beaf1e567d5121219e7f22d9477591ada",
+  "defined": true,
+  "outcomes": [
+    [
+      "short=2 int=4 long=8 llong=8 ptr=8 fptr=8\nsize_t=8 ptrdiff_t=8 wchar_t=4\nINT_MAX=2147483647 LONG_MAX=9223372036854775807 ULONG_MAX=18446744073709551615\nSHRT_MIN=-32768 USHRT_MAX=65535\n",
+      8
+    ]
+  ]
+}

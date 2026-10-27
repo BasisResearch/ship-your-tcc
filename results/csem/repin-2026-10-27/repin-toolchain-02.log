@@ -1,0 +1,168 @@
+Running as unit: run-p2010993-i462769153.scope; invocation ID: bec637178c9c4397bd6ef760c639d913
+
+<><> Installing new switch packages <><><><><><><><><><><><><><><><><><><><><><>
+Switch invariant: ["ocaml-system" {= "5.4.0"}]
+[NOTE] It seems you have not updated your repositories for a while. Consider updating them with:
+       opam update
+
+
+<><> Processing actions <><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+⬇ retrieved ocaml-config.3  (cached)
+∗ installed base-bigarray.base
+∗ installed base-threads.base
+∗ installed base-unix.base
+⬇ retrieved ocaml-system.5.4.0  (https://opam.ocaml.org/cache)
+∗ installed ocaml-system.5.4.0
+∗ installed ocaml-config.3
+∗ installed ocaml.5.4.0
+∗ installed base-domains.base
+∗ installed base-effects.base
+∗ installed base-nnp.base
+Done.
+# To update the current shell environment, run: eval $(opam env --switch=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/csem-704c4e69-e6d8db56/opam)
+[lem.2026-05-01] synchronised (git+file:///data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-lem#HEAD)
+lem is now pinned to git+file:///data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-lem#HEAD (version 2026-05-01)
+
+[NOTE] It seems you have not updated your repositories for a while. Consider updating them with:
+       opam update
+
+The following actions will be performed:
+=== install 8 packages
+  ∗ conf-findutils  1                   [required by lem]
+  ∗ conf-gmp        5                   [required by zarith]
+  ∗ conf-pkg-config 5                   [required by zarith]
+  ∗ lem             2026-05-01 (pinned)
+  ∗ num             1.6                 [required by lem]
+  ∗ ocamlbuild      0.16.1              [required by lem]
+  ∗ ocamlfind       1.9.8               [required by lem]
+  ∗ zarith          1.14                [required by lem]
+
+<><> Processing actions <><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+⬇ retrieved conf-gmp.5  (cached)
+⬇ retrieved conf-pkg-config.5  (cached)
+⬇ retrieved num.1.6  (cached)
+⬇ retrieved ocamlbuild.0.16.1  (cached)
+⬇ retrieved ocamlfind.1.9.8  (cached)
+∗ installed conf-findutils.1
+∗ installed conf-gmp.5
+⬇ retrieved zarith.1.14  (cached)
+∗ installed conf-pkg-config.5
+∗ installed num.1.6
+∗ installed ocamlfind.1.9.8
+∗ installed ocamlbuild.0.16.1
+∗ installed zarith.1.14
+∗ installed lem.2026-05-01
+Done.
+[NOTE] It seems you have not updated your repositories for a while. Consider updating them with:
+       opam update
+
+The following actions will be performed:
+=== install 26 packages
+  ∗ base                    v0.17.3  [required by ppx_sexp_conv]
+  ∗ cmdliner                2.1.1    [required by cerberus, cerberus-lib]
+  ∗ cppo                    1.8.0    [required by ppx_deriving]
+  ∗ csexp                   1.5.2    [required by dune-configurator]
+  ∗ dune                    3.23.1   [required by cerberus, cerberus-lib]
+  ∗ dune-configurator       3.23.1   [required by base]
+  ∗ menhir                  20260209 [required by cerberus, cerberus-lib]
+  ∗ menhirCST               20260209 [required by menhir]
+  ∗ menhirGLR               20260209 [required by menhir]
+  ∗ menhirLib               20260209 [required by menhir]
+  ∗ menhirSdk               20260209 [required by menhir]
+  ∗ ocaml-compiler-libs     v0.17.0  [required by ppxlib]
+  ∗ ocaml_intrinsics_kernel v0.17.2  [required by base]
+  ∗ parsexp                 v0.17.0  [required by sexplib]
+  ∗ pprint                  20230830 [required by cerberus, cerberus-lib]
+  ∗ ppx_derivers            1.2.1    [required by ppx_deriving]
+  ∗ ppx_deriving            6.2.0    [required by cerberus, cerberus-lib]
+  ∗ ppx_sexp_conv           v0.17.1  [required by cerberus, cerberus-lib]
+  ∗ ppxlib                  0.38.0   [required by ppx_deriving, ppx_sexp_conv]
+  ∗ ppxlib_jane             v0.17.4  [required by ppx_sexp_conv]
+  ∗ result                  1.5      [required by cerberus, cerberus-lib]
+  ∗ sexplib                 v0.17.0  [required by cerberus, cerberus-lib]
+  ∗ sexplib0                v0.17.0  [required by ppx_sexp_conv, sexplib]
+  ∗ sha                     1.15.4   [required by cerberus, cerberus-lib]
+  ∗ stdlib-shims            0.3.0    [required by sha]
+  ∗ yojson                  3.0.0    [required by cerberus, cerberus-lib]
+
+<><> Processing actions <><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+⬇ retrieved base.v0.17.3  (cached)
+⬇ retrieved cmdliner.2.1.1  (cached)
+⬇ retrieved cppo.1.8.0  (cached)
+⬇ retrieved csexp.1.5.2  (cached)
+⬇ retrieved ocaml-compiler-libs.v0.17.0  (cached)
+⬇ retrieved ocaml_intrinsics_kernel.v0.17.2  (cached)
+⬇ retrieved parsexp.v0.17.0  (cached)
+⬇ retrieved menhir.20260209, menhirCST.20260209, menhirGLR.20260209, menhirLib.20260209, menhirSdk.20260209  (cached)
+⬇ retrieved pprint.20230830  (cached)
+⬇ retrieved ppx_derivers.1.2.1  (cached)
+⬇ retrieved ppx_deriving.6.2.0  (cached)
+⬇ retrieved ppx_sexp_conv.v0.17.1  (cached)
+⬇ retrieved ppxlib_jane.v0.17.4  (cached)
+⬇ retrieved result.1.5  (cached)
+⬇ retrieved sexplib.v0.17.0  (cached)
+⬇ retrieved sexplib0.v0.17.0  (cached)
+⬇ retrieved sha.1.15.4  (cached)
+⬇ retrieved stdlib-shims.0.3.0  (cached)
+⬇ retrieved yojson.3.0.0  (cached)
+⬇ retrieved ppxlib.0.38.0  (cached)
+⬇ retrieved dune.3.23.1, dune-configurator.3.23.1  (cached)
+∗ installed cmdliner.2.1.1
+∗ installed dune.3.23.1
+∗ installed csexp.1.5.2
+∗ installed menhirCST.20260209
+∗ installed menhirGLR.20260209
+∗ installed menhirLib.20260209
+∗ installed cppo.1.8.0
+∗ installed menhirSdk.20260209
+∗ installed ocaml_intrinsics_kernel.v0.17.2
+∗ installed pprint.20230830
+∗ installed ppx_derivers.1.2.1
+∗ installed dune-configurator.3.23.1
+∗ installed result.1.5
+∗ installed stdlib-shims.0.3.0
+∗ installed sexplib0.v0.17.0
+∗ installed ocaml-compiler-libs.v0.17.0
+∗ installed sha.1.15.4
+∗ installed yojson.3.0.0
+∗ installed parsexp.v0.17.0
+∗ installed sexplib.v0.17.0
+∗ installed menhir.20260209
+∗ installed base.v0.17.3
+∗ installed ppxlib.0.38.0
+∗ installed ppxlib_jane.v0.17.4
+∗ installed ppx_sexp_conv.v0.17.1
+∗ installed ppx_deriving.6.2.0
+Done.
+Lem lean-backend-v0.1.0-alpha.1-78-ge6d8db5
+make: Entering directory '/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus'
+[MKDIR] ocaml_frontend/generated
+[LEM] generating files in [ocaml_frontend/generated] (log in [ocaml_frontend/lem.log])
+[SED] patching things up in [ocaml_frontend/generated]
+[STAMP] recording lem-sync content stamp
+check_lem_sync: recorded ocaml_frontend/lem_sync.sha256 (src 7617fc2d103c4d9719e6be54d50a4cf13f4afcfe7643f5ba567e85b34623e401, gen 0c4e8be9dce3c7100a5cd5b79c720d3b546160fa7f111628b0e6cb8764f4b927)
+[MKDIR] sibylfs/generated
+[LEM] generating files in [sibylfs/generated] (log in [sibylfs/lem.log])
+[CP] sibylfs/generated/abstract_string.mli sibylfs/generated/fs_dict_wrappers.mli sibylfs/generated/fs_interface.mli sibylfs/generated/lem_support.mli
+[CP] sibylfs/generated/abstract_string.ml sibylfs/generated/fs_dict_wrappers.ml sibylfs/generated/fs_interface.ml sibylfs/generated/fs_dump.ml sibylfs/generated/fs_printer.ml sibylfs/generated/lem_support.ml
+[SED] patching things up in [sibylfs/generated]
+make: Leaving directory '/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus'
+Warning: one state has shift/reduce conflicts.
+Warning: one state has reduce/reduce conflicts.
+Warning: one shift/reduce conflict was arbitrarily resolved.
+Warning: 4 reduce/reduce conflicts were arbitrarily resolved.
+check_lem_sync: OK (src 7617fc2d103c4d9719e6be54d50a4cf13f4afcfe7643f5ba567e85b34623e401, gen 0c4e8be9dce3c7100a5cd5b79c720d3b546160fa7f111628b0e6cb8764f4b927)
+Warning: one state has shift/reduce conflicts.
+Warning: one state has reduce/reduce conflicts.
+Warning: one shift/reduce conflict was arbitrarily resolved.
+Warning: 4 reduce/reduce conflicts were arbitrarily resolved.
+Read 1203 sample input sentences and 1203 error messages.
+Warning: one state has shift/reduce conflicts.
+Warning: one state has reduce/reduce conflicts.
+Warning: one shift/reduce conflict was arbitrarily resolved.
+Warning: 3 reduce/reduce conflicts were arbitrarily resolved.
+Warning: one state has shift/reduce conflicts.
+Warning: one state has reduce/reduce conflicts.
+Warning: one shift/reduce conflict was arbitrarily resolved.
+Warning: 4 reduce/reduce conflicts were arbitrarily resolved.
+(debug 0): constructValue_aux: is WRONG for union ==> always assigning the first member

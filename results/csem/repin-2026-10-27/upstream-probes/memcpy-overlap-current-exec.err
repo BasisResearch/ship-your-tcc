@@ -1,0 +1,18 @@
+cerberus: internal error, uncaught exception:
+          Failure("Concrete.memcpy: refused - memcpy on overlapping objects (allocation 1: destination [281474976710646, 281474976710648) and source [281474976710645, 281474976710647), n = 2); C17 7.24.2.1#2 undefined behaviour; upstream copies byte-wise under impl_mem.ml memcpy 'TODO: if ptrval1 and ptrval2 overlap ==> UB' (b9aeedcb4 :2636) - the fork refuses rather than decides (item G1, 2026-10-20)")
+          Raised at Stdlib.failwith in file "stdlib.ml", line 29, characters 17-33
+          Called from Cerb_frontend__Impl_mem.Concrete.memcpy.overlap_refusal in file "memory/concrete/impl_mem.ml", lines 2729-2730, characters 6-134
+          Called from Cerb_frontend__Driver.perform_memop_request2 in file "ocaml_frontend/generated/driver.ml", line 751, characters 17-67
+          Called from Cerb_frontend__Driver.advance_step in file "ocaml_frontend/generated/driver.ml", line 994, characters 10-64
+          Called from Cerb_frontend__Driver.drive_nonmemory_steps_aux2.(fun) in file "ocaml_frontend/generated/driver.ml", line 1058, characters 12-37
+          Called from Cerb_frontend__Nondeterminism.nd_bind.(fun) in file "ocaml_frontend/generated/nondeterminism.ml", line 64, characters 26-31
+          Called from Cerb_frontend__Nondeterminism.nd_bind.(fun) in file "ocaml_frontend/generated/nondeterminism.ml", line 62, characters 11-19
+          Called from Cerb_frontend__Nondeterminism.nd_bind.(fun) in file "ocaml_frontend/generated/nondeterminism.ml", line 62, characters 11-19
+          Called from Cerb_frontend__Nondeterminism.nd_bind.(fun) in file "ocaml_frontend/generated/nondeterminism.ml", line 62, characters 11-19
+          Called from Cerb_frontend__Smt2.runND.aux in file "ocaml_frontend/smt2.ml", line 38, characters 10-18
+          Called from Cerb_frontend__Smt2.runND in file "ocaml_frontend/smt2.ml", line 140, characters 22-33
+          Called from Cerb_backend__Driver_ocaml.batch_drive in file "backend/common/driver_ocaml.ml", line 170, characters 15-115
+          Called from Cerb_backend__Pipeline.interp_backend in file "backend/common/pipeline.ml", line 610, characters 21-85
+          Called from Dune__exe__Main.cerberus in file "backend/driver/main.ml", lines 313-339, characters 8-15
+          Called from Cmdliner_term.app.(fun) in file "cmdliner_term.ml", line 22, characters 19-24
+          Called from Cmdliner_eval.run_parser in file "cmdliner_eval.ml", line 41, characters 7-16

@@ -1,0 +1,98 @@
+test_all_metadata_and_option_distinctions (__main__.SchemaTests.test_all_metadata_and_option_distinctions) ... ok
+test_frozen_schema (__main__.SchemaTests.test_frozen_schema) ... ok
+test_strict_utf8_and_surrogate (__main__.SchemaTests.test_strict_utf8_and_surrogate) ... ok
+test_unbounded_positive_text (__main__.SchemaTests.test_unbounded_positive_text) ... ok
+test_absent_model_and_malformed_panic_never_become_legacy (__main__.CaptureTests.test_absent_model_and_malformed_panic_never_become_legacy) ... ok
+test_all_positions_checked_and_bad_tail_preserves_invariant (__main__.CaptureTests.test_all_positions_checked_and_bad_tail_preserves_invariant) ... ok
+test_batch_header_integrity_and_escape_errors (__main__.CaptureTests.test_batch_header_integrity_and_escape_errors) ... ok
+test_cli_collection_with_duplicates_and_positions (__main__.CaptureTests.test_cli_collection_with_duplicates_and_positions) ... ok
+test_embedded_stop_and_resource_markers_are_data (__main__.CaptureTests.test_embedded_stop_and_resource_markers_are_data) ... ok
+test_envelope_less_model_failure_is_not_attributed (__main__.CaptureTests.test_envelope_less_model_failure_is_not_attributed) ... ok
+test_exact_fuel_frames (__main__.CaptureTests.test_exact_fuel_frames) ... ok
+test_legacy_payload_is_bytes_and_never_shared (__main__.CaptureTests.test_legacy_payload_is_bytes_and_never_shared) ... ok
+test_model_collection_and_fuel_with_execution_indices (__main__.CaptureTests.test_model_collection_and_fuel_with_execution_indices) ... ok
+test_ordinary_absence_is_not_empty_capture (__main__.CaptureTests.test_ordinary_absence_is_not_empty_capture) ... ok
+test_panic_trace_suffix_grammar (__main__.CaptureTests.test_panic_trace_suffix_grammar) ... ok
+test_program_data_and_ordinary_error_have_no_authority (__main__.CaptureTests.test_program_data_and_ordinary_error_have_no_authority) ... ok
+test_unmigrated_refusal_text_is_unattributed (__main__.CaptureTests.test_unmigrated_refusal_text_is_unattributed) ... ok
+test_wrong_channels_statuses_and_incomplete_records (__main__.CaptureTests.test_wrong_channels_statuses_and_incomplete_records) ... ok
+test_duplicate_report_is_a_problem (__main__.SwitchReportTests.test_duplicate_report_is_a_problem) ... ok
+test_malformed_report_is_a_problem (__main__.SwitchReportTests.test_malformed_report_is_a_problem) ... ok
+test_other_stderr_text_is_still_a_problem (__main__.SwitchReportTests.test_other_stderr_text_is_still_a_problem) ... ok
+test_well_formed_report_is_admitted_and_retained (__main__.SwitchReportTests.test_well_formed_report_is_admitted_and_retained) ... ok
+test_actual_channel_adapters (__main__.LeanConformanceTests.test_actual_channel_adapters) ... 
+  test_actual_channel_adapters (__main__.LeanConformanceTests.test_actual_channel_adapters) (mode='refuse') ... FAIL
+  test_actual_channel_adapters (__main__.LeanConformanceTests.test_actual_channel_adapters) (mode='invariant-cli') ... FAIL
+  test_actual_channel_adapters (__main__.LeanConformanceTests.test_actual_channel_adapters) (mode='typed') ... FAIL
+  test_actual_channel_adapters (__main__.LeanConformanceTests.test_actual_channel_adapters) (mode='pure') ... FAIL
+  test_actual_channel_adapters (__main__.LeanConformanceTests.test_actual_channel_adapters) (mode='refuse-m') ... FAIL
+test_cross_language_schema_corpus (__main__.LeanConformanceTests.test_cross_language_schema_corpus) ... FAIL
+test_lean_rendering (__main__.LeanConformanceTests.test_lean_rendering) ... FAIL
+
+======================================================================
+FAIL: test_actual_channel_adapters (__main__.LeanConformanceTests.test_actual_channel_adapters) (mode='refuse')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/csem/scripts/test_stops.py", line 428, in test_actual_channel_adapters
+    self.assertEqual(child.returncode, rc, (child.stdout, child.stderr))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 2 : (b'', b'Failed to connect to user scope bus via local transport: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user)\n')
+
+======================================================================
+FAIL: test_actual_channel_adapters (__main__.LeanConformanceTests.test_actual_channel_adapters) (mode='invariant-cli')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/csem/scripts/test_stops.py", line 428, in test_actual_channel_adapters
+    self.assertEqual(child.returncode, rc, (child.stdout, child.stderr))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 2 : (b'', b'Failed to connect to user scope bus via local transport: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user)\n')
+
+======================================================================
+FAIL: test_actual_channel_adapters (__main__.LeanConformanceTests.test_actual_channel_adapters) (mode='typed')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/csem/scripts/test_stops.py", line 430, in test_actual_channel_adapters
+    self.assertFalse(result.problems, (result.problems, child.stdout, child.stderr))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: [StopProblem(channel='stderr', position=SourcePosition(line=1, offset=0), reason='unrecognized diagnostic or unreviewed panic origin')] is not false : ([StopProblem(channel='stderr', position=SourcePosition(line=1, offset=0), reason='unrecognized diagnostic or unreviewed panic origin')], b'', b'Failed to connect to user scope bus via local transport: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user)\n')
+
+======================================================================
+FAIL: test_actual_channel_adapters (__main__.LeanConformanceTests.test_actual_channel_adapters) (mode='pure')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/csem/scripts/test_stops.py", line 428, in test_actual_channel_adapters
+    self.assertEqual(child.returncode, rc, (child.stdout, child.stderr))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 134 : (b'', b'Failed to connect to user scope bus via local transport: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user)\n')
+
+======================================================================
+FAIL: test_actual_channel_adapters (__main__.LeanConformanceTests.test_actual_channel_adapters) (mode='refuse-m')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/csem/scripts/test_stops.py", line 428, in test_actual_channel_adapters
+    self.assertEqual(child.returncode, rc, (child.stdout, child.stderr))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 134 : (b'', b'Failed to connect to user scope bus via local transport: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user)\n')
+
+======================================================================
+FAIL: test_cross_language_schema_corpus (__main__.LeanConformanceTests.test_cross_language_schema_corpus)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/csem/scripts/test_stops.py", line 396, in test_cross_language_schema_corpus
+    self.assertEqual(result.returncode, 0, result.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : b'Failed to connect to user scope bus via local transport: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user)\n'
+
+======================================================================
+FAIL: test_lean_rendering (__main__.LeanConformanceTests.test_lean_rendering)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/csem/scripts/test_stops.py", line 409, in test_lean_rendering
+    self.assertEqual(result.returncode, 0, result.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : b'Failed to connect to user scope bus via local transport: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user)\n'
+
+----------------------------------------------------------------------
+Ran 25 tests in 0.151s
+
+FAILED (failures=7)

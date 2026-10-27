@@ -1,0 +1,1 @@
+Defined {value: "Specified(1)", stdout: "EDOM=33 ERANGE=34 EILSEQ=138 ENOENT=2 EINVAL=22\nEXIT_SUCCESS=0 EXIT_FAILURE=1 errno=0\nset=34\n", stderr: "", blocked: "false"}

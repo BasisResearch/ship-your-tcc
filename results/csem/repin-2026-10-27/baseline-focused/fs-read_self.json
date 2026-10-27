@@ -1,0 +1,15 @@
+{
+  "kind": "filesystem",
+  "probe": "read_self",
+  "status": "SAME_SAIL_OBSERVATION",
+  "command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run_image.sh",
+    "--first",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/fs/read_self.c"
+  ],
+  "exit": 0,
+  "wall_seconds": 2.847,
+  "source_sha256": "2e93039a6cbc2ab6ea7510d3a8f4fbb23f9934f28a93f2b5d6bb24b776285460",
+  "sail_stdout_sha256": "9876894a73a329e82804e444dd192a66e5651eb9c0777b1d50aa09970d81acde",
+  "sail_meta_sha256": "975bceabe73b00005a35b6cd847762297ca5d4df5e601e20c6d01230829118ca"
+}

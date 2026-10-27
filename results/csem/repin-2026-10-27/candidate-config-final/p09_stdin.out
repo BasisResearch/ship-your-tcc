@@ -1,0 +1,4 @@
+EXECUTION 0:
+Defined {value: "Specified(0)", stdout: "eof=1 feof=1\n", stderr: "", blocked: "false"}
+EXECUTION 1:
+Defined {value: "Specified(0)", stdout: "eof=1 feof=1\n", stderr: "", blocked: "false"}

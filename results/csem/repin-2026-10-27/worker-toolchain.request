@@ -1,0 +1,15 @@
+{
+  "request": "csem-repin-toolchain-20261027-02",
+  "purpose": "Matching pinned generator and pristine oracle in a pin-addressed worktree-local switch. Supersedes toolchain request 01; does not mutate shared toolchains.",
+  "commands": [
+    [
+      "bash",
+      "build/repin-toolchain-02.sh"
+    ]
+  ],
+  "sha256": {
+    "build/repin-toolchain-02.sh": "b7842765599325b33dae81070b50d54593c5d45bdd0c1de77dc31589635a02af"
+  },
+  "cap": "free -g >=25GB; flock shared SYT_LAKE_LOCK; systemd-run --user --scope -p MemoryMax=12G",
+  "result": "build/worker-toolchain.result"
+}

@@ -1,0 +1,11 @@
+{
+  "request": "csem-repin-full-gate-20261027-06",
+  "request_id": "csem-repin-full-gate-20261027-06",
+  "exit": 0,
+  "log": "build/worker-build-csem-repin-full-gate-20261027-06.log",
+  "command": [
+    "scripts/check.sh",
+    "--csem"
+  ],
+  "source_hashes_verified": true
+}

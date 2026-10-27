@@ -1,0 +1,34 @@
+== csem (1) copy-set sync, lem-sync stamp
+check_handwritten_sync: OK (54 hand-written files byte-identical to lean_frontend/generated/; manifest lean_frontend/handwritten_copy.manifest)
+check_lem_sync: lean OK (src b5cac17da6b78018a9aea3edf72fd72871e75df1c5d139f79ececf63f0219391, gen 51ab6b630dff21dfe674e5827f4a9c17c3b1ee715e7d02a298e8b48785bb8d06)
+== csem (3) unit executables
+  ok   core-parser-test
+  ok   effects-proof-test
+  ok   totality-proof-test
+  ok   fresh-int-test
+  ok   pp-test
+  ok   fuel-exemplar-test
+  ok   monadic-failstop-test
+  ok   allocator-soundness-test
+  ok   float-literal-test
+  ok   are-compatible-test
+  ok   many-restatement-test
+  ok   opaque-failure-test
+  ok   enum-data-test
+  ok   run-digest-test
+  ok   cabs-import-test
+  ok   match-pattern-arity-test
+  ok   memory-access-test
+  ok   reconstruct-legacy-test
+  ok   pnvi-arms-test
+== csem (4) purity, totality, axiom census, sorry token
+check_exec_purity: SELFTEST OK (17 plants with the declared verdict and message; real tree CLEAN)
+check_exec_purity: CLEAN (11 modules)
+check_exec_totality: CLEAN (22 generated modules + hand-written CerbND, 0 allowlisted)
+test_exec_totality: OK (8 plants and 2 clean controls)
+check_theorem_axioms: hand-written axiom census OK (0 axioms — the arc-17 S2b end state)
+check_theorem_axioms: generated-tree census OK (230 files: 0 axioms, boundary-opaque population = the 2 registered rows exactly-once (incl. CerbFuel.fuelExhaustedLoc), 0 unsafeCast)
+check_theorem_axioms: C2 ratchet OK (343 files scanned recursively: 0 axioms, 0 runEffectful, seam population = the 8 pinned path-qualified counted rows exactly incl. the extern class; lem tests/ scaffolds asserted outside the surface)
+check_theorem_axioms: D14 grep-ban OK (no native_decide/bv_decide in 1 tree(s) + 54 hand-written seam files + LemLibTest.lean)
+check_theorem_axioms: FAIL — exemplar probe for 'core_object_type_of_ctype' did not run cleanly (matched 0 lines; fail-closed)
+csem_gates: FAIL: axiom census

@@ -1,0 +1,43 @@
+internal error: Desugaring_init.moveTo_aux: refused - union initializer designating a member other than the first (union U: designator .b, first member a); C17 6.7.9#17-19 (a designator selects the member to initialize, in list order; subobjects not initialized explicitly are initialized implicitly); upstream's desugaring_init.lem constructValue_aux builds every braced union initializer as the FIRST member whatever the designators say ('TODO: this is only correct if the first member was the one initialised' b9aeedcb4 :576; 'constructValue_aux: is WRONG for union ==> always assigning the first member' :592) - the fork refuses rather than decides (item U, 2026-10-20)
+cerberus: internal error, uncaught exception:
+          Failure("internal error: Desugaring_init.moveTo_aux: refused - union initializer designating a member other than the first (union U: designator .b, first member a); C17 6.7.9#17-19 (a designator selects the member to initialize, in list order; subobjects not initialized explicitly are initialized implicitly); upstream's desugaring_init.lem constructValue_aux builds every braced union initializer as the FIRST member whatever the designators say ('TODO: this is only correct if the first member was the one initialised' b9aeedcb4 :576; 'constructValue_aux: is WRONG for union ==> always assigning the first member' :592) - the fork refuses rather than decides (item U, 2026-10-20)")
+          Raised at Stdlib.failwith in file "stdlib.ml", line 29, characters 17-33
+          Called from Cerb_frontend__Desugaring_init.moveTo.(fun) in file "ocaml_frontend/generated/desugaring_init.ml", line 430, characters 6-66
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__Cabs_to_ail_effect.catch.(fun) in file "ocaml_frontend/generated/cabs_to_ail_effect.ml", line 345, characters 9-12
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__State_exception.stExpect_bind.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 19, characters 24-29
+          Called from Cerb_frontend__State_exception.state_except_eval.(fun) in file "ocaml_frontend/generated/state_exception.ml", line 94, characters 94-99
+          Called from Cerb_backend__Pipeline.c_frontend.desugar in file "backend/common/pipeline.ml", lines 210-211, characters 4-23
+          Called from Cerb_backend__Pipeline.c_frontend.(fun) in file "backend/common/pipeline.ml", line 260, characters 2-20
+          Called from Cerb_backend__Pipeline.c_frontend_and_elaboration in file "backend/common/pipeline.ml", line 265, characters 2-73
+          Called from Dune__exe__Main.frontend in file "backend/driver/main.ml", line 29, characters 4-60
+          Called from Dune__exe__Main.cerberus.main.(fun) in file "backend/driver/main.ml", line 158, characters 6-47
+          Called from Cerb_frontend__Exception.except_foldlM.(fun) in file "ocaml_frontend/generated/exception.ml", line 69, characters 18-25
+          Called from Dune__exe__Main.cerberus.(fun) in file "backend/driver/main.ml", line 318, characters 8-24
+          Called from Dune__exe__Main.cerberus in file "backend/driver/main.ml", lines 313-339, characters 8-15
+          Called from Cmdliner_term.app.(fun) in file "cmdliner_term.ml", line 22, characters 19-24
+          Called from Cmdliner_eval.run_parser in file "cmdliner_eval.ml", line 41, characters 7-16

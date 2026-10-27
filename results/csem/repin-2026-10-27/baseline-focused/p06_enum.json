@@ -1,0 +1,19 @@
+{
+  "kind": "config",
+  "probe": "p06_enum",
+  "status": "RESIDUAL",
+  "old_status": "residual",
+  "command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+    "--impl",
+    "tcc-rv64",
+    "--address-space-top",
+    "18446744073709551615",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p06_enum.c"
+  ],
+  "exit": 1,
+  "wall_seconds": 0.13,
+  "source_sha256": "83bd64f96527333af0a06564eda4f78a166a37193c488fa803e3a577c35e6c20",
+  "outcomes": [],
+  "defined": false
+}

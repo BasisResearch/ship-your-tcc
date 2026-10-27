@@ -1,0 +1,2 @@
+(debug 0): constructValue_aux: is WRONG for union ==> always assigning the first member
+Time spent: 0.030227 seconds

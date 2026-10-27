@@ -1,0 +1,19 @@
+{
+  "kind": "config",
+  "probe": "p05_bitfield",
+  "status": "RESIDUAL",
+  "old_status": "residual",
+  "command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+    "--impl",
+    "tcc-rv64",
+    "--address-space-top",
+    "18446744073709551615",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p05_bitfield.c"
+  ],
+  "exit": 1,
+  "wall_seconds": 0.143,
+  "source_sha256": "beaa308ca110be810c782bb7d7ec117226adeb818f623dba4e036849b6f0fbbd",
+  "defined": false,
+  "outcomes": []
+}
