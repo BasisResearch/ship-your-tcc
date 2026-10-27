@@ -75,3 +75,12 @@
   integration on Oct 27; no OOM, and overlap ended before further builds.
   check.sh and the Certora helper now derive the default from Git's common
   directory, so worktree gates serialize even without the environment.
+
+- F3 arena collection must stop before executing tcc_baremetal_enter. Running
+  the generated program first misclassified 198 cgen and 50 Csmith compilations
+  as harness limits. The explicit handoff collector recovers all 248. An arena
+  file left by a limited/trapping process is still insufficient: require a
+  consistent completion record and validate serialized length, including caches.
+- Repin workers cannot resolve GitHub or open the systemd bus in their sandbox.
+  Lead-fetched immutable upstream/Lem checkouts plus frozen-input build requests
+  resolve this; do not resend a task that ends at those infrastructure checks.
