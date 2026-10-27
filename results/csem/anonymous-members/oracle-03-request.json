@@ -1,0 +1,31 @@
+{
+  "cwd": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line",
+  "revision": "71c59030a00c932571bc23c18e6b5be74422f80c",
+  "targets": [],
+  "commands": [
+    [
+      "bash",
+      "scripts/csem_fork_oracle.sh",
+      "--build"
+    ]
+  ],
+  "command": [
+    "bash",
+    "scripts/csem_fork_oracle.sh",
+    "--build"
+  ],
+  "sha256": {
+    "csem/frontend/model/ail/genTyping.lem": "879a4a963d8df0305dfcbe48ebd25dbef2dead1504425bc8f9108f30571b86f4",
+    "csem/frontend/model/cabs_to_ail.lem": "c26bef1b7325edf99c09e892658b156e0d15c5b430d1afd450819f5f0192c971",
+    "csem/frontend/model/ctype.lem": "ee36889f63218651ebbd7685e75ca606e70b0152c56c49917e1d39b3f19cef11",
+    "csem/frontend/model/desugaring_init.lem": "ce85cb100b594f7cee95be3317b7e7ed1c366e16a99830f04f548c7c0b4b8362",
+    "scripts/csem_env.sh": "d07848c8e542dd495bf13ce7ab0a7b4399bb5c3e6ff8178587b1e36ce1eb1978",
+    "scripts/csem_fork_oracle.sh": "49d593b29b2b8d49554710ea97222dec3d1b4165aa545438de3cbad682d4199e",
+    "vendor/CSEM_REV": "f4728490acefb712e9ea36f3c89ee387c98b31f8bb297f639ed71f520b92dfd6"
+  },
+  "cap": "free -g >=25GB; shared root build/lake.lock; systemd-run --user --scope -p MemoryMax=12G",
+  "result_path": "build/worker-toolchain.result",
+  "reason": "Anonymous-member physical containers and promoted lookup paths. Local capped build denied systemd bus; frozen sources for lead service, no uncapped fallback. Isolated oracle overlays four explicit shared sources; pristine and shared opam read-only.",
+  "created_ns": 1793137096495931381,
+  "request_id": "anonymous-oracle-0ddc0aefaa7a6e92929896b4672f61eecaf7125b6fa05adb7d00d3839a77e438"
+}

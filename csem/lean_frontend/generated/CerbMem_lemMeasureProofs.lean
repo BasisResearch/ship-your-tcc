@@ -160,12 +160,12 @@ def W (v : Entry) : Nat :=
   ((L.filter (fun v' => decide (R v' ≤ R v))).map (fun v' => defSize v'.2 + 2)).sum
 
 /-- The tag potential of a ctype: the weight of the entry its head tag
-    resolves to (struct tags in `tagDefs`, union tags in `ambient`). -/
-def tp : ctype → Nat
+    resolves to in the explicit layout table (for both aggregate kinds). -/
+def tp (ambient tagDefs : CerbTags.TagDefsMap) (R : Entry → Nat) (L : List Entry) : ctype → Nat
   | Ctype _ (.Struct t) => match lookup tagDefs t with | some v => W R L v | none => 0
-  | Ctype _ (.Union0 t) => match lookup ambient t with | some v => W R L v | none => 0
-  | Ctype _ (.Array0 c _) => tp c
-  | Ctype _ (.Atomic c) => tp c
+  | Ctype _ (.Union0 t) => match lookup tagDefs t with | some v => W R L v | none => 0
+  | Ctype _ (.Array0 c _) => tp ambient tagDefs R L c
+  | Ctype _ (.Atomic c) => tp ambient tagDefs R L c
   | Ctype _ _ => 0
 
 def pot (ty : ctype) : Nat := ctype.lemSize ty + tp ambient tagDefs R L ty
@@ -269,11 +269,11 @@ theorem pot_struct_none (an : List annot) (t : sym) (h : lookup tagDefs t = none
     pot ambient tagDefs R L (Ctype an (.Struct t)) = 2 := by
   simp only [pot, tp, ctype.lemSize, ctype_.lemSize, h]
 
-theorem pot_union (an : List annot) (t : sym) (v : Entry) (h : lookup ambient t = some v) :
+theorem pot_union (an : List annot) (t : sym) (v : Entry) (h : lookup tagDefs t = some v) :
     pot ambient tagDefs R L (Ctype an (.Union0 t)) = 2 + W R L v := by
   simp only [pot, tp, ctype.lemSize, ctype_.lemSize, h]
 
-theorem pot_union_none (an : List annot) (t : sym) (h : lookup ambient t = none) :
+theorem pot_union_none (an : List annot) (t : sym) (h : lookup tagDefs t = none) :
     pot ambient tagDefs R L (Ctype an (.Union0 t)) = 2 := by
   simp only [pot, tp, ctype.lemSize, ctype_.lemSize, h]
 
@@ -289,9 +289,9 @@ theorem tp_spec : ∀ (y : ctype), tp ambient tagDefs R L y = 0 ∨
     | some v => exact Or.inr ⟨t, List.mem_singleton_self t, v, Or.inl h, rfl⟩
   | Ctype _ (.Union0 t) => by
     simp only [tp, refsOf]
-    cases h : lookup ambient t with
+    cases h : lookup tagDefs t with
     | none => exact Or.inl rfl
-    | some v => exact Or.inr ⟨t, List.mem_singleton_self t, v, Or.inr h, rfl⟩
+    | some v => exact Or.inr ⟨t, List.mem_singleton_self t, v, Or.inl h, rfl⟩
   | Ctype _ (.Array0 c _) => by simp only [tp, refsOf]; exact tp_spec c
   | Ctype _ (.Atomic c) => by simp only [tp, refsOf]; exact tp_spec c
   | Ctype _ .Void0 => Or.inl rfl
@@ -521,13 +521,13 @@ theorem layout_stable_aux [CerbImplCfg.Impl]
       case Union0 t =>
         split
         · rename_i s l membrs heq
-          have hl : lookup ambient t = some (l, UnionDef membrs) := lookup_of_entry heq
+          have hl : lookup tagDefs t = some (l, UnionDef membrs) := lookup_of_entry heq
           rw [pot_union ambient tagDefs R L an t _ hl] at hk hf hg
           apply lfoldl_congr
           intro acc memb hmemb
           obtain ⟨ident, at_, al, q, ty⟩ := memb
           dsimp only
-          have hm := mPot_le ambient tagDefs R L hR hLS hLU (Or.inr hl)
+          have hm := mPot_le ambient tagDefs R L hR hLS hLU (Or.inl hl)
             (fun y hy => mem_memberTypes_of_union membrs ⟨(ident, (at_, al, q, ty)), hmemb, hy⟩)
           simp only at hm
           rw [ihM al ty f g (by omega) (by omega) (by omega)]
@@ -576,7 +576,7 @@ theorem layout_stable_aux [CerbImplCfg.Impl]
       case Union0 t =>
         split
         · rename_i s l membrs heq
-          have hl : lookup ambient t = some (l, UnionDef membrs) := lookup_of_entry heq
+          have hl : lookup tagDefs t = some (l, UnionDef membrs) := lookup_of_entry heq
           rw [pot_union ambient tagDefs R L an t _ hl] at hk hf hg
           have hfold : ∀ (init : Nat × Nat), membrs.foldl (fun (acc : Nat × Nat) memb =>
               let (accSize, accAlign) := acc
@@ -593,7 +593,7 @@ theorem layout_stable_aux [CerbImplCfg.Impl]
             obtain ⟨accSize, accAlign⟩ := acc
             obtain ⟨ident, at_, al, q, ty⟩ := memb
             dsimp only
-            have hm := mPot_le ambient tagDefs R L hR hLS hLU (Or.inr hl)
+            have hm := mPot_le ambient tagDefs R L hR hLS hLU (Or.inl hl)
               (fun y hy => mem_memberTypes_of_union membrs ⟨(ident, (at_, al, q, ty)), hmemb, hy⟩)
             simp only at hm
             have hp : pot ambient tagDefs R L ty ≤ mPot ambient tagDefs R L al ty := Nat.le_max_left _ _

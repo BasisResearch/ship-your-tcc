@@ -19,6 +19,41 @@ let lookup_tag_definition s sym =
   Maybe.map (fun (_, _, z) -> z) (List.lookup sym s.tag_definitions)
 
 
+(* Physical members, including a flexible member for source lookup.  Anonymous
+   containers are ordinary members; member_paths supplies promotion. *)
+let source_members sigm tag =
+  match lookup_tag_definition sigm tag with
+    | Just (StructDef xs Nothing) -> xs
+    | Just (StructDef xs (Just (FlexibleArrayMember attrs ident qs ty))) ->
+        xs ++ [(ident, (attrs, Nothing, qs, Ctype [] (Array ty Nothing)))]
+    | Just (UnionDef xs) -> xs
+    | _ -> []
+  end
+
+let member_access_path sigm physical ty ident =
+  let paths = member_paths (1 + List.length sigm.tag_definitions) (source_members sigm) ty in
+  Maybe.map (fun path -> path.member_path_steps)
+    (List.lookup ident (List.filter (fun (_, path) ->
+       if physical then List.length path.member_path_steps = 1 else path.member_path_visible
+    ) paths))
+
+let source_member_path sigm ty ident = member_access_path sigm false ty ident
+
+(* Build typed ordinary member operations.  The root expression occurs once,
+   and each physical edge combines qualifiers exactly as a written '.' does. *)
+let annotate_member_path loc is_ptr root_category root path =
+  let (AnnotatedExpression cat annots at expr, _, _) =
+    List.foldl (fun (base, cat, ptr) (ident, qs, ty) ->
+      let child_cat = match cat with
+        | GenLValueType base_qs _ _ ->
+            GenLValueType (combine_qualifiers base_qs qs) ty false
+        | GenRValueType _ -> GenRValueType (GenTypes.inject_type ty)
+      end in
+      let child = if ptr then AilEmemberofptr base ident else AilEmemberof base ident in
+      (AnnotatedExpression child_cat [] loc child, child_cat, false)
+    ) (root, root_category, is_ptr) path in
+  (expr, cat)
+
 (* NOTE: move in_range and try_ranges inside gen_typing_type_of_constant if Lem ever allows
    recursive functions inside other functions... *)
 let in_range loc (n: integer) ity =
@@ -1142,7 +1177,17 @@ let rec annotate_expression annotate_block sigm gamm ctx (AnnotatedExpression ()
           E.constraint_violation loc AssertMacroExpressionScalarType
     
     | AilEoffsetof ty ident ->
-        E.return (AilEoffsetof ty ident, GenRValueType (GenBasic (GenInteger SizeT)))
+        let cat = GenRValueType (GenBasic (GenInteger SizeT)) in
+        match source_member_path sigm ty ident with
+          | Just path ->
+              let zero = AnnotatedExpression cat [] loc (AilEconst (ConstantInteger (IConstant 0 Decimal Nothing))) in
+              let (AnnotatedExpression _ _ _ expr, _) = List.foldl (fun (acc, parent_ty) (name, _, child_ty) ->
+                let edge = AnnotatedExpression cat [] loc (AilEoffsetof parent_ty name) in
+                (AnnotatedExpression cat [] loc (AilEbinary acc (Arithmetic Add) edge), child_ty)
+              ) (zero, ty) path in
+              E.return (expr, cat)
+          | Nothing -> E.constraint_violation loc (MemberofNoMemberLvalue ident no_qualifiers ty)
+        end
     
     | AilEgeneric e _ gas ->
         annotate_rvalue e >>= fun (e', gty) ->
@@ -1160,177 +1205,63 @@ let rec annotate_expression annotate_block sigm gamm ctx (AnnotatedExpression ()
           end
 
     | AilEmemberof e memb_ident ->
-        (* TODO: factorise *)
         annotate_expression CTXmemberof e >>= fun a_e ->
-        (* the value of the AilEmemberof operator is an lvalue if [e] is an lvalue *)
         match GenTypes.genTypeCategoryOf a_e with
-          | GenLValueType qs ty _ ->
-              (* NOTE: the member is not a "register" regardless of whether the
-                 struct/union was *)
-              (* NOTE: the qualifiers of the value are the combination of the ones
-                of the left operand [e] and the ones in the declaration of the
-                 member type (see §6.5.2.3#3 and #8) *)
-              (* NOTE: we use unatomic_ here because §6.5.2.3#1 says the first operand must be
-                 "atomic, qualified, or unqualified structure or union type" *)
+          | (GenLValueType qs ty _ as cat) ->
               if AAux.is_incomplete sigm ty then
-                  E.constraint_violation (locOf e) (MemberofIncompleteLvalue qs ty)
+                E.constraint_violation (locOf e) (MemberofIncompleteLvalue qs ty)
               else match unatomic_ ty with
-                | Struct tag_sym ->
-                    let do_fail =
-                      E.constraint_violation (Loc.with_cursor_from (Loc.locOf e) (Loc.locOf memb_ident))
-                        (MemberofNoMemberLvalue memb_ident qs ty) in
-                    match lookup_tag_definition sigm tag_sym with
-                      | Just (StructDef membersDefs flexible_opt) ->
-                          match (List.lookup memb_ident membersDefs, flexible_opt) with
-                            | (Just (_, align_opt, memb_qs, memb_ty), _) ->
-                                E.return ( AilEmemberof a_e memb_ident
-                                         , GenLValueType (combine_qualifiers qs memb_qs) memb_ty false )
-                            | (Nothing, Just (FlexibleArrayMember attrs flex_ident flex_qs flex_elem_ty)) ->
-                                if memb_ident = flex_ident then
-                                  E.return ( AilEmemberof a_e memb_ident
-                                           , GenLValueType (combine_qualifiers qs flex_qs) (Ctype [] (Array flex_elem_ty Nothing)) false )
-                                else
-                                  do_fail
-                            | (Nothing, Nothing) ->
-                                do_fail
-                          end
-                      | _ ->
-                          error "annotate_expression(AilEmemberof struct): failed to find a valid tag definition"
+                | Struct _ ->
+                    match member_access_path sigm (is_physical_member_operation std_annots) ty memb_ident with
+                      | Just path -> E.return (annotate_member_path loc false cat a_e path)
+                      | Nothing -> E.constraint_violation (with_cursor_from (locOf e) (locOf memb_ident))
+                          (MemberofNoMemberLvalue memb_ident qs ty)
                     end
-                | Union tag_sym ->
-                    match lookup_tag_definition sigm tag_sym with
-                      | Just (UnionDef membersDefs) ->
-                          match List.lookup memb_ident membersDefs with
-                            | Just (_, align_opt, memb_qs, memb_ty) ->
-                                E.return ( AilEmemberof a_e memb_ident
-                                         , GenLValueType (combine_qualifiers qs memb_qs) memb_ty false )
-                            | Nothing ->
-                                E.constraint_violation (with_cursor_from (locOf e) (locOf memb_ident))
-                                                       (MemberofNoMemberLvalue memb_ident qs ty)
-                          end
-                      | _ ->
-                          error "annotate_expression(AilEmemberof union): failed to find a valid tag definition"
+                | Union _ ->
+                    match member_access_path sigm (is_physical_member_operation std_annots) ty memb_ident with
+                      | Just path -> E.return (annotate_member_path loc false cat a_e path)
+                      | Nothing -> E.constraint_violation (with_cursor_from (locOf e) (locOf memb_ident))
+                          (MemberofNoMemberLvalue memb_ident qs ty)
                     end
-                | _ ->
-                    E.constraint_violation (with_cursor_from (locOf e) loc) (MemberofReferenceBaseTypeLvalue qs ty)
+                | _ -> E.constraint_violation (with_cursor_from (locOf e) loc) (MemberofReferenceBaseTypeLvalue qs ty)
               end
-          | GenRValueType gty ->
-              (* NOTE: even so we are dealing with a rvalue, the memberof operator might be
-                 inside a sizeof(), and therefore not executed.
-                 So the UB from §6.5.2.3#5, doesn't necessarily happens here *)
-              let do_struct tag_sym =
-                let do_fail =
-                  E.constraint_violation (Loc.with_cursor_from (Loc.locOf e) (Loc.locOf memb_ident))
-                    (MemberofNoMemberRvalue memb_ident gty) in
-                match lookup_tag_definition sigm tag_sym with
-                  | Just (StructDef membersDefs flexible_opt) ->
-                      match (List.lookup memb_ident membersDefs, flexible_opt) with
-                        | (Just (_, align_opt, _, memb_ty), _) ->
-                            E.return (AilEmemberof a_e memb_ident, GenRValueType (GenTypes.inject_type memb_ty))
-                        | (Nothing, Just (FlexibleArrayMember attrs flex_ident flex_qs flex_elem_ty)) ->
-                            if memb_ident = flex_ident then
-                              E.return ( AilEmemberof a_e memb_ident
-                                       , GenRValueType (GenTypes.inject_type (Ctype [] (Array flex_elem_ty Nothing))) )
-                            else
-                              do_fail
-                        | (Nothing, Nothing) ->
-                            do_fail
-                      end
-                  | _ ->
-                      error "annotate_expression(AilEmemberof struct): failed to find a valid tag definition"
-                end in
-              let do_union tag_sym =
-                match lookup_tag_definition sigm tag_sym with
-                  | Just (UnionDef membersDefs) ->
-                      match List.lookup memb_ident membersDefs with
-                        | Just (_, align_opt, _, memb_ty) ->
-                            E.return (AilEmemberof a_e memb_ident, GenRValueType (GenTypes.inject_type memb_ty))
-                        | Nothing ->
-                            E.constraint_violation (with_cursor_from (locOf e) (locOf memb_ident))
-                                                   (MemberofNoMemberRvalue memb_ident gty)
-                      end
-                  | _ ->
-                      error "annotate_expression(AilEmemberof union): failed to find a valid tag definition"
+          | (GenRValueType gty as cat) ->
+              let do_member ty =
+                match member_access_path sigm (is_physical_member_operation std_annots) ty memb_ident with
+                  | Just path -> E.return (annotate_member_path loc false cat a_e path)
+                  | Nothing -> E.constraint_violation (with_cursor_from (locOf e) (locOf memb_ident))
+                      (MemberofNoMemberRvalue memb_ident gty)
                 end in
               if GAux.is_incomplete sigm gty then
                 E.constraint_violation (locOf e) (MemberofIncompleteRvalue gty)
               else match gty with
-                | GenAtomic (GenStruct tag_sym) ->
-                    do_struct tag_sym
-                | GenAtomic (GenUnion tag_sym) ->
-                    do_union tag_sym
-                | GenStruct tag_sym ->
-                    do_struct tag_sym
-                | GenUnion tag_sym ->
-                    do_union tag_sym
-                | _ ->
-                    E.constraint_violation (with_cursor_from (locOf e) loc) (MemberofReferenceBaseTypeRvalue gty)
+                | GenStruct tag -> do_member (Ctype [] (Struct tag))
+                | GenAtomic (GenStruct tag) -> do_member (Ctype [] (Struct tag))
+                | GenUnion tag -> do_member (Ctype [] (Union tag))
+                | GenAtomic (GenUnion tag) -> do_member (Ctype [] (Union tag))
+                | _ -> E.constraint_violation (with_cursor_from (locOf e) loc) (MemberofReferenceBaseTypeRvalue gty)
               end
         end
-    
+
     | AilEmemberofptr e memb_ident ->
-      (* NOTE: the qualifiers of the value are the combination of the ones
-         of the referenced type of left operand [e] and the ones in the
-         declaration of the member type (see §6.5.2.3#4) *)
-        annotate_rvalue e >>= function
-          | (e', gty) ->
-              match gty with
-                | GenPointer ref_qs (Ctype _ (Struct tag_sym) as ref_ty) ->
-                    E.return (ref_qs, Left tag_sym, ref_ty)
-                | GenPointer ref_qs (Ctype _ (Atomic (Ctype _ (Struct tag_sym))) as ref_ty) ->
-                    E.return (ref_qs, Left tag_sym, ref_ty)
-                | GenPointer ref_qs (Ctype _ (Union tag_sym) as ref_ty) ->
-                    E.return (ref_qs, Right tag_sym, ref_ty)
-                | GenPointer ref_qs (Ctype _ (Atomic (Ctype _ (Union tag_sym))) as ref_ty) ->
-                    E.return (ref_qs, Right tag_sym, ref_ty)
-                | GenPointer ref_qs ref_ty ->
-                    E.constraint_violation (with_cursor_from (locOf e) loc) (MemberofptrReferenceBaseType ref_qs ref_ty)
-                | _ ->
-                    E.constraint_violation (with_cursor_from (locOf e) loc) (MemberofptrReferenceTypeNotPointer gty)
-              end >>= function
-                | (ref_qs, Left tag_sym, ref_ty) ->
-                    let do_fail =
-                      E.constraint_violation (with_cursor_from (locOf e) (locOf memb_ident))
-                        (MemberofptrNoMember memb_ident ref_qs ref_ty) in
-                    if AAux.is_incomplete sigm ref_ty then
-                      E.constraint_violation (locOf e) (MemberofptrIncomplete ref_qs ref_ty)
-                    else match lookup_tag_definition sigm tag_sym with
-                      | Just (StructDef membersDefs flexible_opt) ->
-                          match (List.lookup memb_ident membersDefs, flexible_opt) with
-                            | (Just (_, align_opt, memb_qs, memb_ty), _) ->
-                                E.return ( AilEmemberofptr e' memb_ident
-                                         , GenLValueType (combine_qualifiers ref_qs memb_qs) memb_ty false )
-                            | (Nothing, Just (FlexibleArrayMember attrs flex_ident flex_qs flex_elem_ty)) ->
-                                if memb_ident = flex_ident then
-                                  E.return ( AilEmemberofptr e' memb_ident
-                                           , GenLValueType (combine_qualifiers ref_qs flex_qs) (Ctype [] (Array flex_elem_ty Nothing)) false )
-                                else
-                                  do_fail
-                            | (Nothing, Nothing) ->
-                                do_fail
-                          end
-                      | _ ->
-                          error "annotate_expression(AilEmemberofptr struct): failed to find a valid tag definition"
-                    end
-                | (ref_qs, Right tag_sym, ref_ty) ->
-                    if AAux.is_incomplete sigm ref_ty then
-                      E.constraint_violation (locOf e) (MemberofptrIncomplete ref_qs ref_ty)
-                    else match lookup_tag_definition sigm tag_sym with
-                      | Just (UnionDef membersDefs) ->
-                          match List.lookup memb_ident membersDefs with
-                            | Just (_, align_opt, memb_qs, memb_ty) ->
-                                E.return ( AilEmemberofptr e' memb_ident
-                                         , GenLValueType (combine_qualifiers ref_qs memb_qs) memb_ty false )
-                            | Nothing ->
-                                E.constraint_violation (with_cursor_from (locOf e) (locOf memb_ident))
-                                                       (MemberofptrNoMember memb_ident ref_qs ref_ty)
-                          end
-                      | _ ->
-                          error "annotate_expression(AilEmemberofptr union): failed to find a valid tag definition"
-                    end
+        annotate_rvalue e >>= fun (e', gty) ->
+        match gty with
+          | GenPointer ref_qs ref_ty ->
+              match unatomic_ ref_ty with
+                | Struct _ -> E.return (ref_qs, ref_ty)
+                | Union _ -> E.return (ref_qs, ref_ty)
+                | _ -> E.constraint_violation (with_cursor_from (locOf e) loc) (MemberofptrReferenceBaseType ref_qs ref_ty)
               end
+          | _ -> E.constraint_violation (with_cursor_from (locOf e) loc) (MemberofptrReferenceTypeNotPointer gty)
+        end >>= fun (ref_qs, ref_ty) ->
+        if AAux.is_incomplete sigm ref_ty then
+          E.constraint_violation (locOf e) (MemberofptrIncomplete ref_qs ref_ty)
+        else match member_access_path sigm (is_physical_member_operation std_annots) ref_ty memb_ident with
+          | Just path -> E.return (annotate_member_path loc true (GenLValueType ref_qs ref_ty false) e' path)
+          | Nothing -> E.constraint_violation (with_cursor_from (locOf e) (locOf memb_ident))
+              (MemberofptrNoMember memb_ident ref_qs ref_ty)
         end
-    
+
     | AilEassign e1 e2 ->
         annotate_expression CTXassign e1 >>= fun e1' ->
         match GenTypes.genTypeCategoryOf e1' with

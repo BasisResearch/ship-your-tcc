@@ -25,6 +25,7 @@ import Multiset
 import Decode
 import IntegerImpl
 import Range
+import Ctype
 import Cabs_to_ail_effect
 import Cabs_to_ail_aux
 import LemLib.Pervasives
@@ -1939,9 +1940,24 @@ partial def desugar_struct_declaration [LemFuel] [CerberusFresh.Digest] [CerbImp
                     (fun (x : Option
                       (List (identifier × (attributes × Option alignment × qualifiers × ctype)))) =>
                       match x with
-                      | some
-                        membrs => /- STD §6.7.2.1#13 -/ /- this is an unammed anonymous structure or union -/
-                        stExpect_return membrs
+                      | some _ =>
+                        (/- Keep one physical container; promoted names are lookup paths,
+                   never extra storage or extra initializer siblings. -/
+                        let ident :=
+                          Identifier
+                            (match base_ty with
+                             | (Ctype annots1 _) => get_loc_ annots1) "anonymous";
+                        stExpect_bind
+                          ((desugar_alignment_specifiers _lemReader_enum_definitions
+                            _lemReader_tagDefs)
+                            (match base_ty with
+                             | (Ctype annots1 _) => get_loc_ annots1) base_ty align_specs)
+                          (fun (align_opt : Option alignment) =>
+                            stExpect_return
+                              [(ident,
+                                (anonymous_member_attributes outer_attrs, align_opt,
+                                  combine_qualifiers tquals_qs specs_qs,
+                                  (lem_if isAtomic then wrap_atomic base_ty else base_ty)))]))
                       | none =>
                         (/- STD §6.7.2.1#2 -/ fun (_ : state_with_markers) =>
                           fail0
@@ -3041,135 +3057,187 @@ partial def desugar_type_specifiers [LemFuel] [CerberusFresh.Digest] [CerbImplCf
                            stExpect_return
                              (/- TODO: check that is indeed the UB I'm thinking of... -/ List.flatten
                                z)))
-                       (fun (all_membDefs : List
+                       (fun (raw_membDefs : List
                          (identifier × (attributes × Option alignment × qualifiers × ctype))) =>
-                         stExpect_bind
-                           (/- Checks whether a member identifier is duplicated -/ stExcept_foldlM
-                             (fun (acc : List identifier)
-                               (p :
-                                 (identifier ×
-                                   (attributes × Option alignment × qualifiers × ctype))) =>
-                               match acc, p with
-                               | acc, (ident, _) =>
-                                 (lem_if Lem_List.elem ident acc then
-                                   fun (_ : state_with_markers) =>
-                                     fail0
-                                       ((match ident with
-                                         | (Identifier loc1 _) => loc1),
-                                         DESUGAR
-                                           (Desugar_TODO
-                                             (String.append "duplicate member: "
-                                               (match ident with
-                                                | Identifier _ str => str))))
-                                 else
-                                   stExpect_return (ident :: acc))) ([] : List identifier)
-                             all_membDefs)
-                           (fun (_ : List identifier) =>
-                             stExpect_bind
-                               (lem_if (List.length all_membDefs == 0) &&
-                                   (struct_or_union1 == UNION) then /- STD §6.7.2.1#8, sentence 3 -/
-                                 fun (_ : state_with_markers) =>
-                                   fail0
-                                     (loc1,
-                                       DESUGAR (Desugar_UndefinedBehaviour UB061_no_named_members))
-                               else lem_if (List.length all_membDefs == 1) ||
-                                   (struct_or_union1 == UNION) then
-                                 stExpect_bind (check_members all_membDefs) (fun (_ : Unit) =>
-                                   stExpect_return none)
-                               else
-                                 match last all_membDefs with
-                                 | none =>
-                                   (/- xs was an empty list -/ /- STD §6.7.2.1#8, sentence 3 -/ fun (_ :
-                                     state_with_markers) =>
-                                     fail0
-                                       (loc1,
-                                         DESUGAR
-                                           (Desugar_UndefinedBehaviour UB061_no_named_members)))
-                                 | some
-                                   ((last_ident, (lastMemb_attrs, _, lastMemb_qs, lastMemb_ty)),
-                                     membDefs) =>
-                                   stExpect_bind (/- STD §6.7.2.1#3 -/ check_members membDefs)
-                                     (fun (_ : Unit) =>
-                                       lem_if is_function lastMemb_ty then
-                                         fun (_ : state_with_markers) =>
-                                           fail0
-                                             ((match last_ident with
-                                               | (Identifier loc1 _) => loc1),
-                                               DESUGAR
-                                                 (Desugar_ConstraintViolation
-                                                   (StructMemberFunctionType last_ident)))
+                         stExpect_bind get_tag_definitions
+                           (fun (nested_tagDefs : Fmap sym tag_definition0) =>
+                             let nested_members : sym → List
+                               (identifier ×
+                                 (attributes × Option alignment × qualifiers × ctype)) :=
+                               (fun (tag : sym) =>
+                                 match (fmapLookupBy
+                                     (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2) tag
+                                     nested_tagDefs) with
+                                 | some (Struct_definition _ _ _ xs _) => xs
+                                 | some (Union_definition _ _ _ xs) => xs
+                                 | _ =>
+                                   ([] : List
+                                     (identifier ×
+                                       (attributes × Option alignment × qualifiers × ctype))));
+                             /- Include descendants' real names when allocating physical names:
+             a promoted source member must not capture its own container. -/
+                             let reserved_names :=
+                               List.flatten
+                                 (List.map
+                                   (fun (p : (sym × tag_definition0)) =>
+                                     match p with
+                                     | (tag, _) =>
+                                       List.map Prod.fst
+                                         (List.filter
+                                           (fun (p :
+                                             (identifier ×
+                                               (attributes × Option alignment × qualifiers ×
+                                                 ctype))) =>
+                                             match p with
+                                             | (_, (attrs1, _, _, _)) =>
+                                               not (is_anonymous_member attrs1))
+                                           (nested_members tag))) (fmapElements nested_tagDefs));
+                             let all_membDefs := name_anonymous_members reserved_names raw_membDefs;
+                             /- Check direct and promoted names in the enclosing namespace. -/
+                             let visible_names :=
+                               List.flatten
+                                 (List.map
+                                   (fun (p :
+                                     (identifier ×
+                                       (attributes × Option alignment × qualifiers × ctype))) =>
+                                     match p with
+                                     | (ident, (attrs1, _, _, ty1)) =>
+                                       (lem_if is_anonymous_member attrs1 then
+                                         List.map Prod.fst
+                                           (List.filter
+                                             (fun (p : (identifier × member_path)) =>
+                                               match p with
+                                               | (_, path) => path.member_path_visible)
+                                             (member_paths
+                                               (1 + List.length (fmapElements nested_tagDefs))
+                                               nested_members ty1))
                                        else
-                                         stExpect_bind
-                                           (cabs_to_ail_effect_is_incomplete lastMemb_ty)
-                                           (fun (x : Bool) =>
-                                             match x with
-                                             | true =>
-                                               (lem_if struct_or_union1 == STRUCT then
-                                                 match lastMemb_ty with
-                                                 | Ctype _ (Array0 elem_ty none) =>
-                                                   (/- if we have an array with unknown size -/ lem_if List.length
-                                                       all_membDefs == 1 then
+                                         [ident])) all_membDefs);
+                             stExpect_bind
+                               (stExcept_foldlM
+                                 (fun (acc : List identifier) (ident : identifier) =>
+                                   lem_if Lem_List.elem ident acc then
+                                     fun (_ : state_with_markers) =>
+                                       fail0
+                                         ((match ident with
+                                           | (Identifier loc1 _) => loc1),
+                                           DESUGAR
+                                             (Desugar_TODO
+                                               (String.append "duplicate member: "
+                                                 (match ident with
+                                                  | Identifier _ str => str))))
+                                   else
+                                     stExpect_return (ident :: acc)) ([] : List identifier)
+                                 visible_names)
+                               (fun (_ : List identifier) =>
+                                 stExpect_bind
+                                   (lem_if (List.length all_membDefs == 0) &&
+                                       (struct_or_union1 ==
+                                         UNION) then /- STD §6.7.2.1#8, sentence 3 -/
+                                     fun (_ : state_with_markers) =>
+                                       fail0
+                                         (loc1,
+                                           DESUGAR
+                                             (Desugar_UndefinedBehaviour UB061_no_named_members))
+                                   else lem_if (List.length all_membDefs == 1) ||
+                                       (struct_or_union1 == UNION) then
+                                     stExpect_bind (check_members all_membDefs) (fun (_ : Unit) =>
+                                       stExpect_return none)
+                                   else
+                                     match last all_membDefs with
+                                     | none =>
+                                       (/- xs was an empty list -/ /- STD §6.7.2.1#8, sentence 3 -/ fun (_ :
+                                         state_with_markers) =>
+                                         fail0
+                                           (loc1,
+                                             DESUGAR
+                                               (Desugar_UndefinedBehaviour UB061_no_named_members)))
+                                     | some
+                                       ((last_ident, (lastMemb_attrs, _, lastMemb_qs, lastMemb_ty)),
+                                         membDefs) =>
+                                       stExpect_bind (/- STD §6.7.2.1#3 -/ check_members membDefs)
+                                         (fun (_ : Unit) =>
+                                           lem_if is_function lastMemb_ty then
+                                             fun (_ : state_with_markers) =>
+                                               fail0
+                                                 ((match last_ident with
+                                                   | (Identifier loc1 _) => loc1),
+                                                   DESUGAR
+                                                     (Desugar_ConstraintViolation
+                                                       (StructMemberFunctionType last_ident)))
+                                           else
+                                             stExpect_bind
+                                               (cabs_to_ail_effect_is_incomplete lastMemb_ty)
+                                               (fun (x : Bool) =>
+                                                 match x with
+                                                 | true =>
+                                                   (lem_if struct_or_union1 == STRUCT then
+                                                     match lastMemb_ty with
+                                                     | Ctype _ (Array0 elem_ty none) =>
+                                                       (/- if we have an array with unknown size -/ lem_if List.length
+                                                           all_membDefs == 1 then
+                                                         fun (_ : state_with_markers) =>
+                                                           fail0
+                                                             ((match last_ident with
+                                                               | (Identifier loc1 _) => loc1),
+                                                               DESUGAR
+                                                                 (Desugar_ConstraintViolation
+                                                                   (IllegalFlexibleArrayMember
+                                                                     last_ident)))
+                                                       else
+                                                         stExpect_return
+                                                           (some
+                                                             (membDefs,
+                                                               FlexibleArrayMember lastMemb_attrs
+                                                                 last_ident lastMemb_qs elem_ty)))
+                                                     | _ =>
+                                                       (fun (_ : state_with_markers) =>
+                                                         fail0
+                                                           ((match last_ident with
+                                                             | (Identifier loc1 _) => loc1),
+                                                             DESUGAR
+                                                               (Desugar_ConstraintViolation
+                                                                 (StructMemberIncompleteType
+                                                                   lastMemb_qs lastMemb_ty))))
+                                                   else
                                                      fun (_ : state_with_markers) =>
                                                        fail0
                                                          ((match last_ident with
                                                            | (Identifier loc1 _) => loc1),
                                                            DESUGAR
                                                              (Desugar_ConstraintViolation
-                                                               (IllegalFlexibleArrayMember
-                                                                 last_ident)))
-                                                   else
-                                                     stExpect_return
-                                                       (some
-                                                         (membDefs,
-                                                           FlexibleArrayMember lastMemb_attrs
-                                                             last_ident lastMemb_qs elem_ty)))
-                                                 | _ =>
-                                                   (fun (_ : state_with_markers) =>
-                                                     fail0
-                                                       ((match last_ident with
-                                                         | (Identifier loc1 _) => loc1),
-                                                         DESUGAR
-                                                           (Desugar_ConstraintViolation
-                                                             (StructMemberIncompleteType lastMemb_qs
-                                                               lastMemb_ty))))
-                                               else
-                                                 fun (_ : state_with_markers) =>
-                                                   fail0
-                                                     ((match last_ident with
-                                                       | (Identifier loc1 _) => loc1),
-                                                       DESUGAR
-                                                         (Desugar_ConstraintViolation
-                                                           (StructMemberIncompleteType lastMemb_qs
-                                                             lastMemb_ty))))
-                                             | false => stExpect_return none)))
-                               (fun (flexible_opt : Option
-                                 (List
-                                   (identifier ×
-                                     (attributes × Option alignment × qualifiers × ctype)) ×
-                                   flexible_array_member)) =>
-                                 let loc1 :=
-                                   match tag_ident_opt with
-                                   | none => loc1
-                                   | some tag_ident =>
-                                     CerbLocation.withCursorFrom loc1
-                                       (match tag_ident with
-                                        | (Identifier loc1 _) => loc1);
-                                 stExpect_bind
-                                   (register_tag_definition loc1 tag_sym
-                                     (match struct_or_union1, flexible_opt with
-                                      | UNION, _ =>
-                                        Union_definition loc1 attrs1 (isNothing tag_ident_opt)
-                                          all_membDefs
-                                      | STRUCT, none =>
-                                        Struct_definition loc1 attrs1 (isNothing tag_ident_opt)
-                                          all_membDefs none
-                                      | STRUCT, some (membDefs', flexible) =>
-                                        Struct_definition loc1 attrs1 (isNothing tag_ident_opt)
-                                          membDefs' (some flexible)))
-                                   (fun (u : Unit) =>
-                                     match u with
-                                     | () =>
-                                       stExpect_return (no_qualifiers, type_ctor tag_sym)))))));
+                                                               (StructMemberIncompleteType
+                                                                 lastMemb_qs lastMemb_ty))))
+                                                 | false => stExpect_return none)))
+                                   (fun (flexible_opt : Option
+                                     (List
+                                       (identifier ×
+                                         (attributes × Option alignment × qualifiers × ctype)) ×
+                                       flexible_array_member)) =>
+                                     let loc1 :=
+                                       match tag_ident_opt with
+                                       | none => loc1
+                                       | some tag_ident =>
+                                         CerbLocation.withCursorFrom loc1
+                                           (match tag_ident with
+                                            | (Identifier loc1 _) => loc1);
+                                     stExpect_bind
+                                       (register_tag_definition loc1 tag_sym
+                                         (match struct_or_union1, flexible_opt with
+                                          | UNION, _ =>
+                                            Union_definition loc1 attrs1 (isNothing tag_ident_opt)
+                                              all_membDefs
+                                          | STRUCT, none =>
+                                            Struct_definition loc1 attrs1 (isNothing tag_ident_opt)
+                                              all_membDefs none
+                                          | STRUCT, some (membDefs', flexible) =>
+                                            Struct_definition loc1 attrs1 (isNothing tag_ident_opt)
+                                              membDefs' (some flexible)))
+                                       (fun (u : Unit) =>
+                                         match u with
+                                         | () =>
+                                           stExpect_return
+                                             (no_qualifiers, type_ctor tag_sym))))))));
            match specs with /- NOTE: The parser does not generate a declaration without a type specifier -/
            | [] =>
              CerbUtils.STD_ "§6.7.2#2, sentence 1"
@@ -4114,7 +4182,7 @@ partial def foo_aux [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl] [CerbGlo
                                                          | acc, ((path, _, _), (memb_ident, _)) =>
                                                            (path,
                                                              AnnotatedExpression ()
-                                                               ([] : List annot)
+                                                               physical_member_annotations
                                                                (CerbLocation.other
                                                                  "init with struct expr")
                                                                (AilEmemberof d_e memb_ident)) ::

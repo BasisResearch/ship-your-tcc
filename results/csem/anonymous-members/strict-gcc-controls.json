@@ -1,0 +1,2664 @@
+{
+  "rows": [
+    {
+      "source": "csem/tests/anonymous/address_auto.c",
+      "source_sha256": "9fe09cb05af079c740dd487ac94b128c3a5a8d0f7abf377455ce70d8d9f99246",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/address_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/address_static.c",
+      "source_sha256": "0f1dd87848a5dcf4e82324be5ca9c1f745467ac67880e4bc822000173b1a41cf",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/address_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/adjacent_containers_auto.c",
+      "source_sha256": "03f5094393c6f0f824ec0ca2144723a036014306c3b286f410de43d1931ab811",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/adjacent_containers_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/adjacent_containers_static.c",
+      "source_sha256": "3b38db478aebe0618c5d7c05883ed09561bde18439a9802caec1fa8242164319",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/adjacent_containers_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/aggregate_copy_auto.c",
+      "source_sha256": "8131fa1522f79ef0dcd82fda0ee49bc56e852569363a36e87fccb46f66242efc",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/aggregate_copy_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/aggregate_copy_static.c",
+      "source_sha256": "fa21e3281a0be38393d0cf637636bf071e9425cc212480f3d19cc8392a7c3628",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/aggregate_copy_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/aligned_container_auto.c",
+      "source_sha256": "b59d55dd0c6a3de657be8ebb907f68ed3292a3df3d1d2586c77695b90f73c57b",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/aligned_container_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/aligned_container_static.c",
+      "source_sha256": "c871b700a7b7a4691d824f2e3734c5468d6f8c0620ba984f02a48465e01e4333",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/aligned_container_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/anonymous_struct_auto.c",
+      "source_sha256": "36494160561af3f9a682dec68f8a4e5eb28e7eb7aded8d549ddc87a29b9104ac",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/anonymous_struct_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/anonymous_struct_static.c",
+      "source_sha256": "52d177f41db8712d64989cee4ec15f663369815cb971f745209fa5189f31dc3c",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/anonymous_struct_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/array_continuation_auto.c",
+      "source_sha256": "f0607833c52218de4ff12a423be19a4526c64b6bf2772486f144256f9a3461fd",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/array_continuation_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/array_continuation_static.c",
+      "source_sha256": "4e029cd563a35684bbb9c89a52ca021601e009cfcd8dfae036fc5be4e9cc13e6",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/array_continuation_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/array_objects_auto.c",
+      "source_sha256": "bfb72e1f3dbd006af574546bb2417ca19177bf64cf1bdcabd31aad3cadb75808",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/array_objects_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/array_objects_static.c",
+      "source_sha256": "24cc985c9340509d953db09957fd501de18610345ac531cd042924c0a5654cb3",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/array_objects_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/arrow_auto.c",
+      "source_sha256": "b668eb68681b068c242594eda0fcba37ae7073329ba89f73755c13b842a07467",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/arrow_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/arrow_static.c",
+      "source_sha256": "c53886d0937067c50bb89cef4088496bc2c633a15e20d07d2c1e2f648ee786e9",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/arrow_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/braces_then_continuation_auto.c",
+      "source_sha256": "3513bbf23d823c532aa25688f4380ab2a832a08e476356d8dd708f2497febe0b",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/braces_then_continuation_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/braces_then_continuation_static.c",
+      "source_sha256": "0c5e4a27d922cf1e8a265daaa82c45a182e114aed89f90251d76555fe442fe87",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/braces_then_continuation_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/compound_literal_auto.c",
+      "source_sha256": "ca3ee722fc61b63d75edabb5a8a294f7c15cd987bacc01cc1d19b45fe5e571c7",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/compound_literal_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/compound_literal_static.c",
+      "source_sha256": "902119d087b27ea4f4d2b9e9c31b689b221b437b885d8ecb7fd76c6d612bdbeb",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/compound_literal_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/const_container_auto.c",
+      "source_sha256": "2503eaf8309073b4c324d9204022a69c13c034c74bbfc5a738dcfe0c558597d6",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/const_container_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/const_container_static.c",
+      "source_sha256": "42a182241742d17b0bc866c3b61a7ce6a46172e56bc246ef724fe03124dfea5f",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/const_container_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/const_object_auto.c",
+      "source_sha256": "5713b7c83fecbe711c1b34c0cc985b6d605eb11012438a3ea0a7e7ec431c02ef",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/const_object_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/const_object_static.c",
+      "source_sha256": "ebdc347c5ed99ff727b9ecda053da7ac981a7acb2d679286482c0286671b9cf3",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/const_object_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/const_pointer_type_auto.c",
+      "source_sha256": "5f2f7e815b31f02b477dd36aa17a1bb58d192f575f6abd28680295dfa0f16e30",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/const_pointer_type_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/const_pointer_type_static.c",
+      "source_sha256": "a2ba6fe841127fbedbc6b77cca02a18287ca6674156fbd0de5487b71de74cfc8",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/const_pointer_type_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/container_name_collision_auto.c",
+      "source_sha256": "c04062913054ab8a0fe4d362a1ad3db341973552f19697120f0123ff27ad73dd",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/container_name_collision_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/container_name_collision_static.c",
+      "source_sha256": "33ce3534075877c4c91580b1094d0f6cda7945084edd7fbd214c64dc0e235884",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/container_name_collision_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/direct_const_pointer_type_auto.c",
+      "source_sha256": "c7c7fb09ecfc0a98c9e91ebe58d9bf78318d53d4f66b8dd6a837697874ce3bd1",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/direct_const_pointer_type_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/direct_const_pointer_type_static.c",
+      "source_sha256": "5c65c445fa4870f91413acf2a6de460d7cf334b235bfc4da0518a258c677e4e7",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/direct_const_pointer_type_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/invalid_collision_direct.c",
+      "source_sha256": "c19fc01301ab1fb6804d398364c26fc7e0c24a608d4d936c63659636dac0e5f9",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/invalid_collision_direct.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "csem/tests/anonymous/invalid_collision_direct.c:1:31: error: duplicate member \u2018a\u2019\n    1 | struct S { int a; struct {int a;}; }; int main(void){return 0;}\n      |                               ^\n"
+      },
+      "tcc_compile": {
+        "command": [
+          "build/cross/riscv64-tcc",
+          "-std=c11",
+          "-c",
+          "csem/tests/anonymous/invalid_collision_direct.c",
+          "-o",
+          "build/anonymous-invalid.o"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "csem/tests/anonymous/invalid_collision_direct.c:1: error: duplicate member 'a'\n"
+      },
+      "tcc_classification": "rejected",
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/invalid_collision_promoted.c",
+      "source_sha256": "9edfb2ce4aa23abc1cdf67b41e301ec007ceb843e34e87e4fdea2c1080b1f173",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/invalid_collision_promoted.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "csem/tests/anonymous/invalid_collision_promoted.c:1:40: error: duplicate member \u2018a\u2019\n    1 | struct S { struct {int a;}; union {int a; long b;}; }; int main(void){return 0;}\n      |                                        ^\n"
+      },
+      "tcc_compile": {
+        "command": [
+          "build/cross/riscv64-tcc",
+          "-std=c11",
+          "-c",
+          "csem/tests/anonymous/invalid_collision_promoted.c",
+          "-o",
+          "build/anonymous-invalid.o"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "csem/tests/anonymous/invalid_collision_promoted.c:1: error: duplicate member 'a'\n"
+      },
+      "tcc_classification": "rejected",
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/invalid_const_assignment.c",
+      "source_sha256": "b36e29fddc0f2f6c7b7d96e0b4606c2d82990690e1c7c03ac7d260e6b560d9fe",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/invalid_const_assignment.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "csem/tests/anonymous/invalid_const_assignment.c: In function \u2018main\u2019:\ncsem/tests/anonymous/invalid_const_assignment.c:1:101: error: assignment of member \u2018a\u2019 in read-only object\n    1 | struct S { union { struct { int a,b; }; int n; }; int z; }; int main(void){const struct S s={0}; s.a=1; return 0;}\n      |                                                                                                     ^\n"
+      },
+      "tcc_compile": {
+        "command": [
+          "build/cross/riscv64-tcc",
+          "-std=c11",
+          "-c",
+          "csem/tests/anonymous/invalid_const_assignment.c",
+          "-o",
+          "build/anonymous-invalid.o"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": "csem/tests/anonymous/invalid_const_assignment.c:1: warning: assignment of read-only location\n"
+      },
+      "tcc_classification": "diagnosed",
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/invalid_const_container_assignment.c",
+      "source_sha256": "653c5dfd7040e805f455a5640d29a455806f17dd17a7bc6c549ec7d141921976",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/invalid_const_container_assignment.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "csem/tests/anonymous/invalid_const_container_assignment.c: In function \u2018main\u2019:\ncsem/tests/anonymous/invalid_const_container_assignment.c:1:70: error: assignment of member \u2018a\u2019 in read-only object\n    1 | struct S {const struct {int a;};}; int main(void){struct S s={0}; s.a=1; return 0;}\n      |                                                                      ^\n"
+      },
+      "tcc_compile": {
+        "command": [
+          "build/cross/riscv64-tcc",
+          "-std=c11",
+          "-c",
+          "csem/tests/anonymous/invalid_const_container_assignment.c",
+          "-o",
+          "build/anonymous-invalid.o"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "tcc_classification": "accepted-without-diagnostic",
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/invalid_named_not_promoted.c",
+      "source_sha256": "46c1d614050dbc4c9458ceadb0ebf0700db857647af56f15b50c4728878721fc",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/invalid_named_not_promoted.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "csem/tests/anonymous/invalid_named_not_promoted.c: In function \u2018main\u2019:\ncsem/tests/anonymous/invalid_named_not_promoted.c:1:64: error: \u2018struct S\u2019 has no member named \u2018a\u2019\n    1 | struct S {struct {int a;} named;}; int main(void){struct S s={.a=1}; return 0;}\n      |                                                                ^\n"
+      },
+      "tcc_compile": {
+        "command": [
+          "build/cross/riscv64-tcc",
+          "-std=c11",
+          "-c",
+          "csem/tests/anonymous/invalid_named_not_promoted.c",
+          "-o",
+          "build/anonymous-invalid.o"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "csem/tests/anonymous/invalid_named_not_promoted.c:1: error: field not found: a\n"
+      },
+      "tcc_classification": "rejected",
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/invalid_private_arrow_auto.c",
+      "source_sha256": "c5b3b18f98b6a8bf7e5f115b79bd19a77ed94f8fff073f7a05d549396fc554a8",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/invalid_private_arrow_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "csem/tests/anonymous/invalid_private_arrow_auto.c: In function \u2018main\u2019:\ncsem/tests/anonymous/invalid_private_arrow_auto.c:3:47: error: \u2018struct S\u2019 has no member named \u2018________________________________________________cerb_anon_2\u2019\n    3 | int main(void){struct S s={0,{1}}; return (&s)->________________________________________________cerb_anon_2.a;}\n      |                                               ^~\n"
+      },
+      "tcc_compile": {
+        "command": [
+          "build/cross/riscv64-tcc",
+          "-std=c11",
+          "-c",
+          "csem/tests/anonymous/invalid_private_arrow_auto.c",
+          "-o",
+          "build/anonymous-invalid.o"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "csem/tests/anonymous/invalid_private_arrow_auto.c:1: error: include file 'stddef.h' not found\n"
+      },
+      "tcc_classification": "rejected",
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/invalid_private_arrow_static.c",
+      "source_sha256": "675c156d35a4be26fe4c98cd87e3a44feacd43b0a412b921970c6c3ddab886aa",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/invalid_private_arrow_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "csem/tests/anonymous/invalid_private_arrow_static.c: In function \u2018main\u2019:\ncsem/tests/anonymous/invalid_private_arrow_static.c:3:54: error: \u2018struct S\u2019 has no member named \u2018________________________________________________cerb_anon_2\u2019\n    3 | int main(void){static struct S s={0,{1}}; return (&s)->________________________________________________cerb_anon_2.a;}\n      |                                                      ^~\n"
+      },
+      "tcc_compile": {
+        "command": [
+          "build/cross/riscv64-tcc",
+          "-std=c11",
+          "-c",
+          "csem/tests/anonymous/invalid_private_arrow_static.c",
+          "-o",
+          "build/anonymous-invalid.o"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "csem/tests/anonymous/invalid_private_arrow_static.c:1: error: include file 'stddef.h' not found\n"
+      },
+      "tcc_classification": "rejected",
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/invalid_private_designator_auto.c",
+      "source_sha256": "d5ae6b9fcc3b5c90a1f00865139b4b805840e72bb463b8f14989ffb1991176f8",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/invalid_private_designator_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "csem/tests/anonymous/invalid_private_designator_auto.c: In function \u2018main\u2019:\ncsem/tests/anonymous/invalid_private_designator_auto.c:3:29: error: \u2018struct S\u2019 has no member named \u2018________________________________________________cerb_anon_2\u2019\n    3 | int main(void){struct S s={.________________________________________________cerb_anon_2={1}}; return s.a;}\n      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ncsem/tests/anonymous/invalid_private_designator_auto.c:3:23: warning: braces around scalar initializer\n    3 | int main(void){struct S s={.________________________________________________cerb_anon_2={1}}; return s.a;}\n      |                       ^\ncsem/tests/anonymous/invalid_private_designator_auto.c:3:23: note: (near initialization for \u2018s.reference_boundary_field_for_internal_container\u2019)\n"
+      },
+      "tcc_compile": {
+        "command": [
+          "build/cross/riscv64-tcc",
+          "-std=c11",
+          "-c",
+          "csem/tests/anonymous/invalid_private_designator_auto.c",
+          "-o",
+          "build/anonymous-invalid.o"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "csem/tests/anonymous/invalid_private_designator_auto.c:1: error: include file 'stddef.h' not found\n"
+      },
+      "tcc_classification": "rejected",
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/invalid_private_designator_static.c",
+      "source_sha256": "e65a30baefd713ee76dd58f7cc06dc351cad76144d8f9a022ed483412980ae23",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/invalid_private_designator_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "csem/tests/anonymous/invalid_private_designator_static.c: In function \u2018main\u2019:\ncsem/tests/anonymous/invalid_private_designator_static.c:3:36: error: \u2018struct S\u2019 has no member named \u2018________________________________________________cerb_anon_2\u2019\n    3 | int main(void){static struct S s={.________________________________________________cerb_anon_2={1}}; return s.a;}\n      |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ncsem/tests/anonymous/invalid_private_designator_static.c:3:30: warning: braces around scalar initializer\n    3 | int main(void){static struct S s={.________________________________________________cerb_anon_2={1}}; return s.a;}\n      |                              ^\ncsem/tests/anonymous/invalid_private_designator_static.c:3:30: note: (near initialization for \u2018s.reference_boundary_field_for_internal_container\u2019)\n"
+      },
+      "tcc_compile": {
+        "command": [
+          "build/cross/riscv64-tcc",
+          "-std=c11",
+          "-c",
+          "csem/tests/anonymous/invalid_private_designator_static.c",
+          "-o",
+          "build/anonymous-invalid.o"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "csem/tests/anonymous/invalid_private_designator_static.c:1: error: include file 'stddef.h' not found\n"
+      },
+      "tcc_classification": "rejected",
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/invalid_private_member_auto.c",
+      "source_sha256": "653a6d55573671f10eca0d8a7c2104e7434c9492a94d66867e4848ab7dd64632",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/invalid_private_member_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "csem/tests/anonymous/invalid_private_member_auto.c: In function \u2018main\u2019:\ncsem/tests/anonymous/invalid_private_member_auto.c:3:44: error: \u2018struct S\u2019 has no member named \u2018________________________________________________cerb_anon_2\u2019\n    3 | int main(void){struct S s={0,{1}}; return s.________________________________________________cerb_anon_2.a;}\n      |                                            ^\n"
+      },
+      "tcc_compile": {
+        "command": [
+          "build/cross/riscv64-tcc",
+          "-std=c11",
+          "-c",
+          "csem/tests/anonymous/invalid_private_member_auto.c",
+          "-o",
+          "build/anonymous-invalid.o"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "csem/tests/anonymous/invalid_private_member_auto.c:1: error: include file 'stddef.h' not found\n"
+      },
+      "tcc_classification": "rejected",
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/invalid_private_member_static.c",
+      "source_sha256": "b93d644f1dc15e1be5c65dfb70f6fc0d28dd52f084ad0d6d4b72b97ebad60288",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/invalid_private_member_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "csem/tests/anonymous/invalid_private_member_static.c: In function \u2018main\u2019:\ncsem/tests/anonymous/invalid_private_member_static.c:3:51: error: \u2018struct S\u2019 has no member named \u2018________________________________________________cerb_anon_2\u2019\n    3 | int main(void){static struct S s={0,{1}}; return s.________________________________________________cerb_anon_2.a;}\n      |                                                   ^\n"
+      },
+      "tcc_compile": {
+        "command": [
+          "build/cross/riscv64-tcc",
+          "-std=c11",
+          "-c",
+          "csem/tests/anonymous/invalid_private_member_static.c",
+          "-o",
+          "build/anonymous-invalid.o"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "csem/tests/anonymous/invalid_private_member_static.c:1: error: include file 'stddef.h' not found\n"
+      },
+      "tcc_classification": "rejected",
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/invalid_private_offsetof_auto.c",
+      "source_sha256": "374e4119064e8071940787e5a24b5b5e0622d23900a69fcef16bc8d758767f03",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/invalid_private_offsetof_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "In file included from csem/tests/anonymous/invalid_private_offsetof_auto.c:1:\ncsem/tests/anonymous/invalid_private_offsetof_auto.c: In function \u2018main\u2019:\ncsem/tests/anonymous/invalid_private_offsetof_auto.c:3:43: error: \u2018struct S\u2019 has no member named \u2018________________________________________________cerb_anon_2\u2019\n    3 | int main(void){struct S s={0,{1}}; return offsetof(struct S,________________________________________________cerb_anon_2);}\n      |                                           ^~~~~~~~\n"
+      },
+      "tcc_compile": {
+        "command": [
+          "build/cross/riscv64-tcc",
+          "-std=c11",
+          "-c",
+          "csem/tests/anonymous/invalid_private_offsetof_auto.c",
+          "-o",
+          "build/anonymous-invalid.o"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "csem/tests/anonymous/invalid_private_offsetof_auto.c:1: error: include file 'stddef.h' not found\n"
+      },
+      "tcc_classification": "rejected",
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/invalid_private_offsetof_static.c",
+      "source_sha256": "f65bc47a08b67220493304667a5ee75dd35938f5534338c9498f0b7f8c10629e",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/invalid_private_offsetof_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "In file included from csem/tests/anonymous/invalid_private_offsetof_static.c:1:\ncsem/tests/anonymous/invalid_private_offsetof_static.c: In function \u2018main\u2019:\ncsem/tests/anonymous/invalid_private_offsetof_static.c:3:50: error: \u2018struct S\u2019 has no member named \u2018________________________________________________cerb_anon_2\u2019\n    3 | int main(void){static struct S s={0,{1}}; return offsetof(struct S,________________________________________________cerb_anon_2);}\n      |                                                  ^~~~~~~~\n"
+      },
+      "tcc_compile": {
+        "command": [
+          "build/cross/riscv64-tcc",
+          "-std=c11",
+          "-c",
+          "csem/tests/anonymous/invalid_private_offsetof_static.c",
+          "-o",
+          "build/anonymous-invalid.o"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "csem/tests/anonymous/invalid_private_offsetof_static.c:1: error: include file 'stddef.h' not found\n"
+      },
+      "tcc_classification": "rejected",
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/invalid_unknown_member.c",
+      "source_sha256": "0dd07b0ae5d6950b8ecc515d7c4efd1ef11889a312349cde864036864953e34d",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/invalid_unknown_member.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "csem/tests/anonymous/invalid_unknown_member.c: In function \u2018main\u2019:\ncsem/tests/anonymous/invalid_unknown_member.c:1:89: error: \u2018struct S\u2019 has no member named \u2018missing\u2019\n    1 | struct S { union { struct { int a,b; }; int n; }; int z; }; int main(void){struct S s={.missing=1}; return 0;}\n      |                                                                                         ^~~~~~~\n"
+      },
+      "tcc_compile": {
+        "command": [
+          "build/cross/riscv64-tcc",
+          "-std=c11",
+          "-c",
+          "csem/tests/anonymous/invalid_unknown_member.c",
+          "-o",
+          "build/anonymous-invalid.o"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "csem/tests/anonymous/invalid_unknown_member.c:1: error: field not found: missing\n"
+      },
+      "tcc_classification": "rejected",
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/layout_auto.c",
+      "source_sha256": "0255e9a9a9eec7a30ff06bdb2d8b74c95d1e10304d3c8e924a8f2fa33b0f4c3c",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/layout_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/layout_static.c",
+      "source_sha256": "efa17e2b06c4d9d37bd4afcf96816fe7042c0b5323874df6a8c305c7b8a5d088",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/layout_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/mixed_named_auto.c",
+      "source_sha256": "9e4158c9fc5bf54557eecd5ad6ef78575fef6a48dabc6afc8af3a23070e74bc6",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/mixed_named_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/mixed_named_static.c",
+      "source_sha256": "63762fc41826caae62de14ba643dd13ba74b80f25078e4588dc251e6dca76d63",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/mixed_named_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/name_shadow_auto.c",
+      "source_sha256": "2075a64753bb501e4c9c31820732d1f7770f27eeccada0cc1ba369576a2babd5",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/name_shadow_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/name_shadow_static.c",
+      "source_sha256": "ef5937915b9e0e0cfff708b828ba78402ab7859b427eb7b9a254987c4fd0d5ee",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/name_shadow_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/named_const_pointer_type_auto.c",
+      "source_sha256": "ae44f3cf959cb1403070de820ac6475c9ac759561009e0e80fbb956cc8566750",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/named_const_pointer_type_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/named_const_pointer_type_static.c",
+      "source_sha256": "1623fcefd2c99697dc75b6c4ec496d64955deb6d91caa2571fd67bd50ae87048",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/named_const_pointer_type_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/named_inside_anonymous_auto.c",
+      "source_sha256": "74d045538b537fe41c18cc14295c8de6824aa82b0d586641a741e133e3cc0e79",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/named_inside_anonymous_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/named_inside_anonymous_static.c",
+      "source_sha256": "d16a6dfbc71b1b397abd4069d7e0fc8f1ceb650f0876bc5535b1e09875e61ed5",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/named_inside_anonymous_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/nested_anonymous_auto.c",
+      "source_sha256": "47888b0b7bfaba2bb32f25f851e031a2f90b87b15a113bbc0debea6072af7ad6",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/nested_anonymous_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/nested_anonymous_static.c",
+      "source_sha256": "68f8581ee87c1c3c6c102a6f05e2e40ad9cb842981a8aca275b09cbbff00589f",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/nested_anonymous_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/null_implicit_auto.c",
+      "source_sha256": "b45808f1b5fc7cb323d9266201bb1e49fff564cb9a5e0b8e97136dd37b59ae27",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/null_implicit_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/null_implicit_static.c",
+      "source_sha256": "c418a98b680c62af39a6655b0f69030e3d43fa9f7b4659c0e58a1b540cf6554d",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/null_implicit_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/object_const_pointer_type_auto.c",
+      "source_sha256": "6749f38e7fe456b88ea48c98cf4fe968b7c00cd60d4ad7085f907ce90a5f42ce",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/object_const_pointer_type_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/object_const_pointer_type_static.c",
+      "source_sha256": "1afe6dee8e130a6660400b6cdf26dfff3cf83c88b24d9a0bb49cc40cb093318f",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/object_const_pointer_type_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/pointer_member_auto.c",
+      "source_sha256": "91084b85b6179d241c87e8b1a3f0ed4285f9bb9a98de6cb0796d61a6a170cffb",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/pointer_member_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/pointer_member_static.c",
+      "source_sha256": "8efdbf8dda2aefce70618f8bfebbda19e0c13ab6cc7ee8f5239d14f1f5f906fa",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/pointer_member_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/positional_braced_auto.c",
+      "source_sha256": "db954357bdd6bea6ec7a7d8d0a83cb6402c8d81f083f8270fc14f105d484c363",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/positional_braced_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/positional_braced_static.c",
+      "source_sha256": "9209404d1c267e991ef18ac7069500f74d343a6c4268cec13c033d0912c20278",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/positional_braced_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/positional_elided_auto.c",
+      "source_sha256": "08e06c0f54b0bfba2411fda9137dfecbf1fc3f72d7266271cfe4b85c138b67c6",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/positional_elided_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/positional_elided_static.c",
+      "source_sha256": "09908d96d37bdf04e12b43e03c44ddc15b2a28192ed92fc1d6c07a2e36b7f58c",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/positional_elided_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/reset_designator_auto.c",
+      "source_sha256": "6a6d4d959b60a2b6a973e2d3401fca8c9650d3161416bd329d07e24034d5f77c",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/reset_designator_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/reset_designator_static.c",
+      "source_sha256": "3eabf31222bd1f02e33c9a99e9b92a4afac96e3cdb6957db6811f3da13fc45a4",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/reset_designator_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/rvalue_member_auto.c",
+      "source_sha256": "01d12a1eac532448f3059ccbf5d44504e56249ec28314091fa3658f97897f32e",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/rvalue_member_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/rvalue_member_static.c",
+      "source_sha256": "e50b8591f000b4cd9a8c61267c3f575e1f265fbe9ae40764beaca2cc05648316",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/rvalue_member_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/same_member_repeat_auto.c",
+      "source_sha256": "689d1248466ea11dd8ea3d2095e6d08e6baaad40702e01a2a405ad58c00f3dfa",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/same_member_repeat_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/same_member_repeat_static.c",
+      "source_sha256": "53d5cfff82e2dd56f9b6582cf8e2bda3181bea8814904d907b6abefcac913bfd",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/same_member_repeat_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/scalar_continuation_auto.c",
+      "source_sha256": "95a3b3090b161e13b6c00f76f19f54c19a62245dd08cac066d5e662d1d4e3aeb",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/scalar_continuation_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/scalar_continuation_static.c",
+      "source_sha256": "ca7d77f5c131511c6baf3b147439417a8cbd98f86f16c5a5162782dfe9600633",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/scalar_continuation_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/scalar_explicit_auto.c",
+      "source_sha256": "59dd87fb3adabf072d218c1ae9a25263ee049b840856ef4a7b6f229fe66b6bea",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/scalar_explicit_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/scalar_explicit_static.c",
+      "source_sha256": "5409a799c41aff6c73b0cddd10022ff1ee147ddbe892bff3df85a65c0adcc7ad",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/scalar_explicit_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/synthetic_collision_auto.c",
+      "source_sha256": "a25da186e17f6d6afa175dbec6c61f7aacd54590dadc28867cd24e9403addb82",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/synthetic_collision_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/synthetic_collision_static.c",
+      "source_sha256": "b591de28df44da134637693761248be2844f6f5a5f9bb7321949117df647d38a",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/synthetic_collision_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/union_first_anon_auto.c",
+      "source_sha256": "86ee9519372b2b0dd4be7d819f3e9a4533cbba28b2672e0969eb96c5c93722b4",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/union_first_anon_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/union_first_anon_static.c",
+      "source_sha256": "ae063354592cf7e9ae0f98b6a938bff010a969b79299b1c84346bbdc003297ce",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/union_first_anon_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/union_later_anon_auto.c",
+      "source_sha256": "1202c7bbec6e0510f9f65fcd08808d253d6fdc1c3401e0b7b05573580b705ba5",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/union_later_anon_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/union_later_anon_static.c",
+      "source_sha256": "41a090081835f019b1d0b74400a88cdc3d045ca5a500659805256c6187c0bbd9",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/union_later_anon_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/union_switch_back_auto.c",
+      "source_sha256": "e7100546d09b95b16f24d280bd9cd40a1eea4dc166806d68aa1e366f1bcde06e",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/union_switch_back_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/union_switch_back_static.c",
+      "source_sha256": "9256829960fd548f685b187bb578b9491ac333d5e20c2f25ff7b2dcc90183bb2",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/union_switch_back_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/union_switch_from_named_auto.c",
+      "source_sha256": "232fad5a7a02c7f9cc54b3d2f8eea7ade66dd6867d73f965aef4991cd88490b0",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/union_switch_from_named_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/union_switch_from_named_static.c",
+      "source_sha256": "aa159547f392a38bce6e3a0dd4e482944a9f5ce43a9ce289d78d775bc5ef4a91",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/union_switch_from_named_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/union_switch_to_named_auto.c",
+      "source_sha256": "c2f6b0ca2abd7cd082bca71eba41dcfd7531e357b2a38b88fb0b5eab48e4b3bf",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/union_switch_to_named_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/union_switch_to_named_static.c",
+      "source_sha256": "4b74cf488c74c8f047090e3e5852439d0926a1e21783c68f0e0ceec906a46873",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/union_switch_to_named_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/volatile_container_auto.c",
+      "source_sha256": "a1afaeb067c65acb2fdb6b862e5f707c8be5b345625af1e41e8a24b0a7d50aa2",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/volatile_container_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/volatile_container_static.c",
+      "source_sha256": "d4655a28ee78e5f849df0059659f2ef39e08395ce5d7fdcc2ad0a6f3cb8bf5dd",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/volatile_container_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/volatile_pointer_type_auto.c",
+      "source_sha256": "13be856c05328156bb62830658045c1f849ffc14fa9e8d569a512ec30fe2fcd8",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/volatile_pointer_type_auto.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    },
+    {
+      "source": "csem/tests/anonymous/volatile_pointer_type_static.c",
+      "source_sha256": "8d07dd5085bbad665d23caecd5e5193f99478dea6e6e0accc90c0a5c906f60f6",
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "-funsigned-char",
+          "csem/tests/anonymous/volatile_pointer_type_static.c",
+          "-o",
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "build/anonymous-gcc"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc_ok": true
+    }
+  ]
+}

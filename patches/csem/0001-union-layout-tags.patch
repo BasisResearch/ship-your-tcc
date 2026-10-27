@@ -1,0 +1,20 @@
+--- a/memory/concrete/impl_mem.ml
++++ b/memory/concrete/impl_mem.ml
+@@ -170,7 +170,7 @@
+         let x = modulus max_offset align in
+         if equal x zero then max_offset else Z.add max_offset (Z.sub align x)
+     | Union tag_sym ->
+-        begin match Pmap.find tag_sym (Tags.tagDefs ()) with
++        begin match Pmap.find tag_sym tagDefs with
+           | _, StructDef _ ->
+               assert false
+           | _, UnionDef membrs ->
+@@ -252,7 +252,7 @@
+               ) init membrs
+         end
+     | Union tag_sym ->
+-        begin match Pmap.find tag_sym (Tags.tagDefs ()) with
++        begin match Pmap.find tag_sym tagDefs with
+           | _, StructDef _ ->
+               assert false
+           | _, UnionDef membrs ->

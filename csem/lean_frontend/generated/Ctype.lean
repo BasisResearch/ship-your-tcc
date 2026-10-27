@@ -2,6 +2,7 @@
 
 import LemLib
 
+import CerbLocation
 import CerbGlobal
 import Global
 import CerbDebug
@@ -706,3 +707,115 @@ def is_ptr_t (c : ctype) : Bool :=
    sufficiency obligation `ctypeEqual_measure_sufficient` is emitted into
    Ctype_auxiliary.lean and proved in lean_frontend/Ctype_lemMeasureProofs.lean
    (lem-lean doc/lean-backend/2026-09-04_d2-enablers-record.md §4.5). -/
+
+/- C11 6.7.2.1p13: an anonymous member is a physical subobject.  An
+   unspellable attribute marks promotion; printable field names keep Core
+   text interoperable.  A source field that resembles the internal name is
+   still an ordinary named field. -/
+/- Attribute identifiers containing ':' cannot be supplied by the C grammar.
+   Keep trusted IR operations separate from public source name resolution. -/
+def has_internal_attribute (name1 : String) (a : attributes) : Bool :=
+  match name1, a with
+  | name1, (Attrs attrs1) =>
+    List.any attrs1 (fun (attr : attribute0) =>
+      idEqual attr.attr_id (Identifier CerbLocation.unknown name1))
+
+def add_internal_attribute (name1 : String) (attrs1 : attributes) : attributes :=
+  combine_attributes attrs1
+    (Attrs
+      [(({ attr_ns := none,
+           attr_id := (Identifier CerbLocation.unknown name1),
+           attr_args :=
+             ([] : List (CerbLocation.Loc × String × List (CerbLocation.Loc × String))) } :
+        attribute0))])
+def is_anonymous_member (attrs1 : attributes) : Bool :=
+  has_internal_attribute ":anonymous-member:" attrs1
+def anonymous_member_attributes (attrs1 : attributes) : attributes :=
+  add_internal_attribute ":anonymous-member:" attrs1
+def physical_member_annotations : List annot :=
+  [Aattrs (add_internal_attribute ":physical-member-operation:" (Attrs ([] : List attribute0)))]
+def is_physical_member_operation (annots1 : List annot) : Bool :=
+  match get_attrs annots1 with
+  | some attrs1 => has_internal_attribute ":physical-member-operation:" attrs1
+  | none => false
+
+def name_anonymous_members (reserved : List identifier)
+    (members : List (identifier × (attributes × Option alignment × qualifiers × ctype))) :
+    List (identifier × (attributes × Option alignment × qualifiers × ctype)) :=
+  /- Longer than every declared name, and unique by member index.  This is
+     local to a tag: a later declaration cannot capture an earlier name. -/
+  let width :=
+    List.foldl
+      (fun (n : Nat) (i : identifier) =>
+        match n, i with
+        | n, (Identifier _ name1) => natMax n (String.length name1)) 0
+      (List.map Prod.fst members ++ reserved);
+  List.map
+    (fun (p : (Nat × (identifier × (attributes × Option alignment × qualifiers × ctype)))) =>
+      match p with
+      | (n, (ident, data)) =>
+        (match ident with
+         | Identifier loc1 name1 =>
+           (match data with
+            | (attrs1, _, _, _) =>
+              (Identifier loc1
+                (lem_if is_anonymous_member attrs1 then
+                  String.append (stringMakeString (width + 1) '_')
+                    (String.append "cerb_anon_" (Lem_String_extra.stringFromNat n))
+                else
+                  name1), data)))) (numerote members)
+
+structure member_path where
+  member_path_visible : Bool
+  member_path_steps : List (identifier × qualifiers × ctype)
+  deriving BEq, Ord
+instance : Inhabited member_path where
+  default := { member_path_visible := default, member_path_steps := default }
+instance (priority := 500) : Lem_Basic_classes.SetType member_path where
+  setElemCompare := defaultCompare
+instance (priority := 500) : Lem_Basic_classes.Eq0 member_path where
+  isEqual x y := x == y
+  isInequal x y := !(x == y)
+instance (priority := 500) : Lem_Basic_classes.Ord0 member_path where
+  compare := defaultCompare
+  isLess := defaultLess
+  isLessEqual := defaultLessEq
+  isGreater := defaultGreater
+  isGreaterEqual := defaultGreaterEq
+def member_paths (depth : Nat)
+    (members : sym → List (identifier × (attributes × Option alignment × qualifiers × ctype)))
+    (ty1 : ctype) :
+    List (identifier × member_path) :=
+  /- A complete by-value member chain cannot repeat a tag.  Callers supply
+     one plus the number of definitions.  Bounded iteration keeps this helper
+     total on malformed cyclic tables too, with no native or partial seam. -/
+  let paths :=
+    List.foldl
+      (fun (paths : ctype → List (identifier × member_path)) (_ : Unit) =>
+        fun (parent_ty : ctype) =>
+          let xs :=
+            match unatomic_ parent_ty with
+            | Struct tag => members tag
+            | Union0 tag => members tag
+            | _ => ([] : List (identifier × (attributes × Option alignment × qualifiers × ctype)));
+          List.flatten
+            (List.map
+              (fun (p : (identifier × (attributes × Option alignment × qualifiers × ctype))) =>
+                match p with
+                | (ident, (attrs1, _, qs, child_ty)) =>
+                  (let step1 := (ident, qs, child_ty);
+                   (ident,
+                     (({ member_path_visible := (not (is_anonymous_member attrs1)),
+                         member_path_steps := [step1] } : member_path))) ::
+                     (lem_if is_anonymous_member attrs1 then
+                       List.map
+                         (fun (p : (identifier × member_path)) =>
+                           match p with
+                           | (name1, path) =>
+                             (name1,
+                               { path with member_path_steps := step1 :: path.member_path_steps }))
+                         (paths child_ty)
+                     else
+                       ([] : List (identifier × member_path))))) xs))
+      (fun (_ : ctype) => ([] : List (identifier × member_path))) (List.replicate depth ());
+  paths ty1

@@ -407,14 +407,12 @@ def combineProv : Provenance → Provenance → Provenance
     offsetof resolves ONLY through the threaded map. The pre-fix Lean
     ambient-read shortcut panicked exactly there (pr44468, the CI
     sweep's finding; 2026-09-01 S-basket item 1).
-    UPSTREAM ASYMMETRY, MIRRORED DELIBERATELY: the Union arms of both
-    sizeof and alignof look the tag up in the GLOBAL
-    (`Pmap.find tag_sym (Tags.tagDefs ())`, impl_mem.ml:173, :255)
-    even though their member folds thread ~tagDefs — so
-    elaboration-time offsetof over a union-containing struct CRASHES
-    upstream (probed 2026-09-01: oracle exit 125, "Tags definitions
-    must be set"; Lean mirrors with the unknown-tag panic — immaculate
-    row offsetof-union-member pins the pair). Upstream-tray candidate.
+    Local anonymous-member repair (2026-10-27): upstream's Union arms of
+    sizeof and alignof look up the global table despite receiving ~tagDefs.
+    Both local adapters now use the explicit table, like the Struct arms.
+    This fixes elaboration-time offsetof on union-containing aggregates;
+    pristine and pre-repair crash captures remain in the anonymous report.
+    The OCaml counterpart is patches/csem/0001-union-layout-tags.patch.
 
     Integer/float leaf sizes come from CerberusImpl (the DefaultImpl port),
     exactly like OCaml routes them through `(Ocaml_implementation.get ())`
@@ -589,10 +587,8 @@ def sizeofCtype_lemFuel [CerbImplCfg.Impl] (lemFuel : Nat) (enumDefs : EnumDefs)
         let x := maxOffset % align
         if x == 0 then maxOffset else maxOffset + (align - x)
       | .Union0 tagSym =>                           -- impl_mem.ml:172-192
-        -- GLOBAL read, deliberately: impl_mem.ml:173 is
-        -- `Pmap.find tag_sym (Tags.tagDefs ())` — NOT ~tagDefs (the
-        -- upstream asymmetry; see the section header note).
-        match CerbTagsWf.lookupEntry ambient tagSym with
+        -- Same explicit definition table as recursive layout calls.
+        match CerbTagsWf.lookupEntry tagDefs tagSym with
         | some (_, (_, UnionDef membrs)) =>
           let (maxSize, maxAlign) := membrs.foldl (init := ((0 : Nat), (0 : Nat)))
             fun (acc : Nat × Nat) memb =>
@@ -654,10 +650,8 @@ def alignofCtype_lemFuel [CerbImplCfg.Impl] (lemFuel : Nat) (enumDefs : EnumDefs
             max (memberAlign_lemFuel lemFuel enumDefs ambient tagDefs alignOpt ty) acc  -- impl_mem.ml:242-251
         | _ => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.alignofStruct "CerbMem.alignofCtype: Struct tag not a StructDef (OCaml: assert false / Not_found)")))
       | .Union0 tagSym =>                           -- impl_mem.ml:253-271
-        -- GLOBAL read, deliberately: impl_mem.ml:255 is
-        -- `Pmap.find tag_sym (Tags.tagDefs ())` — NOT ~tagDefs (the
-        -- upstream asymmetry; see the section header note).
-        match CerbTagsWf.lookupEntry ambient tagSym with
+        -- Same explicit definition table as recursive layout calls.
+        match CerbTagsWf.lookupEntry tagDefs tagSym with
         | some (_, (_, UnionDef membrs)) =>
           membrs.foldl (init := (0 : Nat)) fun acc memb =>
             let (_, (_, alignOpt, _, ty)) := memb

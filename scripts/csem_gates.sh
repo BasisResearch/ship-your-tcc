@@ -76,6 +76,10 @@ python3 scripts/gen_union_c11_observation.py --check || fail "C11 union observat
 python3 scripts/gen_union_suite.py --check || fail "union suite batch fixture drift"
 python3 csem/scripts/check_union_initializers.py --selftest || fail "C11 union initialization"
 
+echo "== csem (3c) C11 anonymous members"
+python3 scripts/gen_anonymous_fixtures.py --check || fail "anonymous fixture drift"
+python3 scripts/test_anonymous_csem.py --report build/anonymous-gate.json || fail "anonymous member semantics"
+
 echo "== csem (4) purity, totality, axiom census, sorry token"
 csem/scripts/check_exec_purity.sh --selftest | tail -1 || fail "exec purity selftest"
 csem/scripts/check_exec_purity.sh || fail "exec purity"

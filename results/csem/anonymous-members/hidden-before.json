@@ -1,0 +1,46 @@
+{
+  "source": "results/csem/anonymous-members/hidden-before.c",
+  "source_sha256": "1cfb62f49e8cfa1d8bab16bb7d64485d3ea0ad4a652bdb617c20c310f5b37766",
+  "guessed_name": "________________________________________________cerb_anon_2",
+  "gcc": {
+    "command": [
+      "gcc",
+      "-std=c11",
+      "-pedantic-errors",
+      "results/csem/anonymous-members/hidden-before.c",
+      "-o",
+      "build/hidden-before"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "results/csem/anonymous-members/hidden-before.c: In function \u2018main\u2019:\nresults/csem/anonymous-members/hidden-before.c:4:24: error: \u2018struct S\u2019 has no member named \u2018________________________________________________cerb_anon_2\u2019\n    4 | int main(void){return s.________________________________________________cerb_anon_2.a;}\n      |                        ^\n"
+  },
+  "ocaml": {
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/9b089b87586cc410286ad9b111d6b1feec2486acada30a7fd74b8195d01f5bf6/_build/default/backend/driver/main.exe",
+      "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/9b089b87586cc410286ad9b111d6b1feec2486acada30a7fd74b8195d01f5bf6/_build/install/default",
+      "--nolibc",
+      "--exec",
+      "--batch",
+      "results/csem/anonymous-members/hidden-before.c"
+    ],
+    "exit": 0,
+    "stdout": "Defined {value: \"Specified(1)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+    "stderr": "Time spent: 0.028579 seconds\n"
+  },
+  "lean": {
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+      "--batch",
+      "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/9b089b87586cc410286ad9b111d6b1feec2486acada30a7fd74b8195d01f5bf6/_build/install/default",
+      "build/hidden-before.json"
+    ],
+    "exit": 0,
+    "stdout": "Defined {value: \"Specified(1)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+    "stderr": "cerberus-lean switches: []\n"
+  },
+  "binaries": {
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/9b089b87586cc410286ad9b111d6b1feec2486acada30a7fd74b8195d01f5bf6/_build/default/backend/driver/main.exe": "c5aa45d5f5586b959e824abc29e44a30957f9d719d1b9e6554bc82e6b85f65ba",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run": "c9883c15c0d179fa9cc0da4b591ba59a2bed733bcb9990f22aa23d48238a0b20"
+  }
+}

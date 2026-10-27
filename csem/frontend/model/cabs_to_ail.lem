@@ -3,7 +3,7 @@ open import Pervasives Utils Cabs AilSyntax Std Constraint Assert_extra
 open import Cabs_to_ail_aux
 import Cabs_to_ail_effect
 
-import IntegerImpl Range
+import IntegerImpl Range Ctype
 
 import Debug Pp Cabs Multiset Decode
 import AilSyntaxAux AilTypesAux Builtins
@@ -1570,15 +1570,33 @@ let rec desugar_type_specifiers specs =
              type is being declared within the translation unit *)
           E.register_tag loc kind_ctor tag_ident_opt >>= fun tag_sym ->
           (* TODO: check that is indeed the UB I'm thinking of... *)
-          List.concat <$> E.mapM desugar_struct_declaration sdecls >>= fun all_membDefs ->
-          
-          (* Checks whether a member identifier is duplicated *)
-          E.foldlM (fun acc (ident, _) ->
+          List.concat <$> E.mapM desugar_struct_declaration sdecls >>= fun raw_membDefs ->
+          E.get_tag_definitions >>= fun nested_tagDefs ->
+          let nested_members tag = match Map.lookup tag nested_tagDefs with
+            | Just (Struct_definition _ _ _ xs _) -> xs
+            | Just (Union_definition _ _ _ xs) -> xs
+            | _ -> []
+          end in
+          (* Include descendants' real names when allocating physical names:
+             a promoted source member must not capture its own container. *)
+          let reserved_names = List.concat (List.map (fun (tag, _) ->
+            List.map fst (List.filter (fun (_, (attrs, _, _, _)) ->
+              not (Ctype.is_anonymous_member attrs)) (nested_members tag))
+          ) (Map_extra.toList nested_tagDefs)) in
+          let all_membDefs = Ctype.name_anonymous_members reserved_names raw_membDefs in
+          (* Check direct and promoted names in the enclosing namespace. *)
+          let visible_names = List.concat (List.map (fun (ident, (attrs, _, _, ty)) ->
+            if Ctype.is_anonymous_member attrs then
+              List.map fst (List.filter (fun (_, path) -> path.Ctype.member_path_visible)
+                (Ctype.member_paths (1 + List.length (Map_extra.toList nested_tagDefs)) nested_members ty))
+            else [ident]
+          ) all_membDefs) in
+          E.foldlM (fun acc ident ->
             if List.elem ident acc then
               E.fail (Loc.locOf ident) (Errors.Desugar_TODO ("duplicate member: " ^ show ident))
             else
               E.return (ident :: acc)
-          ) [] all_membDefs >>= fun _ ->
+          ) [] visible_names >>= fun _ ->
           
           begin
             if List.length all_membDefs = 0 && struct_or_union = UNION then
@@ -2712,10 +2730,14 @@ and desugar_struct_declaration struct_decl =
         let (isAtomic, tquals_qs) = translate_type_qualifiers tquals in
         if List.null sdecltors then
           E.get_anonymous_struct_or_union base_ty >>= function
-            | Just membrs ->
-                (* STD §6.7.2.1#13 *)
-                (* this is an unammed anonymous structure or union *)
-                E.return membrs
+            | Just _ ->
+                (* Keep one physical container; promoted names are lookup paths,
+                   never extra storage or extra initializer siblings. *)
+                let ident = Symbol.Identifier (Loc.locOf base_ty) "anonymous" in
+                desugar_alignment_specifiers (Loc.locOf base_ty) base_ty align_specs >>= fun align_opt ->
+                E.return [(ident, (Ctype.anonymous_member_attributes outer_attrs, align_opt,
+                  Ctype.combine_qualifiers tquals_qs specs_qs,
+                  if isAtomic then wrap_atomic base_ty else base_ty))]
             | Nothing ->
                 (* STD §6.7.2.1#2 *)
                 E.constraint_violation (Loc.locOf base_ty) StructDeclarationLacksDeclaratorList
@@ -3246,7 +3268,7 @@ and foo_aux
                                       ) elems1
                                     ) >>= fun () ->
                                     let acc' = List.foldl (fun acc ((path, _, _), (memb_ident, _)) ->
-                                      (path, AnnotatedExpression () []
+                                      (path, AnnotatedExpression () Ctype.physical_member_annotations
                                                (Loc.other "init with struct expr") (AilEmemberof d_e memb_ident)) :: acc
                                     ) acc (List.zip elems1 membrs) in
                                     foo_aux acc' elems2 unknown_array xs'

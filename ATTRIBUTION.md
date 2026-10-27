@@ -172,3 +172,27 @@ type-selection counterexamples motivated the repair. No library proof was reused
 | Component | Reuse |
 |---|---|
 | Raw-source frontend connection (`Spec/Pre/Provenance.lean`, `CSemCParser/Phase7.lean`, `Tcc/CSem/RawFrontEnd.lean`) | Local composition of this project's C11 preprocessing spec with its existing port of Cerberus's `c_lexer.mll` literal/number rules and `c_parser.mly` string-prefix merge. Reuses the existing pure `CerberusFresh.MD5` over raw bytes; upstream and Lem pins remain in `vendor/CSEM_REV`. No machine/library routine proof or instruction-identity claim is added. |
+
+The anonymous-member repair uses Cerberus/cerberus-lean at
+`704c4e697845127bced66c93fa0763eb51527ca4` and the matching lem-lean at
+`e6d8db5680962f49060257d6c2bcb13c284b910f`. Changes to physical member
+representation, promoted-name paths and initialization are shared Lem source;
+Lean and the isolated OCaml overlay are generated from identical bytes.
+The new focused generator follows the local union/continuation validation
+harnesses and keeps their 34/58 checks intact. Internal attribute markers and
+printable member names are local changes under the surrounding BSD-2-Clause
+license. The Lua abstraction inventory/tool table were consulted; no library
+machine proof was copied or claimed instruction-identical. Exact source,
+binary and generator hashes belong to `results/csem/anonymous-members.md`.
+
+The same task corrects the handwritten layout adapters' two union-table
+lookups: `CerbMem.lean` uses its explicit table, and
+`patches/csem/0001-union-layout-tags.patch` applies the identical correction
+only inside the isolated pristine-pin OCaml copy. The patch is generated
+against upstream `memory/concrete/impl_mem.ml` at the above pin. The original
+pristine crash and the repaired same-API observations are retained separately.
+The final public-name repair reuses the existing Ail annotation representation
+for explicit internal projections, and the existing initializer cursor for
+physical path traversal. The unchanged external fuel-sufficiency interfaces
+are proved with CerbMem.layout_stable_aux (in CerbMem_lemMeasureProofs.lean) after aligning its
+union potential with the explicit table; no new machine proof is imported.

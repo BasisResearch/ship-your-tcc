@@ -1,0 +1,182 @@
+{
+  "pins": "cerberus-lean 704c4e697845127bced66c93fa0763eb51527ca4\nlem-lean e6d8db5680962f49060257d6c2bcb13c284b910f\n# cerberus-lean: OathTech/cerberus-lean, branch mdd/cerberus-lean,\n# commit 2026-10-26 17:26:39 UTC (lead-fetched current snapshot 2026-10-27).\n# lem-lean: OathTech/lem-lean, branch mdd/lean-backend,\n# commit 2026-10-22 01:33:30 UTC; matching LemLib and generator.\n# Upstream targets Lean 4.35.0; this fork retains approved Lean 4.34.0.\n# Imported with scripts/csem_import.sh; local replay and validation recorded\n# in csem/PORT-4.34.md and results/csem/repin-2026-10-27.md.\n",
+  "sources": {
+    "csem/frontend/model/ctype.lem": "88c303cd5f5ca2bc039a5531f3dfd4cb445a0086994999ae6146afa7f0d5c578",
+    "csem/frontend/model/cabs_to_ail.lem": "09bd43a3c76cae4ad9fff141510573dada7c6d105c3f06b00f0679c3ee6c5092",
+    "csem/frontend/model/ail/genTyping.lem": "bb3033b35d0f8a3a0d835922dd118c5c9d2be27530f89cc9de0fbf7ca9d5201f",
+    "csem/frontend/model/desugaring_init.lem": "196326bd12e40e7573efd65fb0acb4a07a40b60599f0e7fb424be2063e1f65d2",
+    "csem/lean_frontend/CerbMem.lean": "947af51f0415c6096683d9070b35be2ee6123fc5f61b09fba940cbf131479ce4",
+    "csem/lean_frontend/CerbMem_lemMeasureProofs.lean": "f4bdafa5bfa402e5f3628199be494dad118aec2e807ca42b0429b2c505d98ef6",
+    "patches/csem/0001-union-layout-tags.patch": "26c575e3aaeac9a525bef796840a89fe5877284f02d2188e2e24a975c8ec7843"
+  },
+  "focused": {
+    "positive": 78,
+    "invalid": 14,
+    "passed": 92,
+    "core_text_parses": 78
+  },
+  "union": {
+    "passed": 34,
+    "conforming": 33,
+    "inherited_excess_control": 1
+  },
+  "continuation": {
+    "attempted": 58,
+    "defined_agreements": 54,
+    "bitfield_gaps": [
+      "build/designator-focused/designator_padding_auto.c",
+      "build/designator-focused/designator_padding_static.c",
+      "build/designator-focused/designator_trailing_padding_auto.c",
+      "build/designator-focused/designator_trailing_padding_static.c"
+    ]
+  },
+  "compiler": {
+    "cases": 78,
+    "sail_agreements": 74,
+    "qualifier_counterexamples": [
+      "csem/tests/anonymous/const_pointer_type_auto.c",
+      "csem/tests/anonymous/const_pointer_type_static.c",
+      "csem/tests/anonymous/volatile_pointer_type_auto.c",
+      "csem/tests/anonymous/volatile_pointer_type_static.c"
+    ]
+  },
+  "parser": {
+    "parser-full.tsv": {
+      "AGREE": 614,
+      "BOTH_REJECT": 41,
+      "CPP_FAIL": 9
+    },
+    "parser-focused.tsv": {
+      "AGREE": 93
+    }
+  },
+  "receipts": {
+    "build": {
+      "request_id": "anonymous-build-4be4fe0569b671d727e3449bb4d10498e527296e85729138b922189fc7640a1a",
+      "receipt": {
+        "request": "anonymous-build-4be4fe0569b671d727e3449bb4d10498e527296e85729138b922189fc7640a1a",
+        "request_id": "anonymous-build-4be4fe0569b671d727e3449bb4d10498e527296e85729138b922189fc7640a1a",
+        "exit": 0,
+        "log": "build/worker-build-anonymous-build-4be4fe0569b671d727e3449bb4d10498e527296e85729138b922189fc7640a1a.log",
+        "command": [
+          "flock",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/build/lake.lock",
+          "systemd-run",
+          "--user",
+          "--scope",
+          "-p",
+          "MemoryMax=12G",
+          "lake",
+          "build",
+          "CerberusLean",
+          "csem_run",
+          "csem_cparse"
+        ],
+        "source_hashes_verified": true,
+        "lead_review_required": "New assignment: tasks/f1-anonymous-members.md. Prior designator/compiler work is fully landed, including native captures; do not resend it. Worktree is a new branch from current main. Read-only pin-addressed toolchain symlink targets root's adopted toolchain; never modify opam, pristine sources, or existing content-addressed oracle directories. A fresh-key isolated fork oracle can be requested from lead.\nSlot 1 independently replaces native float seams; it edits CerbMem's floating representation and shared floating constructors. Your anonymous/container work should preserve those changes at later integration. Do not touch slot 1. Lead handles merges and regeneration if needed.\nRoot build/serve_workers.py services frozen build/worker-build.request with unique ID, targets and complete source hashes. Keep hashed sources stable until result; if superseding, wait until prior request finishes before edits. Use kind full-gate-validation for scripts/check.sh --csem; empty targets otherwise require explicit default-build-validation (arbitrary commands are NOT interpreted).\nToolchain/generator requests not expressible as Lake targets use build/worker-toolchain.request with a unique ID, exact commands, source hashes and memory cap. Lead reviews and executes them. Read-only Git metadata requires frozen worker-commit.request and lead will commit; no external push/merge.\nPristine captures/minimal initializer distinction are already on main in results/model/designator/layout-minimized. Do not confuse layout choices with the wrong s.z value: .a=1,2,3 => s.z=0 upstream vs3 GCC; explicit .a=1,.b=2,.z=3 works. No user decision is blocking this repair.\n\n2026-10-27 21:29 lead: reviewed your four-file isolated OCaml overlay and launched its frozen toolchain request under the shared lock + 12G cap; it is queued behind your Lean build. Retain minimized tcc/GCC anonymous-member discrepancies with raw captures. Do not repair compiler/model concurrently in this CSem task; I will queue a follow-up on integrated compiler image. Explicit compiler constraints and runtime mismatches must remain outside successful validation counts.\n\n2026-10-27 21:39 review: printable physical names must not become source-visible members. Current genTyping.source_member_path uses List.lookup over member_paths without filtering member_path_visible. Please add a negative control that guesses the generated container name in a source member expression/designator, while preserving internally generated physical paths and Core text round trips. A name longer than declared names prevents declaration collisions but does not prevent arbitrary source expressions from naming it. Distinguish source lookup from trusted internal traversal; do not merely filter and break initializer-generated paths. Frozen build/oracle requests should finish before source changes; submit fresh manifests afterward if needed.\n\nFreeze discipline reminder: the source-drift rejection followed edits while other build jobs were still finishing after Cabs_to_ail failed. Seeing a target error in the log is not the matching completed worker-build.result. Wait for that receipt before changing any frozen file; the final verification is part of the build. The new request60cacc is active now.\n\nPure IEEE semantics are now adopted on main (2f2dd9e, after integrated full gate). Do not rebase your dirty frozen sources mid-check; lead will integrate your final candidate with IEEE and regenerate after source merges as needed. Preserve shared semantic source boundaries. New IEEE constructors/translation and 235-file generation are required in the final combined tree.\n"
+      }
+    },
+    "oracle": {
+      "request_id": "anonymous-oracle-d943416e84400e33308a8abe176062db1a03e4b7ed592f025c6aba32f69fd8da",
+      "receipt": {
+        "request_id": "anonymous-oracle-d943416e84400e33308a8abe176062db1a03e4b7ed592f025c6aba32f69fd8da",
+        "exit": 0,
+        "log": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/toolchain-anonymous-oracle-d943416e84400e33308a8abe176062db1a03e4b7ed592f025c6aba32f69fd8da.log",
+        "source_hashes_verified": true
+      }
+    },
+    "gate": {
+      "request_id": "anonymous-gate-a302238940c7159aa2d6ad8ed90b3f3ee15ff33c01bee41a6b2abd289cdd5bf2",
+      "receipt": {
+        "request": "anonymous-gate-a302238940c7159aa2d6ad8ed90b3f3ee15ff33c01bee41a6b2abd289cdd5bf2",
+        "request_id": "anonymous-gate-a302238940c7159aa2d6ad8ed90b3f3ee15ff33c01bee41a6b2abd289cdd5bf2",
+        "exit": 0,
+        "log": "build/worker-build-anonymous-gate-a302238940c7159aa2d6ad8ed90b3f3ee15ff33c01bee41a6b2abd289cdd5bf2.log",
+        "command": [
+          "scripts/check.sh",
+          "--csem"
+        ],
+        "source_hashes_verified": true,
+        "lead_review_required": "New assignment: tasks/f1-anonymous-members.md. Prior designator/compiler work is fully landed, including native captures; do not resend it. Worktree is a new branch from current main. Read-only pin-addressed toolchain symlink targets root's adopted toolchain; never modify opam, pristine sources, or existing content-addressed oracle directories. A fresh-key isolated fork oracle can be requested from lead.\nSlot 1 independently replaces native float seams; it edits CerbMem's floating representation and shared floating constructors. Your anonymous/container work should preserve those changes at later integration. Do not touch slot 1. Lead handles merges and regeneration if needed.\nRoot build/serve_workers.py services frozen build/worker-build.request with unique ID, targets and complete source hashes. Keep hashed sources stable until result; if superseding, wait until prior request finishes before edits. Use kind full-gate-validation for scripts/check.sh --csem; empty targets otherwise require explicit default-build-validation (arbitrary commands are NOT interpreted).\nToolchain/generator requests not expressible as Lake targets use build/worker-toolchain.request with a unique ID, exact commands, source hashes and memory cap. Lead reviews and executes them. Read-only Git metadata requires frozen worker-commit.request and lead will commit; no external push/merge.\nPristine captures/minimal initializer distinction are already on main in results/model/designator/layout-minimized. Do not confuse layout choices with the wrong s.z value: .a=1,2,3 => s.z=0 upstream vs3 GCC; explicit .a=1,.b=2,.z=3 works. No user decision is blocking this repair.\n\n2026-10-27 21:29 lead: reviewed your four-file isolated OCaml overlay and launched its frozen toolchain request under the shared lock + 12G cap; it is queued behind your Lean build. Retain minimized tcc/GCC anonymous-member discrepancies with raw captures. Do not repair compiler/model concurrently in this CSem task; I will queue a follow-up on integrated compiler image. Explicit compiler constraints and runtime mismatches must remain outside successful validation counts.\n\n2026-10-27 21:39 review: printable physical names must not become source-visible members. Current genTyping.source_member_path uses List.lookup over member_paths without filtering member_path_visible. Please add a negative control that guesses the generated container name in a source member expression/designator, while preserving internally generated physical paths and Core text round trips. A name longer than declared names prevents declaration collisions but does not prevent arbitrary source expressions from naming it. Distinguish source lookup from trusted internal traversal; do not merely filter and break initializer-generated paths. Frozen build/oracle requests should finish before source changes; submit fresh manifests afterward if needed.\n\nFreeze discipline reminder: the source-drift rejection followed edits while other build jobs were still finishing after Cabs_to_ail failed. Seeing a target error in the log is not the matching completed worker-build.result. Wait for that receipt before changing any frozen file; the final verification is part of the build. The new request60cacc is active now.\n\nPure IEEE semantics are now adopted on main (2f2dd9e, after integrated full gate). Do not rebase your dirty frozen sources mid-check; lead will integrate your final candidate with IEEE and regenerate after source merges as needed. Preserve shared semantic source boundaries. New IEEE constructors/translation and 235-file generation are required in the final combined tree.\n"
+      }
+    }
+  },
+  "native": {
+    "rows": [
+      {
+        "source": "results/model/designator/layout-minimized/anonymous-continuation.c",
+        "source_sha256": "ad5969c64567eefb59cc5231d9272d59cab7a3c4712405b44b3debb4670adee2",
+        "expected": 3,
+        "exit": 3,
+        "stdout": "",
+        "trace": "TODO: cancel_reservation\nT\t3321247\t80001b60\t80001b64\t80043330\t87fffc30\t8007e350\t0\t80058cb4\tf\tffffffffffffffff\t800abc80\t8007e828\t8640002c\t1\t86800ed0\t86800ee0\t86400000\t2c\t7f\t8007db50\t5f\t1\t0\t0\t0\t0\t2\t86800ea8\t6\t800abc80\t800bae44\t80\tfffffffff0000000\t7f\tO\t0\t0\t256\nT\t3321272\t80001b48\t80001b4c\t80043330\t87fffc30\t8007e350\t0\t80058cb4\tf\tffffffffffffffff\t800abc80\t8007e828\t8640002c\t1\t86800ed0\t86800ee0\t86400000\t2c\t0\t8007db50\t5f\t1\t0\t0\t0\t0\t2\t86800ea8\t6\t800abc80\t800bae44\t80\tfffffffff0000000\t7f\tO\t0\t0\t256\nT\t3321361\t80000804\t80000808\t864000d8\t87fffbf0\t8007e350\t0\t80058cb4\t86402234\tffffffffffffffff\t3\t1\t3\t0\t86800ee0\t86800ee0\t8007d800\t7\t0\t8007db50\t86800ed0\t86800ee0\t86400000\t0\t0\t0\t2\t86800ea8\t6\t800abc80\t800007f4\t80\tfffffffff0000000\t7f\tS8\t8007db40\t0\t0\tO\t0\t0\t256\n",
+        "trace_rows": [
+          "T\t3321247\t80001b60\t80001b64\t80043330\t87fffc30\t8007e350\t0\t80058cb4\tf\tffffffffffffffff\t800abc80\t8007e828\t8640002c\t1\t86800ed0\t86800ee0\t86400000\t2c\t7f\t8007db50\t5f\t1\t0\t0\t0\t0\t2\t86800ea8\t6\t800abc80\t800bae44\t80\tfffffffff0000000\t7f\tO\t0\t0\t256",
+          "T\t3321272\t80001b48\t80001b4c\t80043330\t87fffc30\t8007e350\t0\t80058cb4\tf\tffffffffffffffff\t800abc80\t8007e828\t8640002c\t1\t86800ed0\t86800ee0\t86400000\t2c\t0\t8007db50\t5f\t1\t0\t0\t0\t0\t2\t86800ea8\t6\t800abc80\t800bae44\t80\tfffffffff0000000\t7f\tO\t0\t0\t256",
+          "T\t3321361\t80000804\t80000808\t864000d8\t87fffbf0\t8007e350\t0\t80058cb4\t86402234\tffffffffffffffff\t3\t1\t3\t0\t86800ee0\t86800ee0\t8007d800\t7\t0\t8007db50\t86800ed0\t86800ee0\t86400000\t0\t0\t0\t2\t86800ea8\t6\t800abc80\t800007f4\t80\tfffffffff0000000\t7f\tS8\t8007db40\t0\t0\tO\t0\t0\t256"
+        ],
+        "metadata": "compile_steps=3321247\nprogram_steps=90\nsteps=3321362\n",
+        "image": "/Users/kirancodes/tmp/tcc_sail.Bxj1fU/prog.elf",
+        "image_sha256": "009345f21647d8816e9f8872ec9239101fae215d6fec009cc3b0dcbef93e9856",
+        "embed_sha256": "137d46a18a46e2234bd7c9f3040eff678a444aeae67626e0c9b76ec7ea0c31b1",
+        "command": [
+          "timeout",
+          "900",
+          "scripts/run_tcc_sail.sh",
+          "results/model/designator/layout-minimized/anonymous-continuation.c"
+        ],
+        "environment": {
+          "TCC_ARGS": "\"-w\",\"-std=c11\",",
+          "MAX_STEPS": "100000000",
+          "KEEP_WORK": "1"
+        },
+        "isa_exit": 0,
+        "isa_stdout": "NOTE /Users/kirancodes/tmp/tcc_sail.Bxj1fU/prog.elf(/Users/kirancodes/tmp/tcc_sail.Bxj1fU/prog.elf) .text 8001ee7c: 00100073 ebreak \nNOTE /Users/kirancodes/tmp/tcc_sail.Bxj1fU/prog.elf(/Users/kirancodes/tmp/tcc_sail.Bxj1fU/prog.elf) .text 80021adc: 00100073 ebreak \nNOTE /Users/kirancodes/tmp/tcc_sail.Bxj1fU/prog.elf(/Users/kirancodes/tmp/tcc_sail.Bxj1fU/prog.elf) .text 8002a910: 00100073 ebreak \nNOTE /Users/kirancodes/tmp/tcc_sail.Bxj1fU/prog.elf(/Users/kirancodes/tmp/tcc_sail.Bxj1fU/prog.elf) .text 8003f018: 00100073 ebreak \nNOTE /Users/kirancodes/tmp/tcc_sail.Bxj1fU/prog.elf(/Users/kirancodes/tmp/tcc_sail.Bxj1fU/prog.elf) .text 8003fe8c: 00100073 ebreak \nOK   /Users/kirancodes/tmp/tcc_sail.Bxj1fU/prog.elf insns=107594 bad=0 notes=5 zero-pad=0\n"
+      },
+      {
+        "source": "results/csem/anonymous-members/native-78.c",
+        "source_sha256": "4ed3fc99cad93ce71743fc5cd66d4aead906bc60c68269e5fcaead04a4bfe0e0",
+        "expected": 59,
+        "exit": 59,
+        "stdout": "",
+        "trace": "TODO: cancel_reservation\nT\t7444688\t80001b60\t80001b64\t80043330\t87fffc30\t8007e350\t0\t80058cb4\tf\tffffffffffffffff\t800abc80\t8007e828\t86402d84\t1\t86800ed0\t86800ee0\t86400000\t2d84\tff\t8007db50\t5f\t1\t0\t0\t0\t0\t2\t86800ea8\t6\t800abc80\t8013f1d8\t100\tfffffffff0000000\tff\tO\t0\t0\t256\nT\t7444713\t80001b48\t80001b4c\t80043330\t87fffc30\t8007e350\t0\t80058cb4\tf\tffffffffffffffff\t800abc80\t8007e828\t86402d84\t1\t86800ed0\t86800ee0\t86400000\t2d84\t0\t8007db50\t5f\t1\t0\t0\t0\t0\t2\t86800ea8\t6\t800abc80\t8013f1d8\t100\tfffffffff0000000\tff\tO\t0\t0\t256\nT\t7447670\t80000804\t80000808\t86403034\t87fffbf0\t8007e350\t0\t86402e3c\t864050b4\tffffffffffffffff\t3b\t1\t3b\t0\tc\t86402e48\t8007d800\t77\t0\t8007db50\t86800ed0\t86800ee0\t86400000\t0\t0\t0\t2\t86800ea8\t6\t800abc80\t800007f4\t100\tfffffffff0000000\tff\tS8\t8007db40\t0\t0\tO\t0\t0\t256\n",
+        "trace_rows": [
+          "T\t7444688\t80001b60\t80001b64\t80043330\t87fffc30\t8007e350\t0\t80058cb4\tf\tffffffffffffffff\t800abc80\t8007e828\t86402d84\t1\t86800ed0\t86800ee0\t86400000\t2d84\tff\t8007db50\t5f\t1\t0\t0\t0\t0\t2\t86800ea8\t6\t800abc80\t8013f1d8\t100\tfffffffff0000000\tff\tO\t0\t0\t256",
+          "T\t7444713\t80001b48\t80001b4c\t80043330\t87fffc30\t8007e350\t0\t80058cb4\tf\tffffffffffffffff\t800abc80\t8007e828\t86402d84\t1\t86800ed0\t86800ee0\t86400000\t2d84\t0\t8007db50\t5f\t1\t0\t0\t0\t0\t2\t86800ea8\t6\t800abc80\t8013f1d8\t100\tfffffffff0000000\tff\tO\t0\t0\t256",
+          "T\t7447670\t80000804\t80000808\t86403034\t87fffbf0\t8007e350\t0\t86402e3c\t864050b4\tffffffffffffffff\t3b\t1\t3b\t0\tc\t86402e48\t8007d800\t77\t0\t8007db50\t86800ed0\t86800ee0\t86400000\t0\t0\t0\t2\t86800ea8\t6\t800abc80\t800007f4\t100\tfffffffff0000000\tff\tS8\t8007db40\t0\t0\tO\t0\t0\t256"
+        ],
+        "metadata": "compile_steps=7444688\nprogram_steps=2958\nsteps=7447671\n",
+        "image": "/Users/kirancodes/tmp/tcc_sail.MQOzgL/prog.elf",
+        "image_sha256": "984ed88472a7c1d032e17c2fd4dec5861a830e5eedeb87a9f8f9c5d88581e4ff",
+        "embed_sha256": "516bd4320e8d581b7584b8a8ae20547e779f8a6accd10198bda50b00614caedf",
+        "command": [
+          "timeout",
+          "900",
+          "scripts/run_tcc_sail.sh",
+          "results/csem/anonymous-members/native-78.c"
+        ],
+        "environment": {
+          "TCC_ARGS": "\"-w\",\"-std=c11\",",
+          "MAX_STEPS": "100000000",
+          "KEEP_WORK": "1"
+        },
+        "isa_exit": 0,
+        "isa_stdout": "NOTE /Users/kirancodes/tmp/tcc_sail.MQOzgL/prog.elf(/Users/kirancodes/tmp/tcc_sail.MQOzgL/prog.elf) .text 8001ee7c: 00100073 ebreak \nNOTE /Users/kirancodes/tmp/tcc_sail.MQOzgL/prog.elf(/Users/kirancodes/tmp/tcc_sail.MQOzgL/prog.elf) .text 80021adc: 00100073 ebreak \nNOTE /Users/kirancodes/tmp/tcc_sail.MQOzgL/prog.elf(/Users/kirancodes/tmp/tcc_sail.MQOzgL/prog.elf) .text 8002a910: 00100073 ebreak \nNOTE /Users/kirancodes/tmp/tcc_sail.MQOzgL/prog.elf(/Users/kirancodes/tmp/tcc_sail.MQOzgL/prog.elf) .text 8003f018: 00100073 ebreak \nNOTE /Users/kirancodes/tmp/tcc_sail.MQOzgL/prog.elf(/Users/kirancodes/tmp/tcc_sail.MQOzgL/prog.elf) .text 8003fe8c: 00100073 ebreak \nOK   /Users/kirancodes/tmp/tcc_sail.MQOzgL/prog.elf insns=107594 bad=0 notes=5 zero-pad=0\n"
+      }
+    ],
+    "binaries": {
+      "/data/home/kirancodes/Documents/code/ship-your-lua/riscv-lean/lean_emulator/.lake/build/bin/lean_riscv_emulator": "8989bde8a95345de658fb9c9111e15ce4a5561bc747dab28f798080f0778120b"
+    },
+    "runner_sha256": "9a7737b4ac7a3578db6d1597a1c8224800e912cae30592e95c772f7637737ac8"
+  },
+  "binaries": {
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe": "797230dfc5e086cd222202ab5117e35696aab3cb687e7f6312e2070ab11a226f",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run": "3d158e630cce61e8f9793e3325cba4c96df141275f196ebbb7e67d556a68f41d",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/default/backend/driver/main.exe": "a71dd0968846b72196506a7ce78cd300cb39c6a8a8b10e87945a44c30517d091"
+  },
+  "parser_binary": {
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_cparse": "d4c6bf3d66128d6ea4c53ae74aff29f6671ddc43582f46e22f7c636b8889bed1"
+  },
+  "inventory_sha256": "c2c3c94a86bfc9fe15b797f3432198e0fcdef264a7c6136b241871844fd57f0e",
+  "claim": "Finite observations and kernel-checked fuel proof adaptation only; no compiler/model refinement or all-C11 coverage claim."
+}

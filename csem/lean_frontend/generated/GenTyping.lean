@@ -61,6 +61,55 @@ def lookup_tag_definition { a : Type } (s : sigma a) (sym1 : sym) : Option tag_d
           else
             false)) sym1 s.tag_definitions))
 
+/- Physical members, including a flexible member for source lookup.  Anonymous
+   containers are ordinary members; member_paths supplies promotion. -/
+def source_members { a : Type } (sigm : sigma a) (tag : sym) :
+    List (identifier × (attributes × Option alignment × qualifiers × ctype)) :=
+  match lookup_tag_definition sigm tag with
+  | some (StructDef xs none) => xs
+  | some (StructDef xs (some (FlexibleArrayMember attrs1 ident qs ty1))) =>
+    xs ++ [(ident, (attrs1, none, qs, Ctype ([] : List annot) (Array0 ty1 none)))]
+  | some (UnionDef xs) => xs
+  | _ => ([] : List (identifier × (attributes × Option alignment × qualifiers × ctype)))
+
+def member_access_path { a : Type } (sigm : sigma a) (physical : Bool) (ty1 : ctype)
+    (ident : identifier) :
+    Option (List (identifier × qualifiers × ctype)) :=
+  let paths := member_paths (1 + List.length sigm.tag_definitions) (source_members sigm) ty1;
+  Option.map (fun (path : member_path) => path.member_path_steps)
+    ((lookupBy idEqual ident
+      (List.filter
+        (fun (p : (identifier × member_path)) =>
+          match p with
+          | (_, path) =>
+            (lem_if physical then
+              List.length path.member_path_steps == 1
+            else
+              path.member_path_visible)) paths)))
+
+def source_member_path { a : Type } (sigm : sigma a) (ty1 : ctype) (ident : identifier) :
+    Option (List (identifier × qualifiers × ctype)) :=
+  member_access_path sigm false ty1 ident
+
+/- Build typed ordinary member operations.  The root expression occurs once,
+   and each physical edge combines qualifiers exactly as a written '.' does. -/
+def annotate_member_path (loc1 : CerbLocation.Loc) (is_ptr : Bool) (root_category : genTypeCategory)
+    (root : expression genTypeCategory) (path : List (identifier × qualifiers × ctype)) :
+    (expression_ genTypeCategory × genTypeCategory) :=
+  match List.foldl
+      (fun (p : (expression genTypeCategory × genTypeCategory × Bool))
+        (p0 : (identifier × qualifiers × ctype)) =>
+        match p, p0 with
+        | (base, cat, ptr), (ident, qs, ty1) =>
+          (let child_cat :=
+             match cat with
+             | GenLValueType base_qs _ _ => GenLValueType (combine_qualifiers base_qs qs) ty1 false
+             | GenRValueType _ => GenRValueType (inject_type ty1);
+           let child := lem_if ptr then AilEmemberofptr base ident else AilEmemberof base ident;
+           (AnnotatedExpression child_cat ([] : List annot) loc1 child, child_cat, false)))
+      (root, root_category, is_ptr) path with
+  | (AnnotatedExpression cat annots1 at1 expr1, _, _) => (expr1, cat)
+
 /- NOTE: move in_range and try_ranges inside gen_typing_type_of_constant if Lem ever allows
    recursive functions inside other functions... -/
 def in_range [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
@@ -1945,8 +1994,29 @@ partial def annotate_expression [CerbImplCfg.Impl]
                 ErrorM (fun (_ : List (List String)) =>
                   Sum.inl (loc1, (TError_ConstraintViolation AssertMacroExpressionScalarType)))))
         | AilEoffsetof ty1 ident =>
-          ErrorM (fun (ts : List (List String)) =>
-            Sum.inr ((AilEoffsetof ty1 ident, GenRValueType (GenBasic (GenInteger SizeT))), ts))
+          (let cat := GenRValueType (GenBasic (GenInteger SizeT));
+           match source_member_path sigm ty1 ident with
+           | some path =>
+             (let zero :=
+                AnnotatedExpression cat ([] : List annot) loc1
+                  (AilEconst (ConstantInteger (IConstant ((0 : Int)) Decimal none)));
+              match List.foldl
+                  (fun (p : (expression genTypeCategory × ctype))
+                    (p0 : (identifier × qualifiers × ctype)) =>
+                    match p, p0 with
+                    | (acc, parent_ty), (name1, _, child_ty) =>
+                      (let edge :=
+                         AnnotatedExpression cat ([] : List annot) loc1
+                           (AilEoffsetof parent_ty name1);
+                       (AnnotatedExpression cat ([] : List annot) loc1
+                         (AilEbinary acc (Arithmetic Add0) edge), child_ty))) (zero, ty1) path with
+              | (AnnotatedExpression _ _ _ expr1, _) =>
+                ErrorM (fun (ts : List (List String)) => Sum.inr ((expr1, cat), ts)))
+           | none =>
+             ErrorM (fun (_ : List (List String)) =>
+               Sum.inl
+                 (loc1,
+                   (TError_ConstraintViolation (MemberofNoMemberLvalue ident no_qualifiers ty1)))))
         | AilEgeneric e _ gas =>
           bind3 (annotate_rvalue1 e) (fun (p : (expression genTypeCategory × genType)) =>
             match p with
@@ -1978,285 +2048,146 @@ partial def annotate_expression [CerbImplCfg.Impl]
                               (loc1,
                                 (TError_ConstraintViolation (GenericSelectionNoMatch gty))))))))
         | AilEmemberof e memb_ident =>
-          bind3 (/- TODO: factorise -/ annotate_expression1 CTXmemberof e)
-            (fun (a_e : expression
-              genTypeCategory) => /- the value of the AilEmemberof operator is an lvalue if [e] is an lvalue -/
-              match genTypeCategoryOf a_e with
-              | GenLValueType qs ty1 _ =>
-                (/- NOTE: the member is not a "register" regardless of whether the
-                 struct/union was -/
-                /- NOTE: the qualifiers of the value are the combination of the ones
-                of the left operand [e] and the ones in the declaration of the
-                 member type (see §6.5.2.3#3 and #8) -/
-                /- NOTE: we use unatomic_ here because §6.5.2.3#1 says the first operand must be
-                 "atomic, qualified, or unqualified structure or union type" -/
-                lem_if is_incomplete sigm ty1 then
+          bind3 (annotate_expression1 CTXmemberof e) (fun (a_e : expression genTypeCategory) =>
+            match genTypeCategoryOf a_e with
+            | cat@(GenLValueType qs ty1 _) =>
+              (lem_if is_incomplete sigm ty1 then
+                ErrorM (fun (_ : List (List String)) =>
+                  Sum.inl
+                    ((match e with
+                      | (AnnotatedExpression _ _ loc1 _) => loc1),
+                      (TError_ConstraintViolation (MemberofIncompleteLvalue qs ty1))))
+              else
+                match unatomic_ ty1 with
+                | Struct _ =>
+                  (match member_access_path sigm (is_physical_member_operation std_annots) ty1
+                       memb_ident with
+                   | some path =>
+                     ErrorM (fun (ts : List (List String)) =>
+                       Sum.inr ((annotate_member_path loc1 false cat a_e path), ts))
+                   | none =>
+                     ErrorM (fun (_ : List (List String)) =>
+                       Sum.inl
+                         ((CerbLocation.withCursorFrom
+                           (match e with
+                            | (AnnotatedExpression _ _ loc1 _) => loc1)
+                           (match memb_ident with
+                            | (Identifier loc1 _) => loc1)),
+                           (TError_ConstraintViolation
+                             (MemberofNoMemberLvalue memb_ident qs ty1)))))
+                | Union0 _ =>
+                  (match member_access_path sigm (is_physical_member_operation std_annots) ty1
+                       memb_ident with
+                   | some path =>
+                     ErrorM (fun (ts : List (List String)) =>
+                       Sum.inr ((annotate_member_path loc1 false cat a_e path), ts))
+                   | none =>
+                     ErrorM (fun (_ : List (List String)) =>
+                       Sum.inl
+                         ((CerbLocation.withCursorFrom
+                           (match e with
+                            | (AnnotatedExpression _ _ loc1 _) => loc1)
+                           (match memb_ident with
+                            | (Identifier loc1 _) => loc1)),
+                           (TError_ConstraintViolation
+                             (MemberofNoMemberLvalue memb_ident qs ty1)))))
+                | _ =>
                   ErrorM (fun (_ : List (List String)) =>
                     Sum.inl
-                      ((match e with
-                        | (AnnotatedExpression _ _ loc1 _) => loc1),
-                        (TError_ConstraintViolation (MemberofIncompleteLvalue qs ty1))))
-                else
-                  match unatomic_ ty1 with
-                  | Struct tag_sym =>
-                    (let do_fail :=
-                       ErrorM (fun (_ : List (List String)) =>
-                         Sum.inl
-                           ((CerbLocation.withCursorFrom
-                             (match e with
-                              | (AnnotatedExpression _ _ loc1 _) => loc1)
-                             (match memb_ident with
-                              | (Identifier loc1 _) => loc1)),
-                             (TError_ConstraintViolation
-                               (MemberofNoMemberLvalue memb_ident qs ty1))));
-                     match lookup_tag_definition sigm tag_sym with
-                     | some (StructDef membersDefs flexible_opt) =>
-                       (match (lookupBy idEqual memb_ident membersDefs), flexible_opt with
-                        | some (_, align_opt, memb_qs, memb_ty), _ =>
-                          ErrorM (fun (ts : List (List String)) =>
-                            Sum.inr
-                              ((AilEmemberof a_e memb_ident,
-                                GenLValueType (combine_qualifiers qs memb_qs) memb_ty false), ts))
-                        | none, some (FlexibleArrayMember attrs1 flex_ident flex_qs flex_elem_ty) =>
-                          (lem_if idEqual memb_ident flex_ident then
-                            ErrorM (fun (ts : List (List String)) =>
-                              Sum.inr
-                                ((AilEmemberof a_e memb_ident,
-                                  GenLValueType (combine_qualifiers qs flex_qs)
-                                    (Ctype ([] : List annot) (Array0 flex_elem_ty none)) false),
-                                  ts))
-                          else
-                            do_fail)
-                        | none, none => do_fail)
-                     | _ =>
-                       (failwithI
-                         "annotate_expression(AilEmemberof struct): failed to find a valid tag definition" :
-                         errorM (expression_ genTypeCategory × genTypeCategory)))
-                  | Union0 tag_sym =>
-                    (match lookup_tag_definition sigm tag_sym with
-                     | some (UnionDef membersDefs) =>
-                       (match (lookupBy idEqual memb_ident membersDefs) with
-                        | some (_, align_opt, memb_qs, memb_ty) =>
-                          ErrorM (fun (ts : List (List String)) =>
-                            Sum.inr
-                              ((AilEmemberof a_e memb_ident,
-                                GenLValueType (combine_qualifiers qs memb_qs) memb_ty false), ts))
-                        | none =>
-                          ErrorM (fun (_ : List (List String)) =>
-                            Sum.inl
-                              ((CerbLocation.withCursorFrom
-                                (match e with
-                                 | (AnnotatedExpression _ _ loc1 _) => loc1)
-                                (match memb_ident with
-                                 | (Identifier loc1 _) => loc1)),
-                                (TError_ConstraintViolation
-                                  (MemberofNoMemberLvalue memb_ident qs ty1)))))
-                     | _ =>
-                       (failwithI
-                         "annotate_expression(AilEmemberof union): failed to find a valid tag definition" :
-                         errorM (expression_ genTypeCategory × genTypeCategory)))
-                  | _ =>
-                    ErrorM (fun (_ : List (List String)) =>
-                      Sum.inl
-                        ((CerbLocation.withCursorFrom
-                          (match e with
-                           | (AnnotatedExpression _ _ loc1 _) => loc1) loc1),
-                          (TError_ConstraintViolation (MemberofReferenceBaseTypeLvalue qs ty1)))))
-              | GenRValueType gty =>
-                (/- NOTE: even so we are dealing with a rvalue, the memberof operator might be
-                 inside a sizeof(), and therefore not executed.
-                 So the UB from §6.5.2.3#5, doesn't necessarily happens here -/
-                let do_struct : sym → errorM (expression_ genTypeCategory × genTypeCategory) :=
-                  (fun (tag_sym : sym) =>
-                    let do_fail :=
+                      ((CerbLocation.withCursorFrom
+                        (match e with
+                         | (AnnotatedExpression _ _ loc1 _) => loc1) loc1),
+                        (TError_ConstraintViolation (MemberofReferenceBaseTypeLvalue qs ty1)))))
+            | cat@(GenRValueType gty) =>
+              (let do_member : ctype → errorM (expression_ genTypeCategory × genTypeCategory) :=
+                 (fun (ty1 : ctype) =>
+                   match member_access_path sigm (is_physical_member_operation std_annots) ty1
+                       memb_ident with
+                   | some path =>
+                     ErrorM (fun (ts : List (List String)) =>
+                       Sum.inr ((annotate_member_path loc1 false cat a_e path), ts))
+                   | none =>
+                     ErrorM (fun (_ : List (List String)) =>
+                       Sum.inl
+                         ((CerbLocation.withCursorFrom
+                           (match e with
+                            | (AnnotatedExpression _ _ loc1 _) => loc1)
+                           (match memb_ident with
+                            | (Identifier loc1 _) => loc1)),
+                           (TError_ConstraintViolation (MemberofNoMemberRvalue memb_ident gty)))));
+               lem_if is_incomplete0 sigm gty then
+                 ErrorM (fun (_ : List (List String)) =>
+                   Sum.inl
+                     ((match e with
+                       | (AnnotatedExpression _ _ loc1 _) => loc1),
+                       (TError_ConstraintViolation (MemberofIncompleteRvalue gty))))
+               else
+                 match gty with
+                 | GenStruct tag => do_member (Ctype ([] : List annot) (Struct tag))
+                 | GenAtomic (GenStruct tag) => do_member (Ctype ([] : List annot) (Struct tag))
+                 | GenUnion tag => do_member (Ctype ([] : List annot) (Union0 tag))
+                 | GenAtomic (GenUnion tag) => do_member (Ctype ([] : List annot) (Union0 tag))
+                 | _ =>
+                   ErrorM (fun (_ : List (List String)) =>
+                     Sum.inl
+                       ((CerbLocation.withCursorFrom
+                         (match e with
+                          | (AnnotatedExpression _ _ loc1 _) => loc1) loc1),
+                         (TError_ConstraintViolation (MemberofReferenceBaseTypeRvalue gty))))))
+        | AilEmemberofptr e memb_ident =>
+          bind3 (annotate_rvalue1 e) (fun (p : (expression genTypeCategory × genType)) =>
+            match p with
+            | (e', gty) =>
+              bind3
+                (match gty with
+                 | GenPointer ref_qs ref_ty =>
+                   (match unatomic_ ref_ty with
+                    | Struct _ =>
+                      ErrorM (fun (ts : List (List String)) => Sum.inr ((ref_qs, ref_ty), ts))
+                    | Union0 _ =>
+                      ErrorM (fun (ts : List (List String)) => Sum.inr ((ref_qs, ref_ty), ts))
+                    | _ =>
                       ErrorM (fun (_ : List (List String)) =>
                         Sum.inl
                           ((CerbLocation.withCursorFrom
                             (match e with
-                             | (AnnotatedExpression _ _ loc1 _) => loc1)
-                            (match memb_ident with
-                             | (Identifier loc1 _) => loc1)),
-                            (TError_ConstraintViolation (MemberofNoMemberRvalue memb_ident gty))));
-                    match lookup_tag_definition sigm tag_sym with
-                    | some (StructDef membersDefs flexible_opt) =>
-                      (match (lookupBy idEqual memb_ident membersDefs), flexible_opt with
-                       | some (_, align_opt, _, memb_ty), _ =>
-                         ErrorM (fun (ts : List (List String)) =>
-                           Sum.inr
-                             ((AilEmemberof a_e memb_ident, GenRValueType (inject_type memb_ty)),
-                               ts))
-                       | none, some (FlexibleArrayMember attrs1 flex_ident flex_qs flex_elem_ty) =>
-                         (lem_if idEqual memb_ident flex_ident then
-                           ErrorM (fun (ts : List (List String)) =>
-                             Sum.inr
-                               ((AilEmemberof a_e memb_ident,
-                                 GenRValueType
-                                   (inject_type
-                                     (Ctype ([] : List annot) (Array0 flex_elem_ty none)))), ts))
-                         else
-                           do_fail)
-                       | none, none => do_fail)
-                    | _ =>
-                      (failwithI
-                        "annotate_expression(AilEmemberof struct): failed to find a valid tag definition" :
-                        errorM (expression_ genTypeCategory × genTypeCategory)));
-                let do_union : sym → errorM (expression_ genTypeCategory × genTypeCategory) :=
-                  (fun (tag_sym : sym) =>
-                    match lookup_tag_definition sigm tag_sym with
-                    | some (UnionDef membersDefs) =>
-                      (match (lookupBy idEqual memb_ident membersDefs) with
-                       | some (_, align_opt, _, memb_ty) =>
-                         ErrorM (fun (ts : List (List String)) =>
-                           Sum.inr
-                             ((AilEmemberof a_e memb_ident, GenRValueType (inject_type memb_ty)),
-                               ts))
-                       | none =>
-                         ErrorM (fun (_ : List (List String)) =>
-                           Sum.inl
-                             ((CerbLocation.withCursorFrom
-                               (match e with
-                                | (AnnotatedExpression _ _ loc1 _) => loc1)
-                               (match memb_ident with
-                                | (Identifier loc1 _) => loc1)),
-                               (TError_ConstraintViolation
-                                 (MemberofNoMemberRvalue memb_ident gty)))))
-                    | _ =>
-                      (failwithI
-                        "annotate_expression(AilEmemberof union): failed to find a valid tag definition" :
-                        errorM (expression_ genTypeCategory × genTypeCategory)));
-                lem_if is_incomplete0 sigm gty then
-                  ErrorM (fun (_ : List (List String)) =>
-                    Sum.inl
-                      ((match e with
-                        | (AnnotatedExpression _ _ loc1 _) => loc1),
-                        (TError_ConstraintViolation (MemberofIncompleteRvalue gty))))
-                else
-                  match gty with
-                  | GenAtomic (GenStruct tag_sym) => do_struct tag_sym
-                  | GenAtomic (GenUnion tag_sym) => do_union tag_sym
-                  | GenStruct tag_sym => do_struct tag_sym
-                  | GenUnion tag_sym => do_union tag_sym
-                  | _ =>
-                    ErrorM (fun (_ : List (List String)) =>
-                      Sum.inl
-                        ((CerbLocation.withCursorFrom
-                          (match e with
-                           | (AnnotatedExpression _ _ loc1 _) => loc1) loc1),
-                          (TError_ConstraintViolation (MemberofReferenceBaseTypeRvalue gty))))))
-        | AilEmemberofptr e memb_ident =>
-          bind3
-            (/- NOTE: the qualifiers of the value are the combination of the ones
-         of the referenced type of left operand [e] and the ones in the
-         declaration of the member type (see §6.5.2.3#4) -/
-            annotate_rvalue1 e)
-            (fun (x : (expression genTypeCategory × genType)) =>
-              match x with
-              | (e', gty) =>
-                bind3
-                  (match gty with
-                   | GenPointer ref_qs (ref_ty@(Ctype _ (Struct tag_sym))) =>
-                     ErrorM (fun (ts : List (List String)) =>
-                       Sum.inr ((ref_qs, Sum.inl tag_sym, ref_ty), ts))
-                   | GenPointer ref_qs (ref_ty@(Ctype _ (Atomic (Ctype _ (Struct tag_sym))))) =>
-                     ErrorM (fun (ts : List (List String)) =>
-                       Sum.inr ((ref_qs, Sum.inl tag_sym, ref_ty), ts))
-                   | GenPointer ref_qs (ref_ty@(Ctype _ (Union0 tag_sym))) =>
-                     ErrorM (fun (ts : List (List String)) =>
-                       Sum.inr ((ref_qs, Sum.inr tag_sym, ref_ty), ts))
-                   | GenPointer ref_qs (ref_ty@(Ctype _ (Atomic (Ctype _ (Union0 tag_sym))))) =>
-                     ErrorM (fun (ts : List (List String)) =>
-                       Sum.inr ((ref_qs, Sum.inr tag_sym, ref_ty), ts))
-                   | GenPointer ref_qs ref_ty =>
-                     ErrorM (fun (_ : List (List String)) =>
-                       Sum.inl
-                         ((CerbLocation.withCursorFrom
-                           (match e with
-                            | (AnnotatedExpression _ _ loc1 _) => loc1) loc1),
-                           (TError_ConstraintViolation
-                             (MemberofptrReferenceBaseType ref_qs ref_ty))))
-                   | _ =>
-                     ErrorM (fun (_ : List (List String)) =>
-                       Sum.inl
-                         ((CerbLocation.withCursorFrom
-                           (match e with
-                            | (AnnotatedExpression _ _ loc1 _) => loc1) loc1),
-                           (TError_ConstraintViolation (MemberofptrReferenceTypeNotPointer gty)))))
-                  (fun (x : (qualifiers × Sum sym sym × ctype)) =>
-                    match x with
-                    | (ref_qs, Sum.inl tag_sym, ref_ty) =>
-                      (let do_fail :=
-                         ErrorM (fun (_ : List (List String)) =>
-                           Sum.inl
-                             ((CerbLocation.withCursorFrom
-                               (match e with
-                                | (AnnotatedExpression _ _ loc1 _) => loc1)
-                               (match memb_ident with
-                                | (Identifier loc1 _) => loc1)),
-                               (TError_ConstraintViolation
-                                 (MemberofptrNoMember memb_ident ref_qs ref_ty))));
-                       lem_if is_incomplete sigm ref_ty then
-                         ErrorM (fun (_ : List (List String)) =>
-                           Sum.inl
-                             ((match e with
-                               | (AnnotatedExpression _ _ loc1 _) => loc1),
-                               (TError_ConstraintViolation (MemberofptrIncomplete ref_qs ref_ty))))
-                       else
-                         match lookup_tag_definition sigm tag_sym with
-                         | some (StructDef membersDefs flexible_opt) =>
-                           (match (lookupBy idEqual memb_ident membersDefs), flexible_opt with
-                            | some (_, align_opt, memb_qs, memb_ty), _ =>
-                              ErrorM (fun (ts : List (List String)) =>
-                                Sum.inr
-                                  ((AilEmemberofptr e' memb_ident,
-                                    GenLValueType (combine_qualifiers ref_qs memb_qs) memb_ty
-                                      false), ts))
-                            | none,
-                              some (FlexibleArrayMember attrs1 flex_ident flex_qs flex_elem_ty) =>
-                              (lem_if idEqual memb_ident flex_ident then
-                                ErrorM (fun (ts : List (List String)) =>
-                                  Sum.inr
-                                    ((AilEmemberofptr e' memb_ident,
-                                      GenLValueType (combine_qualifiers ref_qs flex_qs)
-                                        (Ctype ([] : List annot) (Array0 flex_elem_ty none)) false),
-                                      ts))
-                              else
-                                do_fail)
-                            | none, none => do_fail)
-                         | _ =>
-                           (failwithI
-                             "annotate_expression(AilEmemberofptr struct): failed to find a valid tag definition" :
-                             errorM (expression_ genTypeCategory × genTypeCategory)))
-                    | (ref_qs, Sum.inr tag_sym, ref_ty) =>
-                      (lem_if is_incomplete sigm ref_ty then
+                             | (AnnotatedExpression _ _ loc1 _) => loc1) loc1),
+                            (TError_ConstraintViolation
+                              (MemberofptrReferenceBaseType ref_qs ref_ty)))))
+                 | _ =>
+                   ErrorM (fun (_ : List (List String)) =>
+                     Sum.inl
+                       ((CerbLocation.withCursorFrom
+                         (match e with
+                          | (AnnotatedExpression _ _ loc1 _) => loc1) loc1),
+                         (TError_ConstraintViolation (MemberofptrReferenceTypeNotPointer gty)))))
+                (fun (p : (qualifiers × ctype)) =>
+                  match p with
+                  | (ref_qs, ref_ty) =>
+                    (lem_if is_incomplete sigm ref_ty then
+                      ErrorM (fun (_ : List (List String)) =>
+                        Sum.inl
+                          ((match e with
+                            | (AnnotatedExpression _ _ loc1 _) => loc1),
+                            (TError_ConstraintViolation (MemberofptrIncomplete ref_qs ref_ty))))
+                    else
+                      match member_access_path sigm (is_physical_member_operation std_annots) ref_ty
+                          memb_ident with
+                      | some path =>
+                        ErrorM (fun (ts : List (List String)) =>
+                          Sum.inr
+                            ((annotate_member_path loc1 true (GenLValueType ref_qs ref_ty false) e'
+                              path), ts))
+                      | none =>
                         ErrorM (fun (_ : List (List String)) =>
                           Sum.inl
-                            ((match e with
-                              | (AnnotatedExpression _ _ loc1 _) => loc1),
-                              (TError_ConstraintViolation (MemberofptrIncomplete ref_qs ref_ty))))
-                      else
-                        match lookup_tag_definition sigm tag_sym with
-                        | some (UnionDef membersDefs) =>
-                          (match (lookupBy idEqual memb_ident membersDefs) with
-                           | some (_, align_opt, memb_qs, memb_ty) =>
-                             ErrorM (fun (ts : List (List String)) =>
-                               Sum.inr
-                                 ((AilEmemberofptr e' memb_ident,
-                                   GenLValueType (combine_qualifiers ref_qs memb_qs) memb_ty false),
-                                   ts))
-                           | none =>
-                             ErrorM (fun (_ : List (List String)) =>
-                               Sum.inl
-                                 ((CerbLocation.withCursorFrom
-                                   (match e with
-                                    | (AnnotatedExpression _ _ loc1 _) => loc1)
-                                   (match memb_ident with
-                                    | (Identifier loc1 _) => loc1)),
-                                   (TError_ConstraintViolation
-                                     (MemberofptrNoMember memb_ident ref_qs ref_ty)))))
-                        | _ =>
-                          (failwithI
-                            "annotate_expression(AilEmemberofptr union): failed to find a valid tag definition" :
-                            errorM (expression_ genTypeCategory × genTypeCategory)))))
+                            ((CerbLocation.withCursorFrom
+                              (match e with
+                               | (AnnotatedExpression _ _ loc1 _) => loc1)
+                              (match memb_ident with
+                               | (Identifier loc1 _) => loc1)),
+                              (TError_ConstraintViolation
+                                (MemberofptrNoMember memb_ident ref_qs ref_ty)))))))
         | AilEassign e1 e2 =>
           bind3 (annotate_expression1 CTXassign e1) (fun (e1' : expression genTypeCategory) =>
             match genTypeCategoryOf e1' with

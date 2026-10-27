@@ -1,0 +1,21 @@
+{
+  "request": "anonymous-build-0b44bb5619d5b52d226e90e27c3e3b5c1aa2d0b31fbc24b1b9a4b0d7bfd073bd",
+  "request_id": "anonymous-build-0b44bb5619d5b52d226e90e27c3e3b5c1aa2d0b31fbc24b1b9a4b0d7bfd073bd",
+  "exit": 0,
+  "log": "build/worker-build-anonymous-build-0b44bb5619d5b52d226e90e27c3e3b5c1aa2d0b31fbc24b1b9a4b0d7bfd073bd.log",
+  "command": [
+    "flock",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/lake.lock",
+    "systemd-run",
+    "--user",
+    "--scope",
+    "-p",
+    "MemoryMax=12G",
+    "lake",
+    "build",
+    "CerberusLean",
+    "csem_run",
+    "csem_cparse"
+  ],
+  "source_hashes_verified": true
+}

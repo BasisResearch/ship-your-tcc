@@ -434,3 +434,77 @@ declare {lean} fuel val ctypeEqual = `fuelExhausted false`
    Ctype_auxiliary.lean and proved in lean_frontend/Ctype_lemMeasureProofs.lean
    (lem-lean doc/lean-backend/2026-09-04_d2-enablers-record.md §4.5). *)
 declare {lean} fuel_measure val ctypeEqual = `lemSize c`
+
+(* C11 6.7.2.1p13: an anonymous member is a physical subobject.  An
+   unspellable attribute marks promotion; printable field names keep Core
+   text interoperable.  A source field that resembles the internal name is
+   still an ordinary named field. *)
+(* Attribute identifiers containing ':' cannot be supplied by the C grammar.
+   Keep trusted IR operations separate from public source name resolution. *)
+let has_internal_attribute name (Annot.Attrs attrs) =
+  List.any (fun attr -> idEqual attr.Annot.attr_id (Identifier unknown name)) attrs
+
+let add_internal_attribute name attrs =
+  Annot.combine_attributes attrs (Annot.Attrs [<|
+    Annot.attr_ns= Nothing;
+    Annot.attr_id= Identifier unknown name;
+    Annot.attr_args= [];
+  |>])
+
+val is_anonymous_member: Annot.attributes -> bool
+let is_anonymous_member attrs = has_internal_attribute ":anonymous-member:" attrs
+
+val anonymous_member_attributes: Annot.attributes -> Annot.attributes
+let anonymous_member_attributes attrs = add_internal_attribute ":anonymous-member:" attrs
+
+val physical_member_annotations: list Annot.annot
+let physical_member_annotations =
+  [Annot.Aattrs (add_internal_attribute ":physical-member-operation:" (Annot.Attrs []))]
+
+val is_physical_member_operation: list Annot.annot -> bool
+let is_physical_member_operation annots =
+  match Annot.get_attrs annots with
+    | Just attrs -> has_internal_attribute ":physical-member-operation:" attrs
+    | Nothing -> false
+  end
+
+val name_anonymous_members: list Symbol.identifier -> list (Symbol.identifier * (Annot.attributes * maybe alignment * qualifiers * ctype)) -> list (Symbol.identifier * (Annot.attributes * maybe alignment * qualifiers * ctype))
+let name_anonymous_members reserved members =
+  (* Longer than every declared name, and unique by member index.  This is
+     local to a tag: a later declaration cannot capture an earlier name. *)
+  let width = List.foldl (fun n (Identifier _ name) ->
+    max n (String.stringLength name)
+  ) 0 (List.map fst members ++ reserved) in
+  List.map (fun (n, (ident, data)) ->
+    let Identifier loc name = ident in
+    let (attrs, _, _, _) = data in
+    (Identifier loc (if is_anonymous_member attrs then
+       String.makeString (width+1) #'_' ^ "cerb_anon_" ^ show n else name), data)
+  ) (numerote members)
+
+type member_path = <|
+  member_path_visible: bool;
+  member_path_steps: list (Symbol.identifier * qualifiers * ctype);
+|>
+
+val member_paths: nat -> (Symbol.sym -> list (Symbol.identifier * (Annot.attributes * maybe alignment * qualifiers * ctype))) -> ctype -> list (Symbol.identifier * member_path)
+let member_paths depth members ty =
+  (* A complete by-value member chain cannot repeat a tag.  Callers supply
+     one plus the number of definitions.  Bounded iteration keeps this helper
+     total on malformed cyclic tables too, with no native or partial seam. *)
+  let paths = List.foldl (fun paths _ -> fun parent_ty ->
+    let xs = match unatomic_ parent_ty with
+      | Struct tag -> members tag
+      | Union tag -> members tag
+      | _ -> []
+    end in
+    List.concat (List.map (fun (ident, (attrs, _, qs, child_ty)) ->
+      let step = (ident, qs, child_ty) in
+      (ident, <| member_path_visible= not (is_anonymous_member attrs); member_path_steps= [step] |>) ::
+        (if is_anonymous_member attrs then
+           List.map (fun (name, path) ->
+             (name, <| path with member_path_steps= step :: path.member_path_steps |>)) (paths child_ty)
+         else [])
+    ) xs)
+  ) (fun _ -> []) (List.replicate depth ()) in
+  paths ty

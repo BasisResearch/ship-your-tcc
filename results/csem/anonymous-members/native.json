@@ -1,0 +1,68 @@
+{
+  "rows": [
+    {
+      "source": "results/model/designator/layout-minimized/anonymous-continuation.c",
+      "source_sha256": "ad5969c64567eefb59cc5231d9272d59cab7a3c4712405b44b3debb4670adee2",
+      "expected": 3,
+      "exit": 3,
+      "stdout": "",
+      "trace": "TODO: cancel_reservation\nT\t3321247\t80001b60\t80001b64\t80043330\t87fffc30\t8007e350\t0\t80058cb4\tf\tffffffffffffffff\t800abc80\t8007e828\t8640002c\t1\t86800ed0\t86800ee0\t86400000\t2c\t7f\t8007db50\t5f\t1\t0\t0\t0\t0\t2\t86800ea8\t6\t800abc80\t800bae44\t80\tfffffffff0000000\t7f\tO\t0\t0\t256\nT\t3321272\t80001b48\t80001b4c\t80043330\t87fffc30\t8007e350\t0\t80058cb4\tf\tffffffffffffffff\t800abc80\t8007e828\t8640002c\t1\t86800ed0\t86800ee0\t86400000\t2c\t0\t8007db50\t5f\t1\t0\t0\t0\t0\t2\t86800ea8\t6\t800abc80\t800bae44\t80\tfffffffff0000000\t7f\tO\t0\t0\t256\nT\t3321361\t80000804\t80000808\t864000d8\t87fffbf0\t8007e350\t0\t80058cb4\t86402234\tffffffffffffffff\t3\t1\t3\t0\t86800ee0\t86800ee0\t8007d800\t7\t0\t8007db50\t86800ed0\t86800ee0\t86400000\t0\t0\t0\t2\t86800ea8\t6\t800abc80\t800007f4\t80\tfffffffff0000000\t7f\tS8\t8007db40\t0\t0\tO\t0\t0\t256\n",
+      "trace_rows": [
+        "T\t3321247\t80001b60\t80001b64\t80043330\t87fffc30\t8007e350\t0\t80058cb4\tf\tffffffffffffffff\t800abc80\t8007e828\t8640002c\t1\t86800ed0\t86800ee0\t86400000\t2c\t7f\t8007db50\t5f\t1\t0\t0\t0\t0\t2\t86800ea8\t6\t800abc80\t800bae44\t80\tfffffffff0000000\t7f\tO\t0\t0\t256",
+        "T\t3321272\t80001b48\t80001b4c\t80043330\t87fffc30\t8007e350\t0\t80058cb4\tf\tffffffffffffffff\t800abc80\t8007e828\t8640002c\t1\t86800ed0\t86800ee0\t86400000\t2c\t0\t8007db50\t5f\t1\t0\t0\t0\t0\t2\t86800ea8\t6\t800abc80\t800bae44\t80\tfffffffff0000000\t7f\tO\t0\t0\t256",
+        "T\t3321361\t80000804\t80000808\t864000d8\t87fffbf0\t8007e350\t0\t80058cb4\t86402234\tffffffffffffffff\t3\t1\t3\t0\t86800ee0\t86800ee0\t8007d800\t7\t0\t8007db50\t86800ed0\t86800ee0\t86400000\t0\t0\t0\t2\t86800ea8\t6\t800abc80\t800007f4\t80\tfffffffff0000000\t7f\tS8\t8007db40\t0\t0\tO\t0\t0\t256"
+      ],
+      "metadata": "compile_steps=3321247\nprogram_steps=90\nsteps=3321362\n",
+      "image": "/Users/kirancodes/tmp/tcc_sail.Bxj1fU/prog.elf",
+      "image_sha256": "009345f21647d8816e9f8872ec9239101fae215d6fec009cc3b0dcbef93e9856",
+      "embed_sha256": "137d46a18a46e2234bd7c9f3040eff678a444aeae67626e0c9b76ec7ea0c31b1",
+      "command": [
+        "timeout",
+        "900",
+        "scripts/run_tcc_sail.sh",
+        "results/model/designator/layout-minimized/anonymous-continuation.c"
+      ],
+      "environment": {
+        "TCC_ARGS": "\"-w\",\"-std=c11\",",
+        "MAX_STEPS": "100000000",
+        "KEEP_WORK": "1"
+      },
+      "isa_exit": 0,
+      "isa_stdout": "NOTE /Users/kirancodes/tmp/tcc_sail.Bxj1fU/prog.elf(/Users/kirancodes/tmp/tcc_sail.Bxj1fU/prog.elf) .text 8001ee7c: 00100073 ebreak \nNOTE /Users/kirancodes/tmp/tcc_sail.Bxj1fU/prog.elf(/Users/kirancodes/tmp/tcc_sail.Bxj1fU/prog.elf) .text 80021adc: 00100073 ebreak \nNOTE /Users/kirancodes/tmp/tcc_sail.Bxj1fU/prog.elf(/Users/kirancodes/tmp/tcc_sail.Bxj1fU/prog.elf) .text 8002a910: 00100073 ebreak \nNOTE /Users/kirancodes/tmp/tcc_sail.Bxj1fU/prog.elf(/Users/kirancodes/tmp/tcc_sail.Bxj1fU/prog.elf) .text 8003f018: 00100073 ebreak \nNOTE /Users/kirancodes/tmp/tcc_sail.Bxj1fU/prog.elf(/Users/kirancodes/tmp/tcc_sail.Bxj1fU/prog.elf) .text 8003fe8c: 00100073 ebreak \nOK   /Users/kirancodes/tmp/tcc_sail.Bxj1fU/prog.elf insns=107594 bad=0 notes=5 zero-pad=0\n"
+    },
+    {
+      "source": "results/csem/anonymous-members/native-78.c",
+      "source_sha256": "4ed3fc99cad93ce71743fc5cd66d4aead906bc60c68269e5fcaead04a4bfe0e0",
+      "expected": 59,
+      "exit": 59,
+      "stdout": "",
+      "trace": "TODO: cancel_reservation\nT\t7444688\t80001b60\t80001b64\t80043330\t87fffc30\t8007e350\t0\t80058cb4\tf\tffffffffffffffff\t800abc80\t8007e828\t86402d84\t1\t86800ed0\t86800ee0\t86400000\t2d84\tff\t8007db50\t5f\t1\t0\t0\t0\t0\t2\t86800ea8\t6\t800abc80\t8013f1d8\t100\tfffffffff0000000\tff\tO\t0\t0\t256\nT\t7444713\t80001b48\t80001b4c\t80043330\t87fffc30\t8007e350\t0\t80058cb4\tf\tffffffffffffffff\t800abc80\t8007e828\t86402d84\t1\t86800ed0\t86800ee0\t86400000\t2d84\t0\t8007db50\t5f\t1\t0\t0\t0\t0\t2\t86800ea8\t6\t800abc80\t8013f1d8\t100\tfffffffff0000000\tff\tO\t0\t0\t256\nT\t7447670\t80000804\t80000808\t86403034\t87fffbf0\t8007e350\t0\t86402e3c\t864050b4\tffffffffffffffff\t3b\t1\t3b\t0\tc\t86402e48\t8007d800\t77\t0\t8007db50\t86800ed0\t86800ee0\t86400000\t0\t0\t0\t2\t86800ea8\t6\t800abc80\t800007f4\t100\tfffffffff0000000\tff\tS8\t8007db40\t0\t0\tO\t0\t0\t256\n",
+      "trace_rows": [
+        "T\t7444688\t80001b60\t80001b64\t80043330\t87fffc30\t8007e350\t0\t80058cb4\tf\tffffffffffffffff\t800abc80\t8007e828\t86402d84\t1\t86800ed0\t86800ee0\t86400000\t2d84\tff\t8007db50\t5f\t1\t0\t0\t0\t0\t2\t86800ea8\t6\t800abc80\t8013f1d8\t100\tfffffffff0000000\tff\tO\t0\t0\t256",
+        "T\t7444713\t80001b48\t80001b4c\t80043330\t87fffc30\t8007e350\t0\t80058cb4\tf\tffffffffffffffff\t800abc80\t8007e828\t86402d84\t1\t86800ed0\t86800ee0\t86400000\t2d84\t0\t8007db50\t5f\t1\t0\t0\t0\t0\t2\t86800ea8\t6\t800abc80\t8013f1d8\t100\tfffffffff0000000\tff\tO\t0\t0\t256",
+        "T\t7447670\t80000804\t80000808\t86403034\t87fffbf0\t8007e350\t0\t86402e3c\t864050b4\tffffffffffffffff\t3b\t1\t3b\t0\tc\t86402e48\t8007d800\t77\t0\t8007db50\t86800ed0\t86800ee0\t86400000\t0\t0\t0\t2\t86800ea8\t6\t800abc80\t800007f4\t100\tfffffffff0000000\tff\tS8\t8007db40\t0\t0\tO\t0\t0\t256"
+      ],
+      "metadata": "compile_steps=7444688\nprogram_steps=2958\nsteps=7447671\n",
+      "image": "/Users/kirancodes/tmp/tcc_sail.MQOzgL/prog.elf",
+      "image_sha256": "984ed88472a7c1d032e17c2fd4dec5861a830e5eedeb87a9f8f9c5d88581e4ff",
+      "embed_sha256": "516bd4320e8d581b7584b8a8ae20547e779f8a6accd10198bda50b00614caedf",
+      "command": [
+        "timeout",
+        "900",
+        "scripts/run_tcc_sail.sh",
+        "results/csem/anonymous-members/native-78.c"
+      ],
+      "environment": {
+        "TCC_ARGS": "\"-w\",\"-std=c11\",",
+        "MAX_STEPS": "100000000",
+        "KEEP_WORK": "1"
+      },
+      "isa_exit": 0,
+      "isa_stdout": "NOTE /Users/kirancodes/tmp/tcc_sail.MQOzgL/prog.elf(/Users/kirancodes/tmp/tcc_sail.MQOzgL/prog.elf) .text 8001ee7c: 00100073 ebreak \nNOTE /Users/kirancodes/tmp/tcc_sail.MQOzgL/prog.elf(/Users/kirancodes/tmp/tcc_sail.MQOzgL/prog.elf) .text 80021adc: 00100073 ebreak \nNOTE /Users/kirancodes/tmp/tcc_sail.MQOzgL/prog.elf(/Users/kirancodes/tmp/tcc_sail.MQOzgL/prog.elf) .text 8002a910: 00100073 ebreak \nNOTE /Users/kirancodes/tmp/tcc_sail.MQOzgL/prog.elf(/Users/kirancodes/tmp/tcc_sail.MQOzgL/prog.elf) .text 8003f018: 00100073 ebreak \nNOTE /Users/kirancodes/tmp/tcc_sail.MQOzgL/prog.elf(/Users/kirancodes/tmp/tcc_sail.MQOzgL/prog.elf) .text 8003fe8c: 00100073 ebreak \nOK   /Users/kirancodes/tmp/tcc_sail.MQOzgL/prog.elf insns=107594 bad=0 notes=5 zero-pad=0\n"
+    }
+  ],
+  "binaries": {
+    "/data/home/kirancodes/Documents/code/ship-your-lua/riscv-lean/lean_emulator/.lake/build/bin/lean_riscv_emulator": "8989bde8a95345de658fb9c9111e15ce4a5561bc747dab28f798080f0778120b"
+  },
+  "runner_sha256": "9a7737b4ac7a3578db6d1597a1c8224800e912cae30592e95c772f7637737ac8"
+}

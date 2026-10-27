@@ -382,3 +382,46 @@ fast stress compile requires 841,087,712 steps, beyond its first 400M limit.
 Neither exhausted run counts as a passing observation. Build-service review
 notes must be read in full: polling only the first eight receipt lines hid
 requested corrections until the lead surfaced them explicitly.
+- Anonymous members (2026-10-27): flattening an unnamed declaration into its
+  parent's physical member list loses both union storage and initializer
+  current-object boundaries. Promoted names must resolve to physical paths;
+  changing only offsets or only continuation leaves the other defect.
+- Anonymous representation: unspellable synthetic FIELD names (`:anonymous:`)
+  execute on both engines but break the existing Core text grammar. Mark the
+  container with an internal attribute instead and allocate printable names.
+  Include descendants' source names in allocation: a promoted field must not
+  capture its own container. Preserve every qualifier along the lookup path.
+- Anonymous probes: Cerberus parses standard `offsetof`, not GCC's
+  `__builtin_offsetof` spelling. Include `<stddef.h>` and use `offsetof` on
+  all engines; the first four parse failures were harness inputs, not layout
+  answers. Reserved `__...` source identifiers also cannot establish defined
+  strict-C11 coverage; final collision controls use ordinary legal names.
+- Anonymous qualifier follow-up: valid `_Generic(&s.a, const int *:1,default:0)`
+  (and volatile) fails on patched tcc for an anonymous qualified container,
+  in both storage variants. Named-container, direct-const-field and
+  const-object controls pass. Retain this separate compiler gap; do not
+  change CSem qualifiers, Supported or expected results to match it.
+- Anonymous build requests 02 changed while the marker/name collision
+  revision was underway; the service correctly rejected source drift.
+  Those requests are superseded, not build evidence. Freeze the final source
+  manifest and verify its matching receipt before recording success.
+
+- Anonymous layout: repairing physical fields exposes the inherited union
+  sizeof/alignof adapter asymmetry during `offsetof`: both adapters receive
+  the complete explicit table but consult the unset ambient table in their
+  union arms. Four strict-C11 layout probes crash on both engines. Thread
+  the explicit table in both handwritten adapters; do not seed mutable Tags
+  during translation or drop the offset probes. The isolated OCaml overlay
+  must pin the corresponding two-line patch as well as the shared Lem files.
+- Printable names are not a source-visibility mechanism. The first repair
+  accepted a guessed container in a source expression (GCC diagnosed it;
+  both models returned one). Filter public paths, consume initializer paths
+  as explicit physical edges, and distinguish generated IR member operations.
+  Do not simply filter everything and break internal projection. Final
+  member/arrow/designator/offsetof guesses in both storage modes all reject.
+- A positive `*_auto.c`/`*_static.c` wildcard also picks up the new guessed-name
+  negative fixtures. Enumerate positive sources by the generator's invalid
+  classification; preserve the negative diagnostics in their own matrix.
+- The union-layout adapter correction needs its existing fuel potential and
+  two stability cases to read the explicit table too. Reuse layout_stable_aux;
+  do not raise fuel or elaboration bounds to get around the old ambient premise.

@@ -523,13 +523,51 @@ partial def go_top_of_block (pos : init_position) :
   | DInit_ok pos' => go_top_of_block pos'
   | DInit_internal_error msg => internal_error0 msg
 
+/- A source designator has already resolved to a visible path. Consume its
+   physical edges directly; never turn container names into source designators. -/
+def moveTo_member_path { a b : Type } (tagDefs1 : Fmap sym tag_definition0) (is_top : Bool)
+    (p : (ctype × List init_cursor_elem)) (path : List (identifier × b × a)) :
+    state_with_markers → exceptM ((ctype × List init_cursor_elem) × state_with_markers) error :=
+  match tagDefs1, is_top, p, path with
+  | tagDefs1, is_top, (ty1, cursor1), path =>
+    stExpect_bind
+      (stExcept_foldlM
+        (fun (p : (ctype × List init_cursor_elem × Bool)) (p0 : (identifier × b × a)) =>
+          match p, p0 with
+          | (ty1, cursor1, top), (ident, _, _) =>
+            (match unatomic ty1 with
+             | Ctype _ (Struct tag) =>
+               (match find_struct_member tagDefs1 ident tag with
+                | Sum.inr (child_ty, prev, next) =>
+                  stExpect_return
+                    (child_ty,
+                      ((({ is_block := top,
+                           is_overflowing := false,
+                           kind := (Init_struct tag prev ident next) } : init_cursor_elem)) ::
+                        cursor1), false)
+                | _ => internal_error0 "physical struct member path is inconsistent")
+             | Ctype _ (Union0 tag) =>
+               (match find_union_member tagDefs1 ident tag with
+                | some child_ty =>
+                  stExpect_return
+                    (child_ty,
+                      ((({ is_block := top,
+                           is_overflowing := false,
+                           kind := (Init_union tag ident) } : init_cursor_elem)) :: cursor1), false)
+                | _ => internal_error0 "physical union member path is inconsistent")
+             | _ => internal_error0 "physical member path has non-aggregate parent"))
+        (ty1, cursor1, is_top) path)
+      (fun (p : (ctype × List init_cursor_elem × Bool)) =>
+        match p with
+        | (ty1, cursor1, _) => stExpect_return (ty1, cursor1))
+
 partial def moveTo_aux (tagDefs1 : Fmap sym tag_definition0) (funcs : desugaring_init_funcs)
     (is_top : Bool) (p : (ctype × List init_cursor_elem)) (desigs : List designator) :
     state_with_markers → exceptM ((ctype × List init_cursor_elem) × state_with_markers)
         (CerbLocation.Loc × cause) :=
   match tagDefs1, funcs, is_top, p, desigs with
   | tagDefs1, funcs, is_top, (ty_acc, cursor_acc), desigs =>
-    (let moveTo_aux1 := moveTo_aux tagDefs1 funcs false;
+    (let moveTo_child := moveTo_aux tagDefs1 funcs false;
      match desigs with
      | [] => stExpect_return (ty_acc, cursor_acc)
      | Desig_array e :: desigs' =>
@@ -567,13 +605,13 @@ partial def moveTo_aux (tagDefs1 : Fmap sym tag_definition0) (funcs : desugaring
                 (({ is_block := is_top,
                     is_overflowing := false,
                     kind := (Init_array idx (some size)) } : init_cursor_elem));
-            moveTo_aux1 (elem_ty, (new_elem :: cursor_acc)) desigs')
+            moveTo_child (elem_ty, (new_elem :: cursor_acc)) desigs')
         | Ctype _ (Array0 elem_ty none) =>
           stExpect_bind (common e) (fun (idx : Int) =>
             let new_elem :=
               (({ is_block := is_top, is_overflowing := false, kind := (Init_array idx none) } :
                 init_cursor_elem));
-            moveTo_aux1 (elem_ty, (new_elem :: cursor_acc)) desigs')
+            moveTo_child (elem_ty, (new_elem :: cursor_acc)) desigs')
         | _ =>
           (fun (_ : state_with_markers) =>
             fail0 (loc1, DESUGAR (Desugar_ConstraintViolation IllegalArrayDesignatorUsage))))
@@ -581,44 +619,50 @@ partial def moveTo_aux (tagDefs1 : Fmap sym tag_definition0) (funcs : desugaring
        (let loc1 :=
           match ident with
           | (Identifier loc1 _) => loc1;
-        match unatomic ty_acc with
-        | Ctype _ (Struct tag_sym) =>
-          (match find_struct_member tagDefs1 ident tag_sym with
-           | Sum.inr (new_ty, prev, next) =>
-             (let elem' :=
-                (({ is_block := is_top,
-                    is_overflowing := false,
-                    kind := (Init_struct tag_sym prev ident next) } : init_cursor_elem));
-              moveTo_aux1 (new_ty, (elem' :: cursor_acc)) desigs')
-           | Sum.inl is_flexible_array_member =>
-             (lem_if is_flexible_array_member then
-               fun (_ : state_with_markers) =>
-                 fail0
-                   (loc1,
-                     DESUGAR
-                       (Desugar_ConstraintViolation
-                         (IllegalMemberDesignatorFlexibleArrayMember ident)))
-             else
-               fun (_ : state_with_markers) =>
-                 fail0
-                   (loc1,
-                     DESUGAR (Desugar_ConstraintViolation (IllegalMemberDesignator ident ty_acc)))))
-        | Ctype _ (Union0 tag_sym) =>
-          (match find_union_member tagDefs1 ident tag_sym with
-           | some new_ty =>
-             (let elem' :=
-                (({ is_block := is_top,
-                    is_overflowing := false,
-                    kind := (Init_union tag_sym ident) } : init_cursor_elem));
-              moveTo_aux1 (new_ty, (elem' :: cursor_acc)) desigs')
-           | none =>
+        let members : sym → List
+          (identifier × (attributes × Option alignment × qualifiers × ctype)) :=
+          (fun (tag : sym) =>
+            match (fmapLookupBy (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2) tag
+                tagDefs1) with
+            | some (Struct_definition _ _ _ xs _) => xs
+            | some (Union_definition _ _ _ xs) => xs
+            | _ => ([] : List (identifier × (attributes × Option alignment × qualifiers × ctype))));
+        let paths :=
+          List.filter
+            (fun (p : (identifier × member_path)) =>
+              match p with
+              | (_, path) => path.member_path_visible)
+            (member_paths (1 + List.length (fmapElements tagDefs1)) members ty_acc);
+        match (lookupBy idEqual ident paths) with
+        | some path =>
+          stExpect_bind
+            (moveTo_member_path tagDefs1 is_top (ty_acc, cursor_acc) path.member_path_steps)
+            (fun (child : (ctype × List init_cursor_elem)) => moveTo_child child desigs')
+        | none =>
+          (match unatomic ty_acc with
+           | Ctype _ (Struct tag_sym) =>
+             (match find_struct_member tagDefs1 ident tag_sym with
+              | Sum.inl true =>
+                (fun (_ : state_with_markers) =>
+                  fail0
+                    (loc1,
+                      DESUGAR
+                        (Desugar_ConstraintViolation
+                          (IllegalMemberDesignatorFlexibleArrayMember ident))))
+              | _ =>
+                (fun (_ : state_with_markers) =>
+                  fail0
+                    (loc1,
+                      DESUGAR
+                        (Desugar_ConstraintViolation (IllegalMemberDesignator ident ty_acc)))))
+           | Ctype _ (Union0 _) =>
              (fun (_ : state_with_markers) =>
                fail0
                  (loc1,
-                   DESUGAR (Desugar_ConstraintViolation (IllegalMemberDesignator ident ty_acc)))))
-        | _ =>
-          (fun (_ : state_with_markers) =>
-            fail0 (loc1, DESUGAR (Desugar_ConstraintViolation IllegalMemberDesignatorUsage)))))
+                   DESUGAR (Desugar_ConstraintViolation (IllegalMemberDesignator ident ty_acc))))
+           | _ =>
+             (fun (_ : state_with_markers) =>
+               fail0 (loc1, DESUGAR (Desugar_ConstraintViolation IllegalMemberDesignatorUsage))))))
 
 def moveTo (tagDefs1 : Fmap sym tag_definition0) (funcs : desugaring_init_funcs)
     (pos : init_position) :

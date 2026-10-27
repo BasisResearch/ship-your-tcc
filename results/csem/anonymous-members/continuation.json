@@ -1,0 +1,2445 @@
+{
+  "rows": [
+    {
+      "name": "build/designator-focused/designator_anonymous_auto.c",
+      "source_sha256": "f24439c09d67bc564caed6b43e78d4d1c3fd091d26218dc5d0d7a6c6618c4230",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_anonymous_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "e6c3eaf2091721909d4c483b006e441e6f3ade7d998ba7b68ed21bc0e5a8785d"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_anonymous_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.036146 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_anonymous_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_anonymous_static.c",
+      "source_sha256": "caf4f77406265d21e62052ff4d19464380944fb5ba2e69b1be226c24ced1c485",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_anonymous_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "25762de3df48e937958a2d1e204c2090010c28890898053529b8e72a82bb650b"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_anonymous_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.036581 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_anonymous_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_array_designator_auto.c",
+      "source_sha256": "9478385693e02b299a9c77304913517ab3018a9162c9a9799820f9f40a1dfef3",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_array_designator_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "457f573e8444d39c5e775e70d7e2dc7b165b71e4a4ede7f8b084c928e538e8a0"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_array_designator_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.032528 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_array_designator_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_array_designator_static.c",
+      "source_sha256": "b93b51e20a958dd2a16bf79e1702dc5160b76d6b5f54257e4103b5e74ae3f97d",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_array_designator_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "d6975ad01a332c4a1c3fbe26ee46c6acafe5926dfd4ca9438f5d3b278eaa9f74"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_array_designator_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.041531 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_array_designator_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_braced_reset_auto.c",
+      "source_sha256": "564b4cd6e364f1c3273f3574e34e378beac9b52924dfcd95244f56246a9d381c",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_braced_reset_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "f3fa4aa7c473d297083dd4b5eb413b081228ab24b7e135637e4cd68640608c8a"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_braced_reset_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.029947 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_braced_reset_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_braced_reset_static.c",
+      "source_sha256": "ae200e9af1de2e3ae49e67cd80d48a8de8a2a1680201041df822b79bef62f9f9",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_braced_reset_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "5daa04d6c7edd521b3ebbe91739b43776f4a3be7651a4a774bb7ced4d725d17c"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_braced_reset_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.037798 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_braced_reset_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_braced_union_auto.c",
+      "source_sha256": "986552b248661957c9886ebc4cf5b3e0bc01fe2e3f5cb70d93be4b718771fccb",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_braced_union_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "a9e7846771d347e1ec8a762ed07caa2e3558517fd9349be3db2cd70b6c330d1f"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_braced_union_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.037332 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_braced_union_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_braced_union_static.c",
+      "source_sha256": "1f5881a782f1b5eb1031e38193c1a57ebe62d8385f9a7ea87976f8256f9f64ef",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_braced_union_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "4503c28e4c145df099bea3b707a59e1cde41e14ae37937b0970b358ac69cb855"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_braced_union_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.031123 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_braced_union_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_deep_auto.c",
+      "source_sha256": "e62492d17c8f672819d274241940800cd287d3e4a62e8d68cdfe341637da6b26",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_deep_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "f05f03c438f7f38a6d5d5ba65affdfe1810a484e20b6aeb192ec77779c5324c6"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_deep_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.040997 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_deep_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_deep_static.c",
+      "source_sha256": "68edcb0e432842ac762d9795eccbd0aba5767eaedb7b9e19f369cbf0e7854abd",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_deep_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "bdd645a2bf43adbed48450f120bd9a73b06662d629b066480fddb4b08b0a2884"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_deep_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.035178 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_deep_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_elided_auto.c",
+      "source_sha256": "e21581068d91916ac0e41e951b4cd47030117fef37531280abed16125f6db7bd",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_elided_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "dd0f452568ee7c4aeb8dd83a176a7611ebd3c0788a84e0d0ad460537468ba1e4"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_elided_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.034854 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_elided_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_elided_static.c",
+      "source_sha256": "85a9a03d3fcc728769623a425291aa8d83d6e52bdbefdb71c4d8174c14d2588a",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_elided_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "951db3bfc78134a490e11e5fc51fa0616617ab6e2478029993bb0f07e63ae4af"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_elided_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.038940 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_elided_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_explicit_auto.c",
+      "source_sha256": "e082aa945567c671c384ce3ece438d29dc41bda440055d29cf5e16f08f336630",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_explicit_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "801f57642d071865e23906cc39f7e6fca1c45d817b28e74fe1fccb20a03d9863"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_explicit_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.031503 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_explicit_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_explicit_static.c",
+      "source_sha256": "d3189bc5c53b0e221ee3c88bcae01b13d2c4d0df4e09b6e85d3d26b31e0ac89e",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_explicit_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "d099fbf00fba8494ce2db89e76e30fc4b830e5e8c9899dea468e78fa0a8f2ce4"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_explicit_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.029628 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_explicit_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_incomplete_auto.c",
+      "source_sha256": "3bef1baa2fce2002b73a71aa9d4c97d61f23016f3c46a859a94dcb253a725341",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_incomplete_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "01d825f0db7c1f18d15c3093da1f2d2f0be55fbe94d2ef7a331a6e769edc3777"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_incomplete_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.035720 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_incomplete_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_incomplete_matrix_auto.c",
+      "source_sha256": "ac46be101318078fc4ff3aee99459c2efb8c45236681c44a0a8d9d953698b6ae",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_incomplete_matrix_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "3e4a3ad7bbc82fa07ff774bf7dc0d6ec3a22de0c8ea7471b5a20836e56034020"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_incomplete_matrix_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.030260 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_incomplete_matrix_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_incomplete_matrix_static.c",
+      "source_sha256": "2e5e3b31eb1bfa14b25eca80c6fac22d1433b6b8739c4694b71455fedcbf88e2",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_incomplete_matrix_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "e166637eb7fe0151ec5c5891b5f22f175b76b02edbefd4f42a7d05641213af50"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_incomplete_matrix_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.036850 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_incomplete_matrix_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_incomplete_static.c",
+      "source_sha256": "b86b064875b37d410c5206aac6e0a807fdf24ce8f19208692a018dfc5b67158f",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_incomplete_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "56b674e0bb05e0c5151930c5bd6d13fccf8a1a99219e8787c223d4d5310832e5"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_incomplete_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.031184 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_incomplete_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_matrix_auto.c",
+      "source_sha256": "da62b29335e2a6471242e479507cfc524c4d9dd01f2587f983cd25831206b157",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_matrix_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "90b51db91614da9e1d68c83182fa22501482fb188ad542895d38c147e33627d5"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_matrix_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.033793 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_matrix_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_matrix_static.c",
+      "source_sha256": "5e0ffaabdb4b33677a645f3f8c28faf9ecbcf6320ab3bb28d2d402560e96fa98",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_matrix_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "2b7102d797ef03555c8e31adc67270b6976269d522ff2e9c7fc839df518dcf4b"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_matrix_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.034927 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_matrix_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_minimal_auto.c",
+      "source_sha256": "261c8eb217959f69ebe8b9dacddd56287d43eec499e95f9d8e31fc2ab5fb3b4c",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_minimal_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "2e24544964324c01a564a855c5ef1f591ee3960e8acb4e2247a86eb0396bfd57"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_minimal_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.029223 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_minimal_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_minimal_static.c",
+      "source_sha256": "34be83053aed737c41001908cfca07e1575a2b8948a6d024a30ab6c8ce8beb77",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_minimal_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "46d9ad93ca5bf5e1d6765bf57346013bf07c8bdec0675dd619d742269ef69167"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_minimal_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.033559 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_minimal_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_nested_union_auto.c",
+      "source_sha256": "18f84cbd050e544132eb8a5a11dbeca7c9c242b157573b8d631a9b154fbfe1b6",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_nested_union_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "55ef910d71413cfe7a5379ff4351fce25ac82a80b5296e341d69a8955968f3cc"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_nested_union_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.037834 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_nested_union_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_nested_union_static.c",
+      "source_sha256": "4fd2fed172f4c8ac88cc8480288585695e1aeb55a6100386b651624c8b976c95",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_nested_union_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "29467ba1caa067ea9bb2381748c98ed2a8abc58ebd3f0960aa8aa689ecf7ff22"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_nested_union_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.036403 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_nested_union_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_outer_brace_boundary_auto.c",
+      "source_sha256": "1ab169a57d7c46ed536fe6ab19fbcc27ea0f73e2a97e38eb10eaf0760259046b",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_outer_brace_boundary_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "061f4114e6b94abacd2272b6fdf4bbc0e6dca4d09ba928048376e44a15a5875b"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_outer_brace_boundary_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.036627 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_outer_brace_boundary_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_outer_brace_boundary_static.c",
+      "source_sha256": "cf7cf385e710f5c07411d581d4ea291743f51d2eca333f509ab149905d3c9fe5",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_outer_brace_boundary_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "a032e64e69584a8a52d3d160dd6066052e69dc9735e2b2d082a97fbfc13bf799"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_outer_brace_boundary_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.032386 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_outer_brace_boundary_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_outer_designator_auto.c",
+      "source_sha256": "c5f7c4fe77e8bbe9b546e98edc522beedbaa5600c9c623ec9f919168871bc0ff",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_outer_designator_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "d1c0d109054579a5ad2fd4ec0a9dd19482f56740310ecff2e45e664bc15af0cd"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_outer_designator_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.036719 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_outer_designator_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_outer_designator_static.c",
+      "source_sha256": "931d002063f666035c7beb5613a1c7f6074f85dfaf95be7b538b769dcb992b24",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_outer_designator_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "bc5ca8c0e30475f63f05017543a8b36bc3527dd52f9975111372391f08a8e0e8"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_outer_designator_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.036882 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_outer_designator_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_padding_auto.c",
+      "source_sha256": "a88c683d2dcff140b1e52b04a743264ffa8c3c4a895548d26d40e55d3ba5c521",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_padding_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "c972ce139ea24344812a7b5e6ad2ccef3c59447430e76cf73d43f38739a64845"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_padding_auto.c"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_padding_auto.c:1:21: error: feature not yet supported: bit-fields\nstruct S {unsigned :3; unsigned a:4; unsigned :2; unsigned b:4; int z;}; struct T {struct S s; int z;};\n                    ^ \nTime spent: 0.035555 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_padding_auto.cabs.json"
+        ],
+        "exit": 1,
+        "stdout": "Error {msg: \"desugaring failed at /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_padding_auto.c:1:21-22\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "semantic-gap"
+    },
+    {
+      "name": "build/designator-focused/designator_padding_static.c",
+      "source_sha256": "eae041320d303aac351a13f4dd5dda3cf5f8ddd3b387a27d7498baa029c3a0f7",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_padding_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "1716d39bc86450564294f90588a084b5a37462b2b44b2724ac85c78dc1c91850"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_padding_static.c"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_padding_static.c:1:21: error: feature not yet supported: bit-fields\nstruct S {unsigned :3; unsigned a:4; unsigned :2; unsigned b:4; int z;}; struct T {struct S s; int z;};\n                    ^ \nTime spent: 0.030316 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_padding_static.cabs.json"
+        ],
+        "exit": 1,
+        "stdout": "Error {msg: \"desugaring failed at /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_padding_static.c:1:21-22\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "semantic-gap"
+    },
+    {
+      "name": "build/designator-focused/designator_partial_braces_auto.c",
+      "source_sha256": "b8a3f762eaa381d3a66595efdd372bc61441ae600dc5bc751ab3e4ff4be633e7",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_partial_braces_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "4f7791e2ce3833a5dbfe05a2e700443c0e3abe802950a950a9d61d8e91e65ac7"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_partial_braces_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.037804 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_partial_braces_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_partial_braces_static.c",
+      "source_sha256": "0cfcfd7b1db2bbdf1de5f9d79dff126361f8dd2a451dd16f46c66da8fb8b1458",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_partial_braces_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "a16704d70e51f9535d743ad2e79acc5261e375bb40a63437a1890177bde5f85d"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_partial_braces_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.035267 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_partial_braces_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_pointer_auto.c",
+      "source_sha256": "96ea7d684862487b9e0c983120d8164275ea57ef982102a60f33225c2a297f88",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_pointer_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "402a35151d0ace31aa5cee70bab154ce723231d92348da16b4699c89a5afaecf"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_pointer_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.033977 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_pointer_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_pointer_static.c",
+      "source_sha256": "3b11216a819a96d4931504d31612013900ed5bb65f4e5f70360aba72019609d4",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_pointer_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "4cd8ee4c72c33a8281e4b7561f7ddaebf7aed5bb5c1e5feb5561448bad51c7d2"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_pointer_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.036743 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_pointer_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_redesignate_auto.c",
+      "source_sha256": "262aa4165b0b01364d062783639d60ddd530bd1032bc1a3a9909aef3aee46c42",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_redesignate_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "22d36bd9c7041ab335ff231559adad9d967e5b03e1576436b3550ce307f02c9c"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_redesignate_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.036411 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_redesignate_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_redesignate_static.c",
+      "source_sha256": "57cc3b02c07e4607b37e52a769bddf92f6b067d553e2f76294905d2c410af69c",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_redesignate_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "80079a9d386da142deb673eb0e83131b3b74f37c49adc6d7ac5c391283dc62b5"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_redesignate_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.037948 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_redesignate_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_reverse_auto.c",
+      "source_sha256": "dfa861b2558ca9168fb6343e94c22550ae64e169bb406a4e941110cb1d32d0e2",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_reverse_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "9c79db6f7069b229f171829c70ee01ae1b25cd6befedf15d37aa18d9b56d6303"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_reverse_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.039432 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_reverse_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_reverse_static.c",
+      "source_sha256": "11739551ec68595f87e9db95a425459f7cebfcb4fb9daaa6a0bea47512e0d6d6",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_reverse_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "686216df351e654bbf132e95369ae10ce1da20af5b985ad92b23605343b2aea3"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_reverse_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.032210 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_reverse_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_scalar_braces_auto.c",
+      "source_sha256": "4569c372163a6efe5b781f91bafbada543872e03ea91403e8b7b23d10827c519",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_scalar_braces_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "953379d640c1a3ba2a601248ffd6e348209db8037c9a4074ae19439a7d84e351"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_scalar_braces_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.038127 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_scalar_braces_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_scalar_braces_static.c",
+      "source_sha256": "06d5299d996fbfc4fa8026e53fe9bcc19f971ad485e7f44ca6b6210a766daa90",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_scalar_braces_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "434e52eb93ee1a1d86e8759cb4702266e8a8fcfb8bdcf42ec25842851a08c084"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_scalar_braces_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.034858 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_scalar_braces_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_string_auto.c",
+      "source_sha256": "628bd96f8adcc57e4d98da0d2734cc294477f09aabbfd5535e064a2ca2ce7443",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_string_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "f09f7ddd0961e581162b3c265bd51b6e964236bc67ef5392c254cac44d39ddd8"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_string_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.034838 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_string_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_string_scalar_auto.c",
+      "source_sha256": "324efcb27a7dceb1fbc00399c9f5d5f734ee1598fc240b5ef7d2d065d0bba1f4",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_string_scalar_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "e9be69bf9f2f24767787c2d67c6b1be8a0f4f3942e8b0d00eef760ac756e3007"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_string_scalar_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.037954 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_string_scalar_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_string_scalar_static.c",
+      "source_sha256": "3821353a251cc9794dbe8c7882164c427087067ad631cb89cf69aefb3a56a2be",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_string_scalar_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "53254184d1f0c30e5791a603fc0e1cc50286642c2b6b0ea6211a1fc129b81f46"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_string_scalar_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.036699 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_string_scalar_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_string_static.c",
+      "source_sha256": "ccd341428c4b8933668048554d7f0ec1a904d5543702331c1a43d8dbcc117e0a",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_string_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "e9bba5126b67abdc02a23434218fb8d396f957b254a629ae4d7fea23d1d1874b"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_string_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.036743 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_string_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_struct_path_auto.c",
+      "source_sha256": "387462943d23285e7709e87a782ede27d272f5527cfb5932e6dea54dfd04bc47",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_struct_path_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "400a277b1419779a77ef76a2d0fb68d5aee33f9b7a630c24ff91ea83ab922edf"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_struct_path_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.039765 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_struct_path_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_struct_path_static.c",
+      "source_sha256": "205bdd6348ff54a905cfd31d578a4c144add8c1802c51e4bde6879f383dd93ee",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_struct_path_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "0be030bafe38eb27f07566b7ed7e23c199a5374df92309b04ed202cb43f4e60a"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_struct_path_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.037252 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_struct_path_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_trailing_padding_auto.c",
+      "source_sha256": "a1ff4713091712821ae2be41beff2e437bc8c1736ef48527370be8ec6fd5e52a",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_trailing_padding_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "12bb7e0ef4ef3b9bf0828f7f5dc86d5f87840bc83223b4e7a5f3d1fa78d7eee7"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_trailing_padding_auto.c"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_trailing_padding_auto.c:1:27: error: feature not yet supported: bit-fields\nstruct A {int x;unsigned :3;}; struct S {struct A a;int y;};\n                          ^ \nTime spent: 0.038640 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_trailing_padding_auto.cabs.json"
+        ],
+        "exit": 1,
+        "stdout": "Error {msg: \"desugaring failed at /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_trailing_padding_auto.c:1:27-28\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "semantic-gap"
+    },
+    {
+      "name": "build/designator-focused/designator_trailing_padding_static.c",
+      "source_sha256": "30b777b4f141eff2a26adb4a5af6b9d5727fd84acab4536f89502580bbacd011",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_trailing_padding_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "204568327454473109acf7dbe3fcebac3e6c219c5f27fcfade98c82cbd508211"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_trailing_padding_static.c"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_trailing_padding_static.c:1:27: error: feature not yet supported: bit-fields\nstruct A {int x;unsigned :3;}; struct S {struct A a;int y;};\n                          ^ \nTime spent: 0.030920 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_trailing_padding_static.cabs.json"
+        ],
+        "exit": 1,
+        "stdout": "Error {msg: \"desugaring failed at /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_trailing_padding_static.c:1:27-28\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "semantic-gap"
+    },
+    {
+      "name": "build/designator-focused/designator_union_array_auto.c",
+      "source_sha256": "da745d81f0688c0cd7b65ab321fe01c53bbb440200c3135638d3ca5d0ba94618",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_array_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "0b0be048c9c985aafd8684346d7d07e6dce1b6ebb7e27e891a5214e2e026e2e0"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_array_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.036100 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_array_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_union_array_static.c",
+      "source_sha256": "359362ad8e98fd01d1392dc1c9dc57af325179d466b26309b877a15d0c1bce51",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_array_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "145ed6848ebebb149aff2aca982ac7d02be46441e297b594a0c4009484ab0c71"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_array_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.038314 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_array_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_union_reset_string_auto.c",
+      "source_sha256": "28ccae285d2bb237111e2740f35ef6e8fbbd902e928f4ee702e62337052668fd",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_reset_string_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "78e9f520d3ddb9118cd40dc6f883191b5b2994a7db9b332ef0af741b62811749"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_reset_string_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.032752 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_reset_string_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_union_reset_string_static.c",
+      "source_sha256": "f0ea9f2e5fc311bba31f62563ede84c552327776c5ec132bf2bfa77440bfef1e",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_reset_string_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "2ab5bb5d0e2b8626803de73dcb6a62479a6b3c6708c82b2fee6c0b180e0c5905"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_reset_string_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.034942 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_reset_string_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_union_same_auto.c",
+      "source_sha256": "c3a4d071c4ee32652e8de5320588b2839d8d013356a233b3aa5d7d39d6b8f8c7",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_same_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "cb3d5bca74227d657db7faeb5e2728567ed7829e9d5d2a1d7abcadd072fa4a48"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_same_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.036674 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_same_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_union_same_static.c",
+      "source_sha256": "c7ec87aa46f462cfcb9d46ec27253f9fdce81a0183f3e1a56ce9945d50e3d828",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_same_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "4a59f4cc7999888fe9df4a5e160240ae464f25f4bde0b99f90c7c39c2040e31e"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_same_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.036255 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_same_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_union_siblings_auto.c",
+      "source_sha256": "e98743a244cdda066de602364f915185c2681814feda403eda9f9fdf53982eea",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_siblings_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "c22ff38932f0c70a8c92cc826d2920e3739b57f67546d9c2d285f64888599bac"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_siblings_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.036345 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_siblings_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_union_siblings_static.c",
+      "source_sha256": "49141c464982e089af085052b526fbb4e53893b554e3a31945263b412680a3c9",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_siblings_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "cd3555df07ed19d5e971b59766e16cbed7c5185aab27e7ebad85b611f747d93e"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_siblings_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.037627 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_siblings_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_union_switch_auto.c",
+      "source_sha256": "acb8ac9055f033a8bd9aa972eda573c24eea9e898947ef0a3e989171ecf2cd72",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_switch_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "99109dd45f9a3a98ad1ba542f7d21067f6e3fecf977e9e7445b0d9fab2e97ebe"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_switch_auto.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.035738 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_switch_auto.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    },
+    {
+      "name": "build/designator-focused/designator_union_switch_static.c",
+      "source_sha256": "9c1f7234438be7fcbb422b9c0ae39203d84923ab471b99472b4af5bf2460cd62",
+      "export": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--cabs-json",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_switch_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_sha256": "0146a6f6c94d323a7000221142dd69b9bc27f0e86f2669c7b62f8192fbb27c79"
+      },
+      "ocaml": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "--nolibc",
+          "--exec",
+          "--batch",
+          "--mode=exhaustive",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_switch_static.c"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "Time spent: 0.039382 seconds\n"
+      },
+      "lean": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+          "--batch",
+          "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/install/default",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_union_switch_static.cabs.json"
+        ],
+        "exit": 0,
+        "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+        "stderr": "cerberus-lean switches: []\n"
+      },
+      "result": "same"
+    }
+  ],
+  "binaries": {
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/332616fe5dc9137620f8374fc6af0fbd858f28ff2bff4ef19a19023539595ed3/_build/default/backend/driver/main.exe": "797230dfc5e086cd222202ab5117e35696aab3cb687e7f6312e2070ab11a226f",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run": "3d158e630cce61e8f9793e3325cba4c96df141275f196ebbb7e67d556a68f41d"
+  },
+  "shared_source_sha256": "196326bd12e40e7573efd65fb0acb4a07a40b60599f0e7fb424be2063e1f65d2"
+}

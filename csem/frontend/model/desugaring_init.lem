@@ -306,8 +306,31 @@ let rec go_top_of_block pos =
   end
 
 
+(* A source designator has already resolved to a visible path. Consume its
+   physical edges directly; never turn container names into source designators. *)
+let moveTo_member_path tagDefs is_top (ty, cursor) path =
+  E.foldlM (fun (ty, cursor, top) (ident, _, _) ->
+    match unatomic ty with
+      | Ctype _ (Struct tag) ->
+          match find_struct_member tagDefs ident tag with
+            | Right (child_ty, prev, next) ->
+                E.return (child_ty, <| is_block= top; is_overflowing= false;
+                  kind= Init_struct tag prev ident next |> :: cursor, false)
+            | _ -> internal_error "physical struct member path is inconsistent"
+          end
+      | Ctype _ (Union tag) ->
+          match find_union_member tagDefs ident tag with
+            | Just child_ty ->
+                E.return (child_ty, <| is_block= top; is_overflowing= false;
+                  kind= Init_union tag ident |> :: cursor, false)
+            | _ -> internal_error "physical union member path is inconsistent"
+          end
+      | _ -> internal_error "physical member path has non-aggregate parent"
+    end
+  ) (ty, cursor, is_top) path >>= fun (ty, cursor, _) -> E.return (ty, cursor)
+
 let rec moveTo_aux tagDefs funcs is_top (ty_acc, cursor_acc) desigs =
-  let moveTo_aux = moveTo_aux tagDefs funcs false in
+  let moveTo_child = moveTo_aux tagDefs funcs false in
   match desigs with
     | [] ->
         E.return (ty_acc, cursor_acc)
@@ -334,38 +357,37 @@ let rec moveTo_aux tagDefs funcs is_top (ty_acc, cursor_acc) desigs =
                   <| is_block= is_top; is_overflowing= true; kind= Init_array (size-1) (Just size) |>
                 else
                   <| is_block= is_top; is_overflowing= false; kind= Init_array idx (Just size) |> in
-              moveTo_aux (elem_ty, new_elem :: cursor_acc) desigs'
+              moveTo_child (elem_ty, new_elem :: cursor_acc) desigs'
           | Ctype _ (Array elem_ty Nothing) ->
               common e >>= fun idx ->
               let new_elem = <| is_block= is_top; is_overflowing= false; kind= Init_array idx Nothing |> in
-              moveTo_aux (elem_ty, new_elem :: cursor_acc) desigs'
+              moveTo_child (elem_ty, new_elem :: cursor_acc) desigs'
           | _ ->
               E.constraint_violation loc Constraint.IllegalArrayDesignatorUsage
         end
     | Cabs.Desig_member ident :: desigs' ->
         let loc = Loc.locOf ident in
-        match unatomic ty_acc with
-          | Ctype _ (Struct tag_sym) ->
-            match find_struct_member tagDefs ident tag_sym with
-              | Right (new_ty, prev, next) ->
-                  let elem' = <| is_block= is_top; is_overflowing= false; kind= Init_struct tag_sym prev ident next |> in
-                  moveTo_aux (new_ty, elem' :: cursor_acc) desigs'
-              | Left is_flexible_array_member ->
-                  if is_flexible_array_member then
-                    E.constraint_violation loc (Constraint.IllegalMemberDesignatorFlexibleArrayMember ident)
-                  else
-                    E.constraint_violation loc (Constraint.IllegalMemberDesignator ident ty_acc)
-            end
-          | Ctype _ (Union tag_sym) ->
-              match find_union_member tagDefs ident tag_sym with
-                | Just new_ty ->
-                    let elem' = <| is_block= is_top; is_overflowing= false; kind= Init_union tag_sym ident |> in
-                    moveTo_aux (new_ty, elem' :: cursor_acc) desigs'
-                | Nothing ->
-                    E.constraint_violation loc (Constraint.IllegalMemberDesignator ident ty_acc)
+        let members tag = match Map.lookup tag tagDefs with
+          | Just (Struct_definition _ _ _ xs _) -> xs
+          | Just (Union_definition _ _ _ xs) -> xs
+          | _ -> []
+        end in
+        let paths = List.filter (fun (_, path) -> path.member_path_visible)
+          (member_paths (1 + List.length (Map_extra.toList tagDefs)) members ty_acc) in
+        match List.lookup ident paths with
+          | Just path ->
+              moveTo_member_path tagDefs is_top (ty_acc, cursor_acc) path.member_path_steps >>= fun child ->
+              moveTo_child child desigs'
+          | Nothing ->
+              match unatomic ty_acc with
+                | Ctype _ (Struct tag_sym) ->
+                    match find_struct_member tagDefs ident tag_sym with
+                      | Left true -> E.constraint_violation loc (Constraint.IllegalMemberDesignatorFlexibleArrayMember ident)
+                      | _ -> E.constraint_violation loc (Constraint.IllegalMemberDesignator ident ty_acc)
+                    end
+                | Ctype _ (Union _) -> E.constraint_violation loc (Constraint.IllegalMemberDesignator ident ty_acc)
+                | _ -> E.constraint_violation loc Constraint.IllegalMemberDesignatorUsage
               end
-          | _ ->
-              E.constraint_violation loc Constraint.IllegalMemberDesignatorUsage
         end
   end
 
