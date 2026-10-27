@@ -123,11 +123,13 @@ inductive SItem
 
 /-- §6.10.3.3p3: concatenate two operands of `##`. -/
 def glue (ctx : ExpCtx) (line : Nat) : SItem → SItem → Except PreError SItem
+  | .pm, .tok t => .ok (.tok { t with line := line })
+  | .tok t, .pm => .ok (.tok { t with line := line })
   | .pm, x => .ok x
   | x, .pm => .ok x
   | .tok a, .tok b =>
     match lexOne ctx.cfg (a.spell ++ b.spell) with
-    | some (k, s) => .ok (.tok { a with kind := k, spell := s, hs := hsInter a.hs b.hs })
+    | some (k, s) => .ok (.tok { a with kind := k, spell := s, hs := hsInter a.hs b.hs, line := line })
     | none => .error (ctx.err .macro line
         s!"pasting does not give a valid preprocessing token (§6.10.3.3p3)")
   | _, _ => .error (ctx.err .macro line "'##' operand")
@@ -153,15 +155,16 @@ def setWs (ws : Bool) : List Tok → List Tok
 /-- §6.10.3.1–3: the replacement list of `m` with its parameters replaced by
 the arguments (`raw`: as written, `exps`: macro-expanded, for the needed
 ones), `#` and `##` applied, and the hide set `hs` added (Prosser's
-`subst` + `hsadd`). `inv`: the token that completed the invocation (its
-white space and line go to the first token / all tokens). -/
+`subst` + `hsadd`). `inv` is the macro-name token: replacement-list tokens
+and paste results use its line, while substituted arguments retain their
+own token locations. Its white space goes to the first result token. -/
 def substitute (ctx : ExpCtx) (m : MacroDef) (raw : List (List Tok))
     (exps : List (Nat × List Tok)) (hs : List Bytes) (inv : Tok) : Except PreError (List Tok) := do
   let getRaw (i : Nat) : List Tok := raw.getD i []
   let getExp (i : Nat) : List Tok := ((exps.find? (·.1 = i)).map (·.2)).getD []
   let items ← m.items.mapM (fun it =>
     match it with
-    | .tok t => pure [SItem.tok t]
+    | .tok t => pure [SItem.tok { t with line := inv.line }]
     | .paste => pure [SItem.paste]
     | .str i ws =>
       match stringize ctx.cfg (getRaw i) with
@@ -174,10 +177,10 @@ def substitute (ctx : ExpCtx) (m : MacroDef) (raw : List (List Tok))
         if r.isEmpty then pure [SItem.pm] else pure ((setWs ws r).map SItem.tok)
     | .commaPaste comma i =>
       if (getRaw i).isEmpty then pure []
-      else pure (SItem.tok comma :: (getExp i).map SItem.tok))
+      else pure (SItem.tok { comma with line := inv.line } :: (getExp i).map SItem.tok))
   let pasted ← pasteAll ctx inv.line items.flatten [] false
   let toks := pasted.filterMap (fun x => match x with | .tok t => some t | _ => none)
-  pure (setWs inv.ws (toks.map (fun t => { t with hs := hsUnion t.hs hs, line := inv.line })))
+  pure (setWs inv.ws (toks.map (fun t => { t with hs := hsUnion t.hs hs })))
 
 /-- The parameters whose expanded argument is needed, in order of first use. -/
 def neededArgs (items : List RItem) : List Nat :=
@@ -346,13 +349,12 @@ def expand (ctx : ExpCtx) : Nat → Nat → List Tok → List Tok → Except Pre
                     "unterminated argument list invoking macro (§6.10.3p4)")
                 | some (args, rp, rest2) => do
                   let args ← matchArity ctx rp.line ps m.variadic args
-                  let args := args.map (fun a => a.map (fun x => { x with line := rp.line }))
                   let (expanded, exps) ← (neededArgs m.items).foldlM
                     (fun (st : Expansion × List (Nat × List Tok)) i => do
                       let e ← expand st.1.ctx fuel st.1.counter (args.getD i []) []
                       pure (e, st.2 ++ [(i, e.tokens)])) (⟨ctx, ctr, []⟩, [])
                   let out ← substitute expanded.ctx m args exps (hsUnion (hsInter t.hs rp.hs) [t.key])
-                    { t with line := rp.line }
+                    t
                   expand expanded.ctx fuel expanded.counter (out ++ rest2) acc
               else expand ctx fuel ctr rest (t :: acc)
             | [] => expand ctx fuel ctr rest (t :: acc)

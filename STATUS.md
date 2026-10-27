@@ -31,7 +31,7 @@ external bug reporting; no external contact is authorized or planned.
 | F1 ABI/allocation | `agent-a4ab6bbd8c0be5325` | RV64 configuration reader integrated after capped build/full gate; 10/15 probes agree, float/bitfield/enum/stdin gaps remain; allocator recovery still open |
 | F1 filesystem | `agent-ad868c434f5f27398` | integrated after full gate: descriptor fstat, structural state ordering and link proxy repaired; eight exact Sail byte/exit agreements, repeated with RV64 config; mkdir remains a separate missing-library gap |
 | F1 IEEE | `agent-a45cb08cf87ce958c` | review standalone arithmetic; connection to CSem remains open |
-| F3 compiler model | `agent-a05464165befb7074` (recovery merged) | patched C11 model integrated after capped build and combined full gate; 1,670 independent fast arenas including 1,051 generated successes; one full Sail arena now agrees; all-corpus Sail equality remains open |
+| F3 compiler model | `agent-a05464165befb7074` (recovery merged) | patched C11 model integrated after capped build and combined full gate; 1,670 independent fast arenas including 1,051 generated successes; four full Sail arenas now agree; all-corpus Sail equality remains open |
 
 F3 review found reference-derived long-double bytes supplied to the model.
 Such runs cannot establish independent byte equality. That input is now
@@ -67,8 +67,12 @@ The comparator now requires exact equality by default and fails on malformed
 protocol/crashes. Its 608-input diagnostic rerun has 600 exact tcc agreements
 and the same eight residuals (results/pre/acceptance-contract.md). The trigraph patch/config/model repair is integrated after the full gate:
 48 positive and 6 negative C11 cases, 28 independent arenas, and one complete
-4 MiB Sail arena match (results/model/trigraph-sail-arena.md).
-Further C11 coverage remains work, not a change to the contract. The include
+4 MiB Sail arena match (results/model/trigraph-sail-arena.md). Three further
+complete Sail arenas cover pragma state, UTF literals and union overrides
+(results/model/sail-c11-batch.md).
+Further C11 coverage remains work, not a change to the contract. Macro argument/paste locations are repaired in the spec: 38/38 focused
+agreements with patched tcc/GCC; 609/617 exact tcc corpus agreements, with
+the same eight residuals (results/pre/line-spec-repaired.md). The include
 filesystem also incorrectly normalizes away missing directories before lookup
 (results/pre/path-resolution.md); a shared traversal repair is queued after repin.
 

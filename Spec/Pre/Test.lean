@@ -58,6 +58,15 @@ def both (src expected : String) : Bool :=
 #guard ppIs Tcc.cfgTcc ⟨testFS.files ++ [(bs "/tri~.h", bs "??=define H 7??/\n3\n")]⟩
   "??=include \"tri??-.h\"\nH\n" "73"
 
+/-! Macro-name, argument and paste locations remain distinct across newlines. -/
+#guard both "#define I(x) x\n#line 500\nI(\n__LINE__\\\n)\n" "501"
+#guard both "#define F(x) __LINE__ + x\n#line 520\nF(\n__LINE__)\n" "520 + 521"
+#guard both "#define I(x) x\n#define F(x) __LINE__ + x\n#line 530\nF(I(__LINE__\\\n))\n" "530 + 530"
+#guard both "#define C(a,b) a##b + __LINE__\n#line 850\nC(\n__LI,\nNE__)\n" "850 + 850"
+#guard both "#define C(a,b) a##b + __LINE__\n#line 860\nC(,\n__LINE__)\n" "860 + 860"
+#guard both "#define C(a,b) a##b + __LINE__\n#line 870\nC(__LINE__,\n)\n" "870 + 870"
+#guard both "#define F(x) __LINE__ + x\n#define E(x,y) x y\n#line 880\nE(,F)(\n__LINE__)\n" "880 + 881"
+
 /-! ### §6.10.3.5 EXAMPLE 1 -/
 #guard both "#define TABSIZE 100
 int table[TABSIZE];

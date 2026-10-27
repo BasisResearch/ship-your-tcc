@@ -1,0 +1,16 @@
+{
+  "source_worktree": ".claude/worktrees/agent-a45cb08cf87ce958c",
+  "status": "preserved uncommitted draft; not integrated or newly validated",
+  "files": {
+    "csem/lean_frontend/CerbIEEE.lean": "2684d9af191cd1cdbe0e8dfa9787a4d1d78fd8c031a82d379519ae4d40de2774",
+    "csem/lean_frontend/test/Unit/IEEETest.lean": "794278ce78cf3802b2bf7c3edc85c2f6254c00d9d46be3ba9be9961a6721f7c5",
+    "csem/lean_frontend/test/ieee/gen_vectors.c": "154c74514a0fe5dfaf3eb07c298592a54e4b0772ae298e13c2f0206c81d46101",
+    "csem/lean_frontend/test/ieee/sail_probe_print.c": "8377c7c03c83aa4c909e2fb08fd294162ba7328c96b9b0719fe481427c09b4ea"
+  },
+  "review": [
+    "CerbIEEE is a leaf with pure integer/bitvector operations for binary32/64/128 and bridge theorems to Lean Float.Model.",
+    "The draft is not wired into CerbMem.FloatingValue, currently native Float.",
+    "Draft comments cite results/csem/f1b-floats.md, but this report is absent from that worktree. Do not accept those test claims without rerunning.",
+    "No source or generated output in the historical worktree was changed."
+  ]
+}
