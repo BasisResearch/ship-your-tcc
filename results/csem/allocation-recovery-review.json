@@ -1,0 +1,19 @@
+{
+  "recovery_worktree": ".claude/worktrees/agent-a4ab6bbd8c0be5325",
+  "head": "81b16e3420fdfafc409d0ad21427c66c5c7cc0aa",
+  "sha256": {
+    "csem/lean_frontend/CerbMem.lean": "b583a3d57b4d77eaa4ea33203a3d9f72f5337bd7d4a3053cc9ea532fe550f9c0",
+    "csem/lean_frontend/CerbMemAllocatorProofs.lean": "b6d64c6cd1f5a7eba049f6c972dfc5cc39aff6a5ff626904588c9efae619d249",
+    "Tcc/CSem/Statement.lean": "e47a18450aec3516022eea28a988308d99e9a7cbd932470ca32d17b9b824342e"
+  },
+  "review": [
+    "Allocator draft remains uncommitted and intertwined with already-recovered ABI reader; do not import wholesale.",
+    "AllocRequest/AllocPolicy/liveRanges/oracleAnswerOk/oracleAllocate exist; choose is a deterministic function of request, held per run.",
+    "oracleAnswerOk only checks positive address, nonzero alignment, divisibility and interval disjointness; no nonnegative-size or finite pointer bound check.",
+    "Documentation names allocator_oracle_fresh and AllocOracleValid but neither exists in this worktree. Existing allocator soundness proofs still unfold old bump implementation.",
+    "No outcome-set/driver quantification over allocation choices found. Default deterministic bump execution must remain independently validated.",
+    "Hundreds of dirty diff3/generated files are historical diagnostics, not current evidence."
+  ],
+  "next_task": "tasks/f1-allocation-oracle.md",
+  "validated": false
+}
