@@ -39,10 +39,12 @@ The launcher follows 4ct-digest's MANAGER.md/codexwork.sh workflow, adapted
 to this project's two-worker limit and shared Lean build lock.
 
 Current assignments, 2026-10-27: slot 1 runs `tasks/f1-ieee-recovery.md`
-in sol-csem-repin; slot 2 runs `tasks/f3-designator-continuation.md` in
-sol-c11-line. The lead validates the combined raw-token and pragma repair
-in sol-f2-tokens. The scheduled repin and selected-member union repair have
-landed through their integrated gate; current pins are in vendor/CSEM_REV.
+in sol-csem-repin; slot 2 runs `tasks/f2-observer-integration.md` in
+sol-f2-tokens. The lead has integrated the designator repair and is extending
+its native Sail arena observations in sol-c11-line. The scheduled repin,
+selected-member union repair and designator repair have landed through their
+integrated gates; current pins are in vendor/CSEM_REV. Allocation-oracle
+recovery and anonymous-member semantics repair are queued independent tasks.
 
 Frozen build requests use the shared 12 GB lock. Changed inputs invalidate
 a request; freeze a new hash manifest before retrying. Infrastructure limits
