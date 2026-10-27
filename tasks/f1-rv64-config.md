@@ -23,3 +23,8 @@ Use fresh measured outputs; do not copy the recovery's hundreds of stale diff3 r
 If floats/bitfields reveal real gaps, implement or record concrete residual obligations without weakening Supported.
 Write results/csem/f1-config.md with commands, image pins, measured values, limitations and provenance.
 Do not edit STATUS.md/PHASES.md; supply ledger text/dead ends. Finish with the required RESULT line.
+Resume 2026-10-27: previous dirty work is checkpointed, not validated; continue it.
+Source reader changes and regenerated copies exist; inspect results/csem/cfg-probes.
+Review generated whitespace only via the generator; do not edit generated outputs.
+Use build/worker-build.request JSON with request ID, exact targets and SHA256 files;
+keep Lean sources stable until lead writes worker-build.result. Full gates remain owed.

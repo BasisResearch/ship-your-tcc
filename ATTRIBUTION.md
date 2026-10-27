@@ -1,5 +1,13 @@
 # Attribution
 
+The whole-compiler project's C semantics is based on
+**[Cerberus, by the Cambridge REMS team](https://github.com/rems-project/cerberus)**
+and **[cerberus-lean, by Mike Dodds / Oath](https://github.com/OathTech/cerberus-lean)**.
+Cerberus supplies the C semantics and reference frontend; cerberus-lean supplies
+the Lean translation, handwritten execution layer, proofs and validation gates
+that we import and extend as CSem. These are upstream contributions, not work
+originating in ship-your-tcc. Exact pins, licences and local adaptations follow.
+
 This repository reuses the machinery of ship-your-interpreter
 (BasisResearch/ship-your-interpreter) through its most advanced copies,
 ship-your-lua and ship-your-ocaml (all Basis Research). Third-party

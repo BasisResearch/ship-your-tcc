@@ -37,3 +37,7 @@ pushes main without force. Record unsuccessful approaches in
 
 The launcher follows 4ct-digest's MANAGER.md/codexwork.sh workflow, adapted
 to this project's two-worker limit and shared Lean build lock.
+
+Queued 2026-10-27: after tasks/f3-c11-model.md and tasks/f1-rv64-config.md
+land, assign tasks/csem-repin.md before another CSem semantic-change task.
+Keep both current slots on their existing pin; see CSEM-UPSTREAM.md.

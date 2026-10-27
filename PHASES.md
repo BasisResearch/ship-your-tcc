@@ -96,3 +96,16 @@ The F0 statement (`Tcc/CSem/Statement.lean`, lib `TccCSem`, built under
 | divergence in `CSem.outcomes` | a fuel-exhausted branch printed a prefix of `o` for all large fuel; not yet "o is one branch's limit" | F4 (relational outcome set) |
 | `TccppCorrect_Statement` | over `TccppParams` (placeholder `Token`, `phases14`, `preprocess`) | F2, F3 |
 | `TccRunCorrectWitnessSum_Statement` | for a caller-pinned ELF | F8 (`TccSumElf`) |
+
+### Upstream maintenance scheduled 2026-10-27
+
+After the current F3 C11-model and F1 RV64-configuration Sol tasks land,
+execute `tasks/csem-repin.md` in a separate worktree before the next CSem
+semantic-change assignment. Evaluate current OathTech/cerberus-lean and replay
+our fork changes, with full gates and fresh comparisons before adoption.
+The active pin is unchanged. `CSEM-UPSTREAM.md` tracks bugs/limitations and
+upstream-worthy patches for Kiran to relay; no external contact is authorized.
+README and ATTRIBUTION credit Cerberus / Cambridge REMS and Mike Dodds / Oath.
+The old F3 fast-runner counts above are diagnostic: review found an unchecked
+objcopy failure yielding a partial runtime cache fingerprint. A corrected
+fingerprint and fresh C11 comparison are required before accepting new counts.

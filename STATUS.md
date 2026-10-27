@@ -1,6 +1,6 @@
 # Current status
 
-Takeover in progress, 2026-10-21. The approved target is
+Takeover in progress, resumed 2026-10-27. The approved target is
 `tcc_run_correct` in DESIGN-COMPILER.md: whole compiler, `Supported` and
 `Fits` premises, no refusal disjunct. F0 is landed; F1–F3 remain open.
 
@@ -17,13 +17,19 @@ Takeover in progress, 2026-10-21. The approved target is
 
 ## Active work
 
+Mike Dodds's upstream follow-up is tracked in CSEM-UPSTREAM.md. README and
+ATTRIBUTION prominently credit Cerberus / Cambridge REMS and cerberus-lean /
+Mike Dodds / Oath. Repin evaluation is queued in tasks/csem-repin.md after
+the two current Sol tasks land; it will not disrupt their work. Kiran owns
+external bug reporting; no external contact is authorized or planned.
+
 | lane | recovery source | review and next check |
 |---|---|---|
 | C11 patches | new `codex-c11` worktree; existing F2 reproducers | patch 0003 integrated: 7/7 full compiler Sail reproducers; combined 0003/0004 host/cross tests and main gate pass |
 | F1 grammar | `agent-a31b97b8f1c090141` | integrated: main capped build and full comparison pass, 614 exact Cabs agreements / 664 inputs; 41 joint rejections, 9 preprocessing failures |
 | F1 pure seams | `agent-a249bbaa5b1df80ec` | digest retirement integrated; main's full CSem gate passes: 19 unit executables, 113 baseline oracle results; remaining partial/native seams inventoried |
 | F1 ABI/allocation | `agent-a4ab6bbd8c0be5325` | Sol slot 2 reviews source into a fresh worktree; stale generated copies/results preserved for audit |
-| F1 filesystem | `agent-ad868c434f5f27398` | lead replaced synthetic fstat paths with a descriptor builtin; build and stat/create/error CSem probes pass; Sail/gates running |
+| F1 filesystem | `agent-ad868c434f5f27398` | lead replaced synthetic fstat paths with a descriptor builtin; build and stat/create/error probes pass; Core-parser gate and rename/link discrepancy need repair |
 | F1 IEEE | `agent-a45cb08cf87ce958c` | review standalone arithmetic; connection to CSem remains open |
 | F3 compiler model | `agent-a05464165befb7074` (recovery merged) | patch 0004 validated on main; Sol slot 1 now mirrors patch 0003 and C11 arguments |
 
@@ -43,6 +49,8 @@ Before patch 0003, the binary128-fixed model gave 1,557 identical arenas /
 unsupported-assembly/pragma errors, no mismatches. Original 401-input corpus:
 400 identical arenas, one refusal. Generated successful arenas total 1,043;
 none of these fast-runner counts satisfies the pending Sail criterion.
+Review also found an unchecked objcopy failure in the runtime cache key;
+these historical counts remain diagnostic until a fresh, correctly keyed rerun.
 The 156-vector binary128 stress program also has an identical arena. The
 inherited assembler drafts remain in `build/recovery/assembler/`.
 

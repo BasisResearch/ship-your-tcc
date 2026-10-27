@@ -22,3 +22,8 @@ Fast rv64emu comparisons are diagnostic; preserve the pending Sail arena-equalit
 Do not alter the compiler patch merely to match the model, weaken Supported, or claim ghost GNode is Cabs.
 Record commands, counts, image/source pins, and residual cases in results/model/c11-model.md.
 Do not edit STATUS.md/PHASES.md; supply ledger text and dead ends. Final RESULT line required.
+Resume 2026-10-27: the previous dirty work is checkpointed, not validated; continue it.
+Last build c11-model-2 failed on reserved identifier prefix in PpDir.lean (see build log).
+Fix runtime_key: checked objcopy to a temporary regular file, hash all embedded FS inputs
+and gen_embed script; /dev/stdout objcopy emits partial .text then fails Illegal seek.
+Invalidate old reference caches; only fresh correctly keyed comparisons count.

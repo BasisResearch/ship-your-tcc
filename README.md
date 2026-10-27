@@ -1,5 +1,13 @@
 # ship-your-tcc
 
+Our C semantics builds on **[Cerberus](https://github.com/rems-project/cerberus),
+developed by the Cambridge REMS team**, and
+**[cerberus-lean](https://github.com/OathTech/cerberus-lean), the Lean port by
+Mike Dodds / Oath**. Their semantics, port and validation machinery are the
+foundation of the CSem work here. Our local changes and third-party licences
+are recorded in [ATTRIBUTION.md](ATTRIBUTION.md); upstream candidates for
+Kiran to relay are tracked in [CSEM-UPSTREAM.md](CSEM-UPSTREAM.md).
+
 `tcc -run prog.c` on the executable Sail RISC-V model, a three-way
 differential of tcc against CompCert's interpreter and Certora's Lean port of
 Clight, and (Phase 3) per-program end-to-end theorems in Lean that tcc's
