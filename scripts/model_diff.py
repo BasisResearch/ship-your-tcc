@@ -27,6 +27,7 @@ import argparse
 import concurrent.futures as cf
 import hashlib
 import json
+from pathlib import Path
 import os
 import re
 import subprocess
@@ -84,7 +85,7 @@ def runtime_key():
         for part in (label.encode(), data):
             h.update(len(part).to_bytes(8, 'big'))
             h.update(part)
-    add('cache-schema', b'independent-c11-v3')
+    add('cache-schema', b'independent-c11-handoff-v4')
     add('runtime-without-embed', runtime)
     # The runtime excludes .embed, whose headers and archives still determine
     # compilation. Include every ordered image path and its exact file bytes.
@@ -101,30 +102,39 @@ def runtime_key():
 
 
 def parse_arena(path):
-    b = open(path, 'rb').read()
-    hdr, i = {}, 0
-    for _ in range(5):
-        j = b.index(b'\n', i)
-        f = b[i:j].decode().split()
-        hdr[f[0]] = f[1:]
-        i = j + 1
-    return hdr, b[i:]
+    b = Path(path).read_bytes()
+    lines = b.split(b'\n', 5)
+    patterns = [rb'TCCARENA 1', rb'base [0-9a-f]+', rb'entry [0-9a-f]+',
+                rb'code [0-9a-f]+ [0-9a-f]+', rb'size [0-9a-f]+']
+    if len(lines) != 6 or not all(re.fullmatch(p, h) for p, h in zip(patterns, lines[:5])):
+        raise RuntimeError('malformed arena header: '+path)
+    hdr = {f[0]: f[1:] for f in (line.decode().split() for line in lines[:5])}
+    size = int(hdr['size'][0], 16)
+    base, entry = int(hdr['base'][0], 16), int(hdr['entry'][0], 16)
+    code, length = [int(x, 16) for x in hdr['code']]
+    if size != len(lines[5]) or size > 4 * 1024 * 1024:
+        raise RuntimeError('invalid arena payload length: '+path)
+    if not (base <= entry < base + 4 * 1024 * 1024 and
+            base <= code < base + 4 * 1024 * 1024 and length <= base + 4 * 1024 * 1024 - code):
+        raise RuntimeError('invalid arena addresses: '+path)
+    return hdr, lines[5]
 
 
 def ref_run(prog, extra, args, libs, rtkey):
     """scripts/ref_arena.sh, cached: (status, data) where status is 'ran'
     (data = arena path) or 'exit' (data = (code, console bytes))."""
-    key = sha('independent-c11-v3', open(prog, 'rb').read(), repr(extra), repr(args), repr(libs), rtkey, open(os.path.join(ROOT, 'c/src/gen_embed.sh'), 'rb').read(),
-              *[open(h, 'rb').read() for _, h in extra])
+    key = sha('independent-c11-handoff-v4', Path(prog).read_bytes(), repr(extra), repr(args), repr(libs), rtkey, Path(ROOT, 'c/src/gen_embed.sh').read_bytes(),
+              *[Path(h).read_bytes() for _, h in extra])
     base = os.path.join(CACHE, key)
     if os.path.exists(base + '.status'):
-        st = open(base + '.status').read().split()
-        if st[0] == 'ran' and os.path.getsize(base + '.arena') > 0:
+        st = Path(base + '.status').read_text().split()
+        if st and st[0] == 'ran':
+            parse_arena(base + '.arena')
             return 'ran', base + '.arena', st[1] if len(st) > 1 else ''
         # Old caches can contain emulator limits/traps classified as exits.
         # Re-run those records; neither is a compiler refusal.
-        if st[0] == 'exit' and int(st[1]) not in (124, 126):
-            return 'exit', (int(st[1]), open(base + '.console', 'rb').read()), st[2] if len(st) > 2 else ''
+        if len(st) >= 2 and st[0] == 'exit' and 0 < int(st[1]) <= 255 and int(st[1]) not in (124, 126):
+            return 'exit', (int(st[1]), Path(base + '.console').read_bytes()), st[2] if len(st) > 2 else ''
     env = dict(os.environ)
     env['TCC_ARGS'] = ''.join('"%s",' % a for a in args)
     # a non-empty TCC_LIBS turns off ref_arena.sh's own -lm retry (we retry here,
@@ -134,24 +144,26 @@ def ref_run(prog, extra, args, libs, rtkey):
         env['EXTRA_FILES'] = ' '.join('%s=%s' % (p, os.path.abspath(h)) for p, h in extra)
     r = subprocess.run([os.path.join(ROOT, 'scripts', 'ref_arena.sh'), prog, base + '.arena', base + '.console'],
                        capture_output=True, env=env)
-    if r.returncode in (124, 126):
-        raise RuntimeError('reference emulator limit/trap for %s: %s' %
-                           (prog, r.stderr.decode(errors='replace')[-500:]))
-    m = re.search(rb'rv64emu: steps=(\d+) compile_steps=(\S+) exit=(-?\d+)', r.stderr)
-    if not m or int(m.group(3)) in (124, 126) or b'rv64emu: illegal' in r.stderr:
-        raise RuntimeError('reference limit/trap or missing completion record for %s: %s' %
-                           (prog, r.stderr.decode(errors='replace')[-500:]))
-    con = open(base + '.console', 'rb').read() if os.path.exists(base + '.console') else b''
-    lm = 'lm' if (r.returncode != 0 and not libs and b'unresolved reference' in con) else ''
+    if r.returncode not in (0, 125):
+        raise RuntimeError('reference harness failure (%d) for %s: %s' %
+                           (r.returncode, prog, r.stderr.decode(errors='replace')[-500:]))
+    records = [line for line in r.stderr.splitlines() if line.startswith(b'rv64emu: steps=')]
+    if len(records) != 1:
+        raise RuntimeError('missing/duplicate reference completion record: '+prog)
+    con = Path(base + '.console').read_bytes() if os.path.exists(base + '.console') else b''
     if r.returncode == 0:
-        open(base + '.status', 'w').write('ran %s\n' % lm)
-        return 'ran', base + '.arena', lm
-    if r.returncode != 125 or m.group(2) != b'-':
-        raise RuntimeError('reference harness failure after handoff or invalid status for %s: %s' %
-                           (prog, r.stderr.decode(errors='replace')[-500:]))
-    code = int(m.group(3)) & 0xff
-    open(base + '.status', 'w').write('exit %d %s\n' % (code, lm))
-    return 'exit', (code, open(base + '.console', 'rb').read()), lm
+        if not re.fullmatch(rb'rv64emu: steps=\d+ compile_steps=\d+ exit=- status=handoff', records[0]):
+            raise RuntimeError('invalid handoff completion record: '+prog)
+        parse_arena(base + '.arena')
+        Path(base + '.status').write_text('ran\n')
+        return 'ran', base + '.arena', ''
+    m = re.fullmatch(rb'rv64emu: steps=\d+ compile_steps=- exit=(-?\d+) status=exit', records[0])
+    if not m or (int(m.group(1)) & 255) == 0:
+        raise RuntimeError('invalid compiler-refusal completion record: '+prog)
+    code = int(m.group(1)) & 0xff
+    lm = 'lm' if not libs and b'unresolved reference' in con else ''
+    Path(base + '.status').write_text('exit %d %s\n' % (code, lm))
+    return 'exit', (code, con), lm
 
 
 def model_run(prog, extra, args, libs, tag):
