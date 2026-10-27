@@ -41,16 +41,17 @@ public libc `strtold` still needs correction in the library lane. Matching refus
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
 two at a time, following MANAGER.md. Slot 1 connects pure IEEE arithmetic to
 CSem; slot 2 repairs anonymous-member semantics (CSEM-07). The lead reviews
-the committed exact-token/pragma candidate after rebasing onto the designator
-repair. Its C11 checks and old default gate pass, but review found that the
-non-default model executable was stale after rebase. The candidate gate now
-explicitly builds the model/observers; comparisons are being repeated.
-Candidate evidence:
-64 strict positives, 17 negatives, 613 raw/611 spec agreements across 619
-inputs, three independent arenas and two full compiler Sail reproducers.
-Three correctness/noninterference Statements remain open. The designator
-repair is integrated and has two fresh complete 4 MiB native arena matches
-(results/model/designator/native-captures).
+the next whole-C semantic obligations. Exact-token/pragma integration is now
+validated with the nested-designator repair: strengthened full gate, 147
+positive/14 invalid C11 checks, 18 protocol tests, 64 focused positives and
+17 joint rejections. The 619-input corpus has 613 raw/611 spec agreements;
+residuals remain separate. Fresh broad comparison has 1,339 matching arenas,
+466 refusals and seven assembly gaps, zero mismatches/model/harness errors.
+Three fresh complete 4 MiB native Sail arenas agree on this combined image
+(results/pre/combined-integration-2026-10-27.md). All three preprocessing
+correctness/noninterference Statements remain open. The default gate now
+explicitly rebuilds the previously non-default model/observer executables;
+the stale-binary diagnostic and corrected rerun are retained.
 The line repair is integrated, and the scheduled CSem repin plus selected-member
 union initializer repair is adopted after its integrated full gate. The compiler-handoff collector and strict model_diff consumer are integrated.
 Fresh 1,412-input comparison: 1,308 arenas (1,299 generated), 104 refusals,

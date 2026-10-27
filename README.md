@@ -330,3 +330,10 @@ lists the remaining anonymous-layout, aggregate-expression and inactive-tail
 gaps. A valid nested-continuation case remains a separate tcc refusal,
 recorded as a compiler/model repair obligation. Lead review and the integrated full gate pass; Supported/Fits and the frozen
 sum cuts are unchanged.
+
+The current exact-token preprocessing/designator integration passes the
+strengthened gate and 147 positive/14 invalid C11 checks. Fresh comparisons
+have 1,339 independent fast arenas and three complete native Sail arena
+matches; refusals and assembly gaps stay separate. See
+[the integration report](results/pre/combined-integration-2026-10-27.md).
+Preprocessing correctness and binary refinement remain open obligations.

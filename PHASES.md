@@ -178,8 +178,9 @@ carrying connection is still needed for Cabs locations and library-origin
 handling; token equality alone does not supply that connection.
 
 Review correction: the default gate did not build non-default compiler-model
-executables after rebasing. The F2 candidate now extends that gate and repeats
-its comparisons with rebuilt binaries; initial combined arena counts are not
+executables after rebasing. The integrated gate now builds those targets; repeated comparisons
+pass with 1,339 independent fast arenas (466 refusals/seven assembly gaps) and
+three complete native Sail arenas. Initial stale-binary counts are not
 accepted as current-source evidence. Concrete anonymous-member compiler and
 float-literal rounding follow-ups are queued in tasks/f3-anonymous-members.md
 and tasks/f3-direct-float-literals.md. Binary128 printf/sqrtl remain F7 work.
@@ -188,3 +189,9 @@ PreprocessCorrect_Statement, PragmaObservationEffects_Statement and
 PreprocessObservationNoninterference_Statement (Tcc/Model/Preprocess.lean)
 remain open; finite token comparisons do not prove those propositions.
 Combined integration evidence is results/pre/observer-integration-2026-10-27.md.
+
+Final combined preprocessing/designator evidence is
+results/pre/combined-integration-2026-10-27.md: 147/14 C11 checks, 64/17 focused
+token controls, 613 raw/611 spec corpus agreements, full strengthened gate.
+Native observations compare complete arenas and handoff registers at 3,383,440,
+3,377,822 and 3,398,235 steps; no generic correctness proof is claimed.
