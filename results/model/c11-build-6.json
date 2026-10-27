@@ -1,0 +1,66 @@
+{
+  "request": {
+    "request": "c11-model-6",
+    "cwd": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a05464165befb7074",
+    "targets": [
+      "tcc_model"
+    ],
+    "source_revision": "ea62589",
+    "command": "free -g # require >=25 GiB available\nflock \"$SYT_LAKE_LOCK\" systemd-run --user --scope -p MemoryMax=12G lake build tcc_model",
+    "sha256": {
+      "Tcc/Model/Base.lean": "fe70936ded2b273f274b50cc70e82906c642f60d29409d05ca26603e203372ce",
+      "Tcc/Model/Elf.lean": "86e9c5b1f4f3b857abecfeb5165626f412077499535638f687e6f91a96265ecf",
+      "Tcc/Model/Gen1.lean": "fe08462b006e985b16076217fb7cae765aa923526115fed0e3bd7968593b32be",
+      "Tcc/Model/Gen2.lean": "123100220a3950e1d13879de3078837b3e572e2483675fd0ca2dae3aee1beea8",
+      "Tcc/Model/Gen3.lean": "fd6700d670b22f0b710a5f5b128a1acc0c6f26199fb8ffd0ebe131f13f370807",
+      "Tcc/Model/Gen4.lean": "e2ee73b47159e375e8c0d5570baba56134fb2fcb24c476554834c8336d1485d6",
+      "Tcc/Model/Gen5.lean": "2dfbeef1ace7ddeba17fbf7aad9148e4720b731c2df8811f72cfff691fb4107e",
+      "Tcc/Model/Gen6.lean": "ea63055e061369e695a0a266f03963a5623cec859eeba5b43f652aadbf21f61d",
+      "Tcc/Model/Gen7.lean": "2d3d170beeb29d7aa85bb349e99229d88a4847f92ccb41faa2520583be64f73b",
+      "Tcc/Model/Gen8.lean": "ca7181599c51b34fef24df1a5c0e0c591082769ac411f1c52bde71d3e92a563e",
+      "Tcc/Model/Ghost.lean": "4900187f172322317ad455446451626ffd535dfc530b5d45d9a80635f8cd3987",
+      "Tcc/Model/Host.lean": "69ee454169a0fce6e00cd56cfdf8e70e8dc7e4c6d906e10707a2772bd2bb9180",
+      "Tcc/Model/Libtcc.lean": "b0e343dc3e0d3871f512bfe0d9543b77f30c8b90120753c5f3eb6f27e372fd72",
+      "Tcc/Model/Link.lean": "bca83501267db6fd81769c9ffb74f26b97882058c0e39cf824d22405d2066ac4",
+      "Tcc/Model/Main.lean": "0091fb505add143679df0cc4a70140e1ce4c0eb027987dff43e30562b61f8dac",
+      "Tcc/Model/PpDir.lean": "3e568f0934fe34d5a1cc90c6d461eb72bd14aef76eae37c07e3062d8e401eeb1",
+      "Tcc/Model/PpLex.lean": "4737e3964e13b9beac3b3fba3db124194e77a82a76452c6da73bffea08c4a439",
+      "Tcc/Model/PpMacro.lean": "382d3166ab75cbcb0a96154c227887373bce769228e735e16f5f67010c87939d",
+      "Tcc/Model/Rec.lean": "e9c4370fbeb05e3acef60466e932106ea7b0c66ce0e8f550182f37ea4add9be4",
+      "Tcc/Model/Riscv.lean": "4302cc9e2a5fe66fd70c4821a9f6a926c2d93e95282cf699dca00bc91a41d5ac",
+      "Tcc/Model/Run.lean": "69aa48d19fb81f4e0414eb1877b7ae55d352f35b0bcfe863d4b4243257c2dd31",
+      "Tcc/Model/SoftFloat.lean": "5a1e3387c9a642e18f23b4e4875e0deced1af37552a79a7d0589b9c35f2e5fd9",
+      "Tcc/Model/State.lean": "c394c84f350a771536d2a9b8c3fa4cf77c24a122794b4cc37de875eab803d925",
+      "Tcc/Model/Syms.lean": "5b873ab99b01ff805677f5f7df1d75911d7ad9fec965b1ee9d269286d30b6a41",
+      "Tcc/Model/Tie.lean": "bfcd00f452c2ba31fa4da21be386ec3056d5d5bfce8956c50601f2da296bc89a",
+      "Tcc/Model/TieStub.lean": "48f9c8f5b757507be9ad93a568134d81edb878da6dfd6a672b6ef77b6a48bc6a",
+      "Tcc/Model/Tok.lean": "e26013f71fa12f4d99bdd7a13878d0f83c06a80480cf200c60caffcb3d7a9f06",
+      "Tcc/Model/Types.lean": "3cb9bb963f534cb833dba1ff07eff24d16447358dc7312607470cf776009f0ae",
+      "Tcc/ModelMain.lean": "4c90a94f7fc6e16016b13ff42f953acdd5b6d67ec377f1a46d6ddad03cac2470",
+      "scripts/model_diff.py": "e152de067a2f2da91f8cc2edd1b61ba9101351b53241650729dc7aab8f489af0",
+      "scripts/gen_model_tok.py": "5cb3428c0a91a70c12cac02edb79f5c323908a3e3476a0f868337bb4d6904b16",
+      "lakefile.toml": "73660451007a1247d3e65881ebf87fb367876a601dcd6fb64234373666887825",
+      "lean-toolchain": "8733782dc070a99b312039cda424f601b80f3be6f6f512627da5ba25adc27632"
+    },
+    "note": "Sources frozen. Request 5 FAILED, not validated. Fix premature doc-comment terminator; add explicit NUL sentinel and escaped-byte cursor consumption to split_option_args; distinguish Wl/Wp before generic W; mirror patch 0003 pragma operand expansion with caller active-macro list threaded back. Please build under shared lock/12G cap after free >=25 GiB. Publish matching result. After validation Git commit will also need lead service if metadata remains read-only."
+  },
+  "result": {
+    "request": "c11-model-6",
+    "request_id": "c11-model-6",
+    "exit": 0,
+    "log": "build/worker-build-c11-model-6.log",
+    "command": [
+      "flock",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/build/lake.lock",
+      "systemd-run",
+      "--user",
+      "--scope",
+      "-p",
+      "MemoryMax=12G",
+      "lake",
+      "build",
+      "tcc_model"
+    ],
+    "source_hashes_verified": true
+  }
+}

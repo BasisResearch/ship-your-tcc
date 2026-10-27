@@ -1,0 +1,498 @@
+{
+  "command": [
+    "scripts/model_diff.py",
+    "c11",
+    "results/repro/tcc_pp_digraphs.c",
+    "results/repro/tcc_pp_line_relative_name.c",
+    "results/repro/tcc_pp_pragma_operator.c",
+    "results/repro/tcc_pp_stringize_escapes.c",
+    "results/repro/tcc_pp_ucn_identifier.c",
+    "results/repro/tcc_union_designator_override.c",
+    "results/repro/tcc_pragma_macro_operand.c",
+    "build/c11-model-focused/invalid_ucn_0.c",
+    "build/c11-model-focused/invalid_ucn_1.c",
+    "build/c11-model-focused/invalid_ucn_2.c",
+    "build/c11-model-focused/invalid_ucn_3.c",
+    "build/c11-model-focused/invalid_ucn_4.c",
+    "build/c11-model-focused/invalid_ucn_5.c",
+    "build/c11-model-focused/options_escaped_backslash.c",
+    "build/c11-model-focused/options_escaped_quote.c",
+    "build/c11-model-focused/options_quoted.c",
+    "build/c11-model-focused/options_reverse_nested.c",
+    "build/c11-model-focused/options_trailing_backslash.c",
+    "build/c11-model-focused/options_unmatched_quote.c",
+    "build/c11-model-focused/options_wp_ignored.c",
+    "build/c11-model-focused/pragma_macro_argument.c",
+    "build/c11-model-focused/pragma_recursive_operand.c",
+    "build/c11-model-focused/stringize_raw.c",
+    "build/c11-model-focused/ucn_boundary_1.c",
+    "build/c11-model-focused/ucn_boundary_2.c",
+    "build/c11-model-focused/ucn_boundary_3.c",
+    "build/c11-model-focused/ucn_boundary_4.c",
+    "build/c11-model-focused/ucn_boundary_5.c",
+    "build/c11-model-focused/ucn_boundary_6.c",
+    "build/c11-model-focused/ucn_boundary_7.c",
+    "build/c11-model-focused/ucn_boundary_8.c",
+    "build/c11-model-focused/ucn_boundary_9.c",
+    "results/model/c11-state.c",
+    "results/model/c11-options.c",
+    "results/model/c11-pragma-operand.c",
+    "-j",
+    "4",
+    "--no-report",
+    "--json-out",
+    "results/model/c11-focused-final.json",
+    "-v"
+  ],
+  "runtime_key": "e9bab6da0bd738add1cc18cb839ff66de31880e3c9f75b8f337eca4e51079254",
+  "pins": {
+    "vendor/TINYCC_REV": "76ca376f1f96cf1b316713d8f94d91c8629445929d1e7474792fd76610bce1c0",
+    "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+    "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+    "patches/0003-tcc-c11.patch": "acab00b49fd73b1423aca24d9b9281fb843f5788c29dffcacaf5bd5a15db3ff4",
+    "patches/0004-tcc-binary128-literals.patch": "4dfcc192c23a777b1b335e9052a416956886b1071c3de1e8da403b5b194e221e",
+    "c/build/base.elf": "066a87efe653ad5e88e6eefd362119a76ad781f079f1979f67ad973561cb36a4",
+    "c/src/gen_embed.sh": "68534ee3a238c143bf4e749fcb0ea43e8b53933c4a9d6843422d995c879d7d76",
+    "scripts/model_diff.py": "e152de067a2f2da91f8cc2edd1b61ba9101351b53241650729dc7aab8f489af0",
+    ".lake/build/bin/tcc_model": "c275c4219a67c90d84a127bbd873121855169586204fca13ec7ebd6fd679f7d0",
+    "c/tests/c11/digraphs.c": "a3e2dedc112edd426e441b1dcf9ad04e96cbe01b66a29ce9f258cb74795d06a4",
+    "c/tests/c11/line_include.c": "3b806943edf80f2123f8d152150595daaf57ba22ef0567da5caa4e40dfcd341c",
+    "c/tests/c11/pragma.c": "8791af9c4d3610dbbd3e47a99a477cd0c74e8235fb014d6d66fbcd5dacdbad2c",
+    "c/tests/c11/ucn.c": "ef69e0ffc0520c8e9b1ad5fe89c9fabe77b0b773b0350ca8f1af1dfa73131206",
+    "c/tests/c11/union.c": "a8f66609526b08e0748138b135429acfc46a4b2f95b93565c9df39ae30b2ea02",
+    "c/tests/c11/utf_literals.c": "ed390832b178e5fd18e7387d2e7a0d47907b5b835ede4035c14f60adf0324b32",
+    "results/repro/tcc_pp_digraphs.c": "089c4338cae721f30f6fae79b8bed4901f11f1c951d221a03767df7a37e046ee",
+    "results/repro/tcc_pp_line_relative_name.c": "5085bb02cf6bde882abdbdb510b3a152997db38534ba897823a227f40541fd74",
+    "results/repro/tcc_pp_pragma_operator.c": "81b7ca3fed2ef67effcbb563f7dbfaf65924320c2f1e15f551aa6c0648f638a7",
+    "results/repro/tcc_pp_stringize_escapes.c": "73200d28260598befa598ba6cc618579acdce49dd45f781cdc491703b414369e",
+    "results/repro/tcc_pp_ucn_identifier.c": "52ca392ba8e02dbdac3ad5bef7a4cacde35e4477289e5ab4a2a0e9cbc25a136f",
+    "results/repro/tcc_union_designator_override.c": "b46c875972bfc984f5eb76eb87c24152af5e8af3a515c643fa977bbc2e41cc12",
+    "results/repro/tcc_pragma_macro_operand.c": "75fb0e1133edd3b2606d085e5fbd307cce44044fa14642369a8805ed8d4a9f32",
+    "build/c11-model-focused/invalid_ucn_0.c": "3f8cfe47521ff568f376ae6130653c006141e74ed32090cff588b4c23fc002ee",
+    "build/c11-model-focused/invalid_ucn_1.c": "a00b358eaebb1e2cd209083ba4fdb91e3f17fde55ba6632688a4d30c457ac623",
+    "build/c11-model-focused/invalid_ucn_2.c": "59af2cf891ce5eaa9478724eff56ad1d6836a32940abf33ae026c6e57cb85598",
+    "build/c11-model-focused/invalid_ucn_3.c": "f3bd95704101b41eb7feb6bbe214632295f51cc72b96fd2694949db619e017bb",
+    "build/c11-model-focused/invalid_ucn_4.c": "3087a683b33e53e3ef8b971283c2b61fd7af7e715589c187248544aa39a967f8",
+    "build/c11-model-focused/invalid_ucn_5.c": "02f343b1ec3429483580d226ddff4e0d40aecf57710b9a3a2103abd1a643ff34",
+    "build/c11-model-focused/options_escaped_backslash.c": "28a553179da3d5d76dda079b0a8d63f93e638ab68588323039179dfe11698755",
+    "build/c11-model-focused/options_escaped_quote.c": "4e2a3dc2e70fc4dd19f94a15ba24f6b28f31c4a0671832b2a9b133d1406665f5",
+    "build/c11-model-focused/options_quoted.c": "f9ba02db3cfa3fa9f92ea607d03f01142d7a6d57dc20ec6fb08a03446cef00d2",
+    "build/c11-model-focused/options_reverse_nested.c": "3f824a202467b6afb1c3c6f55736ecea136da2c9a5c5d0f4d5d440b2928433b8",
+    "build/c11-model-focused/options_trailing_backslash.c": "2346a13b0558ea4d38dac02b0bfa7916da46c4d59342c257f7286af57dd4ac72",
+    "build/c11-model-focused/options_unmatched_quote.c": "783f9509df9bc89a9fe7a604678832ecf3fe2b740b61d56a27e4922d9750f32d",
+    "build/c11-model-focused/options_wp_ignored.c": "82b49b166ff52bc89967b44307dab84696ba41ab1f856940b68a0219e423f110",
+    "build/c11-model-focused/pragma_macro_argument.c": "5b390ca6e3d58e12f5d2841a960f2a186468cadcf7361546205c0e021e5d7c08",
+    "build/c11-model-focused/pragma_recursive_operand.c": "23dd5f623ea1cb91222b2a7793b1d0a244b78390b9cf0ada5accb551d7c336a5",
+    "build/c11-model-focused/stringize_raw.c": "62292463c5018214eeb141fee548b121962c2d629bb19d0587ebdfd09f19902d",
+    "build/c11-model-focused/ucn_boundary_1.c": "346df179fa0e20df5c7ba5e8fd0f359d317b4bd858f6d392b00363c08d2464bd",
+    "build/c11-model-focused/ucn_boundary_2.c": "88dd6b3d44776991bded18c229232a18b10e803e056f839c06b1cb52236410c6",
+    "build/c11-model-focused/ucn_boundary_3.c": "3dff182cc5e621faa98cd53123d71bf6844dff644ab7d335561f566c074ddf03",
+    "build/c11-model-focused/ucn_boundary_4.c": "46e42dc49963694842f850e6f428b0bb72a426b2c9fe6fa342e4c461a9db3a22",
+    "build/c11-model-focused/ucn_boundary_5.c": "19e324495491355815590019aedff50337c29718d0b10f4cff8710f9509a2cb6",
+    "build/c11-model-focused/ucn_boundary_6.c": "f391107acc12005cfb10a5ef2581f83de9234634d58721e2a7f570daeec83836",
+    "build/c11-model-focused/ucn_boundary_7.c": "38f5b273a3f6941d98516fe3effcdbc3bde039ef852874d80d84050192935470",
+    "build/c11-model-focused/ucn_boundary_8.c": "114e2ad041e074cadc43195fe015ff582ccd86d78e42a8556b5555ba22f0acef",
+    "build/c11-model-focused/ucn_boundary_9.c": "786f3b20f947c1bacbabbb912fc00d8d1c238fe0eeebf986429cb3494f4df9c5",
+    "results/model/c11-state.c": "a49384cc12ad272e2ffac7fbcce5185f84c0f41a303c9b3fceafa02f4df0b90d",
+    "results/model/c11-options.c": "a39163df6b4a1b9fadf085b23cd2d1489ffe39ee5df84d643db313490972d158",
+    "results/model/c11-pragma-operand.c": "ebb48ce805ef4da2f5e83f8f1bcee83ff41eb3b2673f85c8f36832e11c9f2e7e"
+  },
+  "results": {
+    "c11": [
+      {
+        "name": "c/tests/c11/digraphs.c",
+        "model_s": 0.09961891174316406,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 79828 bytes"
+      },
+      {
+        "name": "c/tests/c11/line_include.c",
+        "model_s": 0.09888005256652832,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 79788 bytes"
+      },
+      {
+        "name": "c/tests/c11/ucn.c",
+        "model_s": 0.09483170509338379,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 79804 bytes"
+      },
+      {
+        "name": "c/tests/c11/pragma.c",
+        "model_s": 0.0979773998260498,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 79748 bytes"
+      },
+      {
+        "name": "c/tests/c11/union.c",
+        "model_s": 0.0939183235168457,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 81132 bytes"
+      },
+      {
+        "name": "c/tests/c11/utf_literals.c",
+        "model_s": 0.1033167839050293,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 80372 bytes"
+      }
+    ],
+    "results/repro": [
+      {
+        "name": "results/repro/tcc_pp_digraphs.c",
+        "model_s": 0.10678529739379883,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 79748 bytes"
+      },
+      {
+        "name": "results/repro/tcc_pp_line_relative_name.c",
+        "model_s": 0.11523175239562988,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 79724 bytes"
+      },
+      {
+        "name": "results/repro/tcc_pp_pragma_operator.c",
+        "model_s": 0.048593759536743164,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 20812 bytes"
+      },
+      {
+        "name": "results/repro/tcc_pp_stringize_escapes.c",
+        "model_s": 0.08850502967834473,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 79708 bytes"
+      },
+      {
+        "name": "results/repro/tcc_union_designator_override.c",
+        "model_s": 0.09472036361694336,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 79772 bytes"
+      },
+      {
+        "name": "results/repro/tcc_pp_ucn_identifier.c",
+        "model_s": 0.11854934692382812,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 79732 bytes"
+      },
+      {
+        "name": "results/repro/tcc_pragma_macro_operand.c",
+        "model_s": 0.12662172317504883,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 79724 bytes"
+      }
+    ],
+    "build/c11-model-focused": [
+      {
+        "name": "build/c11-model-focused/invalid_ucn_0.c",
+        "model_s": 0.012845277786254883,
+        "ref": "exit",
+        "model": "exit",
+        "result": "same-refusal",
+        "why": "both stop: exit 1"
+      },
+      {
+        "name": "build/c11-model-focused/invalid_ucn_1.c",
+        "model_s": 0.014915227890014648,
+        "ref": "exit",
+        "model": "exit",
+        "result": "same-refusal",
+        "why": "both stop: exit 1"
+      },
+      {
+        "name": "build/c11-model-focused/invalid_ucn_2.c",
+        "model_s": 0.012914419174194336,
+        "ref": "exit",
+        "model": "exit",
+        "result": "same-refusal",
+        "why": "both stop: exit 1"
+      },
+      {
+        "name": "build/c11-model-focused/invalid_ucn_3.c",
+        "model_s": 0.028140783309936523,
+        "ref": "exit",
+        "model": "exit",
+        "result": "same-refusal",
+        "why": "both stop: exit 1"
+      },
+      {
+        "name": "build/c11-model-focused/invalid_ucn_4.c",
+        "model_s": 0.012283086776733398,
+        "ref": "exit",
+        "model": "exit",
+        "result": "same-refusal",
+        "why": "both stop: exit 1"
+      },
+      {
+        "name": "build/c11-model-focused/invalid_ucn_5.c",
+        "model_s": 0.012301921844482422,
+        "ref": "exit",
+        "model": "exit",
+        "result": "same-refusal",
+        "why": "both stop: exit 1"
+      },
+      {
+        "name": "build/c11-model-focused/options_escaped_backslash.c",
+        "model_s": 0.02057051658630371,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13028 bytes"
+      },
+      {
+        "name": "build/c11-model-focused/options_quoted.c",
+        "model_s": 0.020399808883666992,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13028 bytes"
+      },
+      {
+        "name": "build/c11-model-focused/options_escaped_quote.c",
+        "model_s": 0.017566919326782227,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13028 bytes"
+      },
+      {
+        "name": "build/c11-model-focused/options_reverse_nested.c",
+        "model_s": 0.020587682723999023,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13436 bytes"
+      },
+      {
+        "name": "build/c11-model-focused/options_trailing_backslash.c",
+        "model_s": 0.02648639678955078,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13028 bytes"
+      },
+      {
+        "name": "build/c11-model-focused/options_unmatched_quote.c",
+        "model_s": 0.02730536460876465,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13028 bytes"
+      },
+      {
+        "name": "build/c11-model-focused/options_wp_ignored.c",
+        "model_s": 0.0250856876373291,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13028 bytes"
+      },
+      {
+        "name": "build/c11-model-focused/pragma_macro_argument.c",
+        "model_s": 0.032637834548950195,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13028 bytes"
+      },
+      {
+        "name": "build/c11-model-focused/pragma_recursive_operand.c",
+        "model_s": 0.01843571662902832,
+        "ref": "exit",
+        "model": "exit",
+        "result": "same-refusal",
+        "why": "both stop: exit 1"
+      },
+      {
+        "name": "build/c11-model-focused/ucn_boundary_1.c",
+        "model_s": 0.024533510208129883,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13060 bytes"
+      },
+      {
+        "name": "build/c11-model-focused/stringize_raw.c",
+        "model_s": 0.0985422134399414,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 79708 bytes"
+      },
+      {
+        "name": "build/c11-model-focused/ucn_boundary_2.c",
+        "model_s": 0.025858640670776367,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13060 bytes"
+      },
+      {
+        "name": "build/c11-model-focused/ucn_boundary_3.c",
+        "model_s": 0.03054189682006836,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13060 bytes"
+      },
+      {
+        "name": "build/c11-model-focused/ucn_boundary_4.c",
+        "model_s": 0.026213645935058594,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13060 bytes"
+      },
+      {
+        "name": "build/c11-model-focused/ucn_boundary_5.c",
+        "model_s": 0.01936626434326172,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13060 bytes"
+      },
+      {
+        "name": "build/c11-model-focused/ucn_boundary_6.c",
+        "model_s": 0.017739534378051758,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13060 bytes"
+      },
+      {
+        "name": "build/c11-model-focused/ucn_boundary_7.c",
+        "model_s": 0.017242431640625,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13060 bytes"
+      },
+      {
+        "name": "build/c11-model-focused/ucn_boundary_8.c",
+        "model_s": 0.017255544662475586,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13060 bytes"
+      },
+      {
+        "name": "build/c11-model-focused/ucn_boundary_9.c",
+        "model_s": 0.02150893211364746,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13060 bytes"
+      }
+    ],
+    "results/model": [
+      {
+        "name": "results/model/c11-state.c",
+        "model_s": 0.018224477767944336,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13116 bytes"
+      },
+      {
+        "name": "results/model/c11-options.c",
+        "model_s": 0.017955541610717773,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13268 bytes"
+      },
+      {
+        "name": "results/model/c11-pragma-operand.c",
+        "model_s": 0.01755666732788086,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13028 bytes"
+      }
+    ]
+  },
+  "rows": [
+    [
+      "c11",
+      6,
+      6,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.0980905294418335
+    ],
+    [
+      "results/repro",
+      7,
+      7,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.09985818181719099
+    ],
+    [
+      "build/c11-model-focused",
+      25,
+      18,
+      0,
+      0,
+      0,
+      0,
+      7,
+      0,
+      0.024051170349121093
+    ],
+    [
+      "results/model",
+      3,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.01791222890218099
+    ]
+  ],
+  "totals": {
+    "n": 41,
+    "same": 34
+  },
+  "wall_seconds": 5.138736009597778,
+  "reference": "rv64emu diagnostic; Sail arena equality pending",
+  "compiler_args": [
+    "-std=c11",
+    "-w"
+  ]
+}

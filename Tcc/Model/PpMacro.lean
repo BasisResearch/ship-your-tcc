@@ -721,12 +721,21 @@ def macro_subst_tok (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) 
 
 /-- `_Pragma`: expand the operand, destringize only quote/backslash,
 then run the existing pragma parser on isolated file/token/macro buffers. -/
-def pragma_operator (R : Rec) : M Unit := do
+def pragma_operator (R : Rec) (nested0 : Option SymId) : M (Option SymId) := do
+  let mut nested := nested0
   let flags := (← get).parse_flags
   modify fun s => { s with parse_flags := s.parse_flags &&& ~~~(PARSE_FLAG_TOK_STR ||| PARSE_FLAG_SPACES ||| PARSE_FLAG_LINEFEED) }
   R.next
   if (← getTok) != 40 then expect R "("
   R.next
+  if (← getTok) ≥ TOK_IDENT then
+    let operand_macro ← define_find (← getTok)
+    if operand_macro != 0 && (← sym_find2 (nested.getD 0) (← canonical_ident (← getTok))) == 0 then
+      let (operand, nested', _) ← macro_subst_tok R {} nested operand_macro
+      nested := nested'
+      let operand := tok_str_add operand 0
+      let _ ← begin_macro .heap operand.str 0 1
+      R.next
   if (← getTok) != TOK_PPSTR then expect R "string literal in _Pragma"
   let text := (← get).tokc.sdata
   let mut i := if text.get! 0 == 76 then 1 else 0
@@ -774,6 +783,7 @@ def pragma_operator (R : Rec) : M Unit := do
   if result.len != 0 then
     result := tok_str_add result 0
     let _ ← begin_macro .heap result.str 0 1
+  return nested
 
 /-- Phase 6 selects the common prefix before decoding each literal.
 Separate spellings preserve escape boundaries, e.g. "\\x12" "3". -/
@@ -835,7 +845,7 @@ def macro_subst (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) (mac
     let mut noSubst := false
     if t == (← get).tok_pragma_op && nosubst == 0 && (← get).parse_flags &&& PARSE_FLAG_PREPROCESS != 0 then
       let id ← begin_macro .heap ms.arr ms.pos 2
-      pragma_operator R
+      nested ← pragma_operator R nested
       for _ in [0:fuel] do
         match (← get).macro_stack with
         | fr :: _ => if fr.id == id then break
@@ -925,7 +935,7 @@ def next (R : Rec) : M Unit := do
       setTok (← canonical_ident (← getTok))
     let t ← getTok
     if t == (← get).tok_pragma_op && pf &&& PARSE_FLAG_PREPROCESS != 0 then
-      pragma_operator R
+      let _ ← pragma_operator R none
       continue
     if pf &&& PARSE_FLAG_TOK_STR != 0 then
       if t == TOK_DG_LBRACK then setTok 91

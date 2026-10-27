@@ -49,6 +49,11 @@ def tcc_parse_args (R : Rec) (argv : Array ByteArray) : M (Int32 × Array ByteAr
     let opt := r.extract 1 r.size
     if opt == "w".toUTF8 then
       modify fun s => { s with warn_none := 1 }
+    else if opt.extract 0 3 == "Wl,".toUTF8 then
+      unsupported s!"linker option {Bytes.toStr r}"
+    else if opt.extract 0 3 == "Wp,".toUTF8 then
+      -- libtcc ignores this form in tcc_set_options (argv[0] is NULL).
+      if argv[0]!.size != 0 then unsupported s!"preprocessor option {Bytes.toStr r}"
     else if opt.size > 0 && (opt.get! 0 == 102 || opt.get! 0 == 109 || opt.get! 0 == 87) then
       let group := opt.get! 0
       let arg := opt.extract 1 opt.size
@@ -94,7 +99,9 @@ def tcc_parse_args (R : Rec) (argv : Array ByteArray) : M (Int32 × Array ByteAr
 
 /-- `dynarray_split(..., sep=0)`: double quotes and escaped quotes/backslashes,
 including the trailing unmatched quote behavior of libtcc.c. -/
-def split_option_args (text : ByteArray) : Array ByteArray := Id.run do
+def split_option_args (input : ByteArray) : Array ByteArray := Id.run do
+  -- Bytes.cstrAt strips the terminator supplied to C's dynarray_split.
+  let text := input.push 0
   let mut args := #[ByteArray.empty]
   let mut p := 0
   for _ in [0:text.size + 1] do
@@ -107,11 +114,14 @@ def split_option_args (text : ByteArray) : Array ByteArray := Id.run do
     for _ in [0:text.size + 1] do
       let mut c := text.get! p
       if c == 0 then break
+      if c == 92 && (text.get! (p + 1) == 34 || text.get! (p + 1) == 92) then
+        -- Consume the escape and its byte together; the next iteration
+        -- starts after both, exactly as c = *p++ in dynarray_split.
+        arg := arg.push (text.get! (p + 1))
+        p := p + 2
+        continue
       p := p + 1
-      if c == 92 && (text.get! p == 34 || text.get! p == 92) then
-        c := text.get! p
-        p := p + 1
-      else if c == 34 then
+      if c == 34 then
         quoted := !quoted
         continue
       else if c <= 32 && !quoted then break

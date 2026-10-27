@@ -1,0 +1,60 @@
+Running as unit: run-p1120805-i461807247.scope; invocation ID: 0403fcd1c68245099e85cc59cee7d3a7
+✔ [18/58] Built Tcc.Model.Libtcc (1.1s)
+✔ [19/58] Built Tcc.Model.PpLex (963ms)
+✔ [21/58] Built Tcc.Model.Syms (523ms)
+✔ [23/58] Built Tcc.Model.Libtcc:c.o (2.8s)
+✔ [24/58] Built Tcc.Model.Elf (1.6s)
+✔ [26/58] Built Tcc.Model.PpDir (3.9s)
+✔ [27/58] Built Tcc.Model.Link (2.8s)
+✔ [28/58] Built Tcc.Model.Run (1.1s)
+✔ [29/58] Built Tcc.Model.Riscv (3.9s)
+✔ [31/58] Built Tcc.Model.Main (884ms)
+✔ [32/58] Built Tcc.Model.Main:c.o (3.0s)
+✔ [33/58] Built Tcc.Model.PpMacro (7.6s)
+✔ [34/58] Built Tcc.Model.Gen1 (3.8s)
+✔ [35/58] Built Tcc.Model.Link:c.o (12s)
+✔ [36/58] Built Tcc.Model.Gen2 (3.9s)
+✔ [37/58] Built Tcc.Model.Gen3 (4.8s)
+✔ [38/58] Built Tcc.Model.Gen4 (2.0s)
+✔ [39/58] Built Tcc.Model.Gen5 (1.5s)
+✔ [40/58] Built Tcc.Model.Riscv:c.o (24s)
+✔ [41/58] Built Tcc.Model.Gen6 (2.4s)
+✔ [42/58] Built Tcc.Model.Gen7 (2.3s)
+✔ [43/58] Built Tcc.Model.Gen5:c.o (6.0s)
+✔ [44/58] Built Tcc.Model.PpDir:c.o (31s)
+⚠ [45/58] Built Tcc.Model.Gen8 (3.6s)
+warning: Tcc/Model/Gen8.lean:268:47: `String.get` has been deprecated: Use `String.Pos.Raw.get` instead
+
+Note: The updated constant is in a different namespace. Dot notation may need to be changed (e.g., from `x.get` to `String.Pos.Raw.get x`).
+✔ [46/58] Built Tcc.Model.Tie (482ms)
+✔ [47/58] Built Tcc.Model.Tie:c.o (445ms)
+⚠ [48/58] Built Tcc.ModelMain (757ms)
+warning: Tcc/ModelMain.lean:25:33: `String.mk` has been deprecated: Use `String.ofList` instead
+warning: Tcc/ModelMain.lean:78:9: `String.trim` has been deprecated: Use `String.trimAscii` instead
+
+Note: The updated constant has a different type:
+  String → String.Slice
+instead of
+  String → String
+warning: Tcc/ModelMain.lean:78:46: `String.trim` has been deprecated: Use `String.trimAscii` instead
+
+Note: The updated constant has a different type:
+  String → String.Slice
+instead of
+  String → String
+warning: Tcc/ModelMain.lean:92:13: `String.trim` has been deprecated: Use `String.trimAscii` instead
+
+Note: The updated constant has a different type:
+  String → String.Slice
+instead of
+  String → String
+✔ [50/58] Built Tcc.Model.Gen6:c.o (12s)
+✔ [51/58] Built Tcc.Model.Gen7:c.o (10s)
+✔ [52/58] Built Tcc.Model.Gen4:c.o (18s)
+✔ [53/58] Built Tcc.Model.Gen3:c.o (21s)
+✔ [54/58] Built Tcc.Model.Gen2:c.o (28s)
+✔ [55/58] Built Tcc.Model.Gen1:c.o (33s)
+✔ [56/58] Built Tcc.Model.Gen8:c.o (17s)
+✔ [57/58] Built Tcc.Model.PpMacro:c.o (60s)
+✔ [58/58] Built tcc_model:exe (274ms)
+Build completed successfully (58 jobs).

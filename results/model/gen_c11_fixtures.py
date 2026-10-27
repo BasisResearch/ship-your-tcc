@@ -6,6 +6,7 @@ fixtures. The pragma macro-argument fixture adds main for an arena handoff.
 Run from the repository root, then pass the generated *.c to model_diff.py.
 """
 from pathlib import Path
+import json
 
 
 def main():
@@ -26,6 +27,30 @@ def main():
         'struct P {char c; int i;};\n_Pragma("pack(pop)")\n'
         '_Static_assert(sizeof(struct P)==5,"pack macro expansion");\n'
         'int main(void){return 0;}\n')
+    options = {
+        'quoted': '"-fsigned-char"',
+        'unmatched_quote': '"-fsigned-char',
+        'escaped_quote': '-I \\" -fsigned-char',
+        'escaped_backslash': '-I \\\\ -fsigned-char',
+        'trailing_backslash': '-fsigned-char -I trailing\\',
+        'wp_ignored': '-Wp,-funsigned-char -fsigned-char',
+    }
+    for name, option in options.items():
+        (out / f'options_{name}.c').write_text(
+            '#pragma comment(option, ' + json.dumps(option) + ')\n'
+            '_Static_assert((char)-1 < 0,"signed-char option survived splitting");\n'
+            '#pragma comment(option, "-fno-signed-char -fno-reverse-funcargs -Wall '
+            '-Wno-all -Werror=unsupported -Wno-error=unsupported -mms-bitfields -mno-ms-bitfields")\n'
+            '_Static_assert((char)-1 > 0,"inverted option restores unsigned char");\n'
+            'int main(void){return 0;}\n')
+    (out / 'options_reverse_nested.c').write_text(
+        '#pragma comment(option, "-freverse-funcargs")\n'
+        'static int n;\nstatic int step(void){return ++n;}\n'
+        'static int weighted(int a,int b,int c){return a+10*b+100*c;}\n'
+        'int main(void){int (*f)(int,int,int)=weighted;\n'
+        'return f(step(),weighted(step(),step(),step()),step())==0;}\n')
+    (out / 'pragma_recursive_operand.c').write_text(
+        '#define ENTER _Pragma(ENTER)\nENTER\nint main(void){return 0;}\n')
 
 
 if __name__ == '__main__':

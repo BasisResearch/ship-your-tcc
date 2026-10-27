@@ -275,7 +275,8 @@ def options_f : Array FlagDef := #[
 def options_m : Array FlagDef := #[
   { name := "ms-bitfields", read := (·.ms_bitfields), write := fun s v => { s with ms_bitfields := v } } ]
 
-/-- `set_flag`: no-/error=, warning masks, -Wall propagation and FD_INVERT. -/
+/-- `set_flag`: the `no-` and `error=` forms, warning masks,
+`-Wall` propagation and FD_INVERT. -/
 def set_flag (flags : Array FlagDef) (name0 : ByteArray) : M Int32 := do
   let mut name := name0
   let mut value : Int32 := 1

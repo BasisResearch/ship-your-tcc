@@ -1,5 +1,5 @@
-/* Residual patched-compiler refusal on valid C11: an operand macro inside
-   an object-like macro containing _Pragma. Keep separate from successes. */
+/* Repaired valid C11: expand the operand macro inside the replacement
+   stream, using the caller's active-macro list (patch 0003). */
 #define PACK_TEXT "pack(push, 1)"
 #define ENTER_PACK _Pragma(PACK_TEXT)
 ENTER_PACK

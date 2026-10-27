@@ -1,170 +1,160 @@
 # C11 compiler-model recovery, 2026-10-27
 
-Current handoff status: **request c11-model-5 is pending**. Its source is
-frozen. Counts below validate the earlier successful c11-model-4 executable;
-they do not validate the subsequent option-state changes. The static gate
-passes on the later source. Before the next final build, append a NUL sentinel
-in split_option_args (its input from Bytes.cstrAt excludes NUL); this was found
-during the source freeze and has not yet been applied. Wait for the lead's
-matching build result before editing any frozen source.
-Also preserve separate -Wl/-Wp dispatch before the new generic -W flag
-branch; those are linker/preprocessor argument forms, not warning names.
+Final validation uses **successful capped build c11-model-6**, with its frozen
+source hashes verified before and after the comparisons. **c11-model-5 failed**
+at the premature doc-comment terminator in Libtcc; it was never validated.
+All counts here come from fresh model executions after request 6. Earlier
+request-4 comparisons and reference-only prefill records are historical and
+are excluded. The fast reference is **rv64emu diagnostic**; complete Sail
+arena equality remains open.
 
-The checkpoint `5d4edbb47d5ea8eef7a8d845118c5e5a691d0144` was unvalidated.
-This continuation fixes its Lean syntax and the reference fingerprint, then
-checks the independently computed model arenas against patched TinyCC 43c7708
-under `-std=c11`. The reference is **rv64emu diagnostic**, not Sail arena
-equality. The F3 Sail arena-equality exit requirement remains pending.
+## Changes and review
 
-## Implementation and build
+Reviewed the interrupted C11 and option-state changes from checkpoints
+0f99b7b and ff16a14. Retained UTF element types and phase-6 concatenation,
+raw digraph spelling, isolated pragma streams and rescanning, UCN spelling
+and canonical identity, relative #line, literal-only stringification escaping,
+and union-member/descendant/relocation invalidation. Tok.lean remains generated
+by scripts/gen_model_tok.py; the 733 old decimal token constants retain their
+values, new constants occupy 0xd0–0xd9, and `_Pragma` is allocated by spelling
+after architecture keywords.
 
-The checkpoint models patches 0003 and 0004: UTF element types and phase-6
-prefix selection, raw digraph spellings until parser conversion, isolated
-`_Pragma` streams and rescanning, UCN spelling plus canonical identifier
-identity, relative `#line`, literal-only stringification escaping and union
-member invalidation including descendant records/relocations. Both drivers
-prepend `-std=c11`; the differential supplies `-w` identically. The compiler's
-exact binary128 patch is unchanged, and the model continues to use independent
-exact rational conversion (`SF.ofDecimal SF.F128`). No reference bytes enter
-the model. No library proof or new sister-project machinery was imported.
+Fixed Libtcc's doc comment, explicitly NUL-terminated split_option_args input
+(Bytes.cstrAt omits the C sentinel), and made escaped quote/backslash cursor
+consumption explicit. Quoted, unmatched-quote, escaped-quote, escaped-backslash
+and trailing-backslash regressions all compile to identical arenas. Retained
+libtcc's FlagDef tables, no-/error= forms, warning masks, -Wall propagation and
+inverted flags; pragma options call the main option parser through Rec/Tie.
+Reversed argument-token replay agrees on the focused nested-call fixture and
+the corpus cases. Separate -Wl,/-Wp, dispatch precedes generic -W flags:
+pragma -Wp, is ignored as in C; unimplemented linker options and command-line
+-Wp, remain explicit model gaps rather than silently becoming warnings.
 
-Reserved `prefix` locals in PpDir/PpMacro became `literalPrefix`, and the
-isolated pragma state updates use valid multiline structure layout. Generated
-Tok.lean passes `python3 scripts/gen_model_tok.py --check`; all 733 old decimal
-token constants retain their values. New constants occupy 0xd0–0xd9 and
-`_Pragma` is allocated by spelling after architecture keywords.
+The lead's pragma-operand repair (9b0813f, integrated here as ea62589) is
+mirrored exactly: pragma_operator accepts and returns the caller's active-macro
+list, expands identifier operands with macro_subst_tok when not suppressed,
+then begins their token stream and resumes next(). Direct-source calls pass
+an empty active list. The compiler patch was not changed to fit the model.
+Both the minimized c11-pragma-operand.c and the lead's object/function/nested
+operand reproducer now have successful identical arenas. A recursive operand
+still gives a matching refusal, testing recursion suppression separately.
+The former valid-C11 pragma-operand counterexample is repaired, not excluded
+from Supported. The lead's full compiler Sail validation is recorded in
+[the pragma-operand report](../review/c11/pragma-macro-operand/README.md).
 
-`runtime_key` uses checked objcopy output in a temporary regular file,
-excluding `.embed` from the runtime binary. It hashes that binary, every
-ordered fs.list image path and host-file content, fs.list itself,
-gen_embed.sh, ref_arena.sh, rv64emu.c and model_diff.py. Per-case keys also
-hash source, extra-file paths/bytes and arguments. Schema `independent-c11-v3`
-invalidates prior reference caches; only this fresh namespace is used here.
+The independent exact binary128 conversion remains SF.ofDecimal SF.F128;
+no reference bytes enter the model. Patch 0004 is unchanged. The corrected
+cache fingerprint uses checked objcopy into a regular temporary file and
+hashes runtime bytes without .embed, every ordered fs.list path/content,
+fs.list itself, gen_embed.sh, ref_arena.sh, rv64emu.c and model_diff.py.
+Per-case keys include source, extra-file paths/content and arguments.
+Atomic checked publication of image.syms is retained. No sister-project
+proof was imported; the existing ATTRIBUTION.md TccModel row applies. The
+sister-project abstraction inventory was run and its mandatory tool table
+read. No proof budgets or proof escapes were introduced.
 
-The lead built request **c11-model-4**, verifying its source hashes, with:
+## Build and final comparisons
+
+Source base: ea62589d8b2fbc46c8c9a3a0c83ba0bf67a9c924 plus the request-6
+SHA256 manifest. The worker reported 83 GiB available before requesting the
+build. The lead verified the frozen hashes and ran:
 
 ```
-free -g # 83 GiB available when requested; require at least 25
+free -g # require at least 25 GiB available
 flock "$SYT_LAKE_LOCK" systemd-run --user --scope -p MemoryMax=12G lake build tcc_model
 ```
 
-Result: **58 jobs, success** (`build/worker-build-c11-model-4.log`, matching
-`build/worker-build.result`). Earlier requests 2/3 failed on the reserved local
-and pragma structure syntax. No uncapped Lean build, budget increase or proof
-escape was used. Compiler patches, CSem, Supported, STATUS.md, PHASES.md and
-the sum compile-cut artifacts are unchanged.
+**58 jobs succeeded.** Request, result and complete build log are retained in
+c11-build-6.json and c11-build-6.log. No uncapped Lean build was substituted.
+Static gate and token generator drift checks pass. The static gate checks the
+existing sum artifacts for drift; none was regenerated or edited. Compiler
+patches, CSem, Supported, Fits, STATUS.md and PHASES.md are unchanged.
 
-The broader generated run exposed five pre-existing model errors for
-`#pragma comment(option)` and one transient `image symbol errno missing`.
-The latter came from concurrent harness invocations truncating image.syms
-while model processes were reading it. The harness now generates a checked
-temporary symbol file and publishes it with os.replace. Its changed hash
-invalidates the previous cache namespace again; 2,485 fresh reference inputs
-were collected under key
-`a389d2ea0190cb60079b61a2339bb8a0c71faa966c7d70456c6ae52759b6d25f`
-(1,671 handoffs, 564 refusals, 250 harness errors). These are reference
-records, not model arena-equality counts.
-
-Pending request c11-model-5 adds libtcc's named FlagDef tables and set_flag
-semantics (no-, error=, -Wall propagation and inverted flags), routes pragma
-options through the main option parser via Rec and implements reversed
-argument-token replay in unary_call. c11-options.c is the focused pragma
-state/argument-order fixture. Final model comparisons must be repeated after
-the capped final build; the new harness key prevents old reference entries
-from contributing.
-
-## Validation commands and counts
+The sequential final commands were:
 
 ```
-scripts/check.sh --static-only
-python3 scripts/gen_model_tok.py --check
 python3 results/model/gen_c11_fixtures.py
-python3 scripts/model_diff.py c11 results/repro/tcc_pp_digraphs.c results/repro/tcc_pp_line_relative_name.c results/repro/tcc_pp_pragma_operator.c results/repro/tcc_pp_stringize_escapes.c results/repro/tcc_pp_ucn_identifier.c results/repro/tcc_union_designator_override.c build/c11-model-focused/*.c -j 4 --no-report --json-out results/model/c11-focused.json -v
-python3 scripts/model_diff.py results/model/c11-state.c results/model/c11-pragma-operand.c -j 2 --no-report --json-out results/model/c11-state.json -v
-python3 scripts/model_diff.py tests run tcc p3 compcert tcctests csmith tests2 model c11 -j 4 --no-report --json-out results/model/c11-corpus.json
-python3 scripts/gen_model_corpus.py cgen 1000 --seed 1
-python3 scripts/model_diff.py gen-cgen -j 4 --no-report --json-out results/model/c11-generated-cgen.json
-```
-
-Static gate passes. The 29 focused cases give **23 identical successful
-arenas and 6 matching invalid-UCN refusals**, zero differences/model/harness
-errors. These include all six C11 tests, all six original defect reproducers,
-raw-byte repeated stringification and nine UCN refill placements. The fixture
-generator reproduces all 17 additional inputs byte for byte against their
-recorded hashes. The combined state regression adds **one identical arena**:
-`once` after `#line`, pragma include/pack restoration, suspended pop_macro
-rescanning, UCN parameter identity and phase-6 lookahead across pragma macros.
-
-The non-generated corpus gives **555 attempted, 519 identical arenas,
-28 matching refusals, 6 unsupported assembly cases, 2 harness errors**, zero
-arena differences and zero other model errors (19 s wall using fresh reference
-cache entries). The harness errors are tests2/101_cleanup (400M steps before
-handoff) and tests2/141_riscv_asm (forbidden floating instruction after handoff).
-Refusals are diagnostics, never successful arena coverage.
-
-The c11-model-4 generated runs covered 1,930 inputs: **701/1,000 cgen** and
-**350/400 Csmith** identical arenas, meeting 1,000 successful generated arenas
-with **1,051** even before mutants/dtsplit. Cgen also had 101 matching refusals
-and 198 harness errors; Csmith had 50 harness errors. Mutants: 80 identical,
-319 refusals, one transient symbol-read failure. Dtsplit: 18 identical,
-96 refusals, 11 unsupported assembly, five option model errors. There were
-zero arena mismatches. The six errors motivated the pending changes above.
-The fresh 156-vector binary128 stress input also had one identical arena
-(`c11-binary128-stress.json`), with MAX_STEPS=4000000000. Its cache key must be
-refreshed too after the harness change.
-
-Additional harness checks (`build/c11-runtime-key-check.log`,
-`build/c11-harness-check.log`) verify stable keys, invalidation by embedded
-header bytes/image paths, rejection of failed objcopy with partial output,
-one-step emulator exhaustion as a harness error and failure on missing/empty
-corpora. No limit/trap is counted as a compiler exit or arena success.
-
-## Residual cases, ledger text and dead ends
-
-`c11-pragma-operand.c` is a newly minimized **patched-compiler refusal on valid
-C11**, mirrored by the model: an object-like macro containing
-`_Pragma(PACK_TEXT)` with a macro operand reports `string literal in _Pragma
-expected`. `gcc -std=c11 -Wall -Wextra -c` accepts it. This remains a compiler
-counterexample to the no-refusal headline on supported, fitting programs;
-Supported was not weakened and patch 0003 was not altered. It is kept separate
-from the positive state fixture and successful arena counts.
-
-Dead ends for the lead: do not use objcopy `/dev/stdout` (partial .text then
-Illegal seek), old reference caches, or old checkpoint binaries as evidence.
-Do not repeat the reserved `prefix` locals or pragma record-layout errors.
-Do not reinterpret emulator limits/traps, matching refusals or unsupported
-assembly as successful independent arenas. The existing binary128 gdtoa
-wrapper dead ends remain in tasks/DEAD-ENDS.md; patch 0004 stays exact.
-
-Ghost GNode remains a lossy trace, **not Cabs**. Fuel adequacy, compiler/model
-proofs and complete Sail arena equality remain open. The lead should preserve
-these qualifications when updating the F3 ledger. No push or main merge was
-performed.
-
-Git staging failed with `Read-only file system` creating
-`.git/worktrees/agent-a05464165befb7074/index.lock`. The diff is left for the
-lead's ordinary commit; no alternate index/object store was used. Suggested
-ledger text at this handoff: C11 model checkpoint now has a capped successful
-build and 24 focused positive arena agreements plus negative-case agreement;
-1,051 generated cgen/Csmith arenas agree under the first corrected cache key.
-Later option-state/atomic symbol fixes are source-frozen in request 5 and
-await final capped build and fresh full comparison. Keep the compiler pragma
-operand refusal, residual harness/assembly classifications, ghost-Cabs gap
-and pending Sail arena equality explicit. STATUS.md/PHASES.md were not edited.
-
-Exact image, patch, source, executable and 153 embedded filesystem input pins
-are in c11-pins.json. The pending source hashes still match request 5. Its
-binary pin explicitly identifies the earlier request-4 executable. The next
-validation command after releasing the freeze, fixing the two parser audit
-items and completing the capped build is:
-
-```
+python3 scripts/model_diff.py c11 results/repro/tcc_pp_digraphs.c results/repro/tcc_pp_line_relative_name.c results/repro/tcc_pp_pragma_operator.c results/repro/tcc_pp_stringize_escapes.c results/repro/tcc_pp_ucn_identifier.c results/repro/tcc_union_designator_override.c results/repro/tcc_pragma_macro_operand.c build/c11-model-focused/*.c results/model/c11-state.c results/model/c11-options.c results/model/c11-pragma-operand.c -j 4 --no-report --json-out results/model/c11-focused-final.json -v
 python3 scripts/model_diff.py all -j 8 --no-report --json-out results/model/c11-all.json --require-success 1000
-python3 scripts/model_diff.py c11 results/repro/tcc_pp_*.c results/repro/tcc_union_designator_override.c build/c11-model-focused/*.c results/model/c11-state.c results/model/c11-options.c results/model/c11-pragma-operand.c -j 4 --no-report --json-out results/model/c11-focused-final.json
-MAX_STEPS=4000000000 python3 scripts/model_diff.py build/ld-stress.c -j 1 --no-report --json-out results/model/c11-binary128-stress.json
+MAX_STEPS=4000000000 python3 scripts/model_diff.py build/ld-stress.c -j 1 --no-report --json-out results/model/c11-binary128-stress.json -v
+python3 results/model/freeze_c11_validation.py
+scripts/check.sh --static-only
 ```
 
-Run these sequentially. Verify at least 1,000 `same` entries in gen-cgen plus
-gen-csmith independently of the overall CLI success threshold. Do not hide
-the expected separate assembly/harness categories behind the CLI return code.
-Repeat the static gate and publish final counts/pins only for that executable.
+The stress input is reproducible with
+`python3 scripts/gen_ld_literal_tests.py --stress-out build/ld-stress.c`.
+The generated corpus is the retained cgen/Csmith/mutants/dtsplit corpus;
+every attempted input is SHA256-pinned in c11-all.json. Both drivers pass
+`-std=c11` and identical `-w` arguments.
+
+| final run | attempted | identical successful arenas | matching refusals | unsupported asm | harness failures |
+|---|---:|---:|---:|---:|---:|
+| focused C11/reproducers/state/options | 41 | 34 | 7 | 0 | 0 |
+| non-generated corpus | 555 | 519 | 28 | 6 | 2 |
+| generated cgen | 1,000 | 701 | 101 | 0 | 198 |
+| generated Csmith | 400 | 350 | 0 | 0 | 50 |
+| generated mutants | 400 | 81 | 319 | 0 | 0 |
+| generated dtsplit | 130 | 19 | 100 | 11 | 0 |
+| all corpus/generated | 2,485 | 1,670 | 548 | 17 | 250 |
+| binary128 stress (156 vectors) | 1 | 1 | 0 | 0 | 0 |
+
+**Zero arena mismatches, zero model errors, zero skipped inputs.** Cgen plus
+Csmith alone supply **1,051 successful generated arenas**, independently of
+the CLI's overall threshold. The all-corpus command returns 1 because asm and
+harness cases remain visible; the focused and stress commands return 0.
+No refusal, unsupported case or harness failure contributes to arena success.
+
+c11-focused-final.json, c11-all.json and c11-binary128-stress.json retain every
+case and exact expanded command. c11-residuals.json retains every non-success
+classification. c11-pins.json pins the final sources, executable, patches,
+image, emulator, symbols, generators, reports and all 153 embedded filesystem
+inputs. freeze_c11_validation.py verifies every report input/executable hash,
+the current runtime key, the frozen build-source hashes and the separate
+1,000-generated-success requirement before publishing pins/residuals.
+Final runtime key:
+`e9bab6da0bd738add1cc18cb839ff66de31880e3c9f75b8f337eca4e51079254`.
+Final tcc_model SHA256:
+`c275c4219a67c90d84a127bbd873121855169586204fca13ec7ebd6fd679f7d0`.
+
+## Residuals, ledger text and dead ends
+
+The 250 harness failures are 249 emulator limits and one instruction trap.
+Tests2/101_cleanup reaches 400M steps before handoff. Tests2/141_riscv_asm
+traps on forbidden floating instruction 0xfe842507 after handoff. All 198 cgen
+and 50 generated-Csmith limits occur after handoff; they remain excluded from
+arena agreement under the present harness. A separate worker owns
+scripts/ref_arena.sh and scripts/rv64emu.c; this task did not edit them.
+All 548 compiler refusals and 17 unsupported assembly cases are retained by
+name, with their diagnostics/classifications, in c11-residuals.json. Matching
+refusals are not a correctness escape for valid Supported/Fits C11 programs.
+The whole-compiler goal and its no-refusal headline are unchanged.
+
+Suggested lead ledger text: patched-C11 TccModel builds under the shared
+lock/12 GB cap with request-6 source hashes verified. Final independent fast
+reference comparisons have 34 focused arena successes, 1,670/2,485 full-run
+arena successes, including 1,051 cgen/Csmith successes, and one 156-vector
+binary128 stress arena; zero mismatches/model errors. Keep the separate 548
+refusals, 17 asm cases and 250 harness failures visible. Pragma macro operands
+now reflect the repaired compiler and have successful arenas. Ghost GNode is
+still a lossy trace, not Cabs; fuel adequacy, compiler/model proofs and full
+Sail arena equality remain open. This is diagnostic F3 progress, not its
+Sail-equality exit or the whole-compiler theorem.
+
+Dead ends: request 5 failed; never cite it as validation. Do not use objcopy
+/dev/stdout (partial output plus Illegal seek), stale reference caches,
+pre-edit binaries, or aggregate agreement including refusals. Do not execute
+replacement-stream pragma operands without the caller's active-macro list,
+or let generic -W swallow -Wl,/-Wp,. Do not rely on an out-of-bounds ByteArray
+read for C's NUL sentinel or skip an extra byte after an escaped option byte.
+Do not publish image.syms by truncating the live file. Do not reintroduce the
+reserved prefix locals or malformed pragma record layout. The binary128
+gdtoa-wrapper dead ends remain in tasks/DEAD-ENDS.md; preserve exact patch 0004.
+Git metadata and the systemd user bus are read-only/inaccessible in this
+worker sandbox; keep the lead handoff protocol, with no alternate object
+store and no uncapped build. No push or merge of main was performed.
+
+Final commit handoff: ordinary `git add` was denied while creating the real
+worktree index.lock (`Read-only file system`). The complete reviewed diff is
+ready for the lead's ordinary commit; exact paths, SHA256s and the proposed
+message are in build/worker-commit.request, also referenced by the serviced
+build request. No alternate Git metadata location was used.
