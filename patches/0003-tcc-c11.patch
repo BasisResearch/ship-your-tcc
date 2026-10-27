@@ -1714,7 +1714,7 @@ index fd59104..890b233 100644
 +    while (tok != TOK_LINEFEED && tok != TOK_EOF) {
 +        if (tcc_state->output_type == TCC_OUTPUT_PREPROCESS)
 +            tok_str_add_tok(result);
-+        next();
++        tcc_state->output_type == TCC_OUTPUT_PREPROCESS ? next() : next_nomacro();
 +    }
 +    if (tcc_state->output_type == TCC_OUTPUT_PREPROCESS) {
 +        /* pragma_parse may start its output with a newline. */

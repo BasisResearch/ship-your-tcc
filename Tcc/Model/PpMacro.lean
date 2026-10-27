@@ -801,16 +801,32 @@ def macro_subst_tok (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) 
       tok_str := tok_str_add2_line tok_str t cv (← get).tok_line
     return (tok_str, nested, 0)
 
+/-- Observer events emitted while expanding an operand have no syntactic
+width. Carry them to the outer operator's result before checking its literal. -/
+def pragmaOperandNext (R : Rec) (events0 : TokenString) : M TokenString := do
+  R.next
+  let mut events := events0
+  let fuel ← fuelM
+  for _ in [0:fuel] do
+    let s ← get
+    let event := s.tok == TOK_PPSTR && s.tokc.strSize ≥ 11 && s.tokc.sdata.get! 0 == 0
+    if !s.observePP || (!event && s.tok != 32) then return events
+    -- Removing an event can expose leading argument-cache whitespace.
+    if event then events := tok_str_add2 events s.tok s.tokc
+    R.next
+  throw (.fuel "pragmaOperandNext")
+
 /-- `_Pragma`: expand the operand, destringize only quote/backslash,
 then run the existing pragma parser on isolated file/token/macro buffers. -/
 def pragma_operator (R : Rec) (nested0 : Option SymId) : M (Option SymId) := do
+  let mut operandEvents : TokenString := {}
   let saved_tok_line := (← get).tok_line
   let mut nested := nested0
   let flags := (← get).parse_flags
   modify fun s => { s with parse_flags := s.parse_flags &&& ~~~(PARSE_FLAG_TOK_STR ||| PARSE_FLAG_SPACES ||| PARSE_FLAG_LINEFEED) }
-  R.next
+  operandEvents ← pragmaOperandNext R operandEvents
   if (← getTok) != 40 then expect R "("
-  R.next
+  operandEvents ← pragmaOperandNext R operandEvents
   if (← getTok) ≥ TOK_IDENT then
     let operand_macro ← define_find (← getTok)
     if operand_macro != 0 && (← sym_find2 (nested.getD 0) (← canonical_ident (← getTok))) == 0 then
@@ -818,7 +834,7 @@ def pragma_operator (R : Rec) (nested0 : Option SymId) : M (Option SymId) := do
       nested := nested'
       let operand := tok_str_add operand 0
       let _ ← begin_macro .heap operand.str 0 1
-      R.next
+      operandEvents ← pragmaOperandNext R operandEvents
   if (← getTok) != TOK_PPSTR then expect R "string literal in _Pragma"
   let text := (← get).tokc.sdata
   let mut i := if text.get! 0 == 76 then 1 else 0
@@ -833,7 +849,7 @@ def pragma_operator (R : Rec) (nested0 : Option SymId) : M (Option SymId) := do
     out := out.push (text.get! i)
     i := i + 1
   out := out.push 10
-  R.next
+  operandEvents ← pragmaOperandNext R operandEvents
   if (← getTok) != 41 then expect R ")"
   let saved ← get
   modify fun s => { s with
@@ -844,7 +860,7 @@ def pragma_operator (R : Rec) (nested0 : Option SymId) : M (Option SymId) := do
   modFile fun f => { f with true_filename := caller.true_filename, line_num := caller.line_num }
   modify fun s => { s with parse_flags := PARSE_FLAG_PREPROCESS ||| PARSE_FLAG_TOK_NUM ||| PARSE_FLAG_TOK_STR ||| PARSE_FLAG_LINEFEED }
   let _ ← pragma_parse R
-  let mut result : TokenString := {}
+  let mut result : TokenString := operandEvents
   if saved.observePP then
     let events := (← get).ppObserved.extract saved.ppObserved.size (← get).ppObserved.size
     modify fun s => { s with ppObserved := saved.ppObserved }
@@ -854,8 +870,10 @@ def pragma_operator (R : Rec) (nested0 : Option SymId) : M (Option SymId) := do
   for _ in [0:fuel] do
     let tk ← getTok
     if tk == TOK_LINEFEED || tk == TOK_EOF then break
-    if (← get).output_type == TCC_OUTPUT_PREPROCESS then result ← tok_str_add_tok result
-    R.next
+    if (← get).output_type == TCC_OUTPUT_PREPROCESS then
+      result ← tok_str_add_tok result
+      R.next
+    else R.next_nomacro
   if (← get).output_type == TCC_OUTPUT_PREPROCESS then
     for _ in [0:fuel] do
       if (← getTok) == TOK_EOF then break

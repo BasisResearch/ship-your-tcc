@@ -126,6 +126,27 @@ static int pragma_parse(TCCState *s1)
     old = '    result = tok_str_alloc();\n    pragma_parse(tcc_state);'
     assert pp.count(old) == 1
     pp=pp.replace(old, '    result = tok_str_alloc();\n    saved_pending = raw_pending;\n    raw_pending = result;\n    pragma_parse(tcc_state);\n    raw_pending = saved_pending;')
+    # Metadata produced by an inner operator is zero width while parsing
+    # the outer operand. Preserve its tokens before the outer pragma event.
+    start = pp.index('static void pragma_operator(Sym **nested_list)\n{')
+    split = pp.index('    saved_stack = macro_stack;', start)
+    end = pp.index('/* return next token with macro substitution */', split)
+    operand = pp[start:split]
+    operand = operand.replace('    const char *s;', '    TokenString *operand_events = tok_str_alloc();\n    const char *s;')
+    operand = operand.replace('next();', 'raw_operand_next(operand_events);')
+    body = pp[split:end].replace('    result = tok_str_alloc();', '    result = operand_events;')
+    helper = r"""static void raw_operand_next(TokenString *events)
+{
+    next();
+    while (raw_capture_pragmas && (tok == ' ' ||
+           (tok == TOK_PPSTR && tokc.str.size >= 11 && !tokc.str.data[0]))) {
+        if (tok != ' ') tok_str_add2(events, tok, &tokc);
+        next();
+    }
+}
+
+"""
+    pp = pp[:start] + helper + operand + body + pp[end:]
     (dst/'tccpp.c').write_text(pp)
     shutil.copy2(ROOT/'scripts/pre_tokens_ref.c',dst/'observer.c')
     command=['gcc','-std=gnu11','-O2','-funsigned-char','-fno-strict-aliasing',
