@@ -123,7 +123,7 @@ static int pragma_parse(TCCState *s1)
     old = '    TokenString *saved_stack, *result;'
     assert pp.count(old) == 1
     pp=pp.replace(old, old+'\n    TokenString *saved_pending;')
-    old = '    result = tok_str_alloc();\n    pragma_parse(tcc_state);'
+    old = '    result = pending_output ? pending_output : tok_str_alloc();\n    pragma_parse(tcc_state);'
     assert pp.count(old) == 1
     pp=pp.replace(old, '    result = tok_str_alloc();\n    saved_pending = raw_pending;\n    raw_pending = result;\n    pragma_parse(tcc_state);\n    raw_pending = saved_pending;')
     # Metadata produced by an inner operator is zero width while parsing
@@ -133,7 +133,7 @@ static int pragma_parse(TCCState *s1)
     end = pp.index('/* return next token with macro substitution */', split)
     operand = pp[start:split]
     operand = operand.replace('    const char *s;', '    TokenString *operand_events = tok_str_alloc();\n    const char *s;')
-    operand = operand.replace('next();', 'raw_operand_next(operand_events);')
+    operand = operand.replace('pragma_operand_next();', 'raw_operand_next(operand_events);')
     body = pp[split:end].replace('    result = tok_str_alloc();', '    result = operand_events;')
     helper = r"""static void raw_operand_next(TokenString *events)
 {

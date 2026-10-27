@@ -653,11 +653,13 @@ index fd59104..890b233 100644
  ST_DATA CValue tokc;
  ST_DATA const int *macro_ptr;
  ST_DATA CString tokcstr; /* current parsed string, if any */
-@@ -51,7 +52,36 @@ static TokenString unget_buf;
+@@ -51,7 +52,38 @@ static TokenString unget_buf;
  static unsigned char isidnum_table[256 - CH_EOF];
  static int pp_debug_tok, pp_debug_symv;
  static int pp_counter;
 +static int tok_pragma_op;
++/* Deferred -E directives while an outer _Pragma operand is parsed. */
++static TokenString *pragma_output;
  static void tok_print(const int *str, const char *msg, ...);
 +/* C11 Annex D.1: permitted universal character names in identifiers. */
 +static int ucn_identifier(unsigned u, int initial)
@@ -1575,7 +1577,7 @@ index fd59104..890b233 100644
              if (nosubst && t != '(')
                  nosubst = 0;
              /* GCC supports 'defined' as result of a macro substitution */
-@@ -3463,18 +3714,184 @@ static int macro_subst(
+@@ -3463,18 +3714,201 @@ static int macro_subst(
      tok_str_add(tok_str, 0), --tok_str->len;
      PP_PRINT(("-result:", 0, tok_str->str + tlen));
  #endif
@@ -1648,20 +1650,29 @@ index fd59104..890b233 100644
 +
 +/* C11 6.10.9: macro-expand the operand, destringize only \\" and \\\\,
 +   then use exactly the #pragma parser. Isolate its token/file stream. */
++/* A cached macro argument can retain spaces even with SPACES disabled. */
++static void pragma_operand_next(void)
++{
++    do next(); while (tok == ' ');
++}
++
 +static void pragma_operator(Sym **nested_list)
 +{
 +    int flags = parse_flags, saved_tok_flags, saved_tok_line = tok_line;
 +    const char *s;
 +    CString text;
 +    TokenString *saved_stack, *result;
++    TokenString *saved_output = pragma_output, *pending_output = NULL;
 +    TokenString saved_tokstr, saved_unget;
 +    BufferedFile **saved_includes;
 +    const int *saved_ptr;
 +
++    if (tcc_state->output_type == TCC_OUTPUT_PREPROCESS)
++        pragma_output = pending_output = tok_str_alloc();
 +    parse_flags &= ~(PARSE_FLAG_TOK_STR | PARSE_FLAG_SPACES | PARSE_FLAG_LINEFEED);
-+    next();
++    pragma_operand_next();
 +    if (tok != '(') expect("(");
-+    next();
++    pragma_operand_next();
 +    /* A replacement-list stream is normally already expanded, so next()
 +       does not expand its identifiers.  macro_subst invokes us before that
 +       rescanning is complete: expand the operand using the same active-macro
@@ -1673,7 +1684,7 @@ index fd59104..890b233 100644
 +            macro_subst_tok(operand, nested_list, operand_macro);
 +            tok_str_add(operand, 0);
 +            begin_macro(operand, 1);
-+            next();
++            pragma_operand_next();
 +        }
 +    }
 +    if (tok != TOK_PPSTR) expect("string literal in _Pragma");
@@ -1686,7 +1697,7 @@ index fd59104..890b233 100644
 +        cstr_ccat(&text, *s++);
 +    }
 +    cstr_ccat(&text, '\n');
-+    next();
++    pragma_operand_next();
 +    if (tok != ')') expect(")");
 +
 +    saved_stack = macro_stack;
@@ -1707,8 +1718,10 @@ index fd59104..890b233 100644
 +    file->line_num = file->prev->line_num;
 +    parse_flags = PARSE_FLAG_PREPROCESS | PARSE_FLAG_TOK_NUM
 +        | PARSE_FLAG_TOK_STR | PARSE_FLAG_LINEFEED;
-+    result = tok_str_alloc();
++    result = pending_output ? pending_output : tok_str_alloc();
 +    pragma_parse(tcc_state);
++    if (tcc_state->output_type == TCC_OUTPUT_PREPROCESS)
++        parse_flags &= ~PARSE_FLAG_PREPROCESS;
 +    /* -E re-emits implementation pragmas. Copy them before restoring the
 +       caller, so no temporary-buffer or macro-stack pointer escapes. */
 +    while (tok != TOK_LINEFEED && tok != TOK_EOF) {
@@ -1736,7 +1749,13 @@ index fd59104..890b233 100644
 +    tok_flags = saved_tok_flags;
 +    tok_line = saved_tok_line;
 +    parse_flags = flags;
-+    if (result->len) {
++    pragma_output = saved_output;
++    if (saved_output && pending_output) {
++        int i;
++        for (i = 0; i < result->len; ++i)
++            tok_str_add(saved_output, result->str[i]);
++        tok_str_free(result);
++    } else if (result->len) {
 +        tok_str_add(result, 0);
 +        begin_macro(result, 1);
 +    } else
@@ -1813,13 +1832,14 @@ index fd59104..890b233 100644
      }
  }
  
-@@ -3767,6 +4207,10 @@ ST_FUNC void tccpp_new(TCCState *s)
+@@ -3767,6 +4207,11 @@ ST_FUNC void tccpp_new(TCCState *s)
          p = r;
      }
  
 +    /* Architecture keyword tables may contain duplicate spellings. Allocate
 +       this operator by identity after that table, keeping existing token IDs. */
 +    tok_pragma_op = tok_alloc("_Pragma", 7)->tok;
++    pragma_output = NULL;
 +
      /* we add dummy defines for some special macros to speed up tests
         and to have working defined() */
@@ -1834,6 +1854,30 @@ index fd59104..890b233 100644
          : '+' == a ? TOK_INC == b || '+' == b
          : '-' == a ? TOK_DEC == b || '-' == b
          : a >= TOK_IDENT || a == TOK_PPNUM ? b >= TOK_IDENT || b == TOK_PPNUM
+@@ -3919,7 +4364,7 @@
+ ST_FUNC int tcc_preprocess(TCCState *s1)
+ {
+     BufferedFile **iptr;
+-    int token_seen, spcs, level;
++    int token_seen, spcs, level, pragma_line = 0, saved_flags;
+     const char *p;
+     char white[400];
+ 
+@@ -3948,7 +4393,13 @@
+ 
+     for (;;) {
+         iptr = s1->include_stack_ptr;
+-        next();
++        /* Re-emitted pragma operands are opaque until their newline. */
++        saved_flags = parse_flags;
++        if (pragma_line) parse_flags &= ~PARSE_FLAG_PREPROCESS;
++        next();
++        parse_flags = saved_flags;
++        if (token_seen == '#' && tok == TOK_PRAGMA) pragma_line = 1;
++        if (tok == TOK_LINEFEED) pragma_line = 0;
+         if (tok == TOK_EOF)
+             break;
+ 
 @@ -3990,7 +4435,20 @@ ST_FUNC int tcc_preprocess(TCCState *s1)
          }
  

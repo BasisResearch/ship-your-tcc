@@ -37,6 +37,8 @@ CASES = {
     'c/tests/c11/union.c': 'union 0\n',
     'c/tests/c11/line_include.c': 'line elsewhere/relative.c 0\n',
     'results/repro/tcc_pragma_macro_operand.c': 'pragma operands 0\n',
+    'results/repro/tcc_pragma_ignored_counter.c': '',
+    'results/repro/tcc_pragma_nested_operand.c': '',
     'results/repro/tcc_pp_trigraphs.c': 'trigraphs 0\n',
     'results/repro/tcc_line_splice.c': '',
     'c/tests/c11/line_varargs.c': '',

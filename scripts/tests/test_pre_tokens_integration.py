@@ -5,7 +5,7 @@ import tempfile
 import unittest
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 import pre_tokens_diff as h
-from gen_pre_token_cases import generate, CASES, OBSERVER_RESIDUALS
+from gen_pre_token_cases import generate, CASES, OBSERVER_REGRESSIONS
 
 @unittest.skipUnless(h.MODEL.exists() and h.REF.exists(), 'build tcc_pre_tokens and pre_tokens_ref first')
 class RawIntegration(unittest.TestCase):
@@ -79,7 +79,7 @@ class RawIntegration(unittest.TestCase):
         self.assertEqual(m.tokens[-1],('N',b'0'));self.assertEqual(m.state,plain.state)
     def test_pragma_compositions(self):
         for name in CASES:
-            if (name.startswith('pragma-') or name.startswith('ordinary-')) and name not in OBSERVER_RESIDUALS:
+            if (name.startswith('pragma-') or name.startswith('ordinary-')):
                 with self.subTest(name=name):self.observe(name)
         for name in ['pragma-paste-two','pragma-stringify-two']:
             m,_=self.observe(name)
@@ -105,12 +105,13 @@ class RawIntegration(unittest.TestCase):
             if name.startswith('error-'):
                 with self.subTest(name=name):
                     m,r=self.observe(name);self.assertEqual(m.error[0],'refuse')
-    def test_observer_residuals_remain_failures(self):
-        for name in sorted(OBSERVER_RESIDUALS):
+    def test_observer_regressions_preserve_plain_execution(self):
+        for name in sorted(OBSERVER_REGRESSIONS):
             with self.subTest(name=name):
                 row=h.one(self.cases/(name+'.c'))
-                self.assertEqual(row['raw'],'observer-effect-difference')
-                self.assertFalse(row['observer_preserves_effects'])
+                self.assertEqual(row['raw'],'exact')
+                self.assertEqual(row['spec'],'exact')
+                self.assertTrue(row['observer_preserves_effects'])
 
     def test_comparator_default_accepts_repaired_pragma_and_rejects_refusal(self):
         for name,expected in [('prefixes',0),('error-comment',1),('pragma-unknown',0)]:

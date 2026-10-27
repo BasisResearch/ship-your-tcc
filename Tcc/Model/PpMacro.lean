@@ -809,8 +809,8 @@ def pragmaOperandNext (R : Rec) (events0 : TokenString) : M TokenString := do
   let fuel ← fuelM
   for _ in [0:fuel] do
     let s ← get
-    let event := s.tok == TOK_PPSTR && s.tokc.strSize ≥ 11 && s.tokc.sdata.get! 0 == 0
-    if !s.observePP || (!event && s.tok != 32) then return events
+    let event := s.observePP && s.tok == TOK_PPSTR && s.tokc.strSize ≥ 11 && s.tokc.sdata.get! 0 == 0
+    if !event && s.tok != 32 then return events
     -- Removing an event can expose leading argument-cache whitespace.
     if event then events := tok_str_add2 events s.tok s.tokc
     R.next
@@ -820,6 +820,9 @@ def pragmaOperandNext (R : Rec) (events0 : TokenString) : M TokenString := do
 then run the existing pragma parser on isolated file/token/macro buffers. -/
 def pragma_operator (R : Rec) (nested0 : Option SymId) : M (Option SymId) := do
   let mut operandEvents : TokenString := {}
+  let savedOutput := (← get).pragma_output
+  let deferOutput := (← get).output_type == TCC_OUTPUT_PREPROCESS
+  if deferOutput then modify fun s => { s with pragma_output := some {} }
   let saved_tok_line := (← get).tok_line
   let mut nested := nested0
   let flags := (← get).parse_flags
@@ -860,7 +863,9 @@ def pragma_operator (R : Rec) (nested0 : Option SymId) : M (Option SymId) := do
   modFile fun f => { f with true_filename := caller.true_filename, line_num := caller.line_num }
   modify fun s => { s with parse_flags := PARSE_FLAG_PREPROCESS ||| PARSE_FLAG_TOK_NUM ||| PARSE_FLAG_TOK_STR ||| PARSE_FLAG_LINEFEED }
   let _ ← pragma_parse R
-  let mut result : TokenString := operandEvents
+  if (← get).output_type == TCC_OUTPUT_PREPROCESS then
+    modify fun s => { s with parse_flags := s.parse_flags &&& ~~~PARSE_FLAG_PREPROCESS }
+  let mut result : TokenString := if deferOutput then (← get).pragma_output.getD {} else operandEvents
   if saved.observePP then
     let events := (← get).ppObserved.extract saved.ppObserved.size (← get).ppObserved.size
     modify fun s => { s with ppObserved := saved.ppObserved }
@@ -887,8 +892,13 @@ def pragma_operator (R : Rec) (nested0 : Option SymId) : M (Option SymId) := do
     macro_stack := saved.macro_stack, macro_ptr := saved.macro_ptr,
     tokstr_buf := saved.tokstr_buf, unget_buf := saved.unget_buf,
     include_stack := saved.include_stack, tok_flags := saved.tok_flags, parse_flags := flags,
-    tok_line := saved_tok_line }
-  if result.len != 0 then
+    tok_line := saved_tok_line, pragma_output := savedOutput }
+  if deferOutput && savedOutput.isSome then
+    let mut parent := savedOutput.getD {}
+    for i in [0:result.len.toNat'] do
+      parent := tok_str_add parent (result.str[i]!)
+    modify fun s => { s with pragma_output := some parent }
+  else if result.len != 0 then
     result := tok_str_add result 0
     let _ ← begin_macro .heap result.str 0 1
   return nested
@@ -1147,7 +1157,7 @@ def tccpp_new (R : Rec) : M Unit := do
   for k in Tok.keywords do
     let _ ← tok_alloc R k.toUTF8
   let pragmaTok ← tok_alloc R "_Pragma".toUTF8
-  modify fun s => { s with tok_pragma_op := pragmaTok.tok }
+  modify fun s => { s with tok_pragma_op := pragmaTok.tok, pragma_output := none }
   define_push R Tok.TOK___LINE__ MACRO_OBJ none 0
   define_push R Tok.TOK___FILE__ MACRO_OBJ none 0
   define_push R Tok.TOK___DATE__ MACRO_OBJ none 0

@@ -3,9 +3,9 @@
 from pathlib import Path
 import json
 
-# These probes expose the existing observers changing plain execution. Keep
-# them in a separate failing diagnostic lane; do not count them as successes.
-OBSERVER_RESIDUALS = {'pragma-nested-operand', 'pragma-nested-macro',
+# Regression probes for repaired observer interference; all now belong
+# to the ordinary strict success lane. Historical failures remain in results/.
+OBSERVER_REGRESSIONS = {'pragma-nested-operand', 'pragma-nested-macro',
                       'pragma-operator-ignored-counter'}
 
 CASES = {
@@ -100,7 +100,7 @@ def generate(dst):
     (dst/'operator-once.h').write_text('_Pragma("once")\n__COUNTER__\n')
     (dst/'prescan-once.h').write_text('#define D(x) x x\nD(_Pragma("once"))\n__COUNTER__\n')
     for name,text in CASES.items(): (dst/(name+'.c')).write_text(text)
-    (dst/'manifest.json').write_text(json.dumps(dict(cases=list(CASES),negative=[n for n in CASES if n.startswith('error-')],observer_residuals=sorted(OBSERVER_RESIDUALS)),indent=2)+'\n')
+    (dst/'manifest.json').write_text(json.dumps(dict(cases=list(CASES),negative=[n for n in CASES if n.startswith('error-')],observer_regressions=sorted(OBSERVER_REGRESSIONS)),indent=2)+'\n')
     print(f'{len(CASES)} focused inputs generated in {dst}')
 
 if __name__=='__main__':generate(Path('build/pre-token-cases'))
