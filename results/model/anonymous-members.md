@@ -59,3 +59,11 @@ All runs use `-std=c11`. Full Sail executions and native captures are
 observations, not kernel-certified reachability or compiler correctness.
 Ghost Cabs, fuel adequacy and whole-corpus native coverage remain open. The
 frozen `sum.c` compile-cut chain is unchanged.
+
+Follow-up on the same repaired image: the frozen CSem worker's complete
+78-case positive batch now exits zero on full tcc/Sail (7,492,851 compile
+steps, 3,795 program steps, 7,496,671 total), and its independent fast arena
+matches. The old image stopped at the first qualifier failure, case 59.
+The unchanged generated source, generator hash, actual ELF and raw trace
+are retained under `anonymous-members/suite-78/`; this is a batch execution,
+not 78 new reachability proofs.

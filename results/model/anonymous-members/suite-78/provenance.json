@@ -1,0 +1,14 @@
+{
+  "source_sha256": "4ed3fc99cad93ce71743fc5cd66d4aead906bc60c68269e5fcaead04a4bfe0e0",
+  "generator": ".claude/worktrees/sol-c11-line/scripts/gen_anonymous_fixtures.py",
+  "generator_sha256": "31e057486b22b16dc6aaca70befa2c946fca45292b7e8f49e3292ca81fd2902e",
+  "runtime_image_sha256": "f6980d97b4608b88dfdecab63b2e2437abcf37c98d88caeb59ebf76ba810057b",
+  "compiler_args": [
+    "-std=c11",
+    "-w"
+  ],
+  "cases": 78,
+  "sail_exit": 0,
+  "original_stop_case": 59,
+  "source": "frozen anonymous-member worker generated batch; copied unchanged"
+}

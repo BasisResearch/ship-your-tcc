@@ -1,0 +1,61 @@
+{
+  "command": [
+    "scripts/model_diff.py",
+    "build/anonymous-compiler/repaired-suite-78.c",
+    "--no-report",
+    "--json-out",
+    "build/anonymous-compiler/suite-78-arena.json",
+    "--require-success",
+    "1"
+  ],
+  "runtime_key": "a6f7a4f720bac1a2b36827e550e3c33434f99e3b05f7f8a6240828e82ce17674",
+  "pins": {
+    "vendor/TINYCC_REV": "76ca376f1f96cf1b316713d8f94d91c8629445929d1e7474792fd76610bce1c0",
+    "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+    "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+    "patches/0003-tcc-c11.patch": "c0ea34110e1a26fea8296fc2022d918c7bf02215c6269f2a6c389379056e14ba",
+    "patches/0004-tcc-binary128-literals.patch": "15d4a95ec667c9ec18ea2be3fc1475c1178668853fea28213c3061afa0f863ff",
+    "c/build/base.elf": "f6980d97b4608b88dfdecab63b2e2437abcf37c98d88caeb59ebf76ba810057b",
+    "c/src/gen_embed.sh": "68534ee3a238c143bf4e749fcb0ea43e8b53933c4a9d6843422d995c879d7d76",
+    "scripts/model_diff.py": "6fab1c29ac671896b91fa6e75f064a78c871b77b3f582e163dcaf4aaf84f7bb9",
+    ".lake/build/bin/tcc_model": "e4386bb334923e86742b14be3ec9c43e93712ac6cfb19feadbc75dba837c226e",
+    "build/anonymous-compiler/repaired-suite-78.c": "4ed3fc99cad93ce71743fc5cd66d4aead906bc60c68269e5fcaead04a4bfe0e0"
+  },
+  "results": {
+    "build/anonymous-compiler": [
+      {
+        "name": "build/anonymous-compiler/repaired-suite-78.c",
+        "model_s": 0.10703825950622559,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 29116 bytes"
+      }
+    ]
+  },
+  "rows": [
+    [
+      "build/anonymous-compiler",
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.10703825950622559
+    ]
+  ],
+  "totals": {
+    "n": 1,
+    "same": 1
+  },
+  "wall_seconds": 0.46833086013793945,
+  "reference": "rv64emu diagnostic; Sail arena equality pending",
+  "sail_settings": null,
+  "compiler_args": [
+    "-std=c11",
+    "-w"
+  ]
+}
