@@ -1,0 +1,8 @@
+diff         build/initializer-review/implicit.c           reference exit, model ran; reference console: /prog.c:1: error: ',' expected (got '<eof>')
+
+diff         build/initializer-review/int.c                reference exit, model ran; reference console: /prog.c:1: error: ',' expected (got '<eof>')
+
+
+corpus          total   same   diff   merr   skip   herr refusal    asm
+build/initializer-review      5      2      2      0      0      0       1      0
+all                 5      2   (2 s wall)

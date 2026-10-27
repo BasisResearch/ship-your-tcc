@@ -314,3 +314,17 @@
   two mutable-variable shadowing errors. Attempt 6 builds the final model,
   spec, token driver and audit under the shared lock/12 GB cap. Preserve those
   failed receipts/logs; they do not certify the repaired sources.
+
+2026-10-27 lead: a default `lake build`/old full gate does not refresh the
+non-default `tcc_model`, `tcc_pre_tokens`, or `pre_spec` executables after a
+rebase. The first combined 1,812-case run used the pre-designator model binary
+and reported 1,339 matches plus an incomplete int-array/string disagreement.
+Retain that run as stale-binary diagnostic evidence; do not patch semantics
+from it or claim source-level validation. The gate now explicitly builds the
+three executables and PreAudit, then audits the preprocessing definitions.
+Repeat comparisons after the capped explicit build; source hashes alone do
+not attest which source produced an existing executable.
+The explicit capped rebuild removed both minimal incomplete-array
+mismatches (implicit int and explicit int); the valid char/fixed-array controls
+still match. No compiler/model semantic edit was needed. Full comparisons
+are repeated and retained separately from the stale-binary history.

@@ -78,7 +78,8 @@ are retained in `sail.json` and `sail-{ignored,nested}/`.
 ## Results
 
 All registered C11 cases pass: **89 positives and six negatives**, including
-all 88 inherited positives and both newly registered runtime reproducers.
+the 86 inherited positives, both new runtime reproducers, and the new
+pragma-output fixture.
 Every positive retains direct tcc execution, GCC execution, `-E` round trip,
 cross compilation and RV64I checks. The added `pragma_output.c` checks ordered
 single-emission output through nested operands, reuse, #, ## and both rescan

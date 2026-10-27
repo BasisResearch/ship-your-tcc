@@ -1,0 +1,56 @@
+{
+  "pc": 2147490632,
+  "steps": 3398235,
+  "tick": 1,
+  "cycles": 1,
+  "defined_registers": 176,
+  "memory_map_size": 8415751,
+  "arena_present_bytes": 13108,
+  "status": "native observation only; startup reachability remains open",
+  "boundary": "first pre-instruction state at tcc_baremetal_enter",
+  "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/results/repro/tcc_designator_continuation.c",
+  "source_sha256": "207d48f4e803b9a1280ef8170b95b7252b26fd19cb234b17abb0fe1d675a4b77",
+  "elf": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/model_diff/cache/3cc8ddf1a9be6e4059c151b6.elf",
+  "elf_sha256": "a10309f79c66d2670294dccdcbe700426b1c8992746be43c8b7643bbdf662200",
+  "binary_sha256": "2fe637d6e77e2741606bb67e5f7f07751a1a90dd1d5467f75aca3288cf5663bf",
+  "build_manifest_sha256": "6f829539787d74997a6fa542d9d4cd04b9a62dca3950f50b237458694bf571e6",
+  "arena_base": 2252341248,
+  "arena_end": 2256535552,
+  "flags": 0,
+  "step_limit": 100000000,
+  "presence_encoding": "one byte per arena address: 0 absent, 1 present",
+  "files": {
+    "arena.bin": {
+      "bytes": 4194304,
+      "sha256": "f004cce893f912e69b69f703d09aeabeefb8be6989f31e3de26fa293ba54e96a"
+    },
+    "arena.present.bin": {
+      "bytes": 4194304,
+      "sha256": "842c4218343f0417210f64f05bfcd3fae7fc986ff6da2b8660ad4a359b1d98b6"
+    },
+    "console.repr.txt": {
+      "bytes": 4,
+      "sha256": "eb92a90a8fbc1020de59f62e527480dc5d396402edb88b6beddb89a663c207d2"
+    },
+    "console.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "cut.tsv": {
+      "bytes": 41,
+      "sha256": "e48356cee41f5592b391a33d8a09d4f6a1042dd97551e8c35ab62872b155fa4f"
+    },
+    "native.stderr": {
+      "bytes": 25,
+      "sha256": "9b5abdd2c54053e5bda600e68b1d9213c19f6b77013130366d7ab27ddd6278f6"
+    },
+    "native.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "registers.txt": {
+      "bytes": 15393,
+      "sha256": "179f1fa4ea6a97376ce87f532ca41104c90fe657d772d41262fa7b7d9e8c86e1"
+    }
+  }
+}

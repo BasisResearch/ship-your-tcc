@@ -1,0 +1,101 @@
+{
+  "command": [
+    "scripts/model_diff.py",
+    "build/initializer-review/braced-int.c",
+    "build/initializer-review/char.c",
+    "build/initializer-review/fixed-int.c",
+    "build/initializer-review/implicit.c",
+    "build/initializer-review/int.c",
+    "-j",
+    "2",
+    "--no-report",
+    "--json-out",
+    "build/initializer-review/results.json"
+  ],
+  "runtime_key": "dc14995f919a7cb15e99a2a3b84aa0ebe351b280bd7b62e5fd8684afe08ef4d7",
+  "pins": {
+    "vendor/TINYCC_REV": "76ca376f1f96cf1b316713d8f94d91c8629445929d1e7474792fd76610bce1c0",
+    "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+    "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+    "patches/0003-tcc-c11.patch": "3fe7b107132d23104c9b6988645a8d9f1d96cc7d282433fd4e666830a17526e7",
+    "patches/0004-tcc-binary128-literals.patch": "4dfcc192c23a777b1b335e9052a416956886b1071c3de1e8da403b5b194e221e",
+    "c/build/base.elf": "2294d560777e523cc5742a7cfc6e6f199f115eb4fbcd36d581273a5685e4e3c5",
+    "c/src/gen_embed.sh": "68534ee3a238c143bf4e749fcb0ea43e8b53933c4a9d6843422d995c879d7d76",
+    "scripts/model_diff.py": "6fab1c29ac671896b91fa6e75f064a78c871b77b3f582e163dcaf4aaf84f7bb9",
+    ".lake/build/bin/tcc_model": "4feea3dead58fbdc043739d09e9a69fbf52468c45b8ddf96fdb9b79fedb1b249",
+    "build/initializer-review/braced-int.c": "07587b7f2911194ca394fce699afdb64adbe6099bc622ea8f15d6a054cfad9f1",
+    "build/initializer-review/char.c": "7a299b5bc76247e05cfc83277f7baefca29c0775364e67ef8f26db2a6964c7d8",
+    "build/initializer-review/fixed-int.c": "50866de0d7e853265c4ae64342886a5f5503da247c04bd59ba4138f512c5fe9c",
+    "build/initializer-review/implicit.c": "929e5d916ab8b8f31fb5b232471a175be60c0b78bf8595c0e58df25fee742a79",
+    "build/initializer-review/int.c": "8993c0b1df3ef3ae7ecffd31fa9f3ec01ea8bd0673727b34229c505d04e4d6f1"
+  },
+  "results": {
+    "build/initializer-review": [
+      {
+        "name": "build/initializer-review/char.c",
+        "model_s": 0.0868537425994873,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13036 bytes"
+      },
+      {
+        "name": "build/initializer-review/braced-int.c",
+        "model_s": 0.0847172737121582,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13044 bytes"
+      },
+      {
+        "name": "build/initializer-review/fixed-int.c",
+        "model_s": 0.06658267974853516,
+        "ref": "exit",
+        "model": "exit",
+        "result": "same-refusal",
+        "why": "both stop: exit 1"
+      },
+      {
+        "name": "build/initializer-review/implicit.c",
+        "model_s": 0.09184002876281738,
+        "ref": "exit",
+        "model": "ran",
+        "result": "diff",
+        "why": "reference exit, model ran; reference console: /prog.c:1: error: ',' expected (got '<eof>')\n"
+      },
+      {
+        "name": "build/initializer-review/int.c",
+        "model_s": 0.07517313957214355,
+        "ref": "exit",
+        "model": "ran",
+        "result": "diff",
+        "why": "reference exit, model ran; reference console: /prog.c:1: error: ',' expected (got '<eof>')\n"
+      }
+    ]
+  },
+  "rows": [
+    [
+      "build/initializer-review",
+      5,
+      2,
+      2,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0.08103337287902831
+    ]
+  ],
+  "totals": {
+    "n": 5,
+    "same": 2
+  },
+  "wall_seconds": 1.5726110935211182,
+  "reference": "rv64emu diagnostic; Sail arena equality pending",
+  "sail_settings": null,
+  "compiler_args": [
+    "-std=c11",
+    "-w"
+  ]
+}

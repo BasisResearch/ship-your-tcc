@@ -1,0 +1,22 @@
+/data/home/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/../../../../riscv-none-elf/bin/ld: warning: build/base.elf has a LOAD segment with RWX permissions
+unsupported-asm build/tcc-src/tests/tests2/127_asm_goto.c     model-error unsupported: asm statement
+unsupported-asm build/tcc-src/tests/tests2/138_arm64_encoding.c model-error unsupported: asm statement
+unsupported-asm build/tcc-src/tests/tests2/140_arm64_extasm.c model-error unsupported: asm statement
+unsupported-asm build/tcc-src/tests/tests2/141_riscv_asm.c    model-error unsupported: asm statement
+unsupported-asm build/tcc-src/tests/tests2/85_asm-outside-function.c model-error unsupported: global asm block
+unsupported-asm build/tcc-src/tests/tests2/98_al_ax_extend.c  model-error unsupported: global asm block
+unsupported-asm build/tcc-src/tests/tests2/99_fastcall.c      model-error unsupported: global asm block
+diff         build/model_corpus/mutants/mut_7.c            reference exit, model ran; reference console: /prog.c:4: error: ',' expected (got '<eof>')
+
+
+corpus          total   same   diff   merr   skip   herr refusal    asm
+tests               2      1      0      0      0      0       1      0
+run                 8      8      0      0      0      0       0      0
+tcc                43     43      0      0      0      0       0      0
+p3                  3      3      0      0      0      0       0      0
+model               6      3      0      0      0      0       3      0
+c11                 8      8      0      0      0      0       0      0
+tests2            142    111      0      0      0      0      24      7
+gen-cgen         1200   1082      0      0      0      0     118      0
+gen-mutants       400     80      1      0      0      0     319      0
+all              1812   1339   (283 s wall)

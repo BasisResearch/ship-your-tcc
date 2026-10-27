@@ -1,0 +1,4 @@
+
+corpus          total   same   diff   merr   skip   herr refusal    asm
+build/initializer-review      5      2      0      0      0      0       3      0
+all                 5      2   (0 s wall)
