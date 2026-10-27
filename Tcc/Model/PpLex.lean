@@ -48,7 +48,7 @@ def tcc_trigraphs (buf : ByteArray) : ByteArray := Id.run do
   return out
 
 /-- `handle_eob()` -/
-def handle_eob : M Int32 := do
+def handle_eob (R : Rec) : M Int32 := do
   let bf ← curFile
   if bf.buf_ptr ≥ bf.buf_end then
     let mut data := ByteArray.empty
@@ -58,7 +58,8 @@ def handle_eob : M Int32 := do
         -- after at most three reads one byte must be emitted.
         let mut pending := bf.trigraph_pending
         for _ in [0:3] do
-          let raw := (← Host.read bf.fd (IO_BUF_SIZE - pending)).getD ByteArray.empty
+          let some raw ← Host.read bf.fd (IO_BUF_SIZE - pending)
+            | tcc_error_s R "could not read source file"
           modify fun s => { s with total_bytes := s.total_bytes + UInt32.ofNat raw.size }
           let input := ByteArray.mk (Array.replicate pending (63 : UInt8)) ++ raw
           pending := 0
@@ -71,7 +72,9 @@ def handle_eob : M Int32 := do
           data := tcc_trigraphs (input.extract 0 (input.size - pending))
           if data.size > 0 || raw.size == 0 then break
       else
-        data := (← Host.read bf.fd IO_BUF_SIZE).getD ByteArray.empty
+        let some raw ← Host.read bf.fd IO_BUF_SIZE
+          | tcc_error_s R "could not read source file"
+        data := raw
         modify fun s => { s with total_bytes := s.total_bytes + UInt32.ofNat data.size }
     let len := data.size
     modFile fun f =>
@@ -88,26 +91,26 @@ def handle_eob : M Int32 := do
     return CH_EOF
 
 /-- `next_c()` -/
-def next_c : M Int32 := do
+def next_c (R : Rec) : M Int32 := do
   modFile fun f => { f with buf_ptr := f.buf_ptr + 1 }
   let bf ← curFile
   let ch := (bf.buf.get! bf.buf_ptr).toUInt32.toInt32
-  if ch == CH_EOB && bf.buf_ptr ≥ bf.buf_end then handle_eob else return ch
+  if ch == CH_EOB && bf.buf_ptr ≥ bf.buf_end then handle_eob R else return ch
 
 /-- `handle_stray_noerror(err)` -/
 def handle_stray_noerror (R : Rec) (err : Bool) : M Int32 := do
   let fuel ← fuelM
   for _ in [0:fuel] do
-    let ch ← next_c
+    let ch ← next_c R
     if ch != 92 then return ch
-    let ch ← next_c
+    let ch ← next_c R
     if ch == 10 then
       modFile fun f => { f with line_num := f.line_num + 1 }
     else
       let mut ch := ch
       let mut newl := false
       if ch == 13 then
-        ch ← next_c
+        ch ← next_c R
         if ch == 10 then
           modFile fun f => { f with line_num := f.line_num + 1 }
           newl := true

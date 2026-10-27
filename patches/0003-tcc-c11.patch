@@ -478,7 +478,7 @@ index fd59104..890b233 100644
 +                    raw = read(bf->fd, bf->buffer + pending,
 +                               size > pending ? size - pending : 1);
 +                    if (raw < 0)
-+                        raw = 0;
++                        tcc_error("could not read source file");
 +                    total_bytes += raw;
 +                    len = pending + raw;
 +                    pending = 0;
@@ -493,7 +493,7 @@ index fd59104..890b233 100644
 +            } else {
 +                len = read(bf->fd, bf->buffer, len);
 +                if (len < 0)
-+                    len = 0;
++                    tcc_error("could not read source file");
 +                total_bytes += len;
 +            }
          } else {
