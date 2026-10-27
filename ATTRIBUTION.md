@@ -98,3 +98,9 @@ derived from this repository's `c/src/htif.c`; it was recovered from the prior
 agent worktree and reviewed with descriptor-based fstat, structural ordering
 and link proxy repairs. See `results/csem/f1-filesystem.md`. This is an
 executable model and differential evidence, not a reused library proof.
+
+`Spec/ImageFiles.lean` reuses this fork's existing `CerbFS.embed` and
+`CerbFS.resolve` directly for ordered embedded tables and preprocessing
+lookup, and exports the same initialized tree to `Tcc/ModelMain.lean`.
+This factors executable behavior derived from `c/src/htif.c`; it copies no
+library proof and does not establish filesystem refinement.

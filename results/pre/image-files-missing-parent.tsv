@@ -1,0 +1,2 @@
+file	vs_tcc	vs_gcc	spec_tokens	tcc_tokens	spec_error	tcc_error	gcc_error	tcc_context	gcc_context
+results/repro/pre_include_missing_parent.c	both-error	both-error	0	0	include /prog.c:1 header not found (Â§6.10.2p2)	/Users/kirancodes/tmp/pre_diff_j2lm2wwk/tmp676tqxux/prog.c:1: error: include file 'missing/../lib/tcc/include/stddef.h' not found			

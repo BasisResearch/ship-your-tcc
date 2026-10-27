@@ -45,6 +45,21 @@ def testFS : FileSys := ⟨Tcc.imageFS.files ++ [(bs "/vers2.h", bs "vers2_h_con
 def both (src expected : String) : Bool :=
   ppIs cfgIso testFS src expected && ppIs Tcc.cfgTcc testFS src expected
 
+/-! Image lookup traverses existing directories and respects table order. -/
+def pathFS : FileSys := ⟨[(bs "/dir/one.h", bs "1"), (bs "/root.h", bs "2")]⟩
+#guard pathFS.lookup (bs "/dir/../root.h") == some (bs "2")
+#guard pathFS.lookup (bs "/missing/../root.h") == none
+#guard pathFS.lookup (bs "/root.h/../root.h") == none
+#guard pathFS.lookup (bs "/root.h/") == none
+#guard pathFS.lookup (bs "//dir///./../root.h") == some (bs "2")
+#guard pathFS.lookup (bs "/../../root.h") == some (bs "2")
+#guard pathFS.lookup [] == none
+#guard pathFS.lookup (bs "/dir/") == none
+#guard (⟨[(bs "/x", bs "1"), (bs "/x", bs "2")]⟩ : FileSys).lookup (bs "/x") == some (bs "2")
+#guard (⟨[(bs "/x", bs "1"), (bs "/x/y", bs "2")]⟩ : FileSys).lookup (bs "/x/y") == none
+#guard (⟨[(bs "/x/y", bs "1"), (bs "/x", bs "2")]⟩ : FileSys).lookup (bs "/x") == none
+#guard (⟨[(bs "/x/y", bs "1"), (bs "/x", bs "2")]⟩ : FileSys).lookup (bs "/x/y") == some (bs "1")
+
 /-! ### C11 §5.1.1.2 / §5.2.1.1: phase 1, once per physical file. -/
 #guard phase1 Tcc.cfgTcc (bs "??=??(??/??)??'??<??!??>??-") == bs "#[\\]^{|}~"
 #guard phase1 Tcc.cfgTcc (bs "???=????!??x??") == bs "?#??|??x??"

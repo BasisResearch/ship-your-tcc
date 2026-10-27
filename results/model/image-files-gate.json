@@ -1,0 +1,12 @@
+{
+  "gate": "scripts/check.sh --csem",
+  "result": "pass",
+  "log_sha256": "1cfd883bf712ef83932d565f5e0fe4db201e09503accee22ce6147b179f56e3e",
+  "source_pins": {
+    "Spec/ImageFiles.lean": "799f69aca3a56dbed62d3d7551650a20408bf851b80bf35c94235e0e773cb126",
+    "Spec/Pre/Types.lean": "9fdeead58f3ef26b59b7aead142712b8c7334dbc715e4fc57e00f8827fde37d2",
+    "Spec/Pre/Test.lean": "8156e19fbb94c01669f3dc91d52c01d35c7dc59d295c64b15e8b5afad9bbdf07",
+    "Tcc/ModelMain.lean": "c82788c988eeed9d0505a8642d6a42ab2bc0e9ae4dd4a91def34a6f50fca4806",
+    "lakefile.toml": "256073e71bd92ef44e3a4c34b6200041ea16e18dd42fe90fec83bcc9e46f8e2e"
+  }
+}

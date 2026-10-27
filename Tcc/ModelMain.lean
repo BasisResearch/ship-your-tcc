@@ -1,5 +1,6 @@
 import Tcc.Model.Main
 import Tcc.Model.Tie
+import Spec.ImageFiles
 
 /-!
 # tcc_model: the executable TccModel driver
@@ -50,15 +51,6 @@ partial def parseOpts (o : Opts) : List String → Except String Opts
   | "--ghost-out" :: v :: r => parseOpts { o with ghostOut := v } r
   | a :: _ => .error s!"unknown argument {a}"
 
-/-- every directory prefix of an absolute path ("" is the root) -/
-def dirsOf (p : String) : List String :=
-  let comps := (p.splitOn "/").filter (· ≠ "")
-  let rec go (acc : String) : List String → List String
-    | [] => []
-    | [_] => []
-    | c :: rest => let d := acc ++ "/" ++ c; d :: go d rest
-  go "" comps
-
 /-- the ghost AST as an S-expression -/
 partial def ghostSexp : GNode → String
   | .node k toks kids =>
@@ -70,8 +62,7 @@ def main (argv : List String) : IO UInt32 := do
   let o ← match parseOpts {} argv with
     | .ok o => pure o
     | .error e => IO.eprintln e; return 2
-  let mut files : Std.HashMap ByteArray ByteArray := {}
-  let mut dirs : Std.HashMap ByteArray Unit := {}
+  let mut entries : Array ImageFiles.Entry := #[]
   let mut total : Nat := 0
   let mut specs : Array String := #["/prog.c=" ++ o.prog] ++ o.extra
   for l in (← IO.FS.readFile o.fs).splitOn "\n" do
@@ -81,11 +72,8 @@ def main (argv : List String) : IO UInt32 := do
     | path :: host :: rest =>
       let host := "=".intercalate (host :: rest)
       let data ← IO.FS.readBinFile host
-      -- htif.c's fs_init: the first spec of a path wins (child lookup finds it)
-      if !files.contains path.toUTF8 then
-        files := files.insert path.toUTF8 data
-        total := total + data.size
-      for d in dirsOf path do dirs := dirs.insert d.toUTF8 ()
+      entries := entries.push (path.toUTF8.toList, data.data)
+      total := total + data.size
     | _ => pure ()
   let mut syms : Std.HashMap String UInt64 := {}
   for l in (← IO.FS.readFile o.syms).splitOn "\n" do
@@ -100,6 +88,9 @@ def main (argv : List String) : IO UInt32 := do
     else #["tcc", "-std=c11"] ++ args ++ #["/prog.c"] ++ o.largs ++ #["-run", "--"]
   -- the loop bound of every C loop: proportional to the input's size
   let fuel := 16 * total + 4096
+  let image := ImageFiles.views entries.toList
+  let files := image.files.foldl (fun m (p, d) => m.insert p d) ({} : Std.HashMap ByteArray ByteArray)
+  let dirs := image.dirs.foldl (fun m p => m.insert p ()) ({} : Std.HashMap ByteArray Unit)
   let st0 : TccSt := { fsFiles := files, fsDirs := dirs, imageSyms := syms, fuel := fuel,
                        fds := Array.replicate 3 none }
   let R := Tie.tie fuel

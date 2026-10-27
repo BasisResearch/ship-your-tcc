@@ -13,6 +13,7 @@ implementation-defined, the choice is a `PreCfg` field; `Spec/Pre/Tcc/Cfg.lean`
 sets them to tcc's choices.
 -/
 import Std.Data.TreeMap
+import Spec.ImageFiles
 
 namespace CSem.Pre
 
@@ -88,8 +89,8 @@ def normComponents (p : Bytes) : List Bytes :=
 
 /-- The contents of the file at `p`, if any. -/
 def lookup (fs : FileSys) (p : Bytes) : Option Bytes :=
-  let k := normComponents p
-  (fs.files.find? (fun e => normComponents e.1 = k)).map (·.2)
+  let image := ImageFiles.initial (fs.files.map (fun (name, data) => (name, data.toArray)))
+  (ImageFiles.lookup image p).map (·.toList)
 
 /-- Total size in bytes (part of the fuel bound). -/
 def size (fs : FileSys) : Nat := fs.files.foldl (fun n e => n + e.2.length) 0

@@ -76,7 +76,9 @@ Further C11 coverage remains work, not a change to the contract. Macro argument/
 agreements with patched tcc/GCC; 609/617 exact tcc corpus agreements, with
 the same eight residuals (results/pre/line-spec-repaired.md). The include
 filesystem also incorrectly normalizes away missing directories before lookup
-(results/pre/path-resolution.md); the lead is validating a repair that reuses CerbFS traversal and ordered initialization.
+(results/pre/path-resolution.md); the shared CerbFS traversal/initializer repair passes 12 guards and 11 independent
+image/model observations and is integrated after the full gate (results/model/image-files-review.md).
+A separate directory-read-as-EOF compiler defect is tracked in tasks/f2-include-read-error.md.
 
 Builds are serialized across these lanes, capped at 12 GB. The two inherited
 `results/review/*.json` handoffs are retained as dated records; all 345 hashes

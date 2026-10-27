@@ -1,0 +1,243 @@
+{
+  "runtime_key": "c8c7fb9983017ff114f74b254dda4763f4b5a32e6dbc8451975cc437bf0cd7de",
+  "pins": {
+    "Spec/ImageFiles.lean": "799f69aca3a56dbed62d3d7551650a20408bf851b80bf35c94235e0e773cb126",
+    "Spec/Pre/Types.lean": "9fdeead58f3ef26b59b7aead142712b8c7334dbc715e4fc57e00f8827fde37d2",
+    "Tcc/ModelMain.lean": "c82788c988eeed9d0505a8642d6a42ab2bc0e9ae4dd4a91def34a6f50fca4806",
+    "csem/lean_frontend/CerbFS.lean": "89ba22d5445f4c9f72965cf2c71a49fbfb07422b552f0350d7a44ce39579f7e6",
+    "c/src/htif.c": "cf2027a1d3da3107f821ea6eef1b992113d2b8b7124dda9d25cb4485ae47ae19",
+    "c/build/base.elf": "29caefcedd6d2ad94a46a660a97fc8a15dfefc46d34d06e0a38a4132d43949fd",
+    ".lake/build/bin/tcc_model": "8467d36c03fe3dacb90804832bdeb82c44f77c01ad4a82d87e26ac16ca1865c4",
+    "scripts/test_image_files.py": "52cf53d580a08a89e0dc520a875b62a26476f5885aed7f6d15be51c85f925aac"
+  },
+  "results": [
+    {
+      "case": "duplicate-last",
+      "include": "/same.h",
+      "entries": [
+        [
+          "/same.h",
+          "#define VALUE 1\n"
+        ],
+        [
+          "/same.h",
+          "#define VALUE 2\n"
+        ]
+      ],
+      "expected": "ran",
+      "reference": "ran",
+      "model": "ran",
+      "equal": true,
+      "model_seconds": 0.03926563262939453,
+      "source": "#include \"/same.h\"\n#if VALUE != 2\n#error wrong embedded contents\n#endif\nint main(void) { return 0; }\n",
+      "arena_sha256": "b0b1c02f46b3f3606ee477531b56be62705ff72ab015c285f27ef4a14804b3db"
+    },
+    {
+      "case": "duplicate-reversed",
+      "include": "/same.h",
+      "entries": [
+        [
+          "/same.h",
+          "#define VALUE 2\n"
+        ],
+        [
+          "/same.h",
+          "#define VALUE 1\n"
+        ]
+      ],
+      "expected": "ran",
+      "reference": "ran",
+      "model": "ran",
+      "equal": true,
+      "model_seconds": 0.03902101516723633,
+      "source": "#include \"/same.h\"\n#if VALUE != 1\n#error wrong embedded contents\n#endif\nint main(void) { return 0; }\n",
+      "arena_sha256": "b0b1c02f46b3f3606ee477531b56be62705ff72ab015c285f27ef4a14804b3db"
+    },
+    {
+      "case": "file-blocks-child",
+      "include": "/x/y.h",
+      "entries": [
+        [
+          "/x",
+          "#define VALUE 1\n"
+        ],
+        [
+          "/x/y.h",
+          "#define VALUE 2\n"
+        ]
+      ],
+      "expected": "exit",
+      "reference": "exit",
+      "model": "exit",
+      "equal": true,
+      "model_seconds": 0.033399105072021484,
+      "source": "#include \"/x/y.h\"\nint main(void) { return 0; }\n",
+      "reference_exit": 1,
+      "reference_console_hex": "2f70726f672e633a313a206572726f723a20696e636c7564652066696c6520272f782f792e6827206e6f7420666f756e640a",
+      "model_exit": 1,
+      "model_console_hex": "2f70726f672e633a313a206572726f723a20696e636c7564652066696c6520272f782f792e6827206e6f7420666f756e640a"
+    },
+    {
+      "case": "directory-blocks-file",
+      "include": "/x/y.h",
+      "entries": [
+        [
+          "/x/y.h",
+          "#define VALUE 2\n"
+        ],
+        [
+          "/x",
+          "#define VALUE 1\n"
+        ]
+      ],
+      "expected": "ran",
+      "reference": "ran",
+      "model": "ran",
+      "equal": true,
+      "model_seconds": 0.03737282752990723,
+      "source": "#include \"/x/y.h\"\n#if VALUE != 2\n#error wrong embedded contents\n#endif\nint main(void) { return 0; }\n",
+      "arena_sha256": "b0b1c02f46b3f3606ee477531b56be62705ff72ab015c285f27ef4a14804b3db"
+    },
+    {
+      "case": "directory-not-file",
+      "include": "/x",
+      "entries": [
+        [
+          "/x/y.h",
+          "#define VALUE 2\n"
+        ],
+        [
+          "/x",
+          "#define VALUE 1\n"
+        ]
+      ],
+      "expected": "ran",
+      "reference": "ran",
+      "model": "ran",
+      "equal": true,
+      "model_seconds": 0.03808188438415527,
+      "source": "#include \"/x\"\n#ifdef VALUE\n#error directory was replaced by file contents\n#endif\nint main(void) { return 0; }\n",
+      "arena_sha256": "b0b1c02f46b3f3606ee477531b56be62705ff72ab015c285f27ef4a14804b3db"
+    },
+    {
+      "case": "missing-parent",
+      "include": "/missing/../root.h",
+      "entries": [
+        [
+          "/root.h",
+          "#define VALUE 2\n"
+        ]
+      ],
+      "expected": "exit",
+      "reference": "exit",
+      "model": "exit",
+      "equal": true,
+      "model_seconds": 0.0362849235534668,
+      "source": "#include \"/missing/../root.h\"\nint main(void) { return 0; }\n",
+      "reference_exit": 1,
+      "reference_console_hex": "2f70726f672e633a313a206572726f723a20696e636c7564652066696c6520272f6d697373696e672f2e2e2f726f6f742e6827206e6f7420666f756e640a",
+      "model_exit": 1,
+      "model_console_hex": "2f70726f672e633a313a206572726f723a20696e636c7564652066696c6520272f6d697373696e672f2e2e2f726f6f742e6827206e6f7420666f756e640a"
+    },
+    {
+      "case": "file-parent",
+      "include": "/root.h/../root.h",
+      "entries": [
+        [
+          "/root.h",
+          "#define VALUE 2\n"
+        ]
+      ],
+      "expected": "exit",
+      "reference": "exit",
+      "model": "exit",
+      "equal": true,
+      "model_seconds": 0.030555009841918945,
+      "source": "#include \"/root.h/../root.h\"\nint main(void) { return 0; }\n",
+      "reference_exit": 1,
+      "reference_console_hex": "2f70726f672e633a313a206572726f723a20696e636c7564652066696c6520272f726f6f742e682f2e2e2f726f6f742e6827206e6f7420666f756e640a",
+      "model_exit": 1,
+      "model_console_hex": "2f70726f672e633a313a206572726f723a20696e636c7564652066696c6520272f726f6f742e682f2e2e2f726f6f742e6827206e6f7420666f756e640a"
+    },
+    {
+      "case": "trailing-slash",
+      "include": "/root.h/",
+      "entries": [
+        [
+          "/root.h",
+          "#define VALUE 2\n"
+        ]
+      ],
+      "expected": "exit",
+      "reference": "exit",
+      "model": "exit",
+      "equal": true,
+      "model_seconds": 0.0335545539855957,
+      "source": "#include \"/root.h/\"\nint main(void) { return 0; }\n",
+      "reference_exit": 1,
+      "reference_console_hex": "2f70726f672e633a313a206572726f723a20696e636c7564652066696c6520272f726f6f742e682f27206e6f7420666f756e640a",
+      "model_exit": 1,
+      "model_console_hex": "2f70726f672e633a313a206572726f723a20696e636c7564652066696c6520272f726f6f742e682f27206e6f7420666f756e640a"
+    },
+    {
+      "case": "existing-parent",
+      "include": "/dir/../root.h",
+      "entries": [
+        [
+          "/dir/a.h",
+          "#define VALUE 1\n"
+        ],
+        [
+          "/root.h",
+          "#define VALUE 2\n"
+        ]
+      ],
+      "expected": "ran",
+      "reference": "ran",
+      "model": "ran",
+      "equal": true,
+      "model_seconds": 0.03838944435119629,
+      "source": "#include \"/dir/../root.h\"\n#if VALUE != 2\n#error wrong embedded contents\n#endif\nint main(void) { return 0; }\n",
+      "arena_sha256": "b0b1c02f46b3f3606ee477531b56be62705ff72ab015c285f27ef4a14804b3db"
+    },
+    {
+      "case": "repeated-dot",
+      "include": "//dir///./../root.h",
+      "entries": [
+        [
+          "/dir/a.h",
+          "#define VALUE 1\n"
+        ],
+        [
+          "/root.h",
+          "#define VALUE 2\n"
+        ]
+      ],
+      "expected": "ran",
+      "reference": "ran",
+      "model": "ran",
+      "equal": true,
+      "model_seconds": 0.03872847557067871,
+      "source": "#include \"//dir///./../root.h\"\n#if VALUE != 2\n#error wrong embedded contents\n#endif\nint main(void) { return 0; }\n",
+      "arena_sha256": "b0b1c02f46b3f3606ee477531b56be62705ff72ab015c285f27ef4a14804b3db"
+    },
+    {
+      "case": "root-parent",
+      "include": "/../../root.h",
+      "entries": [
+        [
+          "/root.h",
+          "#define VALUE 2\n"
+        ]
+      ],
+      "expected": "ran",
+      "reference": "ran",
+      "model": "ran",
+      "equal": true,
+      "model_seconds": 0.03775429725646973,
+      "source": "#include \"/../../root.h\"\n#if VALUE != 2\n#error wrong embedded contents\n#endif\nint main(void) { return 0; }\n",
+      "arena_sha256": "b0b1c02f46b3f3606ee477531b56be62705ff72ab015c285f27ef4a14804b3db"
+    }
+  ],
+  "reference": "fast RV64I interpreter; successful arenas and refusals reported separately"
+}
