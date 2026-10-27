@@ -1,0 +1,12 @@
+{
+  "source_checkout": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin",
+  "inputs": {
+    "scripts/gen_union_suite.py": "7ccbdd27ec4e54c29840bbc5105f11e2a316fad809de66213efe595bc19125de"
+  },
+  "source_projection_identical": true,
+  "command": [
+    "python3",
+    "build/designator-union-src/scripts/gen_union_suite.py"
+  ],
+  "generated_source_sha256": "b4e66a6e2103597ab3096436313fff421544f18d424814a708e6d17b24849a2c"
+}

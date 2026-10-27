@@ -1,0 +1,172 @@
+{
+  "build_request": "designator-33736880572f934f0750df9743e31751045f5a138e8d73fb4f337c2b95b86675",
+  "full_gate_request": "designator-full-gate-1fa8a520f19a192638196763e00b83a741f8c51f62f7aca8327c6a554e48ce75",
+  "focused": {
+    "same": 62,
+    "same-refusal": 8
+  },
+  "broad": {
+    "same": 1306,
+    "same-refusal": 498,
+    "unsupported-asm": 7
+  },
+  "csem": {
+    "semantic-gap": 6,
+    "same": 52
+  },
+  "sail": [
+    {
+      "name": "minimal",
+      "source": "results/repro/tcc_designator_continuation.c",
+      "source_sha256": "207d48f4e803b9a1280ef8170b95b7252b26fd19cb234b17abb0fe1d675a4b77",
+      "elf_sha256": "a483fff5bca90ddf9ede45080d79ea5c62aad3c6b737a091f86bd1e447909a28",
+      "meta": {
+        "compile_steps": "3337665",
+        "program_steps": "102",
+        "steps": "3337792"
+      },
+      "stdout_hex": "",
+      "stderr": "work: /Users/kirancodes/tmp/tcc_sail.TkHiEG\n",
+      "command": [
+        "timeout",
+        "900",
+        "scripts/run_tcc_sail.sh",
+        "results/repro/tcc_designator_continuation.c"
+      ],
+      "environment": {
+        "KEEP_WORK": "1",
+        "ORACLE_META": "build/designator-minimal-final.meta"
+      },
+      "emulator_sha256": "8989bde8a95345de658fb9c9111e15ce4a5561bc747dab28f798080f0778120b"
+    },
+    {
+      "name": "nested",
+      "source": "build/designator-focused/designator_nested_union_static.c",
+      "source_sha256": "4fd2fed172f4c8ac88cc8480288585695e1aeb55a6100386b651624c8b976c95",
+      "elf_sha256": "a77b68558e1dbed3632681b2d004af6b00764ecbecdc1c64139b3c80133810ec",
+      "meta": {
+        "compile_steps": "3366665",
+        "program_steps": "112",
+        "steps": "3366802"
+      },
+      "stdout_hex": "",
+      "stderr": "work: /Users/kirancodes/tmp/tcc_sail.DyV70e\n",
+      "command": [
+        "timeout",
+        "900",
+        "scripts/run_tcc_sail.sh",
+        "build/designator-focused/designator_nested_union_static.c"
+      ],
+      "environment": {
+        "KEEP_WORK": "1",
+        "ORACLE_META": "build/designator-nested-final.meta"
+      },
+      "emulator_sha256": "8989bde8a95345de658fb9c9111e15ce4a5561bc747dab28f798080f0778120b"
+    },
+    {
+      "name": "suite",
+      "source": "build/designator-union-src/csem/tests/union-init-batch.c",
+      "source_sha256": "b4e66a6e2103597ab3096436313fff421544f18d424814a708e6d17b24849a2c",
+      "elf_sha256": "99590fb732c45dc93058cb9f4367f3502ddc46f4fab018cdbf722c6c4eeab950",
+      "meta": {
+        "compile_steps": "6402061",
+        "program_steps": "5857",
+        "steps": "6407943"
+      },
+      "stdout_hex": "",
+      "stderr": "work: /Users/kirancodes/tmp/tcc_sail.Q1b2A2\n",
+      "command": [
+        "timeout",
+        "900",
+        "scripts/run_tcc_sail.sh",
+        "build/designator-union-src/csem/tests/union-init-batch.c"
+      ],
+      "environment": {
+        "KEEP_WORK": "1",
+        "ORACLE_META": "build/designator-suite-final.meta"
+      },
+      "emulator_sha256": "8989bde8a95345de658fb9c9111e15ce4a5561bc747dab28f798080f0778120b"
+    }
+  ],
+  "pins": {
+    "Tcc/Model/Gen7.lean": "586e377089d45c5e98df738cc6b0ffb736d000b3f7baf20a46d0b2508f00aa69",
+    "patches/0003-tcc-c11.patch": "44bec955d1bf18dbfbb3901347a9d9f1791101c375e6aacf40544f8ea371e86b",
+    "scripts/gen_designator_fixtures.py": "6bcd1cc11907625eee5abf95943bfd32a01c87a02147776bbba06cb5a57147d4",
+    "scripts/test_tcc_c11.py": "c7d14cb277f0cccc318d7b339c3c6af05b871ba5da915b1e972390655ef4c5ff",
+    "scripts/test_designator_csem.py": "4fc77f385fa11305515ee124b6494fec68ac1736d0202eb1c8e6d8113143f98d",
+    "scripts/model_diff.py": "6fab1c29ac671896b91fa6e75f064a78c871b77b3f582e163dcaf4aaf84f7bb9",
+    "scripts/ref_arena.sh": "f3978ba20c9e0ff651fe082e123c191a1cf28cb7e336e243a3c308ef4eb67e55",
+    "scripts/gen_model_corpus.py": "0ce2abe25b871f32e546c6f5cd35a3ac91050e248749acb0cb23d158128b28da",
+    ".lake/build/bin/tcc_model": "403ee9b6e04ce560dd38ab18acef331e07aab8afda8eb5aa5e4bb9f1192d5074",
+    "c/build/base.elf": "28429612fba6612e240bbde340ffb0c9a8b95cc7e9749bf723983da0fe409cba"
+  },
+  "fixtures": {
+    "build/designator-focused/designator_anonymous_auto.c": "f24439c09d67bc564caed6b43e78d4d1c3fd091d26218dc5d0d7a6c6618c4230",
+    "build/designator-focused/designator_anonymous_static.c": "caf4f77406265d21e62052ff4d19464380944fb5ba2e69b1be226c24ced1c485",
+    "build/designator-focused/designator_array_designator_auto.c": "9478385693e02b299a9c77304913517ab3018a9162c9a9799820f9f40a1dfef3",
+    "build/designator-focused/designator_array_designator_static.c": "b93b51e20a958dd2a16bf79e1702dc5160b76d6b5f54257e4103b5e74ae3f97d",
+    "build/designator-focused/designator_braced_reset_auto.c": "564b4cd6e364f1c3273f3574e34e378beac9b52924dfcd95244f56246a9d381c",
+    "build/designator-focused/designator_braced_reset_static.c": "ae200e9af1de2e3ae49e67cd80d48a8de8a2a1680201041df822b79bef62f9f9",
+    "build/designator-focused/designator_braced_union_auto.c": "986552b248661957c9886ebc4cf5b3e0bc01fe2e3f5cb70d93be4b718771fccb",
+    "build/designator-focused/designator_braced_union_static.c": "1f5881a782f1b5eb1031e38193c1a57ebe62d8385f9a7ea87976f8256f9f64ef",
+    "build/designator-focused/designator_deep_auto.c": "e62492d17c8f672819d274241940800cd287d3e4a62e8d68cdfe341637da6b26",
+    "build/designator-focused/designator_deep_static.c": "68edcb0e432842ac762d9795eccbd0aba5767eaedb7b9e19f369cbf0e7854abd",
+    "build/designator-focused/designator_elided_auto.c": "e21581068d91916ac0e41e951b4cd47030117fef37531280abed16125f6db7bd",
+    "build/designator-focused/designator_elided_static.c": "85a9a03d3fcc728769623a425291aa8d83d6e52bdbefdb71c4d8174c14d2588a",
+    "build/designator-focused/designator_explicit_auto.c": "e082aa945567c671c384ce3ece438d29dc41bda440055d29cf5e16f08f336630",
+    "build/designator-focused/designator_explicit_static.c": "d3189bc5c53b0e221ee3c88bcae01b13d2c4d0df4e09b6e85d3d26b31e0ac89e",
+    "build/designator-focused/designator_incomplete_auto.c": "3bef1baa2fce2002b73a71aa9d4c97d61f23016f3c46a859a94dcb253a725341",
+    "build/designator-focused/designator_incomplete_matrix_auto.c": "ac46be101318078fc4ff3aee99459c2efb8c45236681c44a0a8d9d953698b6ae",
+    "build/designator-focused/designator_incomplete_matrix_static.c": "2e5e3b31eb1bfa14b25eca80c6fac22d1433b6b8739c4694b71455fedcbf88e2",
+    "build/designator-focused/designator_incomplete_static.c": "b86b064875b37d410c5206aac6e0a807fdf24ce8f19208692a018dfc5b67158f",
+    "build/designator-focused/designator_matrix_auto.c": "da62b29335e2a6471242e479507cfc524c4d9dd01f2587f983cd25831206b157",
+    "build/designator-focused/designator_matrix_static.c": "5e0ffaabdb4b33677a645f3f8c28faf9ecbcf6320ab3bb28d2d402560e96fa98",
+    "build/designator-focused/designator_minimal_auto.c": "261c8eb217959f69ebe8b9dacddd56287d43eec499e95f9d8e31fc2ab5fb3b4c",
+    "build/designator-focused/designator_minimal_static.c": "34be83053aed737c41001908cfca07e1575a2b8948a6d024a30ab6c8ce8beb77",
+    "build/designator-focused/designator_nested_union_auto.c": "18f84cbd050e544132eb8a5a11dbeca7c9c242b157573b8d631a9b154fbfe1b6",
+    "build/designator-focused/designator_nested_union_static.c": "4fd2fed172f4c8ac88cc8480288585695e1aeb55a6100386b651624c8b976c95",
+    "build/designator-focused/designator_outer_brace_boundary_auto.c": "1ab169a57d7c46ed536fe6ab19fbcc27ea0f73e2a97e38eb10eaf0760259046b",
+    "build/designator-focused/designator_outer_brace_boundary_static.c": "cf7cf385e710f5c07411d581d4ea291743f51d2eca333f509ab149905d3c9fe5",
+    "build/designator-focused/designator_outer_designator_auto.c": "c5f7c4fe77e8bbe9b546e98edc522beedbaa5600c9c623ec9f919168871bc0ff",
+    "build/designator-focused/designator_outer_designator_static.c": "931d002063f666035c7beb5613a1c7f6074f85dfaf95be7b538b769dcb992b24",
+    "build/designator-focused/designator_padding_auto.c": "a88c683d2dcff140b1e52b04a743264ffa8c3c4a895548d26d40e55d3ba5c521",
+    "build/designator-focused/designator_padding_static.c": "eae041320d303aac351a13f4dd5dda3cf5f8ddd3b387a27d7498baa029c3a0f7",
+    "build/designator-focused/designator_partial_braces_auto.c": "b8a3f762eaa381d3a66595efdd372bc61441ae600dc5bc751ab3e4ff4be633e7",
+    "build/designator-focused/designator_partial_braces_static.c": "0cfcfd7b1db2bbdf1de5f9d79dff126361f8dd2a451dd16f46c66da8fb8b1458",
+    "build/designator-focused/designator_pointer_auto.c": "96ea7d684862487b9e0c983120d8164275ea57ef982102a60f33225c2a297f88",
+    "build/designator-focused/designator_pointer_static.c": "3b11216a819a96d4931504d31612013900ed5bb65f4e5f70360aba72019609d4",
+    "build/designator-focused/designator_redesignate_auto.c": "262aa4165b0b01364d062783639d60ddd530bd1032bc1a3a9909aef3aee46c42",
+    "build/designator-focused/designator_redesignate_static.c": "57cc3b02c07e4607b37e52a769bddf92f6b067d553e2f76294905d2c410af69c",
+    "build/designator-focused/designator_reverse_auto.c": "dfa861b2558ca9168fb6343e94c22550ae64e169bb406a4e941110cb1d32d0e2",
+    "build/designator-focused/designator_reverse_static.c": "11739551ec68595f87e9db95a425459f7cebfcb4fb9daaa6a0bea47512e0d6d6",
+    "build/designator-focused/designator_scalar_braces_auto.c": "4569c372163a6efe5b781f91bafbada543872e03ea91403e8b7b23d10827c519",
+    "build/designator-focused/designator_scalar_braces_static.c": "06d5299d996fbfc4fa8026e53fe9bcc19f971ad485e7f44ca6b6210a766daa90",
+    "build/designator-focused/designator_string_auto.c": "628bd96f8adcc57e4d98da0d2734cc294477f09aabbfd5535e064a2ca2ce7443",
+    "build/designator-focused/designator_string_scalar_auto.c": "324efcb27a7dceb1fbc00399c9f5d5f734ee1598fc240b5ef7d2d065d0bba1f4",
+    "build/designator-focused/designator_string_scalar_static.c": "3821353a251cc9794dbe8c7882164c427087067ad631cb89cf69aefb3a56a2be",
+    "build/designator-focused/designator_string_static.c": "ccd341428c4b8933668048554d7f0ec1a904d5543702331c1a43d8dbcc117e0a",
+    "build/designator-focused/designator_struct_path_auto.c": "387462943d23285e7709e87a782ede27d272f5527cfb5932e6dea54dfd04bc47",
+    "build/designator-focused/designator_struct_path_static.c": "205bdd6348ff54a905cfd31d578a4c144add8c1802c51e4bde6879f383dd93ee",
+    "build/designator-focused/designator_trailing_padding_auto.c": "a1ff4713091712821ae2be41beff2e437bc8c1736ef48527370be8ec6fd5e52a",
+    "build/designator-focused/designator_trailing_padding_static.c": "30b777b4f141eff2a26adb4a5af6b9d5727fd84acab4536f89502580bbacd011",
+    "build/designator-focused/designator_union_array_auto.c": "da745d81f0688c0cd7b65ab321fe01c53bbb440200c3135638d3ca5d0ba94618",
+    "build/designator-focused/designator_union_array_static.c": "359362ad8e98fd01d1392dc1c9dc57af325179d466b26309b877a15d0c1bce51",
+    "build/designator-focused/designator_union_reset_string_auto.c": "28ccae285d2bb237111e2740f35ef6e8fbbd902e928f4ee702e62337052668fd",
+    "build/designator-focused/designator_union_reset_string_static.c": "f0ea9f2e5fc311bba31f62563ede84c552327776c5ec132bf2bfa77440bfef1e",
+    "build/designator-focused/designator_union_same_auto.c": "c3a4d071c4ee32652e8de5320588b2839d8d013356a233b3aa5d7d39d6b8f8c7",
+    "build/designator-focused/designator_union_same_static.c": "c7ec87aa46f462cfcb9d46ec27253f9fdce81a0183f3e1a56ce9945d50e3d828",
+    "build/designator-focused/designator_union_siblings_auto.c": "e98743a244cdda066de602364f915185c2681814feda403eda9f9fdf53982eea",
+    "build/designator-focused/designator_union_siblings_static.c": "49141c464982e089af085052b526fbb4e53893b554e3a31945263b412680a3c9",
+    "build/designator-focused/designator_union_switch_auto.c": "acb8ac9055f033a8bd9aa972eda573c24eea9e898947ef0a3e989171ecf2cd72",
+    "build/designator-focused/designator_union_switch_static.c": "9c1f7234438be7fcbb422b9c0ae39203d84923ab471b99472b4af5bf2460cd62",
+    "build/designator-focused/invalid_designator_bound.c": "aecd7403558aa24ef0af8993eff037b25a6a69846bf65b3b32e1ed5ed4190bb7",
+    "build/designator-focused/invalid_designator_excess.c": "de78d2a0d9041449d0e6a2a35c2ea4599a8dff866d5061765215fe591d99592e",
+    "build/designator-focused/invalid_designator_field.c": "0fadd40de4721452858b66a82150a2cbf7b150e67e8ab0939dbf4cc8f8db858b",
+    "build/designator-focused/invalid_designator_missing_value.c": "6760921fd15ce817826393a9e90ce7e0902ecf4799f364daa139f1dea14fdc75",
+    "build/designator-focused/invalid_designator_negative.c": "a67a1bf233c2f975fe7284497e29648ae63060481b87984c840b87e9d1f7fd40",
+    "build/designator-focused/invalid_designator_scalar_array.c": "6cd15c646cf7e07b65ce3489ec43f191e334803bdf989f0bf6a1c536a3fce487",
+    "build/designator-focused/invalid_designator_scalar_field.c": "7ec32e8111093a9ad0294450f5c4d4fcebde2f7f56c0b9395b106ba480e1b663",
+    "build/designator-focused/invalid_designator_union_excess.c": "86a90dc8b787b107b561c46b006679e9843b4b71be40f3c30dfb0e9c541773ea"
+  },
+  "inventory_sha256": "3c7705b8b483101252a7dd7f710a33916b7132b2b1bf6a5eb87c789a0fbf80d2"
+}

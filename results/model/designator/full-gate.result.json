@@ -1,0 +1,11 @@
+{
+  "request": "designator-full-gate-1fa8a520f19a192638196763e00b83a741f8c51f62f7aca8327c6a554e48ce75",
+  "request_id": "designator-full-gate-1fa8a520f19a192638196763e00b83a741f8c51f62f7aca8327c6a554e48ce75",
+  "exit": 0,
+  "log": "build/worker-build-designator-full-gate-1fa8a520f19a192638196763e00b83a741f8c51f62f7aca8327c6a554e48ce75.log",
+  "command": [
+    "scripts/check.sh",
+    "--csem"
+  ],
+  "source_hashes_verified": true
+}

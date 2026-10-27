@@ -1,0 +1,30 @@
+Running as unit: run-p3862467-i464644403.scope; invocation ID: 5912f3e4301148c5ad6776ac11238a03
+✔ [56/64] Built Tcc.Model.Gen7 (2.1s)
+⚠ [57/64] Built Tcc.Model.Gen8 (2.7s)
+warning: Tcc/Model/Gen8.lean:268:47: `String.get` has been deprecated: Use `String.Pos.Raw.get` instead
+
+Note: The updated constant is in a different namespace. Dot notation may need to be changed (e.g., from `x.get` to `String.Pos.Raw.get x`).
+✔ [59/64] Built Tcc.Model.Tie (443ms)
+⚠ [61/64] Built Tcc.ModelMain (585ms)
+warning: Tcc/ModelMain.lean:26:33: `String.mk` has been deprecated: Use `String.ofList` instead
+warning: Tcc/ModelMain.lean:69:9: `String.trim` has been deprecated: Use `String.trimAscii` instead
+
+Note: The updated constant has a different type:
+  String → String.Slice
+instead of
+  String → String
+warning: Tcc/ModelMain.lean:69:46: `String.trim` has been deprecated: Use `String.trimAscii` instead
+
+Note: The updated constant has a different type:
+  String → String.Slice
+instead of
+  String → String
+warning: Tcc/ModelMain.lean:80:13: `String.trim` has been deprecated: Use `String.trimAscii` instead
+
+Note: The updated constant has a different type:
+  String → String.Slice
+instead of
+  String → String
+✔ [63/64] Built Tcc.Model.Gen7:c.o (7.9s)
+✔ [64/64] Built tcc_model:exe (3.3s)
+Build completed successfully (64 jobs).

@@ -18,6 +18,7 @@ import subprocess
 import sys
 import time
 
+from gen_designator_fixtures import generate as generate_designator_fixtures
 from gen_line_fixtures import generate as generate_line_fixtures
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -71,6 +72,8 @@ def main():
     xpack = next((Path.home() / 'toolchains').glob('xpack-riscv-none-elf-gcc-15.2.0-*/bin'))
     cross += ['-I' + str(xpack.parent / 'riscv-none-elf/include')]
     cases = dict(CASES)
+    designator_cases, designator_invalid = generate_designator_fixtures(OUT / "designator")
+    cases.update(designator_cases)
     cases.update(generate_line_fixtures(OUT / 'line'))
     # Raw nonprinting bytes must stay raw through each stringification.
     raw = OUT / 'stringize_raw.c'
@@ -113,7 +116,8 @@ def main():
         if actual != expected.encode():
             raise RuntimeError(f'{f}: host output {actual!r}, expected {expected!r}')
         exe = OUT / (name + '.gcc')
-        run(['gcc', '-std=c11', '-w', f, '-o', exe])
+        gcc_flags = ['-pedantic-errors'] if f in designator_cases else []
+        run(['gcc', '-std=c11', '-w'] + gcc_flags + [f, '-o', exe])
         if run([exe]).stdout != actual:
             raise RuntimeError(f'{f}: gcc differs')
         pp = OUT / (name + '.i')
@@ -133,6 +137,11 @@ def main():
         for compiler in (tcc, cross):
             if run(compiler + ['-c', f, '-o', OUT / 'invalid.o'], expected=None).returncode == 0:
                 raise RuntimeError(f'accepted invalid identifier {ident}')
+    for f in designator_invalid:
+        for compiler in (tcc, cross, ['gcc', '-std=c11', '-pedantic-errors']):
+            result = run(compiler + ['-c', f, '-o', OUT / 'invalid.o'], expected=None)
+            if result.returncode == 0 or not result.stderr:
+                raise RuntimeError(f'accepted invalid initializer or missing diagnostic: {f}')
     # tcc's implementation pragma expands arguments after its first token;
     # GCC chooses a different pragma-pack grammar. Check _Pragma equivalence
     # to tcc's existing #pragma behavior independently of the GCC oracle.
@@ -196,7 +205,7 @@ def main():
         # The two-stage harness tests generated code; full images also execute
         # the compiler changes on Sail. line_include needs its sibling header
         # in the image; that behavior is covered above on host and cross.
-        run(['scripts/test_tcc_patch.sh'] + list(CASES))
+        run(['scripts/test_tcc_patch.sh'] + list(CASES) + list(designator_cases))
         full = list(CASES)[:7] + ['results/repro/tcc_pragma_macro_operand.c']
         # run_tcc_sail.sh embeds only /prog.c; inline the fixture header for
         # this full-compiler probe (host/cross/model also test the include).
@@ -205,19 +214,21 @@ def main():
             b'??=include \"tcc_pp_trigraphs??-.h\"',
             (ROOT / 'results/repro/tcc_pp_trigraphs~.h').read_bytes()))
         full.append(str(standalone))
+        full += [f for f in designator_cases if Path(f).stem in
+                 ('designator_minimal_static', 'designator_nested_union_static')]
         def full_image(f):
             meta = OUT / (Path(f).stem + '.meta')
             meta.unlink(missing_ok=True)
             p = run(['scripts/run_tcc_sail.sh', f],
                     env={**os.environ, 'ORACLE_META': str(meta)})
-            expected = CASES.get(f, 'trigraphs 0\n')
+            expected = cases.get(f, 'trigraphs 0\n')
             if p.stdout != expected.encode():
                 raise RuntimeError(f'{f}: full image differs: {p.stdout!r}')
             print(f'PASS tcc -run/Sail {f}', flush=True)
         # Leave room for the other worker; each Sail process is about 120 MB.
         with ThreadPoolExecutor(max_workers=3) as pool:
             list(pool.map(full_image, full))
-    print(f'C11: {len(cases)} positive cases, {len(bad)} negative cases; all passed')
+    print(f'C11: {len(cases)} positive cases, {len(bad) + len(designator_invalid)} negative cases; all passed')
 
 if __name__ == '__main__':
     OUT.mkdir(parents=True, exist_ok=True)

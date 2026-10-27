@@ -202,3 +202,21 @@
 - This union continuation's `git add` also hit read-only worktree Git metadata
   (`.git/worktrees/sol-csem-repin/index.lock`). Use the unique frozen commit
   request for lead review; no alternate index/object-store workaround.
+- Nested-designator continuation (2026-10-27): saving only the outer field,
+  or only a flattened byte offset, loses which array/struct/union siblings
+  remain. Keep a named path scoped to the current explicit brace list;
+  anonymous members need their containing frames too. Brace-elided recursive
+  calls must return a subsequent designator to that explicit list.
+- Continuation controls: `-std=c11` in tcc retains its inherited GNU optional
+  `=` syntax, so a missing-equals control is accepted by the existing extension
+  policy. Use a missing-value control for the required invalid-input matrix;
+  no diagnostic was suppressed or policy changed. A further valid trailing
+  unnamed-bitfield probe initially refused: advance past padding before
+  deciding whether an unbraced aggregate is exhausted.
+- Continuation harness setup: `model_diff.py all` fails early on absent
+  gitignored corpora in a fresh worktree. Generate the local corpus and name
+  populated groups explicitly; this setup error is not a compiler refusal.
+  Direct CSem runs require `--cabs-json` and `LEAN_ABORT_ON_PANIC=1`; an initial
+  wrong export switch and then the missing flag produced harness errors,
+  never semantic agreements. The corrected separate-stream captures retain
+  anonymous-member and unnamed-bitfield CSem gaps independently of GCC.

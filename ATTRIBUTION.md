@@ -118,3 +118,10 @@ fixtures retain the upstream refusal witness shapes and reuse our existing
 `c/tests/c11/union.c` through `scripts/gen_union_c11_observation.py`. The local
 changes and tests follow the surrounding BSD-2-Clause license; no library
 machine proofs were copied or claimed instruction-identical in this task.
+
+The initializer-continuation validation reuses the reviewed CSem union-repair
+suite from `sol-csem-repin` (`scripts/gen_union_suite.py` and its 33 conforming
+`csem/tests/union-init` inputs) in an isolated local build directory. The
+unchanged generator produces the Sail input; no CSem sources or proof routines
+are imported. See `results/model/designator-continuation.md` for source hashes
+and the separate GCC / repaired OCaml / repaired Lean observations.

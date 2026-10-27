@@ -57,7 +57,7 @@ index 864a4e3..ec03c3f 100644
  ST_FUNC void preprocess_end(TCCState *s1);
  ST_FUNC void tccpp_new(TCCState *s);
 diff --git a/tccgen.c b/tccgen.c
-index 1b63467..f43a003 100644
+index 1b63467..270b42e 100644
 --- a/tccgen.c
 +++ b/tccgen.c
 @@ -118,10 +118,17 @@ static struct scope {
@@ -203,23 +203,290 @@ index 1b63467..f43a003 100644
  static void decl_design_flex(init_params *p, Sym *ref, int index)
  {
      if (ref == p->flex_array_ref) {
-@@ -7763,6 +7865,7 @@ static int decl_designator(init_params *p, CType *type, unsigned long c,
-         struct_field:
-             next();
- 	    f = find_field(type, l, &cumofs);
-+            init_field_path(p, type, f, c, flags);
-             if (cur_field)
-                 *cur_field = f;
- 	    type = &f->type;
-@@ -7795,6 +7898,7 @@ static int decl_designator(init_params *p, CType *type, unsigned long c,
- 	        *cur_field = f = f->next;
-             if (!f)
-                 tcc_error("too many initializers");
-+            init_union_select(p, type, f, c, flags);
- 	    type = &f->type;
-             c += f->c;
+@@ -7708,100 +7810,181 @@ static void decl_design_flex(init_params *p, Sym *ref, int index)
+         tcc_error("flexible array has zero size in this context");
+ }
+ 
+-/* t is the array or struct type. c is the array or struct
+-   address. cur_field is the pointer to the current
+-   field, for arrays the 'c' member contains the current start
+-   index.  'flags' is as in decl_initializer.
+-   'al' contains the already initialized length of the
+-   current container (starting at c).  This returns the new length of that.  */
+-static int decl_designator(init_params *p, CType *type, unsigned long c,
+-                           Sym **cur_field, int flags, int al)
++/* One frame per containing aggregate, scoped to its explicit brace list.
++   The final frame selects the subobject to initialize next. */
++typedef struct {
++    CType type;
++    unsigned long addr;
++    Sym *field;
++    int index;
++} InitCursor;
++
++typedef struct {
++    InitCursor *data;
++    int len, capacity;
++} InitPath;
++
++static void init_path_push(InitPath *path, CType *type, unsigned long c)
+ {
+-    Sym *s, *f;
+-    int index, index_last, align, l, nb_elems, elem_size;
+-    unsigned long corig = c;
++    InitCursor *q;
++    CType value = *type;
++    if (path->len == path->capacity) {
++        path->capacity = path->capacity ? path->capacity * 2 : 4;
++        path->data = tcc_realloc(path->data, path->capacity * sizeof *q);
++    }
++    q = &path->data[path->len++];
++    q->type = value;
++    q->addr = c;
++    q->field = (value.t & VT_BTYPE) == VT_STRUCT ? value.ref->next : NULL;
++    q->index = 0;
++}
++
++static CType *init_cursor_type(InitCursor *q)
++{
++    return q->type.t & VT_ARRAY ? pointed_type(&q->type) : &q->field->type;
++}
++
++static unsigned long init_cursor_addr(InitCursor *q)
++{
++    int align;
++    return q->addr + (q->type.t & VT_ARRAY
++        ? q->index * type_size(pointed_type(&q->type), &align) : q->field->c);
++}
+ 
+-    elem_size = 0;
+-    nb_elems = 1;
++/* Unnamed integer bitfields occupy layout, not initializer positions. */
++static Sym *init_skip_padding(Sym *f)
++{
++    while (f && (f->v & SYM_FIRST_ANOM) && is_integer_btype(f->type.t & VT_BTYPE))
++        f = f->next;
++    return f;
++}
+ 
+-    if (flags & DIF_HAVE_ELEM)
+-        goto no_designator;
++static void init_path_next(init_params *p, InitPath *path)
++{
++    InitCursor *q;
++    while (path->len) {
++        q = &path->data[path->len - 1];
++        if (q->type.t & VT_ARRAY) {
++            ++q->index;
++            if (q->type.ref == p->flex_array_ref || q->index < q->type.ref->c)
++                return;
++        } else {
++            q->field = q->type.ref->type.t == VT_UNION ? NULL : init_skip_padding(q->field->next);
++            if (q->field)
++                return;
++        }
++        --path->len;
++    }
++}
+ 
+-    if (gnu_ext && tok >= TOK_UIDENT) {
+-        l = tok, next();
+-        if (tok == ':')
+-            goto struct_field;
+-        unget_tok(l);
++/* find_field returns a flattened anonymous member; retain its containers. */
++static void init_path_field(init_params *p, InitPath *path, Sym *field, int flags)
++{
++    InitCursor *q = &path->data[path->len - 1];
++    Sym *s;
++    for (s = q->type.ref->next; s; s = s->next) {
++        if (s == field || ((s->type.t & VT_BTYPE) == VT_STRUCT
++            && s->v >= (SYM_FIRST_ANOM | SYM_FIELD)
++            && init_field_path(p, &s->type, field, q->addr + s->c,
++                               flags | DIF_SIZE_ONLY))) {
++            q->field = s;
++            init_union_select(p, &q->type, s, q->addr, flags);
++            if (s != field) {
++                unsigned long c = q->addr + s->c;
++                init_path_push(path, &s->type, c);
++                init_path_field(p, path, field, flags);
++            }
++            return;
++        }
+     }
++}
+ 
+-    /* NOTE: we only support ranges for last designator */
+-    while (nb_elems == 1 && (tok == '[' || tok == '.')) {
+-        if (tok == '[') {
+-            if (!(type->t & VT_ARRAY))
+-                expect("array type");
+-            next();
+-            index = index_last = expr_const();
+-            if (tok == TOK_DOTS && gnu_ext) {
++static int decl_designator(init_params *p, CType *root, unsigned long corig,
++                           InitPath *path, int flags, int al)
++{
++    InitCursor *q;
++    CType *type;
++    Sym *s, *f;
++    int index, index_last, align, l, nb_elems = 1, elem_size;
++    unsigned long c;
++    int designated = 0;
++
++    if (!(flags & DIF_HAVE_ELEM)) {
++        if (gnu_ext && tok >= TOK_UIDENT) {
++            l = tok, next();
++            if (tok == ':')
++                goto old_field;
++            unget_tok(l);
++        }
++        while (nb_elems == 1 && (tok == '[' || tok == '.')) {
++            if (!designated) {
++                path->len = 0;
++                init_path_push(path, root, corig);
++                designated = 1;
++            } else {
++                q = &path->data[path->len - 1];
++                type = init_cursor_type(q);
++                c = init_cursor_addr(q);
++                init_path_push(path, type, c);
++            }
++            q = &path->data[path->len - 1];
++            if (tok == '[') {
++                if (!(q->type.t & VT_ARRAY))
++                    expect("array type");
++                next();
++                index = index_last = expr_const();
++                if (tok == TOK_DOTS && gnu_ext) {
++                    next();
++                    index_last = expr_const();
++                }
++                skip(']');
++                s = q->type.ref;
++                decl_design_flex(p, s, index_last);
++                if (index < 0 || index_last >= s->c || index_last < index)
++                    tcc_error("index exceeds array bounds or range is empty");
++                q->index = index;
++                nb_elems = index_last - index + 1;
++            } else {
++                int cumofs;
++                next();
++                l = tok;
++                goto field;
++            old_field:
++                path->len = 0;
++                init_path_push(path, root, corig);
++                designated = 1;
++            field:
+                 next();
+-                index_last = expr_const();
++                q = &path->data[path->len - 1];
++                f = find_field(&q->type, l, &cumofs);
++                init_path_field(p, path, f, flags);
+             }
+-            skip(']');
+-            s = type->ref;
+-            decl_design_flex(p, s, index_last);
+-            if (index < 0 || index_last >= s->c || index_last < index)
+-	        tcc_error("index exceeds array bounds or range is empty");
+-            if (cur_field)
+-		(*cur_field)->c = index_last;
+-            type = pointed_type(type);
+-            elem_size = type_size(type, &align);
+-            c += index * elem_size;
+-            nb_elems = index_last - index + 1;
+-        } else {
+-            int cumofs;
+-            next();
+-            l = tok;
+-        struct_field:
+-            next();
+-	    f = find_field(type, l, &cumofs);
+-            if (cur_field)
+-                *cur_field = f;
+-	    type = &f->type;
+-            c += cumofs;
          }
-@@ -8078,7 +8182,7 @@ static void decl_initializer(init_params *p, CType *type, unsigned long c, int f
+-        cur_field = NULL;
+-    }
+-    if (!cur_field) {
+-        if (tok == '=') {
+-            next();
+-        } else if (!gnu_ext) {
+-	    expect("=");
++        if (designated) {
++            if (tok == '=')
++                next();
++            else if (!gnu_ext)
++                expect("=");
+         }
++    }
++    if (!path->len)
++        tcc_error("too many initializers");
++    q = &path->data[path->len - 1];
++    if (q->type.t & VT_ARRAY) {
++        decl_design_flex(p, q->type.ref, q->index);
++        if (q->index >= q->type.ref->c)
++            tcc_error("too many initializers");
+     } else {
+-    no_designator:
+-        if (type->t & VT_ARRAY) {
+-	    index = (*cur_field)->c;
+-            s = type->ref;
+-            decl_design_flex(p, s, index);
+-            if (index >= s->c)
+-                tcc_error("too many initializers");
+-            type = pointed_type(type);
+-            elem_size = type_size(type, &align);
+-            c += index * elem_size;
+-        } else {
+-            f = *cur_field;
+-	    /* Skip bitfield padding. Also with size 32 and 64. */
+-	    while (f && (f->v & SYM_FIRST_ANOM) &&
+-		   is_integer_btype(f->type.t & VT_BTYPE))
+-	        *cur_field = f = f->next;
+-            if (!f)
+-                tcc_error("too many initializers");
+-	    type = &f->type;
+-            c += f->c;
+-        }
++        f = init_skip_padding(q->field);
++        q->field = f;
++        if (!f)
++            tcc_error("too many initializers");
++        init_union_select(p, &q->type, f, q->addr, flags);
+     }
+-
+-    if (!elem_size) /* for structs */
+-        elem_size = type_size(type, &align);
++    type = init_cursor_type(q);
++    c = init_cursor_addr(q);
++    q->index += nb_elems - 1;
++    elem_size = type_size(type, &align);
+ 
+     /* Using designators the same element can be initialized more
+        than once.  In that case we need to delete possibly already
+@@ -7837,6 +8020,7 @@ static int decl_designator(init_params *p, CType *type, unsigned long c,
+     c += nb_elems * elem_size;
+     if (c - corig > al)
+       al = c - corig;
++    init_path_next(p, path);
+     return al;
+ }
+ 
+@@ -8066,8 +8250,8 @@ static void decl_initializer(init_params *p, CType *type, unsigned long c, int f
+ {
+     int len, n, no_oblock, i;
+     int size1, align1;
+-    Sym *s, *f;
+-    Sym indexsym;
++    Sym *s;
++    InitPath path = {0};
+     CType *t1;
+ 
+     /* generate line number info */
+@@ -8078,7 +8262,7 @@ static void decl_initializer(init_params *p, CType *type, unsigned long c, int f
  	/* In case of strings we have special handling for arrays, so
  	   don't consume them as initializer value (which would commit them
  	   to some anonymous symbol).  */
@@ -228,7 +495,7 @@ index 1b63467..f43a003 100644
  	(!(flags & DIF_SIZE_ONLY)
              /* a struct may be initialized from a struct of same type, as in
                      struct {int x,y;} a = {1,2}, b = {3,4}, c[] = {a,b};
-@@ -8096,7 +8200,7 @@ static void decl_initializer(init_params *p, CType *type, unsigned long c, int f
+@@ -8096,7 +8280,7 @@ static void decl_initializer(init_params *p, CType *type, unsigned long c, int f
  
      if (type->t & VT_ARRAY) {
          no_oblock = 1;
@@ -237,7 +504,7 @@ index 1b63467..f43a003 100644
              tok == '{') {
              skip('{');
              no_oblock = 0;
-@@ -8115,18 +8219,20 @@ static void decl_initializer(init_params *p, CType *type, unsigned long c, int f
+@@ -8115,18 +8299,20 @@ static void decl_initializer(init_params *p, CType *type, unsigned long c, int f
  #else
               (t1->t & VT_BTYPE) == VT_INT
  #endif
@@ -265,7 +532,7 @@ index 1b63467..f43a003 100644
                  len--;
                  cstr_cat(&initstr, tokc.str.data, tokc.str.size);
                  next();
-@@ -8134,7 +8240,7 @@ static void decl_initializer(init_params *p, CType *type, unsigned long c, int f
+@@ -8134,7 +8320,7 @@ static void decl_initializer(init_params *p, CType *type, unsigned long c, int f
              if (tok != ')' && tok != '}' && tok != ',' && tok != ';'
                  && tok != TOK_EOF) {
                  /* Not a lone literal but part of a bigger expression.  */
@@ -274,7 +541,7 @@ index 1b63467..f43a003 100644
                  tokc.str.size = initstr.size;
                  tokc.str.data = initstr.data;
                  goto do_init_array;
-@@ -8168,8 +8274,10 @@ static void decl_initializer(init_params *p, CType *type, unsigned long c, int f
+@@ -8168,8 +8354,10 @@ static void decl_initializer(init_params *p, CType *type, unsigned long c, int f
                            ch = 0;
                          } else if (size1 == 1)
                            ch = ((unsigned char *)initstr.data)[i];
@@ -286,7 +553,65 @@ index 1b63467..f43a003 100644
                          vpushi(ch);
                          init_putv(p, t1, c + i * size1);
                      }
-@@ -8266,7 +8374,7 @@ static void decl_initializer(init_params *p, CType *type, unsigned long c, int f
+@@ -8180,8 +8368,7 @@ static void decl_initializer(init_params *p, CType *type, unsigned long c, int f
+         } else {
+ 
+           do_init_array:
+-	    indexsym.c = 0;
+-	    f = &indexsym;
++
+ 
+           do_init_list:
+             /* zero memory once in advance */
+@@ -8195,29 +8382,23 @@ static void decl_initializer(init_params *p, CType *type, unsigned long c, int f
+                it's size is zero.  We won't enter the loop, so set the size
+                now.  */
+             decl_design_flex(p, s, len - 1);
++            init_path_push(&path, type, c);
+ 	    while (tok != '}' || (flags & DIF_HAVE_ELEM)) {
+-		len = decl_designator(p, type, c, &f, flags, len);
++		len = decl_designator(p, type, c, &path, flags, len);
+ 		flags &= ~DIF_HAVE_ELEM;
+-		if (type->t & VT_ARRAY) {
+-		    ++indexsym.c;
+-		    /* special test for multi dimensional arrays (may not
+-		       be strictly correct if designators are used at the
+-		       same time) */
+-		    if (no_oblock && len >= n*size1)
+-		        break;
+-		} else {
+-		    if (s->type.t == VT_UNION)
+-		        f = NULL;
+-		    else
+-		        f = f->next;
+-		    if (no_oblock && f == NULL)
+-		        break;
+-		}
++                if (no_oblock && !path.len)
++                    break;
+ 
+ 		if (tok == '}')
+ 		    break;
+ 		skip(',');
++                /* A designator belongs to the nearest explicit brace list. */
++                if (no_oblock && (tok == '[' || tok == '.')) {
++                    unget_tok(',');
++                    break;
++                }
+ 	    }
++            tcc_free(path.data);
+         }
+         if (!no_oblock)
+             skip('}');
+@@ -8236,7 +8417,6 @@ static void decl_initializer(init_params *p, CType *type, unsigned long c, int f
+             no_oblock = 0;
+         }
+         s = type->ref;
+-        f = s->next;
+         n = s->c;
+         size1 = 1;
+ 	goto do_init_list;
+@@ -8266,7 +8446,7 @@ static void decl_initializer(init_params *p, CType *type, unsigned long c, int f
  	    /* This should happen only when we haven't parsed
  	       the init element above for fear of committing a
  	       string constant to memory too early.  */
@@ -295,7 +620,7 @@ index 1b63467..f43a003 100644
  	      expect("string constant");
  	    parse_init_elem(!p->sec ? EXPR_ANY : EXPR_CONST);
  	}
-@@ -8359,7 +8467,7 @@ static void decl_initializer_alloc(CType *type, AttributeDef *ad, int r,
+@@ -8359,7 +8539,7 @@ static void decl_initializer_alloc(CType *type, AttributeDef *ad, int r,
          if (has_init == 2) {
              /* only get strings */
              init_str = tok_str_alloc();
@@ -304,7 +629,7 @@ index 1b63467..f43a003 100644
                  tok_str_add_tok(init_str);
                  next();
              }
-@@ -8546,6 +8654,11 @@ static void decl_initializer_alloc(CType *type, AttributeDef *ad, int r,
+@@ -8546,6 +8726,11 @@ static void decl_initializer_alloc(CType *type, AttributeDef *ad, int r,
      } else if (has_init) {
          p.sec = sec;
          decl_initializer(&p, type, addr, DIF_FIRST);

@@ -169,22 +169,94 @@ def decl_design_flex (R : Rec) (p : InitP) (ref : SymId) (index : Int32) : M Uni
   else if rc < 0 && index ≥ 0 then
     tcc_error_s R "flexible array has zero size in this context"
 
-/-- `decl_designator(p, type, c, cur_field, flags, al)`: (al, new value of
-the caller's `*cur_field`). `cur_field` is none for NULL. -/
-def decl_designator (R : Rec) (p : InitP) (type0 : CType) (c0 : UInt64) (cur_field0 : Option SymId)
-    (flags0 : Int32) (al0 : Int32) : M (Int32 × Option SymId) := do
-  let mut type := type0
-  let mut c := c0
-  let corig := c0
-  let mut cur_field := cur_field0
-  let mut callerF := cur_field0
+/-- One containing aggregate and its selected child, as in patched tccgen.c. -/
+structure InitCursor where
+  type : CType
+  addr : UInt64
+  field : SymId := 0
+  index : Int32 := 0
+  deriving Inhabited
+
+/-- The last frame selects the next object; each explicit brace list owns a path. -/
+structure InitPath where
+  frames : Array InitCursor := #[]
+  deriving Inhabited
+
+def init_path_push (path : InitPath) (type : CType) (c : UInt64) : M InitPath := do
+  let field ← if type.t &&& VT_BTYPE == VT_STRUCT then pure (← getSym type.ref).next else pure 0
+  return { frames := path.frames.push { type := type, addr := c, field := field } }
+
+def init_cursor_type (q : InitCursor) : M CType := do
+  if q.type.t &&& VT_ARRAY != 0 then pointed_type q.type else pure (← getSym q.field).type
+
+def init_cursor_addr (R : Rec) (q : InitCursor) : M UInt64 := do
+  if q.type.t &&& VT_ARRAY != 0 then
+    let size := (← R.type_size (← pointed_type q.type)).1
+    return q.addr + (q.index * size).toInt64.toUInt64
+  else return q.addr + (← getSym q.field).c.toInt64.toUInt64
+
+/-- Layout-only integer bitfields are never initializer positions. -/
+def init_skip_padding (f0 : SymId) : M SymId := do
+  let mut f := f0
+  let fuel ← fuelM
+  for _ in [0:fuel] do
+    if f == 0 then break
+    let fx ← getSym f
+    if !(fx.v &&& SYM_FIRST_ANOM != 0 && is_integer_btype (fx.type.t &&& VT_BTYPE)) then break
+    f := fx.next
+  return f
+
+def init_path_next (p : InitP) (path0 : InitPath) : M InitPath := do
+  let mut path := path0
+  for _ in [0:path0.frames.size] do
+    if path.frames.isEmpty then break
+    let mut q := path.frames.back!
+    let mut more := false
+    if q.type.t &&& VT_ARRAY != 0 then
+      q := { q with index := q.index + 1 }
+      more := q.type.ref == p.flex_array_ref || q.index < (← symC q.type.ref)
+    else
+      let field ← if (← getSym q.type.ref).type.t == VT_UNION then pure 0 else init_skip_padding (← getSym q.field).next
+      q := { q with field := field }
+      more := field != 0
+    if more then return { frames := path.frames.set! (path.frames.size - 1) q }
+    path := { frames := path.frames.pop }
+  return path
+
+/-- Retain every anonymous container hidden by find_field's flattened result. -/
+def init_path_field : Nat → Rec → InitP → InitPath → SymId → Int32 → M InitPath
+  | 0, _, _, _, _, _ => throw (.fuel "init_path_field")
+  | fuel+1, R, p, path0, field, flags => do
+    let mut path := path0
+    let q := path.frames.back!
+    let mut s := (← getSym q.type.ref).next
+    let bound ← fuelM
+    for _ in [0:bound] do
+      if s == 0 then break
+      let sx ← getSym s
+      let mut found := s == field
+      if !found && sx.type.t &&& VT_BTYPE == VT_STRUCT && sx.v >= (SYM_FIRST_ANOM ||| SYM_FIELD) then
+        found ← init_field_path fuel R p sx.type field (q.addr + sx.c.toInt64.toUInt64) (flags ||| DIF_SIZE_ONLY)
+      if found then
+        path := { frames := path.frames.set! (path.frames.size - 1) { q with field := s } }
+        init_union_select R p q.type s q.addr flags
+        if s != field then
+          path ← init_path_push path sx.type (q.addr + sx.c.toInt64.toUInt64)
+          path ← init_path_field fuel R p path field flags
+        return path
+      s := sx.next
+    return path
+
+/-- `decl_designator`: initialize the selected object and advance its path. -/
+def decl_designator (R : Rec) (p : InitP) (root : CType) (corig : UInt64) (path0 : InitPath)
+    (flags0 : Int32) (al0 : Int32) : M (Int32 × InitPath) := do
+  let mut path := path0
   let mut flags := flags0
   let mut al := al0
-  let mut elem_size : Int32 := 0
   let mut nb_elems : Int32 := 1
-  let mut haveElem := flags &&& DIF_HAVE_ELEM != 0
+  let mut designated := false
   let fuel ← fuelM
-  if !haveElem then
+  if flags &&& DIF_HAVE_ELEM == 0 then
     let mut structField : Option Int32 := none
     if (← get).gnu_ext != 0 && (← getTok) ≥ C.TOK_UIDENT then
       let l ← getTok
@@ -194,8 +266,17 @@ def decl_designator (R : Rec) (p : InitP) (type0 : CType) (c0 : UInt64) (cur_fie
     for _ in [0:fuel] do
       let tk ← getTok
       if !(structField.isSome || (nb_elems == 1 && (tk == 91 || tk == 46))) then break
+      if !designated then
+        path ← init_path_push {} root corig
+        designated := true
+      else
+        let q := path.frames.back!
+        let t ← init_cursor_type q
+        let c ← init_cursor_addr R q
+        path ← init_path_push path t c
+      let q := path.frames.back!
       if structField.isNone && tk == 91 then
-        if type.t &&& VT_ARRAY == 0 then expect R "array type"
+        if q.type.t &&& VT_ARRAY == 0 then expect R "array type"
         R.next
         let index ← R.expr_const
         let mut index_last := index
@@ -203,17 +284,11 @@ def decl_designator (R : Rec) (p : InitP) (type0 : CType) (c0 : UInt64) (cur_fie
           R.next
           index_last ← R.expr_const
         skip R 93
-        let s := type.ref
+        let s := q.type.ref
         decl_design_flex R p s index_last
-        let sc ← symC s
-        if index < 0 || index_last ≥ sc || index_last < index then
+        if index < 0 || index_last ≥ (← symC s) || index_last < index then
           tcc_error_s R "index exceeds array bounds or range is empty"
-        match cur_field with
-        | some f => modSym f fun y => { y with c := index_last }
-        | none => pure ()
-        type ← pointed_type type
-        elem_size := (← R.type_size type).1
-        c := c + (index * elem_size).toInt64.toUInt64
+        path := { frames := path.frames.set! (path.frames.size - 1) { q with index := index } }
         nb_elems := index_last - index + 1
       else
         let l ← match structField with
@@ -221,41 +296,26 @@ def decl_designator (R : Rec) (p : InitP) (type0 : CType) (c0 : UInt64) (cur_fie
           | none => do R.next; getTok
         structField := none
         R.next
-        let (f, cumofs) ← find_field fuel R type l
-        let _ ← init_field_path fuel R p type f c flags
-        if cur_field.isSome then callerF := some f
-        type := (← getSym f).type
-        c := c + cumofs.toInt64.toUInt64
-      cur_field := none
-    if cur_field.isNone then
+        let (f, _) ← find_field fuel R q.type l
+        path ← init_path_field fuel R p path f flags
+    if designated then
       if (← getTok) == 61 then R.next
       else if (← get).gnu_ext == 0 then expect R "="
-    else
-      haveElem := true
-  if haveElem then
-    -- no_designator:
-    if type.t &&& VT_ARRAY != 0 then
-      let index := (← getSym (cur_field.getD 0)).c
-      let s := type.ref
-      decl_design_flex R p s index
-      if index ≥ (← symC s) then tcc_error_s R "too many initializers"
-      type ← pointed_type type
-      elem_size := (← R.type_size type).1
-      c := c + (index * elem_size).toInt64.toUInt64
-    else
-      let mut f := cur_field.getD 0
-      for _ in [0:fuel] do
-        if f == 0 then break
-        let fx ← getSym f
-        if !(fx.v &&& SYM_FIRST_ANOM != 0 && is_integer_btype (fx.type.t &&& VT_BTYPE)) then break
-        f := fx.next
-        callerF := some f
-      if f == 0 then tcc_error_s R "too many initializers"
-      init_union_select R p type f c flags
-      let fx ← getSym f
-      type := fx.type
-      c := c + fx.c.toInt64.toUInt64
-  if elem_size == 0 then elem_size := (← R.type_size type).1
+  if path.frames.isEmpty then tcc_error_s R "too many initializers"
+  let mut q := path.frames.back!
+  if q.type.t &&& VT_ARRAY != 0 then
+    decl_design_flex R p q.type.ref q.index
+    if q.index ≥ (← symC q.type.ref) then tcc_error_s R "too many initializers"
+  else
+    let f ← init_skip_padding q.field
+    q := { q with field := f }
+    if f == 0 then tcc_error_s R "too many initializers"
+    init_union_select R p q.type f q.addr flags
+  let type ← init_cursor_type q
+  let mut c ← init_cursor_addr R q
+  q := { q with index := q.index + nb_elems - 1 }
+  path := { frames := path.frames.set! (path.frames.size - 1) q }
+  let elem_size := (← R.type_size type).1
   if flags &&& DIF_SIZE_ONLY == 0 && (c - corig).toUInt32.toInt32 < al then
     decl_design_delrels p.sec c.toUInt32.toInt32 (elem_size * nb_elems)
     flags := flags &&& ~~~DIF_CLEAR
@@ -274,7 +334,8 @@ def decl_designator (R : Rec) (p : InitP) (type0 : CType) (c0 : UInt64) (cur_fie
     vpop R
   c := c + (nb_elems * elem_size).toInt64.toUInt64
   if (c - corig).toUInt32.toInt32 > al then al := (c - corig).toUInt32.toInt32
-  return (al, callerF)
+  path ← init_path_next p path
+  return (al, path)
 
 /-- `init_putv(p, type, c)` -/
 def init_putv (R : Rec) (p : InitP) (type : CType) (c : UInt64) : M Unit := do
@@ -369,29 +430,26 @@ def decl_initializer (R : Rec) (p : InitP) (type : CType) (c : UInt64) (flags0 :
     modify fun s => { s with nocode_wanted := ncw_prev }
     flags := flags ||| DIF_HAVE_ELEM
   -- the init-list loop (do_init_list), shared by arrays and structs
-  let initList (s : SymId) (n size1 : Int32) (f0 : SymId) (no_oblock : Bool) (flags0 : Int32) : M Unit := do
+  let initList (s : SymId) (n size1 : Int32) (no_oblock : Bool) (flags0 : Int32) : M Unit := do
     let mut flags := flags0
-    let mut f := f0
     if flags &&& (DIF_CLEAR ||| DIF_SIZE_ONLY) == 0 then
       init_putz R p c (n * size1)
       flags := flags ||| DIF_CLEAR
     let mut len : Int32 := 0
     decl_design_flex R p s (len - 1)
+    let mut path ← init_path_push {} type c
     for _ in [0:fuel] do
       if !((← getTok) != 125 || flags &&& DIF_HAVE_ELEM != 0) then break
-      let (len', f') ← decl_designator R p type c (some f) flags len
+      let (len', path') ← decl_designator R p type c path flags len
       len := len'
-      f := f'.getD f
+      path := path'
       flags := flags &&& ~~~DIF_HAVE_ELEM
-      if type.t &&& VT_ARRAY != 0 then
-        modSym f fun y => { y with c := y.c + 1 }
-        if no_oblock && len ≥ n * size1 then break
-      else
-        if (← getSym s).type.t == VT_UNION then f := 0
-        else f := (← getSym f).next
-        if no_oblock && f == 0 then break
+      if no_oblock && path.frames.isEmpty then break
       if (← getTok) == 125 then break
       skip R 44
+      if no_oblock && ((← getTok) == 91 || (← getTok) == 46) then
+        unget_tok 44
+        break
   if type.t &&& VT_ARRAY != 0 then
     let mut no_oblock := true
     let tk ← getTok
@@ -455,8 +513,7 @@ def decl_initializer (R : Rec) (p : InitP) (type : CType) (c : UInt64) (flags0 :
               R.init_putv p.sec p.local_offset p.flex_array_ref t1 (c + (ii * size1).toInt64.toUInt64)
         if (← getTok) == 44 && !no_oblock then R.next
     if doArray then
-      let indexsym ← scratchSym
-      initList s n size1 indexsym no_oblock flags
+      initList s n size1 no_oblock flags
     if !no_oblock then skip R 125
   else if flags &&& DIF_HAVE_ELEM != 0 && (← R.is_compatible_unqualified_types type (← vt).type) then
     -- one_elem
@@ -476,9 +533,8 @@ def decl_initializer (R : Rec) (p : InitP) (type : CType) (c : UInt64) (flags0 :
       skip R 123
       no_oblock := false
     let s := type.ref
-    let f := (← getSym s).next
     let n ← symC s
-    initList s n 1 f no_oblock flags
+    initList s n 1 no_oblock flags
     if !no_oblock then skip R 125
   else if (← getTok) == 123 then
     if flags &&& DIF_HAVE_ELEM != 0 then skip R 59

@@ -1,0 +1,19 @@
+{
+  "request": "designator-33736880572f934f0750df9743e31751045f5a138e8d73fb4f337c2b95b86675",
+  "request_id": "designator-33736880572f934f0750df9743e31751045f5a138e8d73fb4f337c2b95b86675",
+  "exit": 0,
+  "log": "build/worker-build-designator-33736880572f934f0750df9743e31751045f5a138e8d73fb4f337c2b95b86675.log",
+  "command": [
+    "flock",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/lake.lock",
+    "systemd-run",
+    "--user",
+    "--scope",
+    "-p",
+    "MemoryMax=12G",
+    "lake",
+    "build",
+    "tcc_model"
+  ],
+  "source_hashes_verified": true
+}
