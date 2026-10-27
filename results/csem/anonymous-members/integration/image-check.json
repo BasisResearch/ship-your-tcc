@@ -1,0 +1,8 @@
+{
+  "integrated_image": ".claude/worktrees/sol-c11-line/c/build/base.elf",
+  "elf_sha256": "d8c6ad02646237fe06fc1e613df63045c112188b8e96e7c418bdda3a8b4e13de",
+  "text_sha256": "434768a4bb8871a08ba6f1ad994902512e26b1f36d8e3193266c762177567141",
+  "main_image_sha256": "f6980d97b4608b88dfdecab63b2e2437abcf37c98d88caeb59ebf76ba810057b",
+  "text_identical_to_adopted_qualifier_image": true,
+  "note": "No new native observation or kernel reachability claim. Existing suite78 native evidence is pinned separately."
+}

@@ -194,3 +194,36 @@ NaN-conversion policy was corrected from fresh raw Sail evidence. The helper
 proof connection, conversion-field proof, literal-accuracy discrepancy and
 nine finite newlib sqrtl discrepancies remain explicit in PHASES.md and
 `results/csem/ieee-2026-10-27.md`; there is no all-C correctness claim.
+
+### Anonymous containers and explicit union layout tables, 2026-10-27
+
+**CSEM-07 / PATCH-08.** The reviewed local repair preserves physical anonymous
+aggregate containers and resolves promoted names through qualified member
+paths. This fixes the scalar continuation and size/offset counterexamples
+above. Source lookup rejects guessed physical container names; trusted
+initializer projections use explicitly marked internal paths. The worker
+checkpoint passes 78 defined probes and 14 invalid controls on strict GCC,
+patched OCaml and Lean, plus the unchanged parser/execution baselines.
+`results/csem/anonymous-members.md` records exact sources and pin-addressed
+observations. Combined validation with the adopted IEEE semantics now passes: 235-file
+regeneration, the full gate, all 92 focused checks and 54/58 continuation
+agreements with four explicit bitfield gaps. The repair is adopted locally.
+
+**CSEM-09 / PATCH-09 — union layout consults an unset ambient table.** Both
+union arms of sizeof/alignment in upstream `memory/concrete/impl_mem.ml`
+consult `Tags.tagDefs ()` despite receiving the complete `tagDefs` argument.
+Elaboration-time offsetof involving a union can therefore crash before the
+runtime table exists. The four shared anonymous-member sources exposed this
+independent adapter defect. `before-layout-adapter.json` in the anonymous
+report directory retains the failure. `patches/csem/0001-union-layout-tags.patch`
+changes both OCaml lookups to the explicit argument; `CerbMem.lean` has the
+same repair. The existing Lean fuel-stability proof is adapted to that table
+without larger bounds or new hypotheses. This is a small upstream candidate
+separate from the anonymous-container representation change.
+
+CSEM-06 aggregate-expression initialization and CSEM-08 bitfields remain open.
+The separate tcc anonymous-container qualifier defect is repaired in our
+compiler/model; its complete 78-case batch now passes full Sail
+(`results/model/anonymous-members.md`). The older CSem worker's four compiler
+counterexamples remain historical captures. No external message has been
+sent; Kiran retains the report handoff.

@@ -169,3 +169,28 @@ but lacked guessed-name controls; gate 02 is the final public-lookup repair.
 Wait for a matching completed receipt before changing frozen inputs, including
 when an early target error is already visible. These dead ends are also in
 `tasks/DEAD-ENDS.md`.
+
+
+## Adopted combined validation
+
+The reviewed checkpoint is rebased with the adopted IEEE semantics and raw
+frontend (`9574f45`). All **235 generated Lean files** are regenerated through
+the pinned generator. The isolated OCaml engine overlays the same four shared
+anonymous-member sources plus the explicit-table adapter patch; it remains an
+integer/layout oracle, not an RV64 floating specification. Its new content key
+pins the combined Lean adapter, and copied sources/binaries are verified.
+
+The combined full `scripts/check.sh --csem` passes, including **92/92** new
+focused checks, **34/34** union checks, pure-IEEE and raw-frontend cone audits,
+standard axioms and generator identity. A fresh continuation run gives
+**54/58** agreements; the same four bitfield cases remain explicit gaps.
+`anonymous-members/integration/` freezes 2,285 source/input hashes, logs,
+current executable pins, paired outcomes and adapter/source manifests.
+The original pre-IEEE branch's observations above remain historical evidence.
+
+The rebuilt compiler `.text` is byte-identical to main's adopted qualifier
+repair image. Its separate complete 78-case full Sail batch now passes
+(results/model/anonymous-members.md, commit a727c78); the old failed batch
+above is retained as a counterexample to the previous image. No new compiler
+refinement, all-C correctness or kernel reachability proof is inferred.
+CSEM-06 aggregate-expression initialization and CSEM-08 bitfields remain open.

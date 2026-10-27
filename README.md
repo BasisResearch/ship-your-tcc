@@ -22,9 +22,12 @@ refusal disjunct. The existing per-program theorem is its non-vacuity witness;
 STATUS.md records the active F0–F3 work.
 
 Current F0–F3 validation: exact phase-4 observation and nested designators are
-integrated; 1,339 independent fast arenas and three complete native Sail arenas
-match on the combined image. CSem now uses pure binary32/64/128 values, with
-zero native floating in its checked cones. The raw-source frontend reaches
+integrated; the latest compiler comparison has 1,342 matching arenas out of
+1,815 inputs, with refusals/assembly gaps separate. Complete native Sail
+observations include the repaired 78-case anonymous-member batch. CSem now uses pure binary32/64/128 values, with
+zero native floating in its checked cones. Its anonymous-member repair passes
+92 focused checks and the combined full gate; bitfields and aggregate-value
+initialization remain open. The raw-source frontend reaches
 positioned Cabs with retained provenance; its 18 independent comparisons and
 combined gate pass, while pack/layout and library-origin consumption remain
 open (results/csem/raw-frontend.md). F1–F3 and the whole-compiler theorem

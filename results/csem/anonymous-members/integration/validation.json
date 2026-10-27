@@ -1,0 +1,15 @@
+{
+  "revision": "9574f453af8a377032fb7368eecc60a147befa26",
+  "gate_exit": 0,
+  "oracle_exit": 0,
+  "continuation_exit": 1,
+  "continuation_agree": 54,
+  "continuation_bitfield_gaps": [
+    "build/designator-focused/designator_padding_auto.c",
+    "build/designator-focused/designator_padding_static.c",
+    "build/designator-focused/designator_trailing_padding_auto.c",
+    "build/designator-focused/designator_trailing_padding_static.c"
+  ],
+  "sources_verified": true,
+  "source_count": 2285
+}

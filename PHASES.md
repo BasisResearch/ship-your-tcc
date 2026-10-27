@@ -202,8 +202,8 @@ token controls, 613 raw/611 spec corpus agreements, full strengthened gate.
 Native observations compare complete arenas and handoff registers at 3,383,440,
 3,377,822 and 3,398,235 steps; no generic correctness proof is claimed.
 
-The typed ghost Cabs connection is queued as tasks/f3-ghost-cabs.md after the
-raw frontend/provenance interface. It must instrument the modeled compiler
+The typed ghost Cabs connection is active as tasks/f3-ghost-cabs.md after the
+adopted raw frontend/provenance interface. It must instrument the modeled compiler
 parser independently, not copy the spec parser output. The current generic
 ghost tree and dropped folded expressions do not establish parser agreement.
 
@@ -262,3 +262,14 @@ diagnostics, 1,342/1,815 fast arenas and one complete native arena agree;
 466 refusals and seven assembly gaps stay separate. See
 results/model/anonymous-members.md. The associated CSem physical-container
 repair is still under independent integration; F3 proofs/ghost/fuel remain open.
+
+
+CSem anonymous-member integration (2026-10-27): physical aggregate containers,
+public promoted paths, qualifier inheritance and initializer traversal are
+adopted with pure IEEE after 235-file regeneration and the full combined gate.
+92 focused defined/invalid checks and 34 union checks pass; continuation is
+54/58, with four required bitfield implementations still open. Both adapters
+now honor the explicit union layout table, and the existing fuel-stability
+proof uses it without new premises or raised budgets. General aggregate-value
+initialization, bitfields, whole-C coverage and compiler refinement remain
+obligations. See results/csem/anonymous-members.md and CSEM-UPSTREAM.md.

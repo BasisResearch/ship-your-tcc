@@ -1,0 +1,17 @@
+{
+  "adapter-inputs.sha256": "26349fd5cb68d1ab9b230a52c3cf380664aaae0de2adccbb658f97d4f29e2942",
+  "anonymous-integration-image-final.log.gz": "9020b73ac7a7d7fbb57ba1237b5288c1940edce872ee189fabbed2291c9d12f1",
+  "anonymous-integration-image.log.gz": "617a160ddc1ecabd9c4214b5ca9c2b93a56033cb068eea4f606ca7f2b4cb39b3",
+  "anonymous-integration-regen.log.gz": "42df48e1da112430dab2dd3942bd33c48d255d0de1c143e1502cf93cc7b97b9c",
+  "artifacts.sha256": "cb500edc1d15ea61b6b262bb1b23e42fedad46aa67ec5620e9500362037f4907",
+  "continuation.json": "660059b0f19d8e94375ba5c2970a93bf9e5f9d0bbf8bd074adc1cf484f6c7892",
+  "csem-cone.log.gz": "f3687a10e92d78fdc66ee5c3fa09e2ac7c8df69c0fe57fca9c8cae6fcefa7779",
+  "focused.json": "18a10e4b77a7b9ef8d6fb5826f3672be5d162e7893fbffc52894909047bea4cd",
+  "gate.log.gz": "249e5b7fda09c101dae4a10e812eba5d86ca52b054e4ed9192d65e14fd7f11c9",
+  "image-check.json": "159261786a9aa3d8040f56bd132f2a797634c51ee111aa76131744eacae54b92",
+  "oracle.log.gz": "6a776f758a3349e050147f3022b9b92cce7b55bc0f24641366ecf63373be16a7",
+  "overlay.sha256": "5acb585f41f25e735489e01f8f42914307e096ba397d3b4e19dfb2a9ce5ab91e",
+  "shared-sources.sha256": "0f81adf28f66948afdc29c50d16571d15f75a22bc86ecf1f5a6b566910079015",
+  "source-pins.json.gz": "679e70a225d638a0867265f59fe765f09e443ba16651d51fa0e061dddfbb8868",
+  "validation.json": "129e67fa6d35367ee47859492c9ad585c7986d5052089dad3a4053762c290eb2"
+}
