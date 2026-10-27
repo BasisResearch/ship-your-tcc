@@ -51,3 +51,7 @@ a request; freeze a new hash manifest before retrying. Infrastructure limits
 are handled by the lead service, not by uncapped builds or user permission
 requests. The adopted pin-addressed opam/oracle toolchain is shared read-only;
 workers must not repin or mutate it during independent semantic tasks.
+
+Lead review is delivered in worktree `build/lead-note.txt` and frozen build
+receipts. Workers read it before new build requests and before finalizing;
+requested corrections must be resolved or returned as an explicit obstruction.

@@ -55,6 +55,7 @@ set +e
 Work only in this worktree. Do not push or merge main; commit for lead review.
 No built-in subagents. Builds: free -g, then flock \"\$SYT_LAKE_LOCK\" systemd-run --user --scope -p MemoryMax=12G lake build TARGET.
 Record dead ends in your result so the lead does not resend them.
+Read build/lead-note.txt if present before each build request and before finalizing; lead review arrives there and in build receipts. Resolve requested corrections before claiming done.
 Finish with RESULT: landed <commit> or RESULT: stuck <where> (landed means ready for lead review)." \
   >> "$log" 2>&1
 rc=$?
