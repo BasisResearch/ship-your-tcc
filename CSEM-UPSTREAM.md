@@ -39,3 +39,7 @@ worktree or the main pin while they are in flight. Evaluate then-current
 upstream, replay our fork changes, and record exact commits, absorbed patches,
 remaining bugs, gate results and rollback point. This is a repository task
 schedule, not an external notification or an automatic unreviewed pin update.
+
+Started 2026-10-27 after both prerequisite integrations: external Sol slot 2,
+branch sol/csem-repin. The main pin remains unchanged pending the report and
+review. Slot 1's trigraph repair is independent of this CSem evaluation.

@@ -109,3 +109,7 @@ README and ATTRIBUTION credit Cerberus / Cambridge REMS and Mike Dodds / Oath.
 The old F3 fast-runner counts above are diagnostic: review found an unchecked
 objcopy failure yielding a partial runtime cache fingerprint. A corrected
 fingerprint and fresh C11 comparison are required before accepting new counts.
+
+2026-10-27: the original RV64-config and C11-model tasks are integrated.
+The scheduled upstream repin evaluation is active in Sol slot 2; adoption
+requires its documented gates and lead review. The main pin is unchanged.

@@ -46,3 +46,9 @@ Current F3 continuation: tasks/f3-c11-finish.md (slot 1), plus the independent
 reference collector task tasks/f3-reference-handoff.md (slot 2). The original
 RV64-config task is integrated. Repin evaluation stays next after C11 model
 integration; do not assign another CSem semantic-change task before it.
+
+Active after C11-model integration on Oct 27: slot 1 runs
+tasks/f2-c11-trigraphs.md in sol-c11-trigraph; slot 2 runs the scheduled
+tasks/csem-repin.md in sol-csem-repin. The lead handles reference-handoff
+harness integration. Both worker caches were ordinary/reflink copies, not
+hard links. Frozen build requests are serviced under the shared 12 GB lock.

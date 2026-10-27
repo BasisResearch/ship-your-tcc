@@ -40,8 +40,8 @@ public libc `strtold` still needs correction in the library lane. Matching refus
 
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
 two at a time, following MANAGER.md. Slot 1 repairs the newly confirmed C11
-trigraph deviation in tcc/config/model; slot 2 is next for the queued upstream
-repin evaluation. The lead integrates the validated compiler-handoff collector
+trigraph deviation in tcc/config/model; slot 2 evaluates the queued upstream
+repin in sol-csem-repin, with the main pin unchanged until review. The lead integrates the validated compiler-handoff collector
 and hardens its model_diff consumer. The RV64 reader and image filesystem are
 integrated; their fresh probes and remaining semantic gaps are documented.
 Built-in agents remain stopped.
