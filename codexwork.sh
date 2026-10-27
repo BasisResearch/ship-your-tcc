@@ -36,7 +36,14 @@ if ! git -C "$wt" rebase main; then
   echo "RESULT: stuck launch: rebase conflict in $wt; changes preserved"
   exit 1
 fi
-flock "$repo/build/lake.lock" python3 "$repo/scripts/isolate_lake_cache.py" "$wt"
+# A fresh worktree has no artifacts to detach and can start reading/editing
+# while another lane builds. Existing caches still require the common lock.
+if [[ -d "$wt/.lake" || -d "$wt/riscv-lean/lean_emulator/.lake" ||
+      -d "$wt/riscv-lean/lean-sail/.lake" || -d "$wt/riscv-lean/Lean_RV64D_executable/.lake" ]]; then
+  flock "$repo/build/lake.lock" python3 "$repo/scripts/isolate_lake_cache.py" "$wt"
+else
+  echo "Fresh worktree: no Lake artifacts to isolate"
+fi
 codex=${CODEX:-$HOME/.local/share/codex-0.162.0/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex}
 export SYT_LAKE_LOCK="$repo/build/lake.lock"
 echo "$$ $wt" > "$repo/build/workers/slot-$slot.pid"
