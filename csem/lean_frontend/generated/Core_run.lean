@@ -701,6 +701,7 @@ inductive fs_oper : Type where
   | FS_SYMLINK : String → String → fs_oper /- target * link -/
   | FS_READLINK : String → CerbMem.PointerValue → Int → fs_oper /- path * buf * size -/
   | FS_STAT : String → CerbMem.PointerValue → fs_oper /- path * struct stat -/
+  | FS_FSTAT : Int → CerbMem.PointerValue → fs_oper /- descriptor * struct stat -/
   | FS_LSTAT : String → CerbMem.PointerValue → fs_oper /- path * struct stat -/
   | FS_TRUNCATE : String → Int → fs_oper /- path * off_t -/
   | FS_UNLINK : String → fs_oper /- path -/
@@ -716,9 +717,9 @@ inductive fs_oper : Type where
   | FS_VSNPRINTF : CerbMem.PointerValue → CerbMem.IntegerValue → List Char → Int → fs_oper
   deriving BEq, Ord
 export fs_oper (FS_MKDIR FS_RMDIR FS_OPEN FS_CLOSE FS_WRITE FS_LSEEK FS_READ FS_PWRITE FS_PREAD
-    FS_UMASK FS_RENAME FS_LINK FS_SYMLINK FS_READLINK FS_STAT FS_LSTAT FS_TRUNCATE FS_UNLINK
-    FS_CHMOD FS_CHOWN FS_CHDIR FS_OPENDIR FS_READDIR FS_REWINDDIR FS_CLOSEDIR FS_PRINTF FS_VPRINTF
-    FS_VSNPRINTF)
+    FS_UMASK FS_RENAME FS_LINK FS_SYMLINK FS_READLINK FS_STAT FS_FSTAT FS_LSTAT FS_TRUNCATE
+    FS_UNLINK FS_CHMOD FS_CHOWN FS_CHDIR FS_OPENDIR FS_READDIR FS_REWINDDIR FS_CLOSEDIR FS_PRINTF
+    FS_VPRINTF FS_VSNPRINTF)
 instance : Inhabited fs_oper where
   default := FS_MKDIR default default
 instance (priority := 500) : Lem_Basic_classes.SetType fs_oper where
@@ -2139,6 +2140,12 @@ BEFORE EVAL_PEXPR2
                      (let path := List.map (charFromMValue "readlink") path_cvals;
                       Step_fs th_st (FS_STAT (String.ofList path) ptr))
                    | _ => (failwithI "stat" : core_step))
+                | Impl (BuiltinFunction "fstat") =>
+                  (match cvals with
+                   | [Vobject (OVinteger fd_ival), Vobject (OVpointer ptr)] =>
+                     (let fd := forceIntegerFromIntegerValue "fstat" fd_ival;
+                      Step_fs th_st (FS_FSTAT fd ptr))
+                   | _ => (failwithI "fstat" : core_step))
                 | Impl (BuiltinFunction "lstat") =>
                   (match cvals with
                    | [Vlist _ path_cvals, Vobject (OVpointer ptr)] =>

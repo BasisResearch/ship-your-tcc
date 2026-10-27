@@ -385,6 +385,8 @@ let drive_fs_step tid th_st dr_st fs_oper =
       store_buffer_trunc ptr max $ Fs.fs_readlink dr_st.fs_state path
     | Core_run.FS_STAT path ptr ->
       store_stat ptr $ Fs.fs_stat dr_st.fs_state path
+    | Core_run.FS_FSTAT fd ptr ->
+      store_stat ptr $ Fs.fs_fstat dr_st.fs_state fd
     | Core_run.FS_LSTAT path ptr ->
       store_stat ptr $ Fs.fs_lstat dr_st.fs_state path
     | Core_run.FS_SYMLINK target lpath ->

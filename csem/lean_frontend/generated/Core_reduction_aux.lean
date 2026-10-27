@@ -47,6 +47,7 @@ def is_fs_function : implementation_constant → Bool :=
        | "link" => true
        | "readlink" => true
        | "stat" => true
+       | "fstat" => true
        | "lstat" => true
        | "symlink" => true
        | "rmdir" => true
@@ -260,6 +261,12 @@ def step_fs_proc { a : Type } (th_st : a) (iCst : implementation_constant) (cval
        (let path := List.map (charFromMValue "readlink") path_cvals;
         FS_STAT (String.ofList path) ptr)
      | _ => (failwithI "stat" : fs_oper))
+  | BuiltinFunction "fstat" =>
+    (match cvals with
+     | [Vobject (OVinteger fd_ival), Vobject (OVpointer ptr)] =>
+       (let fd := forceIntegerFromIntegerValue "fstat" fd_ival;
+        FS_FSTAT fd ptr)
+     | _ => (failwithI "fstat" : fs_oper))
   | BuiltinFunction "lstat" =>
     (match cvals with
      | [Vlist _ path_cvals, Vobject (OVpointer ptr)] =>

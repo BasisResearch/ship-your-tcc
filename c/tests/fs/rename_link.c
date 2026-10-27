@@ -14,17 +14,18 @@ static const char *ename(int e) {
 
 int main(void) {
     struct stat st;
+    int r;
     int fd = open("/a.txt", O_CREAT | O_WRONLY, 0644);
     write(fd, "abc", 3);
     close(fd);
     errno = 0;
-    printf("rename %d %s\n", rename("/a.txt", "/b.txt"), ename(errno));
+    r = rename("/a.txt", "/b.txt"); printf("rename %d %s\n", r, ename(errno));
     errno = 0;
-    printf("rename missing %d %s\n", rename("/missing", "/c.txt"), ename(errno));
+    r = rename("/missing", "/c.txt"); printf("rename missing %d %s\n", r, ename(errno));
     errno = 0;
-    printf("link %d %s\n", link("/a.txt", "/d.txt"), ename(errno));
+    r = link("/a.txt", "/d.txt"); printf("link %d %s\n", r, ename(errno));
     printf("stat a %d\n", stat("/a.txt", &st));
     errno = 0;
-    printf("stat b %d %s\n", stat("/b.txt", &st), ename(errno));
+    r = stat("/b.txt", &st); printf("stat b %d %s\n", r, ename(errno));
     return 0;
 }

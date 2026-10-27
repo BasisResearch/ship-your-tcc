@@ -551,6 +551,7 @@ def drive_fs_step [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
   | FS_READLINK path ptr max2 =>
     store_buffer_trunc ptr max2 (CerbFS.fs_readlink dr_st.fs_state0 path)
   | FS_STAT path ptr => store_stat ptr (CerbFS.fs_stat dr_st.fs_state0 path)
+  | FS_FSTAT fd ptr => store_stat ptr (CerbFS.fs_fstat dr_st.fs_state0 fd)
   | FS_LSTAT path ptr => store_stat ptr (CerbFS.fs_lstat dr_st.fs_state0 path)
   | FS_SYMLINK target lpath => return3 (CerbFS.fs_symlink dr_st.fs_state0 target lpath)
   | FS_RMDIR path => return3 (CerbFS.fs_rmdir dr_st.fs_state0 path)

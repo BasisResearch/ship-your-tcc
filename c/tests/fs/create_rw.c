@@ -7,6 +7,8 @@
 
 int main(void) {
     char buf[32];
+    int wrote, opened;
+    long pos;
     int fd = open("/new.txt", O_CREAT | O_RDWR | O_TRUNC, 0644);
     printf("open %d\n", fd);
     printf("write %d\n", (int)write(fd, "hello world", 11));
@@ -32,9 +34,11 @@ int main(void) {
     printf("trunc open %d write %d\n", fd, (int)write(fd, "ab", 2));
     close(fd);
     fd = open("/new.txt", O_WRONLY | O_APPEND);
-    printf("append open %d write %d pos %ld\n", fd, (int)write(fd, "cd", 2), (long)lseek(fd, 0, SEEK_CUR));
+    wrote = (int)write(fd, "cd", 2); pos = (long)lseek(fd, 0, SEEK_CUR);
+    printf("append open %d write %d pos %ld\n", fd, wrote, pos);
     lseek(fd, 0, SEEK_SET);
-    printf("append again %d pos %ld\n", (int)write(fd, "ef", 2), (long)lseek(fd, 0, SEEK_CUR));
+    wrote = (int)write(fd, "ef", 2); pos = (long)lseek(fd, 0, SEEK_CUR);
+    printf("append again %d pos %ld\n", wrote, pos);
     close(fd);
     fd = open("/new.txt", O_RDONLY);
     memset(buf, 0, sizeof buf);
@@ -42,9 +46,11 @@ int main(void) {
     close(fd);
     printf("unlink %d\n", unlink("/new.txt"));
     errno = 0;
-    printf("reopen after unlink %d %s\n", open("/new.txt", O_RDONLY), errno == ENOENT ? "ENOENT" : "other");
+    opened = open("/new.txt", O_RDONLY);
+    printf("reopen after unlink %d %s\n", opened, errno == ENOENT ? "ENOENT" : "other");
     errno = 0;
-    printf("create in missing dir %d %s\n", open("/nodir/x", O_CREAT | O_WRONLY, 0644),
+    opened = open("/nodir/x", O_CREAT | O_WRONLY, 0644);
+    printf("create in missing dir %d %s\n", opened,
            errno == ENOENT ? "ENOENT" : "other");
     fd = open("/lib/made.txt", O_CREAT | O_WRONLY, 0644);
     printf("create in /lib %d write %d\n", fd, (int)write(fd, "z", 1));

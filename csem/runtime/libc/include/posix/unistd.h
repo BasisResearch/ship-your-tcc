@@ -50,7 +50,7 @@ int          getopt(int, char * const [], const char *);
 //uid_t        getuid(void);
 int          isatty(int);
 // int          lchown(const char *, uid_t, gid_t);
-// int          link(const char *, const char *);
+int          link(const char *, const char *);
 // int          linkat(int, const char *, int, const char *, int);
 // int          lockf(int, int, off_t);
 off_t        lseek(int, off_t, int);

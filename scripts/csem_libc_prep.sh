@@ -25,7 +25,7 @@ got=$(sha256sum "$out/libc.core" | awk '{print $1}')
 echo --libc
 echo "$out/libc.core"
 for tu in ctype stdio stdlib string time utime unistd stat uio internal vfscanf signal; do
-  (cd "$_repo/csem/runtime/libc" && "$CSEM_ORACLE" --runtime="$CSEM_RUNTIME" --nolibc --cabs-json \
+  (cd "$up/runtime/libc" && "$CSEM_ORACLE" --runtime="$CSEM_RUNTIME" --nolibc --cabs-json \
      -I include -I include/posix "src/$tu.c" > "$out/libc_$tu.json")
   echo --libc-tu
   echo "$out/libc_$tu.json"

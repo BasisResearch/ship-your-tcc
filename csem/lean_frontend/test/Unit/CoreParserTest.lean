@@ -858,7 +858,7 @@ def testFiles : TestM Unit := do
         assertOk name (CoreParser.parseFileSummary content)
       else
         IO.println s!"  (skipping {name} — not found)"
-    -- std.core ailname surface: 46 attribute-tagged proxies (grep-verified),
+    -- std.core ailname surface: 47 attribute-tagged proxies (grep-verified),
     -- keyed by C name, mapped to the proxy symbol — incl. printf ↦
     -- printf_proxy (std.core:289), NOT the `builtin printf` decl (:283)
     let stdPath := "../runtime/libcore/std.core"
@@ -866,10 +866,11 @@ def testFiles : TestM Unit := do
       let stdContent ← IO.FS.readFile stdPath
       match parseAilnames stdContent with
       | .ok pairs =>
-        if pairs.length == 46 then pass "std.core ailnames count 46"
-        else fail_ "std.core ailnames count 46" s!"got {pairs.length}"
+        if pairs.length == 47 then pass "std.core ailnames count 47"
+        else fail_ "std.core ailnames count 47" s!"got {pairs.length}"
         for (c, p) in [("malloc", "malloc_proxy"), ("printf", "printf_proxy"),
-                       ("__builtin_errno", "errno_proxy"), ("memcpy", "memcpy_proxy")] do
+                       ("__builtin_errno", "errno_proxy"), ("memcpy", "memcpy_proxy"),
+                       ("fstat", "fstat_proxy")] do
           if pairs.contains (c, p) then pass s!"std.core ailname {c} ↦ {p}"
           else fail_ s!"std.core ailname {c} ↦ {p}" s!"missing (have: {pairs.lookup c})"
       | .error e => fail_ "std.core ailnames" e

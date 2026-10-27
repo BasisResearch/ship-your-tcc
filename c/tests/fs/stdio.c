@@ -28,6 +28,7 @@ int main(void) {
     printf("nodir %s %s\n", f ? "FILE" : "NULL", errno == ENOENT ? "ENOENT" : "other");
     printf("remove %d\n", remove("/out.txt"));
     errno = 0;
-    printf("remove again %d %s\n", remove("/out.txt"), errno == ENOENT ? "ENOENT" : "other");
+    int removed = remove("/out.txt");
+    printf("remove again %d %s\n", removed, errno == ENOENT ? "ENOENT" : "other");
     return 0;
 }

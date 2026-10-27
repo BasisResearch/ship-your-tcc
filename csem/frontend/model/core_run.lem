@@ -252,6 +252,7 @@ type fs_oper =
   | FS_SYMLINK of string * string (* target * link *)
   | FS_READLINK of string * Mem.pointer_value * integer (* path * buf * size *)
   | FS_STAT of string * Mem.pointer_value (* path * struct stat *)
+  | FS_FSTAT of integer * Mem.pointer_value (* descriptor * struct stat *)
   | FS_LSTAT of string * Mem.pointer_value (* path * struct stat *)
   | FS_TRUNCATE of string * integer (* path * off_t *)
   | FS_UNLINK of string (* path *)
@@ -1307,6 +1308,13 @@ BEFORE EVAL_PEXPR2
                         let path = List.map (charFromMValue "readlink") path_cvals in
                         Step_fs th_st $ FS_STAT (String.toString path) ptr
                       | _ -> error "stat"
+                    end
+                | Impl (BuiltinFunction "fstat") ->
+                    match cvals with
+                      | [Vobject (OVinteger fd_ival); Vobject (OVpointer ptr)] ->
+                        let fd = forceIntegerFromIntegerValue "fstat" fd_ival in
+                        Step_fs th_st $ FS_FSTAT fd ptr
+                      | _ -> error "fstat"
                     end
                 | Impl (BuiltinFunction "lstat") ->
                     match cvals with

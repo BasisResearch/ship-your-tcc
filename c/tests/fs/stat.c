@@ -25,7 +25,7 @@ int main(void) {
     struct stat st;
     long total = 0;
     char buf[64];
-    int n;
+    int n, r;
     errno = 0; show("stat /prog.c", stat("/prog.c", &st), &st);
     int fd = open("/prog.c", O_RDONLY);
     while ((n = (int)read(fd, buf, sizeof buf)) > 0) total += n;
@@ -37,12 +37,13 @@ int main(void) {
     errno = 0; show("stat /missing", stat("/missing", &st), &st);
     errno = 0; show("stat /prog.c/", stat("/prog.c/", &st), &st);
     errno = 0; show("stat /missing/x", stat("/missing/x", &st), &st);
+    errno = 0; show("stat /proc/self/fd/0", stat("/proc/self/fd/0", &st), &st);
     errno = 0; show("fstat 0", fstat(0, &st), &st);
     errno = 0; show("fstat 1", fstat(1, &st), &st);
     errno = 0; show("fstat 30", fstat(30, &st), &st);
-    errno = 0; printf("unlink /lib %d %s\n", unlink("/lib"), ename(errno));
-    errno = 0; printf("unlink /missing/ %d %s\n", unlink("/missing/"), ename(errno));
-    errno = 0; printf("unlink /missing %d %s\n", unlink("/missing"), ename(errno));
+    errno = 0; r = unlink("/lib"); printf("unlink /lib %d %s\n", r, ename(errno));
+    errno = 0; r = unlink("/missing/"); printf("unlink /missing/ %d %s\n", r, ename(errno));
+    errno = 0; r = unlink("/missing"); printf("unlink /missing %d %s\n", r, ename(errno));
     printf("unlink /prog.c %d\n", unlink("/prog.c"));
     errno = 0; show("stat after unlink", stat("/prog.c", &st), &st);
     errno = 0; show("fstat after unlink", fstat(fd, &st), &st);

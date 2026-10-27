@@ -118,9 +118,9 @@ def appendTrunc : Option (List Char) := do
         | .inr s => s.mode == 0o40755 && s.nlink == 3 | _ => false)
 #guard (match (fs_stat img "/").2 with | .inr s => s.nlink == 4 | _ => false)
 #guard (fs_stat img "/missing").2 matches .inl .enoent
--- fstat through Cerberus's libc path form
-#guard (match (fs_stat img "/proc/self/fd/0").2 with | .inr s => s.mode == 0o20000 | _ => false)
-#guard (fs_stat img "/proc/self/fd/9").2 matches .inl .ebadf
+-- fstat is a descriptor operation; proc-style names remain ordinary paths
+#guard (match (fs_fstat img 0).2 with | .inr s => s.mode == 0o20000 | _ => false)
+#guard (fs_fstat img 9).2 matches .inl .ebadf
 
 /-- Unlink while open: the name is gone, the descriptor still reads, fstat says nlink 0. -/
 def unlinkOpen : Option (List Char × Int) := do
@@ -128,8 +128,11 @@ def unlinkOpen : Option (List Char × Int) := do
   let (st, .inr 0) := fs_unlink st "/prog.c" | none
   let (st, .inl .enoent) := fs_stat st "/prog.c" | none
   let (st, .inr cs) := fs_read st fd 3 | none
-  let (_, .inr s) := fs_stat st s!"/proc/self/fd/{fd}" | none
+  let (_, .inr s) := fs_fstat st fd | none
   pure (cs, s.nlink)
+
+#guard (fs_stat img "/proc/self/fd/0").2 == .inl .enoent
+#guard compare img emptyState != .eq
 
 #guard unlinkOpen == some ("int".toList, 0)
 #guard (fs_unlink img "/lib").2 == .inl .eisdir

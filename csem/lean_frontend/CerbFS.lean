@@ -30,11 +30,9 @@ import LemLib
     descriptor that is a console stream (`fs_console_fd`) to the stdout/stderr records.
   * `stat`/`fstat` fill only `st_mode` (S_IFREG|0644 or S_IFDIR|0755, S_IFCHR for a console stream),
     `st_nlink` (1/0 for a linked/unlinked file, 2 + subdirectories for a directory, 1 for a console) and
-    `st_size` (files); every other field is 0 (htif.c `fill_stat`). Cerberus's libc implements `fstat(fd)` as
-    `stat("/proc/self/fd/<fd>")` (runtime/libc/src/stat.c); `fs_stat` answers that exact path form as
-    `fstat`. DEVIATION (registered, PORT-4.34.md): a program that itself names `/proc/self/fd/<n>` gets
-    fstat's answer where the image says ENOTDIR/ENOENT (no `/proc` can exist there: the program has no
-    `mkdir`). Mover: a Core `fstat` builtin (std.core + core_run.lem + runtime/libc/src/stat.c).
+    `st_size` (files); every other field is 0 (htif.c `fill_stat`). `fstat` has a
+    separate Core builtin and descriptor operation; a literal `/proc/self/fd/<n>`
+    path receives ordinary path resolution, never descriptor semantics.
   * `link` is EMLINK (htif.c `_link`), and so is `rename`: newlib's `_rename_r` without HAVE_RENAME is
     `_link_r` then `_unlink_r` (libc.a's renamer.o references both), so the first step fails with EMLINK.
   * O_* flags arrive in Cerberus's encoding (runtime/libc/include/posix/fcntl.h, from fs_spec.lem) and are
@@ -86,7 +84,7 @@ inductive FsError where
   | espipe : FsError    -- Illegal seek
   | emlink : FsError    -- Too many links
   | other : String → FsError
-  deriving Inhabited, BEq, Repr
+  deriving Inhabited, BEq, Repr, Ord
 
 /-- `panic!` needs an inhabitant at the refusal sites below; the
     default is an enosys error (never observed: the driver refuses to run
@@ -109,12 +107,12 @@ structure Node where
   data : Array UInt8
   /-- descriptors referring to it -/
   opens : Nat
-  deriving Inhabited, BEq, Repr
+  deriving Inhabited, BEq, Repr, Ord
 
 /-- An access mode (newlib's O_RDONLY/O_WRONLY/O_RDWR). -/
 inductive Access where
   | rdonly | wronly | rdwr
-  deriving Inhabited, BEq, Repr
+  deriving Inhabited, BEq, Repr, Ord
 
 /-- A descriptor on a node (htif.c `struct mfd` of kind FD_FILE). -/
 structure OpenFile where
@@ -122,19 +120,19 @@ structure OpenFile where
   pos : Nat
   acc : Access
   append : Bool
-  deriving Inhabited, BEq, Repr
+  deriving Inhabited, BEq, Repr, Ord
 
 /-- A descriptor table entry (htif.c `struct mfd`). -/
 inductive Fd where
   | free | stdin | stdout | stderr
   | file (f : OpenFile)
-  deriving Inhabited, BEq, Repr
+  deriving Inhabited, BEq, Repr, Ord
 
 /-- The image's file system: the node table and the descriptor table. -/
 structure FsState where
   nodes : Array (Option Node)
   fds : Array Fd
-  deriving BEq, Repr
+  deriving BEq, Repr, Ord
 
 /-- The root directory alone (htif.c `fs_init` before the embedded files), console streams on 0–2. -/
 def emptyState : FsState where
@@ -143,9 +141,6 @@ def emptyState : FsState where
   fds := #[.stdin, .stdout, .stderr] ++ Array.replicate (maxFds - 3) .free
 
 instance : Inhabited FsState := ⟨emptyState⟩
-
-instance : Ord FsState where
-  compare _ _ := .eq
 
 -- Stat field accessors
 def fs_dev  (s : FsStat) : Int := s.dev
@@ -264,14 +259,14 @@ inductive Target where
   /-- nothing, as the entry `name` of the existing directory `d` (the last component) -/
   | absent (d : Nat) (name : List Char)
   | error (e : FsError)
-  deriving Inhabited, BEq, Repr
+  deriving Inhabited, BEq, Repr, Ord
 
 /-- The result of resolving a path. -/
 structure Resolution where
   target : Target
   /-- the path ends with `/` -/
   slash : Bool
-  deriving Inhabited, BEq, Repr
+  deriving Inhabited, BEq, Repr, Ord
 
 /-- htif.c `resolve`'s loop from directory `d` over the components; the C loop's `rest == NULL` is
 `rest = []`, its `last` is "only empty components follow". -/
@@ -482,26 +477,16 @@ def fstat (st : FsState) (fd : Int) : Sum FsError FsStat :=
   | some (.file f) => .inr (fillStat st f.node)
   | some _ => .inr { mode := 0o20000, nlink := 1 }
 
-/-- The path Cerberus's libc `fstat(fd)` passes to `stat` (runtime/libc/src/stat.c `__procfdname`):
-`/proc/self/fd/` and `fd` in decimal without leading zeros. -/
-def procFd? (path : String) : Option Nat :=
-  let pre := "/proc/self/fd/".toList
-  let cs := path.toList
-  let ds := cs.drop pre.length
-  if cs.take pre.length == pre && !ds.isEmpty && ds.all Char.isDigit &&
-      (ds.head? != some '0' || ds.length == 1) then
-    some (ds.foldl (fun k c => 10 * k + (c.toNat - '0'.toNat)) 0)
-  else none
+/-- Descriptor metadata, independently of path spelling. -/
+def fs_fstat (st : FsState) (fd : Int) : FsState × (Sum FsError FsStat) :=
+  (st, fstat st fd)
 
 def fs_stat (st : FsState) (path : String) : FsState × (Sum FsError FsStat) :=
-  match procFd? path with
-  | some fd => (st, fstat st fd)
-  | none =>
-    match (resolve st path).target with
-    | .error e => (st, .inl e)
-    | .absent .. => (st, .inl .enoent)
-    | .dir d => (st, .inr (fillStat st d))
-    | .file n => (st, .inr (fillStat st n))
+  match (resolve st path).target with
+  | .error e => (st, .inl e)
+  | .absent .. => (st, .inl .enoent)
+  | .dir d => (st, .inr (fillStat st d))
+  | .file n => (st, .inr (fillStat st n))
 
 def fs_unlink (st : FsState) (path : String) : FsState × (Sum FsError Nat) :=
   let r := resolve st path

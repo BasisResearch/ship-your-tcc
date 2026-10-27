@@ -30,6 +30,7 @@ let is_fs_function = function
         | "link" -> true
         | "readlink" -> true
         | "stat" -> true
+        | "fstat" -> true
         | "lstat" -> true
         | "symlink" -> true
         | "rmdir" -> true
@@ -256,6 +257,13 @@ let step_fs_proc th_st iCst cvals =
               let path = List.map (charFromMValue "readlink") path_cvals in
               Core_run.FS_STAT (String.toString path) ptr
           | _ -> error "stat"
+        end
+    | Implementation.BuiltinFunction "fstat" ->
+        match cvals with
+          | [Vobject (OVinteger fd_ival); Vobject (OVpointer ptr)] ->
+              let fd = forceIntegerFromIntegerValue "fstat" fd_ival in
+              Core_run.FS_FSTAT fd ptr
+          | _ -> error "fstat"
         end
     | Implementation.BuiltinFunction "lstat" ->
         match cvals with

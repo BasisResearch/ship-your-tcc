@@ -431,6 +431,7 @@ proc [ailname = "memcmp"] memcmp_proxy (p_ptr: pointer, q_ptr: pointer, size_ptr
 builtin mkdir ([integer], integer): eff loaded integer
 builtin stat  ([integer], pointer): eff loaded integer
 builtin lstat ([integer], pointer): eff loaded integer
+builtin fstat (integer, pointer): eff loaded integer
 builtin umask (integer)           : eff loaded integer
 builtin chmod ([integer], integer): eff loaded integer
 builtin chdir ([integer])         : eff loaded integer
@@ -458,6 +459,17 @@ proc [ailname = "stat"] stat_proxy (path_ptr: pointer, buf_ptr: pointer) : eff l
       pcall(<builtin_stat>, cs, buf)
     | (_: loaded pointer, _: loaded pointer) =>
       pure (undef(<<DUMMY(stat_proxy)>>))
+  end
+
+-- int fstat(int fd, struct stat *statbuf);
+proc [ailname = "fstat"] fstat_proxy (fd_ptr: pointer, buf_ptr: pointer) : eff loaded integer :=
+  let strong fd_loaded: loaded integer = load('signed int', fd_ptr) in
+  let strong buf_loaded: loaded pointer = load('struct stat*', buf_ptr) in
+  case (fd_loaded, buf_loaded) of
+    | (Specified (fd: integer), Specified (buf: pointer)) =>
+      pcall(<builtin_fstat>, fd, buf)
+    | (_: loaded integer, _: loaded pointer) =>
+      pure (undef(<<DUMMY(fstat_proxy)>>))
   end
 
 -- int lstat(const char *pathname, struct stat *statbuf);
@@ -618,7 +630,7 @@ builtin close    (integer)                    : eff loaded pointer
 -- FORK 2026-09-23 ([USER] ruled that unambiguous bugs get fixes; upstream-tray draft 45 "std.core pread/pwrite declaration arity"): the fourth formal is the offset the call sites below pass and both runtime arms consume (core_reduction_aux.lem:218-236, core_run.lem:1269-1287)
 builtin pwrite   (integer, [integer], integer, integer): eff loaded pointer
 builtin pread    (integer, pointer, integer, integer): eff loaded pointer
-builtin link     ([integer], [integer])       : eff loaded pointer
+builtin link     ([integer], [integer])       : eff loaded integer
 builtin readlink ([integer], pointer, integer): eff loaded pointer
 builtin symlink  ([integer], [integer])       : eff loaded pointer
 builtin rmdir    ([integer])                  : eff loaded pointer
@@ -691,7 +703,7 @@ proc [ailname = "pread"] pread_proxy (fd_ptr: pointer, buf_ptr: pointer, size_pt
 
 
 -- int link(const char *oldpath, const char *newpath);
-proc [ailname = "link"] link_proxy (path1_ptr: pointer, path2_ptr: pointer): eff loaded pointer :=
+proc [ailname = "link"] link_proxy (path1_ptr: pointer, path2_ptr: pointer): eff loaded integer :=
   let strong path1_loaded: loaded pointer = load('char*', path1_ptr) in
   let strong path2_loaded: loaded pointer = load('char*', path2_ptr) in
   case (path1_loaded, path2_loaded) of

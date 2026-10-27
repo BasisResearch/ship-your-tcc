@@ -150,6 +150,10 @@ val fs_stat: fs_state -> string -> fs_state * (either fs_error fs_stat)
 declare ocaml target_rep function fs_stat = `Sibylfs.run_stat`
 declare lean target_rep function fs_stat = `CerbFS.fs_stat`
 
+(* ship-your-tcc: fstat is a descriptor operation, never a synthetic path. *)
+val fs_fstat: fs_state -> integer -> fs_state * (either fs_error fs_stat)
+declare lean target_rep function fs_fstat = `CerbFS.fs_fstat`
+
 val fs_lstat: fs_state -> string -> fs_state * (either fs_error fs_stat)
 declare ocaml target_rep function fs_lstat = `Sibylfs.run_lstat`
 declare lean target_rep function fs_lstat = `CerbFS.fs_lstat`
