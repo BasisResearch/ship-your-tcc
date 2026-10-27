@@ -19,8 +19,8 @@ Takeover in progress, resumed 2026-10-27. The approved target is
 
 Mike Dodds's upstream follow-up is tracked in CSEM-UPSTREAM.md. README and
 ATTRIBUTION prominently credit Cerberus / Cambridge REMS and cerberus-lean /
-Mike Dodds / Oath. Repin evaluation is queued in tasks/csem-repin.md after
-the two current Sol tasks land; it will not disrupt their work. Kiran owns
+Mike Dodds / Oath. Repin evaluation is queued in tasks/csem-repin.md now that
+the original RV64-config and C11-model tasks have landed; it uses a fresh worktree. Kiran owns
 external bug reporting; no external contact is authorized or planned.
 
 | lane | recovery source | review and next check |
@@ -31,7 +31,7 @@ external bug reporting; no external contact is authorized or planned.
 | F1 ABI/allocation | `agent-a4ab6bbd8c0be5325` | RV64 configuration reader integrated after capped build/full gate; 10/15 probes agree, float/bitfield/enum/stdin gaps remain; allocator recovery still open |
 | F1 filesystem | `agent-ad868c434f5f27398` | integrated after full gate: descriptor fstat, structural state ordering and link proxy repaired; eight exact Sail byte/exit agreements, repeated with RV64 config; mkdir remains a separate missing-library gap |
 | F1 IEEE | `agent-a45cb08cf87ce958c` | review standalone arithmetic; connection to CSem remains open |
-| F3 compiler model | `agent-a05464165befb7074` (recovery merged) | patch 0004 validated on main; Sol slot 1 now mirrors patch 0003 and C11 arguments |
+| F3 compiler model | `agent-a05464165befb7074` (recovery merged) | patched C11 model integrated after capped build and combined full gate; 1,670 independent fast arenas including 1,051 generated successes; Sail arena equality remains open |
 
 F3 review found reference-derived long-double bytes supplied to the model.
 Such runs cannot establish independent byte equality. That input is now
@@ -39,22 +39,25 @@ removed. Patch 0004 fixes compiler literals using exact integer rounding;
 public libc `strtold` still needs correction in the library lane. Matching refusals likewise do not satisfy the F3 success criterion.
 
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
-two at a time, following MANAGER.md. Slot 1 finishes the patched C11 model and mirrors the additional pragma-operand
-repair; slot 2 makes fast arena collection stop at compiler handoff. The RV64
-configuration reader is integrated; its fresh probe residuals are documented
-in results/csem/f1-config.md. The lead reviews/builds worker results and
-completes filesystem recovery and F2 checks.
+two at a time, following MANAGER.md. Slot 1 repairs the newly confirmed C11
+trigraph deviation in tcc/config/model; slot 2 is next for the queued upstream
+repin evaluation. The lead integrates the validated compiler-handoff collector
+and hardens its model_diff consumer. The RV64 reader and image filesystem are
+integrated; their fresh probes and remaining semantic gaps are documented.
 Built-in agents remain stopped.
 
-Before patch 0003, the binary128-fixed model gave 1,557 identical arenas /
-2,079 inputs against the fast reference: 499 matching refusals, 23 explicit
-unsupported-assembly/pragma errors, no mismatches. Original 401-input corpus:
-400 identical arenas, one refusal. Generated successful arenas total 1,043;
-none of these fast-runner counts satisfies the pending Sail criterion.
-Review also found an unchecked objcopy failure in the runtime cache key;
-these historical counts remain diagnostic until a fresh, correctly keyed rerun.
-The 156-vector binary128 stress program also has an identical arena. The
-inherited assembler drafts remain in `build/recovery/assembler/`.
+The patched C11 model's frozen request-6 build passes, followed by the full
+combined ABI/filesystem gate. Fresh independent fast-reference results:
+34 focused arenas, 1,670/2,485 broad arenas (including 1,051 cgen/Csmith), and
+one 156-vector binary128 stress arena; zero mismatches/model errors. The 548
+compiler refusals, 17 unsupported-assembly cases and 250 harness failures
+remain separate. Most harness failures execute the generated program after
+handoff, which the new collector addresses. See results/model/c11-model.md.
+Ghost GNode is not yet Cabs; fuel adequacy, compiler/model proofs and full
+Sail arena equality remain open. Older pre-C11 counts used a defective cache
+key and remain historical diagnostics. The inherited assembler drafts are
+preserved in build/recovery/assembler/. The extra macro-operand compiler repair
+passes host/cross tests and full Sail (results/review/c11/pragma-macro-operand/).
 
 F2 recheck after patch 0003: 585 token-equal inputs / 593 after UCN identity and `_Pragma`
 operand/effect repairs. The cross-host signed-character difference is already

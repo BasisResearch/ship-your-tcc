@@ -158,3 +158,9 @@ worktree index.lock (`Read-only file system`). The complete reviewed diff is
 ready for the lead's ordinary commit; exact paths, SHA256s and the proposed
 message are in build/worker-commit.request, also referenced by the serviced
 build request. No alternate Git metadata location was used.
+
+Lead integration: after replay on main's RV64 configuration and filesystem
+model, the combined `scripts/check.sh --csem` passes (633 targets, 19 unit
+executables, 230 generated files reproduced, 113 baseline classifications and
+standard-only axiom cones). This does not upgrade fast-reference evidence to
+Sail arena equality. No frozen sum compile-cut artifacts were regenerated.
