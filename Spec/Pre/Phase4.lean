@@ -278,22 +278,12 @@ def phase4Pragma (cfg : PreCfg) (fc : FileCtx) (st : PState) (ts : List Tok) : O
   match ts with
   | [o] => if cfg.ext.pragmaOnce ∧ o.kind = .ident ∧ o.spell = bs "once" then
              some { st with once := FileSys.normComponents fc.path :: st.once } else none
-  | [o, lp, s, rp] =>
-    if cfg.ext.pushPopMacro ∧ o.kind = .ident ∧ isPunct lp "(" ∧ s.kind = .strLit ∧ isPunct rp ")"
-       ∧ s.spell.head? = some 34 then
-      let n := (s.spell.drop 1).dropLast
-      if o.spell = bs "push_macro" then
-        some { st with pushed := (n, st.macros.get? n) :: st.pushed }
-      else if o.spell = bs "pop_macro" then
-        match st.pushed.find? (·.1 = n) with
-        | some (_, d) =>
-          let pushed := st.pushed.eraseP (·.1 = n)
-          let macros := match d with | some d => st.macros.insert n d | none => st.macros.erase n
-          some { st with pushed := pushed, macros := macros }
-        | none => some st
-      else none
-    else none
-  | _ => none
+  | _ =>
+    let ctx : ExpCtx :=
+      { cfg := cfg, macros := st.macros, pushed := st.pushed,
+        file := fc.presumed, lineDelta := fc.lineDelta, inIf := false,
+        hasInc := fun _ _ => false }
+    (macroPragma ctx ts).map fun ctx' => { st with macros := ctx'.macros, pushed := ctx'.pushed }
 
 /-- Emit expanded text: tokens go to the output; pragma markers (from
 `_Pragma`) are executed if they are phase-4 pragmas, else output. A `'` or
@@ -315,11 +305,15 @@ def emitText (cfg : PreCfg) (fc : FileCtx) : Nat → PState → List Tok → Exc
 /-! ### The phase-4 driver -/
 
 def ExpCtx.ofState (cfg : PreCfg) (fs : FileSys) (fc : FileCtx) (st : PState) (inIf : Bool) : ExpCtx :=
-  { cfg := cfg, macros := st.macros, file := fc.presumed, lineDelta := fc.lineDelta, inIf := inIf,
+  { cfg := cfg, macros := st.macros, pushed := st.pushed, file := fc.presumed, lineDelta := fc.lineDelta, inIf := inIf,
     hasInc := fun next h =>
       match headerOf h with
       | some (q, n) => (searchHeader cfg fs fc q next n).isSome
       | none => false }
+
+/-- Propagate the effects of expansion, including argument prescanning. -/
+def PState.afterExpansion (st : PState) (ex : Expansion) : PState :=
+  { st with macros := ex.ctx.macros, pushed := ex.ctx.pushed, counter := ex.counter }
 
 def isActive : List CondFrame → Bool
   | [] => true
@@ -355,9 +349,9 @@ def procFile (cfg : PreCfg) (fs : FileSys) : Nat → PState → FileCtx → List
               let (c, st) ←
                 if name = bs "if" then do
                   let ctx := ExpCtx.ofState cfg fs fc st true
-                  let (ctr, ex) ← expand ctx fuel st.counter args []
-                  let c ← evalIf ctx line ex
-                  pure (c, { st with counter := ctr })
+                  let ex ← expand ctx fuel st.counter args []
+                  let c ← evalIf ex.ctx line ex.tokens
+                  pure (c, (st.afterExpansion ex))
                 else
                   match args with
                   | x :: _ =>
@@ -376,9 +370,9 @@ def procFile (cfg : PreCfg) (fs : FileSys) : Nat → PState → FileCtx → List
                 procFile cfg fs fuel st fc rest' false ({ f with active := false } :: fs')
               else do
                 let ctx := ExpCtx.ofState cfg fs fc st true
-                let (ctr, ex) ← expand ctx fuel st.counter args []
-                let c ← evalIf ctx line ex
-                procFile cfg fs fuel { st with counter := ctr } fc rest' false
+                let ex ← expand ctx fuel st.counter args []
+                let c ← evalIf ex.ctx line ex.tokens
+                procFile cfg fs fuel (st.afterExpansion ex) fc rest' false
                   ({ f with active := c, taken := c } :: fs')
           else if name = bs "else" then
             match conds with
@@ -406,21 +400,21 @@ def procFile (cfg : PreCfg) (fs : FileSys) : Nat → PState → FileCtx → List
           else if name = bs "include" ∨ (cfg.ext.includeNext ∧ name = bs "include_next") then do
             let next := name = bs "include_next"
             -- §6.10.2p2–4: a header-name, or macro-replaced tokens forming one
-            let hdr ← match args with
+            let (st, hdr) ← match args with
               | h :: _ =>
-                if h.kind = .headerName then pure h.spell
+                if h.kind = .headerName then pure (st, h.spell)
                 else do
                   let ctx := ExpCtx.ofState cfg fs fc st false
-                  let (_, ex) ← expand ctx fuel st.counter args []
-                  match ex with
+                  let ex ← expand ctx fuel st.counter args []
+                  match ex.tokens with
                   | [s] =>
-                    if s.kind = .strLit ∧ s.spell.head? = some 34 then pure s.spell
+                    if s.kind = .strLit ∧ s.spell.head? = some 34 then pure (st.afterExpansion ex, s.spell)
                     else throw (err .include "#include expects \"FILENAME\" or <FILENAME> (§6.10.2p4)")
                   | lt :: more =>
                     match more.getLast? with
                     | some gt =>
                       if isPunct lt "<" ∧ isPunct gt ">" then
-                        pure (60 :: joinHeader cfg more.dropLast ++ [62])
+                        pure (st.afterExpansion ex, 60 :: joinHeader cfg more.dropLast ++ [62])
                       else throw (err .include "#include expects \"FILENAME\" or <FILENAME> (§6.10.2p4)")
                     | none => throw (err .include "#include expects \"FILENAME\" or <FILENAME> (§6.10.2p4)")
                   | [] => throw (err .include "#include expects \"FILENAME\" or <FILENAME> (§6.10.2p4)")
@@ -441,15 +435,15 @@ def procFile (cfg : PreCfg) (fs : FileSys) : Nat → PState → FileCtx → List
                   procFile cfg fs fuel st fc rest' false conds
           else if name = bs "line" ∨ (cfg.ext.linemarker ∧ d.kind = .ppNumber) then do
             -- §6.10.4: digit-sequence ["s-char-sequence"], else macro-replaced
-            let toks ← if name = bs "line" then do
+            let (st, toks) ← if name = bs "line" then do
                 match args with
                 | a :: _ =>
-                  if a.kind = .ppNumber then pure args
+                  if a.kind = .ppNumber then pure (st, args)
                   else do
-                    let (_, ex) ← expand (ExpCtx.ofState cfg fs fc st false) fuel st.counter args []
-                    pure ex
-                | [] => pure []
-              else pure ln
+                    let ex ← expand (ExpCtx.ofState cfg fs fc st false) fuel st.counter args []
+                    pure (st.afterExpansion ex, ex.tokens)
+                | [] => pure (st, [])
+              else pure (st, ln)
             match toks with
             | n :: more =>
               if n.kind ≠ .ppNumber ∨ ¬n.spell.all isDigit then
@@ -479,8 +473,8 @@ def procFile (cfg : PreCfg) (fs : FileSys) : Nat → PState → FileCtx → List
             | none =>
               let isStdc : Bool := match args.head? with | some o => o.spell = bs "STDC" | none => false
               let (st, body) ← if cfg.pragmaExpand ∧ ¬isStdc then do
-                  let (ctr, ex) ← expand (ExpCtx.ofState cfg fs fc st false) fuel st.counter args.tail []
-                  pure ({ st with counter := ctr }, args.take 1 ++ ex)
+                  let ex ← expand (ExpCtx.ofState cfg fs fc st false) fuel st.counter args.tail []
+                  pure ((st.afterExpansion ex), args.take 1 ++ ex.tokens)
                 else pure (st, args)
               procFile cfg fs fuel { st with out := (pragmaOut body).reverse ++ st.out } fc rest' false conds
           else if cfg.ext.hashBang ∧ bof ∧ fc.isMain ∧ isPunct d "!" then
@@ -493,8 +487,8 @@ def procFile (cfg : PreCfg) (fs : FileSys) : Nat → PState → FileCtx → List
       else do
         let (txt, rest') := takeText (.tok h :: rest) true []
         let ctx := ExpCtx.ofState cfg fs fc st false
-        let (ctr, ex) ← expand ctx fuel st.counter txt []
-        let st ← emitText cfg fc (ex.length + 1) { st with counter := ctr } ex
+        let ex ← expand ctx fuel st.counter txt []
+        let st ← emitText cfg fc (ex.tokens.length + 1) (st.afterExpansion ex) ex.tokens
         procFile cfg fs fuel st fc rest' false conds
 
 end CSem.Pre

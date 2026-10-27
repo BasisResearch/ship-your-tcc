@@ -80,6 +80,7 @@ exist, searched as by `#include` (`next`: `#include_next`). -/
 structure ExpCtx where
   cfg : PreCfg
   macros : Macros
+  pushed : List (Bytes × Option MacroDef)
   file : Bytes
   lineDelta : Int
   inIf : Bool
@@ -284,11 +285,37 @@ def pragmaToks (ctx : ExpCtx) (t : Tok) (s : Bytes) : Except PreError (List Tok)
   let items ← phase3 ctx.cfg ctx.file ((destringize s).map (fun c => (⟨c, t.line⟩ : PChar)))
   pure (items.filterMap (fun i => match i with | .tok x => some { x with line := t.line } | .nl _ => none))
 
+/-- Execute a macro-stack pragma immediately, so rescanning sees its effect.
+The spelling in the string operand is destringized before identifier lookup. -/
+def macroPragma (ctx : ExpCtx) (ts : List Tok) : Option ExpCtx :=
+  match ts with
+  | [o, lp, s, rp] =>
+    if ctx.cfg.ext.pushPopMacro ∧ o.kind = .ident ∧ isPunct lp "(" ∧
+        s.kind = .strLit ∧ isPunct rp ")" ∧ s.spell.head? = some 34 then
+      let n := identifierKey (destringize s.spell)
+      if o.spell = bs "push_macro" then
+        some { ctx with pushed := (n, ctx.macros.get? n) :: ctx.pushed }
+      else if o.spell = bs "pop_macro" then
+        match ctx.pushed.find? (·.1 = n) with
+        | some (_, d) =>
+          let macros := match d with | some d => ctx.macros.insert n d | none => ctx.macros.erase n
+          some { ctx with pushed := ctx.pushed.eraseP (·.1 = n), macros }
+        | none => some ctx
+      else none
+    else none
+  | _ => none
+
+/-- Expansion returns all effects, including effects of prescanning arguments. -/
+structure Expansion where
+  ctx : ExpCtx
+  counter : Nat
+  tokens : List Tok
+
 /-- Prosser's `expand`, with the rescanning-time operators. `ctr`: the
 `__COUNTER__` value. `acc`: output so far, reversed. -/
-def expand (ctx : ExpCtx) : Nat → Nat → List Tok → List Tok → Except PreError (Nat × List Tok)
+def expand (ctx : ExpCtx) : Nat → Nat → List Tok → List Tok → Except PreError Expansion
   | 0, _, inp, _ => .error (ctx.err .fuel ((inp.head?.map (·.line)).getD 0) "macro expansion fuel")
-  | _ + 1, ctr, [], acc => .ok (ctr, acc.reverse)
+  | _ + 1, ctr, [], acc => .ok ⟨ctx, ctr, acc.reverse⟩
   | fuel + 1, ctr, t :: rest, acc =>
     if t.kind ≠ .ident then expand ctx fuel ctr rest (t :: acc)
     else if ctx.inIf ∧ t.spell = bs "defined" then
@@ -320,12 +347,13 @@ def expand (ctx : ExpCtx) : Nat → Nat → List Tok → List Tok → Except Pre
                 | some (args, rp, rest2) => do
                   let args ← matchArity ctx rp.line ps m.variadic args
                   let args := args.map (fun a => a.map (fun x => { x with line := rp.line }))
-                  let (ctr', exps) ← (neededArgs m.items).foldlM (fun (st : Nat × List (Nat × List Tok)) i => do
-                      let (c, e) ← expand ctx fuel st.1 (args.getD i []) []
-                      pure (c, st.2 ++ [(i, e)])) (ctr, [])
-                  let out ← substitute ctx m args exps (hsUnion (hsInter t.hs rp.hs) [t.key])
+                  let (expanded, exps) ← (neededArgs m.items).foldlM
+                    (fun (st : Expansion × List (Nat × List Tok)) i => do
+                      let e ← expand st.1.ctx fuel st.1.counter (args.getD i []) []
+                      pure (e, st.2 ++ [(i, e.tokens)])) (⟨ctx, ctr, []⟩, [])
+                  let out ← substitute expanded.ctx m args exps (hsUnion (hsInter t.hs rp.hs) [t.key])
                     { t with line := rp.line }
-                  expand ctx fuel ctr' (out ++ rest2) acc
+                  expand expanded.ctx fuel expanded.counter (out ++ rest2) acc
               else expand ctx fuel ctr rest (t :: acc)
             | [] => expand ctx fuel ctr rest (t :: acc)
       | none =>
@@ -343,22 +371,32 @@ def expand (ctx : ExpCtx) : Nat → Nat → List Tok → List Tok → Except Pre
               if isPunct lp "(" then
                 match splitArgs 0 true rest1 0 [] [] with
                 | some ([inner], rp, rest2) => do
-                  let (ctr', ex) ← expand ctx fuel ctr inner []
-                  match hasIncludeOperand ctx.cfg (lp :: ex ++ [rp]) with
+                  let ex ← expand ctx fuel ctr inner []
+                  match hasIncludeOperand ex.ctx.cfg (lp :: ex.tokens ++ [rp]) with
                   | some (h, _) =>
                     let found := ctx.hasInc (t.spell = bs "__has_include_next") h
-                    expand ctx fuel ctr' rest2 (numTok t (if found then 1 else 0) :: acc)
+                    expand ex.ctx fuel ex.counter rest2 (numTok t (if found then 1 else 0) :: acc)
                   | none => .error (ctx.err .ifExpr t.line "malformed __has_include")
                 | _ => .error (ctx.err .ifExpr t.line "malformed __has_include")
               else .error (ctx.err .ifExpr t.line "malformed __has_include")
             | [] => .error (ctx.err .ifExpr t.line "malformed __has_include")
         else if ¬ctx.inIf ∧ t.spell = bs "_Pragma" then
           match rest with
-          | lp :: s :: rp :: rest' =>
-            if isPunct lp "(" ∧ s.kind = .strLit ∧ isPunct rp ")" then do
-              let ps ← pragmaToks ctx t s.spell
-              expand ctx fuel ctr rest'
-                (markerTok .pragmaEnd t :: ps.reverse ++ markerTok .pragmaBegin t :: acc)
+          | lp :: more =>
+            if isPunct lp "(" then
+              match splitArgs 0 true more 0 [] [] with
+              | some ([inner], _, rest') => do
+                let ex ← expand ctx fuel ctr inner []
+                match ex.tokens with
+                | [s] =>
+                  if s.kind = .strLit then do
+                    let ps ← pragmaToks ex.ctx t s.spell
+                    match macroPragma ex.ctx ps with
+                    | some ctx' => expand ctx' fuel ex.counter rest' acc
+                    | none => expand ex.ctx fuel ex.counter rest' (markerTok .pragmaEnd t :: ps.reverse ++ markerTok .pragmaBegin t :: acc)
+                  else .error (ctx.err .directive t.line "_Pragma operand must expand to a string literal (§6.10.9)")
+                | _ => .error (ctx.err .directive t.line "_Pragma operand must expand to one string literal (§6.10.9)")
+              | _ => .error (ctx.err .directive t.line "_Pragma needs ( string-literal ) (§6.10.9)")
             else .error (ctx.err .directive t.line "_Pragma needs ( string-literal ) (§6.10.9)")
           | _ => .error (ctx.err .directive t.line "_Pragma needs ( string-literal ) (§6.10.9)")
         else expand ctx fuel ctr rest (t :: acc)

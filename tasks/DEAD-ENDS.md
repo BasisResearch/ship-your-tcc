@@ -62,3 +62,9 @@
 - F1 worker sandbox: systemd user bus returns Operation not permitted. The lead
   successfully built the first stable request under the shared lock/12 GB cap.
   Keep the build request protocol; never fall back to an uncapped build.
+
+- F2 `_Pragma`: collecting all pragma markers and applying them only after a
+  text block has expanded gives stale macro values after pop_macro. Thread the
+  macro table/stack through rescanning and argument expansion; markers alone
+  cannot represent these effects. Operand macros must expand before checking
+  for one string literal. Regression: c/tests/c11/pragma.c's RESTORE macro.

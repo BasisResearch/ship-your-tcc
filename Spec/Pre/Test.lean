@@ -199,4 +199,14 @@ the image invokes the patched compiler with `-std=c11`. -/
 #guard both "#define caf\\u00e9 caf\\U000000E9\ncaf\\u00e9\n" "caf\\U000000E9"
 #guard both "#define STR(x) #x\nSTR(caf\\u00e9)\n" "\"caf\\u00e9\""
 
+/-! ### `_Pragma` expands its operand and changes rescanning state immediately. -/
+#guard (match runPP cfgIso testFS "#define P \"STDC FENV_ACCESS OFF\"\n_Pragma(P)\n" with
+  | some out => out == [⟨.pragmaBegin, []⟩] ++ toksOf cfgIso "STDC FENV_ACCESS OFF" ++ [⟨.pragmaEnd, []⟩]
+  | none => false)
+#guard ppIs Tcc.cfgTcc testFS "#define X 11\n#pragma push_macro(\"X\")\n#undef X\n#define X 22\n#define RESTORE _Pragma(\"pop_macro(\\\"X\\\")\") X\nRESTORE X\n" "11 11"
+#guard ppIs Tcc.cfgTcc testFS "#define X 11\n#pragma push_macro(\"X\")\n#undef X\n#define X 22\n#define KEEP(x) x X\nKEEP(_Pragma(\"pop_macro(\\\"X\\\")\")) X\n" "11 11"
+#guard ppIs Tcc.cfgTcc testFS "__COUNTER__\n#define L __COUNTER__\n#line L\n__COUNTER__\n" "0 2"
+#guard ppFails cfgIso testFS "#define P 123\n_Pragma(P)\n"
+#guard ppFails cfgIso testFS "_Pragma(\"once\" \"once\")\n"
+
 end CSem.Pre.Test
