@@ -38,14 +38,13 @@ pushes main without force. Record unsuccessful approaches in
 The launcher follows 4ct-digest's MANAGER.md/codexwork.sh workflow, adapted
 to this project's two-worker limit and shared Lean build lock.
 
-Current assignments, 2026-10-27: slot 1 runs `tasks/f1-ieee-recovery.md`
-in sol-csem-repin; slot 2 runs `tasks/f1-anonymous-members.md` in
-sol-c11-line. The lead validates the combined observer/designator candidate
-in sol-f2-tokens; the designator repair and its native arena captures are
-already integrated. The scheduled repin,
-selected-member union repair and designator repair have landed through their
-integrated gates; current pins are in vendor/CSEM_REV. Allocation-oracle
-recovery and the raw frontend connection are queued independent tasks.
+Current assignments, 2026-10-27: slot 1 runs `tasks/f1-raw-frontend.md`
+in sol-f2-tokens (branch sol/f1-raw); slot 2 runs
+`tasks/f1-anonymous-members.md` in sol-c11-line. The lead integrates the
+reviewed IEEE candidate in sol-csem-repin. Exact preprocessing/pragma and
+designator integration is landed, including the explicit model/observer gate
+and three native arena captures. Allocation-oracle recovery, compiler literal
+rounding and anonymous-member compiler repairs remain queued tasks.
 
 Frozen build requests use the shared 12 GB lock. Changed inputs invalidate
 a request; freeze a new hash manifest before retrying. Infrastructure limits
