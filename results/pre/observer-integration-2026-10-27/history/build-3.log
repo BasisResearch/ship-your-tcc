@@ -1,0 +1,30 @@
+Running as unit: run-p100329-i465047256.scope; invocation ID: 2c33f664ee734c84b3fec8e44deb8011
+✔ [30/101] Built Spec.Pre.Tcc.Cfg (311ms)
+✔ [31/101] Built Spec.Pre.Tcc.Cfg:c.o (89ms)
+✖ [32/101] Building Tcc.Model.Types (973ms)
+trace: .> LEAN_PATH=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/packages/Cli/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/riscv-lean/lean-sail/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/packages/ELFSage/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/riscv-lean/Lean_RV64D_executable/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/riscv-lean/lean_emulator/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/build/lib/lean /data/home/kirancodes/.elan/toolchains/leanprover--lean4---v4.34.0/bin/lean /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/Tcc/Model/Types.lean -o /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/build/lib/lean/Tcc/Model/Types.olean -i /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/build/lib/lean/Tcc/Model/Types.ilean -c /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/build/ir/Tcc/Model/Types.c --setup /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/build/ir/Tcc/Model/Types.setup.json --json
+error: Tcc/Model/Types.lean:671:7: Unknown identifier `TOK_PPSTR`
+✔ [81/101] Built Spec.Pre.Expand (1.0s)
+✔ [82/101] Built Spec.Pre.IfExpr (777ms)
+⚠ [84/101] Built Spec.Pre.Phase4 (1.1s)
+warning: Spec/Pre/Phase4.lean:78:8: Variable name `l` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _l
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: Spec/Pre/Phase4.lean:140:37: Variable name `prev` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _prev
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+✔ [86/101] Built Spec.Pre.Main (260ms)
+✔ [88/101] Built Spec.Pre.Expand:c.o (2.2s)
+✔ [89/101] Built Spec.Pre.Compare (228ms)
+✔ [97/101] Built Spec.Pre (216ms)
+✔ [99/101] Built Spec.PreSpec (429ms)
+✔ [101/101] Built pre_spec:exe (729ms)
+Some required targets logged failures:
+- Tcc.Model.Types
+error: build failed

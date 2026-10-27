@@ -1,0 +1,86 @@
+[
+  {
+    "source": "results/repro/tcc_pragma_ignored_counter.c",
+    "exit": 0,
+    "stdout_bytes": 0,
+    "meta": {
+      "compile_steps": 3379795,
+      "program_steps": 89,
+      "steps": 3379909
+    },
+    "command": [
+      "timeout",
+      "1200",
+      "scripts/run_tcc_sail.sh",
+      "results/repro/tcc_pragma_ignored_counter.c"
+    ],
+    "env": {
+      "TCC_ARGS": "\"-std=c11\",\"-w\",",
+      "KEEP_WORK": "1",
+      "MAX_STEPS": "100000000"
+    },
+    "elf_sha256": "698dbbc7084dad973888792fa6c689318a0a253c2267cf2ca674e42e6ff5eeb7",
+    "pins": {
+      "results/repro/tcc_pragma_ignored_counter.c": "8e31ede021bf318c63d351a2b4ec03cfedea090c69ecd91bfc8c17acbbfa1383",
+      "patches/0003-tcc-c11.patch": "ea53d7170d7659af1c30e7ac9a6bf258ed3d1889127ec81a5b7c4807280835ab",
+      "scripts/run_tcc_sail.sh": "9a7737b4ac7a3578db6d1597a1c8224800e912cae30592e95c772f7637737ac8",
+      "c/build/base.elf": "9ea2052f734a13935f7007a73b050f69da90bc806cce354219e73798ee7b3af6"
+    },
+    "observation_sha256": {
+      "results/pre/observer-integration-2026-10-27/sail-ignored/raw": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "results/pre/observer-integration-2026-10-27/sail-ignored/run.stderr": "f0325b67b08edda4724fbb50979eeccf03ece03cd29a88db3461ebb536f6a604",
+      "results/pre/observer-integration-2026-10-27/sail-ignored/embed.S": "54aded8eee3d33829c3985015247426d9678ccae93d4fc6b3f99f93768c392d7",
+      "results/pre/observer-integration-2026-10-27/sail-ignored/make.log": "2384646d6b19184d9c334d43fec85664592fc7190687f3c134da36f984f216c0",
+      "results/pre/observer-integration-2026-10-27/sail-ignored/run.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "results/pre/observer-integration-2026-10-27/sail-ignored/run.meta": "53a51f60107e3d36796028988a41ed8215f97eeba2f6a3c0448def6651af2ef8",
+      "results/pre/observer-integration-2026-10-27/sail-ignored/run.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "results/pre/observer-integration-2026-10-27/sail-ignored/pcs": "3f7755ebb3256a6a0526577a93508f5e3a77e9b18434e73adae90e8cbe605da2",
+      "results/pre/observer-integration-2026-10-27/sail-ignored/out": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "results/pre/observer-integration-2026-10-27/sail-ignored/ld.log": "1a5df3ef0e42202edc60bf7dc6c60df66d0acfaad6e51c804161489eb6e44d04",
+      "results/pre/observer-integration-2026-10-27/sail-ignored/prog.elf.gz": "034279902bc715ffc0d672183019e6b6a0a8cd0bbb2c4e205f41ea0b68ff875c",
+      "results/pre/observer-integration-2026-10-27/sail-ignored/trace": "8aa99b9e52e7498a23d020362c1e7d452194f66c42473e0e361796eb2b634336"
+    }
+  },
+  {
+    "source": "results/repro/tcc_pragma_nested_operand.c",
+    "exit": 0,
+    "stdout_bytes": 0,
+    "meta": {
+      "compile_steps": 3374177,
+      "program_steps": 89,
+      "steps": 3374291
+    },
+    "command": [
+      "timeout",
+      "1200",
+      "scripts/run_tcc_sail.sh",
+      "results/repro/tcc_pragma_nested_operand.c"
+    ],
+    "env": {
+      "TCC_ARGS": "\"-std=c11\",\"-w\",",
+      "KEEP_WORK": "1",
+      "MAX_STEPS": "100000000"
+    },
+    "elf_sha256": "891a2bafce0f669df80cce3745a82396056e98ed11b2dc9723aa8df725d5778b",
+    "pins": {
+      "results/repro/tcc_pragma_nested_operand.c": "62b7e55a9d504aa827fa5dd5e1d920b5dcf7b89455b805549ad31950c7abf6eb",
+      "patches/0003-tcc-c11.patch": "ea53d7170d7659af1c30e7ac9a6bf258ed3d1889127ec81a5b7c4807280835ab",
+      "scripts/run_tcc_sail.sh": "9a7737b4ac7a3578db6d1597a1c8224800e912cae30592e95c772f7637737ac8",
+      "c/build/base.elf": "9ea2052f734a13935f7007a73b050f69da90bc806cce354219e73798ee7b3af6"
+    },
+    "observation_sha256": {
+      "results/pre/observer-integration-2026-10-27/sail-nested/raw": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "results/pre/observer-integration-2026-10-27/sail-nested/run.stderr": "1a14212135170ba3258c902773bbbba0a3db4001aa87b94ec75f4be89b55faf1",
+      "results/pre/observer-integration-2026-10-27/sail-nested/embed.S": "db13b210d5be2e2887e6f6ffa7bb736ca100cfd1bac9d656d9f5d7ff9d82e6a5",
+      "results/pre/observer-integration-2026-10-27/sail-nested/make.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "results/pre/observer-integration-2026-10-27/sail-nested/run.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "results/pre/observer-integration-2026-10-27/sail-nested/run.meta": "a4b694b91dd86de3bafe19bcac2cbf220202488534f1fa63268138f465d78ddb",
+      "results/pre/observer-integration-2026-10-27/sail-nested/run.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "results/pre/observer-integration-2026-10-27/sail-nested/pcs": "3f7755ebb3256a6a0526577a93508f5e3a77e9b18434e73adae90e8cbe605da2",
+      "results/pre/observer-integration-2026-10-27/sail-nested/out": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "results/pre/observer-integration-2026-10-27/sail-nested/ld.log": "2e72b186db42b468f9e309151a98004747d8928be5184913209b3253d272b101",
+      "results/pre/observer-integration-2026-10-27/sail-nested/prog.elf.gz": "a3cf7d533f793beb4de259b3eb3b02deb65e55a1c3f2655c53ce3862cb6d7f72",
+      "results/pre/observer-integration-2026-10-27/sail-nested/trace": "80ece023788d6684450660ce40909ef3f23abe024354b72e9f3d671defd7d8e5"
+    }
+  }
+]

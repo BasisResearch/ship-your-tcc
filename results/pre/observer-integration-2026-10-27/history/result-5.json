@@ -1,0 +1,22 @@
+{
+  "request": "f2-observer-integration-5",
+  "request_id": "f2-observer-integration-5",
+  "exit": 1,
+  "log": "build/worker-build-f2-observer-integration-5.log",
+  "command": [
+    "flock",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/lake.lock",
+    "systemd-run",
+    "--user",
+    "--scope",
+    "-p",
+    "MemoryMax=12G",
+    "lake",
+    "build",
+    "tcc_pre_tokens",
+    "pre_spec",
+    "tcc_model",
+    "Tcc.Model.PreAudit"
+  ],
+  "source_hashes_verified": true
+}

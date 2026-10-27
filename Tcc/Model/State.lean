@@ -145,8 +145,8 @@ structure TccSt where
   tok_ident : Int32 := 0
   table_ident : Array TokenSym := #[]
   tok_pragma_op : Int32 := 0
-  /-- Deferred -E directives during an outer pragma operand. -/
-  pragma_output : Option TokenString := none
+  /-- One emission bit per opaque -E output event, indexed by its identity. -/
+  pragma_emitted : TokenString := {}
   pp_expr : Int32 := 0
   hash_ident : Std.HashMap ByteArray Int32 := {}
   tokstr_buf : TokenString := {}

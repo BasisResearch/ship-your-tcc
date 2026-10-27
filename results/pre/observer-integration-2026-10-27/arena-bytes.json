@@ -1,0 +1,20 @@
+[
+  {
+    "source": "results/repro/tcc_pragma_ignored_counter.c",
+    "reference_cache_key": "70a47df90166b0e184f5a029",
+    "model_tag": "a66ac91ce3bfaa44b7eb0809",
+    "bytes": 13095
+  },
+  {
+    "source": "results/repro/tcc_pragma_nested_operand.c",
+    "reference_cache_key": "53d5ce5d88bcbb7bc108ef4e",
+    "model_tag": "c0c8207310e21118b1a0bc88",
+    "bytes": 13095
+  },
+  {
+    "source": "c/tests/c11/pragma_output.c",
+    "reference_cache_key": "554e495eb9fd4778b4844f2a",
+    "model_tag": "f5ff94219eb49b92c6184d87",
+    "bytes": 13287
+  }
+]

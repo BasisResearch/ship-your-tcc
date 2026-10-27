@@ -270,7 +270,7 @@ are set by the driver to the host tcc's values. -/
 def cfgTccE : PreCfg :=
   {{ cfgTcc with
     predefs := bs predefsE
-    pragmaExpand := fun _ => true
+    pragmaExpand := fun n => n = bs "push_macro" ∨ n = bs "pop_macro"
     ext := {{ extTcc with pragmaPack := false }}
     includePaths := [bs "/lib/tcc/include", bs "/include"]
     sysIncludePaths := [] }}

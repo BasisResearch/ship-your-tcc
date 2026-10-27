@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/scripts/test_tcc_c11.py", line 232, in <module>
+    main()
+    ~~~~^^
+  File "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/scripts/test_tcc_c11.py", line 65, in main
+    run(['scripts/tcc_src.sh', src])
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/scripts/test_tcc_c11.py", line 55, in run
+    raise RuntimeError(f'{cmd}: exit {p.returncode}\n{p.stderr.decode(errors="replace")}')
+RuntimeError: ['scripts/tcc_src.sh', '/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/test-c11/src']: exit 1
+

@@ -379,7 +379,6 @@ is transformed again, lift its events before the transformed output and
 remove them from the semantic token string (including newly exposed edge
 spaces). Ordinary arguments and ordinary compilation are unchanged. -/
 def observationArgs (template : TokPtr) (args : SymId) : M TokenString := do
-  if !(← get).observePP then return {}
   let fuel ← fuelM
   let mut q := template
   let mut transforms := false
@@ -404,7 +403,7 @@ def observationArgs (template : TokPtr) (args : SymId) : M TokenString := do
       let (t, cv, ptr') := TOK_GET ptr {}
       ptr := ptr'
       if t == TOK_EOF then break
-      if t == TOK_PPSTR && cv.strSize ≥ 11 && cv.sdata.get! 0 == 0 then
+      if pragmaMetadata t cv then
         events := tok_str_add2 events t cv
         found := true
       else if t == TOK_PPLINE then line := some cv
@@ -629,6 +628,7 @@ def next_argstream (R : Rec) (nested0 : Option SymId) (ws0 : Option TokenString)
     M (Int32 × Option SymId × Option TokenString) := do
   let fuel ← fuelM
   let mut nested := nested0
+  let mut ws := ws0
   for _ in [0:fuel] do
     let st ← get
     match st.macro_ptr with
@@ -643,6 +643,9 @@ def next_argstream (R : Rec) (nested0 : Option SymId) (ws0 : Option TokenString)
           if t == TOK_PPLINE then
             m := { m with pos := m.pos + 2 }
             continue
+          if t == TOK_PPSTR then
+            let (_, cv, m') := TOK_GET m {}
+            if pragmaMetadata t cv then m := m'; continue
           if t != 32 then found := some t; break
           m := { m with pos := m.pos + 1 }
         else
@@ -652,10 +655,19 @@ def next_argstream (R : Rec) (nested0 : Option SymId) (ws0 : Option TokenString)
             modify fun s => { s with tok_line := cv.i.toUInt32.toInt32 }
             m := mp'
             continue
-          return (tk, nested, ws0)
+          return (tk, nested, ws)
       match found with
-      | some t => return (t, nested, ws0)
+      | some t => return (t, nested, ws)
       | none =>
+        if let some output := ws then
+          let mut output := output
+          let mut q := mp
+          for _ in [0:fuel] do
+            if q.get == 0 then break
+            let (tk, cv, q') := TOK_GET q {}
+            q := q'
+            if pragmaMetadata tk cv then output := tok_str_add2 output tk cv
+          ws := some output
         end_macro
         match nested with
         | some sa =>
@@ -664,15 +676,26 @@ def next_argstream (R : Rec) (nested0 : Option SymId) (ws0 : Option TokenString)
             nested := some pr
             sym_free sa
         | none => pure ()
-  match ws0 with
+  match ws with
   | some _ =>
-    let (c, ws) ← peek_file R ws0
-    return (c, nested, ws)
+    let (c, outputWs) ← peek_file R ws
+    return (c, nested, outputWs)
   | none =>
     next_nomacro R
     let tk ← getTok
     if tk == 9 || tk == TOK_LINEFEED then setTok 32
-    return (← getTok, nested, ws0)
+    return (← getTok, nested, ws)
+
+/-- Preserve zero-width output from frames exhausted by macro-call lookahead. -/
+def pragmaStreamMetadata (out0 input : TokenString) (spaces : Bool) : TokenString := Id.run do
+  let mut out := out0
+  let mut q : TokPtr := { arr := input.str }
+  for _ in [0:input.len.toNat'] do
+    if q.pos ≥ input.len.toNat' then break
+    let (tk, cv, q') := TOK_GET q {}
+    q := q'
+    if spaces || pragmaMetadata tk cv then out := tok_str_add2 out tk cv
+  return out
 
 /-- `macro_subst_tok(tok_str, nested_list, s)` -/
 def macro_subst_tok (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) (s : SymId) :
@@ -695,15 +718,21 @@ def macro_subst_tok (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) 
         modify fun s => { s with parse_flags := saved_parse_flags }
         modify fun s => { s with tok_line := subst_line }
         tok_str := tok_str_add2_line tok_str v {} subst_line
-        if saved_parse_flags &&& PARSE_FLAG_SPACES != 0 then
-          let ws := ws.getD {}
-          for i in [0:ws.len.toNat'] do
-            tok_str := tok_str_add tok_str ws.str[i]!
+        tok_str := pragmaStreamMetadata tok_str (ws.getD {}) (saved_parse_flags &&& PARSE_FLAG_SPACES != 0)
         return (tok_str, nested, 0)
+      tok_str := pragmaStreamMetadata tok_str (ws.getD {}) false
       -- argument macro
       let mut args : SymId := 0
       let mut sa := sx.next
-      let mut i : Int := 2
+      -- Consume the opening parenthesis separately, lifting only the
+      -- metadata between the macro name and '(', never argument events.
+      for _ in [0:fuel] do
+        let (tk, n', _) ← next_argstream R nested none
+        nested := n'
+        if pragmaMetadata tk (← get).tokc then
+          tok_str := tok_str_add2 tok_str tk (← get).tokc
+        if tk == 40 then break
+      let mut i : Int := 1
       let mut tt : Int32 := 0
       for _ in [0:fuel] do
         for _ in [0:fuel] do
@@ -809,7 +838,7 @@ def pragmaOperandNext (R : Rec) (events0 : TokenString) : M TokenString := do
   let fuel ← fuelM
   for _ in [0:fuel] do
     let s ← get
-    let event := s.observePP && s.tok == TOK_PPSTR && s.tokc.strSize ≥ 11 && s.tokc.sdata.get! 0 == 0
+    let event := pragmaMetadata s.tok s.tokc
     if !event && s.tok != 32 then return events
     -- Removing an event can expose leading argument-cache whitespace.
     if event then events := tok_str_add2 events s.tok s.tokc
@@ -820,9 +849,6 @@ def pragmaOperandNext (R : Rec) (events0 : TokenString) : M TokenString := do
 then run the existing pragma parser on isolated file/token/macro buffers. -/
 def pragma_operator (R : Rec) (nested0 : Option SymId) : M (Option SymId) := do
   let mut operandEvents : TokenString := {}
-  let savedOutput := (← get).pragma_output
-  let deferOutput := (← get).output_type == TCC_OUTPUT_PREPROCESS
-  if deferOutput then modify fun s => { s with pragma_output := some {} }
   let saved_tok_line := (← get).tok_line
   let mut nested := nested0
   let flags := (← get).parse_flags
@@ -865,7 +891,7 @@ def pragma_operator (R : Rec) (nested0 : Option SymId) : M (Option SymId) := do
   let _ ← pragma_parse R
   if (← get).output_type == TCC_OUTPUT_PREPROCESS then
     modify fun s => { s with parse_flags := s.parse_flags &&& ~~~PARSE_FLAG_PREPROCESS }
-  let mut result : TokenString := if deferOutput then (← get).pragma_output.getD {} else operandEvents
+  let mut result : TokenString := {}
   if saved.observePP then
     let events := (← get).ppObserved.extract saved.ppObserved.size (← get).ppObserved.size
     modify fun s => { s with ppObserved := saved.ppObserved }
@@ -892,15 +918,17 @@ def pragma_operator (R : Rec) (nested0 : Option SymId) : M (Option SymId) := do
     macro_stack := saved.macro_stack, macro_ptr := saved.macro_ptr,
     tokstr_buf := saved.tokstr_buf, unget_buf := saved.unget_buf,
     include_stack := saved.include_stack, tok_flags := saved.tok_flags, parse_flags := flags,
-    tok_line := saved_tok_line, pragma_output := savedOutput }
-  if deferOutput && savedOutput.isSome then
-    let mut parent := savedOutput.getD {}
-    for i in [0:result.len.toNat'] do
-      parent := tok_str_add parent (result.str[i]!)
-    modify fun s => { s with pragma_output := some parent }
-  else if result.len != 0 then
-    result := tok_str_add result 0
-    let _ ← begin_macro .heap result.str 0 1
+    tok_line := saved_tok_line }
+  if result.len != 0 && (← get).output_type == TCC_OUTPUT_PREPROCESS then
+    let emitted := (← get).pragma_emitted
+    operandEvents := tok_str_add2 operandEvents TOK_PPSTR (pragmaOutputPayload emitted.len.toNat' result)
+    modify fun s => { s with pragma_emitted := tok_str_add emitted 0 }
+  else
+    for k in [0:result.len.toNat'] do
+      operandEvents := tok_str_add operandEvents (result.str[k]!)
+  if operandEvents.len != 0 then
+    operandEvents := tok_str_add operandEvents 0
+    let _ ← begin_macro .heap operandEvents.str 0 1
   return nested
 
 /-- Phase 6 selects the common prefix before decoding each literal.
@@ -1157,7 +1185,7 @@ def tccpp_new (R : Rec) : M Unit := do
   for k in Tok.keywords do
     let _ ← tok_alloc R k.toUTF8
   let pragmaTok ← tok_alloc R "_Pragma".toUTF8
-  modify fun s => { s with tok_pragma_op := pragmaTok.tok, pragma_output := none }
+  modify fun s => { s with tok_pragma_op := pragmaTok.tok, pragma_emitted := {} }
   define_push R Tok.TOK___LINE__ MACRO_OBJ none 0
   define_push R Tok.TOK___FILE__ MACRO_OBJ none 0
   define_push R Tok.TOK___DATE__ MACRO_OBJ none 0

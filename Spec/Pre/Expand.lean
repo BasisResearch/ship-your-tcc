@@ -366,9 +366,13 @@ def expand (ctx : ExpCtx) : Nat → Nat → List Tok → List Tok → Except Pre
             let out ← substitute ctx m [] [] (hsUnion t.hs [t.key]) t
             expand ctx fuel ctr (out ++ rest) acc
           | some ps =>
-            match rest with
+            -- Already executed pragma output has no width in macro-call
+            -- lookahead. Keep its order before the invoked replacement.
+            let (events, call) := rest.span (·.pragma.isSome)
+            match call with
             | lp :: rest1 =>
               if isPunct lp "(" then
+                let acc := events.reverse ++ acc
                 let nNamed := if m.variadic then ps.length - 1 else ps.length
                 match splitArgs nNamed m.variadic rest1 0 [] [] with
                 | none => .error (ctx.err .macro t.line

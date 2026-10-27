@@ -73,6 +73,8 @@ CASES = {
 'pragma-pop-argument': '#define X 11\n#pragma push_macro("X")\n#undef X\n#define X 22\n#define D(x) x X x\nD(_Pragma("pop_macro(\\\"X\\\")")) X\n',
 'pragma-once-operator': '#include "operator-once.h"\n#include "operator-once.h"\n__COUNTER__\n',
 'pragma-once-prescan': '#include "prescan-once.h"\n#include "prescan-once.h"\n__COUNTER__\n',
+'pragma-rescan-call': '#define P(x) _Pragma(x)\n#define F(x) x\n#define APPLY(x) F x\nAPPLY(P("unknown rescan") (123))\n',
+'pragma-rescan-frame': '#define P(x) _Pragma(x)\n#define F(x) x\n#define APPLY(x) F x\nAPPLY(P("unknown frame")) (456)\n',
 'ordinary-argument-transforms': '#define S(x) #x\n#define C(a,b) a##b\n#define D(x) x x\nD(__COUNTER__) S( a + b ) C(ab,cd) __COUNTER__\n',
 'ordinary-location-paste': '#define C(a,b) a##b\n#define D(x) x x\n#line 300\nD(\n__LINE__\n) C(\n__LI,\nNE__)\n',
 'error-pack-underflow': '#pragma pack(pop)\n',

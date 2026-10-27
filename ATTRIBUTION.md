@@ -130,3 +130,11 @@ and the separate GCC / repaired OCaml / repaired Lean observations.
 | here | source | changes |
 |---|---|---|
 | `scripts/pre_tokens_ref.c`, `scripts/build_pre_tokens_ref.py` generated observer | TinyCC 43c7708 (`vendor/TINYCC_REV`), Fabrice Bellard and TinyCC contributors, LGPL-2.1-or-later | Includes the locally patched tcc translation unit; generated instrumentation is confined to `build/pre-tokens-ref`. Reads no model/spec token data. Reuses `scripts/pre_diff.py`'s corpus and auxiliary setup; uses the existing model lexer/macro/effect functions for the Lean interface. |
+
+The combined observer integration moves the existing zero-width argument
+metadata traversal from the observer generator into patch 0003's preprocessor
+so that `-E` output uses the same traversal. Opaque output payloads and the
+model's byte encoding are local additions to the TinyCC-derived macro engine;
+they retain its LGPL-2.1-or-later provenance. The Lua abstraction inventory
+and mandatory tool table were consulted; no library machine proof was copied
+or claimed instruction-identical in this integration.

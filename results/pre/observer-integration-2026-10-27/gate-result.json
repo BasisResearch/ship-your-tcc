@@ -1,0 +1,11 @@
+{
+  "request": "f2-observer-integration-gate-1",
+  "request_id": "f2-observer-integration-gate-1",
+  "exit": 0,
+  "log": "build/worker-build-f2-observer-integration-gate-1.log",
+  "command": [
+    "scripts/check.sh",
+    "--csem"
+  ],
+  "source_hashes_verified": true
+}

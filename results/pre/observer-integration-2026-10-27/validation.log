@@ -1,0 +1,69 @@
+{
+  "focused": {
+    "attempted": 64,
+    "raw": {
+      "exact": 64
+    },
+    "spec": {
+      "exact": 64
+    },
+    "auxiliary": {
+      "tcc": {
+        "exact": 62,
+        "printer-question-escape": 2
+      },
+      "gcc": {
+        "exact": 47,
+        "different": 12,
+        "printer-error": 3,
+        "printer-unprotected-trigraph": 2
+      }
+    }
+  },
+  "negative": {
+    "attempted": 17,
+    "raw": {
+      "both-refused": 17
+    },
+    "spec": {
+      "spec-error": 17
+    },
+    "auxiliary": {
+      "tcc": {
+        "both-error": 11,
+        "exact": 6
+      },
+      "gcc": {
+        "both-error": 7,
+        "exact": 6,
+        "spec-error": 4
+      }
+    }
+  },
+  "corpus": {
+    "attempted": 619,
+    "raw": {
+      "exact": 613,
+      "both-refused": 6
+    },
+    "spec": {
+      "exact": 611,
+      "compiler-refusal": 1,
+      "spec-error": 7
+    },
+    "auxiliary": {
+      "tcc": {
+        "exact": 611,
+        "different": 1,
+        "spec-error": 2,
+        "both-error": 5
+      },
+      "gcc": {
+        "exact": 607,
+        "different": 5,
+        "spec-error": 2,
+        "both-error": 5
+      }
+    }
+  }
+}

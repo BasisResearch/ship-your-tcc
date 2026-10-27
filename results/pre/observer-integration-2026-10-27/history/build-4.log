@@ -1,0 +1,20 @@
+Running as unit: run-p121617-i465005901.scope; invocation ID: b5ed9d9b9cf64785a8c324cb4560f801
+⚠ [16/101] Replayed Spec.Pre.Phase4
+warning: Spec/Pre/Phase4.lean:78:8: Variable name `l` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _l
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: Spec/Pre/Phase4.lean:140:37: Variable name `prev` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _prev
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+✖ [47/101] Building Tcc.Model.Types (978ms)
+trace: .> LEAN_PATH=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/packages/Cli/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/riscv-lean/lean-sail/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/packages/ELFSage/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/riscv-lean/Lean_RV64D_executable/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/riscv-lean/lean_emulator/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/build/lib/lean /data/home/kirancodes/.elan/toolchains/leanprover--lean4---v4.34.0/bin/lean /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/Tcc/Model/Types.lean -o /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/build/lib/lean/Tcc/Model/Types.olean -i /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/build/lib/lean/Tcc/Model/Types.ilean -c /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/build/ir/Tcc/Model/Types.c --setup /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/build/ir/Tcc/Model/Types.setup.json --json
+error: Tcc/Model/Types.lean:671:7: Unknown identifier `Tok.TOK_PPSTR`
+Some required targets logged failures:
+- Tcc.Model.Types
+error: build failed

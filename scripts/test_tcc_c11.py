@@ -13,6 +13,7 @@ import fcntl
 from concurrent.futures import ThreadPoolExecutor
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -39,6 +40,7 @@ CASES = {
     'results/repro/tcc_pragma_macro_operand.c': 'pragma operands 0\n',
     'results/repro/tcc_pragma_ignored_counter.c': '',
     'results/repro/tcc_pragma_nested_operand.c': '',
+    'c/tests/c11/pragma_output.c': '',
     'results/repro/tcc_pp_trigraphs.c': 'trigraphs 0\n',
     'results/repro/tcc_line_splice.c': '',
     'c/tests/c11/line_varargs.c': '',
@@ -124,6 +126,15 @@ def main():
             raise RuntimeError(f'{f}: gcc differs')
         pp = OUT / (name + '.i')
         pp.write_bytes(run(tcc + ['-E', f]).stdout)
+        if f == 'c/tests/c11/pragma_output.c':
+            directives = re.findall(rb'^\s*#pragma (.*)$', pp.read_bytes(), re.M)
+            expected_directives = [b'unknown inner', b'unknown outer',
+                                   b'unknown repeated __COUNTER__', b'unknown stringify',
+                                   b'unknown paste', b'pack(push, 1)', b'pack(pop)', b'unknown rescan', b'unknown frame']
+            # Ignore printer whitespace, preserving each directive and its order.
+            compact = lambda x: re.sub(rb'\s+', b'', x)
+            if list(map(compact, directives)) != list(map(compact, expected_directives)):
+                raise RuntimeError(f'pragma -E order/multiplicity differs: {directives!r}')
         if run(tcc + ['-run', pp]).stdout != actual:
             raise RuntimeError(f'{f}: -E round trip differs')
         obj = OUT / (name + '.o')

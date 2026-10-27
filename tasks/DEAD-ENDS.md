@@ -291,3 +291,26 @@
   worktree diff for the lead to commit, following MANAGER.md. No alternate
   index/object store or permission workaround was attempted. Do not resend
   semantic repair work merely to resolve this infrastructure limitation.
+
+- Observer/-E integration (2026-10-27): a per-operator output sink starts too
+  late for an inner pragma executed during function-macro argument prescan.
+  Replacing next() with next_nomacro() while draining output also drops the
+  macro/unget stacks. Keep both historical failures: opaque, identified output
+  events must survive prescan, substitution and rescanning instead.
+- Zero-width output is also required by function-macro call lookahead. Merely
+  skipping metadata before '(' loses it if that peek exhausts a rescan frame.
+  Retain metadata from exhausted frames in the peek buffer, then preserve it
+  whether or not the macro is invoked. Lift only pre-parenthesis metadata;
+  lifting every argument event changes its position in ordinary replacement
+  lists. The new rescan-call/frame fixtures are strict positives.
+- The new combined printer fixture exposed independent GCC preprocessing
+  choices: it retains _Pragma inside this expanded stringification, duplicates
+  the repeated pragma, and leaves the function macro across that pragma as a
+  function call. Keep these auxiliary differences; GCC runtime checking uses
+  an ordinary identity function for that retained call. Neither raw equality
+  nor the spec uses GCC printer bytes or removes those rows.
+- Combined integration build attempts 3/4 used unqualified then wrongly Tok-
+  qualified TOK_PPSTR in Types; the constants live under C. Attempt 5 exposed
+  two mutable-variable shadowing errors. Attempt 6 builds the final model,
+  spec, token driver and audit under the shared lock/12 GB cap. Preserve those
+  failed receipts/logs; they do not certify the repaired sources.

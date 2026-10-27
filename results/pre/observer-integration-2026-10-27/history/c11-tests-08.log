@@ -1,0 +1,26 @@
+PASS host/gcc/pp/cross/ISA tcc_pp_digraphs
+PASS host/gcc/pp/cross/ISA tcc_pp_line_relative_name
+PASS host/gcc/pp/cross/ISA tcc_pp_pragma_operator
+PASS host/gcc/pp/cross/ISA tcc_pp_stringize_escapes
+PASS host/gcc/pp/cross/ISA tcc_pp_ucn_identifier
+PASS host/gcc/pp/cross/ISA tcc_union_designator_override
+PASS host/gcc/pp/cross/ISA utf_literals
+PASS host/gcc/pp/cross/ISA digraphs
+PASS host/gcc/pp/cross/ISA pragma
+PASS host/gcc/pp/cross/ISA ucn
+PASS host/gcc/pp/cross/ISA union
+PASS host/gcc/pp/cross/ISA line_include
+PASS host/gcc/pp/cross/ISA tcc_pragma_macro_operand
+PASS host/gcc/pp/cross/ISA tcc_pragma_ignored_counter
+PASS host/gcc/pp/cross/ISA tcc_pragma_nested_operand
+Traceback (most recent call last):
+  File "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/scripts/test_tcc_c11.py", line 243, in <module>
+    main()
+    ~~~~^^
+  File "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/scripts/test_tcc_c11.py", line 121, in main
+    if run([exe]).stdout != actual:
+       ~~~^^^^^^^
+  File "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/scripts/test_tcc_c11.py", line 57, in run
+    raise RuntimeError(f'{cmd}: exit {p.returncode}\n{p.stderr.decode(errors="replace")}')
+RuntimeError: ['/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/test-c11/pragma_output.gcc']: exit 1
+

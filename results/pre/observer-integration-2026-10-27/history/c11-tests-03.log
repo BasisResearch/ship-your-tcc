@@ -1,0 +1,15 @@
+PASS host/gcc/pp/cross/ISA tcc_pp_digraphs
+PASS host/gcc/pp/cross/ISA tcc_pp_line_relative_name
+Traceback (most recent call last):
+  File "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/scripts/test_tcc_c11.py", line 232, in <module>
+    main()
+    ~~~~^^
+  File "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/scripts/test_tcc_c11.py", line 123, in main
+    if run(tcc + ['-run', pp]).stdout != actual:
+       ~~~^^^^^^^^^^^^^^^^^^^^
+  File "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/scripts/test_tcc_c11.py", line 55, in run
+    raise RuntimeError(f'{cmd}: exit {p.returncode}\n{p.stderr.decode(errors="replace")}')
+RuntimeError: ['/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/test-c11/host/tcc', '-std=c11', '-B/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/test-c11/host', '-I/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/test-c11/src/include', '-run', '/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/test-c11/tcc_pp_pragma_operator.i']: exit 1
+results/repro/tcc_pp_pragma_operator.c:9: warning: type defaults to int
+results/repro/tcc_pp_pragma_operator.c:9: error: ';' expected (got 'OFF')
+

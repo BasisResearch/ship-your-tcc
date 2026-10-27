@@ -71,82 +71,14 @@ static int pragma_parse(TCCState *s1)
 '''+anchor)
     # Prototypes come after the tcc.h include so the observer is in this TU.
     pp=pp.replace('#include "tcc.h"','#include "tcc.h"\nstatic void raw_observe(void);\nstatic void raw_marker(int);',1)
-    # Observation metadata must remain zero width when an expanded argument
-    # is subsequently stringified or pasted by another macro.
-    anchor = '/* substitute arguments in replacement lists in macro_str'
-    assert pp.count(anchor)==1
-    pp=pp.replace(anchor, r"""static void raw_observation_args(TokenString *events, const int *template, Sym *args)
-{
-    const int *q = template;
-    int t, transforms = 0;
-    CValue cv;
-    Sym *a;
-    if (!raw_capture_pragmas) return;
-    for (;;) {
-        TOK_GET(&t, &q, &cv);
-        if (!t) break;
-        if (t == '#' || t == TOK_DG_SHARP || t == TOK_PPJOIN) transforms = 1;
-    }
-    if (!transforms) return;
-    for (a = args; a; a = a->prev) {
-        TokenString clean;
-        int found = 0, real = 0, space = 0, have_line = 0;
-        CValue ln;
-        tok_str_new(&clean);
-        q = a->d;
-        while (*q != TOK_EOF) {
-            TOK_GET(&t, &q, &cv);
-            if (t == TOK_PPSTR && cv.str.size >= 11 && !cv.str.data[0]) {
-                tok_str_add2(events, t, &cv); found = 1;
-            } else if (t == TOK_PPLINE) { ln = cv; have_line = 1; }
-            else if (t == ' ') space = 1;
-            else {
-                if (real && space) tok_str_add(&clean, ' ');
-                if (have_line) tok_str_add2(&clean, TOK_PPLINE, &ln);
-                tok_str_add2(&clean, t, &cv);
-                real = 1; space = have_line = 0;
-            }
-        }
-        if (found) {
-            tok_str_add(&clean, TOK_EOF);
-            tok_str_free_str(a->d); a->d = clean.str;
-        } else tok_str_free_str(clean.str);
-    }
-}
-
-"""+anchor)
-    anchor = '    tok_str_new(&str);\n    t0 = t1 = 0;'
-    assert pp.count(anchor)==1
-    pp=pp.replace(anchor, '    tok_str_new(&str);\n    raw_observation_args(&str, macro_str, args);\n    t0 = t1 = 0;')
-    # _Pragma may execute eagerly during macro expansion. Carry its events in
-    # token-string metadata, so they emerge between the surrounding tokens.
+    # The patched compiler's zero-width output representation also carries
+    # observation metadata. Only capture/replay of the effect parser is added.
     old = '    TokenString *saved_stack, *result;'
     assert pp.count(old) == 1
     pp=pp.replace(old, old+'\n    TokenString *saved_pending;')
-    old = '    result = pending_output ? pending_output : tok_str_alloc();\n    pragma_parse(tcc_state);'
+    old = '    result = tok_str_alloc();\n    pragma_parse(tcc_state);'
     assert pp.count(old) == 1
     pp=pp.replace(old, '    result = tok_str_alloc();\n    saved_pending = raw_pending;\n    raw_pending = result;\n    pragma_parse(tcc_state);\n    raw_pending = saved_pending;')
-    # Metadata produced by an inner operator is zero width while parsing
-    # the outer operand. Preserve its tokens before the outer pragma event.
-    start = pp.index('static void pragma_operator(Sym **nested_list)\n{')
-    split = pp.index('    saved_stack = macro_stack;', start)
-    end = pp.index('/* return next token with macro substitution */', split)
-    operand = pp[start:split]
-    operand = operand.replace('    const char *s;', '    TokenString *operand_events = tok_str_alloc();\n    const char *s;')
-    operand = operand.replace('pragma_operand_next();', 'raw_operand_next(operand_events);')
-    body = pp[split:end].replace('    result = tok_str_alloc();', '    result = operand_events;')
-    helper = r"""static void raw_operand_next(TokenString *events)
-{
-    next();
-    while (raw_capture_pragmas && (tok == ' ' ||
-           (tok == TOK_PPSTR && tokc.str.size >= 11 && !tokc.str.data[0]))) {
-        if (tok != ' ') tok_str_add2(events, tok, &tokc);
-        next();
-    }
-}
-
-"""
-    pp = pp[:start] + helper + operand + body + pp[end:]
     (dst/'tccpp.c').write_text(pp)
     shutil.copy2(ROOT/'scripts/pre_tokens_ref.c',dst/'observer.c')
     command=['gcc','-std=gnu11','-O2','-funsigned-char','-fno-strict-aliasing',

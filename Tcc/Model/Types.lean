@@ -665,6 +665,22 @@ structure PPObservation where
   event : Nat := 0
   deriving Inhabited
 
+/-- Internal metadata has no C spelling: the leading NUL separates it from
+all preprocessing literals. Both -E output and observer events use this shape. -/
+def pragmaMetadata (t : Int32) (cv : CValue) : Bool :=
+  t == C.TOK_PPSTR && cv.strSize ≥ 11 && cv.sdata.get! 0 == 0
+
+/-- Same byte layout as patch 0003: NUL, E, uint64 little-endian identity,
+serialized int32 token words, final NUL. The output boundary alone renders it. -/
+def pragmaOutputPayload (id : Nat) (tokens : TokenString) : CValue := Id.run do
+  let mut bytes := ByteArray.empty.push 0 |>.push 69
+  for i in [0:8] do bytes := bytes.push (UInt8.ofNat (id / 2^(8*i)))
+  for i in [0:tokens.len.toNat'] do
+    let word := tokens.str[i]!.toUInt32
+    for j in [0:4] do bytes := bytes.push ((word >>> (8*j).toUInt32).toUInt8)
+  bytes := bytes.push 0
+  return (default : CValue).setStr bytes (Int32.ofNat bytes.size)
+
 /-! ## errors and the monad -/
 
 inductive Err where

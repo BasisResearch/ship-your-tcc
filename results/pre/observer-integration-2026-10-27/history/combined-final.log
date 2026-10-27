@@ -1,0 +1,9 @@
+{
+  "raw": {
+    "exact": 3
+  },
+  "spec": {
+    "exact": 1,
+    "spec-error": 2
+  }
+}

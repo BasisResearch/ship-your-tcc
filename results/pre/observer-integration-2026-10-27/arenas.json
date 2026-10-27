@@ -1,0 +1,97 @@
+{
+  "command": [
+    "scripts/model_diff.py",
+    "--no-report",
+    "--json-out",
+    "results/pre/observer-integration-2026-10-27/arenas.json",
+    "--require-success",
+    "3",
+    "-j",
+    "2",
+    "results/repro/tcc_pragma_ignored_counter.c",
+    "results/repro/tcc_pragma_nested_operand.c",
+    "c/tests/c11/pragma_output.c"
+  ],
+  "runtime_key": "a654d556990362ec0b219f496334096ca1957ef63ab2a306a30822cab16e0fc6",
+  "pins": {
+    "vendor/TINYCC_REV": "76ca376f1f96cf1b316713d8f94d91c8629445929d1e7474792fd76610bce1c0",
+    "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+    "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+    "patches/0003-tcc-c11.patch": "ea53d7170d7659af1c30e7ac9a6bf258ed3d1889127ec81a5b7c4807280835ab",
+    "patches/0004-tcc-binary128-literals.patch": "4dfcc192c23a777b1b335e9052a416956886b1071c3de1e8da403b5b194e221e",
+    "c/build/base.elf": "9ea2052f734a13935f7007a73b050f69da90bc806cce354219e73798ee7b3af6",
+    "c/src/gen_embed.sh": "68534ee3a238c143bf4e749fcb0ea43e8b53933c4a9d6843422d995c879d7d76",
+    "scripts/model_diff.py": "6fab1c29ac671896b91fa6e75f064a78c871b77b3f582e163dcaf4aaf84f7bb9",
+    ".lake/build/bin/tcc_model": "4feea3dead58fbdc043739d09e9a69fbf52468c45b8ddf96fdb9b79fedb1b249",
+    "results/repro/tcc_pragma_ignored_counter.c": "8e31ede021bf318c63d351a2b4ec03cfedea090c69ecd91bfc8c17acbbfa1383",
+    "results/repro/tcc_pragma_nested_operand.c": "62b7e55a9d504aa827fa5dd5e1d920b5dcf7b89455b805549ad31950c7abf6eb",
+    "c/tests/c11/pragma_output.c": "a60ee603e070ce85303568c75c85ecbb7061d09e860438797d72c18552d3a52a"
+  },
+  "results": {
+    "results/repro": [
+      {
+        "name": "results/repro/tcc_pragma_ignored_counter.c",
+        "model_s": 0.07920718193054199,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13028 bytes"
+      },
+      {
+        "name": "results/repro/tcc_pragma_nested_operand.c",
+        "model_s": 0.07306528091430664,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13028 bytes"
+      }
+    ],
+    "c/tests/c11": [
+      {
+        "name": "c/tests/c11/pragma_output.c",
+        "model_s": 0.06601572036743164,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13220 bytes"
+      }
+    ]
+  },
+  "rows": [
+    [
+      "results/repro",
+      2,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.07613623142242432
+    ],
+    [
+      "c/tests/c11",
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.06601572036743164
+    ]
+  ],
+  "totals": {
+    "n": 3,
+    "same": 3
+  },
+  "wall_seconds": 1.1390085220336914,
+  "reference": "rv64emu diagnostic; Sail arena equality pending",
+  "sail_settings": null,
+  "compiler_args": [
+    "-std=c11",
+    "-w"
+  ]
+}

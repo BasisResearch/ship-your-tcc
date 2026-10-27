@@ -1,0 +1,46 @@
+Running as unit: run-p136994-i465131059.scope; invocation ID: e41b45234fca45af85b04348ec9bbcb7
+⚠ [16/101] Replayed Spec.Pre.Phase4
+warning: Spec/Pre/Phase4.lean:78:8: Variable name `l` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _l
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: Spec/Pre/Phase4.lean:140:37: Variable name `prev` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _prev
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+✔ [47/101] Built Tcc.Model.Types (900ms)
+✔ [48/101] Built Tcc.Model.Types:c.o (622ms)
+✔ [49/101] Built Tcc.Model.State (945ms)
+✔ [50/101] Built Tcc.Model.Host (437ms)
+✔ [51/101] Built Tcc.Model.Rec (356ms)
+✔ [53/101] Built Tcc.Model.Host:c.o (749ms)
+✔ [54/101] Built Tcc.Model.Libtcc (1.1s)
+✔ [55/101] Built Tcc.Model.State:c.o (2.1s)
+✔ [56/101] Built Tcc.Model.PpLex (1.2s)
+✔ [57/101] Built Tcc.Model.Syms (433ms)
+✔ [58/101] Built Tcc.Model.Syms:c.o (693ms)
+✔ [59/101] Built Tcc.Model.Libtcc:c.o (2.7s)
+✔ [60/101] Built Tcc.Model.Elf (1.4s)
+✔ [61/101] Built Tcc.Model.PpDir (3.9s)
+✔ [62/101] Built Tcc.Model.Link (2.5s)
+✔ [63/101] Built Tcc.Model.PpLex:c.o (4.3s)
+✔ [64/101] Built Tcc.Model.Run (911ms)
+✔ [65/101] Built Tcc.Model.Riscv (3.4s)
+✔ [66/101] Built Tcc.Model.Main (917ms)
+✔ [67/101] Built Tcc.Model.Main:c.o (2.0s)
+✔ [68/101] Built Tcc.Model.Run:c.o (4.4s)
+✔ [69/101] Built Tcc.Model.Elf:c.o (9.3s)
+✖ [70/101] Building Tcc.Model.PpMacro (7.3s)
+trace: .> LEAN_PATH=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/packages/Cli/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/riscv-lean/lean-sail/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/packages/ELFSage/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/riscv-lean/Lean_RV64D_executable/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/riscv-lean/lean_emulator/.lake/build/lib/lean:/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/build/lib/lean /data/home/kirancodes/.elan/toolchains/leanprover--lean4---v4.34.0/bin/lean /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/Tcc/Model/PpMacro.lean -o /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/build/lib/lean/Tcc/Model/PpMacro.olean -i /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/build/lib/lean/Tcc/Model/PpMacro.ilean -c /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/build/ir/Tcc/Model/PpMacro.c --setup /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/.lake/build/ir/Tcc/Model/PpMacro.setup.json --json
+error: Tcc/Model/PpMacro.lean:681:12: mutable variable `ws` cannot be shadowed
+error: Tcc/Model/PpMacro.lean:927:8: mutable variable `i` cannot be shadowed
+✔ [97/101] Built Tcc.Model.Link:c.o (10s)
+✔ [98/101] Built Tcc.Model.Riscv:c.o (21s)
+✔ [99/101] Built Tcc.Model.PpDir:c.o (28s)
+Some required targets logged failures:
+- Tcc.Model.PpMacro
+error: build failed
