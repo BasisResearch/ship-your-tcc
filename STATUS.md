@@ -41,8 +41,8 @@ public libc `strtold` still needs correction in the library lane. Matching refus
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
 two at a time, following MANAGER.md. Slot 1 recovers and connects pure IEEE arithmetic to CSem; slot 2 finishes the combined raw-token/pragma integration, including a nested
 macro -E regression. Its three observer counterexamples pass direct
-model/reference checks, but final integrated checks remain pending. The lead
-reviews and integrates the completed nested-designator compiler/model repair.
+model/reference checks, but final integrated checks remain pending. The nested-designator compiler/model repair is integrated after its gate
+with the adopted CSem pin.
 The line repair is integrated, and the scheduled CSem repin plus selected-member
 union initializer repair is adopted after its integrated full gate. The compiler-handoff collector and strict model_diff consumer are integrated.
 Fresh 1,412-input comparison: 1,308 arenas (1,299 generated), 104 refusals,
@@ -102,9 +102,12 @@ for the remaining gaps. The IEEE draft review and follow-up task are recorded
 in results/csem/ieee-recovery-review.json and tasks/f1-ieee-recovery.md.
 
 The repaired CSem union suite also exposes tcc's valid nested-designator
-continuation refusal (results/repro/tcc_designator_continuation.c). The next
-compiler/model task is tasks/f3-designator-continuation.md; this does not
-change Supported/Fits. The repaired repin and its integrated full gate pass;
+continuation refusal (results/repro/tcc_designator_continuation.c). The compiler/model repair now passes its integrated gate: 144 positive/14
+invalid checks, 58 Sail/GCC program comparisons, 62 focused and 1,306 broad
+independent arenas, and three full compiler Sail runs including the complete
+33-case conforming union suite (results/model/designator-continuation.md).
+498 refusals, seven assembly gaps and six CSem gaps remain separate. This
+does not change Supported/Fits. The repaired repin and its integrated full gate pass;
 remaining aggregate-value, anonymous-layout and IEEE gaps remain explicit.
 
 ## Needs user

@@ -1,0 +1,131 @@
+{
+  "pin": "704c4e697845127bced66c93fa0763eb51527ca4",
+  "oracle_sha256": "a71dd0968846b72196506a7ce78cd300cb39c6a8a8b10e87945a44c30517d091",
+  "rows": [
+    {
+      "source": "results/model/designator/layout-minimized/anonymous-size.c",
+      "sha256": "e7f20be742ca545752743bcf9d57e1d7f398ddd86a2d8d76a6171bba363e55d7",
+      "gcc_command": [
+        "gcc",
+        "-std=c11",
+        "-pedantic-errors",
+        "results/model/designator/layout-minimized/anonymous-size.c",
+        "-o",
+        "build/layout-anonymous-size"
+      ],
+      "gcc_exit": 16,
+      "oracle_command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/default/backend/driver/main.exe",
+        "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/install/default",
+        "--nolibc",
+        "--exec",
+        "--batch",
+        "--mode=exhaustive",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/model/designator/layout-minimized/anonymous-size.c"
+      ],
+      "oracle_exit": 0,
+      "oracle_stdout": "Defined {value: \"Specified(20)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+      "oracle_stderr": "Time spent: 0.026933 seconds\n"
+    },
+    {
+      "source": "results/model/designator/layout-minimized/anonymous-offset.c",
+      "sha256": "0fe4497833a34597111f2e294932675d63194430111009e4e9df41ed8bffa406",
+      "gcc_command": [
+        "gcc",
+        "-std=c11",
+        "-pedantic-errors",
+        "results/model/designator/layout-minimized/anonymous-offset.c",
+        "-o",
+        "build/layout-anonymous-offset"
+      ],
+      "gcc_exit": 12,
+      "oracle_command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/default/backend/driver/main.exe",
+        "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/install/default",
+        "--nolibc",
+        "--exec",
+        "--batch",
+        "--mode=exhaustive",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/model/designator/layout-minimized/anonymous-offset.c"
+      ],
+      "oracle_exit": 0,
+      "oracle_stdout": "Defined {value: \"Specified(16)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+      "oracle_stderr": "Time spent: 0.028392 seconds\n"
+    },
+    {
+      "source": "results/model/designator/layout-minimized/trailing-unnamed.c",
+      "sha256": "93881b8f6af0c17318dad76d2adda3f8d331d93e160df934a62a6ac483ef7544",
+      "gcc_command": [
+        "gcc",
+        "-std=c11",
+        "-pedantic-errors",
+        "results/model/designator/layout-minimized/trailing-unnamed.c",
+        "-o",
+        "build/layout-trailing-unnamed"
+      ],
+      "gcc_exit": 0,
+      "oracle_command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/default/backend/driver/main.exe",
+        "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/install/default",
+        "--nolibc",
+        "--exec",
+        "--batch",
+        "--mode=exhaustive",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/model/designator/layout-minimized/trailing-unnamed.c"
+      ],
+      "oracle_exit": 1,
+      "oracle_stdout": "",
+      "oracle_stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/model/designator/layout-minimized/trailing-unnamed.c:1:29: error: feature not yet supported: bit-fields\nstruct S { int x; unsigned :3; };\n                            ^ \nTime spent: 0.027421 seconds\n"
+    },
+    {
+      "source": "results/model/designator/layout-minimized/anonymous-continuation.c",
+      "sha256": "ad5969c64567eefb59cc5231d9272d59cab7a3c4712405b44b3debb4670adee2",
+      "gcc_command": [
+        "gcc",
+        "-std=c11",
+        "-pedantic-errors",
+        "results/model/designator/layout-minimized/anonymous-continuation.c",
+        "-o",
+        "build/layout-anonymous-continuation"
+      ],
+      "gcc_exit": 3,
+      "oracle_command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/default/backend/driver/main.exe",
+        "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/install/default",
+        "--nolibc",
+        "--exec",
+        "--batch",
+        "--mode=exhaustive",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/model/designator/layout-minimized/anonymous-continuation.c"
+      ],
+      "oracle_exit": 0,
+      "oracle_stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+      "oracle_stderr": "Time spent: 0.027683 seconds\n"
+    },
+    {
+      "source": "results/model/designator/layout-minimized/anonymous-designated.c",
+      "sha256": "c846c8250fea0e926475f9adb6cd6e04c2b0898a314b5bcaf21b54a514f8c76c",
+      "gcc_command": [
+        "gcc",
+        "-std=c11",
+        "-pedantic-errors",
+        "results/model/designator/layout-minimized/anonymous-designated.c",
+        "-o",
+        "build/layout-anonymous-designated"
+      ],
+      "gcc_exit": 3,
+      "oracle_command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/default/backend/driver/main.exe",
+        "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/install/default",
+        "--nolibc",
+        "--exec",
+        "--batch",
+        "--mode=exhaustive",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/model/designator/layout-minimized/anonymous-designated.c"
+      ],
+      "oracle_exit": 0,
+      "oracle_stdout": "Defined {value: \"Specified(3)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+      "oracle_stderr": "Time spent: 0.027334 seconds\n"
+    }
+  ]
+}

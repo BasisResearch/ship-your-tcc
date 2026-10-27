@@ -1,0 +1,23 @@
+{
+  "revision": "51d4979f8684f3701974434376b4e3b70e7792ac",
+  "command": [
+    "scripts/check.sh",
+    "--csem"
+  ],
+  "environment": {
+    "SYT_LAKE_LOCK": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/lake.lock"
+  },
+  "exit": 0,
+  "log_sha256": "f17403409fbff66fb24ffeb12b0c69c8d43aa7f034e41446795735cc7104c299",
+  "sha256": {
+    "Tcc/Model/Gen7.lean": "586e377089d45c5e98df738cc6b0ffb736d000b3f7baf20a46d0b2508f00aa69",
+    "patches/0003-tcc-c11.patch": "44bec955d1bf18dbfbb3901347a9d9f1791101c375e6aacf40544f8ea371e86b",
+    "vendor/CSEM_REV": "f4728490acefb712e9ea36f3c89ee387c98b31f8bb297f639ed71f520b92dfd6",
+    "lakefile.toml": "14f2a8d0e07fa7c7fe52176854236aeccb3053c82a0bcfd6c0a595badbdb3cb1",
+    "scripts/check.sh": "396a9dd0f6114576206db7eb870f79bef939fd9df13a23111eaca10c8a1a632c",
+    "scripts/gen_designator_fixtures.py": "6bcd1cc11907625eee5abf95943bfd32a01c87a02147776bbba06cb5a57147d4",
+    "scripts/test_tcc_c11.py": "c7d14cb277f0cccc318d7b339c3c6af05b871ba5da915b1e972390655ef4c5ff",
+    "csem/frontend/model/desugaring_init.lem": "bc81c6d2f3fd1986ef598bc7d9495c3a929fb55ea5cf736d883836f11e9816d4"
+  },
+  "note": "Final integration with adopted CSem 704c4e69/e6d8db56. Existing frozen sum generators ran in --check mode only."
+}

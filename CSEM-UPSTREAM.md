@@ -150,3 +150,36 @@ longer blocks adoption. General aggregate expressions, anonymous-union layout,
 IEEE and parser/totality work remain explicit. The valid-C tcc continuation
 counterexample is owned by tasks/f3-designator-continuation.md. No external
 message was sent; Kiran retains the bug-list handoff.
+
+
+### Continuation review: separate layout gaps
+
+The tcc continuation repair now passes 144 positive/14 invalid checks, 58
+Sail/GCC program comparisons, 62 focused and 1,306 broad independent model
+arenas. Its three full compiler Sail runs include all 33 conforming union
+repair cases. See `results/model/designator-continuation.md`; the final integrated gate
+with the adopted CSem pin passes.
+
+**CSEM-07 — anonymous member continuation/layout.** The complete generator
+case `designator_anonymous_static.c` initializes an anonymous union containing
+an anonymous struct with `.a[0]=1,2,3,4`. GCC and patched tcc return zero;
+pristine current OCaml and the repaired OCaml/Lean pair return one. Both
+storage variants fail locally. This is separate from the selected-member
+repair. Further complete sources/captures are in
+`results/model/designator/layout-minimized/`: a scalar `.a=1,2,3`
+initializer leaves `s.z` at zero upstream (GCC: three), while explicit
+`.a=1,.b=2,.z=3` returns three in both. Without initialization, the anonymous
+aggregate has size 20/offset 16 upstream versus size 16/offset 12 on GCC;
+these layout mismatches are recorded separately from the wrong initialized value.
+
+**CSEM-08 — bitfield coverage limitation.** The `padding` and
+`trailing_padding` cases, in both storage variants, are refused during CSem
+desugaring with an explicit unsupported-bitfields diagnostic. Even the latter
+has only an unnamed padding field (`struct A {int x; unsigned :3;}`). This is
+an acknowledged coverage gap, not a claim that upstream silently computes
+incorrect bitfield values; it remains required by our whole-compiler target.
+
+`results/model/designator/pristine-layout-gaps.json` contains complete sources,
+pristine pin/binary hash and separate raw captures for these checks.
+`designator/csem.json` records the corresponding local repaired-engine results:
+52 exact defined agreements / 58, six semantic gaps. No external report sent.

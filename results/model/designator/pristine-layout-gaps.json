@@ -1,0 +1,57 @@
+{
+  "pristine_revision": "704c4e697845127bced66c93fa0763eb51527ca4",
+  "oracle_sha256": "a71dd0968846b72196506a7ce78cd300cb39c6a8a8b10e87945a44c30517d091",
+  "rows": [
+    {
+      "source": "struct S {union {struct {int a[2]; int b;}; int n;}; int z;};\nstatic struct S v={.a[0]=1,2,3,4};\nint main(void){return !(v.a[0]==1 && v.a[1]==2 && v.b==3 && v.z==4);}\n",
+      "source_sha256": "caf4f77406265d21e62052ff4d19464380944fb5ba2e69b1be226c24ced1c485",
+      "name": "anonymous_static",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/default/backend/driver/main.exe",
+        "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/install/default",
+        "--nolibc",
+        "--exec",
+        "--batch",
+        "--mode=exhaustive",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_anonymous_static.c"
+      ],
+      "exit": 0,
+      "stdout": "Defined {value: \"Specified(1)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+      "stderr": "Time spent: 0.028788 seconds\n"
+    },
+    {
+      "source": "struct A {int x;unsigned :3;}; struct S {struct A a;int y;};\nstatic struct S v={.a.x=1,2};\nint main(void){return !(v.a.x==1 && v.y==2);}\n",
+      "source_sha256": "30b777b4f141eff2a26adb4a5af6b9d5727fd84acab4536f89502580bbacd011",
+      "name": "trailing_padding_static",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/default/backend/driver/main.exe",
+        "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/install/default",
+        "--nolibc",
+        "--exec",
+        "--batch",
+        "--mode=exhaustive",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_trailing_padding_static.c"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_trailing_padding_static.c:1:27: error: feature not yet supported: bit-fields\nstruct A {int x;unsigned :3;}; struct S {struct A a;int y;};\n                          ^ \nTime spent: 0.028075 seconds\n"
+    },
+    {
+      "source": "struct S {unsigned :3; unsigned a:4; unsigned :2; unsigned b:4; int z;}; struct T {struct S s; int z;};\nstatic struct T v={.s.a=1,2,3,4};\nint main(void){return !(v.s.a==1 && v.s.b==2 && v.s.z==3 && v.z==4);}\n",
+      "source_sha256": "eae041320d303aac351a13f4dd5dda3cf5f8ddd3b387a27d7498baa029c3a0f7",
+      "name": "padding_static",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/default/backend/driver/main.exe",
+        "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/install/default",
+        "--nolibc",
+        "--exec",
+        "--batch",
+        "--mode=exhaustive",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_padding_static.c"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/designator-focused/designator_padding_static.c:1:21: error: feature not yet supported: bit-fields\nstruct S {unsigned :3; unsigned a:4; unsigned :2; unsigned b:4; int z;}; struct T {struct S s; int z;};\n                    ^ \nTime spent: 0.027533 seconds\n"
+    }
+  ]
+}

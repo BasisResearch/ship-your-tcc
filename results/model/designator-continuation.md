@@ -145,3 +145,10 @@ The required Lua abstraction inventory was run (SHA256 in validation.json),
 and its mandatory tool table was read. No sister-project proof was copied;
 no axiom, proof escape, or elaboration-budget increase was added. The same
 dead ends are recorded in `tasks/DEAD-ENDS.md`.
+
+Lead integration: rebased onto the adopted 704c4e69 / e6d8db56 CSem pin;
+`scripts/check.sh --csem` passes with the shared lock/12 GB cap. The new
+receipt and compressed log are `designator/adopted-full-gate.*`. This gate
+checks the integrated sources; the original worker captures remain dated
+evidence. Pristine layout/bitfield failures are independently minimized in
+`designator/layout-minimized/` and added to Kiran's upstream bug list.

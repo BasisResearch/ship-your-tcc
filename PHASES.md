@@ -144,3 +144,15 @@ its shared source, GCC/OCaml/Lean checks, 32 Sail observations, separate tcc
 continuation refusal and inherited semantic gaps are recorded in
 results/csem/union-init-2026-10-27.md. The integrated full gate passes; F1
 totality/IEEE/allocation/frontend and F2/F3 correctness obligations stay open.
+
+
+The nested-designator compiler/model repair is reviewed: named aggregate
+cursor paths preserve C11 positional continuation and explicit brace ownership.
+Worker validation passes 144 positive/14 invalid C11 checks, 58 Sail/GCC
+program comparisons, 62 focused/1,306 broad independent arenas and three full
+compiler Sail observations, including the 33-case conforming union suite.
+The integrated gate with the adopted CSem pin passes; see
+results/model/designator-continuation.md. The six independent CSem layout/
+bitfield gaps and 498 compiler refusals/seven assembly gaps stay explicit.
+The allocation draft review is results/csem/allocation-recovery-review.json;
+its missing soundness/outcome connection is queued as tasks/f1-allocation-oracle.md.
