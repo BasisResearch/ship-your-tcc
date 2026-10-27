@@ -135,8 +135,15 @@ def parse_attribute (R : Rec) (ad0 : AttributeDef) : M AttributeDef := do
 
 /-! ## struct fields and layout -/
 
-/-- `find_field(type, v, &cumofs)`: (field, cumofs) -/
-def find_field : Nat → Rec → CType → Int32 → M (SymId × Int32)
+/-- Promoted field lookup retains qualifiers of all anonymous containers. -/
+structure FieldLookup where
+  field : SymId
+  offset : Int32
+  qualifiers : Int32
+
+/-- `find_field_qualified(type, v, &cumofs, &qualifiers)`. The caller adds
+the enclosing expression's qualifiers; the field itself retains its type. -/
+def find_field_qualified : Nat → Rec → CType → Int32 → M FieldLookup
   | 0, _, _, _ => throw (.fuel "find_field")
   | fuel+1, R, type, v => do
     let mut s := type.ref
@@ -152,13 +159,21 @@ def find_field : Nat → Rec → CType → Int32 → M (SymId × Int32)
       s := (← getSym s).next
       if s == 0 then break
       let x ← getSym s
-      if x.v == v1 then return (s, x.c)
+      if x.v == v1 then return ⟨s, x.c, 0⟩
       if x.type.t &&& VT_BTYPE == VT_STRUCT && x.v ≥ (SYM_FIRST_ANOM ||| SYM_FIELD) then
-        let (ret, cumofs) ← find_field fuel R x.type v1
-        if ret != 0 then return (ret, cumofs + x.c)
+        let result ← find_field_qualified fuel R x.type v1
+        if result.field != 0 then
+          return { result with
+            offset := result.offset + x.c
+            qualifiers := result.qualifiers ||| (x.type.t &&& VT_QUAL) }
     if v &&& SYM_FIELD == 0 then
       tcc_error R (cfmt "field not found: %s" [.s (← get_tok_str v none)])
-    return (0, 0)
+    return ⟨0, 0, 0⟩
+
+/-- Initializer lookup uses the same physical path without expression qualifiers. -/
+def find_field (fuel : Nat) (R : Rec) (type : CType) (v : Int32) : M (SymId × Int32) := do
+  let result ← find_field_qualified fuel R type v
+  return (result.field, result.offset)
 
 /-- `check_fields(type, check)` -/
 def check_fields : Nat → Rec → CType → Bool → M Unit

@@ -162,3 +162,9 @@ integer-bignum ABI for all three destination formats and all source digits.
 `scripts/gen_float_literal_tests.py` factors and reuses this repository's
 `gen_ld_literal_tests.py` exact-rational oracle; it consumes no compiler/model
 output. No new library source or machine proof was imported.
+
+The anonymous-container qualifier extension in patch 0003 and
+`Tcc/Model/Gen3.lean`/`Gen4.lean` follows TinyCC's existing field lookup and
+qualification routines (same LGPL provenance as the model). It accumulates
+qualifiers on successful anonymous paths; the independent CSem worker's
+type-selection counterexamples motivated the repair. No library proof was reused.

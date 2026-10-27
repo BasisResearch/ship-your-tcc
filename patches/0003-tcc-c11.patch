@@ -2081,3 +2081,51 @@ index 44ea25f..b0115f1 100644
          } else {
              tcc_open_bf(s1, str, 0);
              file->fd = fd;
+
+--- a/tccgen.c
++++ b/tccgen.c
+@@ -4172,7 +4172,8 @@
+     goto redo;
+ }
+ 
+-static Sym * find_field (CType *type, int v, int *cumofs)
++static Sym * find_field_qualified(CType *type, int v, int *cumofs,
++                                   int *qualifiers)
+ {
+     Sym *s = type->ref;
+     int v1 = v | SYM_FIELD;
+@@ -4193,9 +4194,12 @@
+         if ((s->type.t & VT_BTYPE) == VT_STRUCT
+           && s->v >= (SYM_FIRST_ANOM | SYM_FIELD)) {
+             /* try to find field in anonymous sub-struct/union */
+-            Sym *ret = find_field (&s->type, v1, cumofs);
++            Sym *ret = find_field_qualified(&s->type, v1, cumofs, qualifiers);
+             if (ret) {
+                 *cumofs += s->c;
++                /* A promoted member inherits every anonymous container. */
++                if (qualifiers)
++                    *qualifiers |= s->type.t & VT_QUAL;
+                 return ret;
+             }
+         }
+@@ -4203,6 +4207,11 @@
+     if (!(v & SYM_FIELD))
+         tcc_error("field not found: %s", get_tok_str(v, NULL));
+     return s;
++}
++
++static Sym *find_field(CType *type, int v, int *cumofs)
++{
++    return find_field_qualified(type, v, cumofs, NULL);
+ }
+ 
+ static void check_fields (CType *type, int check)
+@@ -6247,7 +6256,7 @@
+             test_lvalue();
+             /* expect pointer on structure */
+             next();
+-	    s = find_field(&vtop->type, tok, &cumofs);
++	    s = find_field_qualified(&vtop->type, tok, &cumofs, &qualifiers);
+             /* add field offset to pointer */
+             gaddrof();
+             vtop->type = char_pointer_type; /* change type to 'char *' */

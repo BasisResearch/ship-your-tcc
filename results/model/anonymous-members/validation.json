@@ -1,0 +1,11 @@
+{
+  "base_revision": "148603aba93ee6aa22534037df770838e3b9dccd",
+  "source_pins_verified": true,
+  "full_gate_exit": 0,
+  "c11_final_exit": 0,
+  "broad_limit": 1200000000,
+  "broad_exit": 1,
+  "broad_separate_gaps": 7,
+  "native_arena_matches": 1,
+  "sum_cut_regenerated": false
+}

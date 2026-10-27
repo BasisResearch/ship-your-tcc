@@ -248,3 +248,11 @@ The worker full gate passes; the combined IEEE/literal gate is running.
 Pack-layout consumption and actual library identity remain explicit whole-C
 duties; the checked entry reports them and is not installed universally in F0.
 The independent allocation-oracle recovery task is now assigned to Sol slot 1.
+
+Compiler anonymous-member qualifier follow-up passes its full gate. Patch
+0003 and the model retain all anonymous containers' const/volatile qualifiers
+in successful lookup paths. Two full Sail runtime probes, const-assignment
+diagnostics, 1,342/1,815 fast arenas and one complete native arena agree;
+466 refusals and seven assembly gaps stay separate. See
+results/model/anonymous-members.md. The associated CSem physical-container
+repair is still under independent integration; F3 proofs/ghost/fuel remain open.

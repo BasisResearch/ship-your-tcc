@@ -1,0 +1,119 @@
+{
+  "command": [
+    "scripts/model_diff.py",
+    "results/repro/tcc_anonymous_member_qualifiers.c",
+    "c/tests/c11/anonymous_qualifiers.c",
+    "c/tests/model/float_direct_sail.c",
+    "results/repro/tcc_designator_continuation.c",
+    "--no-report",
+    "--json-out",
+    "build/anonymous-compiler/focused-arenas.json",
+    "--require-success",
+    "4"
+  ],
+  "runtime_key": "a6f7a4f720bac1a2b36827e550e3c33434f99e3b05f7f8a6240828e82ce17674",
+  "pins": {
+    "vendor/TINYCC_REV": "76ca376f1f96cf1b316713d8f94d91c8629445929d1e7474792fd76610bce1c0",
+    "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+    "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+    "patches/0003-tcc-c11.patch": "c0ea34110e1a26fea8296fc2022d918c7bf02215c6269f2a6c389379056e14ba",
+    "patches/0004-tcc-binary128-literals.patch": "15d4a95ec667c9ec18ea2be3fc1475c1178668853fea28213c3061afa0f863ff",
+    "c/build/base.elf": "f6980d97b4608b88dfdecab63b2e2437abcf37c98d88caeb59ebf76ba810057b",
+    "c/src/gen_embed.sh": "68534ee3a238c143bf4e749fcb0ea43e8b53933c4a9d6843422d995c879d7d76",
+    "scripts/model_diff.py": "6fab1c29ac671896b91fa6e75f064a78c871b77b3f582e163dcaf4aaf84f7bb9",
+    ".lake/build/bin/tcc_model": "e4386bb334923e86742b14be3ec9c43e93712ac6cfb19feadbc75dba837c226e",
+    "results/repro/tcc_anonymous_member_qualifiers.c": "dbfc61691b5f825842f8d04e2123ed2b8acdaa194f934c7a873b12cce2d1b595",
+    "c/tests/c11/anonymous_qualifiers.c": "6d96bf4dcdb7f1150f111af89c57798ef37a299e0a4fb386a87f31cb4d057751",
+    "c/tests/model/float_direct_sail.c": "de5a1b86e264d228e842f424ba333f70790a2b3bf65408ed3401963a9d8da657",
+    "results/repro/tcc_designator_continuation.c": "207d48f4e803b9a1280ef8170b95b7252b26fd19cb234b17abb0fe1d675a4b77"
+  },
+  "results": {
+    "results/repro": [
+      {
+        "name": "results/repro/tcc_designator_continuation.c",
+        "model_s": 0.09549164772033691,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13108 bytes"
+      },
+      {
+        "name": "results/repro/tcc_anonymous_member_qualifiers.c",
+        "model_s": 0.19434785842895508,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 79812 bytes"
+      }
+    ],
+    "c/tests/c11": [
+      {
+        "name": "c/tests/c11/anonymous_qualifiers.c",
+        "model_s": 0.1813042163848877,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 80180 bytes"
+      }
+    ],
+    "c/tests/model": [
+      {
+        "name": "c/tests/model/float_direct_sail.c",
+        "model_s": 0.19768404960632324,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 81180 bytes"
+      }
+    ]
+  },
+  "rows": [
+    [
+      "results/repro",
+      2,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.144919753074646
+    ],
+    [
+      "c/tests/c11",
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.1813042163848877
+    ],
+    [
+      "c/tests/model",
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.19768404960632324
+    ]
+  ],
+  "totals": {
+    "n": 4,
+    "same": 4
+  },
+  "wall_seconds": 0.8275043964385986,
+  "reference": "rv64emu diagnostic; Sail arena equality pending",
+  "sail_settings": null,
+  "compiler_args": [
+    "-std=c11",
+    "-w"
+  ]
+}

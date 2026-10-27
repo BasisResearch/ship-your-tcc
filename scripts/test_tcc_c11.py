@@ -44,6 +44,8 @@ CASES = {
     'results/repro/tcc_pp_trigraphs.c': 'trigraphs 0\n',
     'results/repro/tcc_line_splice.c': '',
     'c/tests/c11/line_varargs.c': '',
+    'results/repro/tcc_anonymous_member_qualifiers.c': 'const=1 volatile=1\n',
+    'c/tests/c11/anonymous_qualifiers.c': 'anonymous qualifiers 0\n',
 }
 COMMANDS = []
 
@@ -155,6 +157,13 @@ def main():
             result = run(compiler + ['-c', f, '-o', OUT / 'invalid.o'], expected=None)
             if result.returncode == 0 or not result.stderr:
                 raise RuntimeError(f'accepted invalid initializer or missing diagnostic: {f}')
+    # A warning satisfies the C11 diagnostic obligation. Require an actual
+    # const-assignment diagnostic, rather than a refusal for another reason.
+    const_bad = 'results/repro/tcc_anonymous_const_assignment.c'
+    for compiler in (tcc, cross, ['gcc', '-std=c11', '-pedantic-errors']):
+        result = run(compiler + ['-c', const_bad, '-o', OUT / 'invalid.o'], expected=None)
+        if not re.search(rb'assignment[^\n]*read.only', result.stderr, re.I):
+            raise RuntimeError(f'missing const-assignment diagnostic: {const_bad}')
     # tcc's implementation pragma expands arguments after its first token;
     # GCC chooses a different pragma-pack grammar. Check _Pragma equivalence
     # to tcc's existing #pragma behavior independently of the GCC oracle.
@@ -241,7 +250,7 @@ def main():
         # Leave room for the other worker; each Sail process is about 120 MB.
         with ThreadPoolExecutor(max_workers=3) as pool:
             list(pool.map(full_image, full))
-    print(f'C11: {len(cases)} positive cases, {len(bad) + len(designator_invalid)} negative cases; all passed')
+    print(f'C11: {len(cases)} positive cases, {len(bad) + len(designator_invalid) + 1} negative cases; all passed')
 
 if __name__ == '__main__':
     OUT.mkdir(parents=True, exist_ok=True)

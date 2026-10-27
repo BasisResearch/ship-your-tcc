@@ -131,9 +131,9 @@ Direct literal repair: all four original same-program counterexamples now
 match exact expected bits on full Sail; the independent 4 MiB handoff arena
 also matches. The 189/789-case generated checks and fresh broad comparison
 are retained in results/model/direct-float-fixed-2026-10-27.md. The full gate and 15-case native boundary probe pass;
-the repair is adopted. Raw-frontend review requires UCN identity and an
-explicit pack-layout connection; anonymous-member review requires hiding
-physical container names from source expressions/designators. Worker receipts
+the repair is adopted. Raw-frontend UCN identity is implemented; pack-layout
+consumption remains explicitly unimplemented. Anonymous-member CSem review
+now distinguishes private container paths from source-visible names. Worker receipts
 now surface these lead notes before finalization.
 
 Raw frontend checkpoint 604256c (rebased ceb85b6) passes its worker gate,
@@ -143,6 +143,13 @@ The checked entry explicitly diagnoses unimplemented pack consumption and
 library-identity mismatches; this is not a Supported restriction or universal
 F0 substitution. Allocation recovery proceeds independently in external Sol
 slot 1; the reviewed task rejects the draft's unbounded/negative-size answers.
+
+Compiler anonymous-container qualifiers are repaired and gated: old full Sail
+selects the wrong const/volatile pointer types; repaired Sail and GCC agree.
+The extended array/pointer/nesting/evaluation fixture passes, and invalid
+const assignment now diagnoses. Fresh 1,342/1,815 independent arenas and one
+complete native arena match, with 466 refusals and seven assembly gaps kept
+separate (results/model/anonymous-members.md).
 
 ## Needs user
 

@@ -1,0 +1,110 @@
+{
+  "command": [
+    "scripts/model_diff.py",
+    "results/repro/tcc_anonymous_member_qualifiers.c",
+    "--no-report",
+    "--json-out",
+    "build/anonymous-compiler/native-arena.json",
+    "--require-success",
+    "1",
+    "--sail-capture",
+    "build/capture-cut-parametric/capture_cut",
+    "--sail-timeout",
+    "900"
+  ],
+  "runtime_key": "a6f7a4f720bac1a2b36827e550e3c33434f99e3b05f7f8a6240828e82ce17674",
+  "pins": {
+    "vendor/TINYCC_REV": "76ca376f1f96cf1b316713d8f94d91c8629445929d1e7474792fd76610bce1c0",
+    "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+    "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+    "patches/0003-tcc-c11.patch": "c0ea34110e1a26fea8296fc2022d918c7bf02215c6269f2a6c389379056e14ba",
+    "patches/0004-tcc-binary128-literals.patch": "15d4a95ec667c9ec18ea2be3fc1475c1178668853fea28213c3061afa0f863ff",
+    "c/build/base.elf": "f6980d97b4608b88dfdecab63b2e2437abcf37c98d88caeb59ebf76ba810057b",
+    "c/src/gen_embed.sh": "68534ee3a238c143bf4e749fcb0ea43e8b53933c4a9d6843422d995c879d7d76",
+    "scripts/model_diff.py": "6fab1c29ac671896b91fa6e75f064a78c871b77b3f582e163dcaf4aaf84f7bb9",
+    ".lake/build/bin/tcc_model": "e4386bb334923e86742b14be3ec9c43e93712ac6cfb19feadbc75dba837c226e",
+    "results/repro/tcc_anonymous_member_qualifiers.c": "dbfc61691b5f825842f8d04e2123ed2b8acdaa194f934c7a873b12cce2d1b595"
+  },
+  "results": {
+    "results/repro": [
+      {
+        "name": "results/repro/tcc_anonymous_member_qualifiers.c",
+        "model_s": 0.18901777267456055,
+        "ref": "ran",
+        "model": "ran",
+        "reference": "native Sail + rv64emu",
+        "sail": {
+          "status": "equal",
+          "evidence": "native Sail observation; not a theorem",
+          "compared_bytes": 4194304,
+          "model_payload_bytes": 79812,
+          "arena_sha256": "7057a0901316abd409e5c185b1d9cb2984f9257e13876b54814715b2ae2f5832",
+          "model_arena_sha256": "ca1ed22b85c090e1477941a424ca3d8b37e3c90e23687d2e2b41b1384104b45d",
+          "trace_sha256": null,
+          "capture_manifest_sha256": "304c6137998cf2ed293446c3a6da66011efb16a6144a09935b8531267371d3a9",
+          "elf_sha256": "ce4939b371c7190ec534d8222683b31dd073d3f0ffbd43c72acbdeda38c01817",
+          "source_sha256": "dbfc61691b5f825842f8d04e2123ed2b8acdaa194f934c7a873b12cce2d1b595",
+          "steps": 13467949,
+          "pc": 2147490632,
+          "handoff": {
+            "x10": 2252341980,
+            "x14": 2252341248,
+            "x15": 732
+          },
+          "capture_settings": {
+            "binary": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/capture-cut-parametric/capture_cut",
+            "binary_sha256": "2fe637d6e77e2741606bb67e5f7f07751a1a90dd1d5467f75aca3288cf5663bf",
+            "build_manifest_sha256": "6f829539787d74997a6fa542d9d4cd04b9a62dca3950f50b237458694bf571e6",
+            "max_steps": 100000000,
+            "timeout_seconds": 900,
+            "scripts": {
+              "scripts/capture_cut.py": "f1e7a0da02e424298e5659884ef430b7bd6098753bef02d8d136f9b5f61a6d2d",
+              "scripts/gen_capture_cut.py": "d01897950f68f4fb68ca0ffc2fd15b6a6e0e759ec189fd389e36d05feabccd01",
+              "scripts/compare_sail_arena.py": "c6495bde62cb803fcab2438008677a9966f9e2905aa49430561b1dddcd22ac1f",
+              "scripts/model_diff.py": "6fab1c29ac671896b91fa6e75f064a78c871b77b3f582e163dcaf4aaf84f7bb9"
+            }
+          }
+        },
+        "result": "same",
+        "why": "arena 79812 bytes"
+      }
+    ]
+  },
+  "rows": [
+    [
+      "results/repro",
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.18901777267456055
+    ]
+  ],
+  "totals": {
+    "n": 1,
+    "same": 1
+  },
+  "wall_seconds": 375.2500684261322,
+  "reference": "native Sail full arenas plus rv64emu; refusals have no Sail coverage",
+  "sail_settings": {
+    "binary": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/capture-cut-parametric/capture_cut",
+    "binary_sha256": "2fe637d6e77e2741606bb67e5f7f07751a1a90dd1d5467f75aca3288cf5663bf",
+    "build_manifest_sha256": "6f829539787d74997a6fa542d9d4cd04b9a62dca3950f50b237458694bf571e6",
+    "max_steps": 100000000,
+    "timeout_seconds": 900,
+    "scripts": {
+      "scripts/capture_cut.py": "f1e7a0da02e424298e5659884ef430b7bd6098753bef02d8d136f9b5f61a6d2d",
+      "scripts/gen_capture_cut.py": "d01897950f68f4fb68ca0ffc2fd15b6a6e0e759ec189fd389e36d05feabccd01",
+      "scripts/compare_sail_arena.py": "c6495bde62cb803fcab2438008677a9966f9e2905aa49430561b1dddcd22ac1f",
+      "scripts/model_diff.py": "6fab1c29ac671896b91fa6e75f064a78c871b77b3f582e163dcaf4aaf84f7bb9"
+    }
+  },
+  "compiler_args": [
+    "-std=c11",
+    "-w"
+  ]
+}

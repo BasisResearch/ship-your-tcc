@@ -157,12 +157,13 @@ def unary_postfix (R : Rec) : M Unit := do
       let qualifiers := (← vtt) &&& VT_QUAL
       test_lvalue R
       R.next
-      let (s, cumofs) ← find_field fuel R (← vt).type (← getTok)
+      let field ← find_field_qualified fuel R (← vt).type (← getTok)
+      let qualifiers := qualifiers ||| field.qualifiers
       gaddrof
       setVtType 0 (← get).char_pointer_type
-      vpushi R cumofs
+      vpushi R field.offset
       R.gen_op 43
-      setVtType 0 (← getSym s).type
+      setVtType 0 (← getSym field.field).type
       if qualifiers != 0 then
         setVtType 0 (← parse_btype_qualify R (← vt).type qualifiers)
       if (← vtt) &&& VT_ARRAY == 0 then
