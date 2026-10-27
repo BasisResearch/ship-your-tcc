@@ -120,36 +120,18 @@ theorem toList_create (l : Pmap α β) (x : α) (d : β) (r : Pmap α β) :
 
 theorem toList_bal (l : Pmap α β) (x : α) (d : β) (r : Pmap α β) :
     toList (bal l x d r) = toList l ++ (x, d) :: toList r := by
-  -- ship-your-tcc 4.34 port (csem/PORT-4.34.md): 4.34's `split` takes the
-  -- matches before the `if`s and stops on the height guards, so the case
-  -- analysis is written out
-  simp only [bal]
-  by_cases h1 : height l > height r + 2
-  · simp only [h1, ↓reduceIte]
-    cases l with
-    | Empty => simp [height] at h1
-    | Node ll lv ld lr _ =>
-      simp only
-      by_cases h2 : height ll ≥ height lr
-      · simp only [h2, ↓reduceIte]; simp [toList_create, toList, List.append_assoc]
-      · simp only [h2, ↓reduceIte]
-        cases lr with
-        | Empty => simp [height] at h2
-        | Node => simp [toList_create, toList, List.append_assoc]
-  · simp only [h1, ↓reduceIte]
-    by_cases h3 : height r > height l + 2
-    · simp only [h3, ↓reduceIte]
-      cases r with
-      | Empty => simp [height] at h3
-      | Node rl rv rd rr _ =>
-        simp only
-        by_cases h4 : height rr ≥ height rl
-        · simp only [h4, ↓reduceIte]; simp [toList_create, toList, List.append_assoc]
-        · simp only [h4, ↓reduceIte]
-          cases rl with
-          | Empty => simp [height] at h4
-          | Node => simp [toList_create, toList, List.append_assoc]
-    · simp only [h3, ↓reduceIte]; simp [toList]
+  unfold bal
+  -- Zeta-reduce the two `let hl/hr` binders `unfold` leaves at the head: on
+  -- Lean 4.35.0 `split` does not split the outer `if` under them and takes
+  -- the inner matches first, so the `if` hypotheses never reach the context
+  -- (toolchain move 2026-10-21; 4.32.2 split the outer `if` as is).
+  dsimp only
+  repeat' split
+  all_goals (try simp only [height] at *)
+  all_goals (repeat' split)
+  all_goals first
+    | (simp [toList_create, toList, List.append_assoc]; done)
+    | (exfalso; omega)
 
 /-! ## List lemmas -/
 
@@ -162,7 +144,7 @@ theorem lookupList_append_of_none (cmp : α → α → LemOrdering) (k : α) (xs
     obtain ⟨k', v⟩ := x
     by_cases hc : cmp k k' = .EQ
     · simp [lookupList, hc] at h
-    · simp only [lookupList, List.cons_append, hc, if_false] at h ⊢
+    · simp only [lookupList, List.cons_append, hc, ite_false] at h ⊢
       exact ih h
 
 theorem lookupList_append_of_some (cmp : α → α → LemOrdering) (k : α) (xs ys : List (α × β)) (w : β)
@@ -173,8 +155,8 @@ theorem lookupList_append_of_some (cmp : α → α → LemOrdering) (k : α) (xs
   | cons x xs ih =>
     obtain ⟨k', v⟩ := x
     by_cases hc : cmp k k' = .EQ
-    · simp only [lookupList, List.cons_append, hc, if_true] at h ⊢; exact h
-    · simp only [lookupList, List.cons_append, hc, if_false] at h ⊢
+    · simp only [lookupList, List.cons_append, hc, ite_true] at h ⊢; exact h
+    · simp only [lookupList, List.cons_append, hc, ite_false] at h ⊢
       exact ih h
 
 theorem lookupList_eq_none (cmp : α → α → LemOrdering) (k : α) (xs : List (α × β))
@@ -184,7 +166,7 @@ theorem lookupList_eq_none (cmp : α → α → LemOrdering) (k : α) (xs : List
   | cons x xs ih =>
     obtain ⟨k', v⟩ := x
     have hx : cmp k k' ≠ .EQ := h (k', v) (by simp)
-    simp only [lookupList, hx, if_false]
+    simp only [lookupList, hx, ite_false]
     exact ih (fun y hy => h y (by simp [hy]))
 
 theorem insertList_append_lt (cmp : α → α → LemOrdering) (k : α) (v : β) (xs : List (α × β))
@@ -262,7 +244,7 @@ theorem lookupList_insertList_other {cmp : α → α → LemOrdering} (h : CmpLa
     | GT =>
       by_cases hk : cmp k kx = .EQ
       · simp [insertList, lookupList, hc, hk]
-      · simp only [insertList, hc, lookupList, hk, if_false]
+      · simp only [insertList, hc, lookupList, hk, ite_false]
         exact ih
 
 theorem insertList_pairwise {cmp : α → α → LemOrdering} (h : CmpLaws cmp) (k : α) (v : β)
@@ -327,7 +309,7 @@ theorem find?_eq_lookupList {cmp : α → α → LemOrdering} (h : CmpLaws cmp) 
       | none =>
         rw [lookupList_append_of_none _ _ _ _ hres]
         have hne : cmp k v ≠ .EQ := by rw [hkv]; decide
-        simp only [lookupList, hne, if_false]
+        simp only [lookupList, hne, ite_false]
         symm; apply lookupList_eq_none
         intro x hx hkx
         -- cmp v k = GT (flip of LT) but also cmp v k = cmp v x.1 = LT
@@ -338,7 +320,7 @@ theorem find?_eq_lookupList {cmp : α → α → LemOrdering} (h : CmpLaws cmp) 
       -- nothing in l or (v, d) is EQ to k
       rw [lookupList_append_of_none]
       · have hne : cmp k v ≠ .EQ := by rw [hkv]; decide
-        simp only [lookupList, hne, if_false]; exact ihr hr
+        simp only [lookupList, hne, ite_false]; exact ihr hr
       · apply lookupList_eq_none
         intro x hx hkx
         have h1 := h.eq_congr k x.1 v hkx
@@ -488,7 +470,7 @@ that packages exactly the strict-weak-order laws of a comparator:
 `OrientedCmp → ReflCmp` instance), `TransCmp.lt_trans`, and
 `TransCmp.congr_left` (comparator-equal keys compare alike — our
 `eq_congr`). `Std.TransOrd` is in Lean core (`Init/Data/Order/Ord.lean`)
-in the toolchain this library is built with (4.32.2, `lean-toolchain`)
+in the toolchain this library is built with (4.35.0, `lean-toolchain`)
 with instances for `Nat`, `Int`, `String`, `Char`,
 `Bool`, the fixed-width integers, `Fin n`, `Option`, and lexicographic
 products — so `Nat`/`Int`/`String` keys are covered by one theorem and

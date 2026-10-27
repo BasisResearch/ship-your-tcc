@@ -38,6 +38,21 @@ of this work's scope.
 
 ## Queued larger work
 
+- **Quotation hygiene follow-up** — mirror resolved-path library-location
+  classification into the fork OCaml oracle and refuse quotation through
+  non-canonical runtime spellings. These ruled-yes I1b changes are explicitly
+  deferred from inner_arg_temps; see its charter amendment. Keep the Normal
+  runtime-location divergence pin until that separate slice validates the change.
+
+- **Preserve all Core symbol identities in library transport** — number every
+  named symbol (for example `i_123`) and join globals through metadata, or use
+  a binary/JSON transport. This is a separate slice: it changes the Normal
+  dump pin and the name join. The tray-65 fork remedy distinguishes argument
+  values and refuses collisions with bare names; the loader rejects body
+  binders that reuse parameter names. Neither check establishes general
+  scope/liveness fidelity, and the loader can refuse legal block-local
+  shadowing. See [tray 65](docs/upstream-tray/65-inner-arg-temps-core-symbol-loss.md)
+  and the [transport record](docs/2026-10-22_inner-arg-temps-transport-record.md).
 - **SC concurrency** — excluded from this release; built from current mainline
   under the [SC master plan](../SC-CONCURRENCY.md). The failed prototype is a
   quarry, not a candidate awaiting integration. WP0 (passive memory receipts)
@@ -69,6 +84,112 @@ of this work's scope.
   itemized with prices in
   `docs/2026-08-31_semantics-forward-assessment.md` (the F-axes);
   deliberately parked behind the substantive track.
+
+- **Native link input is package-relative (consumer finding, cerberus-caesium,
+  2026-10-19).** Every `[[lean_exe]]` in `lean_frontend/lakefile.toml` carries
+  `moreLinkArgs = ["native/md5.o"]`, relative to the package. Lake links from
+  the workspace root, so a consumer that builds the driver as a Lake
+  dependency links from its own root and the path misses (the consumer keeps
+  a link workaround). A TOML lakefile cannot compute a path or declare an
+  `extern_lib`; the fix is a `lakefile.lean` with an `extern_lib` target for
+  `native/*.o`, which Lake then links into every dependent executable itself.
+  Gate: row 1 plus a dependency-flavour link smoke test in a scratch consumer
+  package. Price S–M. [AGENT 2026-10-19] filed; no change yet.
+- **Generated-tree compiler warnings are a lem-backend item.** Building the
+  generated tree replays 337 warnings in the `CerbQuote` seam's closure and
+  837 under `generated/` in the driver's closure (measured 2026-10-19 at
+  `e7e9bb427`): `Variable name … is not explicitly referenced` on pattern
+  variables and `unused termination_by, function is not recursive`. Both are
+  emission patterns of the Lean backend, fixed in lem-lean (its TODO 54) and
+  re-pinned here; nothing in this repository can fix them. The hand-written
+  class-valued test definitions and one unused simp argument were fixed on
+  2026-10-19 (`fix/hygiene-20261019`).
+
+- **Lean toolchain bump 4.32.2 → 4.35.0.** Scoped 2026-10-20
+  (`docs/2026-10-20_lean-4.35-scoping-record.md`): moderate; the toolchain is
+  installed on the box; seven removed-`String` sites, five `split` repairs, one
+  test `rfl`, one LemLib `omega` proof, two emitter keywords; the risk is
+  `CerbMemAccessFacts.lean` (two theorems with unsolved goals; trust surface)
+  and the float lanes. Buys `lake check` / `--paranoid`, whose sandbox needs an
+  operator-side `bwrap` decision on this box. [USER 2026-10-20] scheduled after
+  the Core-quoting landing; its own charter then; lem-lean first (its TODO
+  carries the backend side). DONE 2026-10-26 on `arc/lean-4.35` (charter
+  `docs/2026-10-25_worker-charter-lean-4.35-plan-b.md`, record
+  `docs/2026-10-25_lean-4.35-cerberus-record.md`, pre-merge review
+  `docs/2026-10-26_lean-4.35-cerberus-premerge-review.md`): Lean 4.35.0 in every
+  `lean-toolchain`, LemLib/opam lem/`deps/lem-pinned` at `e6d8db5`, both generated
+  trees byte-identical under the new lem; the repairs (removed `String` functions,
+  five `split` sites, `CerbMemAccessFacts.loadM_erasure` proof-only, the
+  `FuelExemplar` `rfl`, 15 deprecation sites, three unused-simp-argument warnings);
+  the 128-field witness, the inlining-class census, the D14 gate repaired and
+  hardened (the per-declaration `native_decide`/`bv_decide` axiom form plus a
+  name-independent allowlist parse); kernel replay exit 0, `lake check` (no-sandbox)
+  accepted, the full battery's 44 commands passed. The landing note records the ff.
+
+- **`tests/mem-scale-probes/micro` (the `memscale-micro` Tier C reporting
+  instrument) has not built since 2026-09-20** — found at the Lean 4.35 move
+  (record `docs/2026-10-25_lean-4.35-cerberus-record.md` §1.2 (h)): five
+  `Application type mismatch` errors (`Micro.lean:85,90,95,115,116`:
+  `memValueToBytes tagDefs` / `reconstructValue tagDefs`, whose first argument has
+  been `CerbMem.EnumDefs` since `3ad477462`, program-data parameters E-A; the file
+  was last changed 2026-09-17). No lane or gate builds it, so nothing noticed.
+  Fix shape: thread an `EnumDefs` through the five call sites and re-derive the
+  measurement; or retire the instrument with its `results/`. Needs a ruling; not
+  the move's change. [AGENT 2026-10-26]
+
+- **The ≥128-field record refusal in lem's Lean backend (lem-lean TODO 55) after
+  Lean 4.35.0.** The move's witness (record §2.1): on 4.35.0 a 128-, 129- and
+  255-field structure allocates and runs (4.32.2 segfaults at 128, exit 139), and
+  256 fields do not elaborate on either toolchain (`constructor … has too many
+  fields`), so the toolchain's own bound is 255. The refusal lives in lem's
+  emitter (`lean_max_constructor_fields = 127`), an emitter change the move's
+  charter reserves to lem-lean while its P4 asked for the lift; RESOLVED as KEEP
+  in the move [AGENT 2026-10-26, within the operator's 2026-10-22 ruling, relayed
+  by the orchestrator]. Proposed lem-lean follow-up, its own slice under a ruling:
+  re-derive the bound to 255 with a message stating the 4.35.0 facts and move the
+  two negative probes to 256.
+
+## Upstream-uncertainty survey follow-ups (2026-10-20) — queued BEHIND the cerberus-caesium deliveries
+
+Record: [`docs/2026-10-20_upstream-uncertainty-survey-record.md`](docs/2026-10-20_upstream-uncertainty-survey-record.md)
+(the uncertainty-marker inventory of the shared model and the 247 probes; corpus `tests/parity-probes/uncertainty/`,
+not a gate). Every item below is queued behind the deliveries to cerberus-caesium (Core quoting, `inner_arg_temps`,
+the outcome protocol) and is not to be dispatched before them ([USER 2026-10-20]); the slice shapes are the record's §3.
+
+- **Anonymous struct/union members: refuse in the shared Lem** ([USER 2026-10-20]; record §2.1, slice 1; tray 60).
+  `desugar_struct_declaration` (cabs_to_ail.lem:2713-2719) splices an anonymous member's members into the containing
+  aggregate: wrong `sizeof`/offsets, no aliasing inside an anonymous union, every member after it initialised one
+  slot late, false UB081/UB036 (25 silent-wrong probes, both engines and pristine upstream agree). Refusal at that
+  arm (`Desugar_NotYetSupported`), both engines through the shared `.lem`; one gated row moves
+  (`tests/coverage/struct/struct-008-anon-struct.c`), witness script per the item-G shape; upstream report filed.
+- **Compound assignment with a side-effecting left operand: refuse** ([USER 2026-10-20]; record §2.2, slice 2; tray 61).
+  translation.lem:2510-2535 elaborates `e1 op= e2` with `e1` duplicated (its own TODO): `*g() += 3` calls `g` twice,
+  `a[i++] += 5` is a false UB035. A syntactic side-effect predicate on `e1` and a `record_error_at` refusal (the GNU
+  `?:` precedent at :2325); 0 gated rows move. The one-binding elaboration is proposed upstream and adopted on re-pin.
+- **`_Bool` from a fractional floating value: refuse — upstream fix exists, backport proposed, ruling pending**
+  (record §2.3; tray 15). std.core:78-91 applies the §6.3.1.2#1 test to the truncated integer (`_Bool b = 0.5` is 0;
+  11 probes). [USER 2026-10-20] ruled a refusal rather than an override because the reach is low; upstream commit
+  `3230aa494` (2026-09-30) fixes it (`conv_arith` `_Bool` arm; `loaded_ivfromfloat` tests the floating value; CI
+  `tests/ci/0343-subzero-floating-to-_Bool.c`), and the orchestrator has proposed backporting it as a fork-ahead
+  delta instead; whichever the operator rules, no gated row moves.
+- **Crashes on valid C become declared refusals** ([USER 2026-10-20]: a crash is an unspecified stop, a refusal a
+  specified one; the conversion changes no accepted program's answer; record §2.5, §2.7-§2.9, slice 3). Five arms:
+  (1) `wchar_t` with a negative value (`bytes_of_int` assertion from the unsigned-range/signed-alias contradiction at
+  impl_mem.ml:2449/:2479 vs ocaml_implementation.ml:167; tray 62); (2) statement expressions whose block contains an
+  assignment/`++`/`if` (`break_at_sseq, Cbound`, failure register row 183); (3) multi-character and UTF-8 character
+  constants (`decode_character_constant`, decode.ml:218; tray 63); (4) `NULL + 0` (impl_mem.ml:2277 `failwith`,
+  mirror `CerbMem.lean:1975`; tray 04) — **upstream fix exists (`f4a3a3d54`, 2026-09-30: the pure
+  `array_shift_ptrval` returns UB on a null pointer); backport proposed, ruling pending**; (5) the `printf` `%.*d`
+  (negative precision, tray 26) and `%n` arms (formatted.lem:453/:726). Each becomes an attributed refusal in both
+  engines with a witness; 0 gated rows move.
+- **Float profile documentation, no code** ([USER 2026-10-20]; record §2.4; tray 32). SUPPORTED.md and CONTRACT D6
+  state `sizeof(float) == sizeof(double) == sizeof(long double) == 8`, all binary64, `_Alignof(long double) == 8`;
+  tray 32 gains the `float.h` contradiction (`FLT_MANT_DIG 24` / `LDBL_MANT_DIG 64` against 53-bit values,
+  `FLT_EPSILON` absent). The shipped `runtime/libc/include/float.h` is NOT edited.
+- **Row-183 witness and the census correction** (record §2.8). `scripts/failure_reach_register.txt` row 183
+  (`break_at_sseq, Cbound`, reach UNKNOWN) gets the six C witnesses of `tests/parity-probes/uncertainty/P-statement-expressions/`;
+  `docs/2026-10-04_real-c-reach-census.md` (M1) is corrected from "statement expressions are supported" to "supported
+  unless the block contains an assignment, `++` or `if` statement".
 
 ## Semantics-audit repairs (2026-09-11) — RESOLVED findings and the rows they leave
 
@@ -766,6 +887,30 @@ arm, the `--args` flag, the allocation-census line, the DivMod
 canonicity consolidation, the printf/Monadic_parsing totalization
 tail, and the Lean-side lem-sync freshness stamp all closed in the
 S-basket slice — `docs/2026-09-01_s-basket.md`.)
+
+- **Stop vocabulary: a dedicated `libc` boundary?** The inner_arg_temps libc
+  refusals (`R-IAT-LIBC-SYMBOL-LOSS`, the dump/mode calling-convention mismatch)
+  are REFUSAL envelopes under boundary `cli`, item `--libc`, because
+  `CerbStop.Boundary` (frozen by design v2) has no `libc` boundary; the item-G
+  refusals are legacy panics for a related reason. Whether a `libc` boundary is
+  added (a design-v2 amendment) is decided in the quotation-hygiene slice
+  (rulings B and C of 2026-10-21). [AGENT 2026-10-26]
+- **Libc text transport: a per-proc bare-name census as a speedbump.** The
+  inner_arg_temps review (P2-3) printed both `.co` libraries at `-d5` and found
+  distinct symbols sharing a bare name inside 7 procs of the variant dump and 10
+  of the Normal dump (pre-existing; none a parameter rebinding; not shown live
+  together; the 42-row libc lane is green in both modes). The printer fix and the
+  two detectors close the parameter-rebinding shape only; fail-closed transport
+  is NOT established. Cheap speedbump: add the `-d5` census to
+  `scripts/libc_prep.sh --check` for both variants, pinning the reviewed list and
+  failing on a new entry. The principled fix (numbering every named symbol, or a
+  binary/JSON library transport) is the queued transport item. [AGENT 2026-10-26]
+- **inner_arg_temps fuzzing over the in-tree csmith corpus.** The slice's fuzzing
+  round was 32 fresh seeds of which 26 failed the frontend, leaving six switched
+  comparisons (review P2-4; the record states it plainly). Run the lane's `--fuzz`
+  logic over `tests/csmith/*` (1669 files that pass the frontend) under the switch
+  as a Tier C row: engine agreement within the mode, cross-mode set equality on
+  the oracle; discrepancies are findings. [AGENT 2026-10-26]
 
 ## Needs maintainer action or network access
 

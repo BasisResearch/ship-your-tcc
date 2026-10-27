@@ -160,7 +160,15 @@ fork side times out, or a both-sides timeout on a registered case, is RED —
 the pin moved.
 Since 2026-10-03 the register has 8 `shared-model-fix` rows. They are `multi_tu_tray/node` (draft 37;
 draft 38's consult was reverted, §3), the four allocator rows, and the three `_Alignas`
-completeness rows of draft 47 (§3). The inventory at
+completeness rows of draft 47 (§3). The inner_arg_temps close-out adds one
+`diagnostic-text` row for `immaculate/nolibc/zd-z2fl03-nan-to-int`: I0b's
+upstream `3230aa494` backport adds two evaluator frames to the existing
+Normal `Z.Overflow` failure. Both processes still exit 125 with empty
+stdout and the same exception. The row binds exactly the two projected
+stderr signatures, with the control and disposition in the
+[close-out record](docs/2026-10-25_inner-arg-temps-closeout-record.md).
+Frame functions, order and count remain compared; every other moved
+signature is a separate finding. The inventory at
 `e9f9d049f`, counted 2026-09-24, had 7 `shared-model-fix` rows (the three cross-TU
 struct-value cases of upstream-tray drafts 37/38/39, where the fork answered
 `Specified(7)` and pristine loops or rejects; and the two allocator
@@ -168,8 +176,9 @@ exhausted-regime witnesses of draft 44, `minimal/112-…`/`113-…`, where
 pristine returns an overlapping, misaligned allocation and the fork kills out
 of memory — §3; plus the corresponding two `immaculate/nolibc/tray44-*`
 wrappers, separately registered). This is seven case rows, not seven
-distinct defects; `diagnostic-text` is a
-permitted class with zero rows — [USER 2026-09-17] (option (2) agreed): the lane's
+distinct defects. The earlier zero-row `diagnostic-text` inventory relied
+on the position-only projection, which remains unchanged: [USER 2026-09-17]
+(option (2) agreed): the lane's
 diagnostic projection normalises source positions inside OCaml backtrace
 frames — and, since the allocator-soundness slice's C1b (2026-09-17; the
 [USER 2026-09-17] ruling recorded in §3), the position in the exception HEADER
@@ -306,7 +315,7 @@ markers are `CerbDecode.lean` R1/R2, `CerbMem.lean` R3 (memcmp, added
 | Id | Difference and mechanism | Why not mirrored or refused | Witnesses | Lean site | Mover | Status |
 |---|---|---|---|---|---|---|
 | **N1** | A function pointer's NUMBER, observed through an integer conversion (`(intptr_t)&f`), the bytes of a stored function pointer, or `%p` of `(void*)fp`. In libc mode the same numbering artefact also changes function IDENTITY on the oracle: its funptrmap is keyed by number alone (`impl_mem.ml:1206`, upstream FIXME `:1044`), and a user function can draw the number of a libc static and replace its entry, so the oracle calls the wrong function (a spurious UB041 in the witness) where Lean, numbering from one supply, is correct (bug hunt BUG-1, 2026-09-29; tray 48; witness `zd-funptr-libc-conflate` DIFF / L=`Specified(1)`). Both engines serve the function symbol's number (`impl_mem.ml:1203-1220`, `:1047`; mirrored in `CerbMem.memValueToBytes`/`reconstructValue`), but that number is a fresh-supply artefact: the oracle's Core parser draws one per `std.core` symbol before the user TU (`core_parser.mly:184,220`), `CoreParser.lean` mints hashes. nolibc: oracle = Lean + 483 on the probes | Mirroring would mean reproducing the oracle's draw count for `std.core` (a numbering dependency the §5 renumbering principle calls a defect). Refusing: every stored function pointer uses these bytes, and `%p` prints through the pure printer with no memory state, so a precise refusal needs a byte-representation change. The integer conversion was refused for a few hours and broke libc's `atexit`, which round-trips a function pointer through `uintptr_t` (`runtime/libc/src/stdlib.c:194-199`); a round trip never observes the number, so refusing the conversion refuses correct programs (`docs/2026-09-28_funptr-int-refusal-record.md`) | `zd-funptr-int-direct` and `zd-funptr-int-voidptr` DIFF / L=`Specified(47)` (oracle 530); `zd-funptr-bytes-deviation` DIFF / L=`Specified(19)` (oracle 502); `zd-funptr-printf-deviation` DIFF / L=`(@empty, 0xa0)` (oracle `0x283`); the round trip is served and MATCHes (`zd-funptr-call-control`, libc_exec `040`/`041` atexit) | `CerbMem.intfromptr` `PVfunction` arm and `CerbMem.memValueToBytes` `PVfunction` arm (marker `-- named-deviation register N1`) | none planned: upstream artefact, tray 46; a representation change could refuse it later | **ADMITTED** [USER 2026-09-28] (agreed with option (1); named deviations are acceptable where the mismatch cannot easily be resolved); integer channel added [USER 2026-09-28] (agreed to the proposed `atexit` handling); libc-mode identity consequence added [USER 2026-09-29] (agreed on every point and approved the fixes) |
-| **N2** | A NaN's sign and payload bits in memory. Lean stores a float as `Float.toBits`, which canonicalizes every NaN to `0x7ff8000000000000` (measured; the disassembly of `lean_float_to_bits` in Lean 4.32.2 is `ucomisd; movq; movabs $0x7ff8000000000000; cmovnp`); the OCaml stores `Int64.bits_of_float` (`impl_mem.ml:1190`), which keeps them. Observed through the bytes of a stored NaN, union punning, `memcpy` of a double into an integer, and libc code that reads a double's bytes (e.g. a `signbit`) | Mirroring: Lean has no portable access to a NaN's bits (`Float.toBits`, `toString` and `toUInt64` all lose them). Refusing: every C variable lives in memory in this model, so refusing to store a NaN would refuse every program that merely computes one (e.g. to test `isnan`); the stored bytes carry no record that they came from a NaN, so no read-side refusal is precise. Printing a NaN with `%f` IS refused (it is precise; `CerbFloat.formatFixed`) | `zd-nan-bytes-deviation` DIFF / L=`Specified(127)` (oracle 255, gcc 255) | `CerbMem.memValueToBytes` `MVfloating` arm, both forms (marker `-- named-deviation register N2`) | a bit-level float representation (C floats as bit patterns with IEEE arithmetic in Lean, following x86 NaN rules; queued arc, TODO.md, [USER 2026-09-29] agreed to queue it as proposed); a native float-bits seam was rejected (a new kernel-opaque boundary, host-CPU-dependent); upstream note `lean4/03` | **ADMITTED** [USER 2026-09-29] (agreed on all three points, on the orchestrator's recommendation to register the pre-merge audit's F2 as N2) |
+| **N2** | A NaN's sign and payload bits in memory. Lean stores a float as `Float.toBits`, which canonicalizes every NaN to `0x7ff8000000000000` (measured; the disassembly of `lean_float_to_bits` in Lean 4.32.2 is `ucomisd; movq; movabs $0x7ff8000000000000; cmovnp`; re-measured by value on Lean 4.35.0 at the toolchain move, 2026-10-26: `Float.toBits` of `0/0`, `-(0/0)`, `Float.ofBits 0x7ff0000000000001` and `Float.ofBits 0xfff8000000000000` all read `0x7ff8000000000000`); the OCaml stores `Int64.bits_of_float` (`impl_mem.ml:1190`), which keeps them. Observed through the bytes of a stored NaN, union punning, `memcpy` of a double into an integer, and libc code that reads a double's bytes (e.g. a `signbit`) | Mirroring: Lean has no portable access to a NaN's bits (`Float.toBits`, `toString` and `toUInt64` all lose them). Refusing: every C variable lives in memory in this model, so refusing to store a NaN would refuse every program that merely computes one (e.g. to test `isnan`); the stored bytes carry no record that they came from a NaN, so no read-side refusal is precise. Printing a NaN with `%f` IS refused (it is precise; `CerbFloat.formatFixed`) | `zd-nan-bytes-deviation` DIFF / L=`Specified(127)` (oracle 255, gcc 255) | `CerbMem.memValueToBytes` `MVfloating` arm, both forms (marker `-- named-deviation register N2`) | a bit-level float representation (C floats as bit patterns with IEEE arithmetic in Lean, following x86 NaN rules; queued arc, TODO.md, [USER 2026-09-29] agreed to queue it as proposed); a native float-bits seam was rejected (a new kernel-opaque boundary, host-CPU-dependent); upstream note `lean4/03` | **ADMITTED** [USER 2026-09-29] (agreed on all three points, on the orchestrator's recommendation to register the pre-merge audit's F2 as N2) |
 | **N3** | Float constants in the libc Lean loads. Lean loads libc from the pinned text dump `tests/libc/libc.core`, which the oracle's Core printer writes with `%.12g` (`pp_core.ml:279-282`); the oracle runs the compiled `libc.co`, whose doubles are exact. The one lossy literal is line 60849, `1.84467440737e+19` for `0x1p64` = 2^64 (`runtime/libc/src/internal.c:303`, decfloat), parsed back 9 551 872 below 2^64, so Lean's `strtod` sets `ERANGE` near `DBL_MAX` where the oracle does not. ISO C11 §6.4.4.2#3 requires `0x1p64` to be exactly 2^64: the oracle is right, Lean is wrong | Fixing it within the dump needs an exact printer; an opt-in printing mode used only for the dump was rejected ([USER 2026-09-30]: deviations are not fixed with special-case paths that work only in one situation); the principled fixes (a round-tripping Core printer everywhere, or building libc from its C sources, which also fixes Z1-A1's missing libc locations) are queued work. No precise refusal exists | the inventory check `scripts/check_libc_float_literals.py` (row 1): every float literal of the dump = the reviewed register `scripts/libc_float_literals.txt` (24 literals, 1 LOSSY-N3), as multisets, both directions; a 12-significant-digit literal may not be registered exact; 8 plants | `CoreParser.lean` float-literal note (marker `NAMED DEVIATION N3`) | a round-tripping Core printer, or libc built from its C sources (TODO.md) | **ADMITTED** [USER 2026-09-30] (chose option (3) for now, leaving (1) or (2) as possible later work) |
 
 ## 3. Every known Lean-vs-oracle difference, by class
@@ -360,11 +369,14 @@ Nothing else.
 **(c) missing features — loud, attributed refusals (not bugs):**
 
 - *Semantics switches* (`--switches=…`, `--iso`): since PNVI arc S4 (2026-10-07,
-  `docs/2026-10-07_pnvi-s4-lane-record.md`) exactly ONE non-default set is SUPPORTED —
-  `--switches=PNVI_ae_udi` (both cmdliner forms; a one-element list), matched against the
-  oracle under the SAME switch by `scripts/test_pnvi.sh` (§5, LADDER Tier A row 14; the
-  run's instance `⟨[.PNVI .AE_UDI]⟩`, one general path — the set only selects the arms).
-  Every other value is REFUSED, each element with its reason (`Main.judgeSwitches` /
+  `docs/2026-10-07_pnvi-s4-lane-record.md`) `--switches=PNVI_ae_udi` is supported
+  as a whole set, matched against the oracle by `scripts/test_pnvi.sh`
+  (LADDER Tier A row 14; instance `⟨[.PNVI .AE_UDI]⟩`). The second supported
+  whole set is `--switches=inner_arg_temps` (instance `⟨[.inner_arg_temps]⟩`),
+  with matched runtime/calling convention, separate libc pins and the row-15
+  lane described below. Normal remains the default. Both cmdliner forms are
+  accepted. `--call` under inner_arg_temps is a named refusal because its
+  injected call site implements Normal only. Every other value is REFUSED, each element with its reason (`Main.judgeSwitches` /
   `refuseSwitches`; exit 2, attributed; [AGENT] Q7 recommendation "REFUSE now … plumbing … is
   not wanted", accepted [USER 2026-09-03] for the rest): the other switch names, plain `PNVI`/`PNVI_ae` (unvalidated,
   design §F.3), mixed lists, `--iso`, and the two places the ORACLE is fail-open
@@ -456,6 +468,101 @@ Nothing else.
   No gated lane row moved; five Tier C scoreboard rows (`torture_not_std_compliant`)
   move MATCH → reject when the scoreboard is next re-recorded. A deliberate
   fork ≠ pristine difference (below; `scripts/fork_drift_manifest.txt`).
+- *Item G: two upstream TODOs of the concrete memory model* (contract D10,
+  2026-10-20; [USER 2026-10-20] ruled that where upstream left a case to a TODO
+  the fork leaves it or refuses loudly, never inventing a verdict;
+  `docs/2026-10-20_item-g-refusals-record.md`): REFUSED in BOTH engines — a
+  refusal, not an ISO fix (no UB verdict is invented; §2 is untouched).
+  (G1) `memcpy` on overlapping objects: upstream's `impl_mem.ml` `memcpy`
+  carries `(* TODO: if ptrval1 and ptrval2 overlap ==> UB *)` (b9aeedcb4
+  :2636) and copies byte-wise, so both engines gave `Specified(7)` on tray 56's
+  witness; now the memory model's copy dies when both pointers are concrete
+  in the same allocation (`Prov_some`), or both are device-memory pointers
+  (`Prov_device`: the fixed `device_ranges` an integer cast reaches; the
+  pre-merge audit's P2-1 probes `(char*)0xABC`/`(char*)0x40000000` answered
+  `Specified(5)`/`Specified(111)` on both engines before the arm), with
+  intersecting `[a1, a1+n)`/`[a2, a2+n)`, `n > 0`; the remaining shapes
+  cannot complete a copy (`Prov_none` fails at the first byte,
+  `Prov_symbolic` dies in the pure `array_shift_ptrval`, `PVnull`/`PVfunction`
+  fail in `load`) — except one NAMED RESIDUAL, still served on both engines:
+  an allocation/device pair, reachable only when an allocation lies inside a
+  device range, i.e. under the fork-only `--address-space-top` (outside
+  CONTRACT §2's promise; `Specified(56)` on both at top 2756), not refused
+  because without the allocation's bounds, which `memcpy` never consults, it
+  cannot be told from an out-of-bounds run into device memory (record §2). It
+  fires before ANY access check (a dead or out-of-bounds overlapping copy is
+  refused, not reported as that UB) (oracle `failwith`; Lean
+  `CerbMem.memcpyM` `failwithI`):
+  `Concrete.memcpy: refused - memcpy on overlapping objects (…) - the fork
+  refuses rather than decides (item G1, 2026-10-20)`. (G2) an allocation with
+  an alignment that is not a positive power of two: upstream's `std.core:385`
+  `aligned_alloc_proxy` checks only `size rem_t align = 0` and the allocator
+  rounds to any alignment, so `aligned_alloc(3, 9)` allocated (tray 57); now
+  the ALLOCATOR of both memory models dies, after its out-of-memory kill and
+  before the remainder (oracle `failwith`; Lean `CerbMem.allocator`, the leaf
+  carried as the message of a kill so `allocator_active_sound` keeps its
+  hypothesis-free statement): `Concrete.allocator: refused - allocation with an
+  invalid alignment N (…) - the fork refuses rather than decides (item G2,
+  2026-10-20)`. Alignment zero is OUT OF SCOPE and unchanged (tray 34's
+  `Division_by_zero` at `std.core:385`'s `rem_t`). Shape: oracle uncaught
+  `Failure`, exit 125; Lean abort under `LEAN_ABORT_ON_PANIC=1`, exit 134, the
+  texts byte-identical. Measured 2026-10-20 over every exec-type lane: the
+  alignments reaching the allocator are 1, 2, 4, 8, 16 and — on exactly one
+  row — 3; `_Alignas(3)` is a front-end constraint violation and never reaches
+  it. Witnesses: `scripts/check_item_g_refusals.sh` (row 1). Two gated lane
+  rows were literally these cases — `tests/coverage/mem4/mem4-020-memcpy-overlap.c`
+  (Tier A row 3, "the observable is what each engine reports") and
+  `tests/libc_exec/009-aligned-alloc-3.c` (row 5, the Z2 alignment-arithmetic
+  control) — each a deliberate control of the superseded stance; both are
+  RETIRED with their baseline rows ([USER 2026-10-20]: the witness script
+  carries their purpose — the refusals, and the valid-alignment arithmetic
+  controls). A deliberate fork ≠ pristine difference (below).
+- *Union initializers designating a non-first member, item U* (contract D11,
+  2026-10-20; [USER 2026-10-20] ruled, under the same rule as item G, that union
+  initializers are refused rather than fixed and that no initialization
+  semantics is claimed obvious; `docs/2026-10-20_union-init-refusal-record.md`):
+  REFUSED in BOTH engines — a refusal, not an ISO fix (§2 is untouched). The
+  LIVE initializer desugarer is `frontend/model/desugaring_init.lem` (called
+  from `cabs_to_ail.lem:3527-3528`; `cabs_to_ail.lem`'s own `constructValue`
+  is dead code), whose `constructValue_aux` builds EVERY braced union
+  initializer as the FIRST member whatever the designators say (upstream's
+  `TODO: this is only correct if the first member was the one initialised`,
+  b9aeedcb4 :576, and its level-0 print `constructValue_aux: is WRONG for
+  union ==> always assigning the first member`, :592; the init-map key
+  `Elem_union` has no member identity), so `union U { int i; unsigned char
+  c[4]; } u = { .c = {1,2,3,4} }` gave `u.c[0]*100 + u.c[3]` = 0 on both engines
+  (gcc 104) — twelve such rows in tray 59 (a). Now `moveTo_aux`'s Union arm —
+  the one place the designated member is decidable — `error`s when a member
+  designator on a union names a non-first member (any depth, any storage
+  class, arrays of unions, nested unions, compound literals, a union inside a
+  struct): oracle `Cerb_debug.error` (`internal error: <text>` + uncaught
+  `Failure`, exit 125), Lean `failwithI` (abort, exit 134), one text by
+  generation: `Desugaring_init.moveTo_aux: refused - union initializer
+  designating a member other than the first (union U: designator .c, first
+  member i); C17 6.7.9#17-19 (…); upstream's desugaring_init.lem
+  constructValue_aux builds every braced union initializer as the FIRST member
+  whatever the designators say (…) - the fork refuses rather than decides
+  (item U, 2026-10-20)`. Unchanged and agreeing with the oracle: positional and
+  first-member-designated forms (incl. `{ 9, .a = 2 }` → 2, so the one predicate
+  covers mixed lists: a mixed list is silently wrong only when it names a
+  non-first member), `{ 0 }` on a smaller first member (Unspecified on both), the
+  anonymous-union-in-struct path (members spliced into the enclosing struct),
+  a union inside a struct positional or first-designated. Measured 2026-10-20
+  over every union-containing program of `tests/` (39 outside csmith, 1285
+  csmith, Tier B), `lean_frontend/corpus`, the CN, libxml2 and pKVM sources
+  and the libc (libc.co rebuilt under the new desugarer; the 12 metadata TUs
+  regenerated): exactly ONE gated program refuses —
+  `tests/coverage/union3/union3-003-union-init.c` (Tier A row 3, `{ .c = 'A' }`
+  with `c` the second member, right before only by representation overlap) —
+  REPORTED under the slice's STOP rule and then RETIRED with its baseline row
+  ([USER 2026-10-20], the item-G precedent for a control of the superseded
+  stance: the project tolerates no silently wrong answer, and a MATCH on a
+  wrong answer is not evidence; the witness script carries its shape). Witnesses: `scripts/check_union_init_refusals.sh` (row
+  1). Not refused, reported (tray 59 (b)/(c)): a struct/union VALUE as a member
+  initializer and a designated union compound literal in the initializer
+  position are constraint violations on both engines; the anonymous-union
+  layout (`sizeof` 12, no aliasing). A deliberate fork ≠ pristine difference
+  (below).
 - *`LEAN_ABORT_ON_PANIC` required* (Z2-FL-03): the driver refuses to
   start (exit 2) without it, because a Lean `panic!` — the fail-stop
   mirror of every OCaml failwith/assert/uncaught exception — would
@@ -483,11 +590,35 @@ Nothing else.
   `runtime/libcore`, `runtime/libcore/impls` or `runtime/libc/include`
   but is not that directory of THIS run's runtime is REFUSED at import
   (exit 2, `cerberus-lean: refused — library-location classification: …`).
-  The oracle tests exact equality (`util/cerb_location.ml:512-523`); the
-  port's pure `CerbLocation.isLibraryLocation` tests the suffix, and the
-  refusal makes the two agree on every served run. A cabs-json exported
-  under a different runtime prefix refuses the same way (its `builtins.h`
-  location). Witnesses: the same script.
+  The oracle tests literal directory equality (`util/cerb_location.ml:512-523`).
+  Deliberate divergence [USER 2026-10-19]: the import guard now compares
+  resolved directories, retaining exact membership in the same three runtime
+  directories. Equivalent absolute/relative spellings and symlinks agree;
+  missing and foreign directories refuse. The pure model still tests the
+  suffix; stored source and lexing positions are never rewritten. Relative
+  paths resolve against the importing process's working directory. The
+  admitted divergence class is any label whose directory resolves to a
+  runtime library directory but differs literally from the oracle's key
+  `<runtime-as-given>/lib/cerberus-lib/runtime/<dir>`, in both directions:
+  an absolute or `./` label under a relative `--runtime`, a relative or `./`
+  label under an absolute one, a `#line` alias, a symlinked spelling, for
+  `libcore` as much as `libc/include`. Such a label is non-library by the
+  oracle's literal test but library by the port's suffix test, and the
+  resolved guard accepts it. Every canonical export carries the instance:
+  cpp's `./_build/.../libc/include/*.h` positions under
+  `--runtime=_build/install/default`. On such served inputs the UB location
+  differs: the `#line` plant in `scripts/check_runtime_resolution.sh` is
+  reported at `<2:10--2:15>` by the oracle and `<11:10--11:23>` by the port,
+  and at `<11:10--11:23>` by both under the unprefixed spelling. Differential
+  lanes use absolute spellings where both agree. The quoted literal is
+  unaffected: its stored labels are preserved. The fixture-001 witness in
+  the same script prints both actual classifiers and the execution verdicts
+  (that program has no UB); [upstream draft 58](docs/upstream-tray/58-relative-runtime-library-location.md)
+  describes the oracle's literal-key mismatch.
+  Portable libc metadata uses `scripts/libc_prep.sh --jsons OUTDIR`, whose
+  exporter runs from the project root with `--runtime=_build/install/default`
+  and relative source/include paths. Consume this metadata from the project
+  root, with the same runtime spelling for portable quotation artifacts.
 - *Non-UTF-8 bytes in the Cabs JSON* (bug hunt BUG-6 and K-5, refused since
   2026-09-29, `docs/2026-09-29_bug-hunt-fixes-record.md` §S3; before that a
   class-(b) residual that died with an uncaught exception, rc 1, and listed
@@ -558,11 +689,21 @@ operator items are listed in the record.
 - *In-process consumers and the library-location check* (bug-hunt fixes
   pre-merge audit L4): the driver refuses, at import, any location whose
   path passes `CerbLocation.isLibraryLocation`'s suffix test but not the
-  oracle's exact test against the runtime root, which makes the two tests
-  agree on every accepted input and retires Z-67 for the driver. A
-  consumer calling `CabsImport.parseJson` and `isLibraryLocation` directly
-  bypasses that check and keeps the Z-67 residual unless it applies the
-  same check with its runtime root.
+  exact membership test against the resolved runtime directories. D2b accepts
+  equivalent path spellings as a declared divergence from the oracle's
+  literal comparison. The Z-67 retirement is conditional on matching literal
+  directory spellings, as in the differential lanes' absolute invocations.
+  Any label that resolves to a runtime library directory but differs
+  literally from the oracle's `<runtime-as-given>/<dir>` key, in either
+  direction (cpp's `./`-prefixed header positions under the canonical
+  relative runtime being the instance every export carries), is non-library
+  on the oracle and library on the port, even on served driver runs, and the
+  served UB location differs (the `#line` plant pin above: oracle
+  `<2:10--2:15>`, port `<11:10--11:23>`). This does not change the quoted
+  literal. A consumer calling `CabsImport.parseJson` and `isLibraryLocation`
+  directly bypasses the guard and also keeps the foreign-directory Z-67
+  residual; applying the resolved guard removes that class, not the
+  literal-spelling divergence.
 - *In-process consumers and kind-1 fail-stops*: no universal `drive`
   conformance theorem follows from avoiding known failure sites; byte,
   runtime-state and other obligations also remain. `failwithI` has an
@@ -716,8 +857,50 @@ by a cited re-record.
   (`scripts/fork_drift_manifest.txt`, header note "fix/asm-refusal"). Upstream
   disposition: none planned — the refusal is the fork's contract, not a fix
   for upstream to take [AGENT].
-- **`diagnostic-text` (0 rows; a permitted class).** RESOLVED [USER
-  2026-09-17] (option (2) agreed, on the orchestrator's question — record §7): the
+- **Fork refusal — item G, the memory model's overlap and alignment TODOs
+  (0 register rows; 2 corpus controls retired; added 2026-10-20; contract D10;
+  record `docs/2026-10-20_item-g-refusals-record.md`):** the fork REFUSES what
+  pristine ANSWERS (§3(c) above): `impl_mem.ml` `memcpy` `failwith`s on an
+  overlapping copy where upstream's TODO copies byte-wise, and `allocator`
+  `failwith`s on an alignment that is not a positive power of two where
+  upstream rounds to it. Row 10's walked corpora contained exactly one program
+  of each (`tests/coverage/mem4/mem4-020-memcpy-overlap.c`,
+  `tests/libc_exec/009-aligned-alloc-3.c`; the lane measurement of record §3),
+  both deliberate controls of the superseded stance; both are RETIRED with
+  this slice ([USER 2026-10-20], their purpose carried by
+  `scripts/check_item_g_refusals.sh`), so the walked corpora hold no such
+  program and the register has no row — as for inline assembly above (the
+  pristine lane is Tier B, run by the orchestrator; not run in the slice).
+  The content pin for `memory/concrete/impl_mem.ml` moved
+  (`scripts/fork_drift_manifest.txt`, header note "fix/item-g-refusals"); no
+  generated-OCaml delta moved. Upstream disposition: drafts 56/57 stay Draft —
+  they report the TODOs; the refusal is the fork's contract [AGENT].
+- **Fork refusal — union initializers designating a non-first member, item U
+  (0 register rows; 1 corpus control retired; added 2026-10-20; contract D11; record `docs/2026-10-20_union-init-refusal-record.md`):**
+  the fork REFUSES what pristine ANSWERS WRONGLY (§3(c) above):
+  `desugaring_init.lem`'s `moveTo_aux` Union arm `error`s on a member designator
+  naming a non-first member where upstream's `constructValue_aux` builds the
+  first member whatever the designators say. Row 10's walked corpora contain
+  exactly one such program, `tests/coverage/union3/union3-003-union-init.c`
+  (the slice measurement, record §3), RETIRED with its baseline row ([USER
+  2026-10-20], as the item-G controls were: a MATCH on an answer right only by
+  representation overlap is not evidence; `scripts/check_union_init_refusals.sh`
+  carries its shape), so the walked corpora hold no such program and the
+  register has no row. The file was byte-identical to upstream before, so the manifest
+  gains a `[files]` + `[source-content]` row for `frontend/model/desugaring_init.lem`
+  and an `[expected-semantic]` row for the generated `desugaring_init.ml`
+  (`scripts/fork_drift_manifest.txt`, header note "fix/union-init-refusal");
+  `cabs_to_ail.lem`/`cabs_to_ail.ml` unchanged. Upstream disposition: draft 59
+  stays Draft — it reports the TODO and the three neighbouring defects; the
+  refusal is the fork's contract [AGENT].
+- **`diagnostic-text` (1 row).** The inner_arg_temps I0b backport adds two
+  evaluator frames to `immaculate/nolibc/zd-z2fl03-nan-to-int` while retaining
+  exit 125, empty stdout and `Z.Overflow`. Its exact signature pair is
+  registered; the control and disposition are in the
+  [close-out record](docs/2026-10-25_inner-arg-temps-closeout-record.md).
+  Frame count/order are not projected away. The older position-only cases
+  remain resolved by [USER 2026-09-17] (option (2) agreed, on the
+  orchestrator's question — record §7): the
   lane's diagnostic projection — the one `matching_failure` and the
   register's stderr signature already used (the `Time spent` trailer removed)
   — additionally normalises `line N[-M], characters A-B` positions inside
@@ -764,6 +947,64 @@ by a cited re-record.
   (C6: 134 agree / 2 `matching_incomplete` / 106 `matching_failure`; shard
   1/34: 26 / 21 / 3).
 
+### Core quotation instrument boundary
+
+`--quote-core` and `--quote-libc` emit constructor literals for the converted
+Core file. The round-trip checks establish computed whole-file representation
+agreement on the required inputs and separately inspect elaborated comparator
+terms against construction provenance. They do not prove that the literal equals
+the frontend's output. All the following are **instrument code outside the exec
+cone**, including the printer invoked on the quotation-only driver branch:
+
+- `CerbQuote.lean` has seventeen kernel-opaque `partial def`s:
+  `q_ctype`, `q_ctype_`, `q_CerbMem_MemValue`, `q_core_object_type`,
+  `q_core_base_type`, `q_generic_pattern`, `q_generic_pattern_`,
+  `q_mem_constraint`, `q_loaded_value`, `q_object_value`, `q_value`,
+  `q_generic_pexpr`, `q_generic_pexpr_`, `q_generic_expr`, `q_generic_expr_`,
+  `intern` and `renderTasks`. Runtime printing and sharing are computed evidence.
+  **Instrument-only indexing exemption:** the ten `!` indexing/update sites
+  in `internKey`, `planSharing`, `renderTasks` and `render` retain Lean's
+  panic-class access. Interned IDs index entries allocated before them;
+  child IDs precede parents, and planning/rendering enumerate array bounds.
+  Those invariants are source-level evidence, not a kernel proof. Panic is
+  kernel-transparent; the invocation recipes set `LEAN_ABORT_ON_PANIC=1` so
+  an invariant violation aborts native instrumentation. This exemption is
+  confined to the quotation instrument outside the exec cone. D5's attempted
+  `failwithI` wrappers were unresolved owners in the failure-reach probe's
+  declared import environment; the permitted exemption avoids changing that gate or
+  its register (record F12).
+- `test/Unit/CoreQuoteTest.lean` has 176 partial definitions: the independent
+  datatype visitors `view0` through `view171`, `sameShape`, `census`,
+  `expandHelpers` and `comparatorForm`. The latter two support the metaprogrammed
+  comparator-syntax check. The development generator
+  `test/CoreQuote/CoreQuoteVisitor.lean` has the partial traversal `collect`;
+  the unwired D0 probe `test/CoreQuote/probes/CoreQuoteInventory.lean` has the
+  partial traversal `inventory`. These development inventories are computed
+  evidence too. Neither native comparison, its census, generated auxiliary BEq nor these
+  metaprogram checks constitutes a kernel proof of the round-trip relation.
+- The `CoreQuoteSupport` Lake library compiles `test/CoreQuote/CoreQuoteCompare.lean`
+  and its pipeline dependencies into `libCoreQuoteCompare.so`. The Python runner
+  `test/CoreQuote/CoreQuoteRoundTrip.py` loads this test plugin with `--plugin`
+  and its dependencies with `--load-dynlib`; those native computations are part
+  of the instrument. At test time it compiles the existing `native/md5.c` with
+  `lake env leanc -shared -fPIC -DLEAN_EXPORTING` to expose the frontend digest
+  symbols to the plugin. This reuses the existing digest implementation.
+- The runner reads Lake's shared-library dependency traces, requiring the schema
+  version `"2025-09-10"`. That toolchain-specific dependency-loading convention,
+  the Python orchestration, source audit and emitted comparator selection are
+  outside the kernel evidence. An unrecognized trace schema is an error.
+
+Literal elaboration and the named replay gates `lake env leanchecker LibcLiteral`
+and `lake env leanchecker LinkedLiteral` load no test plugin. Tier B requires
+GNU `time` (probed as `gtime` or `time` on PATH) for wall-time/peak-RSS measurement;
+its absence is a named prerequisite failure. They check the emitted definitions against their imported Lean
+environment; they do not establish the missing connection to frontend execution.
+**Named mover: the printer-correctness bridge (Core quotation charter option B).**
+The delivered instrument is option A. Coverage, refusals, canonical runtime
+convention, replay measurements and the complete re-pin recipe are in the
+[consumer note](docs/2026-10-18_consumer-note-cerberus-caesium-core-quote.md);
+Tier A row 1 and Tier B row 13 are the round-trip gates.
+
 ## 3b. Deviations the consumer relies on (cerberus-sl)
 
 The rule is [USER 2026-10-03]: no innovation relative to Cerberus-upstream unless something is
@@ -795,6 +1036,86 @@ list is the consumer's statement as of 2026-10-03. It is not proof that nothing 
 deviation that is absent from it still gets the question whenever the consumer's proofs might
 touch it.
 
+### The inner_arg_temps differential lane
+
+`scripts/test_inner_arg_temps.sh --gate` is Tier A row 15. The trust surface
+is exact comparison of complete ordered observation sequences between
+engines within each mode, plus the dump compatibility/parameter-binder
+refusals. It runs its selftest, all 113 minimal inputs, ten fixtures,
+sixteen corpus inputs, 42 libc inputs, three main/argc/argv witnesses and
+upstream backport witnesses 0343/0344 (186 rows). Libc and main witnesses
+run both engines in both modes; ordinary inputs run matched switched engines.
+
+The oracle-only cross-mode check is a separate sanity instrument: it
+compares the SET of distinct complete observations (value, stdout, stderr,
+blocked, and complete Error/UB payloads where present), ignoring order and
+multiplicity only. A changed set fails loudly as a finding. Normal calls
+create/store an object per argument in the caller, adding unsequenced
+steps and exhaustive interleavings; inner_arg_temps allocates in the callee
+after the call. `libc/exhaustive/001-unseq-order-libc` witnesses two distinct
+outcomes with 80 Normal observations and 4 switched observations, engines
+agreeing within each mode. Counts are informational, not pinned: unrelated
+elaboration changes can alter path enumeration. This sanity check is not
+a new trust-surface claim.
+
+Baseline hashes pin sorted distinct full tokens, never values alone or
+execution counts. The run-time engine comparison still checks the entire
+ordered sequence before baseline lookup. Class, row membership and both
+engine hashes must match the baseline. The registered strerror assert is
+`BOTH_FAIL`, citing `tests/libc_exec/baseline.txt:38`, never execution
+agreement. Other BOTH_FAIL/RESOURCE rows require matching Normal failure
+controls; their full failure/status hashes remain pinned. Only Error
+failure classification uses the existing narrow Symbol-number projection.
+
+Ordinary inputs are exhaustive without libc. Top-level libc and upstream
+witnesses use single-trace AGREE-FIRST (outside CONTRACT §1); the two
+exhaustive libc controls require multiple complete observations. Bounded
+main witnesses return 0 (argc/argv), 7 (recursion) and 42 (recursion with
+argc/argv). Upstream's separate recursive-main guard is bypassed by the
+active driver path, so recursion executes. These are finite checks, not
+a universal correspondence or termination theorem. Default limits are
+4G per subprocess, 30 seconds ordinary and 300 seconds libc.
+
+Selftests strip each engine's switch; mutate Normal Lean results; plant
+both dump/mode mismatches and parameter rebindings; create a printer
+collision; and corrupt baselines/outcomes. Sequence/set controls accept
+cross-mode duplication/reordering but reject within-mode sequence changes
+and changes to each observation field. Csmith (`--fuzz COUNT`) is a seeded
+single-trace measurement with exact switched-engine comparison and the
+same oracle cross-mode set rule. Measurements and commands are in the
+[completion record](docs/2026-10-23_inner-arg-temps-closeout-record.md).
+
+### Core text parameter-identity speedbumps (inner_arg_temps repair)
+
+The fork printer gives `SD_FunArgValue` a numbered `name_fav<number>`
+spelling. While printing each procedure it rejects any collision between
+that spelling and a bare `SD_Id`/`SD_ObjectAddress` name, in either insertion
+order, through `Cerb_debug.error` naming the procedure and name. Both
+current libc dumps regenerate without that error; the Normal dump and all
+42 libc-execution/ten fixture Core outputs are byte-identical to their
+pre-repair captures. Hashes and commands are in the
+[transport record](docs/2026-10-22_inner-arg-temps-transport-record.md).
+
+On every libc load, including Normal mode and quotation, the Lean loader
+rejects a procedure body binder that reuses a formal parameter name:
+`R-IAT-LIBC-SYMBOL-LOSS`, exit 2, naming both procedure and name, before
+metadata stitching. This catches the shape of tray 65's lossy old dump.
+The lane's selftest plants a corrupted binder line in each dump and a C
+local whose name matches the measured argument-value spelling in the
+printer. The parser tests also cover nested case and continuation binders.
+These are speedbumps against printer regressions, **not a proof of transport
+fidelity**. A valid C block-local shadow of a parameter can be over-refused;
+that conservative result is accepted. No general scope analysis is done.
+
+Transport still assumes different symbols live together have different
+printed names within a procedure: unnamed symbols are numbered `a_<n>`,
+C names are unique within their scopes, and argument values now have their
+own numbered spelling. The checks guard the two demonstrated ways this
+assumption can fail, not arbitrary scope reuse. The principled queued fix
+is numbering every named symbol with metadata joins, or structured
+transport; see [TODO](TODO.md#queued-larger-work) and
+[tray 65](docs/upstream-tray/65-inner-arg-temps-core-symbol-loss.md).
+
 ## 4. What is compared, against what
 
 **The oracle.** The OCaml Cerberus in this repository, built from the
@@ -808,6 +1129,32 @@ The contract's matrix names each lane's ordering and projection: GCC uses
 native exit membership, call-point pins project a single value/UB, and
 legacy printer/reference checks retain their documented narrower purpose.
 An acknowledged baseline difference or refusal is not observation agreement.
+
+**Attributed stops.** `scripts/observations.py` exposes
+`decode_stop(stdout: bytes, stderr: bytes, status: int) -> StopDecode`.
+It retains every complete emitted occurrence, with all constructor metadata,
+channel, execution index and source position, alongside exact fuel occurrences,
+validated legacy/unattributed panics and protocol problems. Empty `stops` is
+not evidence of completion. Decode before truncation or status/resource returns;
+ordinary program output and ordinary Error messages confer no stop authority.
+The [first-delivery note](docs/2026-10-20_consumer-note-cerberus-caesium-outcome-protocol.md)
+contains the family table, concrete consumer recipe and loss-before-emission
+limits. The sentinel and pure-failure boundaries remain operational limits,
+with structural outcomes as their named mover. The incoming D10 overlap/alignment
+refusals and D11 union-initializer refusal retain their raw diagnostic texts;
+`decode_stop` reports validated frames as legacy/unattributed, not INVARIANT or
+REFUSAL. The migration map names the memory-model metadata extension and shared
+desugarer mapping under WP2; semantic refusal status alone is not wire attribution.
+
+Only PNVI and immaculate add stop-policy corrections in this delivery: an
+emitted INVARIANT is unconditionally RED, including against oracle crash/resource
+or malformed later output. Their historical CRASH/BOTH_FAIL negative pins do
+not identify upstream origin; a validated envelope-less panic is explicitly
+legacy, origin unattributed. Other lane policies are unchanged. The normative
+resource rule stays: bare 137 is unexplained/RED; a positive owned `oom_kill`
+counter is the OOM witness, even when the parent exits successfully. The existing
+PNVI `status == 137` resource shortcut is a documented deferred divergence, not
+certified by this decoder or amended into that normative rule (design v2 §§8.4/9).
 
 **Pristine upstream, the reference (§0).** The independently compiled
 pristine engine (`b9aeedcb4` + upstream Lem `3802cb0`; kept standing by
@@ -992,7 +1339,7 @@ theorem over the shipped pipeline `@drive ⟨fuel⟩` at the ambient
 | `test_fuel_classifier.sh` | the one FUEL classifier (`scripts/fuel_classify.sh classify_fuel_outcome`) reads its fixture captures correctly: both fuel forms positive; a genuine `Error` kill, a PANIC without the marker, and program stdout carrying the words all negative (§7) |
 | `check_no_fuel_numerals.sh` | **a plant-tested SPEEDBUMP against fuel numerals in the Lean text a consumer reasons against** (fuel-parameter arc, 2026-09-04; [USER 2026-09-03]: any hardcoded magic value that cannot be quantified over is by definition a bug): seams, `generated/`, `test/`, `speclab/`, `tests/**/*.lean` scanned comment-stripped for the enumerated idiomatic shapes F1–F6 (the deleted `lemDefaultFuel`/`driverFuel`/`ndDefaultFuel`; a global `instance : LemFuel`; a worker at a literal counter — bare, parenthesised, hex, or after a carried instance `f_lemFuel ⟨i⟩ 5`; `LemFuel := ⟨…⟩`/`LemFuel := { fuel := … }`/`LemFuel.mk N`/`LemFuel.mk (…)`; a single-component anonymous constructor led by a numeral `⟨N⟩`/`⟨(N : Nat)⟩`/`⟨0x…⟩`/`⟨10^8⟩`; a fuel-named constant defined as a numeral) — the ONE allowed site is Main.lean's `defaultFuel` (+ the `letI` that consumes it), allowlisted by exact line; vacuity-guarded; its `--selftest` plants 29 shapes red (F1–F6, A1–A3 and the switch-set rule W1, next row) and the unplanted set green on every `test_unit.sh` run. What it does NOT guarantee (pre-merge audit M2): indirection through a non-fuel-named constant (`def budget := 100000000; @f ⟨budget⟩`) and arithmetic spellings not led by a numeral are not regex-closable — the selftest records that gap as a KNOWN GAP line; they are review discipline. The BACKSTOP is the typing, not the grep: every fuel'd function demands a `[LemFuel]` instance, no instance exists in library/generated/seam code, and a measured wrapper carries its sufficiency obligation — a numeral can only enter where a human writes an instance |
 | `check_no_fuel_numerals.sh` rule W1 | **a SPEEDBUMP against accidental default `CerbGlobal.Switches` instances** (PNVI arc S1, 2026-10-05; proportionality revision 2026-10-07, record `docs/2026-10-05_pnvi-s1-switch-parameter-record.md` §14): the switch set is the instance-implicit `[CerbGlobal.Switches]`; over the same comment-stripped roots as the fuel rules (seams, `generated/`, `test/`, `speclab/`, `tests/**/*.lean`) an `instance` declaration whose same-line header names `Switches` is RED (plain text pattern); Main.lean's `letI` is not an `instance` declaration; vacuity-guarded (`class Switches` must be seen); `--selftest` plants one in a seam, one in `generated/` and one in a unit test, each RED. What it does NOT guarantee: it is NOT adversarially robust — a header split across lines, an alias, an `extends`, an `instance` attribute, an untyped instance or a raw-string desync passes it, by design. The BACKSTOP is that Main.lean's LOCAL instance (`letI`) wins over any global one for every lane, plus review; a consumer's own instance (outside this repository) is the intended use |
-| `check_no_fuel_numerals.sh` rule W2 | **a SPEEDBUMP against production calls of the default-pinned `reconstructValue` wrappers** (PNVI arc S2, 2026-10-07, record `docs/2026-10-07_pnvi-s2-data-shapes-record.md`; design record §B.7 condition (b)): `CerbMem.reconstructValue(_lemFuel)` keep their pre-S2 names and types for the consumer but are pinned at `⟨CerbGlobal.defaultSwitches⟩` (closure fixed, taint dropped; kernel-equal to the pre-S2 text, `test/Unit/ReconstructLegacyTest.lean`); production calls `reconstructValueAbst` with the ambient set. Over the comment-AND-string-stripped seams and `generated/` (the `*_lemMeasureProofs` proof carriers and the theorem-only seam `CerbMemDefaultFacts.lean` excluded — the latter's kernel bridges, PNVI arc S2 review fix F1, NAME the wrappers in their statements), a mention of either old name other than the wrappers' own definition lines (exact-content allowlist, `CerbMem.lean` and its copy) is RED; vacuity-guarded (an allowlisted line must be seen); `--selftest` plants a seam call and a qualified generated-tree call, each RED. What it does NOT guarantee: not adversarially robust — an alias, a call from `test/`/`speclab/`, or a raw-string desync passes it. Not a trust surface: at the default set the two functions agree (kernel), so a stray call moves no lane today; the backstop once a PNVI set is accepted is the PNVI lane (S4) plus review |
+| `check_no_fuel_numerals.sh` rule W2 | **a SPEEDBUMP against production calls of the default-pinned `reconstructValue` wrappers** (PNVI arc S2, 2026-10-07, record `docs/2026-10-07_pnvi-s2-data-shapes-record.md`; design record §B.7 condition (b)): `CerbMem.reconstructValue(_lemFuel)` keep their pre-S2 names and types for the consumer but are pinned at `⟨CerbGlobal.defaultSwitches⟩` (closure fixed, taint dropped; kernel-equal to the parameterised pre-S2 reference at `productionDiagnostics`, `test/Unit/ReconstructLegacyTest.lean`; the historical direct-message instance and the changed consumer contract are described in `docs/2026-10-20_consumer-note-cerberus-sl-outcome-protocol.md`); production calls `reconstructValueAbst` with the ambient set. Over the comment-AND-string-stripped seams and `generated/` (the `*_lemMeasureProofs` proof carriers and the theorem-only seam `CerbMemDefaultFacts.lean` excluded — the latter's kernel bridges, PNVI arc S2 review fix F1, NAME the wrappers in their statements), a mention of either old name other than the wrappers' own definition lines (exact-content allowlist, `CerbMem.lean` and its copy) is RED; vacuity-guarded (an allowlisted line must be seen); `--selftest` plants a seam call and a qualified generated-tree call, each RED. What it does NOT guarantee: not adversarially robust — an alias, a call from `test/`/`speclab/`, or a raw-string desync passes it. Not a trust surface: at the default set the two functions agree (kernel), so a stray call moves no lane today; the backstop once a PNVI set is accepted is the PNVI lane (S4) plus review |
 | `gen_fuel_parametricity.py --check` | the generated tree's ambient fuel-wrapper SET equals the set pinned by `TotalityProofTest.lean` Part 1's `∀ n, @f ⟨n⟩ = f_lemFuel n` examples, both directions (a new fuel'd function without a pin is RED; `--emit` regenerates the list) — pre-merge audit M1 |
 | `check_lakefile_roots.sh` | every `generated/*.lean` — the `_auxiliary` obligation carriers and the `*_lemMeasureProofs` modules included — is a Lake root of the semantics library and every root exists, both directions (lem-lean fuel-measure record §6.4 item 8: an auxiliary module dropped from the roots would silently un-build its obligations); `--selftest` plants a dropped root, a phantom root and an unrooted module |
 | `check_exec_totality.sh` | zero `partial` definitions on the execution path (empty allowlist; fuel-totalized recursion with the distinguished fuel-exhaustion outcome, §7) |
@@ -1001,11 +1348,13 @@ theorem over the shipped pipeline `@drive ⟨fuel⟩` at the ambient
 | `check_fork_drift.sh` | the fork's oracle-side surface equals a reviewed manifest, and generated-OCaml fork-vs-upstream deltas match pinned hashes |
 | `check_pin_sites.sh` | the lem-lean pin is ONE value at every site that names it — the manifest `lem-pin`, the Lake `LemLib` rev, the three lake-manifests (`rev` + `inputRev`) and the README's newcomer `opam pin` command (fresh-clone finding 2026-09-25; 8 plants) |
 | `check_fixture_freeze.sh` | the `corpus/` differential-fixture set matches its hash manifest exactly (additions included) |
-| `check_failure_reach.sh` | **the failure-reach register gate** (fuel-pending close-out 2026-09-08 — option C of the pure-failure reachability census `docs/2026-09-07_pure-failure-reachability-census.md`; the TRIPWIRE the parked twin design `docs/2026-09-07_pure-failure-correspondence-design.md` names): rebuilds the one-module declaration-dependency instrument `tests/failure-probes/FailureReach.lean` (fresh scratch Lake package, ~6 s), takes the lexical census (`scripts/failure_census.py`) and requires every PURE `failwithI`/`panic!` site of the exec dependency closure (237) + every pure site with an unresolved kernel owner (2) to equal a row of `scripts/failure_reach_register.txt` — same position class (the census's token-level classifier `scripts/failure_position.py`), the census's reviewed reach class (173 UNREACHABLE-BY-INVARIANT / 44 REACHABLE / 22 UNKNOWN over 239 rows, the 2 unresolved rows among the UNKNOWN; counts as of 2026-10-07, PNVI arc S4 — the PNVI refusal rows re-reviewed once the switch became accepted — the gate's OK line is authoritative), sealed rows — both directions, matched on the key file/owner/token/message (the first 60 whitespace-collapsed chars after the token; inside a group of sites sharing that key the window is lengthened to the minimum that tells them apart, and a group identical even on the full recorded window is a loud FAIL — 2026-10-04, `docs/2026-10-04_failure-reach-key-groups-record.md`); RED naming the rows on a NEW site, a stale row, a moved position class, a DISCARDABLE generated let-binding (the F1 shape: a dead binding of a failure — today 0) or an unsealed class edit. Reach classes are reviewed claims (an invariant NAME with a cite, or a witness under `tests/failure-probes/reach/`), not theorems; the closure is a kernel constant-dependency closure, not a path. `--selftest` plants on scratch copies (a new site in a generated exec-closure definition, a dead let, an unsealed class edit, a phantom row, an edited tally, mis-shaped `lem_if`/`lemSeq` heads (P6/P7), and P8: two same-owner rows' reach classes swapped together with their seals — the pre-merge audit A3 hole, now RED SEAL MISMATCH) plus classifier witnesses C1-C7 and the key-group witness K1 |
+| `check_failure_reach.sh` | **the failure-reach register gate** (fuel-pending close-out 2026-09-08 — option C of the pure-failure reachability census `docs/2026-09-07_pure-failure-reachability-census.md`; the TRIPWIRE the parked twin design `docs/2026-09-07_pure-failure-correspondence-design.md` names): rebuilds the one-module declaration-dependency instrument `tests/failure-probes/FailureReach.lean` (fresh scratch Lake package, ~6 s), takes the lexical census (`scripts/failure_census.py`) and requires every PURE `failwithI`/`panic!` site of the exec dependency closure (238) + every pure site with an unresolved kernel owner (2) to equal a row of `scripts/failure_reach_register.txt` — same position class (the census's token-level classifier `scripts/failure_position.py`), the census's reviewed reach class (174 UNREACHABLE-BY-INVARIANT / 44 REACHABLE / 22 UNKNOWN over 240 rows, the 2 unresolved rows among the UNKNOWN; counts rechecked 2026-10-21 after outcome-protocol integration — the PNVI refusal rows were re-reviewed at PNVI S4 once the switch became accepted — the gate's OK line is authoritative), sealed rows — both directions, matched on the key file/owner/token/message (the first 60 whitespace-collapsed chars after the token; inside a group of sites sharing that key the window is lengthened to the minimum that tells them apart, and a group identical even on the full recorded window is a loud FAIL — 2026-10-04, `docs/2026-10-04_failure-reach-key-groups-record.md`); RED naming the rows on a NEW site, a stale row, a moved position class, a DISCARDABLE generated let-binding (the F1 shape: a dead binding of a failure — today 0) or an unsealed class edit. Reach classes are reviewed claims (an invariant NAME with a cite, or a witness under `tests/failure-probes/reach/`), not theorems; the closure is a kernel constant-dependency closure, not a path. `--selftest` plants on scratch copies (a new site in a generated exec-closure definition, a dead let, an unsealed class edit, a phantom row, an edited tally, mis-shaped `lem_if`/`lemSeq` heads (P6/P7), and P8: two same-owner rows' reach classes swapped together with their seals — the pre-merge audit A3 hole, now RED SEAL MISMATCH) plus classifier witnesses C1-C7 and the key-group witness K1 |
 | `test_renumber_plants.sh` | the rebaseline-admission instrument (`check_renumber_only.py`) refuses what it must: committed adversarial pairs (string-content/comment-boundary holes + count/token/order plants) fail, positive controls admit with their declared class |
 | `check_runtime_resolution.sh --selftest` | the driver's runtime is the oracle's (`--runtime DIR` / `CERB_INSTALL_PREFIX`), never the working directory, and a missing runtime or a suffix-library-but-not-exact location refuses (bug hunt BUG-2/BUG-3, 2026-09-29; §3(c)); plants: a runtime-ignoring stub and a refuse-everything stub must fail it |
 | `check_cabs_json_utf8.sh --selftest` | a non-UTF-8 Cabs JSON (a raw byte ≥ 0x80 in a file name or attribute string) is refused with the attributed message instead of an uncaught exception, and ASCII controls agree with the oracle (bug hunt BUG-6/K-5, 2026-09-29; §3(c)); plants: a pre-fix uncaught-exception stub and a refuse-everything stub must fail it |
 | `check_asm_refusal.sh --selftest` | inline assembly is refused, never erased: 4 asm statements (basic, extended, `asm goto`, in a never-called function) are refused by the oracle and by Lean with the attributed desugar message at the asm location, 3 declarator asm labels are refused by the shared parser for `--exec` and `--cabs-json` (no Cabs JSON), and 2 controls (asm-free; asm only in a comment and a string) agree with the oracle (contract D9, 2026-10-05; §3(c)); plants: a pre-fix erasing oracle (strips the asm, both engines then run it), a Lean-only erasing stub and a refuse-everything pair must fail it |
+| `check_item_g_refusals.sh --selftest` | the two item-G memory-model TODOs are refused, never answered: 6 overlapping `memcpy` programs (tray 56's witness, the retired coverage control mem4-020's backward shape, an object onto itself, inside a malloc'd object, and two device-memory overlaps) and 3 invalid-alignment allocations (`aligned_alloc(3, 9)`, `(6, 12)`, `(1000, 2000)`) are refused by the oracle (uncaught `Failure`, exit 125) and by Lean (abort, exit 134) with byte-identical texts; 9 controls agree with the oracle (adjacent device ranges, adjacent halves, two objects, length 0, realloc's copy, an out-of-bounds non-overlapping copy that is UB on both, `aligned_alloc(16, 32)`, one allocation at each alignment the lanes use — 1, 2, 4, 8, 16 — and the unchanged size-clause UB) and the zero-alignment crash is unchanged on both (contract D10, 2026-10-20; §3(c)); plants: a pre-fix answering pair, a Lean-only answering stub, a refuse-everything pair, a message-without-abort stub and an altered-text stub must all fail it |
+| `check_union_init_refusals.sh --selftest` | a braced union initializer designating a member other than the first is refused, never answered: 14 programs (the tray-59 witness `{ .c = {1,2,3,4} }`, static and automatic designated elements, a designated struct member, mixed positional/designated lists, a nested union, an array of unions, a string literal, a scalar second member, the retired coverage control union3-003's shape `{ .c = 'A' }`, a compound literal, a union inside a struct) are refused by the oracle (uncaught `Failure`, exit 125) and by Lean (abort, exit 134) with byte-identical texts; 12 controls agree with the oracle (positional and first-member designated forms incl. `{ 9, .a = 2 }`, a first member that is an array or a partially designated struct, `{ 0 }` read as Unspecified, the anonymous-union-in-struct path, a union inside a struct positional or first-designated, member assignment) and the struct-from-struct-variable rejection is unchanged on both (contract D11, 2026-10-20; §3(c)); plants: a pre-fix answering pair, a Lean-only answering stub, a refuse-everything pair, a message-without-abort stub and an altered-text stub must all fail it |
 | `check_libc_float_literals.py --selftest` + check | every float literal of the pinned `tests/libc/libc.core` equals the reviewed register `scripts/libc_float_literals.txt`, as multisets, both directions; a 12-significant-digit literal may not be registered exact (named deviation N3); 8 plants |
 
 Certification-integrity rules ride the gates: validation of
@@ -1387,7 +1736,9 @@ value-carrying opaques with no native binding: `CerbFuel.fuelExhaustedLoc`
 memory-model fail-stops; proofs are uniform in the atom, no inequality between
 the two atoms is claimed — a transparent `def` alternative is a TODO item).
 
-There is no other declared boundary. The debug no-op stubs (`CerbDebug`,
+The separate [Core quotation instrument boundary](#core-quotation-instrument-boundary)
+in §3 covers the printer and test machinery outside the exec cone. There is no
+other declared boundary. The debug no-op stubs (`CerbDebug`,
 `CerbUtils`) are off every differential path (the oracle's debug level
 is 0 in matched mode); `CerbFS` and concurrency are class (c) as stated
 in §3; the fuel bound is class (b)/fuel with its parameter. Known

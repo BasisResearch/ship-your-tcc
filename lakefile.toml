@@ -180,7 +180,7 @@ roots = [
   "CerbGlobal",
   "CerbFloat",
   "CerbUtils",
-  "CerbPP",
+  "CerbPP", "CerbQuote", "CerbDriverConfig", "CerbStop", "CerbStopSites",
   "CerbMem",
   "CerbMemAllocatorProofs",
   "CerbMemDefaultFacts",
@@ -389,3 +389,18 @@ globs = ["Tcc.Model.+"]
 [[lean_exe]]
 name = "tcc_model"
 root = "Tcc.ModelMain"
+
+# Current upstream outcome codec and quotation controls.
+[[lean_exe]]
+name = "stop-test"
+srcDir = "csem/lean_frontend/test"
+root = "Unit.StopTest"
+
+[[lean_exe]]
+name = "core-quote-test"
+srcDir = "csem/lean_frontend/test/CoreQuote"
+root = "CoreQuoteRunner"
+
+[[lean_lib]]
+name = "CSemConeReport"
+roots = ["scripts.csem_cone"]

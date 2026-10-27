@@ -2,6 +2,7 @@
 
 import LemLib
 
+import CerbMem
 import CerbDebug
 import CerbImplCfg
 import CerberusFresh
@@ -15,6 +16,7 @@ import GenTypes
 import GenTypesAux
 import Core
 import Core_aux
+import Mem
 import LemLib.Pervasives
 import Utils
 import Translation_effect
@@ -635,6 +637,9 @@ def warn_atomic_elaboration (guard2 : Bool) : elab_state → (Unit × elab_state
           | () => "TODO: elaboration is wrong for atomic types")
       else
         ()) (fun _ => return0 ()))
+/- IMPORTANT: this must be kept in sync with loaded_ivfromfloat() in std.core
+ * and std_inner_arg_temps.core -/
+
 def conv_arith (stdlib1 : translation_stdlib) (ty_src : ctype) (ty_dst : ctype)
     (pe : generic_pexpr Unit sym) :
     generic_pexpr Unit sym :=
@@ -646,7 +651,12 @@ def conv_arith (stdlib1 : translation_stdlib) (ty_src : ctype) (ty_dst : ctype)
     else /- NOTE: this case will occurs in particular if ty_dst is an atomic type -/
       (failwithI "Translation_aux.conv_arith, not (is_arithmetic ty_dst)" : generic_pexpr Unit sym)
   else lem_if is_floating ty_src then
-    lem_if is_integer ty_dst then
+    lem_if is_Bool ty_dst then
+      /- STD §6.3.1.2#1: 0 if the value compares equal to 0.0, 1 otherwise; the test is on
+         the floating value, not on its truncation (see loaded_ivfromfloat() in std.core) -/
+      mk_if_pe (mk_op_pe OpEq pe (mk_floating_value_pe CerbMem.zeroFval))
+        (mk_integer_pe ((0 : Int))) (mk_integer_pe ((1 : Int)))
+    else lem_if is_integer ty_dst then
       Pexpr ([] : List annot) () (PEctor Civfromfloat [mk_ail_ctype_pe ty_dst, pe])
     else lem_if is_floating ty_dst then /- TODO: floating vs floating conversion -/
       pe

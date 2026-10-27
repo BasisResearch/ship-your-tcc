@@ -139,7 +139,7 @@ def exemplarFile : file core_run_annotation :=
     is applied to it positionally (`@drive ⟨n⟩ _ sw₀ …`), after the fuel instance (binder
     order `[LemFuel] [CerbGlobal.Switches]`). A plain `def`, not an `instance`: nothing
     resolves to it implicitly (`scripts/check_no_fuel_numerals.sh` rule W1). -/
-def sw₀ : CerbGlobal.Switches := ⟨CerbGlobal.defaultSwitches⟩
+abbrev sw₀ : CerbGlobal.Switches := ⟨CerbGlobal.defaultSwitches⟩
 
 /-- The shipped cold start: `(initial_driver_state sup top digest file fs).1` with the
     production filesystem state (Main.lean's `drSt`), at the ambient
@@ -363,7 +363,7 @@ theorem driver2_done {k : Nat} (fl : Nat)
     -- exists to prove (it used to be a `cases` on an opaque read, both
     -- arms discharged).
     rw [CerbGlobal.current_execution_mode_eq]
-    rw [if_neg (fun h => Bool.noConfusion h)]
+    rw [ite_eq_right (fun h => Bool.noConfusion h)]
     refine (runOne_bind_active (z := ()) (s' := dstF) (by rfl)).trans ?_
     refine (runOne_bind_active (z := ((0 : Nat), some (Step_done2 v)))
       (s' := dstF) (by rfl)).trans ?_
@@ -449,7 +449,9 @@ theorem allocator_errno (top : Int) (h : 8 ≤ top) :
        { CerbMem.initialMemState top with nextAllocId := 1, lastUsed := some 0, lastAddress := errnoAddr top }) := by
   have h1 : ¬ ((top - 4 : Int) < 0) := by omega
   simp only [runOne, CerbMem.allocator, CerbMem.initialMemState, errnoAddr]
-  simp [h1]
+  -- `CerbMem.alignmentRefused 4` (the fork's item-G2 arm, 2026-10-20) reduces to
+  -- `false` once unfolded (a literal); the two kills are excluded as before
+  simp [h1, CerbMem.alignmentRefused]
   omega
 
 theorem allocateObject_errno (k : Nat) (top : Int) (h : 8 ≤ top) :
@@ -479,7 +481,7 @@ theorem storeM_errno_active (k : Nat) (top : Int) :
   have hatomic : @CerbMem.isAtomicMemberAccess _ ⟨Nat.succ k⟩ fmapEmpty fmapEmpty (errnoAlloc top) signed_int (errnoAddr top) = false := rfl
   unfold CerbMem.storeM
   simp only [runOne, errnoPtr, hcompat, hget]
-  simp only [hsz, hbounds, hro, hatomic, Bool.not_true, Bool.false_eq_true, if_false]
+  simp only [hsz, hbounds, hro, hatomic, Bool.not_true, Bool.false_eq_true, ite_false]
 
 /-- The memory state after drive's whole errno action at top `top`. -/
 def σstore [LemFuel] (top : Int) : CerbMem.MemState :=
@@ -583,8 +585,12 @@ theorem drive_after_setup (k : Nat) (top : Int) (digest : String) (h : 8 ≤ top
   refine (runOne_bind_active (z := ()) (s' := dstD) ?_).trans ?_
   · refine (runOne_bind_active (z := ()) (s' := @S₁ ⟨Nat.succ (Nat.succ k)⟩ sw₀ top digest) rfl).trans ?_
     exact hdrv2
-  · refine (runOne_bind_active (z := dstD) (s' := dstD) rfl).trans ?_
-    rfl
+  · -- the dead `if using_concurrency` arm is rewritten away first (as at the scheduler-mode
+    -- test above): 4.35.0's `refine` no longer unifies the bind lemma through the `ite`
+    rw [ite_eq_right (fun h => Bool.noConfusion h)]
+    refine (runOne_bind_active (z := dstD) (s' := dstD) ?_).trans ?_
+    · rfl
+    · rfl
 
 /-- The round on `S₁` at ANY ambient fuel ≥ 2: PROGRAM-DONE in one round
     (consumer shape `driver2_done`); the successor state is explicit. -/

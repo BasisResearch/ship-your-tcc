@@ -24,19 +24,48 @@ it is not a new independent measurement of a downstream checkout.
 | Fuel | `check_fuel_forms.sh`: 81 workers, comprising 62 measured (12 under hypotheses), 13 checked zero-case kills, six outside the execution closure, zero pending (derived from the registered forms at the baseline pin). | General successor-case propagation and completion monotonicity are not delivered by Lem (TODO 13). Measured stability is not a proof that the sentinel is never reached. Layout acyclicity remains a theorem hypothesis, not a universally established frontend invariant. |
 | Program data | Enum compatible types and tag environments are explicit readers; execution symbol digest is `core_run_state.sym_digest`, passed through the driver entries. | The frontend digest/native MD5 seam remains. Reader seeds do not re-seed already-constructed closures; seed positions follow global reader order. |
 | Runtime failures and representation | Failure-site and observation gates register known behavior; native harnesses use `LEAN_ABORT_ON_PANIC=1`. | Unused `let`s are forced at run time by LemLib's `lemSeq` (a temporary native seam, invisible to proofs); a failing expression Lean can still drop or delay elsewhere (lem-lean A3/A5) is not forced. Lem strings use Unicode scalars rather than OCaml bytes; ten Lem parity XFAILs are registered at the pin (two string cases, five ruled OCaml-target numeric deviations, three open discrepancies: A5 twice and A1-R). |
-| Domain | Default sequential concrete-memory configuration, recorded LP64/libc assumptions, explicit fuel and address-space parameters. | The concrete memory model carries an opt-in, disabled-by-default access-receipt buffer (SC WP0, 2026-09-25: a passive diagnostic instrument, Tier A row 13 — not SC execution). Concurrency/weak memory is not implemented by this profile: `CerbConcurrency` contains stubs, and excluded CMM operations have unsupported markers. Every filesystem operation, including reading stdin, is refused (`CerbFS`, contract D2); inline assembly (GNU `asm`/`__asm__` statements and declarator asm labels) is refused by both engines where upstream erases it (contract D9, 2026-10-05, `scripts/check_asm_refusal.sh`); function-pointer numbers are named deviation N1; the contract ([CONTRACT.md](CONTRACT.md)) is the full statement and says how deeply each part is tested; debug stubs remain. General CHERI, all C extensions and arbitrary malformed Core are not certified. |
-| Semantics switches | Since 2026-10-07 (PNVI arc S4, `docs/2026-10-07_pnvi-s4-lane-record.md`): `--switches=PNVI_ae_udi` is supported and matched against the oracle under the same switch by `scripts/test_pnvi.sh` (Tier A row 14: upstream's 44 PNVI litmus files exhaustive, `tests/minimal` under the switch, the pKVM census drivers; 164 rows, 152 AGREE + 3 AGREE-FIRST + 7 registered refusal rows + 2 both-fail rows). | Every other switch and `--iso` are refused at the CLI. Inside the switch, the upstream arms that crash, print or call themselves wrong are refusals (`R-PNVI-nn`, CONTRACT §3). The pKVM allocator drivers are compared in `--first` only (their exhaustive sets exceed the 4G per-test cap on the oracle). Row 14 needs the separately fetched, GPL-licensed pKVM case study (`deps/CN-pKVM-buddy-allocator-case-study` or `PKVM_CASE_STUDY`) and fails closed without it, so a fresh clone cannot pass full Tier A until that repository is provisioned (`scripts/LADDER.md` row 14). |
+| Domain | Default sequential concrete-memory configuration, recorded LP64/libc assumptions, explicit fuel and address-space parameters. | The concrete memory model carries an opt-in, disabled-by-default access-receipt buffer (SC WP0, 2026-09-25: a passive diagnostic instrument, Tier A row 13 — not SC execution). Concurrency/weak memory is not implemented by this profile: `CerbConcurrency` contains stubs, and excluded CMM operations have unsupported markers. Every filesystem operation, including reading stdin, is refused (`CerbFS`, contract D2); inline assembly (GNU `asm`/`__asm__` statements and declarator asm labels) is refused by both engines where upstream erases it (contract D9, 2026-10-05, `scripts/check_asm_refusal.sh`); an overlapping `memcpy` and an allocation with an invalid alignment (upstream TODOs of the concrete memory model) are refused by both engines where upstream answers (contract D10, 2026-10-20, `scripts/check_item_g_refusals.sh`); a braced union initializer whose member designator names a member other than the first is refused by both engines where upstream's desugarer silently builds the first member (contract D11, 2026-10-20, `scripts/check_union_init_refusals.sh`) — EXCEPT anonymous union members, which the refusal does not reach because upstream splices them into the containing aggregate: `struct S { union { int i; unsigned char c[4]; }; } s = { .c = {1,2,3,4} }` still answers silently wrong on both engines (`s.i & 0xff` reads 0 where gcc reads 1), a known silently-wrong class that remains until the queued anonymous-members slice lands (the upstream-uncertainty survey record (`docs/2026-10-20_upstream-uncertainty-survey-record.md`, branch `docs/uncertainty-survey`, §2.1 cluster A; tray 60)); function-pointer numbers are named deviation N1; the contract ([CONTRACT.md](CONTRACT.md)) is the full statement and says how deeply each part is tested; debug stubs remain. General CHERI, all C extensions and arbitrary malformed Core are not certified. |
+| Semantics switches | Since 2026-10-07 (PNVI arc S4, `docs/2026-10-07_pnvi-s4-lane-record.md`): `--switches=PNVI_ae_udi` is supported and matched against the oracle under the same switch by `scripts/test_pnvi.sh` (Tier A row 14: upstream's 44 PNVI litmus files exhaustive, `tests/minimal` under the switch, the pKVM census drivers; 164 rows, 152 AGREE + 3 AGREE-FIRST + 7 registered refusal rows + 2 both-fail rows). | `inner_arg_temps` is accepted with the limits below; other switches, mixed sets and `--iso` are refused at the CLI. Inside PNVI, the upstream arms that crash, print or call themselves wrong are refusals (`R-PNVI-nn`, CONTRACT §3). The pKVM allocator drivers are compared in `--first` only (their exhaustive sets exceed the 4G per-test cap on the oracle). Row 14 needs the separately fetched, GPL-licensed pKVM case study (`deps/CN-pKVM-buddy-allocator-case-study` or `PKVM_CASE_STUDY`) and fails closed without it, so a fresh clone cannot pass full Tier A until that repository is provisioned (`scripts/LADDER.md` row 14). |
 
 There is no enforced broad C fragment for which every failure, byte,
 layout and native-boundary precondition is proved. Consumers must state
 entry-specific hypotheses and use the current definitions, not infer a
 universal theorem from a green differential baseline.
 
+The whole switch set `--switches=inner_arg_temps` selects the matching
+standard runtime and callee-allocated argument temporaries, including for
+`main`. Use the matching `libc_inner_arg_temps.core` for execution and
+quotation. `--call` under the switch and combinations with PNVI are refused.
+The printer rejects argument-value spelling collisions; the loader rejects
+body binders that reuse parameter names in every dump, including Normal.
+This can conservatively refuse legal block-local shadowing; it is a
+speedbump against known transport failures, not a fidelity proof.
+
+Tier A row 15 compares complete ordered engine sequences exactly within
+each mode. Its oracle-only cross-mode sanity check compares sets of
+distinct complete observations, retaining all payload fields while ignoring
+order and multiplicity. Normal's caller creates/stores each argument object
+in unsequenced steps, multiplying exhaustive interleavings; the switched
+callee allocates after the call. The exhaustive libc 001 witness has two
+distinct outcomes, 80 Normal observations and 4 switched observations,
+with exact engine agreement within each mode. Those counts are informational,
+not pinned. A distinct-outcome difference is a finding. The registered
+strerror assert Error remains BOTH_FAIL, never execution agreement.
+
+Upstream's recursive-main guard is dead on the active driver path:
+recursion into main executes. Bounded witnesses with and without argc/argv
+pass both engines and modes (42 and 7 respectively, also the GCC results).
+No recursive-main refusal is added; finite checks do not establish arbitrary
+recursion or a universal correspondence theorem. See the
+[completion record](docs/2026-10-23_inner-arg-temps-closeout-record.md) for
+measured validation. Quotation hygiene remains separate work.
+
 The minimal baseline contains 113 rows: 90 MATCH, 18 UB_MATCH and five
 CERB_SKIP (derived from `scripts/exec_baseline.txt`, 2026-09-24 at the
-baseline pin). The pristine register has seven `shared-model-fix` case
-rows, including two pairs of allocator witnesses; it does not identify
-seven independent defects. Full historical ladder/reporting runs keep
+baseline pin). The current pristine register has eight `shared-model-fix`
+case rows, including two pairs of allocator witnesses, and one
+`diagnostic-text` row for I0b's additional NaN-to-int evaluator frames;
+case counts do not count independent defects. Full historical ladder/reporting runs keep
 their original dates and source pins. The initial MUST checkpoint reran row 1
 and six named fast differential lanes; the closure also checks multi-TU,
 the multi-TU tray, address-space and immaculate lanes, as recorded above.

@@ -2,9 +2,10 @@
 # Run all Lean unit tests under lean_frontend/test/Unit/.
 # Each test is a [[lean_exe]] in lakefile.toml that exits 0 on pass.
 #
-# Usage: ./scripts/test_unit.sh [test-name]
+# Usage: ./scripts/test_unit.sh [test-name | --core-quote-libc]
 #   With no args, runs all tests.
 #   With a name, runs just that test (e.g. fresh-int-test).
+#   --core-quote-libc runs the separate Tier B quotation cases in both conventions.
 
 # Resolved before any cd (used by the exec-purity gate at the end).
 PURITY_SH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/check_exec_purity.sh"
@@ -24,6 +25,7 @@ UNIT_TESTS=(
     # main reports success; its cone is probed by check_theorem_axioms.sh
     "fuel-exemplar-test"
     "monadic-failstop-test"
+    "stop-test"
     # allocator soundness (upstream-tray draft 44, 2026-09-16): the four draft-44
     # states on the actual CerbMem.allocator; its import compiles the kernel theorem
     "allocator-soundness-test"
@@ -53,11 +55,15 @@ UNIT_TESTS=(
     # diagnostic; also Tier A row 13's Lean consumer. Args: fuel, iteration count, capture mode.
     "memory-access-test"
     # PNVI arc S2 (2026-10-07): the default-mode wrappers CerbMem.reconstructValue(_lemFuel) equal
-    # the pre-S2 text (kernel); the retired C1 reference form; runtime controls of the PNVI helpers
+    # the parameterised references at productionDiagnostics (kernel); separate historical
+    # instances recover the old bodies; runtime controls of the PNVI helpers
     "reconstruct-legacy-test"
     # PNVI arc S3 (2026-10-07): the PNVI-ae-udi arms' runtime witnesses (default-instance
     # controls beside them) + the compile-time R-PNVI-nn refusal pins. Arg: fuel.
     "pnvi-arms-test"
+    # Core quotation: whole-file fixture/corpus/multi-TU round trips and mutations.
+    # The standalone and user-linked libc round trips have their own Tier B row.
+    "core-quote-test"
 )
 
 # ---------------------------------------------------------------------------
@@ -82,7 +88,15 @@ fi
 
 cd "$PROJECT_ROOT/lean_frontend"
 
-if [[ $# -gt 0 ]]; then
+core_quote_libc=0
+if [[ "${1:-}" == --core-quote-libc ]]; then
+    if [[ $# -ne 1 ]]; then
+        echo "test_unit: --core-quote-libc takes no further arguments" >&2
+        exit 2
+    fi
+    TESTS=("core-quote-test")
+    core_quote_libc=1
+elif [[ $# -gt 0 ]]; then
     TESTS=("$@")
 else
     TESTS=("${UNIT_TESTS[@]}")
@@ -107,12 +121,25 @@ for test in "${TESTS[@]}"; do
     if [[ "$test" == memory-access-test ]]; then test_args=(17 0 on); fi
     # PNVI arc S3: the suite fuel (no fuel numeral in test/Unit/PnviArmsTest.lean).
     if [[ "$test" == pnvi-arms-test ]]; then test_args=(17); fi
+    if [[ "$test" == core-quote-test ]]; then
+        test_args=(--fuel 1000000)
+        if [[ "$core_quote_libc" == 1 ]]; then test_args+=(--libc); fi
+    fi
     if "$bin" "${test_args[@]}"; then
         echo "${GREEN}✓ $test PASSED${NC}"
         total_pass=$((total_pass + 1))
     else
         echo "${RED}✗ $test FAILED${NC}"
         total_fail=$((total_fail + 1))
+    fi
+    if [[ "$core_quote_libc" == 1 ]]; then
+        if "$bin" "${test_args[@]}" --switches=inner_arg_temps; then
+            echo "${GREEN}✓ $test (inner_arg_temps) PASSED${NC}"
+            total_pass=$((total_pass + 1))
+        else
+            echo "${RED}✗ $test (inner_arg_temps) FAILED${NC}"
+            total_fail=$((total_fail + 1))
+        fi
     fi
 done
 
@@ -121,6 +148,13 @@ echo "=========================================="
 echo "Total: $total_pass passed, $total_fail failed"
 if [[ $total_fail -gt 0 ]]; then
     exit 1
+fi
+
+# The standalone Tier B row owns just the libc quotation check. The ordinary
+# row-1 invocation below still runs every shared gate; do not duplicate that
+# full battery when the ladder reaches the separate libc row.
+if [[ "$core_quote_libc" == 1 ]]; then
+    exit 0
 fi
 
 # Purity gate for the execution slice (arc 2; ENFORCING since S2).
@@ -172,6 +206,10 @@ if ! "$(dirname "$PURITY_SH")/test_gcc_capture.sh"; then
 fi
 if ! python3 "$(dirname "$PURITY_SH")/test_observations.py"; then
     echo "test_unit: observation codec/capture plants FAILED"
+    exit 1
+fi
+if ! python3 "$PROJECT_ROOT/scripts/test_stops.py" --lean-bin "$PROJECT_ROOT/lean_frontend/.lake/build/bin/stop-test"; then
+    echo "test_unit: outcome protocol codec/adapter tests FAILED"
     exit 1
 fi
 if ! python3 "$(dirname "$PURITY_SH")/test_capture_prerequisites.py"; then
@@ -450,6 +488,42 @@ fi
 ASM_REFUSAL_SH="$(dirname "$PURITY_SH")/check_asm_refusal.sh"
 if ! "$ASM_REFUSAL_SH" --selftest; then
     echo "test_unit: inline-assembly refusal witnesses FAILED"
+    exit 1
+fi
+
+# Item-G refusal witnesses (2026-10-20, [USER 2026-10-20] ruled that where
+# upstream left a case to a TODO the fork leaves it or refuses loudly, never
+# inventing a verdict; record docs/2026-10-20_item-g-refusals-record.md): an
+# overlapping memcpy (tray 56) and an allocation with an invalid alignment
+# (tray 57) are refused by the concrete memory model in BOTH engines with
+# byte-identical texts (oracle uncaught Failure, exit 125; Lean abort, exit
+# 134); controls (non-overlapping copies incl. realloc, one allocation at each
+# alignment the lanes use, the unchanged size-clause UB and zero-alignment
+# crash) agree with the oracle. --selftest: a pre-fix answering pair, a
+# Lean-only answering stub, a refuse-everything pair, a message-without-abort
+# stub and an altered-text stub must all fail.
+ITEM_G_SH="$(dirname "$PURITY_SH")/check_item_g_refusals.sh"
+if ! "$ITEM_G_SH" --selftest; then
+    echo "test_unit: item-G refusal witnesses FAILED"
+    exit 1
+fi
+
+# Union-initializer refusal witnesses (item U, 2026-10-20, [USER 2026-10-20]:
+# where upstream left a case to a TODO the fork leaves it or refuses loudly,
+# never answering silently wrong; for union initializers, refuse rather than
+# fix; record docs/2026-10-20_union-init-refusal-record.md): a braced union
+# initializer whose member designator names a member other than the first is
+# refused by the SHARED initializer desugarer (desugaring_init.lem moveTo_aux)
+# in BOTH engines with byte-identical texts (oracle uncaught Failure, exit
+# 125; Lean abort, exit 134); controls (positional and first-member forms, the
+# anonymous-union-in-struct path, a union inside a struct, assignment) agree
+# with the oracle; the struct-from-struct-variable rejection is unchanged.
+# --selftest: a pre-fix answering pair, a Lean-only answering stub, a
+# refuse-everything pair, a message-without-abort stub and an altered-text
+# stub must all fail.
+UNION_INIT_SH="$(dirname "$PURITY_SH")/check_union_init_refusals.sh"
+if ! "$UNION_INIT_SH" --selftest; then
+    echo "test_unit: union-initializer refusal witnesses FAILED"
     exit 1
 fi
 

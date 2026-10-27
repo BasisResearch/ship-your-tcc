@@ -1,3 +1,4 @@
+import CerbStopSites
 import CerberusImpl
 import CerbMem
 import CerbCtypeInstances
@@ -10,6 +11,7 @@ import Implementation
 import GenTyping
 import Translation
 import Core_run_aux
+import CerbQuote
 import Driver
 import CerbND
 import CerbEscape
@@ -19,6 +21,16 @@ import CerbEscape
 import CerbCall
 
 set_option autoImplicit true
+
+/-! The driver accepts Normal (the default), PNVI_ae_udi alone, or
+inner_arg_temps alone. The selected set supplies both stdlib selection and
+translation/calling convention; the latter mode takes loaded argument
+values and allocates parameter objects in the callee, including main.
+Run reports go to stderr; quotations carry the same set in their header.
+Libc dumps must match the convention and pass the parameter-binder check.
+`--call` and mixed switch sets are refused under inner_arg_temps. The active
+upstream driver permits recursion into main (tray 64). See SUPPORTED.md
+and the matched-mode lane, scripts/test_inner_arg_temps.sh. -/
 
 /-! ## Core stdlib loading -/
 
@@ -67,7 +79,7 @@ def loadCoreImpl (implFile : CoreParser.CoreFile) : impl :=
       -- audit F2), so the error arm is unreachable here
       let ic := match CoreParser.pImplConstant name with
         | .ok ic => ic
-        | .error e => failwithI s!"Main.loadCoreImpl: {e}"
+        | .error e => failwithI (CerbStop.render (.invariant (CerbStopSites.coreImplKey s!"Main.loadCoreImpl: {e}")))
       fmapAddBy implementation_constant_compare ic d acc)
     fmapEmpty
 
@@ -182,10 +194,10 @@ Documented divergences from the oracle's in-memory libc file:
 private def libcSymEq : sym → sym → Bool
   | Symbol d1 n1 _, Symbol d2 n2 _ => d1 == d2 && n1 == n2
 
-/-- The name `--pp core` prints for a symbol (Pp_symbol.to_string_pretty,
-    pp_symbol.ml:20-24: SD_Id, SD_ObjectAddress, SD_FunArgValue) — the name
-    the dump's interning joins on; `none` for unnamed symbols (which print
-    as `a_<n>` and are never name-joined). -/
+/-- Source name used to join metadata globals and tags with the dump.
+    Local SD_FunArgValue parameters now print with a numbered _fav suffix
+    (upstream tray 65); they are not metadata globals and are not joined here.
+    Unnamed symbols print as `a_<n>` and are never name-joined. -/
 private def libcSymNameOpt : sym → Option String
   | Symbol _ _ (SD_Id s) | Symbol _ _ (SD_ObjectAddress s) | Symbol _ _ (SD_FunArgValue s) => some s
   | _ => none
@@ -282,6 +294,11 @@ def firstInvalidUtf8 (b : ByteArray) : Option Nat := Id.run do
     i := i + n
   return none
 
+/-- Driver admission failures use stderr and exit 2 before batch records. -/
+def driverRefusal (boundary : CerbStop.Boundary) (item : Option String) (detail : String)
+    (mover : CerbStop.NonemptyText) : CerbStop.Refusal :=
+  CerbStopSites.refusal boundary item detail mover ⟨"CONTRACT.md §2/§3; VALIDATION.md", by decide⟩
+
 /-- Bug-hunt BUG-6 and K-5 (2026-09-29; record
     `docs/2026-09-29_bug-hunt-fixes-record.md` §S3): decode a Cabs JSON
     document read as BYTES, and REFUSE (exit 2, attributed) when it is not
@@ -308,8 +325,9 @@ def decodeCabsJson (label : String) (bytes : ByteArray) : IO String := do
         let lo := if i ≥ 40 then i - 40 else 0
         (s!"{i}", CerbEscape.bytes (bytes.extract lo (min bytes.size (i + 40))))
       | none => ("unknown", "")
-    IO.eprintln s!"cerberus-lean: refused — non-UTF-8 Cabs JSON: {label} is not valid UTF-8 (first invalid byte at offset {off}, context \"{ctx}\"). The oracle's --cabs-json exporter copies the bytes ≥ 0x80 of a file name (the real path, a #line or an #include name), of a Loc_other string and of attribute-argument or magic-comment text into the JSON raw (backend/lean_export/cabs_json.ml:46/:49, :62, :618/:620, :675); this port's bridge cannot carry them, because Lean strings are sequences of Unicode scalar values (string-literal and character-constant bytes are byte-carriers and unaffected; see VALIDATION.md §3(c), bug hunt BUG-6/K-5)"
-    IO.Process.exit 2
+    CerbStop.exitRefusals (driverRefusal .cabsJsonUtf8 (some label)
+      s!"cerberus-lean: refused — non-UTF-8 Cabs JSON: {label} is not valid UTF-8 (first invalid byte at offset {off}, context \"{ctx}\"). The oracle's --cabs-json exporter copies the bytes ≥ 0x80 of a file name (the real path, a #line or an #include name), of a Loc_other string and of attribute-argument or magic-comment text into the JSON raw (backend/lean_export/cabs_json.ml:46/:49, :62, :618/:620, :675); this port's bridge cannot carry them, because Lean strings are sequences of Unicode scalar values (string-literal and character-constant bytes are byte-carriers and unaffected; see VALIDATION.md §3(c), bug hunt BUG-6/K-5)"
+      ⟨"a lossless byte-carrying Cabs JSON bridge", by decide⟩)
 
 /-- Read a Cabs JSON file as bytes and decode it (`decodeCabsJson`). -/
 def readCabsJsonFile (path : String) : IO String := do
@@ -496,7 +514,8 @@ as a next-arc item in the S4b scoreboard doc). -/
 def ppSymbolPretty : sym → String
   | Symbol _ n sd =>
     match sd with
-    | .SD_Id str | .SD_ObjectAddress str | .SD_FunArgValue str => str
+    | .SD_Id str | .SD_ObjectAddress str => str
+    | .SD_FunArgValue str => s!"{str}_fav{n}" -- fork pp_symbol remedy, tray 65
     | .SD_unnamed_tag _ => s!"__cerbty_unnamed_tag_{n}"
     | .SD_CN_Id str => str
     | _ => s!"a_{n}"
@@ -551,8 +570,9 @@ def runtimeOfPrefix (pfx : String) : String :=
 
 /-- REFUSE (exit 2, attributed) — the runtime-resolution boundary. -/
 def refuseRuntime (what : String) : IO α := do
-  IO.eprintln s!"cerberus-lean: refused — runtime: {what} (see VALIDATION.md, bug hunt BUG-2)"
-  IO.Process.exit 2
+  CerbStop.exitRefusals (driverRefusal .runtime none
+    s!"cerberus-lean: refused — runtime: {what} (see VALIDATION.md, bug hunt BUG-2)"
+    ⟨"provisioning the configured runtime library", by decide⟩)
 
 /-- The runtime root `resolveRuntime` selects (before its existence check). -/
 def resolveRuntimeRoot (cli : Option String) : IO String := do
@@ -592,11 +612,11 @@ def resolveRuntimeRoot (cli : Option String) : IO String := do
       working directory, which is the lookup BUG-2 removed.
     Every harness passes the oracle's runtime: `scripts/common.sh` exports
     `CERB_INSTALL_PREFIX` = the prefix of its `--runtime=` oracle argument. -/
-def resolveRuntime (cli : Option String) : IO String := do
+def resolveRuntime [CerbGlobal.Switches] (cli : Option String) : IO String := do
   let rt ← resolveRuntimeRoot cli
   -- pipeline.ml:36-37 (the oracle's own existence check at stdlib load):
   -- checked here, before any input is read, so a wrong runtime is named as such
-  let stdCore := filenameConcat (filenameConcat rt "libcore") "std.core"
+  let stdCore := filenameConcat (filenameConcat rt "libcore") CerbDriverConfig.stdCoreName
   unless ← System.FilePath.pathExists stdCore do
     refuseRuntime s!"couldn't find the Core standard library file (looked at: `{stdCore}'); the runtime was resolved from {if cli.isSome then "--runtime" else "CERB_INSTALL_PREFIX"} as DIR/lib/cerberus-lib/runtime"
   return rt
@@ -607,19 +627,42 @@ def resolveRuntime (cli : Option String) : IO String := do
 def runtimeLibraryDirs (runtime : String) : List String :=
   ["libc/include", "libcore", "libcore/impls"].map (filenameConcat runtime)
 
-/-- Bug-hunt BUG-3 (2026-09-29): the import-time half of the library-location
-    mirror (see `CerbLocation.isLibraryLocation`). A file path of the imported
-    Cabs locations that passes the port's SUFFIX test but not the oracle's
-    EXACT test (`Filename.dirname path` ∈ `runtimeLibraryDirs runtime`) would
-    be library-classified by Lean only, and the UB location would differ: the
-    run is REFUSED (exit 2, attributed). Afterwards the suffix test equals the
-    exact test on every file the run can carry. -/
+/-- The import-time guard for `CerbLocation.isLibraryLocation`'s suffix test.
+    Deliberate divergence [USER 2026-10-19]: retain the oracle's exact
+    directory-membership rule (`util/cerb_location.ml:512-523`), but compare
+    resolved directories rather than their literal spellings. Thus `./`,
+    absolute/relative aliases and symlinks to the same directory agree.
+    Relative paths resolve from the importing process's working directory;
+    stored source and lexing positions are never rewritten. A missing or
+    foreign directory is refused (exit 2), not accepted by suffix alone.
+    Admitted divergence class: any label whose directory resolves to one of
+    this run's library directories but differs literally from the oracle's
+    key `<runtime-as-given>/lib/cerberus-lib/runtime/<dir>` passes this guard
+    and the port's suffix test while failing the oracle's literal test, in
+    both directions: an absolute or `./` label under a relative --runtime, a
+    relative or `./` label under an absolute one, a `#line` alias, a symlinked
+    spelling; `libcore` as much as `libc/include`. The instance every
+    canonical export carries is cpp's ./_build/... header position under
+    --runtime=_build/install/default. On such inputs the served UB location
+    differs: `scripts/check_runtime_resolution.sh` pins a `#line` plant on
+    which the oracle reports `<2:10--2:15>` and the port `<11:10--11:23>`
+    (the unprefixed spelling agrees on `<11:10--11:23>`).
+    Quotation preserves the labels and is unaffected; differential lanes use
+    absolute spellings where the classifiers agree (upstream-tray draft 58). -/
 def refuseLibraryLocations (runtime : String) (source : String) (files : Array String) : IO Unit := do
-  let exact := runtimeLibraryDirs runtime
+  let refuse {α : Type} (detail : String) : IO α := do
+    CerbStop.exitRefusals (driverRefusal .libraryLocation (some source)
+      s!"cerberus-lean: refused — library-location classification: {source}: {detail}. Canonical Core quotation convention: export metadata and run with --runtime=_build/install/default from the project root, or a directory with that fixed relative runtime link; preserve all stored labels (see VALIDATION.md, bug hunt BUG-3 and Core quotation D2b)"
+      ⟨"exact resolved runtime-directory classification through the location seam", by decide⟩)
+  let exact ← try
+      (runtimeLibraryDirs runtime).mapM (fun path => do return (← IO.FS.realPath (.mk path)).toString)
+    catch e => refuse s!"cannot resolve this run's runtime library directories: {e}"
   for f in files do
-    if CerbLocation.isLibraryPathSuffix f && !exact.contains (CerbLocation.dirname f) then
-      IO.eprintln s!"cerberus-lean: refused — library-location classification: {source} carries a source location in `{f}`, whose directory ends in one of {CerbLocation.libraryDirs} but is not one of this run's runtime library directories {exact}; the oracle classifies a location as library code by EXACT directory equality with its runtime (util/cerb_location.ml:512-523), this port's pure CerbLocation.isLibraryLocation by the directory suffix, so answering could serve a different UB location (see VALIDATION.md, bug hunt BUG-3)"
-      IO.Process.exit 2
+    if CerbLocation.isLibraryPathSuffix f then
+      let directory ← try IO.FS.realPath (CerbLocation.dirname f)
+        catch e => refuse s!"cannot resolve the source directory of `{f}`: {e}"
+      unless exact.contains directory.toString do
+        refuse s!"source location `{f}` resolves to directory `{directory}`, outside this run's resolved runtime library directories {exact}; exact membership is required, not a matching suffix"
 
 /-- Bug-hunt BUG-4 (2026-09-29; record `docs/2026-09-29_bug-hunt-fixes-record.md`
     §S4): print a batch `Undefined` line with the `ub:` payload as BYTES. The
@@ -639,13 +682,16 @@ def refuseLibraryLocations (runtime : String) (source : String) (files : Array S
     `simple_location` mirror. A payload Char above U+00FF has no OCaml
     counterpart (the producer's byte-domain invariant is broken): refused,
     exit 2, never re-encoded. -/
-def printUndefinedLine (ub : String) (stderr : String) (loc : String) : IO Unit := do
-  let mut payload := ByteArray.empty
+def validateUndefinedPayload (ub : String) : IO Unit := do
   for c in ub.toList do
-    if c.toNat < 256 then payload := payload.push c.toNat.toUInt8
-    else
-      IO.eprintln s!"cerberus-lean: refused — batch UB payload: the undefined-behaviour text holds U+{(Nat.toDigits 16 c.toNat).asString}, outside the byte domain the oracle's byte string can hold (driver_ocaml.ml:134-138 prints the payload's bytes); the byte-carrier invariant of the model's strings is broken (see VALIDATION.md, bug hunt BUG-4)"
-      IO.Process.exit 2
+    if c.toNat ≥ 256 then
+      CerbStop.exitRefusals (driverRefusal .batchUbPayload none
+        s!"cerberus-lean: refused — batch UB payload: the undefined-behaviour text holds U+{String.ofList (Nat.toDigits 16 c.toNat)}, outside the byte domain the oracle's byte string can hold (driver_ocaml.ml:134-138 prints the payload's bytes); the byte-carrier invariant of the model's strings is broken (see VALIDATION.md, bug hunt BUG-4)"
+        ⟨"preservation of the UB payload byte-carrier invariant", by decide⟩)
+
+def printUndefinedLine (ub : String) (stderr : String) (loc : String) : IO Unit := do
+  validateUndefinedPayload ub
+  let payload := ub.toList.foldl (fun bytes c => bytes.push c.toNat.toUInt8) ByteArray.empty
   let out ← IO.getStdout
   out.write ("Undefined {ub: \"".toUTF8 ++ payload ++ s!"\", stderr: \"{stderr}\", loc: \"{loc}\"}\n".toUTF8)
 
@@ -739,7 +785,7 @@ def frontendTU [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (quiet : Bool)
         -- the empty table, which IS the oracle's reset-then-elaborate state
         -- (documented divergence from the driver-level bookkeeping, mirror
         -- doctrine; the value-passing replaces the write scaffold).
-        let callconv := Normal_callconv
+        let callconv := CerbDriverConfig.callingConvention
         let (coreFile, supplyAfterTranslate) :=
           translate enumDefs fmapEmpty supplyAfterDesugar (ailnames, stdFunMap) callconv coreImpl typedProg
         say s!"  translation succeeded!"
@@ -777,6 +823,44 @@ def frontendTU [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (quiet : Bool)
         | _ => IO.println s!"    cause: (other)"
         return .error 0
 
+/-- Recover the calling-convention distinction that the stock Core text dump
+    omits. Translation.lem:4335-4340 gives every fixed C parameter either a raw
+    pointer (Normal) or a loaded value (Inner_arg). Its variadic tail at
+    :4476-4491 is a final list of (ctype, pointer) pairs in BOTH modes.
+    Require a fixed parameter somewhere: an empty/parameterless dump cannot
+    establish the pairing. This check precedes the symbol/metadata stitch;
+    the oracle checks its retained tag in core_linking.lem:286-287. -/
+def checkLibcCallingConvention (mode : calling_convention) (parsed : CoreParser.CoreFile) :
+    Except String Unit := do
+  let mut hasFixedParameter := false
+  let modeName := match mode with
+    | Normal_callconv => "Normal_callconv"
+    | Inner_arg_callconv => "Inner_arg_callconv"
+  for (s, decl) in parsed.procs do
+    let params ← match decl with
+      | Proc _ _ _ params _ =>
+        let types := params.map Prod.snd
+        -- Only definitions have the extra variadic carrier, and only at the end.
+        match types.reverse with
+        | BTy_list (BTy_tuple [BTy_ctype, BTy_object OTy_pointer]) :: fixed =>
+          if fixed.isEmpty then
+            throw s!"procedure {libcSymName s} has a variadic carrier without a fixed parameter"
+          else pure fixed.reverse
+        | _ => pure types
+      | ProcDecl _ _ params => pure params
+      | Fun _ _ _ | BuiltinDecl _ _ _ =>
+        throw s!"non-procedure {libcSymName s} in the dump's procedure list"
+    for ty in params do
+      let paramMatches := match mode, ty with
+        | Normal_callconv, BTy_object OTy_pointer => true
+        | Inner_arg_callconv, BTy_loaded _ => true
+        | _, _ => false
+      unless paramMatches do
+        throw s!"procedure {libcSymName s} has a fixed parameter incompatible with {modeName}"
+      hasFixedParameter := true
+  unless hasFixedParameter do
+    throw "the dump has no fixed procedure parameter establishing its calling convention"
+
 /-- Load and assemble the libc library Core file (see the module note at
     "C-libc loading" above). -/
 def loadLibc [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (runtime : String) (quiet : Bool) (supply0 : Nat) (addressSpaceTop : Int)
@@ -799,6 +883,14 @@ def loadLibc [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (runtime : Strin
   let parsed ← match CoreParser.parseFile dumpContent with
     | .ok f => pure f
     | .error e => return (← bail s!"parsing {libcCorePath}: {e}")
+  match CoreParser.checkParameterBinders parsed with
+  | .error (proc, binder) =>
+    -- Outcome protocol: a declared driver refusal is a REFUSAL envelope. No `libc`
+    -- boundary exists in the frozen vocabulary (TODO.md); boundary `cli`, item `--libc`.
+    CerbStop.exitRefusals (driverRefusal .cli (some "--libc")
+      s!"cerberus-lean: refused — --libc: R-IAT-LIBC-SYMBOL-LOSS: procedure {libcSymName proc} binds parameter name {libcSymName binder} again; the Core dump may have lost symbol identity (upstream tray 65)"
+      ⟨"a lossless library transport (a numbered-symbol printer or a binary/JSON library format)", by decide⟩)
+  | .ok () => pure ()
   say s!"    {parsed.procs.length} proc, {parsed.funs.length} fun, {parsed.globs.length} glob"
   -- 2. Frontend the 12 metadata TUs (same order as runtime/libc/dune's
   --    libc.co link; reverse-consed accumulator exactly as the OCaml
@@ -824,6 +916,14 @@ def loadLibc [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (runtime : Strin
   let metaFile ← match link metaFiles with
     | .Result f => pure f
     | .Exception (_, _) => return (← bail "linking the libc metadata TUs failed")
+  -- Do not silently install the metadata's convention over bodies from the
+  -- other mode. The text dump has lost the tag that the oracle linker checks.
+  match checkLibcCallingConvention metaFile.calling_convention0 parsed with
+  | .error reason =>
+    CerbStop.exitRefusals (driverRefusal .cli (some "--libc")
+      s!"cerberus-lean: refused — --libc: IncompatibleCallingConvention: {reason}; dump {libcCorePath} cannot be stitched to these metadata TUs (core_linking.lem:286-287)"
+      ⟨"a library dump of the run's calling convention", by decide⟩)
+  | .ok () => pure ()
   -- 3. THE STITCH (module note): rename the dump onto the metadata
   --    symbols — tags by name, functions by name, globals by position —
   --    every join fail-closed.
@@ -1033,6 +1133,22 @@ def loadLibc [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (runtime : Strin
   }, supply)
 
 
+/-- Publish a fully rendered module by same-directory rename. A failed write
+    leaves the destination untouched; scratch creation is exclusive. -/
+private def writeQuoteModule (output source : String) : IO (Except String Unit) := do
+  try
+    let scratch : System.FilePath := output ++ ".cerb-quote-" ++ toString (← IO.monoNanosNow)
+    IO.FS.createDir scratch
+    try
+      let temporary := scratch / "module.lean"
+      IO.FS.writeFile temporary source
+      IO.FS.rename temporary output
+    finally
+      IO.FS.removeDirAll scratch
+    return .ok ()
+  catch e =>
+    return .error s!"output {output}: {e}"
+
 /-- Run the pipeline over one or more translation units (multi-TU, arc-5
     S2). `tunits` carries (source digest, parsed Cabs) per TU in
     command-line order — the digest is the oracle's `Digest.file` the
@@ -1058,14 +1174,19 @@ def runPipeline [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (runtime : St
     (addressSpaceTop : Int)
     (callFn : Option (String × List Int)) (traceNodes : Bool)
     (libc : Option (String × List String))
+    (quoteCore quoteLibc : Option String)
     (argv0 : String)
     (progArgs : List String)
     -- the initial file system (ship-your-tcc F1b: `loadImageFs`, the fork's
     -- `CerbFS.fs_initial_state` without --image-fs)
     (fsState : CerbFS.FsState)
     (tunits : List (String × translation_unit)) : IO UInt8 := do
-  -- Progress chatter: human mode only (batch and pp-core keep stdout clean)
-  let quiet := batch || ppCore
+  -- Quotation stops at the prepared execution value, with machine-shaped errors.
+  let quoting := quoteCore.isSome || quoteLibc.isSome
+  let quiet := batch || ppCore || quoting
+  let quoteError (msg : String) : IO UInt8 := do
+    IO.println s!"Error \{msg: \"Core quotation failed: {CerbEscape.text msg}\"}"
+    return 1
   let say (s : String) : IO Unit := unless quiet do IO.println s
   -- Per-TU parse summary — kept ABOVE the stdlib load so single-TU chatter
   -- stays byte-identical to the pre-multi-TU driver
@@ -1085,17 +1206,17 @@ def runPipeline [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (runtime : St
   -- core_parser.mly:1571 regions). Bug-hunt BUG-2 (2026-09-29): the path is
   -- built from the resolved runtime exactly as the oracle builds it, so the
   -- stamp is also the oracle's string (the exact library test holds).
-  let stdCorePath := filenameConcat (filenameConcat runtime "libcore") "std.core"
+  -- Mirror backend/common/pipeline.ml:34; the existence check uses this same selector.
+  let stdCorePath := filenameConcat (filenameConcat runtime "libcore") CerbDriverConfig.stdCoreName
   -- pipeline.ml:36-37: the oracle reports a missing stdlib as an error
   unless ← System.FilePath.pathExists stdCorePath do
     refuseRuntime s!"couldn't find the Core standard library file (looked at: `{stdCorePath}'); the runtime was resolved from --runtime / CERB_INSTALL_PREFIX (DIR/lib/cerberus-lib/runtime)"
   let stdContent ← IO.FS.readFile stdCorePath
   let stdFile ← match CoreParser.parseLibraryFile stdCorePath stdContent with
     | .ok f => pure f
-    | .error e => throw (IO.Error.userError s!"failed to parse std.core: {e}")
+    | .error e => throw (IO.Error.userError s!"failed to parse {CerbDriverConfig.stdCoreName}: {e}")
   let allStdDecls := stdFile.funs ++ stdFile.procs ++ stdFile.builtins
   say s!"    raw: {stdFile.funs.length} fun, {stdFile.procs.length} proc, {stdFile.builtins.length} builtin = {allStdDecls.length} total"
-  let allStd := stdFile.funs ++ stdFile.procs ++ stdFile.builtins
   let (ailnames, stdFunMap) := loadCoreStdlib stdFile
   say s!"    ailnames: {List.length (fmapElements ailnames)} entries"
   say s!"    stdlib funs: {List.length (fmapElements stdFunMap)} entries"
@@ -1131,6 +1252,8 @@ def runPipeline [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (runtime : St
   -- (main.ml:150-156) — so it ends up LAST in the reverse-consed list
   -- handed to Core_linking.link, mirroring the oracle's link order.
   let mut coreFiles : List (file Unit) := []
+  let mut origins : List CerbQuote.Provenance := []
+  let mut convertedLibc : Option (CerbQuote.Provenance × file core_run_annotation) := none
   -- Effect-retirement C1 (S1 ruling [USER 2026-08-31]): the ONE
   -- fresh-symbol stream, seeded here and threaded through every phase
   -- (per-TU desugar + const-expr mini-runs + elaboration) and into the
@@ -1141,7 +1264,12 @@ def runPipeline [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (runtime : St
   | some (libcCore, libcTus) =>
     match ← loadLibc runtime quiet supply addressSpaceTop coreEvalStuff ailnames stdFunMap coreImpl libcCore libcTus with
     | .error code => return code
-    | .ok (libcFile, supply') => coreFiles := [libcFile]; supply := supply'
+    | .ok (libcFile, supply') =>
+      let origin := CerbQuote.libcProvenance libcFile
+      coreFiles := [libcFile]
+      origins := [origin]
+      if quoteLibc.isSome then convertedLibc := some (origin, convert_file libcFile)
+      supply := supply'
   | none => pure ()
   for (digest, tunit) in tunits do
     -- Frontend-only per-TU digest; execution receives `runDigest tunits`.
@@ -1161,7 +1289,10 @@ def runPipeline [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (runtime : St
     -- instance reader `[CerberusFresh.Digest]`), not a native global.
     match ← frontendTU quiet digest supply addressSpaceTop coreEvalStuff ailnames stdFunMap coreImpl tunit with
     | .error code => return code
-    | .ok (coreFile, supply') => coreFiles := coreFile :: coreFiles; supply := supply'
+    | .ok (coreFile, supply') =>
+      coreFiles := coreFile :: coreFiles
+      origins := CerbQuote.translatedProvenance coreFile :: origins
+      supply := supply'
 
   -- Link the translated Core files — main.ml:278-281:
   --   prelude >>= main >>= begin function
@@ -1214,6 +1345,30 @@ def runPipeline [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (runtime : St
     -- Step 4: Prepare for execution (mirrors driver_ocaml.ml)
     say "  preparing for execution..."
     let runFile := convert_file coreFile
+    if quoting then
+      -- Render all requested values before publishing any module. In particular,
+      -- a refusal in the final file cannot leave an earlier library output.
+      let mut modules : List (String × String) := []
+      if let some output := quoteLibc then
+        let some (origin, library) := convertedLibc
+          | return (← quoteError "libc: no converted library was loaded")
+        let source ← match CerbQuote.moduleSource CerbGlobal.Switches.switches origin library with
+          | .ok source => pure source
+          | .error e => return (← quoteError s!"libc: {e.message}")
+        modules := [(output, source)]
+      if let some output := quoteCore then
+        let origin ← match CerbQuote.linkedProvenance origins coreFile with
+          | .ok origin => pure origin
+          | .error e => return (← quoteError e.message)
+        let source ← match CerbQuote.moduleSource CerbGlobal.Switches.switches origin runFile with
+          | .ok source => pure source
+          | .error e => return (← quoteError e.message)
+        modules := modules ++ [(output, source)]
+      for (output, source) in modules do
+        match ← writeQuoteModule output source with
+        | .ok () => pure ()
+        | .error e => return (← quoteError e)
+      return 0
     -- C1: CerbMem's struct/union layout reads receive runFile.tagDefs by
     -- VALUE (reader_consumer, mem.lem) — no global set is needed or
     -- possible.
@@ -1249,6 +1404,14 @@ def runPipeline [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (runtime : St
       else
         ([], if firstTrace then CerbND.runND1 driverAction drSt
              else CerbND.runND driverAction drSt)
+    -- Admission is atomic with respect to final batch output: a later bad UB
+    -- payload cannot leave earlier Defined/ModelFailure records on stdout.
+    if batch then
+      for (status, _, _) in execs do
+        match status with
+        | .Killed _ (.Undef0 _ (ub :: _)) =>
+          validateUndefinedPayload (stringFromUndefined_behaviour ub)
+        | _ => pure ()
     for l in nodeLabels do
       IO.println s!"NODE {l}"
     if batch then
@@ -1302,7 +1465,7 @@ def runPipeline [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (runtime : St
             match eval_integer_value ival with
             | some n => IO.println s!"  return value: {n}"
             | none => IO.println s!"  return value: (could not evaluate)"
-          | v => IO.println s!"  return value: (non-integer)"
+          | _ => IO.println s!"  return value: (non-integer)"
         | .Killed _st reason =>
           match reason with
           | .Undef0 loc ubs =>
@@ -1394,16 +1557,17 @@ def refuseFlag (flag : String) : IO Unit := do
     else if flag == "--batch" || flag == "--pp-core" || flag == "--parse-core" || flag == "--first" then
       "known flag out of its canonical position (`--batch`, `--pp-core` or `--parse-core` must be argv[0]; `--first` must immediately follow `--batch`/`--pp-core`)"
     else
-      "unknown flag; this port accepts only --batch | --pp-core | --parse-core (argv[0]), --first, --stdin, --libc <core> --libc-tu <json>, --call <f> [--call-args <ints>], --args <str>, --trace-nodes, --fuel <N>, --address-space-top <N>, --runtime <DIR>, --switches PNVI_ae_udi (every other switch set is refused)"
-  IO.eprintln s!"cerberus-lean: refused — {flag}: {feature} (see VALIDATION.md, zero-discrepancy Z-24)"
-  IO.Process.exit 2
+      "unknown flag; this port accepts only --batch | --pp-core | --parse-core (argv[0]), --first, --stdin, --quote-core <out.lean>, --quote-libc <out.lean>, --libc <core> --libc-tu <json>, --call <f> [--call-args <ints>], --args <str>, --trace-nodes, --fuel <N>, --address-space-top <N>, --runtime <DIR>, --switches PNVI_ae_udi | inner_arg_temps (each alone; every other switch set is refused)"
+  CerbStop.exitRefusals (driverRefusal (if flag == "--concurrency" then .concurrency else if flag == "--iso" then .switches else .cli) (some flag)
+    s!"cerberus-lean: refused — {flag}: {feature} (see VALIDATION.md, zero-discrepancy Z-24)"
+    ⟨"implementation and validation of the requested command-line feature", by decide⟩)
 
 /-- The refusal reason for ONE element of a REFUSED `--switches` value (PNVI arc S1,
     2026-10-05; S4, 2026-10-07; design docs/2026-10-04_pnvi-ae-udi-design.md §B.4.2, §D.3,
     §F.3, §F.4, §F.13). The names are the oracle's (`ocaml_frontend/switches.ml:60-102`
-    `read_switch`). Since S4 exactly ONE switch set is supported — `--switches=PNVI_ae_udi`
-    alone (`judgeSwitches`), validated against the oracle under the same switch by
-    `scripts/test_pnvi.sh`; every other value is refused, each element with its own reason.
+    `read_switch`). Two non-default whole sets are supported: `PNVI_ae_udi` alone
+    and `inner_arg_temps` alone (`judgeSwitches`). Mixed sets and every other value
+    are refused, each element with its own reason.
     The oracle is FAIL-OPEN on an unknown name (switches.ml:140-141: "failed to parse
     switch '…' --> ignoring." and the run proceeds without it); this port refuses
     (exception class (c), §F.4). -/
@@ -1418,9 +1582,9 @@ def switchRefusalReason (name : String) : String :=
   | "strict_reads" =>
     "strict reads (switches.ml:66-67) are not supported: CerbMem's arm is a loud kill, and the oracle's rm_unspecs Core pass (backend/common/pipeline.ml:579) has no Lean counterpart"
   | "forbid_nullptr_free" | "zap_dead_pointers" | "strict_pointer_equality" | "strict_pointer_relationals" | "zero_initialised" =>
-    "this impl_mem.ml switch is not supported: its arm is a loud kill in CerbMem (seam-hygiene H2)"
+    "this impl_mem.ml switch is not supported: its arm is a structured refusal in CerbMem (seam-hygiene H2)"
   | "inner_arg_temps" =>
-    "the inner-argument-temporaries elaboration (switches.ml:84-85) is not supported: it needs the alternative runtime std_inner_arg_temps.core (backend/common/pipeline.ml:34), which this port does not load"
+    "inner_arg_temps (switches.ml:84-85) is supported only as the WHOLE switch set, `--switches=inner_arg_temps`; combinations, including PNVI_ae_udi, are not validated and are refused"
   | "permissive_printf" =>
     "permissive printf (switches.ml:86-87) is not validated by any lane"
   | "CHERI" =>
@@ -1453,7 +1617,7 @@ def knownSwitch (name : String) : Bool :=
 
 /-- REFUSE a `--switches` value (`flag` is the argv text: `--switches=V` or
     `--switches V`): one line per element, each naming the element and its reason, then
-    exit 2. Called for every value but the one supported set (`judgeSwitches`); an empty
+    exit 2. Called for every value but the supported whole sets (`judgeSwitches`); an empty
     value too (cmdliner's `opt (list string)`, backend/driver/main.ml:589-591). The override class is recorded
     only for a KNOWN name, as the oracle's `set` does (switches.ml:134-141: an unknown name
     is "failed to parse" every time, never "would override"). -/
@@ -1466,23 +1630,28 @@ def refuseSwitches (flag value : String) : IO Unit := do
       else if knownSwitch n && seen.contains (switchClass n) then
         s!"{switchRefusalReason n}; ALSO it would override a previous switch of the same class in this list (the oracle prints `switch '…' would override a previous switch --> ignoring.` and drops it, switches.ml:136-139, fail-open; design §G R20, R-PNVI-11)"
       else switchRefusalReason n
-    IO.eprintln s!"cerberus-lean: refused — {flag}: this semantics switch set is not supported (the one supported set is `--switches=PNVI_ae_udi`) — `{n}`: {reason} (see CONTRACT.md §2/§3 and VALIDATION.md, semantics switches)"
+    IO.eprintln (CerbStop.render (.refusal (driverRefusal .switches (some n)
+      s!"cerberus-lean: refused — {flag}: this semantics switch set is not supported (supported whole sets are `--switches=PNVI_ae_udi` and `--switches=inner_arg_temps`) — `{n}`: {reason} (see CONTRACT.md §2/§3 and VALIDATION.md, semantics switches)"
+      ⟨"implementation and validation of this complete switch set", by decide⟩)))
     if knownSwitch n then seen := seen ++ [switchClass n]
   IO.Process.exit 2
 
 /-- Judge a `--switches` value (PNVI arc S4, 2026-10-07; design §D.3, §E S4, §F.3, §F.4):
-    the ONE supported set is `PNVI_ae_udi` alone — the `=` and space forms, a one-element
-    comma list — and becomes `[.PNVI .AE_UDI]`, the run's `CerbGlobal.Switches` (built in
-    `main`). Anything else is refused by `refuseSwitches`, each element with its reason:
+    the supported non-default sets are `PNVI_ae_udi` alone and `inner_arg_temps` alone,
+    in either the `=` or space form. They become `[.PNVI .AE_UDI]` and
+    `[.inner_arg_temps]`, respectively, in the run's `CerbGlobal.Switches`.
+    Anything else is refused by `refuseSwitches`, each element with its reason:
     another switch name, plain PNVI / PNVI_ae (§F.3), a mixed list, an override
     (R-PNVI-11), an unknown name (R-PNVI-12), the empty value. The oracle accepts many of
     these and ignores some silently (§C.5); the refusals are class (c). -/
 def judgeSwitches (flag value : String) : IO (List CerbGlobal.CerbSwitch) := do
   if value == "PNVI_ae_udi" then return [.PNVI .AE_UDI]
+  if value == "inner_arg_temps" then return [.inner_arg_temps]
   refuseSwitches flag value
   -- refuseSwitches exits 2; falling through would be an internal error (fail-closed)
-  IO.eprintln "cerberus-lean: internal error: refuseSwitches returned"
-  IO.Process.exit 2
+  CerbStop.exitInvariant (CerbStopSites.invariant ⟨"Main.judgeSwitches", by decide⟩
+    "refuseSwitches returned"
+    ⟨"Main.refuseSwitches must terminate after emitting every refused element", by decide⟩)
 
 /-- `--switches` given to `--parse-core` (S1 review L5 item 1): the value is judged by
     the switch parser itself (its own per-element refusal), never the generic
@@ -1498,8 +1667,9 @@ def refuseSwitchesParseCore (tok : String) (next? : Option String) : IO Unit := 
         IO.eprintln "cerberus-lean: --switches requires an argument"
         IO.Process.exit 1
   let _ ← judgeSwitches flag value
-  IO.eprintln s!"cerberus-lean: refused — {flag}: --parse-core runs only the Core text parser, which reads no switch set; the switch would be silently ignored (see CONTRACT.md §2)"
-  IO.Process.exit 2
+  CerbStop.exitRefusals (driverRefusal .switches (some value)
+    s!"cerberus-lean: refused — {flag}: --parse-core runs only the Core text parser, which reads no switch set; the switch would be silently ignored (see CONTRACT.md §2)"
+    ⟨"a semantics execution mode which consumes the switch set", by decide⟩)
 
 /-- `--image-fs FILE` / `--image-fs-file SPEC` (ship-your-tcc F1b): the initial file system is the tcc -run
     image's (`CerbFS.fs_initial_state_of`) with the files the specs name, each `/path/in/image=host/file`
@@ -1542,8 +1712,9 @@ def cerbMain (args : List String) : IO Unit := do
   match ← IO.getEnv "LEAN_ABORT_ON_PANIC" with
   | some _ => pure ()
   | none =>
-    IO.eprintln "cerberus-lean: refused — LEAN_ABORT_ON_PANIC is not set: a Lean panic! (this port's fail-stop mirror of every OCaml failwith/assert/uncaught exception) would print and then CONTINUE with a default value, converting a crash into a verdict; set LEAN_ABORT_ON_PANIC=1 (every harness does: scripts/common.sh run_cerberus_lean; see VALIDATION.md, zero-discrepancy Z2-FL-03)"
-    IO.Process.exit 2
+    CerbStop.exitRefusals (driverRefusal .abortFlag (some "LEAN_ABORT_ON_PANIC")
+      "cerberus-lean: refused — LEAN_ABORT_ON_PANIC is not set: a Lean panic! (this port's fail-stop mirror of every OCaml failwith/assert/uncaught exception) would print and then CONTINUE with a default value, converting a crash into a verdict; set LEAN_ABORT_ON_PANIC=1 (every harness does: scripts/common.sh run_cerberus_lean; see VALIDATION.md, zero-discrepancy Z2-FL-03)"
+      ⟨"setting LEAN_ABORT_ON_PANIC in the launching environment", by decide⟩)
   -- CLI ORDER CONTRACT (sem:N7, arc-14 S1 F6; zero-discrepancy Z-24): this
   -- is a POSITIONAL flag parser (not cmdliner like the oracle). The
   -- contract: `--batch` or `--pp-core` must be argv[0]; `--first` must
@@ -1581,6 +1752,8 @@ def cerbMain (args : List String) : IO Unit := do
   -- the main-startup mode too).
   let mut libcCore : Option String := none
   let mut libcTus : List String := []
+  let mut quoteCore : Option String := none
+  let mut quoteLibc : Option String := none
   let mut callName : Option String := none
   let mut callArgsStr : Option String := none
   let mut progArgsStr : Option String := none
@@ -1618,6 +1791,21 @@ def cerbMain (args : List String) : IO Unit := do
   while true do
     match pending with
     | [] => break
+    | "--quote-core" :: v :: rest =>
+      if quoteCore.isSome || v.isEmpty || v.startsWith "--" then
+        CerbStop.exitRefusals (driverRefusal .cli (some "--quote-core")
+          "cerberus-lean: refused — --quote-core requires one nonempty output path and cannot be repeated"
+          ⟨"Core quotation admission for this option combination", by decide⟩)
+      quoteCore := some v; pending := rest
+    | "--quote-libc" :: v :: rest =>
+      if quoteLibc.isSome || v.isEmpty || v.startsWith "--" then
+        CerbStop.exitRefusals (driverRefusal .cli (some "--quote-libc")
+          "cerberus-lean: refused — --quote-libc requires one nonempty output path and cannot be repeated"
+          ⟨"Core quotation admission for this option combination", by decide⟩)
+      quoteLibc := some v; pending := rest
+    | ["--quote-core"] | ["--quote-libc"] =>
+      IO.eprintln "cerberus-lean: --quote-core/--quote-libc require an output path"
+      IO.Process.exit 1
     | "--libc" :: v :: rest => libcCore := some v; pending := rest
     | "--libc-tu" :: v :: rest => libcTus := libcTus ++ [v]; pending := rest
     | "--call" :: v :: rest => callName := some v; pending := rest
@@ -1627,8 +1815,9 @@ def cerbMain (args : List String) : IO Unit := do
       -- repeated", exit 124); taking the last value silently was a divergence
       -- (bug-hunt fixes pre-merge audit L3)
       if progArgsStr.isSome then
-        IO.eprintln "cerberus-lean: option --args cannot be repeated (as the oracle's command line)"
-        IO.Process.exit 2
+        CerbStop.exitRefusals (driverRefusal .cli (some "--args")
+          "cerberus-lean: option --args cannot be repeated (as the oracle's command line)"
+          ⟨"a single command-line occurrence matching upstream admission", by decide⟩)
       progArgsStr := some v; pending := rest
     | "--trace-nodes" :: rest => traceNodes := true; pending := rest
     | "--impl" :: v :: rest => implArg := some v; pending := rest
@@ -1646,8 +1835,9 @@ def cerbMain (args : List String) : IO Unit := do
       runtimeArg := some v; pending := rest
     | "--switches" :: v :: rest =>
       if switchesArg.isSome then
-        IO.eprintln "cerberus-lean: option --switches cannot be repeated (as the oracle's command line)"
-        IO.Process.exit 2
+        CerbStop.exitRefusals (driverRefusal .cli (some "--switches")
+          "cerberus-lean: option --switches cannot be repeated (as the oracle's command line)"
+          ⟨"a single command-line occurrence matching upstream admission", by decide⟩)
       switchesArg := some (s!"--switches {v}", v); pending := rest
     | ["--libc"] | ["--libc-tu"] | ["--call"] | ["--call-args"]
     | ["--impl"] | ["--argv0"] | ["--args"] | ["--fuel"] | ["--address-space-top"] | ["--runtime"] | ["--switches"]
@@ -1661,8 +1851,9 @@ def cerbMain (args : List String) : IO Unit := do
         runtimeArg := some (a.drop "--runtime=".length).toString; pending := rest; continue
       if a.startsWith "--switches=" then
         if switchesArg.isSome then
-          IO.eprintln "cerberus-lean: option --switches cannot be repeated (as the oracle's command line)"
-          IO.Process.exit 2
+          CerbStop.exitRefusals (driverRefusal .cli (some "--switches")
+            "cerberus-lean: option --switches cannot be repeated (as the oracle's command line)"
+            ⟨"a single command-line occurrence matching upstream admission", by decide⟩)
         switchesArg := some (a, (a.drop "--switches=".length).toString); pending := rest; continue
       -- Z-24: a `--` token here is not a file name (except `--stdin`). A `--switches`
       -- value already scanned is judged FIRST, so `--switches=V --batch …` reports V's
@@ -1680,7 +1871,7 @@ def cerbMain (args : List String) : IO Unit := do
         IO.eprintln s!"cerberus-lean: unknown implementation: {name}"
         IO.Process.exit 2
   -- --switches (PNVI arc S4): the run's switch set — `CerbGlobal.defaultSwitches` (= `[]`,
-  -- switches.ml:47-48) without the option, `[.PNVI .AE_UDI]` for `--switches=PNVI_ae_udi`;
+  -- switches.ml:47-48) without the option, or one supported whole set from judgeSwitches;
   -- every other value is refused here (`judgeSwitches`). Supplied below beside the fuel.
   let switchSet : List CerbGlobal.CerbSwitch ← match switchesArg with
     | none => pure CerbGlobal.defaultSwitches
@@ -1699,12 +1890,14 @@ def cerbMain (args : List String) : IO Unit := do
     | some s => match s.toNat? with
       | some n =>
         if n == 0 then do
-          IO.eprintln s!"cerberus-lean: refused — --fuel {s}: the fuel must be a positive integer (fuel 0 kills at the first bind: never a verdict; see VALIDATION.md, fuel)"
-          IO.Process.exit 2
+          CerbStop.exitRefusals (driverRefusal .fuelArg (some s)
+            s!"cerberus-lean: refused — --fuel {s}: the fuel must be a positive integer (fuel 0 kills at the first bind: never a verdict; see VALIDATION.md, fuel)"
+            ⟨"a positive decimal fuel argument", by decide⟩)
         else pure n
       | none => do
-        IO.eprintln s!"cerberus-lean: refused — --fuel {s}: not a decimal numeral (the fuel is a positive integer; default {defaultFuel}; see VALIDATION.md, fuel)"
-        IO.Process.exit 2
+        CerbStop.exitRefusals (driverRefusal .fuelArg (some s)
+          s!"cerberus-lean: refused — --fuel {s}: not a decimal numeral (the fuel is a positive integer; default {defaultFuel}; see VALIDATION.md, fuel)"
+          ⟨"a positive decimal fuel argument", by decide⟩)
   -- The SHARED GRAMMAR (C5, re-review R1; [AGENT orchestrator], mirror doctrine): "nonempty ASCII
   -- decimal digits, 0 < value < 2^64" on BOTH engines. `String.toNat?` alone also accepts single
   -- underscore separators (`6_4` = 64), which the fork's digit-only converter refuses — so the
@@ -1716,12 +1909,14 @@ def cerbMain (args : List String) : IO Unit := do
         -- the DOMAIN 0 < top < 2^64 (addressSpaceLimit; the fork oracle's converter refuses with the
         -- SAME sentence — mirror doctrine; only its exit code is cmdliner's)
         if n == 0 || n ≥ @addressSpaceLimit ⟨implParams⟩ then do
-          IO.eprintln s!"cerberus-lean: refused — --address-space-top {s}: the address-space top must fit an LP64 pointer: 0 < top < 2^64 (CerberusImpl.sizeof_pointer = some 8; the allocator's initial cursor; default {defaultAddressSpaceTop}; see VALIDATION.md, address-space top)"
-          IO.Process.exit 2
+          CerbStop.exitRefusals (driverRefusal .addressSpaceArg (some s)
+            s!"cerberus-lean: refused — --address-space-top {s}: the address-space top must fit an LP64 pointer: 0 < top < 2^64 (CerberusImpl.sizeof_pointer = some 8; the allocator's initial cursor; default {defaultAddressSpaceTop}; see VALIDATION.md, address-space top)"
+            ⟨"an address-space-top argument in the LP64 pointer domain", by decide⟩)
         else pure (n : Int)
       | none => do
-        IO.eprintln s!"cerberus-lean: refused — --address-space-top {s}: not a decimal numeral (the address-space top is a decimal positive integer, 0 < top < 2^64; default {defaultAddressSpaceTop}; see VALIDATION.md, address-space top)"
-        IO.Process.exit 2
+        CerbStop.exitRefusals (driverRefusal .addressSpaceArg (some s)
+          s!"cerberus-lean: refused — --address-space-top {s}: not a decimal numeral (the address-space top is a decimal positive integer, 0 < top < 2^64; default {defaultAddressSpaceTop}; see VALIDATION.md, address-space top)"
+          ⟨"an address-space-top argument in the LP64 pointer domain", by decide⟩)
   let callFn : Option (String × List Int) ← match callName, callArgsStr with
     | none, none => pure none
     | none, some _ => do
@@ -1734,12 +1929,18 @@ def cerbMain (args : List String) : IO Unit := do
         | some s => s.splitOn ","
       let mut vals : List Int := []
       for p in parts do
-        match p.trim.toInt? with
+        match p.trimAscii.toString.toInt? with
         | some v => vals := vals ++ [v]
         | none => do
           IO.eprintln s!"cerberus-lean: --call-args: not an integer: {p}"
           IO.Process.exit 1
       pure (some (n, vals))
+  if switchSet.contains .inner_arg_temps && callFn.isSome then
+    -- Outcome protocol (landed 2026-10-22): a declared driver refusal is a REFUSAL
+    -- envelope, boundary `cli`, like `refuseFlag`'s (post-rebase adaptation, 2026-10-26).
+    CerbStop.exitRefusals (driverRefusal .cli (some "--call")
+      "cerberus-lean: refused — --call: inner_arg_temps is unsupported by CerbCall, whose injected call site implements only Normal_callconv (see CerbCall.lean and SUPPORTED.md)"
+      ⟨"a CerbCall call site for the inner_arg_temps calling convention", by decide⟩)
   let libc : Option (String × List String) ← match libcCore, libcTus with
     | some c, tus =>
       if tus.isEmpty then do
@@ -1750,6 +1951,20 @@ def cerbMain (args : List String) : IO Unit := do
     | none, _ :: _ => do
       IO.eprintln "cerberus-lean: --libc-tu without --libc"
       IO.Process.exit 1
+  let quoting := quoteCore.isSome || quoteLibc.isSome
+  if quoting && (ppCoreMode || firstTrace || callName.isSome || callArgsStr.isSome ||
+      progArgsStr.isSome || traceNodes) then
+    CerbStop.exitRefusals (driverRefusal .cli (some "Core quotation")
+      "cerberus-lean: refused — Core quotation cannot be combined with --pp-core, --first, --call, --call-args, --args or --trace-nodes"
+      ⟨"Core quotation admission for this option combination", by decide⟩)
+  if quoteLibc.isSome && libc.isNone then
+    IO.eprintln "cerberus-lean: --quote-libc requires --libc and its --libc-tu metadata"
+    IO.Process.exit 1
+  if let (some program, some library) := (quoteCore, quoteLibc) then
+    if (System.FilePath.mk program).normalize == (System.FilePath.mk library).normalize then
+      CerbStop.exitRefusals (driverRefusal .cli (some "--quote-core/--quote-libc")
+        "cerberus-lean: refused — --quote-core and --quote-libc require distinct output paths"
+        ⟨"Core quotation admission for this option combination", by decide⟩)
   -- Effect-retirement C1 (charter section 5): the debug-level global is
   -- DELETED — the model returns values, the driver prints; the former
   -- human-mode level-2 write here was already vestigial (its only
@@ -1793,8 +2008,8 @@ def cerbMain (args : List String) : IO Unit := do
       | .ok cf =>
         let total := cf.funs.length + cf.procs.length + cf.impls.length +
                      cf.tagDefs.length + cf.globs.length + cf.builtins.length
-        if total == 0 && input.trim.length > 0 then
-          IO.eprintln s!"{label}: ERROR: parser returned .ok but 0 declarations from {input.trim.length} non-whitespace chars"
+        if total == 0 && input.trimAscii.toString.length > 0 then
+          IO.eprintln s!"{label}: ERROR: parser returned .ok but 0 declarations from {input.trimAscii.toString.length} non-whitespace chars"
           IO.eprintln s!"{label}: first 120 chars of input: {input.take 120}"
           failures := failures + 1
         else
@@ -1806,8 +2021,13 @@ def cerbMain (args : List String) : IO Unit := do
       IO.Process.exit 1
     return
 
-  if (batchMode || ppCoreMode) && restArgs.isEmpty then
-    IO.eprintln "usage: cerberus-lean [--batch|--pp-core] [--first] FILE.json [FILE2.json ...]"
+  if quoteCore.isSome && libc.isSome && restArgs.isEmpty then
+    CerbStop.exitRefusals (driverRefusal .cli (some "--quote-core")
+      "cerberus-lean: refused — Core quotation: --quote-core with --libc requires a user TU; use --quote-libc for the standalone library"
+      ⟨"Core quotation admission for this option combination", by decide⟩)
+  let libraryOnly := quoting && libc.isSome && restArgs.isEmpty
+  if (batchMode || ppCoreMode || quoting) && restArgs.isEmpty && !libraryOnly then
+    IO.eprintln "usage: cerberus-lean [--batch|--pp-core] [--first] [--quote-core OUT.lean] [--quote-libc LIB.lean --libc CORE --libc-tu META.json ...] FILE.json [FILE2.json ...]"
     IO.Process.exit 1
 
   -- Default: parse Cabs JSON (one per translation unit) and run pipeline.
@@ -1820,8 +2040,8 @@ def cerbMain (args : List String) : IO Unit := do
   -- runPipeline's frontend loop (pipeline.ml:181 mirror).
   -- bug-hunt BUG-2: the runtime is resolved like the oracle's (resolveRuntime),
   -- never searched for relative to the working directory
-  let runtimeDir ← resolveRuntime runtimeArg
-  let contents ← readInputs restArgs
+  let runtimeDir ← @resolveRuntime ⟨switchSet⟩ runtimeArg
+  let contents ← if libraryOnly then pure [] else readInputs restArgs
   let mut tunits : List (String × translation_unit) := []
   let mut idx := 0
   for content in contents do
@@ -1840,15 +2060,20 @@ def cerbMain (args : List String) : IO Unit := do
   -- The ONE instantiation of the ambient fuel (fuel-parameter arc): every
   -- fuel'd function below `runPipeline` reads this instance; nothing else
   -- in the repository builds one (`scripts/check_no_fuel_numerals.sh`).
-  -- Beside it, the ONE instance of the switch set (PNVI arc S1, 2026-10-05; S4,
-  -- 2026-10-07): `⟨switchSet⟩` — the default `CerbGlobal.defaultSwitches` (= `[]`,
-  -- switches.ml:47-48) unless `--switches=PNVI_ae_udi` was given (judged above); one
+  -- Beside it, the run's instance of the switch set — one of the supported whole sets
+  -- (PNVI arc S1, 2026-10-05; S4, 2026-10-07; inner_arg_temps 2026-10-21): `⟨switchSet⟩` — the default `CerbGlobal.defaultSwitches` (= `[]`,
+  -- switches.ml:47-48) unless a supported whole switch set was given (judged above); one
   -- general path, the set only selects the arms (no PNVI-only entry point). No other
   -- instance of `CerbGlobal.Switches` exists in this repository
   -- (speedbump: `scripts/check_no_fuel_numerals.sh` rule W1).
   let fsState ← loadImageFs imageFsSpecs imageFsList
   let argv0 := argv0Arg.getD implParams.argv0
   let code ← (letI : CerbImplCfg.Impl := ⟨implParams⟩; letI : LemFuel := ⟨fuel⟩; letI : CerbGlobal.Switches := ⟨switchSet⟩; runPipeline runtimeDir batchMode ppCoreMode firstTrace
-    addressSpaceTop callFn traceNodes libc argv0 progArgs fsState tunits)
+    addressSpaceTop callFn traceNodes libc quoteCore quoteLibc argv0 progArgs fsState tunits)
+  -- Report completed runs on stderr: batch stdout contains only verdict tokens.
+  -- Emit after execution so a panic's diagnostic envelope remains intact. Quotation
+  -- stays silent and carries the same report in its module header instead.
+  if !quoting && !ppCoreMode then
+    IO.eprintln (CerbDriverConfig.switchReport switchSet)
   if code != 0 then
     IO.Process.exit code

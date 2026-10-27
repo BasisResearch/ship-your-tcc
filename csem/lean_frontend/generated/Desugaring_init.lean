@@ -523,6 +523,39 @@ partial def go_top_of_block (pos : init_position) :
   | DInit_ok pos' => go_top_of_block pos'
   | DInit_internal_error msg => internal_error0 msg
 
+/- FORK (item U, 2026-10-20): the text of the union-designator refusal. ASCII only, assembled
+   from the same pieces on both engines (the member names as the C source spells them, the
+   union's tag name from its symbol description), so the oracle's Failure(...) and the Lean
+   PANIC line carry it byte-identically (scripts/check_union_init_refusals.sh compares them). -/
+def union_designator_refusal (tag_sym : sym) (first_ident : identifier) (ident : identifier) :
+    String :=
+  match first_ident with
+  | (Identifier _ first_str) =>
+    (match ident with
+     | (Identifier _ memb_str) =>
+       (let tag_str :=
+          match symbol_description0 tag_sym with
+          | SD_Id str => String.append "union " str
+          | SD_unnamed_tag _ => "an unnamed union"
+          | _ => "a union";
+        String.append
+          "Desugaring_init.moveTo_aux: refused - union initializer designating a member other than the first ("
+          (String.append tag_str
+            (String.append ": designator ."
+              (String.append memb_str
+                (String.append ", first member "
+                  (String.append first_str
+                    (String.append "); "
+                      (String.append
+                        "C17 6.7.9#17-19 (a designator selects the member to initialize, in list order; subobjects not initialized explicitly are initialized implicitly); "
+                        (String.append
+                          "upstream's desugaring_init.lem constructValue_aux builds every braced union initializer as the FIRST member whatever the designators say "
+                          (String.append
+                            "('TODO: this is only correct if the first member was the one initialised' b9aeedcb4 :576; "
+                            (String.append
+                              "'constructValue_aux: is WRONG for union ==> always assigning the first member' :592) "
+                              "- the fork refuses rather than decides (item U, 2026-10-20)"))))))))))))
+
 partial def moveTo_aux (tagDefs1 : Fmap sym tag_definition0) (funcs : desugaring_init_funcs)
     (is_top : Bool) (p : (ctype × List init_cursor_elem)) (desigs : List designator) :
     state_with_markers → exceptM ((ctype × List init_cursor_elem) × state_with_markers)
@@ -606,11 +639,32 @@ partial def moveTo_aux (tagDefs1 : Fmap sym tag_definition0) (funcs : desugaring
         | Ctype _ (Union0 tag_sym) =>
           (match find_union_member tagDefs1 ident tag_sym with
            | some new_ty =>
-             (let elem' :=
-                (({ is_block := is_top,
-                    is_overflowing := false,
-                    kind := (Init_union tag_sym ident) } : init_cursor_elem));
-              moveTo_aux1 (new_ty, (elem' :: cursor_acc)) desigs')
+             (/- FORK REFUSAL (item U, 2026-10-20; [USER 2026-10-20]: where upstream left a
+                       case to a TODO, the fork leaves it or REFUSES LOUDLY, never answering
+                       silently wrong). constructValue_aux (below) builds EVERY braced union
+                       initializer as the FIRST member, whatever the designators say - the
+                       init-map key Elem_union carries no member identity - so a designator
+                       naming any other member is silently wrong (C17 6.7.9#17-19). This arm
+                       is the one place the designated member is decidable. `error` is
+                       Cerb_debug.error in the generated OCaml and failwithI in the generated
+                       Lean: one text on both engines. Record:
+                       lean_frontend/docs/2026-10-20_union-init-refusal-record.md -/
+             match lookup_union_members tagDefs1 tag_sym with
+             | ((first_ident, _), _) =>
+               (lem_if (match ident with
+                        | (Identifier _ str1) =>
+                          (match first_ident with
+                           | (Identifier _ str2) => not (str1 == str2))) then
+                 (failwithI (union_designator_refusal tag_sym first_ident ident) :
+                   state_with_markers → exceptM
+                   ((ctype × List init_cursor_elem) × state_with_markers)
+                   (CerbLocation.Loc × cause))
+               else
+                 let elem' :=
+                   (({ is_block := is_top,
+                       is_overflowing := false,
+                       kind := (Init_union tag_sym ident) } : init_cursor_elem));
+                 moveTo_aux1 (new_ty, (elem' :: cursor_acc)) desigs'))
            | none =>
              (fun (_ : state_with_markers) =>
                fail0

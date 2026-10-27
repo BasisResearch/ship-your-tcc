@@ -1066,6 +1066,42 @@ def translate_function_call [CerberusFresh.Digest] [CerbImplCfg.Impl]
                                          match Lem_List.splitAt (List.length expect_params)
                                              (List.reverse rev_args_info) with
                                          | (args_info, variadic_args_info) =>
+                                           (/- (STD §6.5.2.2#7, sentence 1) implicit conversion of the argument to the type of the
+   * corresponding parameter using the assignment rules.
+   * NOTE: a pointer argument passed to a _Bool parameter has already been converted during its
+   * elaboration (and has Core type loaded integer), so we do NOT convert it again here. -/
+                                           let conv_arg_value : ctype → generic_pexpr Unit sym →
+                                             (ctype × Bool × generic_pexpr Unit sym) → generic_pexpr
+                                             Unit sym :=
+                                             (fun (expect_param_ty : ctype)
+                                               (expect_param_ty_pe : generic_pexpr Unit sym)
+                                               (p : (ctype × Bool × generic_pexpr Unit sym)) =>
+                                               match expect_param_ty, expect_param_ty_pe, p with
+                                               | expect_param_ty, expect_param_ty_pe,
+                                                 (arg_ty, arg_is_null, arg_sym_pe) =>
+                                                 (lem_if atomic_qualified_unqualified is_Bool
+                                                     expect_param_ty && is_pointer arg_ty then
+                                                   arg_sym_pe
+                                                   /- NOTE: since the expected type is compatible with the parameter type, if one is an integer or
+      floating, the other one must also be an integer or floating (respectively) -/
+                                                 else lem_if is_integer expect_param_ty then
+                                                   lem_if is_integer arg_ty then
+                                                     stdlib1.mkcall_conv_loaded_int_
+                                                       expect_param_ty_pe arg_sym_pe
+                                                   else
+                                                     stdlib1.mkcall_loaded_ivfromfloat_
+                                                       expect_param_ty_pe arg_sym_pe
+                                                 else lem_if is_floating expect_param_ty then
+                                                   lem_if is_integer arg_ty then
+                                                     stdlib1.mkcall_loaded_fvfromint_
+                                                       expect_param_ty_pe arg_sym_pe
+                                                   else
+                                                     arg_sym_pe
+                                                 else lem_if is_pointer expect_param_ty &&
+                                                     arg_is_null then
+                                                   mk_specified_pe (mk_nullptr_pe expect_param_ty)
+                                                 else
+                                                   arg_sym_pe));
                                            bind1
                                              (/- standard arguments -/ foldlM
                                                (fun (p : (Int × List (generic_expr Unit Unit sym)))
@@ -1100,40 +1136,10 @@ def translate_function_call [CerberusFresh.Digest] [CerbImplCfg.Impl]
                                                                        "§6.5.2.2#9"
                                                                        UB041_function_not_compatible))
                                                                    (let conv_value :=
-                                                                      lem_if atomic_qualified_unqualified
-                                                                          is_Bool expect_param_ty &&
-                                                                          is_pointer arg_ty then
-                                                                        arg_sym_pe
-                                                                        /- NOTE: since the expected type is compatible with the parameter type, if one is an integer or
-                floating, the other one must also be an integer or floating (respectively) -/
-                                                                      else lem_if is_integer
-                                                                          expect_param_ty then
-                                                                        lem_if is_integer
-                                                                            arg_ty then
-                                                                          stdlib1.mkcall_conv_loaded_int_
-                                                                            expect_param_ty_pe
-                                                                            arg_sym_pe
-                                                                        else
-                                                                          stdlib1.mkcall_loaded_ivfromfloat_
-                                                                            expect_param_ty_pe
-                                                                            arg_sym_pe
-                                                                      else lem_if is_floating
-                                                                          expect_param_ty then
-                                                                        lem_if is_integer
-                                                                            arg_ty then
-                                                                          stdlib1.mkcall_loaded_fvfromint_
-                                                                            expect_param_ty_pe
-                                                                            arg_sym_pe
-                                                                        else
-                                                                          arg_sym_pe
-                                                                      else lem_if is_pointer
-                                                                          expect_param_ty &&
-                                                                          arg_is_null then
-                                                                        mk_specified_pe
-                                                                          (mk_nullptr_pe
-                                                                            expect_param_ty)
-                                                                      else
-                                                                        arg_sym_pe;
+                                                                      conv_arg_value expect_param_ty
+                                                                        expect_param_ty_pe
+                                                                        (arg_ty, arg_is_null,
+                                                                          arg_sym_pe);
                                                                     let mo1 :=
                                                                       lem_if is_atomic
                                                                           expect_param_ty then /- STD §6.2.6.1#9 -/
@@ -1203,36 +1209,11 @@ def translate_function_call [CerberusFresh.Digest] [CerbImplCfg.Impl]
                                                                             (mk_std_undef_pe loc1
                                                                               "§6.5.2.2#9"
                                                                               UB041_function_not_compatible)
-                                                                            (/- NOTE: since the expected type is compatible with the parameter type,
-                if one is an integer or floating, the other one must also be an integer or floating (respectively) -/
-                                                                            lem_if is_integer
-                                                                                expect_param_ty then
-                                                                              lem_if is_integer
-                                                                                  arg_ty then
-                                                                                stdlib1.mkcall_conv_loaded_int_
-                                                                                  expect_param_ty_pe
-                                                                                  arg_sym_pe
-                                                                              else
-                                                                                stdlib1.mkcall_loaded_ivfromfloat_
-                                                                                  expect_param_ty_pe
-                                                                                  arg_sym_pe
-                                                                            else lem_if is_floating
-                                                                                expect_param_ty then
-                                                                              lem_if is_integer
-                                                                                  arg_ty then
-                                                                                stdlib1.mkcall_loaded_fvfromint_
-                                                                                  expect_param_ty_pe
-                                                                                  arg_sym_pe
-                                                                              else
-                                                                                arg_sym_pe
-                                                                            else lem_if is_pointer
-                                                                                expect_param_ty &&
-                                                                                arg_is_null then
-                                                                              mk_specified_pe
-                                                                                (mk_nullptr_pe
-                                                                                  expect_param_ty)
-                                                                            else
-                                                                              arg_sym_pe))) ::
+                                                                            (conv_arg_value
+                                                                              expect_param_ty
+                                                                              expect_param_ty_pe
+                                                                              (arg_ty, arg_is_null,
+                                                                                arg_sym_pe)))) ::
                                                                           cn_core_args)))))
                                                         ((0 : Int),
                                                           ([] : List (generic_pexpr Unit sym)))
@@ -1692,7 +1673,7 @@ def translate_function_call [CerberusFresh.Digest] [CerbImplCfg.Impl]
                                                                                                                                 sym1))
                                                                                                                         arg_ptr_syms_tys))
                                                                                       /- return function call result -/ (mk_pure_e
-                                                                                        call_ret_wrp.sym_pe)))))))))))))))))))))))))))
+                                                                                        call_ret_wrp.sym_pe))))))))))))))))))))))))))))
 
 inductive atomic_explicit : Type where
   | AtomicStoreExplicit : atomic_explicit

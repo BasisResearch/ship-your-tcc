@@ -141,3 +141,26 @@
   correctly has empty stdout; an evidence-validator draft expecting the
   untraced emulator's SUCCESS chatter failed. Check verified lead exit,
   empty console, no fuel exhaustion and the expected trace cuts instead.
+- CSem repin, 2026-10-27: sandbox DNS/systemd/Git restrictions are serviced
+  by the lead's frozen build/toolchain/commit handoff; they are not a reason
+  to stop this evaluation. The fetched current snapshots and isolated
+  generator build worked. Do not resend the old infrastructure-blocker task.
+- The selected upstream 4.35 sources compile on approved Lean 4.34; its
+  Utils/Defacto, memory-erasure and LemLib map proof repairs absorb our old
+  port patches. Do not migrate the root toolchain or restore those duplicate
+  proof patches without new evidence.
+- Replaying upstream's generic JSON stop renderer adds partial JSON/number
+  printing to the semantics cone. Keep the shared total encoding adapter;
+  raising budgets or treating an axiom-only census as a purity certificate
+  does not solve that regression.
+- Pin changes invalidate `--libc` metadata even when an old args file exists:
+  runtime directory identity is checked exactly. Keep the content-addressed
+  preparation cache; never relax the runtime-location guard.
+- The shared main `c/build/base.elf` can change during another lane's work.
+  The repin's first FS comparison verified all retained pins and passed eight
+  observations; a later rerun correctly stopped on changed base-image bytes.
+  Retain the dated valid measurement; do not recertify changed image inputs.
+- Current upstream still refuses a valid C11 second-member union initializer
+  (`results/csem/repin-2026-10-27/probes/union-second.c`). The old oracle gives
+  7 and the new oracle refuses. This is a concrete adoption concern, not
+  grounds to narrow Supported or add a refusal disjunct to the theorem.

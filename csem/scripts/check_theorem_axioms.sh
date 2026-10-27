@@ -580,9 +580,30 @@ echo "check_theorem_axioms: C2 ratchet OK ($RATCHET_NSCANNED files scanned recur
 #     live; formerly lean_frontend/relsemcore/**, removed 2026-09-02),
 #     and the LemLib package's lean-lib/LemLibTest.lean (the copy the
 #     build actually compiles). Mandatory paths missing = FAIL, not skip.
-#   * axiom leg (with the cone probes below): Lean.ofReduceBool /
-#     Lean.ofReduceNat — the axioms those tactics introduce — are
-#     ALWAYS-FATAL in every probed cone, alongside sorryAx.
+#   * axiom leg (with the cone probes below): the axioms those tactics
+#     introduce are ALWAYS-FATAL in every probed cone, alongside sorryAx.
+#     Since Lean 4.31 `native_decide` introduces a PER-DECLARATION axiom
+#     named `<decl>._native.native_decide.ax_<n>_<m>` (measured on 4.32.2
+#     and 4.35.0 at the Lean 4.35 move, 2026-10-26: `#print axioms` of a
+#     `by native_decide` theorem lists exactly that name and never
+#     `Lean.ofReduceBool`); the pre-4.31 form `Lean.ofReduceBool` /
+#     `Lean.ofReduceNat` is still matched. `bv_decide`'s axiom has the same
+#     per-declaration shape, `<decl>._native.bv_decide.ax_<n>_<m>` (measured
+#     on both toolchains by the 2026-10-26 pre-merge review), and is caught
+#     by the `\._native\.` alternative of the pattern. Plant-tested at the
+#     move: with a `native_decide` theorem referenced from `nd_bind`
+#     (generated copy, outside the grep leg's surface) the exemplar probe
+#     printed `'nd_bind' depends on axioms:
+#     [d14_plant_cone._native.native_decide.ax_1_1]` and the ofReduce-only
+#     pattern let it PASS — a vacuous leg on every toolchain since 4.31,
+#     closed by the widened pattern below. Because a name pattern can go
+#     vacuous again on the next rename (review P2-1), both cone legs ALSO
+#     parse every `depends on axioms: [...]` list and fail on any member
+#     outside {propext, Classical.choice, Quot.sound} — the C2 entry
+#     census's mechanism — so an axiom of ANY name fails the gate; the
+#     greps stay as the loud named messages. Plant-tested with an axiom
+#     added by a metaprogram under an arbitrary name (no `axiom` keyword
+#     for the census legs, no `_native`/`ofReduce` for the patterns).
 # ---------------------------------------------------------------------------
 D14_ROOT="$(pwd)"
 D14_SCAN_PATHS=()
@@ -670,12 +691,33 @@ if grep -q "sorryAx" <<<"$OUT"; then
   echo "check_theorem_axioms: FAIL — sorryAx in an exemplar cone"
   exit 1
 fi
-# D14 axiom leg: Lean.ofReduceBool / Lean.ofReduceNat (native_decide's
-# axioms) are always fatal in every probed cone. Matched on the bare
-# names so both qualified ('Lean.ofReduceBool') and unqualified probe
+# D14 axiom leg: native_decide's axioms — the per-declaration
+# `<decl>._native.native_decide.ax_<n>_<m>` of Lean ≥ 4.31 and the older
+# Lean.ofReduceBool / Lean.ofReduceNat — are always fatal in every probed
+# cone. Matched on the bare names so both qualified and unqualified probe
 # spellings are caught.
-if grep -qE 'ofReduce(Bool|Nat)' <<<"$OUT"; then
-  echo "check_theorem_axioms: FAIL — ofReduceBool/ofReduceNat in an exemplar cone (D14 non-kernel proof-method ban)"
+if grep -qE 'ofReduce(Bool|Nat)|native_decide|\._native\.' <<<"$OUT"; then
+  echo "check_theorem_axioms: FAIL — a native_decide axiom (…._native.native_decide.ax_* or ofReduceBool/ofReduceNat) in an exemplar cone (D14 non-kernel proof-method ban)"
+  exit 1
+fi
+# Name-independent D14 leg (pre-merge review 2026-10-26 P2-1): the exact
+# allowlist parse of the C2 entry census, applied to the exemplar cones.
+EXEMPLAR_BAD=$(python3 - <<PYEOF
+import re, sys
+out = """$OUT"""
+ok = {"propext", "Classical.choice", "Quot.sound"}
+bad = []
+for m in re.finditer(r"'([^']+)' depends on axioms: \[([^\]]*)\]", out):
+    entry, axs = m.group(1), [a.strip() for a in m.group(2).split(',') if a.strip()]
+    for a in axs:
+        if a not in ok:
+            bad.append(f"{entry}: {a}")
+print("\n".join(bad))
+PYEOF
+)
+if [[ -n "$EXEMPLAR_BAD" ]]; then
+  echo "check_theorem_axioms: FAIL — exemplar cone: axiom outside the exact allowlist [propext, Classical.choice, Quot.sound] (the name-independent D14 leg, pre-merge review 2026-10-26 P2-1):"
+  echo "$EXEMPLAR_BAD"
   exit 1
 fi
 
@@ -703,8 +745,27 @@ if grep -q "sorryAx" <<<"$OUT2"; then
   exit 1
 fi
 # D14 axiom leg, driver2 cone: same always-fatal ban as the exemplar set.
-if grep -qE 'ofReduce(Bool|Nat)' <<<"$OUT2"; then
-  echo "check_theorem_axioms: FAIL — ofReduceBool/ofReduceNat in driver2's kernel cone (D14 non-kernel proof-method ban)"
+if grep -qE 'ofReduce(Bool|Nat)|native_decide|\._native\.' <<<"$OUT2"; then
+  echo "check_theorem_axioms: FAIL — a native_decide axiom (…._native.native_decide.ax_* or ofReduceBool/ofReduceNat) in driver2's kernel cone (D14 non-kernel proof-method ban)"
+  exit 1
+fi
+# Name-independent D14 leg for driver2's cone (review P2-1), same parse.
+DRIVER2_BAD=$(python3 - <<PYEOF
+import re, sys
+out = """$OUT2"""
+ok = {"propext", "Classical.choice", "Quot.sound"}
+bad = []
+for m in re.finditer(r"'([^']+)' depends on axioms: \[([^\]]*)\]", out):
+    entry, axs = m.group(1), [a.strip() for a in m.group(2).split(',') if a.strip()]
+    for a in axs:
+        if a not in ok:
+            bad.append(f"{entry}: {a}")
+print("\n".join(bad))
+PYEOF
+)
+if [[ -n "$DRIVER2_BAD" ]]; then
+  echo "check_theorem_axioms: FAIL — driver2's kernel cone: axiom outside the exact allowlist [propext, Classical.choice, Quot.sound] (the name-independent D14 leg, pre-merge review 2026-10-26 P2-1):"
+  echo "$DRIVER2_BAD"
   exit 1
 fi
 # DAEMON leg, driver2 cone (arc-8 S3): forbidden like every other cone.
@@ -712,7 +773,7 @@ if grep -q "DAEMON" <<<"$OUT2"; then
   echo "check_theorem_axioms: FAIL — DAEMON in driver2's kernel cone (the DAEMON axiom family was DELETED in arc-8; the arc-3 D9 allowance is removed)"
   exit 1
 fi
-echo "check_theorem_axioms: driver2 cone sorryAx-free + ofReduce*-free + DAEMON-free (arc-8 S3 bar)"
+echo "check_theorem_axioms: driver2 cone sorryAx-free + native_decide-axiom-free (ofReduce*/…_native…) + DAEMON-free + ⊆ [propext, Classical.choice, Quot.sound] (arc-8 S3 bar; review P2-1 parse)"
 
 # ---------------------------------------------------------------------------
 # C2 ratchet leg (5): exec-entry EXACT axiom census (charter sections
@@ -789,10 +850,13 @@ echo "check_theorem_axioms: C2 entry census OK (${#ENTRIES[@]} entries, every co
 # PNVI arc S2 (2026-10-07; record docs/2026-10-07_pnvi-s2-data-shapes-record.md):
 # the C1 reference form and its equalities are RETIRED from CerbMem.lean into
 # the row-1 test module Unit.ReconstructLegacyTest (design record §B.7), restated
-# over the verbatim pre-S2 copy and chained to the production wrapper; the
+# over the pre-S2 algorithm and chained to the production wrapper; the
 # same module carries the S2 wrapper equalities (`…_eq_legacy`), pinned here
 # too. The module is built by test_unit.sh before this gate runs (as
 # Unit.FuelExemplar for the FUEL leg below).
+# Outcome protocol C: these references now take direct diagnostics explicitly;
+# the historical instance recovers the old bodies, and the production equations
+# use productionDiagnostics. Existing checked theorem entries are retained.
 # PNVI arc-end audit F3 (2026-10-07): the six consumer-facing kernel bridges of the
 # theorem-only seam CerbMemDefaultFacts.lean (a Lake root nothing in the production
 # tree imports) are pinned here too. `lake env lean` below does NOT build; the seam
@@ -810,7 +874,11 @@ echo "check_theorem_axioms: C2 entry census OK (${#ENTRIES[@]} entries, every co
 # (memory-access-test) imports it.
 # ---------------------------------------------------------------------------
 PROBE4=lean_frontend/.axiom-probe-memscale.lean
+# Outcome protocol: reference-to-reference equality quantifies over diagnostics;
+# production equations instantiate productionDiagnostics. All seven entries stay.
 MEMSCALE_THMS=(CerbMem.chunksOf_eq_range_map
+               ReconstructLegacyTest.historical_linear_recovers
+               ReconstructLegacyTest.historical_indexed_recovers
                ReconstructLegacyTest.reconstructValueLegacy_lemFuel_eq_indexed
                ReconstructLegacyTest.reconstructValue_lemFuel_eq_indexed
                ReconstructLegacyTest.reconstructValue_eq_indexed

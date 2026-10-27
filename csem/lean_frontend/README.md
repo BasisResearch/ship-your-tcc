@@ -86,7 +86,7 @@ typing, elaboration to Core, execution).
 
 Measured platform: Linux x86_64; other platforms are unverified.
 Prerequisites: Git, Bash, GNU make/coreutils/findutils/diffutils, GNU time
-(default `/usr/bin/time`), a C toolchain, opam 2, Python 3, and elan with Lean 4.32.2 installed (the committed `lean-toolchain`). The
+(default `/usr/bin/time`), a C toolchain, opam 2, Python 3, and elan with Lean 4.35.0 installed (the committed `lean-toolchain`). The
 measured OCaml toolchain is 5.4.0 with opam 2.1.5 and Dune 3.23.1; the
 package files constrain Dune to `>= 3.21.0 & < 3.24.0`. Use the fork of Lem
 at the **same revision as Lake's LemLib**; upstream `opam install lem` does
@@ -101,7 +101,7 @@ git clone --branch mdd/cerberus-lean https://github.com/OathTech/cerberus-lean.g
 cd cerberus-lean
 opam switch create . ocaml-base-compiler.5.4.0 --no-switch --no-install
 # Keep this revision equal to lean_frontend/lakefile.toml.
-opam pin add --switch=. lem git+https://github.com/OathTech/lem-lean.git#2d3a492758cb23dc4e417f2961983d25b36ce130 --yes
+opam pin add --switch=. lem git+https://github.com/OathTech/lem-lean.git#e6d8db5680962f49060257d6c2bcb13c284b910f --yes
 opam install --switch=. --deps-only ./cerberus-lib.opam ./cerberus.opam --yes
 
 opam exec --switch=. -- make prelude-src
@@ -200,11 +200,58 @@ production generator in an isolated scratch repository.
   exhaustively over the nondeterministic branch structure or as a single
   trace (`--first`). The runtime (`std.core`, the implementation file) is
   the oracle's: `--runtime DIR` or the `CERB_INSTALL_PREFIX` environment
-  variable, runtime = `DIR/lib/cerberus-lib/runtime`, the same prefix the
-  cabs-json was exported with (`cerberus --runtime=DIR --cabs-json`). The
+  variable, runtime = `DIR/lib/cerberus-lib/runtime`. Imported library
+  directories must resolve to that runtime; equivalent absolute/relative
+  spellings and symlinks are accepted, while foreign or missing directories
+  are refused. Source and lexing positions retain their original spelling. The
   driver refuses to run without one; it never searches the working
   directory and does not use the oracle's `OPAM_SWITCH_PREFIX` fallback.
   The lanes export `CERB_INSTALL_PREFIX` from `scripts/common.sh`.
+  For portable libc metadata, run `scripts/libc_prep.sh --jsons OUTDIR`:
+  it exports from the project root with `--runtime=_build/install/default`
+  and project-relative source/include paths. The **canonical Core quotation
+  convention** requires that exact runtime spelling for both metadata export
+  and the Lean run, from the project root (or a consumer directory holding a
+  fixed relative runtime link at that location). A symlink alias of the project
+  root is also valid. Labels are preserved verbatim: absolute runtime spellings
+  produce different artifacts. Invocations from `lean_frontend/` using
+  `../_build/...` cannot resolve the stored project-relative header labels and
+  are refused with the convention named. No source-root option or label rewrite
+  participates in this convention. The port classifies a label by directory
+  suffix, the oracle by literal equality with `<runtime-as-given>/<dir>`, so
+  any spelling that resolves to a runtime library directory but differs
+  literally from that key (an absolute or `./` label under a relative runtime,
+  a relative or `./` label under an absolute one, a `#line` alias) is library
+  on the port and not on the oracle, in both directions; every canonical
+  export carries the `./`-prefixed instance. On such inputs the served UB
+  location differs (`scripts/check_runtime_resolution.sh` pins a plant:
+  oracle `<2:10--2:15>`, port `<11:10--11:23>`). This declared divergence
+  leaves quoted labels unchanged (VALIDATION §3).
+- **Callee-allocated argument temporaries.** `--switches=inner_arg_temps`
+  selects that whole set, the matching std runtime and `Inner_arg_callconv`;
+  the default remains Normal. Use `tests/libc/libc_inner_arg_temps.core`
+  and the twelve metadata JSONs from `scripts/libc_prep.sh --jsons OUTDIR`.
+  `--quote-core` and `--quote-libc` use the same flag. Run reports go to stderr
+  and quotation headers report the switch set, outside compared verdict
+  tokens. Dump/mode mismatches and parameter-rebinding dumps refuse loudly.
+  `--call` under the switch and combinations with PNVI are refused. Recursion
+  into main executes because the active driver bypasses its separate guard.
+  Tier A row 15 compares matched engines exactly; the oracle cross-mode
+  sanity instrument compares distinct complete observation sets. See the
+  [consumer note](docs/2026-10-21_consumer-note-cerberus-caesium-inner-arg-temps.md)
+  for pins, validation and limits.
+- **Core constructor literals for consumers.** `--quote-core OUT.lean` writes
+  the converted, linked user file; `--quote-libc OUT.lean` writes the separately
+  converted library once. Use the canonical convention above. The generated
+  module declares `quotedCore : file core_run_annotation`; NaNs and inadmissible
+  comparator provenance are refused by name. The independent `core-quote-test`
+  executable accepts these modules with `--module`; combine `--libc` and
+  repeated `--input` for a libc-linked module. `--quote-core --libc` requires
+  at least one user TU. Its runner, support and libc
+  SHA-256 pin live in `test/CoreQuote/`; earlier development probes live in
+  `test/CoreQuote/probes/`. The [consumer note](docs/2026-10-18_consumer-note-cerberus-caesium-core-quote.md)
+  gives generation, round-trip, replay and re-pin commands. This is a computed
+  quotation instrument with a [declared boundary](VALIDATION.md#core-quotation-instrument-boundary).
 - **Function-level execution.** `--call <f> [--call-args <ints>]`
   calls an individual function with injected arguments (the caller
   protocol mirrors elaborated call sites; `CerbCall.lean`, a port-side

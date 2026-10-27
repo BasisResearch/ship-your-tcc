@@ -85,10 +85,17 @@ moreLeanArgs = ["-DautoImplicit=false"]
 # lem-lean `2d3a492` is on `mdd/lean-backend` and `deps/lem-pinned` plus the
 # shared opam lem are moved to it (the two-repo pin dance); a re-gate in the
 # standard environment must then be green.
+# Lean 4.35 move, 2026-10-25 ([USER 2026-10-20] the toolchain moves 4.32.2 ->
+# 4.35.0, lem-lean first; [USER 2026-10-22] approved landing the lem-lean half):
+# re-pin to the merged mdd/lean-backend head e6d8db5 (LemLib on Lean 4.35.0: the
+# `toList_bal` proof repair, two deprecation swaps; the emitter's one output
+# change, `@[noinline]` on synthesized tuple-let RHS defs, has no site in this
+# tree). The pin's lean-toolchain propagates here through `lake update LemLib`.
+# Evidence: docs/2026-10-25_lean-4.35-cerberus-record.md.
 [[require]]
 name = "LemLib"
 git = "https://github.com/OathTech/lem-lean"
-rev = "2d3a492758cb23dc4e417f2961983d25b36ce130"
+rev = "e6d8db5680962f49060257d6c2bcb13c284b910f"
 subDir = "lean-lib"
 
 [[lean_lib]]
@@ -181,6 +188,7 @@ roots = [
   "CerbFloat",
   "CerbUtils",
   "CerbPP",
+  "CerbQuote",
   "CerbMem",
   "CerbMemAllocatorProofs",
   "CerbMemDefaultFacts",
@@ -189,7 +197,7 @@ roots = [
   "CerbFuel",
   "CerbFail",
   "CerbFailProofs",
-  "CerbNDFuelProofs", "CerbEscape",
+  "CerbNDFuelProofs", "CerbEscape", "CerbStop", "CerbStopSites",
   "CerbConcurrency",
   "CerbCtypeInstances",
   "CerbStepInstances",
@@ -207,6 +215,7 @@ roots = [
   "CoreParser",
   "CerbND",
   "CerbCall",
+  "CerbDriverConfig",
   # fuel_measure obligation proofs (fuel-parameter arc C1 / D2 enablers): the
   # hand-written <Module>_lemMeasureProofs modules the generated
   # <Module>_auxiliary.lean obligation shells import (build fails without them)
@@ -235,6 +244,12 @@ root = "Main"
 
 # Test library: tests live under lean_frontend/test/ and import from
 # the main CerberusLean lib. Each test exe has root "Unit.<Name>Test".
+# Make the existing driver module an explicit library dependency for the
+# independently compiled quotation test pipeline; the driver entry is unchanged.
+[[lean_lib]]
+name = "CoreQuoteDriver"
+roots = ["Main"]
+
 [[lean_lib]]
 name = "CerberusLeanTest"
 srcDir = "test"
@@ -291,6 +306,12 @@ supportInterpreter = true
 name = "monadic-failstop-test"
 srcDir = "test"
 root = "Unit.MonadicFailstop"
+
+[[lean_exe]]
+name = "stop-test"
+srcDir = "test"
+root = "Unit.StopTest"
+moreLinkArgs = ["native/md5.o"]
 
 # allocator soundness (upstream-tray draft 44, remedy 1 landed 2026-09-16): the
 # four draft-44 states evaluated on the ACTUAL CerbMem.allocator — a RUNTIME
@@ -383,3 +404,26 @@ root = "Unit.MatchPatternArityTest"
 name = "memory-access-test"
 srcDir = "test"
 root = "Unit.MemoryAccess"
+
+[[lean_exe]]
+name = "core-quote-test"
+srcDir = "test/CoreQuote"
+root = "CoreQuoteRunner"
+moreLinkArgs = ["native/md5.o"]
+needs = ["CoreQuoteSupport:shared"]
+
+# This importable checker has no main. Give it its own native library instead
+# of linking the suite's many independent executable entry points together.
+[[lean_lib]]
+name = "CoreQuoteChecks"
+srcDir = "test"
+roots = ["Unit.CoreQuoteTest"]
+
+# Native test support for the same pipeline stages the driver executes. Loading
+# this library avoids interpreting million-element frontend traversals in #eval.
+# Literal elaboration and kernel replay do not load the test plugin.
+[[lean_lib]]
+name = "CoreQuoteSupport"
+srcDir = "test/CoreQuote"
+roots = ["CoreQuoteCompare"]
+libName = "CoreQuoteCompare"

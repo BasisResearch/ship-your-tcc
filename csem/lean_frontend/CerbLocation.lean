@@ -1,3 +1,4 @@
+import CerbStopSites
 import LemLib
 /-
   Source location tracking.
@@ -171,7 +172,7 @@ private def posLt (p1 p2 : Pos) : Bool :=
     `CabsImport.jsonToLoc` rejects an empty `Loc_regions` list). -/
 private def outerBbox (xs : List (Pos × Pos)) : Pos × Pos :=
   match xs with
-  | [] => failwithI "Cerb_location.outer_bbox: [] (cerb_location.ml:109-110 assert false)"
+  | [] => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.outerBboxEmpty "Cerb_location.outer_bbox: [] (cerb_location.ml:109-110 assert false)")))
   | (b0, e0) :: rest =>
     rest.foldl (fun (bAcc, eAcc) (b, e) =>
       ((if posLt b bAcc then b else bAcc), (if posLt e eAcc then eAcc else e))
@@ -222,10 +223,10 @@ def getFilename : Loc → Option String
     Public since the bug-hunt fixes S2 (2026-09-29): `Main.lean`'s import-time
     library-location check applies the oracle's EXACT test with it. -/
 def dirname (p : String) : String :=
-  let trimmed := (p.dropRightWhile (· == '/'))
+  let trimmed := (p.dropEndWhile (· == '/')).copy
   if trimmed.isEmpty then (if p.isEmpty then "." else "/")
   else
-    let dir := (trimmed.dropRightWhile (· != '/')).dropRightWhile (· == '/')
+    let dir := ((trimmed.dropEndWhile (· != '/')).dropEndWhile (· == '/')).copy
     if !trimmed.contains '/' then "." else if dir.isEmpty then "/" else dir
 
 /-- The three library directories of `util/cerb_location.ml:512-520`,
@@ -256,7 +257,7 @@ def isLibraryPathSuffix (path : String) : Bool :=
     This function is a pure `target_rep` called from generated code, and the
     runtime root is a property of the driver invocation, so the function
     tests the directory SUFFIX (`isLibraryPathSuffix`) instead of the exact
-    directory. The two tests agree on every input the driver ACCEPTS (bug
+    directory. The original guard made the tests agree on accepted inputs (bug
     hunt BUG-3, `docs/2026-09-29_discrepancy-bug-hunt.md`; fixed 2026-09-29,
     record `docs/2026-09-29_bug-hunt-fixes-record.md` §S2):
     - exact ⇒ suffix: the runtime `Main.resolveRuntime` builds always ends in
@@ -271,7 +272,25 @@ def isLibraryPathSuffix (path : String) : Bool :=
       as `<runtime>/libcore/std.core` and `<runtime>/libcore/impls/….impl`
       (exact by construction). The `--libc` dump's bodies carry no file
       (`CoreParser.parseFile` erases their positions; recorded Z1-A1).
-    This retires the earlier documented residual Z-67 (a user file under a
+    Core quotation D2b subsequently changed the guard to RESOLVED membership
+    ([USER 2026-10-19], Main.refuseLibraryLocations). Thus the retirement below
+    is conditional on literal spellings agreeing, as in the lanes' absolute
+    runtime invocations. The admitted class is any label whose directory
+    resolves to a runtime library directory but differs literally from the
+    oracle's key `<runtime-as-given>/lib/cerberus-lib/runtime/<dir>`
+    (util/cerb_location.ml:512-523), in both directions: an absolute or `./`
+    label under a relative --runtime, a relative or `./` label under an
+    absolute one, a `#line` alias or a symlinked spelling, for `libcore` as
+    much as `libc/include`. Every canonical export carries the instance: cpp's
+    ./_build/... header positions under --runtime=_build/install/default.
+    On such inputs this function says library and the oracle says not, so the
+    served UB location differs (the three sites above):
+    scripts/check_runtime_resolution.sh pins fixture 001's classifier
+    disagreement and a `#line` plant on which the oracle reports
+    `<2:10--2:15>` and the port `<11:10--11:23>`; the unprefixed spelling
+    agrees. Quotation preserves the labels unchanged; upstream-tray draft 58
+    records the oracle issue.
+    The original guard retired the earlier residual Z-67 (a user file under a
     directory literally named `runtime/libcore` was library-classified by
     Lean and not by the oracle; the witness now refuses) FOR THE DRIVER ONLY.
     An in-process consumer that calls `CabsImport.parseJson` and this
@@ -303,7 +322,7 @@ def simpleLocation : Loc → String
   | .point pos => s!"{pos.line}:{pos.col}"
   | .region s e _ => s!"<{s.line}:{s.col}--{e.line}:{e.col}>"
   | .regions ((s, e) :: _) _ => s!"<{s.line}:{s.col}--{e.line}:{e.col}>"
-  | .regions [] _ => failwithI "CerbLocation.simpleLocation: hd"
+  | .regions [] _ => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.simpleLocationEmpty "CerbLocation.simpleLocation: hd")))
 
 private def stringOfPos (pos : Pos) : String :=
   s!"{pos.file}:{pos.line}:{pos.col}"

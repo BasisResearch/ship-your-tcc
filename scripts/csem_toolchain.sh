@@ -11,7 +11,7 @@
 #   README: make prelude-src, dune build main.exe + cerberus-lib.install +
 #   cerberus.install). It is the `--cabs-json` front end of csem_run and the
 #   oracle of scripts/csem_lane.sh.
-# Everything lands outside git (build/ of the main checkout); heavy steps run
+# Everything lands outside git in this worktree's pin-addressed build directory; heavy steps run
 # under a 12 GB systemd scope. Measured 2026-10-20: switch ~20 min, 765 MB.
 set -euo pipefail
 source "$(dirname "$0")/csem_env.sh"

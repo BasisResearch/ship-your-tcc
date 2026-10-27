@@ -27,6 +27,7 @@ CerbConcurrency.lean
 CerbCtypeInstances.lean
 CerbDebug.lean
 CerbDecode.lean
+CerbDriverConfig.lean
 CerbEscape.lean
 CerberusFresh.lean
 CerberusImpl.lean
@@ -42,6 +43,7 @@ CerbMemDefaultFacts.lean
 CerbMemAccessFacts.lean
 CerbND.lean
 CerbPP.lean
+CerbQuote.lean
 CerbStepInstances.lean
 CerbTags.lean
 CerbTagsWf.lean
@@ -70,6 +72,8 @@ Formatted_lemMeasureProofs.lean
 Driver_lemMeasureProofs.lean
 Monadic_parsing_lemMeasureProofs.lean
 CerbFail.lean
+CerbStop.lean
+CerbStopSites.lean
 CerbFailProofs.lean
 CerbNDFuelProofs.lean
 Translation_lemMeasureProofs.lean

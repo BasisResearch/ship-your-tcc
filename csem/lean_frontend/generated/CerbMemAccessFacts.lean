@@ -122,18 +122,18 @@ test module's `eraseNode (step …)` written out: `(r.1, stopObserving r.2)` for
 theorem loadM_erasure [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (es ts l t p s) :
     ((step (loadM es ts l t p) s).1, stopObserving (step (loadM es ts l t p) s).2) =
       step (loadM es ts l t p) (stopObserving s) := by
-  simp only [CerbFail.step, loadM]
+  simp only [CerbFail.step, loadM, refuseM]
   split
   case h_5 =>
     -- the Prov_symbolic arm
     rw [resolveIota_stopObserving _ (by intros; rfl)]
-    split <;> (try simp only [stopObserving_deadAllocations, stopObserving_allocations, stopObserving_bytemap,
-      stopObserving_lastUsedUnionMembers, stopObserving_funptrmap, findOverlapping_stopObserving, readBytesFrom])
+    split <;> (try simp only [readBytesFrom])
     all_goals (repeat' first
       | simp_all only [not_true_eq_false, Bool.false_eq_true, stopObserving_recordAccess, stopObserving_exposeOnLoad, stopObserving_lastUsed,
           stopObserving_observations, exposeOnLoad_observations, recordAccess_of_observations_none,
           stopObserving_deadAllocations, stopObserving_allocations, stopObserving_bytemap,
-          stopObserving_lastUsedUnionMembers, stopObserving_funptrmap, findOverlapping_stopObserving]
+          stopObserving_lastUsedUnionMembers, stopObserving_funptrmap, findOverlapping_stopObserving,
+          not_true_eq_false, Bool.false_eq_true]
       | split
       | rfl)
   all_goals (simp only [stopObserving_deadAllocations, stopObserving_allocations, stopObserving_bytemap,
@@ -142,7 +142,7 @@ theorem loadM_erasure [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (es ts 
     | simp_all only [not_true_eq_false, Bool.false_eq_true, stopObserving_recordAccess, stopObserving_exposeOnLoad, stopObserving_lastUsed,
         stopObserving_observations, exposeOnLoad_observations, recordAccess_of_observations_none,
         stopObserving_deadAllocations, stopObserving_allocations, stopObserving_bytemap,
-        stopObserving_lastUsedUnionMembers, stopObserving_funptrmap, findOverlapping_stopObserving]
+        stopObserving_lastUsedUnionMembers, stopObserving_funptrmap, not_true_eq_false, Bool.false_eq_true]
     | split
     | rfl)
 
@@ -158,14 +158,14 @@ theorem storeM_erasure [CerbImplCfg.Impl] [LemFuel] (es ts l t locking p v s) :
     case h_5 =>
       -- the Prov_symbolic arm
       rw [resolveIota_stopObserving _ (by intros; rfl)]
-      split <;> (try simp only [stopObserving_allocations])
+      split
       all_goals (repeat' first
-        | simp_all only [stopObserving_recordAccess, stopObserving_observations, recordAccess_of_observations_none,
+        | simp_all only [stopObserving_recordAccess, stopObserving_observations,
             stopObserving_allocations, stopObserving_funptrmap]
         | split
         | rfl)
     all_goals (repeat' first
-      | simp_all only [stopObserving_recordAccess, stopObserving_observations, recordAccess_of_observations_none,
+      | simp_all only [stopObserving_recordAccess, stopObserving_observations,
           stopObserving_allocations, stopObserving_funptrmap]
       | split
       | rfl)

@@ -18,12 +18,12 @@ Each SIDE is decoded with the shared codec (scripts/observations.py) into one of
     OBS <tokens>        a complete batch observation (the codec's `batch` policy, `full`
                         projection: value, stdout, stderr, UB and its location)
     REFUSAL <id>        Lean only: exit 134 under LEAN_ABORT_ON_PANIC, LemLib's failure
-                        leaf, message `PNVI_ae_udi refusal (unsupported upstream arm):
-                        R-PNVI-nn: …` (CerbMem.pnviRefusal, the §H shape)
-    CRASH <message>     an internal failure (oracle exit 125 uncaught exception / Lean
+                        leaf, a decoded REFUSAL with boundary pnvi and item R-PNVI-nn
+                        (CerbMem.pnviRefusal, outcome protocol)
+    CRASH <message>     a coarse negative-test pin, never SHARED_CRASH attribution; an internal failure (oracle exit 125 uncaught exception / Lean
                         exit 134 PANIC) that is not a PNVI refusal (the codec's `litmus`
                         policy)
-    CLI_REFUSAL <line>  Lean only: exit 2 `cerberus-lean: refused — …`
+    CLI_REFUSAL <line>  Lean only: exit 2 with decoded CLI REFUSAL records
     RESOURCE <kind>     KILL (capped's OOM witness / exit 137), TIMEOUT (exit 124), FUEL
     INVALID <reason>    anything else (RED)
 
@@ -91,8 +91,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import observations as obs  # noqa: E402
 
-REFUSAL_PREFIX = 'PNVI_ae_udi refusal (unsupported upstream arm): '
-REFUSAL_ID = re.compile(r'(R-PNVI-[0-9]{2}b?): ')
 # The oracle side each refusal id pairs with (design §G.1, the refusal's own upstream arm).
 # 'crash': the oracle must die with exactly this uncaught failure (the codec's decoded
 # exception payload, matched with fullmatch — anchored both ends); 'verdict': the oracle
@@ -125,14 +123,37 @@ def classify_side(prefix: str, lean: bool):
         status = int(read(prefix, '.status').decode().strip())
     except (OSError, ValueError) as exc:
         return ('INVALID', f'unreadable capture: {exc}')
+    decoded = obs.decode_stop(stdout, stderr, status) if lean else None
+    # A complete emitted invariant remains a defect beside a resource or a
+    # malformed tail, regardless of the oracle. Do this before every early exit.
+    if decoded is not None:
+        invariants = [entry.stop for entry in decoded.stops if isinstance(entry.stop, obs.Invariant)]
+        if invariants:
+            return ('INVALID', 'INVARIANT: ' + '; '.join(stop.site for stop in invariants))
+        if decoded.legacy_panics:
+            print('pnvi_lane: legacy, origin unattributed (coarse CRASH pin only)', file=sys.stderr)
     if obs.CAP_OOM.search(stderr) or status == 137:
         return ('RESOURCE', 'KILL')
     if status == 124:
         return ('RESOURCE', 'TIMEOUT')
     if obs.FUEL_RECORD.search(stdout + b'\n' + stderr):
         return ('RESOURCE', 'FUEL')
-    if lean and status == 2 and stderr.startswith('cerberus-lean: refused — '.encode()):
-        return ('CLI_REFUSAL', stderr.split(b'\n')[0].decode('utf-8', 'replace')[:200])
+    if lean:
+        # Producer-format compatibility. Refusal attribution comes from the
+        # structured field, never a search in a program/ordinary Error payload.
+        # Malformed/missing envelopes must not fall through as absent, even
+        # when no stop decoded. Keep the resource early returns above intact.
+        if decoded.problems:
+            return ('INVALID', 'stop protocol: ' + str(decoded.problems))
+        if decoded.stops:
+            stops = [entry.stop for entry in decoded.stops]
+            if status == 2 and all(isinstance(stop, obs.Refusal) for stop in stops):
+                return ('CLI_REFUSAL', '; '.join(stop.detail for stop in stops)[:200])
+            if len(stops) == 1 and isinstance(stops[0], obs.Refusal):
+                stop = stops[0]
+                if stop.boundary != 'pnvi' or stop.item not in ORACLE_SIDE:
+                    return ('INVALID', 'unregistered PNVI refusal metadata: ' + repr(stop))
+                return ('REFUSAL', stop.item)
     try:
         o = obs.parse(stdout, stderr, status, 'batch')
         # (OBS, full tokens, failure-class tokens): the comparison and every hash use the
@@ -150,11 +171,6 @@ def classify_side(prefix: str, lean: bool):
         return ('INVALID', f'batch: {batch_reason}; {policy}: {exc}')
     if o.internal:
         msg = o.verdicts[0].field('msg').decode('utf-8', 'replace')
-        if lean and msg.startswith(REFUSAL_PREFIX):
-            m = REFUSAL_ID.match(msg[len(REFUSAL_PREFIX):])
-            if not m:
-                return ('INVALID', 'PNVI refusal without an R-PNVI id: ' + msg[:160])
-            return ('REFUSAL', m.group(1))
         return ('CRASH', msg)
     return ('INVALID', f'batch: {batch_reason}')
 
@@ -173,6 +189,8 @@ def named_crash_ids(o) -> list[str]:
 
 def classify_row(mode: str, o, l) -> tuple[str, str]:
     """(class, explanation). class 'DIFF' / 'INVALID' are always RED."""
+    if l[0] == 'INVALID' and l[1].startswith('INVARIANT:'):
+        return ('INVALID', 'lean: ' + l[1])
     if o[0] == 'INVALID':
         return ('INVALID', 'oracle: ' + o[1])
     if l[0] == 'INVALID':

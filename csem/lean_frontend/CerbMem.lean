@@ -1,3 +1,4 @@
+import CerbStopSites
 /-
   Concrete memory model for Cerberus.
   Corresponds to: memory/concrete/impl_mem.ml (module Concrete : Memory)
@@ -19,6 +20,7 @@ import Symbol
 import Mem_common
 import Nondeterminism
 import CerbFail
+import CerbStop
 import CerbTags
 import CerberusImpl
 import CerbFloat
@@ -345,15 +347,17 @@ def mkCtype (ty_ : ctype_) : ctype := Ctype ([] : List annot) ty_
 
 /-- The one PNVI refusal message (PNVI arc; design record
     docs/2026-10-04_pnvi-ae-udi-design.md §D.5, §G.1; the shape ruled in §H
-    for §F.16, option (a) — the `CerbFS` `failwithI`-with-a-fixed-prefix
-    shape, `CerbFS.lean` `fsRefusal`). `detail` names the `R-PNVI-nn` row,
+    for §F.16, option (a) — the existing panic boundary, now carrying
+    the structured outcome protocol). `detail` names the `R-PNVI-nn` row,
     the site, the impl_mem.ml line and upstream's text. [USER 2026-10-05]
     accepted the PNVI recommendations except for mirroring crashes and
     obviously wrong behaviour, which are to be refusals — an upstream crash or
     self-declared-wrong arm on the PNVI path is refused here, never
     mirrored. Every site is unreachable at the default switch set. -/
-def pnviRefusal (detail : String) : String :=
-  s!"PNVI_ae_udi refusal (unsupported upstream arm): {detail} — refused, not mirrored (upstream crashes, debug-print arms and self-declared-wrong arms on the PNVI path are loud refusals: design record docs/2026-10-04_pnvi-ae-udi-design.md §G/§H)"
+def pnviRefusal (detail : String) : CerbStop.Refusal :=
+  CerbStopSites.refusal .pnvi (some (detail.takeWhile (· != ':')).toString) detail
+    ⟨"PNVI upstream-arm validation and implementation", by decide⟩
+    ⟨"docs/2026-10-04_pnvi-ae-udi-design.md §G/§H", by decide⟩
 
 /-! ## combine_prov — impl_mem.ml:366-394 -/
 
@@ -374,8 +378,8 @@ def combineProv : Provenance → Provenance → Provenance
   -- path (the oracle hits it on 4 of its own 44 PNVI litmus files, design §C.2),
   -- REFUSED (design §G.1 row R1, class (A), `R-PNVI-01`; PNVI arc S3). Unreachable
   -- at the default switch set (nothing mints `Prov_symbolic` there)
-  | .Prov_symbolic _, _ => failwithI (pnviRefusal "R-PNVI-01: combine_prov, a Prov_symbolic provenance (first argument) — impl_mem.ml:390-394 `(* TODO: this is improvised, need to check with P *)` … `failwith \"Concrete.combine_prov: found a Prov_symbolic\"`")
-  | _, .Prov_symbolic _ => failwithI (pnviRefusal "R-PNVI-01: combine_prov, a Prov_symbolic provenance (second argument) — impl_mem.ml:390-394 `(* TODO: this is improvised, need to check with P *)` … `failwith \"Concrete.combine_prov: found a Prov_symbolic\"`")
+  | .Prov_symbolic _, _ => failwithI (CerbStop.render (.refusal (pnviRefusal "R-PNVI-01: combine_prov, a Prov_symbolic provenance (first argument) — impl_mem.ml:390-394 `(* TODO: this is improvised, need to check with P *)` … `failwith \"Concrete.combine_prov: found a Prov_symbolic\"`")))
+  | _, .Prov_symbolic _ => failwithI (CerbStop.render (.refusal (pnviRefusal "R-PNVI-01: combine_prov, a Prov_symbolic provenance (second argument) — impl_mem.ml:390-394 `(* TODO: this is improvised, need to check with P *)` … `failwith \"Concrete.combine_prov: found a Prov_symbolic\"`")))
 
 /-! ## Layout computation — impl_mem.ml:98-273 (offsetsof / sizeof / alignof)
 
@@ -433,7 +437,7 @@ def combineProv : Provenance → Provenance → Provenance
 def targetPtrSize [CerbImplCfg.Impl] : Nat :=
   match CerberusImpl.sizeof_pointer with
   | some n => n
-  | none => failwithI "CerbMem.targetPtrSize: the concrete memory model requires a complete implementation"
+  | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.targetPtrSize "CerbMem.targetPtrSize: the concrete memory model requires a complete implementation")))
 
 /- The threaded tag environment is the Fmap itself (the same value the
    ambient global holds); enumeration-spine conversion happens only at
@@ -528,7 +532,7 @@ def offsetsof_lemFuel [CerbImplCfg.Impl] (lemFuel : Nat) (enumDefs : EnumDefs) (
   | 0 => fuelExhaustedWith "CerbMem.offsetsof: fuel exhausted" ([], 0)
   | lemFuel + 1 =>
     match CerbTagsWf.lookupEntry tagDefs tagSym with
-    | none => failwithI "CerbMem.offsetsof: unknown tag (OCaml: Pmap.find Not_found)"
+    | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.offsetsof "CerbMem.offsetsof: unknown tag (OCaml: Pmap.find Not_found)")))
     | some (_, (_, StructDef membrs_ flexibleOpt)) =>
       let membrs := match flexibleOpt with
         | none => membrs_
@@ -556,18 +560,18 @@ def sizeofCtype_lemFuel [CerbImplCfg.Impl] (lemFuel : Nat) (enumDefs : EnumDefs)
     match cty with
     | Ctype _ ty_ =>
       match ty_ with
-      | .Void0 => failwithI "CerbMem.sizeofCtype: Void (impl_mem.ml:134-135 assert false)"
-      | .Array0 _ none => failwithI "CerbMem.sizeofCtype: incomplete array (impl_mem.ml:134-135 assert false)"
+      | .Void0 => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.sizeofVoid "CerbMem.sizeofCtype: Void (impl_mem.ml:134-135 assert false)")))
+      | .Array0 _ none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.sizeofIncompleteArray "CerbMem.sizeofCtype: incomplete array (impl_mem.ml:134-135 assert false)")))
       | .Function _ _ _ | .FunctionNoParams _ =>
-        failwithI "CerbMem.sizeofCtype: function type (impl_mem.ml:134-135 assert false)"
+        failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.sizeofFunction "CerbMem.sizeofCtype: function type (impl_mem.ml:134-135 assert false)")))
       | .Basic (.Integer ity) =>
         match CerberusImpl.sizeof_ity (CerberusImpl.resolveEnum enumDefs ity) with      -- impl_mem.ml:136-141
         | some n => n
-        | none => failwithI "CerbMem.sizeofCtype: the concrete memory model requires a complete implementation sizeof INTEGER"
+        | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.sizeofInteger "CerbMem.sizeofCtype: the concrete memory model requires a complete implementation sizeof INTEGER")))
       | .Basic (.Floating fty) =>
         match CerberusImpl.sizeof_fty fty with      -- impl_mem.ml:143-148
         | some n => n
-        | none => failwithI "CerbMem.sizeofCtype: the concrete memory model requires a complete implementation sizeof FLOAT"
+        | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.sizeofFloat "CerbMem.sizeofCtype: the concrete memory model requires a complete implementation sizeof FLOAT")))
       | .Array0 elemCty (some n) => n.toNat * sizeofCtype_lemFuel lemFuel enumDefs ambient tagDefs elemCty  -- impl_mem.ml:150-151 (sizeof ~tagDefs)
       | .Pointer _ _ => targetPtrSize               -- impl_mem.ml:153-158
       | .Atomic innerCty => sizeofCtype_lemFuel lemFuel enumDefs ambient tagDefs innerCty    -- impl_mem.ml:160-161 (sizeof ~tagDefs)
@@ -591,7 +595,7 @@ def sizeofCtype_lemFuel [CerbImplCfg.Impl] (lemFuel : Nat) (enumDefs : EnumDefs)
           -- trailing padding up to the max alignment — impl_mem.ml:189-191
           let x := maxSize % maxAlign
           if x == 0 then maxSize else maxSize + (maxAlign - x)
-        | _ => failwithI "CerbMem.sizeofCtype: Union tag not a UnionDef (OCaml: assert false / Not_found)"
+        | _ => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.sizeofUnion "CerbMem.sizeofCtype: Union tag not a UnionDef (OCaml: assert false / Not_found)")))
       | .Byte => 1                                  -- impl_mem.ml:193-194
 
 /-- alignof — impl_mem.ml:196-273.
@@ -609,17 +613,17 @@ def alignofCtype_lemFuel [CerbImplCfg.Impl] (lemFuel : Nat) (enumDefs : EnumDefs
     match cty with
     | Ctype _ ty_ =>
       match ty_ with
-      | .Void0 => failwithI "CerbMem.alignofCtype: Void (impl_mem.ml:198-199 assert false)"
+      | .Void0 => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.alignofVoid "CerbMem.alignofCtype: Void (impl_mem.ml:198-199 assert false)")))
       | .Function _ _ _ | .FunctionNoParams _ =>
-        failwithI "CerbMem.alignofCtype: function type (impl_mem.ml:216-218 assert false)"
+        failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.alignofFunction "CerbMem.alignofCtype: function type (impl_mem.ml:216-218 assert false)")))
       | .Basic (.Integer ity) =>
         match CerberusImpl.alignof_ity (CerberusImpl.resolveEnum enumDefs ity) with     -- impl_mem.ml:200-206
         | some n => n
-        | none => failwithI "CerbMem.alignofCtype: the concrete memory model requires a complete implementation alignof INTEGER"
+        | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.alignofInteger "CerbMem.alignofCtype: the concrete memory model requires a complete implementation alignof INTEGER")))
       | .Basic (.Floating fty) =>
         match CerberusImpl.alignof_fty fty with     -- impl_mem.ml:207-213
         | some n => n
-        | none => failwithI "CerbMem.alignofCtype: the concrete memory model requires a complete implementation alignof FLOATING"
+        | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.alignofFloat "CerbMem.alignofCtype: the concrete memory model requires a complete implementation alignof FLOATING")))
       | .Array0 elemCty _ => alignofCtype_lemFuel lemFuel enumDefs ambient tagDefs elemCty   -- impl_mem.ml:214-215 (alignof ~tagDefs)
       | .Pointer _ _ => targetPtrSize               -- impl_mem.ml:219-225
       | .Atomic innerCty => alignofCtype_lemFuel lemFuel enumDefs ambient tagDefs innerCty   -- impl_mem.ml:226-227 (alignof ~tagDefs)
@@ -640,7 +644,7 @@ def alignofCtype_lemFuel [CerbImplCfg.Impl] (lemFuel : Nat) (enumDefs : EnumDefs
             -- `alignof_ty … -> maybe nat`, mem.lem:191 `alignof_ival`), so the
             -- unbounded maximum is computed here (pins zd-ta-alignas-huge-*).
             max (memberAlign_lemFuel lemFuel enumDefs ambient tagDefs alignOpt ty) acc  -- impl_mem.ml:242-251
-        | _ => failwithI "CerbMem.alignofCtype: Struct tag not a StructDef (OCaml: assert false / Not_found)"
+        | _ => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.alignofStruct "CerbMem.alignofCtype: Struct tag not a StructDef (OCaml: assert false / Not_found)")))
       | .Union0 tagSym =>                           -- impl_mem.ml:253-271
         -- GLOBAL read, deliberately: impl_mem.ml:255 is
         -- `Pmap.find tag_sym (Tags.tagDefs ())` — NOT ~tagDefs (the
@@ -651,7 +655,7 @@ def alignofCtype_lemFuel [CerbImplCfg.Impl] (lemFuel : Nat) (enumDefs : EnumDefs
             let (_, (_, alignOpt, _, ty)) := memb
             -- ISO-fix register R7: as the struct fold (impl_mem.ml:267 `Z.to_int al_n`)
             max (memberAlign_lemFuel lemFuel enumDefs ambient tagDefs alignOpt ty) acc
-        | _ => failwithI "CerbMem.alignofCtype: Union tag not a UnionDef (OCaml: assert false / Not_found)"
+        | _ => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.alignofUnion "CerbMem.alignofCtype: Union tag not a UnionDef (OCaml: assert false / Not_found)")))
       | .Byte => 1                                  -- impl_mem.ml:272-273
 
 end
@@ -718,7 +722,7 @@ def intToBytes (signed : Bool) (val_ : Int) (size : Nat) : List (Option UInt8) :
   let lo : Int := if signed then -half else 0
   let hi : Int := (if signed then half else modulusVal) - 1
   if !(lo ≤ val_ && val_ ≤ hi) || totalBits > 128 then
-    failwithI s!"CerbMem.intToBytes: failed: bytes_of_int({if signed then "signed" else "unsigned"}), i= {val_}, nbits= {totalBits}, [{lo} ... {hi}] (impl_mem.ml:1105-1109 assert false)"
+    failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.intToBytes s!"CerbMem.intToBytes: failed: bytes_of_int({if signed then "signed" else "unsigned"}), i= {val_}, nbits= {totalBits}, [{lo} ... {hi}] (impl_mem.ml:1105-1109 assert false)")))
   else
   let unsigned : Int := if val_ < 0 then modulusVal + val_ else val_
   List.range size |>.map fun i =>
@@ -733,8 +737,8 @@ def intToBytes (signed : Bool) (val_ : Int) (size : Nat) : List (Option UInt8) :
     integer type has 1 ≤ sizeof ≤ 8, and loads are sizeof-sliced). -/
 def bytesToInt (bytes : List AbsByte) (signed : Bool) : Option Int :=
   if bytes.any (·.value.isNone) then none
-  else if bytes.isEmpty then failwithI "Concrete.int_of_bytes: [] (impl_mem.ml:742-743 assert false)"
-  else if bytes.length > 16 then failwithI "Concrete.int_of_bytes: more than 16 bytes (impl_mem.ml:744-745 assert false)"
+  else if bytes.isEmpty then failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.bytesToIntEmpty "Concrete.int_of_bytes: [] (impl_mem.ml:742-743 assert false)")))
+  else if bytes.length > 16 then failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.bytesToIntOversize "Concrete.int_of_bytes: more than 16 bytes (impl_mem.ml:744-745 assert false)")))
   else
     let rec go (bs : List AbsByte) (i : Nat) (acc : Int) : Int :=
       match bs with
@@ -778,7 +782,7 @@ def provFromIntegerBytes (bytes : List AbsByte) : Provenance :=
     Empty byte list: OCaml failwith (impl_mem.ml:433-434) — mirrored. -/
 def splitBytesProv (bytes : List AbsByte) : Provenance × Bool :=
   match bytes with
-  | [] => failwithI "Concrete.AbsByte.split_bytes: called on an empty list"
+  | [] => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.splitBytesProv "Concrete.AbsByte.split_bytes: called on an empty list")))
   | b :: _ =>
     let prov := if bytes.all (fun b' => b'.prov == b.prov) then b.prov else .Prov_none
     let validPtr := bytes.all (fun b' => b'.prov == b.prov) && (bytes.zipIdx.all fun (b', i) =>
@@ -804,7 +808,7 @@ def provsOfBytes (bytes : List AbsByte) : ProvTaint :=
     | .Prov_none => acc
     | .Prov_some allocId => allocId :: acc
     | .Prov_symbolic _ =>
-      failwithI (pnviRefusal "R-PNVI-01b: AbsByte.provs_of_bytes, Prov_symbolic byte — impl_mem.ml:470-471 `Prov_symbolic iota -> acc (* TODO(iota) *)`, reached only after combine_prov's `failwith \"Concrete.combine_prov: found a Prov_symbolic\"` (:390-394) on the same bytes")
+      failwithI (CerbStop.render (.refusal (pnviRefusal "R-PNVI-01b: AbsByte.provs_of_bytes, Prov_symbolic byte — impl_mem.ml:470-471 `Prov_symbolic iota -> acc (* TODO(iota) *)`, reached only after combine_prov's `failwith \"Concrete.combine_prov: found a Prov_symbolic\"` (:390-394) on the same bytes")))
     | .Prov_device => acc) []
   match xs with
   | [] => .NoTaint
@@ -870,7 +874,7 @@ def findOverlapping [CerbGlobal.Switches] (st : MemState) (addr : Address) : Ove
     | some (.PNVI .AE) => (true, false)
     | some (.PNVI .AE_UDI) => (true, true)
     | some _ =>
-      failwithI (pnviRefusal "R-PNVI-02: find_overlaping, a non-PNVI switch matched the SW_PNVI predicate — impl_mem.ml:810-811 `Some _ -> assert false`")
+      failwithI (CerbStop.render (.refusal (pnviRefusal "R-PNVI-02: find_overlaping, a non-PNVI switch matched the SW_PNVI predicate — impl_mem.ml:810-811 `Some _ -> assert false`")))
     | none => (false, false)
   st.allocations.foldl (init := OverlapResult.NoAlloc) fun acc allocId alloc =>
     let notExposedButRequired := requireExposed && alloc.taint != .Exposed
@@ -886,7 +890,7 @@ def findOverlapping [CerbGlobal.Switches] (st : MemState) (addr : Address) : Ove
     | .NoAlloc, some allocId => .SingleAlloc allocId                  -- :835-836
     | .SingleAlloc allocId1, some allocId2 => .DoubleAlloc allocId1 allocId2  -- :837-838
     | .DoubleAlloc _ _, some _ =>
-      failwithI (pnviRefusal "R-PNVI-03: find_overlaping, a third candidate allocation — impl_mem.ml:839-842 `DoubleAlloc _, Some _ -> (* TODO: I guess there is an invariant that the new_alloc is either of the DoubleAlloc *) acc` (upstream drops it silently)")
+      failwithI (CerbStop.render (.refusal (pnviRefusal "R-PNVI-03: find_overlaping, a third candidate allocation — impl_mem.ml:839-842 `DoubleAlloc _, Some _ -> (* TODO: I guess there is an invariant that the new_alloc is either of the DoubleAlloc *) acc` (upstream drops it silently)")))
 
 /-- The order argument for `findOverlapping` (OCaml `IntMap.fold` visits keys in
     increasing order): `Std.TreeMap.foldl` over the allocations is the fold
@@ -948,7 +952,7 @@ def memValueToBytes_lemFuel [CerbImplCfg.Impl] (lemFuel : Nat) (enumDefs : EnumD
     -- get, impl_mem.ml:1186-1191)
     let sz := match CerberusImpl.sizeof_ity (CerberusImpl.resolveEnum enumDefs ity) with
       | some n => n
-      | none => failwithI "CerbMem.memValueToBytes: the concrete memory model requires a complete implementation sizeof INTEGER"
+      | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.serializeInteger "CerbMem.memValueToBytes: the concrete memory model requires a complete implementation sizeof INTEGER")))
     -- :1147 `AilTypesAux.is_signed_ity ity` = `Implementation.is_signed_ity`
     -- (ailTypesAux.lem:28) = the CerberusImpl mirror
     let rawBytes := intToBytes (CerberusImpl.is_signed_ity (CerberusImpl.resolveEnum enumDefs ity)) n sz
@@ -960,7 +964,7 @@ def memValueToBytes_lemFuel [CerbImplCfg.Impl] (lemFuel : Nat) (enumDefs : EnumD
     -- CerberusImpl.sizeof_fty)
     let sz := match CerberusImpl.sizeof_fty fty with
       | some n => n
-      | none => failwithI "CerbMem.memValueToBytes: the concrete memory model requires a complete implementation sizeof FLOAT"
+      | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.serializeFloat "CerbMem.memValueToBytes: the concrete memory model requires a complete implementation sizeof FLOAT")))
     -- :1153-1155 `bytes_of_int true 8 (Z.of_int64 (Int64.bits_of_float fval))`:
     -- the SIGNED int64 reading of the bit pattern (so the assert's range
     -- is [-2^63, 2^63-1]); the bytes are the same two's complement
@@ -1076,7 +1080,7 @@ def memValueToBytes_append_lemFuel [CerbImplCfg.Impl] (lemFuel : Nat) (enumDefs 
   | .MVinteger ity (.IV prov n) =>
     let sz := match CerberusImpl.sizeof_ity (CerberusImpl.resolveEnum enumDefs ity) with
       | some n => n
-      | none => failwithI "CerbMem.memValueToBytes: the concrete memory model requires a complete implementation sizeof INTEGER"
+      | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.serializeInteger "CerbMem.memValueToBytes: the concrete memory model requires a complete implementation sizeof INTEGER")))
     -- :1147 `AilTypesAux.is_signed_ity ity` = `Implementation.is_signed_ity`
     -- (ailTypesAux.lem:28) = the CerberusImpl mirror
     let rawBytes := intToBytes (CerberusImpl.is_signed_ity (CerberusImpl.resolveEnum enumDefs ity)) n sz
@@ -1085,7 +1089,7 @@ def memValueToBytes_append_lemFuel [CerbImplCfg.Impl] (lemFuel : Nat) (enumDefs 
   | .MVfloating fty fv =>
     let sz := match CerberusImpl.sizeof_fty fty with
       | some n => n
-      | none => failwithI "CerbMem.memValueToBytes: the concrete memory model requires a complete implementation sizeof FLOAT"
+      | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.serializeFloat "CerbMem.memValueToBytes: the concrete memory model requires a complete implementation sizeof FLOAT")))
     -- :1153-1155 `bytes_of_int true 8 (Z.of_int64 (Int64.bits_of_float fval))`:
     -- the SIGNED int64 reading of the bit pattern (so the assert's range
     -- is [-2^63, 2^63-1]); the bytes are the same two's complement
@@ -1265,8 +1269,9 @@ theorem chunksOf_eq_range_map (e n : Nat) (l : List α) :
     the strict pair evaluates the failing component and aborts the same way
     (the run requires LEAN_ABORT_ON_PANIC); the shape keeps the wrapper
     `reconstructValue_lemFuel` (the `.2` projection) kernel-equal to the
-    pre-S2 text, whose leaves are the bare `failwithI` (`failwithI` is opaque —
-    a projection of a failing pair is not provably the failing component).
+    parameterised pre-S2 reference at `productionDiagnostics`, whose leaves are
+    bare `failwithI` applications at the same rendered messages (`failwithI` is
+    opaque — a projection of a failing pair is not provably the failing component).
     Not ported: is_zap (a refused switch's caller, :1488).
     The DEFAULT-MODE consumer is the wrapper `reconstructValue(_lemFuel)` below,
     pinned at `⟨CerbGlobal.defaultSwitches⟩`; production (`loadM`) calls THIS
@@ -1327,7 +1332,7 @@ def reconstructValueAbst_lemFuel [CerbImplCfg.Impl] [CerbGlobal.Switches] (lemFu
         match funptrmap.find? (fun (a, _) => a == ptrAddr) with
         | some (_, (fileDig, name)) =>
           .MVpointer pointeeCty (.PV prov (.PVfunction (Symbol fileDig ptrAddr.toNat (SD_Id name))))
-        | none => failwithI s!"CerbMem.reconstructValue: unknown function pointer: {ptrAddr}"
+        | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.reconstructUnknownFunction s!"CerbMem.reconstructValue: unknown function pointer: {ptrAddr}")))
       | _ =>
         -- impl_mem.ml:1051-1090: under is_PNVI (:1057), a pointer whose bytes are not
         -- one whole-pointer copy (`NotValidPtrProv`) takes its provenance from
@@ -1346,7 +1351,7 @@ def reconstructValueAbst_lemFuel [CerbImplCfg.Impl] [CerbGlobal.Switches] (lemFu
               | .NoAlloc => .Prov_none
               | .SingleAlloc allocId => .Prov_some allocId
               | .DoubleAlloc _ _ =>
-                failwithI (pnviRefusal "R-PNVI-05: abst, pointer arm, NotValidPtrProv, DoubleAlloc — impl_mem.ml:1079-1082 `(* FIXME/HACK(VICTOR): This is wrong, but when serialising the memory in the UI, I get this failwith. *) Prov_some alloc_id1`")
+                failwithI (CerbStop.render (.refusal (pnviRefusal "R-PNVI-05: abst, pointer arm, NotValidPtrProv, DoubleAlloc — impl_mem.ml:1079-1082 `(* FIXME/HACK(VICTOR): This is wrong, but when serialising the memory in the UI, I get this failwith. *) Prov_some alloc_id1`")))
           else prov
         .MVpointer pointeeCty (.PV prov (.PVconcrete none ptrAddr.toNat))
     | none =>
@@ -1416,7 +1421,7 @@ def reconstructValueAbst_lemFuel [CerbImplCfg.Impl] [CerbGlobal.Switches] (lemFu
     -- leaf is untouched; the message differs from the oracle's exception
     -- text (failure TEXT is an allowed discrepancy class).
     match CerbTagsWf.lookupEntry ambient tagSym with
-    | none => (.NoTaint, failwithI "CerbMem.reconstructValue: unknown struct tag (OCaml: Pmap.find Not_found in sizeof/offsetsof, impl_mem.ml:1067/1073)")
+    | none => (.NoTaint, failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.reconstructUnknownStruct "CerbMem.reconstructValue: unknown struct tag (OCaml: Pmap.find Not_found in sizeof/offsetsof, impl_mem.ml:1067/1073)"))))
     | some _ =>
       let (offs, _) := offsetsof enumDefs ambient ambient tagSym (ignoreFlexible := true)
       let res := offs.foldl
@@ -1436,7 +1441,7 @@ def reconstructValueAbst_lemFuel [CerbImplCfg.Impl] [CerbGlobal.Switches] (lemFu
     match CerbTagsWf.lookupEntry ambient tagSym with
     | some (_, (_, UnionDef membrs)) =>
       match membrs with
-      | [] => (.NoTaint, failwithI "CerbMem.reconstructValue: empty UnionDef (OCaml: match failure)")
+      | [] => (.NoTaint, failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.reconstructEmptyUnion "CerbMem.reconstructValue: empty UnionDef (OCaml: match failure)"))))
       | (firstIdent, (_, _, _, firstTy)) :: _ =>
         -- ident comparison is by NAME (idEqual), as OCaml's
         -- Eq Symbol.identifier instance does (:1120). A recorded identifier
@@ -1458,12 +1463,12 @@ def reconstructValueAbst_lemFuel [CerbImplCfg.Impl] [CerbGlobal.Switches] (lemFu
             let r := reconstructValueAbst_lemFuel lemFuel enumDefs ambient findOverlapping unionmap funptrmap addr membTy
                 (bytes.take (sizeofCtype enumDefs ambient membTy))
             (r.1, .MVunion tagSym membIdent r.2)
-          | none => (.NoTaint, failwithI "CerbMem.reconstructValue: recorded union member not in UnionDef (OCaml: assert false)")
-    | _ => (.NoTaint, failwithI "CerbMem.reconstructValue: Union tag not a UnionDef (OCaml: assert false)")
+          | none => (.NoTaint, failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.reconstructMissingMember "CerbMem.reconstructValue: recorded union member not in UnionDef (OCaml: assert false)"))))
+    | _ => (.NoTaint, failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.reconstructWrongUnion "CerbMem.reconstructValue: Union tag not a UnionDef (OCaml: assert false)"))))
   -- impl_mem.ml:978-983: Void, Array (_, None), Function, FunctionNoParams
   -- "must have a known size" → assert false (served-surface audit P3; was a
   -- silent MVunspecified)
-  | _ => (.NoTaint, failwithI "CerbMem.reconstructValue: type without a known size (OCaml: assert false, impl_mem.ml:978-983)")
+  | _ => (.NoTaint, failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.reconstructUnsized "CerbMem.reconstructValue: type without a known size (OCaml: assert false, impl_mem.ml:978-983)"))))
 
 /-- Measured wrapper of the full reconstruction (fuel-free, hypothesis
     `CerbTagsWf.Acyclic ambient`; obligation `reconstructValueAbst_measure_sufficient`
@@ -1488,7 +1493,9 @@ types for the consumer (cerberus-sl, statement §1.5 item 1 of the design
 record): each is `reconstructValueAbst(_lemFuel)` pinned EXPLICITLY at
 `⟨CerbGlobal.defaultSwitches⟩` (never the ambient instance — they are honestly
 the DEFAULT-mode reconstruction), with the closure fixed to `noOverlapping` and
-the taint discarded. Kernel-checked equal to the pre-S2 text:
+the taint discarded. Kernel-checked equal to the parameterised pre-S2 reference
+at the production diagnostic renderer (the historical instance retains the old
+direct messages; no equality between different opaque failure messages is claimed):
 `reconstructValue_lemFuel_eq_legacy` (test/Unit/ReconstructLegacyTest.lean,
 compiled by row 1). NO production path calls these names (speedbump: rule W2 of
 `scripts/check_no_fuel_numerals.sh`); `loadM` calls `reconstructValueAbst`. -/
@@ -1526,7 +1533,7 @@ def typeofMval_lemFuel (lemFuel : Nat) : MemValue → ctype :=
   | .MVinteger ity _ => mkCtype (.Basic (.Integer ity))
   | .MVfloating fty _ => mkCtype (.Basic (.Floating fty))
   | .MVpointer refTy _ => mkCtype (.Pointer no_qualifiers refTy)
-  | .MVarray [] => failwithI "CerbMem.typeofMval: MVarray [] (OCaml: assert false, ill-formed value)"
+  | .MVarray [] => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.typeofEmptyArray "CerbMem.typeofMval: MVarray [] (OCaml: assert false, ill-formed value)")))
   | .MVarray (mval :: rest) =>
     mkCtype (.Array0 (typeofMval_lemFuel lemFuel mval) (some ((rest.length + 1 : Nat) : Int)))
   | .MVstruct tagSym _ => mkCtype (.Struct tagSym)
@@ -1603,7 +1610,7 @@ def casePtrval {α : Type} [Inhabited α] (pv : PointerValue)
     -- row R11, `R-PNVI-07`; PNVI arc S3). Unreachable at the default switch set
     -- (nothing mints `Prov_symbolic` there); the `Prov_device` half below is on the
     -- default path and is UNCHANGED (design §G.3, §H)
-    failwithI (pnviRefusal "R-PNVI-07: case_ptrval, Prov_symbolic concrete pointer — impl_mem.ml:1858 `| _ -> failwith \"case_ptrval\"` (the Prov_symbolic half; the Prov_device half stays the mirrored fail-stop)")
+    failwithI (CerbStop.render (.refusal (pnviRefusal "R-PNVI-07: case_ptrval, Prov_symbolic concrete pointer — impl_mem.ml:1858 `| _ -> failwith \"case_ptrval\"` (the Prov_symbolic half; the Prov_device half stays the mirrored fail-stop)")))
   | .PV _ (.PVconcrete _ _) =>
     -- impl_mem.ml:1814 `| _ -> failwith "case_ptrval"` (a Prov_device or
     -- Prov_symbolic concrete pointer): an UNCAUGHT exception on the oracle
@@ -1613,7 +1620,7 @@ def casePtrval {α : Type} [Inhabited α] (pv : PointerValue)
     -- the moment Z-06 mirrored the device ranges (Z2-M-02, Z2 audit;
     -- tests/z2-probes/mem/device_funptr_call.c: calling through
     -- `(void(*)(void))0xABC` reaches this arm from core_eval.lem:920).
-    failwithI "CerbMem.casePtrval: case_ptrval"
+    failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.casePtrvalDevice "CerbMem.casePtrval: case_ptrval")))
 
 /-- case_funsym_opt — impl_mem.ml:1816-1827 -/
 def caseFunsymOpt (st : MemState) (pv : PointerValue) : Option sym :=
@@ -1646,7 +1653,7 @@ def maxIval [CerbImplCfg.Impl] (enumDefs : EnumDefs) (_tagDefs : TagDefs) (ity :
   let ity := CerberusImpl.resolveEnum enumDefs ity   -- impl_mem.ml:2369-2372, through the map
   let size := match CerberusImpl.sizeof_ity ity with
     | some n => n
-    | none => failwithI "CerbMem.maxIval: the concrete memory model requires a complete implementation MAX"
+    | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.maxIvalIncomplete "CerbMem.maxIval: the concrete memory model requires a complete implementation MAX")))
   let signedMax : Int := (2 ^ (size * 8 - 1)) - 1
   let unsignedMax : Int := (2 ^ (size * 8)) - 1
   integerIval (match ity with
@@ -1655,7 +1662,7 @@ def maxIval [CerbImplCfg.Impl] (enumDefs : EnumDefs) (_tagDefs : TagDefs) (ity :
     | .Size_t | .Wchar_t | .Unsigned _ => unsignedMax
     | .Ptrdiff_t | .Wint_t | .Signed _ => signedMax
     | .Ptraddr_t => unsignedMax
-    | .Enum0 _ => failwithI "maxIval: Enum after resolveEnum (OCaml: assert false)")
+    | .Enum0 _ => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.maxIvalEnum "maxIval: Enum after resolveEnum (OCaml: assert false)"))))
 
 /-- min_ival — impl_mem.ml:2405-2434. A reader consumer like max_ival; Enum
     resolved through the map (impl_mem.ml:2407-2410 through the registry). Char: signed → -2^7 (OCaml hardcodes 8-1
@@ -1672,9 +1679,9 @@ def minIval [CerbImplCfg.Impl] (enumDefs : EnumDefs) (_tagDefs : TagDefs) (ity :
     | .Ptrdiff_t | .Signed _ =>
       match CerberusImpl.sizeof_ity ity with
       | some n => -(2 ^ (n * 8 - 1))
-      | none => failwithI "CerbMem.minIval: the concrete memory model requires a complete implementation MIN"
+      | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.minIvalIncomplete "CerbMem.minIval: the concrete memory model requires a complete implementation MIN")))
     | .Ptraddr_t => 0
-    | .Enum0 _ => failwithI "minIval: Enum after resolveEnum (OCaml: assert false)")
+    | .Enum0 _ => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.minIvalEnum "minIval: Enum after resolveEnum (OCaml: assert false)"))))
 
 def sizeofIval [CerbImplCfg.Impl] [LemFuel] (enumDefs : EnumDefs) (tagDefs : TagDefs) (ty : ctype) : IntegerValue := integerIval (sizeofCtype enumDefs tagDefs ty)
 def alignofIval [CerbImplCfg.Impl] [LemFuel] (enumDefs : EnumDefs) (tagDefs : TagDefs) (ty : ctype) : IntegerValue := integerIval (alignofCtype enumDefs tagDefs ty)
@@ -1685,7 +1692,7 @@ def alignofIval [CerbImplCfg.Impl] [LemFuel] (enumDefs : EnumDefs) (tagDefs : Ta
     only through the concurrency mode, which is REFUSED (Z-24/Z-25) and
     non-functional on the oracle itself. -/
 def concurReadIval (_ : integerType) (_ : sym) : IntegerValue :=
-  failwithI "CerbMem.concurReadIval: TODO: concurRead_ival"
+  failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.concurReadIval "CerbMem.concurReadIval: TODO: concurRead_ival")))
 
 /-! ### Integer division/remainder helpers
 
@@ -1724,20 +1731,20 @@ def concurReadIval (_ : integerType) (_ : sym) : IntegerValue :=
 /-- Z.div — truncating quotient (zarith z.mli:155-162). zarith raises
     `Division_by_zero` on a zero divisor: mirrored as a fail-stop. -/
 def integerDiv_t (a b : Int) : Int :=
-  if b == 0 then failwithI "CerbMem.integerDiv_t: Division_by_zero (zarith Z.div raises; mirrors the oracle's uncaught exception, impl_mem.ml:1967 diff_ptrval)"
+  if b == 0 then failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.integerDiv "CerbMem.integerDiv_t: Division_by_zero (zarith Z.div raises; mirrors the oracle's uncaught exception, impl_mem.ml:1967 diff_ptrval)")))
   else Int.tdiv a b
 /-- Z.integerRem_t = Z.rem — truncating remainder, sign of dividend
     (impl_mem.ml:11, zarith z.mli:164-168). zarith raises
     `Division_by_zero` on a zero divisor: mirrored as a fail-stop. -/
 def integerRem_t (a b : Int) : Int :=
-  if b == 0 then failwithI "CerbMem.integerRem_t: Division_by_zero (zarith Z.rem raises; mirrors the oracle's uncaught exception, impl_mem.ml:2481-2482 op_ival IntRem_t)"
+  if b == 0 then failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.integerRemTrunc "CerbMem.integerRem_t: Division_by_zero (zarith Z.rem raises; mirrors the oracle's uncaught exception, impl_mem.ml:2481-2482 op_ival IntRem_t)")))
   else Int.tmod a b
 /-- Z.integerRem_f = Big_int_Z.mod_big_int — euclidean remainder,
     always non-negative (impl_mem.ml:12). Lean's Int.emod is exactly
     euclidean remainder. `mod_big_int` raises `Division_by_zero` on a zero
     divisor: mirrored as a fail-stop. -/
 def integerRem_f (a b : Int) : Int :=
-  if b == 0 then failwithI "CerbMem.integerRem_f: Division_by_zero (Big_int_Z.mod_big_int raises; mirrors the oracle's uncaught exception, impl_mem.ml:2483-2484 op_ival IntRem_f)"
+  if b == 0 then failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.integerRemFloor "CerbMem.integerRem_f: Division_by_zero (Big_int_Z.mod_big_int raises; mirrors the oracle's uncaught exception, impl_mem.ml:2483-2484 op_ival IntRem_f)")))
   else Int.emod a b
 
 /-- op_ival — impl_mem.ml:2464-2490 -/
@@ -1774,7 +1781,7 @@ def opIval (op : integer_operator) (v1 v2 : IntegerValue) : IntegerValue :=
       -- the fail-OPEN `.toNat` clamp that stood here. Unreachable from C: the
       -- shift elaboration guards negative counts (UB) before the `^` (std.core
       -- shift procs).
-      if n2 < 0 then failwithI "CerbMem.opIval IntExp: negative exponent has no meaning in the model (impl_mem.ml:2490 Z.pow raises Invalid_argument — mirrored as a fail-stop); unreachable behind the shift guards"
+      if n2 < 0 then failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.negativeExponent "CerbMem.opIval IntExp: negative exponent has no meaning in the model (impl_mem.ml:2490 Z.pow raises Invalid_argument — mirrored as a fail-stop); unreachable behind the shift guards")))
       else .IV Provenance.Prov_none (n1 ^ n2.toNat)
 
 /-- offsetof_ival — impl_mem.ml:2193-2201: offsetsof (WITHOUT
@@ -1790,7 +1797,7 @@ def offsetofIval [CerbImplCfg.Impl] [LemFuel] (enumDefs : EnumDefs) (tagDefs : T
   let (xs, _) := offsetsof enumDefs tagDefs tagDefsMap tag
   match xs.find? (fun (ident, _, _) => idEqual ident memb) with
   | some (_, _, off) => integerIval off
-  | none => failwithI "Concrete.offsetof_ival: invalid memb_ident"
+  | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.offsetofIval "Concrete.offsetof_ival: invalid memb_ident")))
 
 /-! ## Bitwise operations — impl_mem.ml:2497-2511: pure two's-complement
     arithmetic on unbounded Z — `Z.(sub (neg n) (of_int 1))`, `Z.logand`,
@@ -1970,10 +1977,10 @@ def arrayShiftPtrval [CerbImplCfg.Impl] [LemFuel] (enumDefs : EnumDefs) (tagDefs
       -- §G.1 row R8, class (A), `R-PNVI-06`; PNVI arc S3). The function is on the
       -- default path; THIS arm is not (nothing mints `Prov_symbolic` at the default
       -- switch set)
-      failwithI (pnviRefusal "R-PNVI-06: array_shift_ptrval (pure), Prov_symbolic pointer — impl_mem.ml:2254-2255 `failwith \"Concrete.array_shift_ptrval found a Prov_symbolic\"`")
+      failwithI (CerbStop.render (.refusal (pnviRefusal "R-PNVI-06: array_shift_ptrval (pure), Prov_symbolic pointer — impl_mem.ml:2254-2255 `failwith \"Concrete.array_shift_ptrval found a Prov_symbolic\"`")))
     | _, .PVnull _ =>
-      failwithI s!"CerbMem.arrayShiftPtrval: TODO(pure shift a null pointer should be undefined behaviour), offset:{offset}"
-    | _, .PVfunction _ => failwithI "Concrete.array_shift_ptrval, PVfunction"
+      failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.arrayShiftNull s!"CerbMem.arrayShiftPtrval: TODO(pure shift a null pointer should be undefined behaviour), offset:{offset}")))
+    | _, .PVfunction _ => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.arrayShiftFunction "Concrete.array_shift_ptrval, PVfunction")))
     | _, .PVconcrete um addr => .PV prov (.PVconcrete um (addr + offset))
 
 /-- member_shift_ptrval — impl_mem.ml:2223-2242.
@@ -1996,7 +2003,7 @@ def memberShiftPtrval [CerbImplCfg.Impl] [LemFuel] (enumDefs : EnumDefs) (tagDef
     -- impl_mem.ml:2239-2240: failwith "Concrete.member_shift_ptrval,
     -- PVfunction" — mirrored as a panic (arc-14 S1 F1, sem:S8; was a
     -- self-confessed fail→value divergence returning pv unchanged).
-    failwithI "Concrete.member_shift_ptrval, PVfunction (impl_mem.ml:2239-2240)"
+    failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.memberShiftFunction "Concrete.member_shift_ptrval, PVfunction (impl_mem.ml:2239-2240)")))
   | .PV prov (.PVconcrete _ addr) =>
     .PV prov (.PVconcrete unionMem (addr + offsetVal))
 
@@ -2008,7 +2015,7 @@ def bytefromint (iv : IntegerValue) : IntegerValue :=
   match iv with
   | .IV _ n =>
     if 0 ≤ n && n ≤ 255 then iv
-    else failwithI "CerbMem.bytefromint: value out of byte range (impl_mem.ml:2776 assert)"
+    else failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.bytefromint "CerbMem.bytefromint: value out of byte range (impl_mem.ml:2776 assert)")))
 
 /-- intfrombyte — impl_mem.ml:2779-2781: same assert, value unchanged
     (arc-14 S1 F1, sem:S6; the assert was previously dropped). -/
@@ -2016,7 +2023,7 @@ def intfrombyte (iv : IntegerValue) : IntegerValue :=
   match iv with
   | .IV _ n =>
     if 0 ≤ n && n ≤ 255 then iv
-    else failwithI "CerbMem.intfrombyte: value out of byte range (impl_mem.ml:2780 assert)"
+    else failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.intfrombyte "CerbMem.intfrombyte: value out of byte range (impl_mem.ml:2780 assert)")))
 
 /-- overlapping — impl_mem.ml:527-532 -/
 def overlapping (f1 f2 : Footprint) : Bool :=
@@ -2065,8 +2072,9 @@ def ppSymbol : sym → String
       if CerbDebug.get_level () > 4 then name ++ "{" ++ toString n ++ "}"
       else name
     match sd with
-    | .SD_Id str | .SD_ObjectAddress str | .SD_FunArgValue str =>
+    | .SD_Id str | .SD_ObjectAddress str =>
       maybeAddNumber str
+    | .SD_FunArgValue str => str ++ "_fav" ++ toString n -- fork pp_symbol remedy, tray 65
     | .SD_unnamed_tag _ => "__cerbty_unnamed_tag_" ++ toString n  -- is_human=false arm (pp_symbol.ml:25-29)
     | .SD_CN_Id str => str
     | _ => "a_" ++ toString n  -- SD_None / SD_Return / SD_FunArg (pp_symbol.ml:33-34)
@@ -2235,17 +2243,17 @@ end
     concrete model) — fail-stop likewise. -/
 
 def deriveCap (_ : Bool) (_ : derivecap_op) (_ _ : IntegerValue) : IntegerValue :=
-  failwithI "assert false (* CHERI only *): Concrete.derive_cap (impl_mem.ml:2175-2176)"
+  failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.deriveCap "assert false (* CHERI only *): Concrete.derive_cap (impl_mem.ml:2175-2176)")))
 def capAssignValue (_ : CerbLocation.Loc) (_ _ : IntegerValue) : IntegerValue :=
-  failwithI "assert false (* CHERI only *): Concrete.cap_assign_value (impl_mem.ml:2178-2179)"
+  failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.capAssignValue "assert false (* CHERI only *): Concrete.cap_assign_value (impl_mem.ml:2178-2179)")))
 def nullCap (_ : Bool) : IntegerValue :=
-  failwithI "assert false (* CHERI only *): Concrete.null_cap (impl_mem.ml:2184-2185)"
+  failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.nullCap "assert false (* CHERI only *): Concrete.null_cap (impl_mem.ml:2184-2185)")))
 def ptrTIntValue (_ : IntegerValue) : IntegerValue :=
-  failwithI "assert false (* CHERI only *): Concrete.ptr_t_int_value (impl_mem.ml:2181-2182)"
+  failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.ptrTIntValue "assert false (* CHERI only *): Concrete.ptr_t_int_value (impl_mem.ml:2181-2182)")))
 def cheriPointerHashPrintf (_ : Bool) (_ : PointerValue) : String :=
-  failwithI "CHERI only: cheri_pointer_hash_printf has no concrete-model body"
+  failwithI (CerbStop.render (.invariant (CerbStopSites.cheriPointerHash "CHERI only: cheri_pointer_hash_printf has no concrete-model body")))
 def getIntrinsicTypeSpec (_ : String) : Option intrinsics_signature :=
-  failwithI "assert false (* CHERI only *): Concrete.get_intrinsic_type_spec (impl_mem.ml:2187-2188)"
+  failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.intrinsicType "assert false (* CHERI only *): Concrete.get_intrinsic_type_spec (impl_mem.ml:2187-2188)")))
 
 /-! ## Monadic operations -/
 
@@ -2253,6 +2261,27 @@ abbrev memM (a : Type) := ndM a String mem_error (mem_constraint IntegerValue) M
 
 /-- An intentional model stop, distinct from modeled memory errors. -/
 def failStopMem {a : Type} (msg : String) : memM a := CerbFail.failStopND msg
+
+/-- Attributed typed kill: a refusal cannot enter this adapter. -/
+def stopMem {a : Type} (stop : CerbStop.Failure) : memM a :=
+  failStopMem (CerbStop.render stop.toStop)
+
+/-- A switch-only arm which the command line does not admit. -/
+def switchRefusal (item detail : String) : CerbStop.Refusal :=
+  CerbStopSites.refusal .switches (some item) detail
+    ⟨"implementation and validation of this semantics switch", by decide⟩
+    ⟨"CONTRACT.md §2/§3; CerbMem switch guards", by decide⟩
+
+/-- Monomorphic failure reason. Keeping this leaf separate lets the existing
+census classify its pure result type instead of the enclosing `memM` adapter. -/
+def refusalKill (refusal : CerbStop.Refusal) : kill_reason mem_error :=
+  failwithI (CerbStop.render (.refusal refusal))
+
+/-- A refusal aborts while constructing the killed node. Keeping the node and
+input state explicit preserves the observation-erasure law even though the
+failure reason is opaque (outcome-protocol record C.5). -/
+def refuseM {a : Type} (refusal : CerbStop.Refusal) : memM a :=
+  ND fun s => (NDkilled (refusalKill refusal), s)
 
 /-- A PNVI refusal (`pnviRefusal`) ascribed at the memory MONAD, for the refusals that sit
     inside an `ND fun st => …` body (R-PNVI-08, R-PNVI-10; PNVI arc S4 Part 1, the S3
@@ -2263,7 +2292,7 @@ def failStopMem {a : Type} (msg : String) : memM a := CerbFail.failStopND msg
     `monadic_ascribed` group, `scripts/failure_census.py`), not pure ones. Use at a site as
     `match pnviRefuseM d with | ND f => f st`. At run time the leaf aborts first, as every
     refusal does (`LEAN_ABORT_ON_PANIC`). -/
-def pnviRefuseM {a : Type} (detail : String) : memM a := failwithI (pnviRefusal detail)
+def pnviRefuseM {a : Type} (detail : String) : memM a := failwithI (CerbStop.render (.refusal (pnviRefusal detail)))
 
 def memReturn {a : Type} (x : a) : memM a := nd_return x
 
@@ -2333,7 +2362,7 @@ def lookupIota (st : MemState) (iota : SymbolicStorageInstanceId) : IotaEntry :=
   match st.iotaMap.get? iota with
   | some entry => entry
   | none =>
-    failwithI (pnviRefusal s!"R-PNVI-04: lookup_iota, iota {iota} absent from the iota map — impl_mem.ml:912-914 `IntMap.find iota st.iota_map` (raises Not_found)")
+    failwithI (CerbStop.render (.refusal (pnviRefusal s!"R-PNVI-04: lookup_iota, iota {iota} absent from the iota map — impl_mem.ml:912-914 `IntMap.find iota st.iota_map` (raises Not_found)")))
 
 /-- The outcome of a `resolve_iota` precondition — impl_mem.ml:917-942
     `[ `OK | `FAIL of Cerb_location.t * mem_error ]` (built by the kill, load and
@@ -2463,6 +2492,31 @@ def readonlyStatusForAlloc (pref : prefix0) (initOpt : Option MemValue) : Readon
     (CerbMemAllocatorProofs.lean) is stated with it. -/
 def oomKill : kill_reason mem_error := Other (MerrOther "Concrete.allocator: failed (out of memory)")
 
+/-- The fork's alignment refusal for the allocator (item G2; [USER 2026-10-20]: where
+    upstream left a case to a TODO, the fork leaves it or REFUSES LOUDLY, never inventing
+    a verdict; upstream-tray draft 57): an alignment that is not a positive power of two.
+    Upstream's only check is std.core:385's `size rem_t align = 0` (`aligned_alloc_proxy`);
+    the allocator's remainder (b9aeedcb4 :1253) then rounds the cursor down to a multiple of
+    ANY align, so `aligned_alloc(3, 9)` allocated at "alignment 3". The test is the oracle's
+    `not (equal align zero) && not (gt align zero && equal (logand align (pred align)) zero)`
+    (impl_mem.ml:1306 in this tree), written on `Int.toNat` because this toolchain has no
+    `Int.land`; for `align > 0` the two agree. Alignment ZERO is deliberately excluded: it
+    is the pre-existing `Division_by_zero` crash (draft 34, `aligned_alloc(0, n)` dies at
+    std.core:385's `rem_t`, `integerRem_t`; the arm in `allocator` mirrors the quomod) and
+    its behaviour is unchanged. A negative alignment is refused (`size_t` never produces
+    one; a hand-written Core `alloc` could). Measured 2026-10-20 over every exec-type lane
+    (record `docs/2026-10-20_item-g-refusals-record.md`): the alignments reaching the
+    allocator are 1, 2, 4, 8, 16, and 3 on exactly one row
+    (tests/libc_exec/009-aligned-alloc-3.c); `_Alignas(3)` never reaches it (a front-end
+    constraint violation, §6.7.5#3). Reduces by `decide`/`rfl`/`simp [alignmentRefused]` on
+    a literal. -/
+def alignmentRefused (align : Int) : Bool :=
+  align != 0 && !(align > 0 && (align.toNat &&& (align.toNat - 1)) == 0)
+
+/-- The refusal text, byte-identical to the fork oracle's `failwith` (impl_mem.ml:1307). -/
+def alignmentRefusal (align sz : Int) : String :=
+  s!"Concrete.allocator: refused - allocation with an invalid alignment {align} (not a positive power of two; size {sz}); C17 7.22.3.1#2-3 requires aligned_alloc to fail by returning a null pointer (C11: undefined behaviour); upstream allocates under runtime/libcore/std.core:385 aligned_alloc_proxy, whose only check is 'size rem_t align = 0', and impl_mem.ml allocator's quomod (b9aeedcb4 :1253) - the fork refuses rather than decides (item G2, 2026-10-20)"
+
 /-- allocator — impl_mem.ml:1247-1270, the arithmetic verbatim on Z (Int),
     AFTER remedy 1 of upstream-tray draft 44 (fork fix, 2026-09-16 — the
     fork deviates from pristine `b9aeedcb4` here, OBSERVABLY at upstream's
@@ -2503,7 +2557,11 @@ def oomKill : kill_reason mem_error := Other (MerrOther "Concrete.allocator: fai
     states, with the pre-fix values as the negative control).
     Zero-discrepancy Z-13 / Z2-M-05: the two callers used to clamp
     size and align with `.max 1` and map a negative size to 0 through
-    `.toNat` — silent normalisations the OCaml has nowhere; both gone. -/
+    `.toNat` — silent normalisations the OCaml has nowhere; both gone.
+    Fork refusal (item G2, 2026-10-20; `alignmentRefused` below): an alignment
+    that is not a positive power of two is REFUSED after the `z < 0` kill and
+    before the remainder, where the oracle's `failwith` now sits
+    (impl_mem.ml:1292-1308 in this tree). -/
 def allocator (sz align : Int) : memM (StorageInstanceId × Address) :=
   ND fun st =>
     let allocId := st.nextAllocId
@@ -2511,7 +2569,17 @@ def allocator (sz align : Int) : memM (StorageInstanceId × Address) :=
     if z < 0 then                                                                -- :1255-1256 (draft 44 fix)
       (NDkilled oomKill, st)
     else if align == 0 then                                                      -- :1258 quomod → Division_by_zero
-      (NDkilled (CerbFail.failStopKill "CerbMem.allocator: alignment 0 has no meaning in the model (impl_mem.ml:1258 quomod raises Division_by_zero — mirrored as a fail-stop; docs/2026-10-03_total-arith-and-bookkeeping-record.md)"), st)
+      (NDkilled (CerbFail.failStopKill (CerbStop.render (.upstreamCrash (CerbStopSites.allocatorAlignment "CerbMem.allocator: alignment 0 has no meaning in the model (impl_mem.ml:1258 quomod raises Division_by_zero — mirrored as a fail-stop; docs/2026-10-03_total-arith-and-bookkeeping-record.md)")))), st)
+    else if alignmentRefused align then                                          -- fork refusal (item G2), impl_mem.ml:1306-1307 in this tree
+      -- The leaf is the loud fail-stop every refusal uses (`failwithI`: under
+      -- LEAN_ABORT_ON_PANIC the process aborts with the text, as the oracle's
+      -- uncaught `Failure` does). It is carried as the MESSAGE of a kill, not as
+      -- the arm's value, so that the KERNEL sees a kill here exactly as in the
+      -- arm above: `allocator_active_sound` keeps its hypothesis-free statement
+      -- ("a refusal arm is never active"), where a `failwithI` at the pair type
+      -- would be an opaque value the theorem could say nothing about. Without
+      -- the abort the arm is still a kill (an empty message), never an answer.
+      (NDkilled (CerbFail.failStopKill (failwithI (alignmentRefusal align sz))), st)
     else
       let m := z % align                                                         -- :1258 (Euclidean remainder, m ≥ 0)
       let z' := z - m                                                            -- :1259 (align down)
@@ -2539,7 +2607,7 @@ def allocateObject [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (enumDefs 
   | .IV _ alignN =>
   let size : Int := sizeofCtype enumDefs tagDefs ty                                       -- :1289
   match reqAddrOpt with
-  | some _ => failStopMem "TODO: cerb::with_address() is yet implemented"           -- :1293-1295
+  | some _ => stopMem (.upstreamCrash (CerbStopSites.allocateRequested "TODO: cerb::with_address() is yet implemented"))           -- :1293-1295
   | none =>
   nd_bind (allocator size alignN) fun (idAddr : StorageInstanceId × Address) =>  -- :1291-1292
   let (allocId, addr) := idAddr
@@ -2550,7 +2618,7 @@ def allocateObject [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (enumDefs 
     -- (seam-hygiene H2). The guard is that branch's test, `init_opt = None ∧
     -- has_switch`, hoisted in front of the unchanged body.
     if initOpt.isNone && CerbGlobal.has_switch .zero_initialised then
-      (NDkilled (Other (MerrOther "allocateObject: SW_zero_initialised is set but the zero-fill arm (impl_mem.ml:1318-1324) is not ported — switches are refused (Z-24)")), st)
+      (match refuseM (switchRefusal "zero_initialised" "allocateObject: SW_zero_initialised is set but the zero-fill arm (impl_mem.ml:1318-1324) is not ported — switches are refused (Z-24)") with | ND f => f st)
     else
     -- readonly_status per init_opt — impl_mem.ml:1304-1333 (see
     -- readonlyStatusForAlloc above)
@@ -2644,7 +2712,7 @@ def killM [CerbGlobal.Switches] (loc : CerbLocation.Loc) (isDynamic : Bool) (pv 
             lastUsed := some allocId
             allocations := st1.allocations.erase allocId }
           if CerbGlobal.has_switch .zap_dead_pointers then
-            (NDkilled (Other (MerrOther "killM: SW_zap_dead_pointers is set but zap_pointers (impl_mem.ml:1447-1462) is not ported — switches are refused (Z-24)")), st)
+            (match refuseM (switchRefusal "zap_dead_pointers" "killM: SW_zap_dead_pointers is set but zap_pointers (impl_mem.ml:1447-1462) is not ported — switches are refused (Z-24)") with | ND f => f st)
           else (NDactive (), st')
     | .PV (.Prov_some allocId) (.PVconcrete _ addr) =>
       -- :1515-1549 in THIS order: is_dynamic addr (the POINTER's address, not
@@ -2665,7 +2733,7 @@ def killM [CerbGlobal.Switches] (loc : CerbLocation.Loc) (isDynamic : Bool) (pv 
           -- on Lean via libc-body injection) or the fork-only
           -- `cerb::with_address` attribute. Unreachable from C through
           -- malloc/free (argument temporaries, translation.lem:4435).
-          (NDkilled (CerbFail.failStopKill "Concrete: FREE was called on a dead allocation"), st)
+          (NDkilled (CerbFail.failStopKill (CerbStop.render (.upstreamCrash (CerbStopSites.killDeadStatic "Concrete: FREE was called on a dead allocation")))), st)
       else match st.allocations.get? allocId with
         | none =>
           -- :1534 get_allocation ~loc → :669-675 MerrOutsideLifetime (UB009)
@@ -2680,7 +2748,7 @@ def killM [CerbGlobal.Switches] (loc : CerbLocation.Loc) (isDynamic : Bool) (pv 
             -- ported): that switch is refused (Z-24), so the OCaml default
             -- arm `return ()` is the only reachable one; the set case is loud
             if CerbGlobal.has_switch .zap_dead_pointers then
-              (NDkilled (Other (MerrOther "killM: SW_zap_dead_pointers is set but zap_pointers (impl_mem.ml:1447-1462) is not ported — switches are refused (Z-24)")), st)
+              (match refuseM (switchRefusal "zap_dead_pointers" "killM: SW_zap_dead_pointers is set but zap_pointers (impl_mem.ml:1447-1462) is not ported — switches are refused (Z-24)") with | ND f => f st)
             else (NDactive (), st')
           else fail_ (MerrUndefinedFree Free_out_of_bound)                       -- :1547-1548
 
@@ -2858,7 +2926,7 @@ def loadM [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (enumDefs : EnumDef
       -- Refused set (Z-24): the default arm is the only reachable one; the set
       -- case is loud (seam-hygiene H2)
       else if CerbGlobal.has_switch .strict_reads then
-        (NDkilled (Other (MerrOther "loadM: SW_strict_reads is set but the strict-reads arm (impl_mem.ml:1601-1606) is not ported — switches are refused (Z-24)")), st0)
+        (match refuseM (switchRefusal "strict_reads" "loadM: SW_strict_reads is set but the strict-reads arm (impl_mem.ml:1601-1606) is not ported — switches are refused (Z-24)") with | ND f => f st0)
       else (NDactive (fp, mv), loadedState)
     match pv with
     | .PV _ (.PVnull _) => fail_ (MerrAccess LoadAccess NullPtr)          -- impl_mem.ml:1605-1606
@@ -2995,7 +3063,7 @@ def storeM [CerbImplCfg.Impl] [LemFuel] (enumDefs : EnumDefs) (tagDefs : TagDefs
           -- unreachable: the precondition's `get_allocation` found `allocId` in
           -- the same allocation map (`resolveIota` writes only `iotaMap`); loud,
           -- never absorbed
-          (NDkilled (CerbFail.failStopKill s!"storeM: the allocation {allocId} resolved for a Prov_symbolic store is absent (unreachable: resolveIota's precondition found it in the same allocation map)"), st)
+          (NDkilled (CerbFail.failStopKill (CerbStop.render (.invariant (CerbStopSites.storeResolvedAbsent s!"storeM: the allocation {allocId} resolved for a Prov_symbolic store is absent (unreachable: resolveIota's precondition found it in the same allocation map)")))), st)
     | .PV (.Prov_some allocId) (.PVconcrete unionMem addr) =>
       -- impl_mem.ml:1762-1789: NO is_dead check on the store path — a
       -- dead allocation is caught by is_within_bound's get_allocation
@@ -3081,7 +3149,7 @@ def eqPtrval [CerbGlobal.Switches] (_ : CerbLocation.Loc) (pv1 pv2 : PointerValu
           [("using provenance", memReturn false),
            ("ignoring provenance", memReturn (addr1 == addr2))]
     if CerbGlobal.has_switch .strict_pointer_equality then
-      kill (Other (MerrOther "eqPtrval: SW_strict_pointer_equality is set but the strict-equality arm (impl_mem.ml:1860-1861) is not ported — switches are refused (Z-24)"))
+      refuseM (switchRefusal "strict_pointer_equality" "eqPtrval: SW_strict_pointer_equality is set but the strict-equality arm (impl_mem.ml:1860-1861) is not ported — switches are refused (Z-24)")
     else match prov1, prov2 with
       | .Prov_symbolic iota1, .Prov_symbolic iota2 =>
         -- impl_mem.ml:1905-1914 (PNVI-ae-udi): `lookup_iota iota1`, then iota2
@@ -3112,7 +3180,7 @@ def ltPtrval [CerbGlobal.Switches] (loc : CerbLocation.Loc) (pv1 pv2 : PointerVa
   | .PV _ (.PVconcrete _ a1), .PV _ (.PVconcrete _ a2) =>
     -- :1897-1903 SW_strict_pointer_relationals: refused set (Z-24), set case loud (H2)
     if CerbGlobal.has_switch .strict_pointer_relationals then
-      kill (Other (MerrOther "ltPtrval: SW_strict_pointer_relationals is set but the strict-relational arm (impl_mem.ml:1897-1903) is not ported — switches are refused (Z-24)"))
+      refuseM (switchRefusal "strict_pointer_relationals" "ltPtrval: SW_strict_pointer_relationals is set but the strict-relational arm (impl_mem.ml:1897-1903) is not ported — switches are refused (Z-24)")
     else memReturn (a1 < a2)                                  -- :1896-1897 (non-strict)
   | .PV _ (.PVnull _), _ | _, .PV _ (.PVnull _) =>
     memFail (MerrWIP "lt_ptrval ==> one null pointer") loc    -- :1898-1900
@@ -3124,7 +3192,7 @@ def gtPtrval [CerbGlobal.Switches] (loc : CerbLocation.Loc) (pv1 pv2 : PointerVa
   | .PV _ (.PVconcrete _ a1), .PV _ (.PVconcrete _ a2) =>
     -- :1915-1921 SW_strict_pointer_relationals: refused set (Z-24), set case loud (H2)
     if CerbGlobal.has_switch .strict_pointer_relationals then
-      kill (Other (MerrOther "gtPtrval: SW_strict_pointer_relationals is set but the strict-relational arm (impl_mem.ml:1915-1921) is not ported — switches are refused (Z-24)"))
+      refuseM (switchRefusal "strict_pointer_relationals" "gtPtrval: SW_strict_pointer_relationals is set but the strict-relational arm (impl_mem.ml:1915-1921) is not ported — switches are refused (Z-24)")
     else memReturn (a1 > a2)                                  -- :1914-1915 (non-strict)
   | _, _ => memFail (MerrWIP "gt_ptrval") loc                 -- :1916-1917
 
@@ -3134,7 +3202,7 @@ def lePtrval [CerbGlobal.Switches] (loc : CerbLocation.Loc) (pv1 pv2 : PointerVa
   | .PV _ (.PVconcrete _ a1), .PV _ (.PVconcrete _ a2) =>
     -- :1930-1938 SW_strict_pointer_relationals: refused set (Z-24), set case loud (H2)
     if CerbGlobal.has_switch .strict_pointer_relationals then
-      kill (Other (MerrOther "lePtrval: SW_strict_pointer_relationals is set but the strict-relational arm (impl_mem.ml:1930-1938) is not ported — switches are refused (Z-24)"))
+      refuseM (switchRefusal "strict_pointer_relationals" "lePtrval: SW_strict_pointer_relationals is set but the strict-relational arm (impl_mem.ml:1930-1938) is not ported — switches are refused (Z-24)")
     else memReturn (a1 ≤ a2)                                  -- :1930-1932 (non-strict)
   | _, _ => memFail (MerrWIP "le_ptrval") loc                 -- :1934-1935
 
@@ -3144,7 +3212,7 @@ def gePtrval [CerbGlobal.Switches] (loc : CerbLocation.Loc) (pv1 pv2 : PointerVa
   | .PV _ (.PVconcrete _ a1), .PV _ (.PVconcrete _ a2) =>
     -- :1947-1955 SW_strict_pointer_relationals: refused set (Z-24), set case loud (H2)
     if CerbGlobal.has_switch .strict_pointer_relationals then
-      kill (Other (MerrOther "gePtrval: SW_strict_pointer_relationals is set but the strict-relational arm (impl_mem.ml:1947-1955) is not ported — switches are refused (Z-24)"))
+      refuseM (switchRefusal "strict_pointer_relationals" "gePtrval: SW_strict_pointer_relationals is set but the strict-relational arm (impl_mem.ml:1947-1955) is not ported — switches are refused (Z-24)")
     else memReturn (a1 ≥ a2)                                  -- :1948-1950 (non-strict)
   | _, _ => memFail (MerrWIP "ge_ptrval") loc                 -- :1952-1953
 
@@ -3190,7 +3258,7 @@ def diffPtrval [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (enumDefs : En
     -- Refused set (Z-24): the default arm is the only reachable one; the set
     -- case is loud (seam-hygiene H2)
     if CerbGlobal.has_switch (.pointer_arith .PERMISSIVE) then
-      (NDkilled (Other (MerrOther "diffPtrval: SW_pointer_arith PERMISSIVE is set but the permissive arm (impl_mem.ml:1978-1983) is not ported — switches are refused (Z-24)")), st)
+      (match refuseM (switchRefusal "permissive_pointer_arith" "diffPtrval: SW_pointer_arith PERMISSIVE is set but the permissive arm (impl_mem.ml:1978-1983) is not ported — switches are refused (Z-24)") with | ND f => f st)
     else match pv1, pv2 with
     | .PV (.Prov_some allocId1) (.PVconcrete _ addr1),
       .PV (.Prov_some allocId2) (.PVconcrete _ addr2) =>
@@ -3462,13 +3530,13 @@ def intfromptr [CerbImplCfg.Impl] [CerbGlobal.Switches] (enumDefs : EnumDefs) (t
 def effArrayShiftPtrval [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (enumDefs : EnumDefs) (tagDefs : TagDefs) (loc : CerbLocation.Loc) (pv : PointerValue) (elemTy : ctype) (iv : IntegerValue) : memM PointerValue :=
   match pv, iv with
   | .PV _ (.PVnull _), _ => memFail MerrArrayShift loc                             -- :2247-2251
-  | .PV _ (.PVfunction _), _ => failStopMem "Concrete.eff_array_shift_ptrval, PVfunction"  -- :2252-2253
+  | .PV _ (.PVfunction _), _ => stopMem (.upstreamCrash (CerbStopSites.shiftFunction "Concrete.eff_array_shift_ptrval, PVfunction"))  -- :2252-2253
   | .PV (.Prov_symbolic iota) (.PVconcrete _ addr), .IV _ ival =>
     -- impl_mem.ml:2301-2376 (THIS tree), PNVI-ae-udi
     let sz : Int := (sizeofCtype enumDefs tagDefs elemTy : Int)
     let shiftedAddr := addr + sz * ival                                            -- :2306
     if CerbGlobal.has_switch (.pointer_arith .STRICT) then
-      kill (Other (MerrOther "effArrayShiftPtrval: SW_pointer_arith STRICT is set but the strict bounds-checking arms (impl_mem.ml:2309-2310, 2381-2382, 2393-2394) are not ported — switches are refused (Z-24)"))
+      refuseM (switchRefusal "strict_pointer_arith" "effArrayShiftPtrval: SW_pointer_arith STRICT is set but the strict bounds-checking arms (impl_mem.ml:2309-2310, 2381-2382, 2393-2394) are not ported — switches are refused (Z-24)")
     else ND fun st =>
       -- precond z — :2307-2319 (the STRICT disjunct is the loud kill above)
       let precond (z : StorageInstanceId) : Except (kill_reason mem_error) Bool :=
@@ -3526,7 +3594,7 @@ def effArrayShiftPtrval [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (enum
       -- the STRICT disjunct: refused set (Z-24), its arms are not ported — loud
       -- (seam-hygiene H2); the `is_PNVI ∧ ¬PERMISSIVE` disjunct: the live arms
       if CerbGlobal.has_switch (.pointer_arith .STRICT) then
-        kill (Other (MerrOther "effArrayShiftPtrval: SW_pointer_arith STRICT is set but the strict bounds-checking arms (impl_mem.ml:2309-2310, 2381-2382, 2393-2394) are not ported — switches are refused (Z-24)"))
+        refuseM (switchRefusal "strict_pointer_arith" "effArrayShiftPtrval: SW_pointer_arith STRICT is set but the strict bounds-checking arms (impl_mem.ml:2309-2310, 2381-2382, 2393-2394) are not ported — switches are refused (Z-24)")
       else
         let shiftedAddr := addr + offset
         match prov with
@@ -3548,7 +3616,7 @@ def effArrayShiftPtrval [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (enum
           memReturn (.PV .Prov_device (.PVconcrete none shiftedAddr))
         | .Prov_symbolic _ =>
           -- unreachable: matched by the Prov_symbolic arm above; loud, never absorbed
-          failStopMem "effArrayShiftPtrval: a Prov_symbolic pointer reached the Prov_some/Prov_none bounds arms (unreachable: the Prov_symbolic arm matches first)"
+          stopMem (.invariant (CerbStopSites.shiftSymbolicPastArm "effArrayShiftPtrval: a Prov_symbolic pointer reached the Prov_some/Prov_none bounds arms (unreachable: the Prov_symbolic arm matches first)"))
     else memReturn (.PV prov (.PVconcrete none (addr + offset)))                -- :2336/:2343/:2346
 
 def effMemberShiftPtrval [CerbImplCfg.Impl] [LemFuel] (enumDefs : EnumDefs) (tagDefs : TagDefs) (_ : CerbLocation.Loc) (pv : PointerValue) (tag : sym) (member : identifier) : memM PointerValue :=
@@ -3556,28 +3624,86 @@ def effMemberShiftPtrval [CerbImplCfg.Impl] [LemFuel] (enumDefs : EnumDefs) (tag
 
 /-! ### Memory operations -/
 
+/-- The fork's overlap refusal for `memcpy` (item G1; [USER 2026-10-20]: where upstream
+    left a case to a TODO, the fork leaves it or REFUSES LOUDLY, never inventing a verdict;
+    upstream-tray draft 56). `impl_mem.ml` `memcpy` opens with `(* TODO: if ptrval1 and
+    ptrval2 overlap ==> UB *)` (b9aeedcb4 :2636) and copies byte-wise; C17 7.24.2.1#2
+    leaves an overlapping copy undefined, and both engines answered `Specified(7)` on the
+    draft's witness. The fork oracle now `failwith`s at the head of `memcpy`
+    (impl_mem.ml:2722-2734 in this tree) and `memcpyM` fails with the same text (mirror).
+    Refused, with intersecting byte ranges `[a1, a1+n)` and `[a2, a2+n)`, `n > 0`: (1) both
+    pointers `Prov_some`/`PVconcrete` in the SAME allocation (region `allocation ID`);
+    (2) both `Prov_device`/`PVconcrete` (region `device memory`: `ptrfromint` mints it for an
+    integer in `deviceRanges`, impl_mem.ml:2226-2227, `[0x40000000, 0x40000004)` and
+    `[0xABC, 0xAC0)`; `loadM`/`storeM` serve it, their `.Prov_device` arms, impl_mem.ml
+    :1669/:1778; the pure `arrayShiftPtrval` passes it through, :2414-2416 — the pre-merge
+    audit's P2-1: its probes `dev_overlap.c` (`(char*)0xABC`, `memcpy(p, p + 1, 2)`) and
+    `dev_overlap2.c` (`(char*)0x40000000`, `memcpy(p + 1, p, 3)`) answered
+    `Specified(5)`/`Specified(111)` on both engines before this arm). The remaining shapes
+    cannot complete a copy: a `Prov_none` concrete pointer fails at the first byte
+    (impl_mem.ml:1667/:1776; the audit's `none_overlap.c` → `UB_CERB002a_out_of_bound_load`
+    on both), a `Prov_symbolic` argument dies in the pure `arrayShiftPtrval` first
+    (R-PNVI-06), `PVnull`/`PVfunction` fail in `loadM` — EXCEPT one named residual: a
+    `Prov_some`/`Prov_device` pair whose addresses intersect, reachable only when an
+    allocation lies inside a device range, i.e. under the fork-only `--address-space-top`
+    (outside CONTRACT §2's promise; `mixed.c`, `memcpy(a + 4, d, 2)` with `a` at 0xAB8 and
+    `d = (char*)0xABC` under `--address-space-top 2756`, answers `Specified(56)` on both
+    engines). It is NOT refused, because the ranges are the C-level objects, not clipped to
+    the allocation (memcpy never consults the allocation's bounds; upstream's loop reports an
+    out-of-bounds byte as its own UB): without the bounds an allocation inside the device
+    range cannot be told from an out-of-bounds run from a neighbouring allocation into it —
+    the same reason the allocation case requires the SAME id (a source range running out of
+    one object into its neighbour is `UB_CERB002a`, not an overlap; the witness script's
+    `ctl_memcpy_oob.c` pins that, and caught a wider predicate) [AGENT 2026-10-20]. The
+    refusal fires at application, before ANY access check: an overlapping copy that is also
+    out of bounds, or whose object is dead, is refused rather than reported as that UB
+    [AGENT 2026-10-20]. `memcpy(p, p, n)` overlaps (the same object). Different allocations
+    never overlap (the allocator never reuses an address); `realloc`'s copy is new ← old,
+    two allocations. Returns the region's description for the message and the two bases. -/
+def memcpyOverlap (dst src : PointerValue) (n : Int) : Option (String × Address × Address) :=
+  let intersects (a1 a2 : Address) : Bool := n > 0 && a1 < a2 + n && a2 < a1 + n
+  match dst, src with
+  | .PV (.Prov_some id1) (.PVconcrete _ a1), .PV (.Prov_some id2) (.PVconcrete _ a2) =>
+    if id1 == id2 && intersects a1 a2 then some (s!"allocation {id1}", a1, a2) else none
+  | .PV .Prov_device (.PVconcrete _ a1), .PV .Prov_device (.PVconcrete _ a2) =>
+    if intersects a1 a2 then some ("device memory", a1, a2) else none
+  | _, _ => none
+
+/-- The refusal text, byte-identical to the fork oracle's `overlap_refusal` (impl_mem.ml:2722-2724 in this tree). -/
+def memcpyOverlapRefusal (region : String) (a1 a2 n : Int) : String :=
+  s!"Concrete.memcpy: refused - memcpy on overlapping objects ({region}: destination [{a1}, {a1 + n}) and source [{a2}, {a2 + n}), n = {n}); C17 7.24.2.1#2 undefined behaviour; upstream copies byte-wise under impl_mem.ml memcpy 'TODO: if ptrval1 and ptrval2 overlap ==> UB' (b9aeedcb4 :2636) - the fork refuses rather than decides (item G1, 2026-10-20)"
+
 /-- memcpy — impl_mem.ml:2635-2646 (arc-14 S1 F1, sem:G2: previously
     copied raw bytemap bytes, silently bypassing every access check).
     Mirrored as upstream writes it: a per-byte loop of CHECKED
     `load`/`store` of `unsigned char` at `array_shift_ptrval` offsets, so
     OOB source/destination, dead or read-only destination, and atomicity
     violations kill exactly as the oracle's load/store machinery does.
-    Upstream's own TODOs (overlap-UB unimplemented) inherit unchanged.
+    Upstream's overlap TODO is now the fork's REFUSAL (`memcpyOverlap`,
+    item G1, 2026-10-20): checked first, before any byte moves,
+    as the oracle's `failwith` is raised when `memcpy` is applied.
     The loop recurses on a Nat countdown (structural; upstream counts up
     with `Z.lt i size_n`, same iteration space). -/
 def memcpyM [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (enumDefs : EnumDefs) (tagDefs : TagDefs) (loc : CerbLocation.Loc) (dst src : PointerValue) (sizeIv : IntegerValue) : memM PointerValue :=
   match sizeIv with
   | .IV _ size_n =>
-    let rec aux : Nat → Int → memM PointerValue
-      | 0, _ => memReturn dst                                        -- :2643-2644
-      | k + 1, i =>
-        -- :2640-2642: load uchar (src+i) >>= store uchar (dst+i)
-        nd_bind (loadM enumDefs tagDefs loc unsigned_char
-            (arrayShiftPtrval enumDefs tagDefs src unsigned_char (.IV .Prov_none i))) fun lr =>
-        nd_bind (storeM enumDefs tagDefs loc unsigned_char false
-            (arrayShiftPtrval enumDefs tagDefs dst unsigned_char (.IV .Prov_none i)) lr.2) fun _ =>
-        aux k (i + 1)
-    aux size_n.toNat 0
+    match memcpyOverlap dst src size_n with
+    | some (region, a1, a2) =>
+      -- the fork's refusal (item G1, [USER 2026-10-20]), impl_mem.ml:2722-2734 in this
+      -- tree: the same text; the loud fail-stop every refusal uses (LEAN_ABORT_ON_PANIC),
+      -- ascribed at `memM` like `pnviRefuseM` (kernel default a kill, never an answer)
+      failwithI (memcpyOverlapRefusal region a1 a2 size_n)
+    | none =>
+      let rec aux : Nat → Int → memM PointerValue
+        | 0, _ => memReturn dst                                        -- :2643-2644
+        | k + 1, i =>
+          -- :2640-2642: load uchar (src+i) >>= store uchar (dst+i)
+          nd_bind (loadM enumDefs tagDefs loc unsigned_char
+              (arrayShiftPtrval enumDefs tagDefs src unsigned_char (.IV .Prov_none i))) fun lr =>
+          nd_bind (storeM enumDefs tagDefs loc unsigned_char false
+              (arrayShiftPtrval enumDefs tagDefs dst unsigned_char (.IV .Prov_none i)) lr.2) fun _ =>
+          aux k (i + 1)
+      aux size_n.toNat 0
 
 /-- memcmp — impl_mem.ml:2649-2665 (arc-14 S1 F1, sem:G2: previously read
     raw bytemap bytes with unspecified bytes silently comparing equal).
@@ -3614,7 +3740,7 @@ def memcmpM [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (enumDefs : EnumD
           getBytes ptr' (byte_n :: acc) k
         | _ =>
           -- impl_mem.ml:2658-2659: assert false (unspecified byte)
-          failStopMem "Concrete.memcmp: non-integer byte (impl_mem.ml:2658-2659 assert false)"
+          stopMem (.upstreamCrash (CerbStopSites.memcmpByte "Concrete.memcmp: non-integer byte (impl_mem.ml:2658-2659 assert false)"))
     -- ISO-fix register R3 (VALIDATION.md §2, ADMITTED BY CLASS — [USER 2026-09-03]
     -- referent ruling, confirmed [USER 2026-09-05], option (2)): upstream converts the
     -- size with `Z.to_int size_n` (impl_mem.ml:2660-2661), which raises Z.Overflow for a
@@ -3810,7 +3936,7 @@ def vaList (vaIdx : Int) : memM (List (ctype × PointerValue)) :=
     match st.varargs.find? (fun e => e.1 == vaIdx) with
     | some (_, (n, args)) =>
       if n == 0 then (NDactive args, st)
-      else (NDkilled (CerbFail.failStopKill "va_list: assert (n = 0) failed (impl_mem.ml:2760)"), st)
+      else (NDkilled (CerbFail.failStopKill (CerbStop.render (.upstreamCrash (CerbStopSites.vaListIndex "va_list: assert (n = 0) failed (impl_mem.ml:2760)")))), st)
     | none => (NDkilled (failReason (MerrWIP "va_list")), st)
 
 /-! ### Misc -/
@@ -3829,7 +3955,7 @@ def copyAllocId [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (enumDefs : E
 /-- call_intrinsic — impl_mem.ml:2190-2191 `assert false (* CHERI only *)`
     (zero-discrepancy Z-22; see the CHERI section note). -/
 def callIntrinsic (_ : CerbLocation.Loc) (_ : String) (_ : List MemValue) : memM (Option MemValue) :=
-  failStopMem "assert false (* CHERI only *): Concrete.call_intrinsic (impl_mem.ml:2190-2191)"
+  stopMem (.upstreamCrash (CerbStopSites.callIntrinsic "assert false (* CHERI only *): Concrete.call_intrinsic (impl_mem.ml:2190-2191)"))
 
 /-- Fuel-exhaustion sentinel for the fuel-threaded `Core_aux.zeros_aux`
     (arc-1): reached only past the default fuel's type-nesting depth, i.e.

@@ -32,7 +32,7 @@ UNIT=(core-parser-test effects-proof-test totality-proof-test fresh-int-test pp-
       fuel-exemplar-test monadic-failstop-test allocator-soundness-test float-literal-test
       are-compatible-test many-restatement-test opaque-failure-test enum-data-test
       run-digest-test cabs-import-test match-pattern-arity-test memory-access-test
-      reconstruct-legacy-test pnvi-arms-test)
+      reconstruct-legacy-test pnvi-arms-test stop-test core-quote-test)
 
 echo "== csem (1) copy-set sync, lem-sync stamp"
 csem/tools/check_handwritten_sync.sh || fail "hand-written copies drifted (scripts/csem_regen.sh)"
@@ -49,6 +49,7 @@ for t in "${UNIT[@]}"; do
   args=()
   case "$t" in
     monadic-failstop-test) args=(2 17);;
+    core-quote-test) args=(--local-controls);;
     match-pattern-arity-test|pnvi-arms-test) args=(17);;
     memory-access-test) args=(17 0 on);;
   esac
@@ -58,6 +59,10 @@ for t in "${UNIT[@]}"; do
     fail "unit executable $t (run: cd csem/lean_frontend && $_repo/.lake/build/bin/$t ${args[*]})"
   fi
 done
+
+# Current upstream outcome envelopes: codec/frame plants and real fail-stop captures.
+python3 csem/scripts/test_stops.py --lean-bin "$_repo/.lake/build/bin/stop-test" \
+  || fail "structured stop codec/capture plants"
 
 echo "== csem (4) purity, totality, axiom census, sorry token"
 csem/scripts/check_exec_purity.sh --selftest | tail -1 || fail "exec purity selftest"
@@ -69,6 +74,7 @@ csem/scripts/check_theorem_axioms.sh | grep '^check_theorem_axioms' || fail "axi
 csem/scripts/check_sorry_token.sh || fail "sorry token"
 
 echo "== csem (5) generator drift"
+csem_have_toolchain || fail "matching pinned generator required for the repin gate (scripts/csem_toolchain.sh)"
 scripts/csem_regen.sh --check || fail "generated Lean drifted"
 
 if [ $lane = 1 ]; then

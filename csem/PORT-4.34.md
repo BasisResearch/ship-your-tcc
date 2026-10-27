@@ -1,52 +1,90 @@
-# csem/: our fork of cerberus-lean, and its port to Lean 4.34.0
+# CSem import and Lean 4.34 adaptations
 
-`csem/` is OathTech/cerberus-lean at the pin in `vendor/CSEM_REV` (e7e9bb4,
-Lean 4.32.2), the part `scripts/csem_import.sh` selects, plus LemLib
-(lem-lean `lean-lib/` at 2d3a492) in `csem/lemlib`. Our changes are ordinary
-commits on top; this file lists every one. `scripts/csem_import.sh --check
-UPSTREAM LEMLEAN` lists the files that differ from a pristine import.
+The candidate imports OathTech/cerberus-lean `mdd/cerberus-lean` at
+`704c4e697845127bced66c93fa0763eb51527ca4` (2026-10-26), with matching
+lem-lean `mdd/lean-backend` at `e6d8db5680962f49060257d6c2bcb13c284b910f`.
+`vendor/CSEM_REV` is authoritative. Upstream targets Lean 4.35.0; the root
+project remains on its approved **Lean 4.34.0**. No elaboration option or
+budget was added or raised. The selected source and all proof groups compile
+on 4.34; the evaluation is `results/csem/repin-2026-10-27.md`.
 
-* **Layout.** As upstream: `frontend/` (Lem model), `lean_frontend/`
-  (hand-written seams, `generated/`, `test/`, `corpus/`, `native/`), `scripts/`
-  and `tools/` (gates), `runtime/` (Core library, `.impl` file, libc),
-  `parsers/c` (menhir grammar and lexer, F1's reference), `tests/minimal` and
-  `tests/fixtures`. `lean_frontend/lakefile.toml` is kept for reference only:
-  the libraries build in the root project's `lakefile.toml` (`LemLib`,
-  `LemLibTests`, `CerberusLean`, `CerberusLeanTest`, the fork's unit
-  executables, `csem_run`; none a default target).
-* **Generated.** `lean_frontend/generated/` = `lem -lean` of the
-  `LEM_SRC_LEAN` list plus copies of the files in
-  `lean_frontend/handwritten_copy.manifest` (the fork's `make
-  lean-prelude-src`), by `scripts/csem_regen.sh`; `--check` regenerates in a
-  scratch copy and diffs. Generator: lem `lean-backend-v0.1.0-alpha.1-65-g2d3a492`
-  under OCaml 5.4.0 (opam switch `build/csem-opam`, `scripts/csem_toolchain.sh`).
+## Generation and layout
 
-## Changes for Lean 4.34.0
+`scripts/csem_import.sh --check UPSTREAM LEMLEAN` compares the selected
+pristine import with our source changes. `lean_frontend/generated/` is
+produced by `scripts/csem_regen.sh`: Lem translates the `LEM_SRC_LEAN` model
+list and the manifest copies the handwritten modules. All **234** outputs
+are regenerated, never edited. The generator is the exact matching lem pin,
+`lean-backend-v0.1.0-alpha.1-78-ge6d8db5`, built with OCaml 5.4.0. The
+regeneration check requires that matching generator in the full fork gate.
 
-No option was added: no `maxHeartbeats`, `maxRecDepth` or other option is set
-anywhere in `csem/` (upstream sets none either). Three proofs needed changes,
-all from one 4.34 behaviour change of `split` on `if`s.
+Toolchains now default to a pin-addressed directory in **this worktree**,
+`build/csem-<cerberus-short>-<lem-short>/`, rather than a shared mutable opam
+switch. The lead-fetched local snapshots supplied the current evaluation;
+no worker network access or toolchain migration was needed.
 
-| file | change | why |
-|---|---|---|
-| `lean_frontend/Utils_lemMeasureProofs.lean` (3 sites), `lean_frontend/Defacto_memory_lemMeasureProofs.lean` (2 sites) | `split` → `refine ite_congr rfl (fun _ => ?_) (fun _ => ?_)` | on the `lem_if` term `if decide (p) = true then … else …` (both sides of a fuel-stability equation), 4.34's `split` case-splits but then fails to simplify the target with the new hypothesis (`trace.split.failure`: "failed to simplify target using new hypotheses") and gives up; `ite_congr` yields the same two goals with the same hypotheses, so the branch proofs are unchanged |
-| `lean_frontend/CerbMemAccessFacts.lean` (`loadM_erasure`) | `not_true_eq_false, Bool.false_eq_true` added to the two `simp_all only` sets of the closing loop | the loop's `split`s now leave the contradictory branches with hypotheses `¬True` / `false = true` that 4.32's `split` simplified away; the extra lemmas close them |
-| `lemlib/LemLibPmapLaws.lean` (`toList_bal`) | the `repeat' split … omega` script replaced by the explicit case analysis on the two height guards and the four `match`es of `bal` | 4.34's `split` takes the `match`es before the `if`s and stops on the height guards, so `omega` met unreduced `match` terms; the statement is unchanged |
+The root `lakefile.toml` builds LemLib, generated semantics, tests, the C
+parser, `csem_run` and `TccCSem`. The imported frontend lakefile/toolchain
+are upstream reference material. `Main.lean` is imported as `CerbDriver.lean`
+with `main` renamed `cerbMain`; `CSemRun.lean` wraps it for the OCaml-Cabs
+oracle bridge. This avoids the root project's existing `Main` module.
 
-## Other changes (ours, not the port)
+## Original F0 port patches absorbed upstream
 
-| file | change | why |
-|---|---|---|
-| `lean_frontend/Main.lean` → `lean_frontend/CerbDriver.lean` | renamed; `def main` → `def cerbMain`; `handwritten_copy.manifest` lists `CerbDriver.lean` | the root package already has a module `Main` (`lean/ClightRun`); `csem_run` wraps the driver |
-| `lean_frontend/CSemRun.lean` (new, in the manifest) | `csem_run`'s `main`: a `.c` argument goes through `cerberus --cabs-json` (`$CSEM_ORACLE`) and then `cerbMain --batch`; any other argument list is `cerbMain` unchanged | the CSem oracle for F1's `scripts/diff3.py` |
-| `native-lake/lakefile.lean` (new) | `extern_lib cerbnative` compiling `lean_frontend/native/md5.c` with `leanc` | upstream links `native/md5.o` by `moreLinkArgs` after `make lean-native-obj`; a TOML lakefile cannot declare an `extern_lib`, so it is a path package the root project requires |
-| `scripts/check_sorry_token.sh` | LemLib scanned at `csem/lemlib` | LemLib is vendored, not a Lake package copy |
-| `scripts/check_theorem_axioms.sh` | probes run with `lake env lean` from the root project (`$CSEM_LAKE_ROOT`, default `csem/..`); LemLib at `csem/lemlib`; the lem-lean clone for leg 4's scaffold assertion at `$CSEM_LEMLEAN` | the semantics builds in the root Lake project |
+The original import was Cerberus `e7e9bb4` / lem `2d3a492` (Lean 4.32.2).
+Its three port groups are now supplied by upstream and work on 4.34:
 
-Gates not ported (they need upstream's in-tree OCaml build and
-`lean_frontend` Lake package, or name `Main.lean`): `check_fuel_forms.sh`,
-`check_failure_reach.sh`, `check_no_fuel_numerals.sh` (its allowlist names
-`Main.lean`), `check_lakefile_roots.sh`, `check_pin_sites.sh`,
-`check_fork_drift.sh`, `check_fixture_freeze.sh`, and the lanes other than the
-exec lane (`scripts/csem_lane.py` reimplements that one; the fork's
-`test_exec.sh` stays runnable in the pristine upstream checkout).
+| group | current implementation |
+|---|---|
+| Utils / Defacto measure proofs | keep the Boolean guard intact for `split`, and give the `of_decide_eq_true` bridge an explicit proposition; the local `ite_congr` replacements are retired |
+| `CerbMemAccessFacts.loadM_erasure` | upstream includes the contradiction simplifications (`not_true_eq_false`, `Bool.false_eq_true`) and the new refusal arm; retain our existing implementation-reader parameters |
+| `LemLibPmapLaws.toList_bal` | upstream zeta-reduces the height lets with `dsimp only` before splitting; retire our explicit height-guard/match proof |
+
+The statements are retained. Our configuration/digest reader parameters in
+other proofs and tests remain explicit; no proof premise was weakened.
+
+## Fork changes retained
+
+| source | local purpose |
+|---|---|
+| `CerberusFresh.lean`, `lean_digest.lem`, affected Lem sources/proofs/tests | total MD5 and an explicit per-TU `Digest` reader; no native MD5 object, mutable digest global or IO forcing barrier in the production pipeline |
+| `CerbImplCfg.lean`, `lean_impl.lem`, implementation/decoder/parser/memory/driver readers | explicit RV64I/lp64 configuration, C11 target choices, errno, argv and HTIF exit conventions; the documented float/bitfield/enum gaps remain obligations |
+| `CerbFS.lean`, `fs.lem`, `driver.lem`, Core/libc runtime proxies | the image filesystem, descriptor-based fstat, path resolution, explicit embedded files and structural state ordering; operations unavailable in the image still refuse, now with upstream stop metadata |
+| `cparser/` | our Lean C grammar and Cabs comparison interface; unchanged by this repin |
+| `CerbDriver.lean`, `CSemRun.lean`, manifests, Makefile and root Lake | repository layout and explicit-reader integration, preserving upstream's new calling-convention reader and quotation definitions |
+| `scripts/csem_{env,libc_prep,run}.sh` | pin-local generator/oracle paths and a locked libc cache keyed by oracle, source, runtime identity and content, with artifact hashes; the upstream exact location guard is preserved |
+| `scripts/check_{exec_purity,sorry_token,theorem_axioms}.sh` and allowlists | root-Lake paths, vendored LemLib, retired-digest seam population; retain upstream's strengthened exact axiom allowlists |
+
+## Total stop encoding
+
+Upstream's `CerbStop.render` calls generic `Json.compress`. The first
+candidate's dependency walk found one additional kernel partial and two
+additional runtime partials (`Json.compress.go`, `JsonNumber.countDigits.loop`).
+
+Our `CerbStop.Encoding` describes the fixed strings/nulls/arrays protocol
+once. The JSON-value instance preserves `toJson`; the wire-string instance
+uses Lean's existing **total** `Json.renderString` and array joining. It has
+no recursive serializer, new fuel, opaque declaration or native replacement.
+`Unit.StopTest` checks byte equality against the upstream generic printer on
+its seven samples, including Unicode and every control character. The fresh
+cone returns to the baseline 43 kernel / 100 runtime partials. The parser
+and float/native seams already recorded in F1 remain; this is no purity
+certificate for the whole semantics.
+
+## Gate scope
+
+`scripts/csem_gates.sh` keeps the original root-integrated fork gates and
+19 executable tests, adds the structured-stop executable and its 25 codec /
+capture tests, and builds/runs the upstream quotation local controls. The
+root `CSemConeReport` target makes the dependency census buildable under the
+same shared lock and 12 GB cap.
+
+As at F0, upstream standalone lanes requiring its own Lake package and full
+OCaml tree are not claimed as root-package gates: fuel-forms/failure-reach,
+no-fuel-numerals, lakefile-roots, pin-sites, fork-drift, fixture-freeze, the
+non-exec differential lanes, and now the full quotation round-trip/plugin
+lane. Their imported scripts remain provenance/reference material. The
+new quotation local controls do not claim that full lane passed. The root
+exec lane, regeneration, purity/totality plants, axiom census and focused
+parser/configuration/filesystem regressions are recorded individually in
+the repin report.

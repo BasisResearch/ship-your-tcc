@@ -9,8 +9,15 @@
 # searches the working directory and deliberately does not mirror the
 # oracle's OPAM_SWITCH_PREFIX fallback (Main.lean resolveRuntime). A Cabs
 # location whose directory passes the port's suffix library test but not the
-# oracle's exact test against the runtime is REFUSED (Main.lean
-# refuseLibraryLocations).
+# resolved-directory membership test against the runtime is REFUSED. The
+# oracle's literal test can differ on accepted aliases: the fixture-001
+# witness below pins that declared divergence (Core quotation D2b/D5).
+# A `#line` plant then pins the SERVED consequence: a UB inside a function
+# placed at the ./-prefixed runtime header directory is reported at the
+# function body by the oracle (`<2:10--2:15>`) and at the call site by the
+# port (`<11:10--11:23>`); the unprefixed spelling agrees on the call site.
+# The pin goes red if either engine's rule moves. The selftest plants below
+# (ignore-runtime, refuse-all) cover it: neither stub prints that line.
 #
 # Each check runs the REAL oracle (cabs-json export, and the oracle's own
 # verdict where the check compares against it) and the Lean driver.
@@ -40,7 +47,8 @@ if [[ "${1:-}" == "--selftest" ]]; then
     printf '#!/usr/bin/env bash\necho %q\nexit 1\n' \
         'Undefined {ub: "UB017_out_of_range_floating_integer_conversion", stderr: "", loc: "<3:11--3:17>"}' > "$ST/ignore-runtime"
     # (b) refuses everything
-    printf '#!/usr/bin/env bash\necho "cerberus-lean: refused — runtime: plant" >&2\nexit 2\n' > "$ST/refuse-all"
+    printf '#!/usr/bin/env bash\nprintf "%%s\\n" %q >&2\nexit 2\n' \
+        'cerberus-lean stop ["1","REFUSAL","runtime",null,"plant","plant mover",null,"plant"]' > "$ST/refuse-all"
     chmod +x "$ST/ignore-runtime" "$ST/refuse-all"
     for plant in ignore-runtime refuse-all; do
         if CERB_LEAN_BIN_OVERRIDE="$ST/$plant" "$0" > "$ST/$plant.out" 2>&1; then
@@ -60,6 +68,17 @@ mkdir -p "$ROOT/.tmp/scripts" || { echo "$NAME: FAIL — cannot create $ROOT/.tm
 W=$(mktemp -d "$ROOT/.tmp/scripts/$NAME.XXXXXX") || { echo "$NAME: FAIL — mktemp"; exit 1; }
 trap 'rm -rf "$W"' EXIT
 
+check_refusal() {  # boundary, JSON item list (or null), required and forbidden detail
+    python3 - "$SCRIPT_DIR" "$W/stdout" "$W/stderr" "$RC" "$@" <<'PY'
+import json, sys
+from pathlib import Path
+sys.path.insert(0, sys.argv[1])
+from test_stops import assert_cli_refusals
+assert_cli_refusals(Path(sys.argv[2]).read_bytes(), Path(sys.argv[3]).read_bytes(),
+                    int(sys.argv[4]), sys.argv[5] or None, json.loads(sys.argv[6]),
+                    sys.argv[7], sys.argv[8] if len(sys.argv) > 8 else '')
+PY
+}
 fails=0; n=0
 fail() { echo "$NAME: FAIL — $*"; fails=$((fails + 1)); }
 
@@ -72,22 +91,26 @@ oracle_line() {  # <prefix> <c-file> [cwd] -> first verdict line
     ( cd "${3:-$W}" && env -u CERB_INSTALL_PREFIX "$ORACLE" --runtime="$1" --exec --batch --nolibc "$2" 2>/dev/null ) \
         | grep -E '^(Defined|Undefined|Error) ' | head -1
 }
-# lean <cwd> <env-assignments...> -- <driver args...>  -> sets OUT, RC
+# lean <cwd> <env-assignments...> -- <driver args...> -> sets OUT, ERR, RC
 lean() {
     local cwd="$1"; shift
     local envs=()
     while [[ "$1" != "--" ]]; do envs+=("$1"); shift; done
     shift
-    OUT=$(cd "$cwd" && env -u CERB_INSTALL_PREFIX -u OPAM_SWITCH_PREFIX LEAN_ABORT_ON_PANIC=1 \
-        ${envs[@]+"${envs[@]}"} "$BIN" "$@" 2>&1); RC=$?
+    (cd "$cwd" && env -u CERB_INSTALL_PREFIX -u OPAM_SWITCH_PREFIX LEAN_ABORT_ON_PANIC=1 \
+        ${envs[@]+"${envs[@]}"} "$BIN" "$@") > "$W/stdout" 2> "$W/stderr"; RC=$?
+    OUT=$(<"$W/stdout"); ERR=$(<"$W/stderr")
 }
 expect_line() {  # <label> <expected-line>
     n=$((n + 1))
     if [[ "$OUT" != "$2" ]]; then fail "$1: expected exactly [$2]; got rc=$RC: ${OUT:0:300}"; fi
+    if [[ "$ERR" != 'cerberus-lean switches: []' ]]; then fail "$1: expected the default switch report on stderr; got: ${ERR:0:300}"; fi
 }
 expect_refusal() {  # <label> <refusal-prefix> <substring>
     n=$((n + 1))
-    if [[ $RC -ne 2 || "$OUT" != *"cerberus-lean: refused — $2"* || "$OUT" != *"$3"* ]]; then
+    local boundary=runtime
+    [[ "$2" == "library-location classification:" ]] && boundary=library-location
+    if ! check_refusal "$boundary" null "$3"; then
         fail "$1: expected exit 2 + 'refused — $2' naming '$3'; got rc=$RC: ${OUT:0:300}"
     fi
 }
@@ -159,5 +182,93 @@ L4=$(oracle_line "$PREFIX" user/other/liblocub.c)
 [[ "$L4" == Undefined* ]] || { echo "$NAME: FAIL — oracle control verdict for liblocub.c: [$L4]"; exit 1; }
 lean "$W" -- --batch --runtime="$PREFIX" "$W/l4.json";               expect_line "control: the same file elsewhere agrees with the oracle" "$L4"
 
+# --- Accepted relative spelling: actual oracle/port classifiers disagree -----
+# The committed fixture has cpp's ./ prefix; the oracle's runtime key does not
+# (util/cerb_location.ml:512-523). Do not normalize the witness's stored label.
+HEADER=$(python3 - "$ROOT/tests/fixtures/001-return-literal/cabs.json" <<'PYLOC'
+import json, sys
+paths = []
+def visit(x):
+    if isinstance(x, dict):
+        if {"file", "line", "col"} <= x.keys() and x["file"].endswith("/builtins.h"):
+            paths.append(x["file"])
+        for v in x.values(): visit(v)
+    elif isinstance(x, list):
+        for v in x: visit(v)
+visit(json.load(open(sys.argv[1])))
+expected = "./_build/install/default/lib/cerberus-lib/runtime/libc/include/builtins.h"
+if len(paths) != 154 or set(paths) != {expected}:
+    raise SystemExit("fixture-001 library-location witness drift: expected 154 ./-prefixed positions")
+print(expected)
+PYLOC
+) || { echo "$NAME: FAIL — fixture-001 location inventory"; exit 1; }
+cat > "$W/location.ml" <<'OCAML'
+let () =
+  Cerb_runtime.specified_runtime := Some Sys.argv.(1);
+  let pos = Cerb_position.from_lexing { Lexing.dummy_pos with pos_fname = Sys.argv.(2) } in
+  Printf.printf "%b\n" (Cerb_location.is_library_location (Cerb_location.point pos))
+OCAML
+if ! ocamlfind ocamlopt -package unix,str,lem,pprint,yojson -linkpkg \
+    -I "$ROOT/_build/default/util/.cerb_util.objs/byte" \
+    -I "$ROOT/_build/default/util/.cerb_util.objs/native" -I "$ROOT/_build/default/util" \
+    "$ROOT/_build/default/util/cerb_util.cmxa" "$W/location.ml" -o "$W/location"; then
+    echo "$NAME: FAIL — cannot build actual oracle library-location probe"; exit 1
+fi
+cat > "$W/Location.lean" <<'LEAN'
+import CerbLocation
+def main (args : List String) : IO Unit := do
+  match args with
+  | [path] => IO.println (CerbLocation.isLibraryPathSuffix path)
+  | _ => throw (IO.userError "library-location probe requires one path")
+LEAN
+OCLASS=$(cd "$ROOT" && "$W/location" _build/install/default "$HEADER") \
+    || { echo "$NAME: FAIL — oracle library-location probe"; exit 1; }
+OCONTROL=$(cd "$ROOT" && "$W/location" _build/install/default "${HEADER#./}") \
+    || { echo "$NAME: FAIL — oracle library-location control"; exit 1; }
+LCLASS=$(cd "$ROOT/lean_frontend" && "$SCRIPT_DIR/capped" lake env lean --run "$W/Location.lean" "$HEADER") \
+    || { echo "$NAME: FAIL — port library-location probe"; exit 1; }
+n=$((n + 1))
+if [[ "$OCLASS" != false || "$LCLASS" != true || "$OCONTROL" != true ]]; then
+    fail "fixture-001 classification drift: oracle=$OCLASS port=$LCLASS oracle-no-dot-control=$OCONTROL"
+fi
+echo "$NAME: fixture-001 --runtime=_build/install/default: 154 ./-prefixed header positions; oracle library=$OCLASS; port library=$LCLASS; oracle without ./=$OCONTROL (declared divergence)"
+F001=$(oracle_line _build/install/default tests/fixtures/001-return-literal/source.c "$ROOT") \
+    || { echo "$NAME: FAIL — fixture-001 oracle execution failed"; exit 1; }
+[[ "$F001" == 'Defined {value: "Specified(42)", stdout: "", stderr: "", blocked: "false"}' ]] \
+    || { echo "$NAME: FAIL — fixture-001 oracle execution verdict: [$F001]"; exit 1; }
+lean "$ROOT" -- --batch --runtime=_build/install/default tests/fixtures/001-return-literal/cabs.json
+expect_line "relative fixture-001 is served; execution agrees despite classification divergence" "$F001"
+[[ $RC -eq 0 ]] || fail "relative fixture-001 exit $RC, expected 0"
+echo "$NAME: fixture-001 execution: oracle=[$F001]; port=[$OUT]"
+
+# --- Served divergence pin: a #line plant at the ./-prefixed runtime header --
+# dot: the spelling cpp emits under --runtime=_build/install/default; the
+# oracle says not-library and reports the UB inside the function, the port
+# says library and substitutes the call site (core_eval.lem:602). nodot: the
+# oracle's literal key; both substitute the call site. Both engines run from
+# the repository root at the relative runtime, as the fixture-001 case above.
+plant() {  # <name> <library-directory-spelling>
+    printf '#line 1 "%s/plant.h"\nint f(int x) {\n  return x + 1;\n}\n#line 10 "%s.c"\nint main(void) {\n  return f(2147483647);\n}\n' "$2" "$1" > "$W/$1.c"
+    cabs _build/install/default "$W/$1.c" "$W/$1.json" "$ROOT"
+}
+plant dot   ./_build/install/default/lib/cerberus-lib/runtime/libc/include
+plant nodot _build/install/default/lib/cerberus-lib/runtime/libc/include
+BODY='Undefined {ub: "UB036_exceptional_condition", stderr: "", loc: "<2:10--2:15>"}'
+SITE='Undefined {ub: "UB036_exceptional_condition", stderr: "", loc: "<11:10--11:23>"}'
+ODOT=$(oracle_line _build/install/default "$W/dot.c" "$ROOT")
+ONODOT=$(oracle_line _build/install/default "$W/nodot.c" "$ROOT")
+n=$((n + 1))
+[[ "$ODOT" == "$BODY" ]] || fail "served-divergence pin: oracle verdict for the ./ plant moved: expected exactly [$BODY]; got [$ODOT]"
+n=$((n + 1))
+[[ "$ONODOT" == "$SITE" ]] || fail "served-divergence pin control: oracle verdict for the unprefixed plant moved: expected exactly [$SITE]; got [$ONODOT]"
+lean "$ROOT" -- --batch --runtime=_build/install/default "$W/dot.json"
+expect_line "served-divergence pin: ./ plant is served; the port reports the call site where the oracle reports the body" "$SITE"
+[[ $RC -eq 1 ]] || fail "served-divergence pin: ./ plant exit $RC, expected 1"
+PDOT=$OUT
+lean "$ROOT" -- --batch --runtime=_build/install/default "$W/nodot.json"
+expect_line "served-divergence pin control: unprefixed plant agrees with the oracle" "$SITE"
+[[ $RC -eq 1 ]] || fail "served-divergence pin control: unprefixed plant exit $RC, expected 1"
+echo "$NAME: served-divergence pin: ./ plant oracle=[$ODOT] port=[$PDOT]; unprefixed plant oracle=[$ONODOT] port=[$OUT]"
+
 [[ $fails -eq 0 ]] || { echo "$NAME: $fails of $n witnesses FAILED"; exit 1; }
-echo "$NAME: OK ($n witnesses: --runtime/CERB_INSTALL_PREFIX resolution and priority, planted cwd std.core ignored, planted prefix used, 5 runtime refusals, 1 cross-runtime and 3 library-location refusals, 1 control agreeing with the oracle)"
+echo "$NAME: OK ($n witnesses: --runtime/CERB_INSTALL_PREFIX resolution and priority, planted cwd std.core ignored, planted prefix used, 5 runtime refusals, 1 cross-runtime and 3 library-location refusals, 1 control agreeing with the oracle, relative fixture-001 classification divergence and execution control, served UB-location divergence pin with its unprefixed control)"

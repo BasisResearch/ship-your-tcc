@@ -1,3 +1,4 @@
+import CerbStopSites
 import LemLib
 /-
   Filesystem model for Cerberus: THE tcc -run IMAGE'S FILE SYSTEM (ship-your-tcc F1b, DESIGN-COMPILER.md §3.4
@@ -418,7 +419,10 @@ def writeAt (a : Array UInt8) (pos : Nat) (bs : List UInt8) : Array UInt8 :=
 
 /-- The refusal for an operation that cannot happen here. -/
 private def fsRefusal (op : String) (why : String) : String :=
-  s!"CerbFS refusal (fail-closed fs-model boundary): {op} — {why}"
+  CerbStop.render (.refusal (CerbStopSites.refusal .fs (some op)
+    s!"CerbFS refusal (fail-closed fs-model boundary): {op} — {why}"
+    ⟨"an image implementation of the requested operation", by decide⟩
+    ⟨"CerbFS.lean; c/src/htif.c", by decide⟩))
 
 def fs_write (st : FsState) (fd : Int) (data : List Char) (count : Int) : FsState × (Sum FsError Nat) :=
   match st.getFd fd with
