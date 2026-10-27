@@ -54,8 +54,8 @@ these historical counts remain diagnostic until a fresh, correctly keyed rerun.
 The 156-vector binary128 stress program also has an identical arena. The
 inherited assembler drafts remain in `build/recovery/assembler/`.
 
-F2 recheck after patch 0003: 583 token-equal inputs / 593. The remaining
-spec gaps include UCN macro identity and macro operands of `_Pragma`;
+F2 recheck after patch 0003: 584 token-equal inputs / 593 after the UCN identity fix. Macro operands
+and rescanning-time effects of `_Pragma` remain spec gaps;
 the cross-host signed-character difference is already diagnosed. These
 remain implementation work, not changes to the C11 contract.
 

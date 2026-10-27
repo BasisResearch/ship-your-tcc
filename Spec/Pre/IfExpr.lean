@@ -105,14 +105,6 @@ def utf8Decode : Bytes → Option (Nat × Bytes)
       else some (c, rest)
   | [] => none
 
-def utf8Encode (cp : Nat) : Bytes :=
-  if cp < 0x80 then [cp.toUInt8]
-  else if cp < 0x800 then [(0xC0 + cp / 64).toUInt8, (0x80 + cp % 64).toUInt8]
-  else if cp < 0x10000 then
-    [(0xE0 + cp / 4096).toUInt8, (0x80 + (cp / 64) % 64).toUInt8, (0x80 + cp % 64).toUInt8]
-  else [(0xF0 + cp / 262144).toUInt8, (0x80 + (cp / 4096) % 64).toUInt8,
-        (0x80 + (cp / 64) % 64).toUInt8, (0x80 + cp % 64).toUInt8]
-
 /-- §6.4.4.4: the code units of a character constant's c-char-sequence.
 `wide`: code points (decoding UTF-8), else bytes. Escapes: simple, octal,
 hexadecimal, universal character names. -/

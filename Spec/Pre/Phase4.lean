@@ -113,11 +113,11 @@ def parseParams (cfg : PreCfg) : List Tok → List Bytes → Option (List Bytes 
     else if t.kind = .ident then
       match rest with
       | r :: rest' =>
-        if isPunct r ")" then some ((t.spell :: acc).reverse, false, rest')
-        else if isPunct r "," then parseParams cfg rest' (t.spell :: acc)
+        if isPunct r ")" then some ((t.key :: acc).reverse, false, rest')
+        else if isPunct r "," then parseParams cfg rest' (t.key :: acc)
         else if cfg.ext.namedVariadic ∧ isPunct r "..." then
           match rest' with
-          | r2 :: rest'' => if isPunct r2 ")" then some ((t.spell :: acc).reverse, true, rest'') else none
+          | r2 :: rest'' => if isPunct r2 ")" then some ((t.key :: acc).reverse, true, rest'') else none
           | [] => none
         else none
       | [] => none
@@ -147,7 +147,7 @@ only), `##` is not at either end (§6.10.3.3p1). -/
 def resolveBody (cfg : PreCfg) (params : Option (List Bytes)) (variadic : Bool)
     (body : List Tok) : Except String (List RItem) := do
   let ps := params.getD []
-  let idx (t : Tok) : Option Nat := if t.kind = .ident then ps.idxOf? t.spell else none
+  let idx (t : Tok) : Option Nat := if t.kind = .ident then ps.idxOf? t.key else none
   let isFunc := params.isSome
   let isHash (t : Tok) : Bool := isFunc ∧ (isPunct t "#" ∨ isPunct t "%:")
   let isPaste (t : Tok) : Bool := isPunct t "##" ∨ isPunct t "%:%:"
@@ -222,12 +222,12 @@ def doDefine (cfg : PreCfg) (fc : FileCtx) (line : Nat) (st : PState) (ts : List
       | .ok i => pure i
       | .error m => throw (err m)
     let d : MacroDef := ⟨params, variadic, body, items, none⟩
-    match st.macros.get? n.spell with
+    match st.macros.get? n.key with
     | some old =>
       if sameDef old d then pure st
-      else if cfg.ext.redefine then pure { st with macros := st.macros.insert n.spell d }
+      else if cfg.ext.redefine then pure { st with macros := st.macros.insert n.key d }
       else throw (err "macro redefined differently (§6.10.3p2)")
-    | none => pure { st with macros := st.macros.insert n.spell d }
+    | none => pure { st with macros := st.macros.insert n.key d }
 
 /-! ### `#include` (§6.10.2) -/
 
@@ -362,7 +362,7 @@ def procFile (cfg : PreCfg) (fs : FileSys) : Nat → PState → FileCtx → List
                   match args with
                   | x :: _ =>
                     if x.kind = .ident then
-                      let dfd := isDefinedName (ExpCtx.ofState cfg fs fc st false) x.spell
+                      let dfd := isDefinedName (ExpCtx.ofState cfg fs fc st false) x.key
                       pure (if name = bs "ifdef" then dfd else !dfd, st)
                     else throw (err .directive "#ifdef/#ifndef needs an identifier (§6.10.1)")
                   | [] => throw (err .directive "#ifdef/#ifndef needs an identifier (§6.10.1)")
@@ -400,7 +400,7 @@ def procFile (cfg : PreCfg) (fs : FileSys) : Nat → PState → FileCtx → List
             match args with
             | x :: _ =>
               if x.kind = .ident then
-                procFile cfg fs fuel { st with macros := st.macros.erase x.spell } fc rest' false conds
+                procFile cfg fs fuel { st with macros := st.macros.erase x.key } fc rest' false conds
               else .error (err .directive "#undef needs an identifier (§6.10.3.5)")
             | [] => .error (err .directive "#undef needs an identifier (§6.10.3.5)")
           else if name = bs "include" ∨ (cfg.ext.includeNext ∧ name = bs "include_next") then do

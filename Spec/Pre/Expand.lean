@@ -229,10 +229,10 @@ def builtinTok (ctx : ExpCtx) (ctr : Nat) (b : Builtin) (t : Tok) : Nat × Tok :
 /-- §6.10.1p1: `defined identifier` or `defined ( identifier )`. -/
 def definedOperand : List Tok → Option (Bytes × List Tok)
   | x :: rest =>
-    if x.kind = .ident then some (x.spell, rest)
+    if x.kind = .ident then some (x.key, rest)
     else if isPunct x "(" then
       match rest with
-      | y :: z :: rest' => if y.kind = .ident ∧ isPunct z ")" then some (y.spell, rest') else none
+      | y :: z :: rest' => if y.kind = .ident ∧ isPunct z ")" then some (y.key, rest') else none
       | _ => none
     else none
   | [] => none
@@ -296,9 +296,9 @@ def expand (ctx : ExpCtx) : Nat → Nat → List Tok → List Tok → Except Pre
       | some (n, rest') =>
         expand ctx fuel ctr rest' (numTok t (if isDefinedName ctx n then 1 else 0) :: acc)
       | none => .error (ctx.err .ifExpr t.line "'defined' needs an identifier (§6.10.1p1)")
-    else if t.hs.contains t.spell then expand ctx fuel ctr rest (t :: acc)
+    else if t.hs.contains t.key then expand ctx fuel ctr rest (t :: acc)
     else
-      match ctx.macros.get? t.spell with
+      match ctx.macros.get? t.key with
       | some m =>
         match m.builtin with
         | some b =>
@@ -307,7 +307,7 @@ def expand (ctx : ExpCtx) : Nat → Nat → List Tok → List Tok → Except Pre
         | none =>
           match m.params with
           | none => do
-            let out ← substitute ctx m [] [] (hsUnion t.hs [t.spell]) t
+            let out ← substitute ctx m [] [] (hsUnion t.hs [t.key]) t
             expand ctx fuel ctr (out ++ rest) acc
           | some ps =>
             match rest with
@@ -323,7 +323,7 @@ def expand (ctx : ExpCtx) : Nat → Nat → List Tok → List Tok → Except Pre
                   let (ctr', exps) ← (neededArgs m.items).foldlM (fun (st : Nat × List (Nat × List Tok)) i => do
                       let (c, e) ← expand ctx fuel st.1 (args.getD i []) []
                       pure (c, st.2 ++ [(i, e)])) (ctr, [])
-                  let out ← substitute ctx m args exps (hsUnion (hsInter t.hs rp.hs) [t.spell])
+                  let out ← substitute ctx m args exps (hsUnion (hsInter t.hs rp.hs) [t.key])
                     { t with line := rp.line }
                   expand ctx fuel ctr' (out ++ rest2) acc
               else expand ctx fuel ctr rest (t :: acc)

@@ -53,6 +53,41 @@ inductive LItem
 def isDigit (c : UInt8) : Bool := 48 ≤ c ∧ c ≤ 57
 def isNondigit (c : UInt8) : Bool := (97 ≤ c ∧ c ≤ 122) ∨ (65 ≤ c ∧ c ≤ 90) ∨ c = 95
 def isHex (c : UInt8) : Bool := isDigit c ∨ (97 ≤ c ∧ c ≤ 102) ∨ (65 ≤ c ∧ c ≤ 70)
+def utf8Encode (cp : Nat) : Bytes :=
+  if cp < 0x80 then [cp.toUInt8]
+  else if cp < 0x800 then [(0xC0 + cp / 64).toUInt8, (0x80 + cp % 64).toUInt8]
+  else if cp < 0x10000 then
+    [(0xE0 + cp / 4096).toUInt8, (0x80 + (cp / 64) % 64).toUInt8, (0x80 + cp % 64).toUInt8]
+  else [(0xF0 + cp / 262144).toUInt8, (0x80 + (cp / 4096) % 64).toUInt8,
+        (0x80 + (cp / 64) % 64).toUInt8, (0x80 + cp % 64).toUInt8]
+
+/-- Canonical UTF-8 identity of an identifier, while `Tok.spell` retains the
+source spelling for stringification and token pasting. Valid UCNs and literal
+UTF-8 spellings name the same identifier. Malformed sequences remain unchanged;
+this helper is not the lexical validity check. -/
+def identifierKey (spell : Bytes) : Bytes :=
+  let rec go : Nat → Bytes → Bytes
+    | 0, cs => cs
+    | _ + 1, [] => []
+    | fuel + 1, c :: rest =>
+      match rest with
+      | u :: digits =>
+        let n := if u = 117 then 4 else if u = 85 then 8 else 0
+        let hs := digits.take n
+        if c = 92 ∧ n > 0 ∧ hs.length = n ∧ hs.all isHex then
+          let cp := hs.foldl (fun a b => a * 16 +
+            (if b ≤ 57 then b.toNat - 48 else if b ≤ 70 then b.toNat - 55 else b.toNat - 87)) 0
+          if cp ≤ 0x10FFFF ∧ ¬(0xD800 ≤ cp ∧ cp ≤ 0xDFFF) then
+            utf8Encode cp ++ go fuel (digits.drop n)
+          else c :: go fuel rest
+        else c :: go fuel rest
+      | [] => [c]
+  go spell.length spell
+
+/-- Identity is canonical only for identifiers; token spelling stays untouched. -/
+def Tok.key (t : Tok) : Bytes :=
+  if t.kind = .ident then identifierKey t.spell else t.spell
+
 /-- §6.4p3 white space other than new-line: space, HT, VT, FF (plus the
 implementation's extra white space). -/
 def isSpace (cfg : PreCfg) (c : UInt8) : Bool :=

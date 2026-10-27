@@ -190,4 +190,13 @@ int x<:2:> = <% 1 %>; DG(y)
 the image invokes the patched compiler with `-std=c11`. -/
 #guard both "#define u8 X\nu8\"a\"\n" "u8\"a\""
 
+/-! ### UCN identifier identity is independent of the source spelling. -/
+#guard both "#define caf\\u00e9 7\ncaf\\U000000E9\n" "7"
+#guard ppIs Tcc.cfgTcc testFS "#define caf\\u00e9 7\ncafé\n" "7"
+#guard both "#define f(\\u00e9) \\U000000E9\nf(23)\n" "23"
+#guard both "#define caf\\u00e9 7\n#if defined(caf\\U000000E9)\nyes\n#endif\n#undef caf\\U000000E9\n#ifdef caf\\u00e9\nno\n#endif\n" "yes"
+#guard both "#define CAT(a,b) a ## b\n#define caf\\u00e9 7\nCAT(caf,\\U000000E9)\n" "7"
+#guard both "#define caf\\u00e9 caf\\U000000E9\ncaf\\u00e9\n" "caf\\U000000E9"
+#guard both "#define STR(x) #x\nSTR(caf\\u00e9)\n" "\"caf\\u00e9\""
+
 end CSem.Pre.Test
