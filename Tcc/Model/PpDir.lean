@@ -890,14 +890,13 @@ def parse_number (R : Rec) (src : ByteArray) : M Unit := do
   if fracDirect || ch == 46 || ((ch == 101 || ch == 69) && b == 10) || ((ch == 112 || ch == 80) && (b == 16 || b == 2)) then
     if b != 10 then
       -- hexadecimal or binary floats
-      let shift := if b == 16 then 4 else 1
+      let shift : Nat := if b == 16 then 4 else 1
       let mut bn : Nat := 0
       let mut frac_bits : Int := 0
       for c in q.data do
         let c := c.toUInt32.toInt32
         let t := if c ≥ 97 then c - 97 + 10 else if c ≥ 65 then c - 65 + 10 else c - 48
-        let (bn', r) := bn_lshift bn shift t.toNat'
-        bn := bn'; frac_bits := frac_bits - r
+        bn := bn * 2 ^ shift + t.toNat'
       if ch == 46 then
         ch := at_ p; p := p + 1
         for _ in [0:fuel] do
@@ -907,8 +906,8 @@ def parse_number (R : Rec) (src : ByteArray) : M Unit := do
           else if t ≥ 48 && t ≤ 57 then t := t - 48
           else break
           if t ≥ b then tcc_error_s R "invalid digit"
-          let (bn', r) := bn_lshift bn shift t.toNat'
-          bn := bn'; frac_bits := frac_bits - r + shift
+          bn := bn * 2 ^ shift + t.toNat'
+          frac_bits := frac_bits + shift
           ch := at_ p; p := p + 1
       if ch != 112 && ch != 80 then expect R "exponent"
       ch := at_ p; p := p + 1
@@ -922,25 +921,22 @@ def parse_number (R : Rec) (src : ByteArray) : M Unit := do
         if exp_val < 100000000 then exp_val := exp_val * 10 + (ch - 48).toInt
         ch := at_ p; p := p + 1
       exp_val := exp_val * s
-      -- d = bn[3]*2^96 + bn[2]*2^64 + bn[1]*2^32 + bn[0] in long double, then ldexpl
-      let w (k : Nat) : Nat := (bn / 2 ^ (32 * k)) % 2 ^ 32
-      let f := SF.F128
-      let d := SF.add f (SF.add f (SF.add f (SF.ofInt f (w 3 * 2 ^ 96)) (SF.ofInt f (w 2 * 2 ^ 64))) (SF.ofInt f (w 1 * 2 ^ 32))) (SF.ofInt f (w 0))
-      let d := match SF.decode f d with
-        | .fin n m e => SF.roundQ f n m (e + exp_val - frac_bits) false
-        | _ => d
+      -- Patch 0004 retains every source digit and rounds directly at the
+      -- destination quantum. The old scanner's fixed bn[4] is not the value
+      -- consumed by the exact bare-metal conversion helper.
       let t := toUp ch
       if t == 70 then
         ch := at_ p; p := p + 1
-        let fb := SF.cvt f SF.F32 d
+        let fb := SF.ofBinary SF.F32 bn (exp_val - frac_bits)
         modify fun st => { st with tok := TOK_CFLOAT, tokc := st.tokc.setFbits (UInt32.ofNat fb) }
       else if t == 76 then
         ch := at_ p; p := p + 1
+        let d := SF.ofBinary SF.F128 bn (exp_val - frac_bits)
         modify fun st => { st with
           tok := TOK_CLDOUBLE,
           tokc := { st.tokc with lo := UInt64.ofNat (d % 2^64), hi := UInt64.ofNat (d / 2^64) } }
       else
-        let db := SF.cvt f SF.F64 d
+        let db := SF.ofBinary SF.F64 bn (exp_val - frac_bits)
         modify fun st => { st with tok := TOK_CDOUBLE, tokc := st.tokc.setI (UInt64.ofNat db) }
     else
       -- decimal floats
@@ -972,9 +968,8 @@ def parse_number (R : Rec) (src : ByteArray) : M Unit := do
       let txt := Bytes.toStr q
       if t == 70 then
         ch := at_ p; p := p + 1
-        -- newlib's strtof: (float) strtod
-        let db := SF.ofDecimal SF.F64 txt
-        let fb := SF.cvt SF.F64 SF.F32 db
+        -- Patch 0004: no intermediate binary64 rounding.
+        let fb := SF.ofDecimal SF.F32 txt
         modify fun st => { st with tok := TOK_CFLOAT, tokc := st.tokc.setFbits (UInt32.ofNat fb) }
       else if t == 76 then
         ch := at_ p; p := p + 1

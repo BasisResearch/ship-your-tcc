@@ -372,3 +372,13 @@ are repeated and retained separately from the stale-binary history.
   is retained separately from output equality. A minimal literal probe prints
   `3f800000 3f800000` on tcc/Sail versus CSem `3f800001 3f800000`; these two
   observed discrepancies block claiming the corresponding library/literal links.
+
+Direct literal review (2026-10-27): binary128 intermediates still double-round
+binary32/64, and fixed-width hexadecimal accumulation loses the sticky tail.
+Use every source digit and direct destination rounding. The full 189-case
+tcc/Sail probe needs 232,926,522 compile steps; the incomplete stopped run
+is retained separately from the smaller native boundary probe. The 789-case
+fast stress compile requires 841,087,712 steps, beyond its first 400M limit.
+Neither exhausted run counts as a passing observation. Build-service review
+notes must be read in full: polling only the first eight receipt lines hid
+requested corrections until the lead surfaced them explicitly.

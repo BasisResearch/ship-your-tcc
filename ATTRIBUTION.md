@@ -156,3 +156,9 @@ policy, frontend integration, new tests and harness repairs are local changes
 under the surrounding project licenses. Fresh evidence, including failures
 and the correction to the draft's NaN policy, is in
 `results/csem/ieee-2026-10-27.md`.
+
+The direct-literal extension of patch 0004 reuses the same pinned newlib
+integer-bignum ABI for all three destination formats and all source digits.
+`scripts/gen_float_literal_tests.py` factors and reuses this repository's
+`gen_ld_literal_tests.py` exact-rational oracle; it consumes no compiler/model
+output. No new library source or machine proof was imported.

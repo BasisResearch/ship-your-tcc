@@ -42,31 +42,36 @@ def decimal(x, exact=False, direction=0):
     return str(q) + 'e' + str(e - 159)
 
 
-def bits(text):
-    """Round the decimal rational directly to its binary128 quantum."""
-    x = F(text)
-    if text.startswith('-'):
-        return (1 << 127) | bits(text[1:])
+def round_bits(x, fraction=112, ebits=15):
+    """Round a nonnegative exact rational at the destination IEEE quantum."""
+    bias = 2 ** (ebits - 1) - 1
     if not x:
         return 0
     n, d = x.numerator, x.denominator
     e = n.bit_length() - d.bit_length()
     if x < pow2(e):
         e -= 1
-    quantum = max(e - 112, -16494)
+    quantum = max(e - fraction, 1 - bias - fraction)
     y = x / pow2(quantum)
     q, r = divmod(y.numerator, y.denominator)
     if 2 * r > y.denominator or (2 * r == y.denominator and q % 2):
         q += 1
-    if q == 2 ** 113:
+    if q == 2 ** (fraction + 1):
         q //= 2
         quantum += 1
-    if q < 2 ** 112:
+    if q < 2 ** fraction:
         return q
-    exponent = quantum + 16495
-    if exponent >= 32767:
-        return 32767 << 112
-    return (exponent << 112) | (q - 2 ** 112)
+    exponent = quantum + fraction + bias
+    if exponent >= 2 ** ebits - 1:
+        return (2 ** ebits - 1) << fraction
+    return (exponent << fraction) | (q - 2 ** fraction)
+
+
+def bits(text):
+    """Round the decimal rational directly to binary128, preserving -0."""
+    if text.startswith('-'):
+        return (1 << 127) | bits(text[1:])
+    return round_bits(F(text))
 
 
 def vectors():

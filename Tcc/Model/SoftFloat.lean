@@ -245,7 +245,16 @@ def isNonzero (f : Fmt) (a : Nat) : Bool :=
   | .zero _ => false
   | _ => true
 
-/-! ## decimal strings (correctly rounded, as newlib's strtod) -/
+/-- Exact binary literal conversion from all source digits. The exponent
+checks match patch 0004 and avoid constructing enormous underflow shifts. -/
+def ofBinary (f : Fmt) (m : Nat) (e : Int) : Nat :=
+  if m == 0 then 0 else
+  let exponent := e + (bitlen m : Int) - 1
+  if exponent > (f.bias : Int) then f.inf false
+  else if exponent < -(f.bias : Int) - f.mbits then 0
+  else roundQ f false m e false
+
+/-! ## exact decimal source literals -/
 
 /-- parse the C decimal floating literal text `[digits][.digits][e[+-]digits]`
 into (mantissa digits as Nat, decimal exponent) -/
@@ -288,7 +297,7 @@ def ofDecimal (f : Fmt) (s : String) (trunc : Bool := false) : Nat :=
     else if e ≥ 0 then roundQ f false (m * 10 ^ e.toNat) 0 false trunc
     else roundRat f false m (10 ^ (-e).toNat) 0 trunc
 
-/- Decimal long doubles use `ofDecimal F128` after patches/0004. The
+/- All decimal formats use direct `ofDecimal` after patches/0004. The
    compiler's mprec-based conversion and this rational algorithm are independent;
    their agreement is a differential obligation, not yet proved. -/
 

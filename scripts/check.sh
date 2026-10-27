@@ -78,6 +78,8 @@ python3 scripts/gen_printf_layout.py --check || fail "generated Tcc/Printf/Sum d
 python3 scripts/gen_ccp.py --check || fail "generated Tcc/Ccp/Sum drifted (scripts/gen_ccp.py)"
 # Executable compiler model token numbers must follow the patched tcc headers.
 python3 scripts/gen_model_tok.py --check || fail "generated Tcc/Model/Tok drifted"
+python3 scripts/gen_ld_literal_tests.py --check || fail "generated binary128 literal tests drifted"
+python3 scripts/gen_float_literal_tests.py --check || fail "generated direct literal tests drifted"
 # CSem.Pre's tcc configuration and image file system (Spec/Pre/Tcc/), from the
 # patched tcc sources, the cross tcc's -dM listing and c/build/fs.list
 if [ -f c/build/fs.list ] && [ -x build/cross/riscv64-tcc ]; then

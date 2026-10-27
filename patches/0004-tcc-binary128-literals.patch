@@ -1,30 +1,30 @@
-Exact decimal binary128 literals in the pinned bare-metal RV64 image.
+Exact source floating literals in the bare-metal RV64 image.
 
-Newlib 4.5.0.20241231 strtold writes x87 into binary128 storage. Its
-_strtodg_l also fails boundary tests at 113-bit nearest and 114-bit directed
-rounding. Reuse its integer bignum helpers (mprec) without the approximate
-floating conversion path: construct the exact rational, divide at the
-binary128 quantum and round once, ties to even. See results/model/ld-literals.md.
+Newlib strtof rounds through binary64, strtold writes x87 into binary128
+storage, and the inherited hexadecimal path loses low digits and rounds
+through binary128. Use the existing newlib integer bignums to round the
+exact decimal/hexadecimal/binary rational once at its destination quantum.
+No reference data or native floating intermediate is used. Public libc
+conversions are unchanged; only compiler literal parsing is repaired.
 
-Only compiler literal parsing changes; public libc strtold is unchanged.
-Applies after 0001/0002 and slot 1's 0003 (disjoint preprocessor/C11 work).
-The pristine vendor/tinycc and existing sum compile-cut stay untouched.
+Applies after 0001/0002/0003. Vendor TinyCC and frozen sum cuts stay unchanged.
+See results/model/direct-float-review-2026-10-27.md and ATTRIBUTION.md.
 
 --- a/tccpp.c
 +++ b/tccpp.c
-@@ -2238,6 +2238,146 @@
+@@ -2380,10 +2380,160 @@
      }
  }
  
 +#ifdef TCC_BAREMETAL
-+/* newlib 4.5.0 strtold writes x87, and strtodg has binary128 boundary
-+   defects. Reuse newlib's integer bignums directly and round an exact
-+   decimal rational once. Private ABI: sys/reent.h and stdlib/mprec.h;
-+   see ATTRIBUTION.md. No floating-point arithmetic occurs here. */
++/* Exact source-literal conversion. Reuse newlib mprec integer bignums;
++   round once at the destination quantum, including subnormal boundaries.
++   No host floating value or intermediate floating format is involved. */
 +#include <reent.h>
-+#if __LDBL_MANT_DIG__ != 113 || __LDBL_MAX_EXP__ != 16384 \
++#if __FLT_MANT_DIG__ != 24 || __DBL_MANT_DIG__ != 53 \
++    || __LDBL_MANT_DIG__ != 113 || __LDBL_MAX_EXP__ != 16384 \
 +    || __SIZEOF_LONG_DOUBLE__ != 16 || __BYTE_ORDER__ != __ORDER_LITTLE_ENDIAN__
-+#error TCC_BAREMETAL literal conversion requires little-endian IEEE binary128
++#error TCC_BAREMETAL literal conversion requires little-endian IEEE 32/64/128
 +#endif
 +extern struct _Bigint *_Balloc(struct _reent *, int);
 +extern void _Bfree(struct _reent *, struct _Bigint *);
@@ -38,11 +38,9 @@ The pristine vendor/tinycc and existing sum compile-cut stay untouched.
 +
 +static struct _Bigint *tcc_big_checked(struct _Bigint *b)
 +{
-+    if (!b)
-+        tcc_error("memory full (binary128 literal)");
++    if (!b) tcc_error("memory full (floating literal)");
 +    return b;
 +}
-+
 +static struct _Bigint *tcc_big_copy(struct _Bigint *b)
 +{
 +    struct _Bigint *r = tcc_big_checked(_Balloc(_REENT, b->_k));
@@ -51,56 +49,68 @@ The pristine vendor/tinycc and existing sum compile-cut stay untouched.
 +    memcpy(r->_x, b->_x, b->_wds * sizeof b->_x[0]);
 +    return r;
 +}
-+
 +static struct _Bigint *tcc_big_shift(struct _Bigint *b, int shift)
 +{
 +    return tcc_big_checked(__lshift(_REENT, b, shift));
 +}
-+
 +static int tcc_big_bits(struct _Bigint *b)
 +{
 +    return 32 * b->_wds - __hi0bits(b->_x[b->_wds - 1]);
 +}
 +
-+static long double tcc_strtold_binary128(const char *s)
++static void tcc_literal_ieee(const char *s, int fraction, int ebits, void *out)
 +{
 +    struct _Bigint *num = tcc_big_checked(__i2b(_REENT, 0));
 +    struct _Bigint *den = NULL, *tmp, *rem;
-+    __ULong words[4] = { 0, 0, 0, 0 };
-+    long double result;
-+    int e10 = 0, digits = 0, dot = 0, nonzero = 0, exp10 = 0;
-+    int negexp = 0, exponent, quantum, i, cmp, carry;
++    __ULong words[4] = {0, 0, 0, 0};
++    int base = 10, scale = 0, dot = 0, digits = 0, nonzero = 0;
++    int expval = 0, negexp = 0, digit, exponent, quantum, i, cmp, carry;
++    int bias = (1 << (ebits - 1)) - 1;
++    int min_quantum = 1 - bias - fraction;
++    int max_field = (1 << ebits) - 1;
 +
-+    /* parse_number has already validated this unsigned decimal token. */
-+    for (; (*s >= '0' && *s <= '9') || *s == '.'; ++s) {
-+        if (*s == '.') {
-+            dot = 1;
-+        } else {
-+            num = tcc_big_checked(__multadd(_REENT, num, 10, *s - '0'));
-+            if (*s != '0') nonzero = 1;
-+            if (nonzero) ++digits;
-+            if (dot) --e10;
-+        }
++    /* The ordinary scanner already validated the complete unsigned token. */
++    if (s[0] == '0' && (s[1] == 'x' || s[1] == 'X')) base = 16, s += 2;
++    else if (s[0] == '0' && (s[1] == 'b' || s[1] == 'B')) base = 2, s += 2;
++    for (;;) {
++        if (*s == '.') { dot = 1; ++s; continue; }
++        if (*s >= '0' && *s <= '9') digit = *s - '0';
++        else if (*s >= 'a' && *s <= 'f') digit = *s - 'a' + 10;
++        else if (*s >= 'A' && *s <= 'F') digit = *s - 'A' + 10;
++        else break;
++        if (digit >= base) break;
++        num = tcc_big_checked(__multadd(_REENT, num, base, digit));
++        if (digit) nonzero = 1;
++        if (nonzero) ++digits;
++        if (dot) scale -= base == 16 ? 4 : 1;
++        ++s;
 +    }
-+    if (*s == 'e' || *s == 'E') {
++    if ((base == 10 && (*s == 'e' || *s == 'E'))
++        || (base != 10 && (*s == 'p' || *s == 'P'))) {
 +        ++s;
 +        if (*s == '-' || *s == '+') negexp = *s++ == '-';
 +        for (; *s >= '0' && *s <= '9'; ++s)
-+            if (exp10 < 100000000) exp10 = exp10 * 10 + *s - '0';
-+        e10 += negexp ? -exp10 : exp10;
++            if (expval < 100000000) expval = expval * 10 + *s - '0';
++        scale += negexp ? -expval : expval;
 +    }
-+    if (!nonzero || e10 + digits < -6000) goto done;
-+    if (e10 + digits > 6000) goto infinity;
-+
-+    den = tcc_big_checked(__i2b(_REENT, 1));
-+    if (e10 >= 0) {
-+        num = tcc_big_checked(__pow5mult(_REENT, num, e10));
-+        num = tcc_big_shift(num, e10);
++    if (!nonzero) goto done;
++    if (base == 10) {
++        if (scale + digits < -6000) goto done;
++        if (scale + digits > 6000) goto infinity;
 +    } else {
-+        den = tcc_big_checked(__pow5mult(_REENT, den, -e10));
-+        den = tcc_big_shift(den, -e10);
++        /* Avoid allocating a huge shift for an already definite zero/inf. */
++        exponent = tcc_big_bits(num) - 1 + scale;
++        if (exponent > bias) goto infinity;
++        if (exponent < min_quantum - 1) goto done;
 +    }
-+    /* floor(log2(num/den)), then the representable quantum exponent. */
++    den = tcc_big_checked(__i2b(_REENT, 1));
++    if (scale >= 0) {
++        if (base == 10) num = tcc_big_checked(__pow5mult(_REENT, num, scale));
++        num = tcc_big_shift(num, scale);
++    } else {
++        if (base == 10) den = tcc_big_checked(__pow5mult(_REENT, den, -scale));
++        den = tcc_big_shift(den, -scale);
++    }
 +    exponent = tcc_big_bits(num) - tcc_big_bits(den);
 +    if (exponent >= 0) {
 +        tmp = tcc_big_shift(tcc_big_copy(den), exponent);
@@ -111,16 +121,13 @@ The pristine vendor/tinycc and existing sum compile-cut stay untouched.
 +    }
 +    _Bfree(_REENT, tmp);
 +    if (cmp < 0) --exponent;
-+    if (exponent > 16383) goto infinity;
-+    if (exponent < -16495) goto done;
-+    quantum = exponent - 112;
-+    if (quantum < -16494) quantum = -16494;
++    if (exponent > bias) goto infinity;
++    if (exponent < min_quantum - 1) goto done;
++    quantum = exponent - fraction;
++    if (quantum < min_quantum) quantum = min_quantum;
 +    if (quantum >= 0) den = tcc_big_shift(den, quantum);
 +    else num = tcc_big_shift(num, -quantum);
-+
-+    /* Binary long division: quotient has at most 113 bits. Keep the
-+       exact remainder for a single ties-to-even rounding decision. */
-+    for (i = 112; i >= 0; --i) {
++    for (i = fraction; i >= 0; --i) {
 +        tmp = tcc_big_shift(tcc_big_copy(den), i);
 +        if (__mcmp(num, tmp) >= 0) {
 +            rem = tcc_big_checked(__mdiff(_REENT, num, tmp));
@@ -133,41 +140,93 @@ The pristine vendor/tinycc and existing sum compile-cut stay untouched.
 +    num = tcc_big_shift(num, 1);
 +    cmp = __mcmp(num, den);
 +    carry = cmp > 0 || (cmp == 0 && (words[0] & 1));
-+    for (i = 0; carry && i < 4; ++i)
-+        carry = ++words[i] == 0;
-+    if (words[3] & 0x20000u) {
++    for (i = 0; carry && i < 4; ++i) carry = ++words[i] == 0;
++    if (words[(fraction + 1) / 32] & ((__ULong)1 << ((fraction + 1) % 32))) {
 +        memset(words, 0, sizeof words);
-+        words[3] = 0x10000u;
++        words[fraction / 32] = (__ULong)1 << (fraction % 32);
 +        ++quantum;
 +    }
-+    if (words[3] & 0x10000u) {
-+        if (quantum > 16271) goto infinity;
-+        words[3] = (words[3] & 0xffffu) | ((__ULong)(quantum + 16495) << 16);
++    if (words[fraction / 32] & ((__ULong)1 << (fraction % 32))) {
++        int field = quantum + fraction + bias;
++        if (field >= max_field) goto infinity;
++        words[fraction / 32] &= ~((__ULong)1 << (fraction % 32));
++        words[fraction / 32] |= (__ULong)field << (fraction % 32);
 +    }
 +    goto done;
 +infinity:
 +    memset(words, 0, sizeof words);
-+    words[3] = 0x7fff0000u;
++    words[fraction / 32] = (__ULong)max_field << (fraction % 32);
 +done:
 +    _Bfree(_REENT, num);
 +    if (den) _Bfree(_REENT, den);
-+    memcpy(&result, words, sizeof result);
-+    return result;
++    memcpy(out, words, (fraction + ebits + 1) / 8);
 +}
 +#endif
 +
  /* parse number in null terminated string 'p' and return it in the
     current token */
  static void parse_number(const char *p)
-@@ -2424,7 +2564,11 @@
+ {
++#ifdef TCC_BAREMETAL
++    const char *literal_start = p;
++#endif
+     int b, t, shift, frac_bits, s, exp_val, ch;
+     char *q;
+     unsigned int bn[BN_SIZE];
+@@ -2500,6 +2650,21 @@
+             }
+             exp_val = exp_val * s;
+ 
++#ifdef TCC_BAREMETAL
++            t = toup(ch);
++            if (t == 'F') {
++                ch = *p++;
++                tok = TOK_CFLOAT;
++                tcc_literal_ieee(literal_start, 23, 8, &tokc.f);
++            } else if (t == 'L') {
++                ch = *p++;
++                tok = TOK_CLDOUBLE;
++                tcc_literal_ieee(literal_start, 112, 15, &tokc.ld);
++            } else {
++                tok = TOK_CDOUBLE;
++                tcc_literal_ieee(literal_start, 52, 11, &tokc.d);
++            }
++#else
+             /* now we can generate the number */
+             /* XXX: should patch directly float number */
+             d = (long double)bn[3] * 79228162514264337593543950336.0L +
+@@ -2521,6 +2686,7 @@
+                 tok = TOK_CDOUBLE;
+                 tokc.d = (double)d;
+             }
++#endif
+         } else {
+             /* decimal floats */
+             if (ch == '.') {
+@@ -2562,14 +2728,26 @@
+             if (t == 'F') {
+                 ch = *p++;
+                 tok = TOK_CFLOAT;
++#ifdef TCC_BAREMETAL
++                tcc_literal_ieee(literal_start, 23, 8, &tokc.f);
++#else
+                 tokc.f = strtof(token_buf, NULL);
++#endif
              } else if (t == 'L') {
                  ch = *p++;
                  tok = TOK_CLDOUBLE;
 +#ifdef TCC_BAREMETAL
-+                tokc.ld = tcc_strtold_binary128(token_buf);
++                tcc_literal_ieee(literal_start, 112, 15, &tokc.ld);
 +#else
                  tokc.ld = strtold(token_buf, NULL);
 +#endif
              } else {
                  tok = TOK_CDOUBLE;
++#ifdef TCC_BAREMETAL
++                tcc_literal_ieee(literal_start, 52, 11, &tokc.d);
++#else
                  tokc.d = strtod(token_buf, NULL);
++#endif
+             }
+         }
+     } else {

@@ -42,7 +42,7 @@ The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
 two at a time, following MANAGER.md. Slot 1 connects raw preprocessing to
 the Cabs frontend; slot 2 repairs anonymous-member semantics (CSEM-07).
 The pure IEEE implementation is integrated after the combined gate; the lead
-investigates compiler literal rounding while both frontend lanes continue. Exact-token/pragma integration is now
+validates the direct-rounding compiler/model repair while both frontend lanes continue. Exact-token/pragma integration is now
 validated with the nested-designator repair: strengthened full gate, 147
 positive/14 invalid C11 checks, 18 protocol tests, 64 focused positives and
 17 joint rejections. The 619-input corpus has 613 raw/611 spec agreements;
@@ -125,6 +125,15 @@ discrepancies. Follow-up tasks are `tasks/f3-direct-float-literals.md` and
 `tasks/f3-anonymous-members.md`; each requires minimized independent evidence
 and preserves the whole-C contract. Newlib binary128 printf/sqrtl remain F7
 obligations, separate from pure IEEE arithmetic.
+
+Direct literal repair: all four original same-program counterexamples now
+match exact expected bits on full Sail; the independent 4 MiB handoff arena
+also matches. The 189/789-case generated checks and fresh broad comparison
+are retained in results/model/direct-float-fixed-2026-10-27.md. The full gate and 15-case native boundary probe pass;
+the repair is adopted. Raw-frontend review requires UCN identity and an
+explicit pack-layout connection; anonymous-member review requires hiding
+physical container names from source expressions/designators. Worker receipts
+now surface these lead notes before finalization.
 
 ## Needs user
 

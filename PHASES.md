@@ -216,7 +216,7 @@ Open IEEE connections are explicit typed definitions:
 | `CerbIEEE.FormatConversionValue_Statement` | field-level proof that the RV64 payload-preserving NaN extension still denotes the core model's NaN; finite rounding path is `convert_not_nan` | open; raw widening/narrowing Sail bits retained |
 | `Tcc.CSem.IEEE.RV64LibgccIEEE_Statement calls` | instantiate `SailCalls` with actual image-pinned lp64 helper runs, code/stack/frame preconditions, then prove `RuntimeAgreement` | open F7; no abstract relation is asserted to describe an image |
 | `Tcc.CSem.IEEE.NewlibIEEE_Statement calls` | image-pinned sqrt and floating printf calls agree with pure IEEE, with ABI/resources/stdio frames supplied by F7 | open; nine finite sqrtl discrepancies and binary128 printf precision/range loss are observed on Sail |
-| `Tcc.CSem.IEEE.TccLiteralIEEE_Statement parseLiteral` | connect target/compiler-model literal parsing to the selected direct-RNE IEEE literal function | open; fresh tcc/Sail `rounding.c` returns 1 where CSem returns 0; retained as a target/spec literal-accuracy discrepancy requiring repair or explicit standards/configuration reconciliation, never a Supported exclusion |
+| `Tcc.CSem.IEEE.TccLiteralIEEE_Statement parseLiteral` | connect target/compiler-model literal parsing to the selected direct-RNE IEEE literal function | open; the direct-rounding compiler/model repair and fresh evidence are in results/model/direct-float-fixed-2026-10-27.md; the original discrepancy is retained, and finite checks do not prove this connection |
 
 The fresh tcc/Sail continuation passes NaN bytes and conversions but its
 long-double printf line narrows to binary64 precision/range; the independent
@@ -228,3 +228,15 @@ rounded libc Core dump and the partial Core/frontend parsers remain separate
 obligations. The runtime native-seam census remains diagnostic for other
 seams; its new floating check rejects native Float/Float32 in either cone.
 See `results/csem/ieee-2026-10-27.md` for final gate status and exact counts.
+
+Direct-literal follow-up (2026-10-27): patch 0004 and PpDir/SoftFloat now use
+exact source digits and direct destination-format rounding. The original four
+bit-pattern counterexamples pass full Sail, with a complete independent 4 MiB
+native arena match. The 789-case stress matrix passes fast RV64 execution and
+xPack/Sail, with independent model arena equality. Broad fresh comparison
+has 1,339 matching arenas / 1,813 attempts, 466 refusals, seven assembly gaps
+and one instruction-limit failure; the separately retained larger-limit
+cleanup run matches, with no byte mismatch. The full gate and 15-case native boundary probe pass; their
+evidence is recorded in results/model/direct-float-fixed-2026-10-27.md.
+The literal-connection Statement, all-corpus Sail coverage and F3 proofs stay
+open; these are not new Supported exclusions.

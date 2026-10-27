@@ -25,7 +25,7 @@ Current F0–F3 validation: exact phase-4 observation and nested designators are
 integrated; 1,339 independent fast arenas and three complete native Sail arenas
 match on the combined image. CSem now uses pure binary32/64/128 values, with
 zero native floating in its checked cones. F1–F3 and the whole-compiler theorem
-remain open; literal rounding, newlib binary128 formatting/sqrt and other
+remain open; newlib binary128 formatting/sqrt and other
 recorded semantic gaps still require work.
 
 ## The target: RV64I
@@ -352,3 +352,10 @@ unchanged. Fresh arithmetic, literal, printf and Sail evidence, with the
 retained target literal-accuracy, binary128 printf and sqrtl discrepancies,
 is in [the recovery report](results/csem/ieee-2026-10-27.md). Image/library and
 conversion-field proof connections remain explicit obligations in PHASES.md.
+
+The direct source-literal repair extends patch 0004 to binary32/64/128 decimal
+and hexadecimal conversion. Exact-rational boundary and stress fixtures,
+independent arena checks and retained native Sail evidence are in
+[results/model/direct-float-fixed-2026-10-27.md](results/model/direct-float-fixed-2026-10-27.md).
+The original failing image remains documented separately; the compiler/model
+literal refinement theorem and public libc conversions remain open.

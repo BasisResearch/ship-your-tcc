@@ -1,0 +1,118 @@
+{
+  "command": [
+    "scripts/model_diff.py",
+    "--no-report",
+    "-j",
+    "2",
+    "--json-out",
+    "build/direct-float-fixed/arenas.json",
+    "--require-success",
+    "4",
+    "results/repro/tcc_float_literal_direct_rounding.c",
+    "c/tests/model/float_direct.c",
+    "c/tests/model/ld_boundary.c",
+    "build/direct-float-fixed/stress.c"
+  ],
+  "runtime_key": "e09085b5b52a251c77b058f5c9328988f520947a7258f2b71c6f2fa6f725b39a",
+  "pins": {
+    "vendor/TINYCC_REV": "76ca376f1f96cf1b316713d8f94d91c8629445929d1e7474792fd76610bce1c0",
+    "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+    "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+    "patches/0003-tcc-c11.patch": "3fe7b107132d23104c9b6988645a8d9f1d96cc7d282433fd4e666830a17526e7",
+    "patches/0004-tcc-binary128-literals.patch": "15d4a95ec667c9ec18ea2be3fc1475c1178668853fea28213c3061afa0f863ff",
+    "c/build/base.elf": "2cd691d9423bdc61503fb61d888a3ac564ee09e68ca16a99ca434747ec99e546",
+    "c/src/gen_embed.sh": "68534ee3a238c143bf4e749fcb0ea43e8b53933c4a9d6843422d995c879d7d76",
+    "scripts/model_diff.py": "6fab1c29ac671896b91fa6e75f064a78c871b77b3f582e163dcaf4aaf84f7bb9",
+    ".lake/build/bin/tcc_model": "7d0c073072eda03bfee92042c73dfcb2a797b2f7885720dcb8e8a937491062da",
+    "results/repro/tcc_float_literal_direct_rounding.c": "cb86bf202eab06b20cadb1fe58c2fc7a205ef0a59bf12edc66db740c207a3ec3",
+    "c/tests/model/float_direct.c": "9aa10e3166b8a5321f0cf108c45136030270cdb153fa020f31cf59ad365151d6",
+    "c/tests/model/ld_boundary.c": "5ddfd00d0cc6d4d1812dd51df0343c509892a8ee0d077ca24351d23282072905",
+    "build/direct-float-fixed/stress.c": "426cc81986ff2dd9e6a298443e35c32fa9fbc2c3b24b036f491a30bfd5e34f3a"
+  },
+  "results": {
+    "results/repro": [
+      {
+        "name": "results/repro/tcc_float_literal_direct_rounding.c",
+        "model_s": 0.27422380447387695,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 78100 bytes"
+      }
+    ],
+    "c/tests/model": [
+      {
+        "name": "c/tests/model/float_direct.c",
+        "model_s": 0.6230423450469971,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 84428 bytes"
+      },
+      {
+        "name": "c/tests/model/ld_boundary.c",
+        "model_s": 0.40999937057495117,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 81556 bytes"
+      }
+    ],
+    "build/direct-float-fixed": [
+      {
+        "name": "build/direct-float-fixed/stress.c",
+        "result": "harness-error",
+        "why": "reference harness failure (124) for /data/home/kirancodes/Documents/code/ship-your-tcc/build/direct-float-fixed/stress.c: rv64emu: steps=400000000 compile_steps=- exit=124 status=limit\n"
+      }
+    ]
+  },
+  "rows": [
+    [
+      "results/repro",
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.27422380447387695
+    ],
+    [
+      "c/tests/model",
+      2,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.5165208578109741
+    ],
+    [
+      "build/direct-float-fixed",
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0
+    ]
+  ],
+  "totals": {
+    "n": 4,
+    "same": 3
+  },
+  "wall_seconds": 3.4177732467651367,
+  "reference": "rv64emu diagnostic; Sail arena equality pending",
+  "sail_settings": null,
+  "compiler_args": [
+    "-std=c11",
+    "-w"
+  ]
+}

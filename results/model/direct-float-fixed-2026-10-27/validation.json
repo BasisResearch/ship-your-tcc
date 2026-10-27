@@ -1,0 +1,14 @@
+{
+  "base_revision": "4db60b66e90ef806a2721074335a0457682b5b7c",
+  "source_pins_verified": true,
+  "full_gate_exit": 0,
+  "final_static_after_generated_focus_fixture": 0,
+  "native_boundary_cases": 15,
+  "native_boundary_exit": 0,
+  "frozen_sum_chain_regenerated": false,
+  "known_limitations": [
+    "typed literal connection unproved",
+    "whole-corpus native arena equality open",
+    "public libc conversions unchanged"
+  ]
+}
