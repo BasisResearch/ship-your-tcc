@@ -96,23 +96,34 @@ def get_tok_str_st (s : TccSt) (v : Int32) (cv : Option CValue) : Option ByteArr
   let cv := cv.getD {}
   if v == TOK_CINT || v == TOK_CUINT || v == TOK_CLONG || v == TOK_CULONG || v == TOK_CLLONG || v == TOK_CULLONG then
     some (cfmt "%llu" [.u cv.i.toNat])
-  else if v == TOK_CCHAR || v == TOK_LCHAR then
-    let b := if v == TOK_LCHAR then ByteArray.empty.push 76 else ByteArray.empty
+  else if v == TOK_CCHAR || v == TOK_LCHAR || v == TOK_U16CHAR || v == TOK_U32CHAR then
+    let b := if v == TOK_CCHAR then ByteArray.empty else
+      ByteArray.empty.push (if v == TOK_U16CHAR then 117 else if v == TOK_U32CHAR then 85 else 76)
     -- add_char(cv->i) with the int value
     some ((add_char (b.push 39) cv.i.toUInt32.toInt32).push 39)
   else if v == TOK_PPNUM || v == TOK_PPSTR then
     some (Bytes.cstrAt cv.sdata 0)
-  else if v == TOK_STR || v == TOK_LSTR then
+  else if TOK_IS_STR v then
     Id.run do
-      let mut b := if v == TOK_LSTR then ByteArray.empty.push 76 else ByteArray.empty
+      let mut b := if v == TOK_STR then ByteArray.empty else
+        ByteArray.empty.push (if v == TOK_U16STR then 117 else if v == TOK_U32STR then 85 else 76)
       b := b.push 34
       if v == TOK_STR then
         let len := cv.strSize.toInt - 1
         for i in [0:len.toNat] do b := add_char b (cv.sdata.get! i).toUInt32.toInt32
       else
-        let len := cv.strSize.toInt / 4 - 1
-        for i in [0:len.toNat] do b := add_char b (Bytes.r32 cv.sdata (4*i)).toInt32
+        let width := (TOK_STR_SIZE v).toNat'
+        let len := cv.strSize.toInt / (Int.ofNat width) - 1
+        for i in [0:len.toNat] do
+          let c := if width == 2 then (Bytes.r16 cv.sdata (2*i)).toUInt32 else Bytes.r32 cv.sdata (4*i)
+          b := add_char b c.toInt32
       return some (b.push 34)
+  else if v == TOK_DG_LBRACK then some "<:".toUTF8
+  else if v == TOK_DG_RBRACK then some ":>".toUTF8
+  else if v == TOK_DG_LBRACE then some "<%".toUTF8
+  else if v == TOK_DG_RBRACE then some "%>".toUTF8
+  else if v == TOK_DG_SHARP then some "%:".toUTF8
+  else if v == TOK_DG_PASTE then some "%:%:".toUTF8
   else if v == TOK_CFLOAT then some "<float>".toUTF8
   else if v == TOK_CDOUBLE then some "<double>".toUTF8
   else if v == TOK_CLDOUBLE then some "<long double>".toUTF8

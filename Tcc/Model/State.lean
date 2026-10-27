@@ -138,6 +138,7 @@ structure TccSt where
   tokcstr : ByteArray := ByteArray.empty
   tok_ident : Int32 := 0
   table_ident : Array TokenSym := #[]
+  tok_pragma_op : Int32 := 0
   pp_expr : Int32 := 0
   hash_ident : Std.HashMap ByteArray Int32 := {}
   tokstr_buf : TokenString := {}
@@ -180,6 +181,9 @@ structure TccSt where
   char_type : CType := {}
   char_pointer_type : CType := {}
   initstr : ByteArray := ByteArray.empty
+  /-- The current init_params.unions callback context. Nested initializer
+  allocations save/restore this list, just as C passes a distinct init_params. -/
+  init_unions : Array InitUnion := #[]
   cur_switch : Nat := 0
   switches : Array SwitchT := #[default]
   arr_temp_local_vars : Array TempLocal := Array.replicate 8 default

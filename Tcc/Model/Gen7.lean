@@ -66,7 +66,10 @@ def init_assert (R : Rec) (p : InitP) (offset : Int32) : M Unit := do
 /-- `init_putz(p, c, size)` -/
 def init_putz (R : Rec) (p : InitP) (c : UInt64) (size : Int32) : M Unit := do
   init_assert R p (c.toUInt32.toInt32 + size)
-  if p.sec == 0 then
+  if p.sec != 0 then
+    if !(← NODATA_WANTED) then
+      modSecData p.sec fun d => Bytes.copy d c.toNat (Bytes.zeros size.toNat') 0 size.toNat'
+  else
     vpush_helper_func R TOK_memset
     vseti R VT_LOCAL c.toUInt32.toInt32
     vpushi R 0
@@ -91,6 +94,72 @@ def decl_design_delrels (sec : SecId) (c size : Int32) : M Unit := do
       if w != k then d := writeRela d (24 * w) r
       w := w + 1
   modSec sr fun x => { x with data := d, data_offset := off }
+
+/-- A union switch invalidates descendant records by type membership,
+never an enclosing record at the same address. -/
+def init_union_nested : Nat → SymId → SymId → M Bool
+  | 0, _, _ => throw (.fuel "init_union_nested")
+  | fuel+1, outer, inner => do
+    let mut f := (← getSym outer).next
+    let bound ← fuelM
+    for _ in [0:bound] do
+      if f == 0 then break
+      let field ← getSym f
+      let mut t := field.type
+      for _ in [0:bound] do
+        if t.t &&& VT_ARRAY == 0 then break
+        t ← pointed_type t
+      if t.t &&& VT_BTYPE == VT_STRUCT then
+        if t.ref == inner then return true
+        if ← init_union_nested fuel t.ref inner then return true
+      f := field.next
+    return false
+
+/-- `init_union_select(p, type, member, c, flags)` -/
+def init_union_select (R : Rec) (p : InitP) (type : CType) (member : SymId)
+    (c : UInt64) (flags : Int32) : M Unit := do
+  if flags &&& DIF_SIZE_ONLY != 0 || (← getSym type.ref).type.t != VT_UNION then return
+  let us := (← get).init_unions
+  let old := us.find? fun u => u.type == type.ref && u.addr == c
+  if let some u := old then
+    if u.member != member then
+      let size := (← getSym type.ref).c
+      let fuel ← fuelM
+      let mut kept : Array InitUnion := #[]
+      for v in us do
+        if v.type == type.ref && v.addr == c then
+          kept := kept.push v
+        else if v.addr - c < size.toInt64.toUInt64 then
+          if !(← init_union_nested fuel type.ref v.type) then kept := kept.push v
+        else kept := kept.push v
+      modify fun s => { s with init_unions := kept }
+      decl_design_delrels p.sec c.toUInt32.toInt32 size
+      init_putz R p c size
+  else
+    modify fun s => { s with init_unions := s.init_unions.push { type := type.ref, addr := c } }
+  modify fun s => { s with init_unions := s.init_unions.map fun u =>
+    if u.type == type.ref && u.addr == c then { u with member := member } else u }
+
+/-- `init_field_path`: select the direct member along every anonymous path.
+The size-only probe has no effects, matching patched tccgen.c. -/
+def init_field_path : Nat → Rec → InitP → CType → SymId → UInt64 → Int32 → M Bool
+  | 0, _, _, _, _, _, _ => throw (.fuel "init_field_path")
+  | fuel+1, R, p, type, field, c, flags => do
+    let mut s := (← getSym type.ref).next
+    let bound ← fuelM
+    for _ in [0:bound] do
+      if s == 0 then break
+      let sx ← getSym s
+      let mut found := s == field
+      if !found && sx.type.t &&& VT_BTYPE == VT_STRUCT && sx.v >= (SYM_FIRST_ANOM ||| SYM_FIELD) then
+        found ← init_field_path fuel R p sx.type field (c + sx.c.toInt64.toUInt64) (flags ||| DIF_SIZE_ONLY)
+      if found then
+        init_union_select R p type s c flags
+        if s != field then
+          let _ ← init_field_path fuel R p sx.type field (c + sx.c.toInt64.toUInt64) flags
+        return true
+      s := sx.next
+    return false
 
 /-- `decl_design_flex(p, ref, index)` -/
 def decl_design_flex (R : Rec) (p : InitP) (ref : SymId) (index : Int32) : M Unit := do
@@ -153,6 +222,7 @@ def decl_designator (R : Rec) (p : InitP) (type0 : CType) (c0 : UInt64) (cur_fie
         structField := none
         R.next
         let (f, cumofs) ← find_field fuel R type l
+        let _ ← init_field_path fuel R p type f c flags
         if cur_field.isSome then callerF := some f
         type := (← getSym f).type
         c := c + cumofs.toInt64.toUInt64
@@ -181,6 +251,7 @@ def decl_designator (R : Rec) (p : InitP) (type0 : CType) (c0 : UInt64) (cur_fie
         f := fx.next
         callerF := some f
       if f == 0 then tcc_error_s R "too many initializers"
+      init_union_select R p type f c flags
       let fx ← getSym f
       type := fx.type
       c := c + fx.c.toInt64.toUInt64
@@ -289,7 +360,7 @@ def decl_initializer (R : Rec) (p : InitP) (type : CType) (c : UInt64) (flags0 :
   let mut flags := flags0
   let fuel ← fuelM
   let tk ← getTok
-  if flags &&& DIF_HAVE_ELEM == 0 && tk != 123 && tk != TOK_LSTR && tk != TOK_STR &&
+  if flags &&& DIF_HAVE_ELEM == 0 && tk != 123 && !TOK_IS_STR tk &&
      (flags &&& DIF_SIZE_ONLY == 0 || type.t &&& VT_BTYPE == VT_STRUCT) then
     let ncw_prev := (← get).nocode_wanted
     if flags &&& DIF_SIZE_ONLY != 0 && p.sec == 0 then
@@ -324,7 +395,7 @@ def decl_initializer (R : Rec) (p : InitP) (type : CType) (c : UInt64) (flags0 :
   if type.t &&& VT_ARRAY != 0 then
     let mut no_oblock := true
     let tk ← getTok
-    if (flags &&& DIF_FIRST != 0 && tk != TOK_LSTR && tk != TOK_STR) || tk == 123 then
+    if (flags &&& DIF_FIRST != 0 && !TOK_IS_STR tk) || tk == 123 then
       skip R 123
       no_oblock := false
     let s := type.ref
@@ -333,24 +404,27 @@ def decl_initializer (R : Rec) (p : InitP) (type : CType) (c : UInt64) (flags0 :
     let size1 := (← R.type_size t1).1
     let tk ← getTok
     let mut doArray := true
-    if (tk == TOK_LSTR && t1.t &&& VT_BTYPE == VT_INT) || (tk == TOK_STR && t1.t &&& VT_BTYPE == VT_BYTE) then
+    if (tk == TOK_LSTR && t1.t &&& VT_BTYPE == VT_INT) ||
+       (tk == TOK_U16STR && t1.t &&& VT_BTYPE == VT_SHORT) ||
+       (tk == TOK_U32STR && t1.t &&& VT_BTYPE == VT_INT) || (tk == TOK_STR && t1.t &&& VT_BTYPE == VT_BYTE) then
       doArray := false
+      let str_tok := tk
       let mut len : Int32 := 0
       let mut initstr := ByteArray.empty
-      if size1 != (if tk == TOK_STR then 1 else 4) then tcc_error_s R "unhandled string literal merging"
+      if size1 != TOK_STR_SIZE tk then tcc_error_s R "unhandled string literal merging"
       for _ in [0:fuel] do
         let tk ← getTok
-        if !(tk == TOK_STR || tk == TOK_LSTR) then break
+        if !(TOK_IS_STR tk) then break
+        if size1 != TOK_STR_SIZE tk then tcc_error_s R "incompatible string literal initializer"
         if initstr.size > 0 then initstr := initstr.extract 0 (initstr.size - size1.toNat')
         let tc := (← get).tokc
-        if tk == TOK_STR then len := len + tc.strSize
-        else len := len + tc.strSize / 4
+        len := len + tc.strSize / size1
         len := len - 1
         initstr := initstr ++ tc.sdata.extract 0 tc.strSize.toNat'
         R.next
       let tk ← getTok
       if tk != 41 && tk != 125 && tk != 44 && tk != 59 && tk != C.TOK_EOF then
-        unget_tok (if size1 == 1 then TOK_STR else TOK_LSTR)
+        unget_tok str_tok
         modify fun s => { s with tokc := s.tokc.setStr initstr (Int32.ofNat initstr.size), initstr := initstr }
         doArray := true
       else
@@ -375,6 +449,7 @@ def decl_initializer (R : Rec) (p : InitP) (type : CType) (c : UInt64) (flags0 :
                   break
                 ch := 0
               else if size1 == 1 then ch := (initstr.get! i).toUInt32.toInt32
+              else if size1 == 2 then ch := (Bytes.r16 initstr (2 * i)).toUInt32.toInt32
               else ch := (Bytes.r32 initstr (4 * i)).toInt32
               vpushi R ch
               R.init_putv p.sec p.local_offset p.flex_array_ref t1 (c + (ii * size1).toInt64.toUInt64)
@@ -416,7 +491,7 @@ def decl_initializer (R : Rec) (p : InitP) (type : CType) (c : UInt64) (flags0 :
   else
     if flags &&& DIF_HAVE_ELEM == 0 then
       let tk ← getTok
-      if tk != TOK_STR && tk != TOK_LSTR then expect R "string constant"
+      if !TOK_IS_STR tk then expect R "string constant"
       parse_init_elem R (if p.sec == 0 then EXPR_ANY else EXPR_CONST)
     let v ← vt
     if p.sec == 0 && flags &&& DIF_CLEAR != 0 &&

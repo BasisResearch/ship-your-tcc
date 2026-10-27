@@ -49,6 +49,11 @@ def tcc_parse_args (R : Rec) (argv : Array ByteArray) : M (Int32 × Array ByteAr
     let opt := r.extract 1 r.size
     if opt == "w".toUTF8 then
       modify fun s => { s with warn_none := 1 }
+    else if opt.size ≥ 3 && opt.extract 0 3 == "std".toUTF8 then
+      -- libtcc.c's TCC_OPTION_std only updates these two spellings.
+      let value := opt.extract 3 opt.size
+      if value == "=c11".toUTF8 || value == "=gnu11".toUTF8 then
+        modify fun s => { s with cversion := 201112 }
     else if opt.size ≥ 3 && opt.extract 0 3 == "run".toUTF8 then
       run := some (opt.extract 3 opt.size)
       if (← get).output_type != 0 then

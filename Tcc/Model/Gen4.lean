@@ -168,7 +168,7 @@ def unary_postfix (R : Rec) : M Unit := do
 
 /-- the ghost node kind of a primary/prefix expression starting with `tok` -/
 def unaryGhostKind (tok : Int32) : String :=
-  if C.TOK_HAS_VALUE tok then (if tok == TOK_STR || tok == TOK_LSTR then "str" else "const")
+  if C.TOK_HAS_VALUE tok then (if TOK_IS_STR tok then "str" else "const")
   else if tok == 42 then "deref" else if tok == 38 then "addr" else if tok == 33 then "lnot"
   else if tok == 126 then "bnot" else if tok == 43 then "uplus" else if tok == 45 then "neg"
   else if tok == TOK_INC then "preinc" else if tok == TOK_DEC then "predec"
@@ -203,6 +203,8 @@ def unary (R : Rec) : M Unit := do
   let tc0 := (← get).tokc
   let mut gwrapped := false
   if tok == TOK_LCHAR || tok == TOK_CINT || tok == TOK_CCHAR then pushTokc VT_INT
+  else if tok == TOK_U16CHAR then pushTokc (VT_SHORT ||| VT_UNSIGNED)
+  else if tok == TOK_U32CHAR then pushTokc (VT_INT ||| VT_UNSIGNED)
   else if tok == TOK_CUINT then pushTokc (VT_INT ||| VT_UNSIGNED)
   else if tok == TOK_CLLONG then pushTokc VT_LLONG
   else if tok == TOK_CULLONG then pushTokc (VT_LLONG ||| VT_UNSIGNED)
@@ -216,6 +218,8 @@ def unary (R : Rec) : M Unit := do
     let cs := fn.push 0
     modify fun s => { s with tok := TOK_STR, tokcstr := cs, tokc := s.tokc.setStr cs (Int32.ofNat cs.size) }
     strInit (← get).char_type.t
+  else if tok == TOK_U16STR then strInit (VT_SHORT ||| VT_UNSIGNED)
+  else if tok == TOK_U32STR then strInit (VT_INT ||| VT_UNSIGNED)
   else if tok == TOK_LSTR then strInit VT_INT
   else if tok == TOK_STR then strInit (← get).char_type.t
   else if tok == TOK_SOTYPE || tok == 40 then

@@ -96,8 +96,8 @@ def main (argv : List String) : IO UInt32 := do
     | _ => pure ()
   let args := if o.argsSet then o.args else #["-w"]
   let tccArgv : Array String :=
-    if o.largs.isEmpty then #["tcc"] ++ args ++ #["-run", "/prog.c"]
-    else #["tcc"] ++ args ++ #["/prog.c"] ++ o.largs ++ #["-run", "--"]
+    if o.largs.isEmpty then #["tcc", "-std=c11"] ++ args ++ #["-run", "/prog.c"]
+    else #["tcc", "-std=c11"] ++ args ++ #["/prog.c"] ++ o.largs ++ #["-run", "--"]
   -- the loop bound of every C loop: proportional to the input's size
   let fuel := 16 * total + 4096
   let st0 : TccSt := { fsFiles := files, fsDirs := dirs, imageSyms := syms, fuel := fuel,

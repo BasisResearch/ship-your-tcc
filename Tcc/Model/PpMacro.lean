@@ -10,8 +10,66 @@ open C
 
 /-! ## next_nomacro -/
 
+/-- Patch 0003, C11 Annex D.1 identifier ranges. -/
+def ucn_identifier (u : UInt32) (initial : Bool) : Bool :=
+  let ranges : Array (UInt32 × UInt32) := #[
+    (0xa8,0xa8), (0xaa,0xaa), (0xad,0xad), (0xaf,0xaf),
+    (0xb2,0xb5), (0xb7,0xba), (0xbc,0xbe), (0xc0,0xd6),
+    (0xd8,0xf6), (0xf8,0x167f), (0x1681,0x180d),
+    (0x180f,0x1fff), (0x200b,0x200d), (0x202a,0x202e),
+    (0x203f,0x2040), (0x2054,0x2054), (0x2060,0x206f),
+    (0x2070,0x218f), (0x2460,0x24ff), (0x2776,0x2793),
+    (0x2c00,0x2dff), (0x2e80,0x2fff), (0x3004,0x3007),
+    (0x3021,0x302f), (0x3031,0xd7ff), (0xf900,0xfd3d),
+    (0xfd40,0xfdcf), (0xfdf0,0xfe44), (0xfe47,0xfffd)]
+  if initial && ((u >= 0x300 && u <= 0x36f) || (u >= 0x1dc0 && u <= 0x1dff) ||
+     (u >= 0x20d0 && u <= 0x20ff) || (u >= 0xfe20 && u <= 0xfe2f)) then false
+  else if u >= 0x10000 then u <= 0xefffd && (u &&& 0xffff) <= 0xfffd
+  else ranges.any fun (lo, hi) => lo <= u && u <= hi
+
+/-- The slow identifier path retains raw UCN spelling and allocates the
+canonical UTF-8 spelling first, exactly as patched next_nomacro. -/
+def parse_ident_slow (R : Rec) (p0 : Nat) (cs0 : ByteArray) : M Nat := do
+  let fuel ← fuelM
+  let mut p := p0
+  let mut c ← rd p
+  let mut cs := cs0
+  let mut spelling := cs0
+  for _ in [0:fuel] do
+    if (← isidnum c) &&& (IS_ID ||| IS_NUM) == 0 && c != 92 then break
+    if c == 92 then
+      let mut u : UInt32 := 0
+      spelling := spelling.push 92
+      let (c', p') ← peekc R p
+      c := c'; p := p'
+      spelling := spelling.push c.toUInt8
+      if c != 117 && c != 85 then tcc_error_s R "invalid universal-character-name"
+      let digits := if c == 117 then 4 else 8
+      for _ in [0:digits] do
+        let (c', p') ← peekc R p
+        c := c'; p := p'
+        spelling := spelling.push c.toUInt8
+        let d := if c >= 48 && c <= 57 then c - 48 else
+          if c >= 97 && c <= 102 then c - 97 + 10 else
+          if c >= 65 && c <= 70 then c - 65 + 10 else -1
+        if d < 0 then tcc_error_s R "invalid universal-character-name"
+        u := (u <<< 4) ||| d.toUInt32
+      if !ucn_identifier u (cs.size == 0) then
+        tcc_error_s R "invalid universal-character-name in identifier"
+      cs := cs ++ (← unicode_to_utf8 R u)
+    else
+      cs := cs.push c.toUInt8
+      spelling := spelling.push c.toUInt8
+    let (c', p') ← peekc R p
+    c := c'; p := p'
+  let canonical ← tok_alloc R cs
+  let ts ← tok_alloc R spelling
+  modTokSym ts.tok fun t => { t with canonical := canonical.tok }
+  modify fun s => { s with tokcstr := cs, tok := ts.tok }
+  return p
+
 inductive NL where
-  | redo | maybeSpace | maybeNewline | parseSimple | identFast | parseNum | strConst | done | keep
+  | redo | parseSharp | identSlow | maybeSpace | maybeNewline | parseSimple | identFast | parseNum | strConst | done | keep
   deriving BEq, Inhabited
 
 /-- `next_nomacro()` -/
@@ -21,7 +79,7 @@ def next_nomacro (R : Rec) : M Unit := do
   let mut lbl := NL.redo
   let mut c : Int32 := 0
   let mut t : Int32 := 0
-  let mut is_long := false
+  let mut prefix : Int32 := 0
   for _ in [0:fuel] do
     match lbl with
     | .redo =>
@@ -35,7 +93,9 @@ def next_nomacro (R : Rec) : M Unit := do
       else if c == 92 then
         let (c', p') ← handle_stray R p
         c := c'; p := p'
-        if c == 92 then lbl := .parseSimple
+        if c == 92 then
+          if (← rd (p + 1)) == 117 || (← rd (p + 1)) == 85 then lbl := .identSlow
+          else lbl := .parseSimple
         else if c == CH_EOF then
           let st ← get
           if st.tok_flags &&& TOK_FLAG_BOL == 0 then lbl := .maybeNewline
@@ -64,34 +124,29 @@ def next_nomacro (R : Rec) : M Unit := do
       else if c == 35 then
         let (c', p') ← peekc R p
         c := c'; p := p'
-        let st ← get
-        if (st.tok_flags &&& TOK_FLAG_BOL != 0) && (st.parse_flags &&& PARSE_FLAG_PREPROCESS != 0) then
-          modify fun s => { s with tok_flags := s.tok_flags &&& ~~~TOK_FLAG_BOL }
-          setBufPtr p
-          preprocess R ((← get).tok_flags &&& TOK_FLAG_BOF)
-          p ← bufPtr
-          lbl := .maybeNewline
-        else if c == 35 then
-          p := p + 1; setTok TOK_TWOSHARPS; lbl := .done
-        else if st.parse_flags &&& PARSE_FLAG_ASM_FILE != 0 then
-          p ← parse_line_comment R (p - 1)
-        else
-          setTok 35; lbl := .done
+        lbl := .parseSharp
       else if c == 36 then
         if (← isidnum 36) &&& IS_ID == 0 || (← get).parse_flags &&& PARSE_FLAG_ASM_FILE != 0 then
           lbl := .parseSimple
         else lbl := .identFast
-      else if c == 76 then
-        let t1 ← rd (p + 1)
-        if t1 == 39 || t1 == 34 || t1 == 92 then
+      else if c == 76 || c == 117 || c == 85 then
+        let original := c
+        let (c', p') ← peekc R p
+        c := c'; p := p'
+        prefix := original
+        if original == 117 && c == 56 then
           let (c', p') ← peekc R p
           c := c'; p := p'
-          if c == 39 || c == 34 then
-            is_long := true; lbl := .strConst
+          if c == 34 then
+            prefix := 56; lbl := .strConst
           else
-            p := p - 1; wrb p 76; c := 76
+            p := p - 1; wrb p 56
+            p := p - 1; wrb p original; c := original
             lbl := .identFast
-        else lbl := .identFast
+        else if c == 39 || c == 34 then lbl := .strConst
+        else
+          p := p - 1; wrb p original; c := original
+          lbl := .identFast
       else if (c ≥ 97 && c ≤ 122) || (c ≥ 65 && c ≤ 90) || c == 95 then
         lbl := .identFast
       else if c ≥ 48 && c ≤ 57 then
@@ -118,11 +173,13 @@ def next_nomacro (R : Rec) : M Unit := do
         else
           setTok 46; lbl := .done
       else if c == 39 || c == 34 then
-        is_long := false; lbl := .strConst
+        prefix := 0; lbl := .strConst
       else if c == 60 then
         let (c', p') ← peekc R p
         c := c'; p := p'
-        if c == 61 then p := p + 1; setTok TOK_LE
+        if c == 58 || c == 37 then
+          p := p + 1; setTok (if c == 58 then TOK_DG_LBRACK else TOK_DG_LBRACE)
+        else if c == 61 then p := p + 1; setTok TOK_LE
         else if c == 60 then
           let (c', p') ← peekc R p
           c := c'; p := p'
@@ -168,7 +225,34 @@ def next_nomacro (R : Rec) : M Unit := do
         else if c == 62 then p := p + 1; setTok TOK_ARROW
         else setTok 45
         lbl := .done
-      else if c == 33 || c == 61 || c == 42 || c == 37 || c == 94 then
+      else if c == 37 then
+        let (c', p') ← peekc R p
+        c := c'; p := p'
+        if c == 58 then
+          let (c', p') ← peekc R p
+          c := c'; p := p'
+          let st ← get
+          if st.tok_flags &&& TOK_FLAG_BOL != 0 && st.parse_flags &&& PARSE_FLAG_PREPROCESS != 0 then
+            lbl := .parseSharp
+          else
+            setTok TOK_DG_SHARP
+            if c == 37 then
+              let (c', p') ← peekc R p
+              c := c'; p := p'
+              if c == 58 then p := p + 1; setTok TOK_DG_PASTE
+              else p := p - 1; wrb p 37
+            lbl := .done
+        else
+          if c == 62 then p := p + 1; setTok TOK_DG_RBRACE
+          else if c == 61 then p := p + 1; setTok TOK_A_MOD
+          else setTok 37
+          lbl := .done
+      else if c == 58 then
+        let (c', p') ← peekc R p
+        c := c'; p := p'
+        if c == 62 then p := p + 1; setTok TOK_DG_RBRACK else setTok 58
+        lbl := .done
+      else if c == 33 || c == 61 || c == 42 || c == 94 then
         let c1 := c
         let tok2 := if c1 == 33 then TOK_NE else if c1 == 61 then TOK_EQ else if c1 == 42 then TOK_A_MUL
                     else if c1 == 37 then TOK_A_MOD else TOK_A_XOR
@@ -190,7 +274,7 @@ def next_nomacro (R : Rec) : M Unit := do
         else
           setTok 47; lbl := .done
       else if c == 64 || c == 40 || c == 41 || c == 91 || c == 93 || c == 123 || c == 125 ||
-              c == 44 || c == 59 || c == 58 || c == 63 || c == 126 then
+              c == 44 || c == 59 || c == 63 || c == 126 then
         lbl := .parseSimple
       else
         let mut handled := false
@@ -202,6 +286,23 @@ def next_nomacro (R : Rec) : M Unit := do
           if c ≥ 0x80 && c ≤ 0xFF then lbl := .identFast
           else if (← get).parse_flags &&& PARSE_FLAG_ASM_FILE != 0 then lbl := .parseSimple
           else tcc_error R (cfmt "unrecognized character \\x%02x" [.i c.toInt])
+    | .parseSharp =>
+        let st ← get
+        if (st.tok_flags &&& TOK_FLAG_BOL != 0) && (st.parse_flags &&& PARSE_FLAG_PREPROCESS != 0) then
+          modify fun s => { s with tok_flags := s.tok_flags &&& ~~~TOK_FLAG_BOL }
+          setBufPtr p
+          preprocess R ((← get).tok_flags &&& TOK_FLAG_BOF)
+          p ← bufPtr
+          lbl := .maybeNewline
+        else if c == 35 then
+          p := p + 1; setTok TOK_TWOSHARPS; lbl := .done
+        else if st.parse_flags &&& PARSE_FLAG_ASM_FILE != 0 then
+          p ← parse_line_comment R (p - 1)
+        else
+          setTok 35; lbl := .done
+    | .identSlow =>
+      p ← parse_ident_slow R p ByteArray.empty
+      lbl := .done
     | .maybeSpace =>
       if (← get).parse_flags &&& PARSE_FLAG_SPACES != 0 then
         lbl := .keep
@@ -229,18 +330,10 @@ def next_nomacro (R : Rec) : M Unit := do
         let ts ← tok_alloc R bytes
         setTok ts.tok
       else
-        let mut cs := (← curFile).buf.extract p1 p
-        p := p - 1
-        let (c', p') ← peekc R p
+        let cs := (← curFile).buf.extract p1 p
+        let (c', p') ← peekc R (p - 1)
         c := c'; p := p'
-        for _ in [0:fuel] do
-          if (← isidnum c) &&& (IS_ID ||| IS_NUM) == 0 then break
-          cs := cs.push c.toUInt8
-          let (c', p') ← peekc R p
-          c := c'; p := p'
-        modify fun s => { s with tokcstr := cs }
-        let ts ← tok_alloc R cs
-        setTok ts.tok
+        p ← parse_ident_slow R p cs
       lbl := .done
     | .parseNum =>
       let mut cs := ByteArray.empty
@@ -260,7 +353,8 @@ def next_nomacro (R : Rec) : M Unit := do
       lbl := .done
     | .strConst =>
       let mut cs := ByteArray.empty
-      if is_long then cs := cs.push 76
+      if prefix == 56 then cs := "u8".toUTF8
+      else if prefix != 0 then cs := cs.push prefix.toUInt8
       cs := cs.push c.toUInt8
       let (p', cs') ← parse_pp_string R p c (some cs)
       p := p'
@@ -291,13 +385,13 @@ def macro_arg_subst (R : Rec) (nested0 : Option SymId) (macro_str0 : TokPtr) (ar
     let (t, cval, ms') := TOK_GET ms {}
     ms := ms'
     if t == 0 then break
-    if t == 35 then
+    if t == 35 || t == TOK_DG_SHARP then
       -- stringize
       let mut tt : Int32 := 0
       for _ in [0:fuel] do
         tt := ms.get; ms := { ms with pos := ms.pos + 1 }
         if tt != 32 then break
-      let s ← sym_find2 args tt
+      let s ← sym_find2 args (← canonical_ident tt)
       if s != 0 then
         let mut cs : ByteArray := ByteArray.empty.push 34
         let mut st : TokPtr := { arr := ((← getSym s).d.getD #[]) }
@@ -307,15 +401,15 @@ def macro_arg_subst (R : Rec) (nested0 : Option SymId) (macro_str0 : TokPtr) (ar
           st := st'
           let sb ← get_tok_str t2 (some cv2)
           for ch in sb.data do
-            if t2 == TOK_PPSTR && ch != 39 then cs := add_char cs ch.toUInt32.toInt32
-            else cs := cs.push ch
+            if t2 == TOK_PPSTR && (ch == 92 || ch == 34) then cs := cs.push 92
+            cs := cs.push ch
         cs := (cs.push 34).push 0
         modify fun s => { s with tokcstr := cs }
         str := tok_str_add2 str TOK_PPSTR ((default : CValue).setStr cs (Int32.ofNat cs.size))
       else
         expect R "macro parameter after '#'"
     else if t ≥ TOK_IDENT then
-      let s ← sym_find2 args t
+      let s ← sym_find2 args (← canonical_ident t)
       if s != 0 then
         let sx ← getSym s
         let mut st : TokPtr := { arr := sx.d.getD #[] }
@@ -625,6 +719,104 @@ def macro_subst_tok (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) 
       tok_str := tok_str_add2_spc tok_str t cv
     return (tok_str, nested, 0)
 
+/-- `_Pragma`: expand the operand, destringize only quote/backslash,
+then run the existing pragma parser on isolated file/token/macro buffers. -/
+def pragma_operator (R : Rec) : M Unit := do
+  let flags := (← get).parse_flags
+  modify fun s => { s with parse_flags := s.parse_flags &&& ~~~(PARSE_FLAG_TOK_STR ||| PARSE_FLAG_SPACES ||| PARSE_FLAG_LINEFEED) }
+  R.next
+  if (← getTok) != 40 then expect R "("
+  R.next
+  if (← getTok) != TOK_PPSTR then expect R "string literal in _Pragma"
+  let text := (← get).tokc.sdata
+  let mut i := if text.get! 0 == 76 then 1 else 0
+  if text.get! i != 34 then expect R "ordinary or wide string literal in _Pragma"
+  i := i + 1
+  let mut out := ByteArray.empty
+  let fuel ← fuelM
+  for _ in [0:fuel] do
+    let c := text.get! i
+    if c == 0 || c == 34 then break
+    if c == 92 && (text.get! (i+1) == 92 || text.get! (i+1) == 34) then i := i + 1
+    out := out.push (text.get! i)
+    i := i + 1
+  out := out.push 10
+  R.next
+  if (← getTok) != 41 then expect R ")"
+  let saved ← get
+  modify fun s => { s with macro_stack := [], macro_ptr := none,
+    tokstr_buf := {}, unget_buf := {}, include_stack := #[] }
+  let caller ← curFile
+  tcc_open_bf caller.filename (some out)
+  modFile fun f => { f with true_filename := caller.true_filename, line_num := caller.line_num }
+  modify fun s => { s with parse_flags := PARSE_FLAG_PREPROCESS ||| PARSE_FLAG_TOK_NUM ||| PARSE_FLAG_TOK_STR ||| PARSE_FLAG_LINEFEED }
+  let _ ← pragma_parse R
+  let mut result : TokenString := {}
+  for _ in [0:fuel] do
+    let tk ← getTok
+    if tk == TOK_LINEFEED || tk == TOK_EOF then break
+    if (← get).output_type == TCC_OUTPUT_PREPROCESS then result ← tok_str_add_tok result
+    R.next
+  if (← get).output_type == TCC_OUTPUT_PREPROCESS then
+    for _ in [0:fuel] do
+      if (← getTok) == TOK_EOF then break
+      result ← tok_str_add_tok result
+      R.next
+  for _ in [0:fuel] do
+    if (← get).macro_stack.isEmpty then break
+    end_macro
+  tcc_close
+  modify fun s => { s with macro_stack := saved.macro_stack, macro_ptr := saved.macro_ptr,
+    tokstr_buf := saved.tokstr_buf, unget_buf := saved.unget_buf,
+    include_stack := saved.include_stack, tok_flags := saved.tok_flags, parse_flags := flags }
+  if result.len != 0 then
+    result := tok_str_add result 0
+    let _ ← begin_macro .heap result.str 0 1
+
+/-- Phase 6 selects the common prefix before decoding each literal.
+Separate spellings preserve escape boundaries, e.g. "\\x12" "3". -/
+def parse_string_concat (R : Rec) : M Unit := do
+  let flags := (← get).parse_flags
+  modify fun s => { s with parse_flags := s.parse_flags &&& ~~~PARSE_FLAG_TOK_STR }
+  let mut literals : Array ByteArray := #[]
+  let mut prefix : UInt8 := 0
+  let fuel ← fuelM
+  for _ in [0:fuel] do
+    let st ← get
+    if st.tok != TOK_PPSTR && st.tok != TOK_STR && st.tok != TOK_LSTR then break
+    let spelling ← get_tok_str st.tok (some st.tokc)
+    let c := spelling.get! 0
+    let mut p : UInt8 := if c == 76 || c == 117 || c == 85 then c else 0
+    if p == 117 && spelling.get! 1 == 56 then p := 56
+    if p != 0 && prefix != 0 && p != prefix then tcc_error_s R "incompatible string literal prefixes"
+    if p != 0 then prefix := p
+    literals := literals.push spelling
+    R.next
+    if (← getTok) == TOK_PPSTR then
+      let sp := (← get).tokc.sdata
+      let mut i := 0
+      for _ in [0:sp.size] do
+        let c := sp.get! i
+        if c == 76 || c == 117 || c == 85 || c == 56 then i := i + 1 else break
+      if sp.get! i != 34 then break
+  unget_tok 0
+  modify fun s => { s with parse_flags := flags }
+  let mut out := ByteArray.empty
+  for spelling in literals do
+    let mut i := 0
+    if spelling.get! 0 == 76 || spelling.get! 0 == 117 || spelling.get! 0 == 85 then
+      i := 1
+      if spelling.get! 0 == 117 && spelling.get! 1 == 56 then i := 2
+    let mut sp := ByteArray.empty
+    if prefix == 56 then sp := "u8".toUTF8
+    else if prefix != 0 then sp := sp.push prefix
+    sp := sp ++ spelling.extract i spelling.size
+    parse_string R sp sp.size
+    let st ← get
+    if out.size != 0 then out := out.extract 0 (out.size - (TOK_STR_SIZE st.tok).toNat')
+    out := out ++ st.tokc.sdata.extract 0 st.tokc.strSize.toNat'
+  modify fun s => { s with tokcstr := out, tokc := s.tokc.setStr out (Int32.ofNat out.size) }
+
 /-- `macro_subst(tok_str, nested_list, macro_str)` -/
 def macro_subst (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) (macro_str0 : TokPtr) :
     M (TokenString × Option SymId × Int32) := do
@@ -639,11 +831,29 @@ def macro_subst (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) (mac
     let mut t := t0
     if t == 0 || t == TOK_EOF then break
     let mut noSubst := false
-    if t ≥ TOK_IDENT then
+    if t == (← get).tok_pragma_op && nosubst == 0 && (← get).parse_flags &&& PARSE_FLAG_PREPROCESS != 0 then
+      let id ← begin_macro .heap ms.arr ms.pos 2
+      pragma_operator R
+      for _ in [0:fuel] do
+        match (← get).macro_stack with
+        | fr :: _ => if fr.id == id then break
+        | [] => throw (.internal "_Pragma lost rescan frame")
+        match (← get).macro_ptr with
+        | some mp =>
+          let (tk, cv, mp') := TOK_GET mp {}
+          modify fun s => { s with macro_ptr := some mp' }
+          if tk == 0 then end_macro
+          else tok_str := tok_str_add2_spc tok_str tk cv
+        | none => throw (.internal "_Pragma lost macro pointer")
+      match (← get).macro_ptr with
+      | some mp => ms := mp
+      | none => throw (.internal "_Pragma lost rescan pointer")
+      end_macro
+    else if t ≥ TOK_IDENT then
       let s ← define_find t
       if s == 0 || nosubst != 0 then
         noSubst := true
-      else if (← sym_find2 (nested.getD 0) t) != 0 then
+      else if (← sym_find2 (nested.getD 0) (← canonical_ident t)) != 0 then
         t := t ||| SYM_FIELD
         noSubst := true
       else
@@ -669,7 +879,8 @@ def macro_subst (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) (mac
       if t == Tok.TOK_DEFINED && (← get).pp_expr != 0 then nosubst := 1
   return (tok_str, nested, nosubst)
 
-/-- `next()` -/
+/-- `next()`, including patch 0003's common convert path. Macro tokens
+retain spelling until conversion; `_Pragma` executes before the next token. -/
 def next (R : Rec) : M Unit := do
   let fuel ← fuelM
   for _ in [0:fuel] do
@@ -683,15 +894,6 @@ def next (R : Rec) : M Unit := do
         if t == TOK_LINENUM then
           modFile fun f => { f with line_num := cv.i.toUInt32.toInt32 }
           continue
-        -- convert:
-        let pf := (← get).parse_flags
-        if t == TOK_PPNUM then
-          if pf &&& PARSE_FLAG_TOK_NUM != 0 then parse_number R (← get).tokc.sdata
-        else if t == TOK_PPSTR then
-          if pf &&& PARSE_FLAG_TOK_STR != 0 then
-            let tc := (← get).tokc
-            parse_string R tc.sdata (tc.strSize - 1).toNat'
-        return
       else if t == 0 then
         end_macro
         continue
@@ -701,11 +903,9 @@ def next (R : Rec) : M Unit := do
       else
         modify fun s => { s with macro_ptr := some { mp with pos := mp.pos + 1 } }
         let t := t &&& ~~~SYM_FIELD
-        if t == 92 then
-          if (← get).parse_flags &&& PARSE_FLAG_ACCEPT_STRAYS == 0 then
-            tcc_error_s R "stray '\\' in program"
+        if t == 92 && (← get).parse_flags &&& PARSE_FLAG_ACCEPT_STRAYS == 0 then
+          tcc_error_s R "stray '\\' in program"
         setTok t
-        return
     | none =>
       next_nomacro R
       let t ← getTok
@@ -717,17 +917,34 @@ def next (R : Rec) : M Unit := do
           let ts := tok_str_add ts 0
           modify fun st => { st with tokstr_buf := ts }
           let _ ← begin_macro .tokstrBuf ts.str 0 0
-          continue    -- goto redo
-        return
-      -- convert:
-      let pf := (← get).parse_flags
-      if t == TOK_PPNUM then
-        if pf &&& PARSE_FLAG_TOK_NUM != 0 then parse_number R (← get).tokc.sdata
-      else if t == TOK_PPSTR then
-        if pf &&& PARSE_FLAG_TOK_STR != 0 then
-          let tc := (← get).tokc
-          parse_string R tc.sdata (tc.strSize - 1).toNat'
-      return
+          continue
+    let pf := (← get).parse_flags
+    if pf &&& (PARSE_FLAG_TOK_STR ||| PARSE_FLAG_TOK_NUM) != 0 then
+      setTok (← canonical_ident (← getTok))
+    let t ← getTok
+    if t == (← get).tok_pragma_op && pf &&& PARSE_FLAG_PREPROCESS != 0 then
+      pragma_operator R
+      continue
+    if pf &&& PARSE_FLAG_TOK_STR != 0 then
+      if t == TOK_DG_LBRACK then setTok 91
+      if t == TOK_DG_RBRACK then setTok 93
+      if t == TOK_DG_LBRACE then setTok 123
+      if t == TOK_DG_RBRACE then setTok 125
+      if t == TOK_DG_SHARP then setTok 35
+      if t == TOK_DG_PASTE then setTok TOK_TWOSHARPS
+    if t == TOK_PPNUM then
+      if pf &&& PARSE_FLAG_TOK_NUM != 0 then parse_number R (← get).tokc.sdata
+    else if t == TOK_STR && pf &&& PARSE_FLAG_TOK_STR != 0 then
+      parse_string_concat R
+    else if t == TOK_PPSTR && pf &&& PARSE_FLAG_TOK_STR != 0 then
+      let tc := (← get).tokc
+      let mut i := 0
+      for _ in [0:tc.sdata.size] do
+        let c := tc.sdata.get! i
+        if c == 76 || c == 117 || c == 85 || c == 56 then i := i + 1 else break
+      if tc.sdata.get! i == 34 then parse_string_concat R
+      else parse_string R tc.sdata (tc.strSize - 1).toNat'
+    return
   throw (.fuel "next")
 
 /-- `pp_error(cs)`: the text error1 prints for a bad #if expression -/
@@ -801,6 +1018,8 @@ def tccpp_new (R : Rec) : M Unit := do
     tokcstr := ByteArray.empty, unget_buf := {}, tokstr_buf := {}, tok_ident := TOK_IDENT, table_ident := #[] }
   for k in Tok.keywords do
     let _ ← tok_alloc R k.toUTF8
+  let pragmaTok ← tok_alloc R "_Pragma".toUTF8
+  modify fun s => { s with tok_pragma_op := pragmaTok.tok }
   define_push R Tok.TOK___LINE__ MACRO_OBJ none 0
   define_push R Tok.TOK___FILE__ MACRO_OBJ none 0
   define_push R Tok.TOK___DATE__ MACRO_OBJ none 0

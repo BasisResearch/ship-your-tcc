@@ -69,7 +69,7 @@ def decl_initializer_alloc (R : Rec) (type0 : CType) (ad : AttributeDef) (r0 : I
       let mut str : TokenString := {}
       for _ in [0:fuel] do
         let tk ← getTok
-        if !(tk == TOK_STR || tk == TOK_LSTR) then break
+        if !(TOK_IS_STR tk) then break
         str ← tok_str_add_tok str
         R.next
       str := tok_str_add str C.TOK_EOF
@@ -183,7 +183,10 @@ def decl_initializer_alloc (R : Rec) (type0 : CType) (ad : AttributeDef) (r0 : I
       modScope cs fun x => { x with vla_loc := addr', vla_num := x.vla_num + 1 }
   else if has_init != 0 then
     p := { p with sec := sec }
+    let saved_unions := (← get).init_unions
+    modify fun s => { s with init_unions := #[] }
     R.decl_initializer p.sec p.local_offset p.flex_array_ref t addr.toInt64.toUInt64 DIF_FIRST
+    modify fun s => { s with init_unions := saved_unions }
     if flexible_array != 0 then
       let fr := (← getSym flexible_array).type.ref
       modSym fr fun y => { y with c := -1 }

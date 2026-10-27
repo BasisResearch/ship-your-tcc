@@ -19,7 +19,11 @@ def preprocess_skip (R : Rec) : M Unit := do
   let mut start_of_line := true
   let mut in_warn_or_error := false
   for _ in [0:fuel] do
-    let c ← rd p
+    let mut c ← rd p
+    if c == 37 then
+      let (c', p') ← handle_bs R (p + 1)
+      if c' == 58 then
+        p := p'; c := 35
     if c == 32 || c == 9 || c == 12 || c == 11 || c == 13 then
       p := p + 1
       continue
@@ -107,7 +111,7 @@ def define_push (R : Rec) (v macro_type : Int32) (str : Option TokArr) (first_ar
 
 /-- `define_undef(s)` -/
 def define_undef (s : SymId) : M Unit := do
-  let v := (← getSym s).v
+  let v ← canonical_ident (← getSym s).v
   let st ← get
   if v ≥ TOK_IDENT && v < st.tok_ident then
     modTokSym v fun ts => { ts with sym_define := 0 }
@@ -307,7 +311,7 @@ def set_idnum (c : Int32) (v : UInt8) : M UInt8 := do
 
 /-- `parse_define()` -/
 def parse_define (R : Rec) : M Unit := do
-  let v ← getTok
+  let v ← canonical_ident (← getTok)
   if v < TOK_IDENT || v == Tok.TOK_DEFINED then
     let st ← get
     tcc_error R (cfmt "invalid macro name '%s'" [.s (← get_tok_str st.tok (some st.tokc))])
@@ -324,7 +328,7 @@ def parse_define (R : Rec) : M Unit := do
     let mut last : SymId := 0     -- the last arg sym (ps = &last->next)
     if (← getTok) != 41 then
       for _ in [0:fuel] do
-        let mut varg ← getTok
+        let mut varg ← canonical_ident (← getTok)
         R.next_nomacro
         let mut is_vaargs : Int32 := 0
         if varg == TOK_DOTS then
@@ -356,7 +360,7 @@ def parse_define (R : Rec) : M Unit := do
       str := { str with need_spc := str.need_spc ||| 1 }
     else
       let mut tk := tk
-      if TOK_TWOSHARPS == tk then
+      if TOK_TWOSHARPS == tk || tk == TOK_DG_PASTE then
         if t0 == 0 then tcc_error_s R "'##' cannot appear at either end of macro"
         tk := TOK_PPJOIN
         setTok tk
@@ -374,11 +378,7 @@ def parse_define (R : Rec) : M Unit := do
 /-- `tccpp_putfile(filename)` -/
 def tccpp_putfile (filename : ByteArray) : M Unit := do
   let f ← curFile
-  let mut buf := ByteArray.empty
-  if !(filename.size > 0 && filename.get! 0 == 47) then
-    buf := pstrcpy 1024 f.true_filename
-    buf := buf.extract 0 (basenameOff buf)
-  buf := pstrcat buf 1024 filename
+  let buf := pstrcpy 1024 filename
   if f.filename == buf then return
   modFile fun f => { f with filename := pstrcpy 1024 buf }
 
@@ -670,13 +670,19 @@ def unicode_to_utf8 (R : Rec) (uc : UInt32) : M ByteArray := do
   else tcc_error R (cfmt "0x%x is not a valid universal character" [.u uc.toNat])
 
 /-- `parse_escape_string(outstr, buf, is_long)` -/
-def parse_escape_string (R : Rec) (buf : ByteArray) (is_long : Bool) : M ByteArray := do
+def parse_escape_string (R : Rec) (buf : ByteArray) (width : Nat) : M ByteArray := do
   let mut out := ByteArray.empty
   let mut p := 0
   let at_ (i : Nat) : Int32 := if i < buf.size then (buf.get! i).toUInt32.toInt32 else 0
   let fuel ← fuelM
   let addc (out : ByteArray) (c : Int32) : ByteArray :=
-    if !is_long then out.push c.toUInt8
+    if width == 0 then out.push c.toUInt8
+    else if width == 2 then
+      if c.toUInt32 < 0x10000 then Bytes.w16 (out ++ Bytes.zeros 2) out.size c.toUInt16'
+      else
+        let u := c.toUInt32 - 0x10000
+        let out := Bytes.w16 (out ++ Bytes.zeros 2) out.size ((u >>> 10) + 0xd800).toUInt16
+        Bytes.w16 (out ++ Bytes.zeros 2) out.size ((u &&& 0x3ff) + 0xdc00).toUInt16
     else Bytes.w32 (out ++ Bytes.zeros 4) out.size c.toUInt32
   for _ in [0:fuel] do
     let mut c := at_ p
@@ -714,7 +720,7 @@ def parse_escape_string (R : Rec) (buf : ByteArray) (is_long : Bool) : M ByteArr
           p := p + 1
           i := i - 1
           if i == 0 then break
-        if is_long || addHex then
+        if width != 0 || addHex then
           out := addc out n.toInt32
         else
           out := out ++ (← unicode_to_utf8 R n)
@@ -734,7 +740,7 @@ def parse_escape_string (R : Rec) (buf : ByteArray) (is_long : Bool) : M ByteArr
             tcc_warning R (cfmt "unknown escape sequence: '\\%c'" [.i c.toInt])
           else
             tcc_warning R (cfmt "unknown escape sequence: '\\x%x'" [.i c.toInt])
-    else if is_long && c ≥ 0x80 then
+    else if width != 0 && c ≥ 0x80 then
       let mut cont := 0
       let mut n : Int32 := 0
       let mut skip := 0
@@ -767,34 +773,38 @@ def parse_escape_string (R : Rec) (buf : ByteArray) (is_long : Bool) : M ByteArr
       continue
     p := p + 1
     out := addc out c
-  if !is_long then return out.push 0
-  else return addc out 0
+  return out ++ Bytes.zeros (if width == 0 then 1 else width)
 
 /-- `parse_string(s, len)` -/
 def parse_string (R : Rec) (s0 : ByteArray) (len0 : Nat) : M Unit := do
   let mut s := s0
   let mut len := len0
-  let is_long := s.size > 0 && s.get! 0 == 76
-  if is_long then s := s.extract 1 s.size; len := len - 1
+  let prefix := s.get! 0
+  let width := if prefix == 76 || prefix == 85 then 4 else if prefix == 117 && s.get! 1 != 56 then 2 else 0
+  if prefix == 76 || prefix == 117 || prefix == 85 then
+    s := s.extract 1 s.size; len := len - 1
+    if prefix == 117 && s.get! 0 == 56 then
+      s := s.extract 1 s.size; len := len - 1
   let sep := s.get! 0
   s := s.extract 1 s.size
   len := len - 2
   let p := s.extract 0 len
-  let str ← parse_escape_string R p is_long
+  let str ← parse_escape_string R p width
   modify fun st => { st with tokcstr := str }
   if sep == 39 then
-    let char_size := if is_long then 4 else 1
-    let tok := if is_long then TOK_LCHAR else TOK_CCHAR
+    let char_size := if width == 0 then 1 else width
+    let tok := if width == 0 then TOK_CCHAR else if prefix == 117 then TOK_U16CHAR else if prefix == 85 then TOK_U32CHAR else TOK_LCHAR
     let n : Int := (str.size / char_size : Nat) - 1
     if n < 1 then tcc_error_s R "empty character constant"
     if n > 1 then tcc_warning_c R WARNC_all "multi-character character constant".toUTF8
     let mut c : Int32 := 0
     for i in [0:n.toNat] do
-      if is_long then c := (Bytes.r32 str (4*i)).toInt32
+      if width == 2 then c := (Bytes.r16 str (2*i)).toUInt32.toInt32
+      else if width != 0 then c := (Bytes.r32 str (4*i)).toInt32
       else c := (c <<< 8) ||| (str.get! i).toUInt32.toInt32
     modify fun st => { st with tok := tok, tokc := st.tokc.setI c.toInt64.toUInt64 }
   else
-    modify fun st => { st with tok := if is_long then TOK_LSTR else TOK_STR,
+    modify fun st => { st with tok := if width == 0 then TOK_STR else if prefix == 117 then TOK_U16STR else if prefix == 85 then TOK_U32STR else TOK_LSTR,
                                tokc := st.tokc.setStr str (Int32.ofNat str.size) }
 
 /-- `bn_lshift(bn, shift, or_val)` on a 128-bit number -/

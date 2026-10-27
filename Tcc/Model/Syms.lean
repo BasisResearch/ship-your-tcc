@@ -72,8 +72,17 @@ def label_find (v : Int32) : M SymId := do
   | some i => return (← get).table_ident[i]!.sym_label
   | none => return 0
 
+/-- Patch 0003: spelling is preserved for #/##; macro lookup and phase 7
+use the canonical UTF-8 identifier, preserving the no-substitution bit. -/
+def canonical_ident (t : Int32) : M Int32 := do
+  let v := t &&& ~~~SYM_FIELD
+  match ← tokIdx v with
+  | some i => return (← get).table_ident[i]!.canonical ||| (t &&& SYM_FIELD)
+  | none => return t
+
 /-- `define_find(v)` -/
 def define_find (v : Int32) : M SymId := do
+  let v ← canonical_ident v
   match ← tokIdx v with
   | some i => return (← get).table_ident[i]!.sym_define
   | none => return 0
@@ -82,7 +91,7 @@ def define_find (v : Int32) : M SymId := do
 def tok_alloc_new (R : Rec) (str : ByteArray) : M TokenSym := do
   let s ← get
   if s.tok_ident ≥ SYM_FIRST_ANOM then tcc_error_s R "memory full (symbols)"
-  let ts : TokenSym := { tok := s.tok_ident, str := str }
+  let ts : TokenSym := { tok := s.tok_ident, canonical := s.tok_ident, str := str }
   modify fun s =>
     let a := s.table_ident
     let h := s.hash_ident

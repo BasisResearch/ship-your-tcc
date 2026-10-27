@@ -77,7 +77,7 @@ def handle_stray_noerror (R : Rec) (err : Bool) : M Int32 := do
           modFile fun f => { f with buf_ptr := f.buf_ptr - 1 }
           wrb (← bufPtr) 13
       if !newl then
-        if err then tcc_error_s R "stray '\\' in program"
+        if err && ch != 117 && ch != 85 then tcc_error_s R "stray '\\' in program"
         modFile fun f => { f with buf_ptr := f.buf_ptr - 1 }
         wrb (← bufPtr) 92
         return 92
@@ -245,9 +245,9 @@ def packBytes (b : ByteArray) : Array Int32 := Id.run do
 /-- `tok_str_add2(s, t, cv)` -/
 def tok_str_add2 (s : TokenString) (t : Int32) (cv : CValue) : TokenString := Id.run do
   let mut s := tok_str_add s t
-  if t == TOK_CINT || t == TOK_CUINT || t == TOK_CCHAR || t == TOK_LCHAR || t == TOK_CFLOAT || t == TOK_LINENUM then
+  if t == TOK_CINT || t == TOK_CUINT || t == TOK_CCHAR || t == TOK_LCHAR || t == TOK_U16CHAR || t == TOK_U32CHAR || t == TOK_CFLOAT || t == TOK_LINENUM then
     s := tok_str_add s (cv.tab 0).toInt32
-  else if t == TOK_PPNUM || t == TOK_PPSTR || t == TOK_STR || t == TOK_LSTR then
+  else if t == TOK_PPNUM || t == TOK_PPSTR || TOK_IS_STR t then
     let size := cv.strSize
     s := tok_str_add s size
     for w in packBytes (cv.sdata.extract 0 size.toNat') do s := tok_str_add s w
@@ -290,13 +290,13 @@ def tok_get (p : TokPtr) (cv0 : CValue) : Int32 × CValue × TokPtr := Id.run do
   let mut q := p.pos + 1
   let mut cv := cv0
   let at_ (k : Nat) : Int32 := p.arr[k]?.getD 0
-  if t == TOK_CINT || t == TOK_CCHAR || t == TOK_LCHAR || t == TOK_LINENUM then
+  if t == TOK_CINT || t == TOK_CCHAR || t == TOK_LCHAR || t == TOK_U16CHAR || t == TOK_U32CHAR || t == TOK_LINENUM then
     cv := cv.setI (at_ q).toInt64.toUInt64; q := q + 1
   else if t == TOK_CUINT then
     cv := cv.setI (at_ q).toUInt32.toUInt64; q := q + 1
   else if t == TOK_CFLOAT then
     cv := cv.setTab 0 (at_ q).toUInt32; q := q + 1
-  else if t == TOK_STR || t == TOK_LSTR || t == TOK_PPNUM || t == TOK_PPSTR then
+  else if TOK_IS_STR t || t == TOK_PPNUM || t == TOK_PPSTR then
     let size := at_ q
     q := q + 1
     cv := cv.setStr (unpackBytes p.arr q size.toNat') size

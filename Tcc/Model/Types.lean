@@ -197,7 +197,12 @@ def TOK_CLDOUBLE : Int32 := 0xcc
 def TOK_PPNUM : Int32 := 0xcd
 def TOK_PPSTR : Int32 := 0xce
 def TOK_LINENUM : Int32 := 0xcf
-@[inline] def TOK_HAS_VALUE (t : Int32) : Bool := t ≥ TOK_CCHAR && t ≤ TOK_LINENUM
+@[inline] def TOK_HAS_VALUE (t : Int32) : Bool := t ≥ TOK_CCHAR && t ≤ TOK_U32CHAR
+@[inline] def TOK_IS_STR (t : Int32) : Bool :=
+  t == TOK_STR || t == TOK_LSTR || t == TOK_U16STR || t == TOK_U32STR
+@[inline] def TOK_STR_SIZE (t : Int32) : Int32 :=
+  if t == TOK_STR then 1 else if t == TOK_U16STR then 2 else 4
+
 def TOK_EOF : Int32 := -1
 def TOK_LINEFEED : Int32 := 10
 def TOK_IDENT : Int32 := 256
@@ -489,6 +494,7 @@ structure TokenSym where
   sym_struct : SymId := 0
   sym_identifier : SymId := 0
   tok : Int32 := 0
+  canonical : Int32 := 0
   str : ByteArray := ByteArray.empty
   deriving Inhabited
 
@@ -620,6 +626,13 @@ structure Scope where
   csym : Nat := 0
   lstk : SymId := 0
   llstk : SymId := 0
+  deriving Inhabited
+
+/-- Patch 0003's active union member at one initialized subobject. -/
+structure InitUnion where
+  type : SymId := 0
+  member : SymId := 0
+  addr : UInt64 := 0
   deriving Inhabited
 
 structure TempLocal where

@@ -4,6 +4,21 @@
     tcc's token numbers: `TOK_LAST = 255`, then one per `DEF`; and
     `tcc_keywords`, the identifier strings tccpp_new allocates first. -/
 
+namespace Tcc.Model.C
+
+@[inline] def TOK_U16STR : Int32 := 0xd0
+@[inline] def TOK_U32STR : Int32 := 0xd1
+@[inline] def TOK_U16CHAR : Int32 := 0xd2
+@[inline] def TOK_U32CHAR : Int32 := 0xd3
+@[inline] def TOK_DG_LBRACK : Int32 := 0xd4
+@[inline] def TOK_DG_RBRACK : Int32 := 0xd5
+@[inline] def TOK_DG_LBRACE : Int32 := 0xd6
+@[inline] def TOK_DG_RBRACE : Int32 := 0xd7
+@[inline] def TOK_DG_SHARP : Int32 := 0xd8
+@[inline] def TOK_DG_PASTE : Int32 := 0xd9
+
+end Tcc.Model.C
+
 namespace Tcc.Model.Tok
 
 @[inline] def TOK_IF : Int32 := 256

@@ -26,6 +26,7 @@ the runtime image). The summary goes to results/model/f3-diff.md.
 import argparse
 import concurrent.futures as cf
 import hashlib
+import json
 import os
 import re
 import subprocess
@@ -49,7 +50,7 @@ CORPORA = {
     'compcert': 'corpus/compcert/*.c', 'tcctests': 'corpus/tcc/*.c', 'csmith': 'corpus/csmith/*.c',
     'tests2': 'build/tcc-src/tests/tests2/*.c',
     'gen-cgen': 'build/model_corpus/cgen/*.c', 'gen-csmith': 'build/model_corpus/csmith/*.c',
-    'model': 'c/tests/model/*.c',
+    'model': 'c/tests/model/*.c', 'c11': 'c/tests/c11/*.c',
     'gen-mutants': 'build/model_corpus/mutants/*.c', 'gen-dtsplit': 'build/model_corpus/dtsplit/*.c',
 }
 
@@ -70,7 +71,9 @@ def sha(*parts):
 def runtime_key():
     elf = os.path.join(ROOT, 'c', 'build', 'base.elf')
     out = subprocess.run([os.path.join(TC, 'riscv-none-elf-objcopy'), '-O', 'binary', '-R', '.embed', elf, '/dev/stdout'],
-                         capture_output=True).stdout
+                         capture_output=True, check=True).stdout
+    if not out:
+        raise RuntimeError('empty reference runtime image')
     return hashlib.sha256(out).hexdigest()[:16]
 
 
@@ -88,16 +91,16 @@ def parse_arena(path):
 def ref_run(prog, extra, args, libs, rtkey):
     """scripts/ref_arena.sh, cached: (status, data) where status is 'ran'
     (data = arena path) or 'exit' (data = (code, console bytes))."""
-    key = sha(open(prog, 'rb').read(), repr(extra), repr(args), repr(libs), rtkey,
+    key = sha('independent-c11-v2', open(prog, 'rb').read(), repr(extra), repr(args), repr(libs), rtkey, open(os.path.join(ROOT, 'c/src/gen_embed.sh'), 'rb').read(),
               *[open(h, 'rb').read() for _, h in extra])
     base = os.path.join(CACHE, key)
     if os.path.exists(base + '.status'):
         st = open(base + '.status').read().split()
-        if st[0] == 'ran':
+        if st[0] == 'ran' and os.path.getsize(base + '.arena') > 0:
             return 'ran', base + '.arena', st[1] if len(st) > 1 else ''
         # Old caches can contain emulator limits/traps classified as exits.
         # Re-run those records; neither is a compiler refusal.
-        if int(st[1]) not in (124, 126):
+        if st[0] == 'exit' and int(st[1]) not in (124, 126):
             return 'exit', (int(st[1]), open(base + '.console', 'rb').read()), st[2] if len(st) > 2 else ''
     env = dict(os.environ)
     env['TCC_ARGS'] = ''.join('"%s",' % a for a in args)
@@ -112,13 +115,17 @@ def ref_run(prog, extra, args, libs, rtkey):
         raise RuntimeError('reference emulator limit/trap for %s: %s' %
                            (prog, r.stderr.decode(errors='replace')[-500:]))
     m = re.search(rb'rv64emu: steps=(\d+) compile_steps=(\S+) exit=(-?\d+)', r.stderr)
+    if not m or int(m.group(3)) in (124, 126) or b'rv64emu: illegal' in r.stderr:
+        raise RuntimeError('reference limit/trap or missing completion record for %s: %s' %
+                           (prog, r.stderr.decode(errors='replace')[-500:]))
     con = open(base + '.console', 'rb').read() if os.path.exists(base + '.console') else b''
     lm = 'lm' if (r.returncode != 0 and not libs and b'unresolved reference' in con) else ''
     if r.returncode == 0:
         open(base + '.status', 'w').write('ran %s\n' % lm)
         return 'ran', base + '.arena', lm
-    if not m:
-        raise RuntimeError('reference harness failed for %s: %s' % (prog, r.stderr.decode(errors='replace')[-500:]))
+    if r.returncode != 125 or m.group(2) != b'-':
+        raise RuntimeError('reference harness failure after handoff or invalid status for %s: %s' %
+                           (prog, r.stderr.decode(errors='replace')[-500:]))
     code = int(m.group(3)) & 0xff
     open(base + '.status', 'w').write('exit %d %s\n' % (code, lm))
     return 'exit', (code, open(base + '.console', 'rb').read()), lm
@@ -174,12 +181,16 @@ def disasm(data, base, off, width=24):
 def compare(prog, mode, rtkey):
     name = os.path.relpath(prog, ROOT)
     tag = sha(name, mode)
-    extra, args, src = [], ['-w'], prog
+    # gen_embed and ModelMain both prepend -std=c11 to these identical args.
+    # Embed sibling headers at the same relative image paths for both runs.
+    import glob
+    extra = [('/' + os.path.basename(h), h) for h in sorted(glob.glob(os.path.join(os.path.dirname(prog), '*.h')))]
+    args, src = ['-w'], prog
     if mode == 'obj':
         objdir = os.path.join(WORK, 'obj')
         os.makedirs(objdir, exist_ok=True)
         obj = os.path.join(objdir, tag + '.o')
-        r = subprocess.run([CROSS, '-nostdinc', '-I', os.path.join(ROOT, 'c/build/fs/tccinclude'),
+        r = subprocess.run([CROSS, '-std=c11', '-nostdinc', '-I', os.path.join(ROOT, 'c/build/fs/tccinclude'),
                             '-I', os.path.join(ROOT, 'c/build/fs/include'), '-c', prog, '-o', obj],
                            capture_output=True)
         if r.returncode != 0:
@@ -191,13 +202,10 @@ def compare(prog, mode, rtkey):
     libs = ['-lm'] if lm else []
     if lm:
         rst, rdata, _ = ref_run(src, extra, args, libs, rtkey)
-    mst, mdata, dt = model_run(src, extra, args, [], tag)
-    if mst == 'exit' and b'unresolved reference' in mdata[1]:
-        mst, mdata, dt2 = model_run(src, extra, args, ['-lm'], tag)
-        dt += dt2
+    mst, mdata, dt = model_run(src, extra, args, libs, tag)
     res = dict(name=name, model_s=dt, ref=rst, model=mst)
     if mst == 'model-error':
-        res.update(result='model-error', why=mdata)
+        res.update(result='unsupported-asm' if mdata in ('model-error unsupported: asm statement', 'model-error unsupported: global asm block') else 'model-error', why=mdata)
         return res
     if rst != mst:
         why = 'reference %s, model %s' % (rst, mst)
@@ -242,9 +250,11 @@ def main():
     ap.add_argument('-j', type=int, default=8)
     ap.add_argument('--limit', type=int, default=0)
     ap.add_argument('--no-report', action='store_true')
+    ap.add_argument('--json-out', help='retain every case, counts and input/image pins')
+    ap.add_argument('--require-success', type=int, default=0, help='minimum identical successful arenas')
     ap.add_argument('-v', action='store_true')
     a = ap.parse_args()
-    if a.j > 8:
+    if a.j < 1 or a.j > 8:
         sys.exit('at most 8 concurrent emulator runs on the shared box')
     groups = []
     for t in a.targets:
@@ -254,6 +264,14 @@ def main():
             groups.append((t, corpus_files(t)))
         else:
             groups.append((os.path.relpath(os.path.dirname(os.path.abspath(t)), ROOT), [os.path.abspath(t)]))
+    if a.limit < 0 or a.require_success < 0:
+        ap.error('limits and required successes must be nonnegative')
+    for group, files in groups:
+        if not files:
+            ap.error(f'empty corpus {group}: generate/populate it before comparison')
+        for source in files:
+            if not os.path.isfile(source):
+                ap.error(f'input does not exist: {source}')
     # Rebuild before fingerprinting: patches can change the runtime and its
     # exported addresses. Never pair a new reference with stale model symbols
     # or cache it under the previous image's key.
@@ -265,12 +283,6 @@ def main():
                        check=True, stdout=subprocess.DEVNULL)
         with open(SYMS, 'w') as f:
             subprocess.run([os.path.join(ROOT, 'scripts', 'gen_image_syms.sh')], stdout=f, check=True)
-    for group, files in groups:
-        if not files:
-            ap.error(f'empty corpus {group}: generate/populate it before comparison')
-        for source in files:
-            if not os.path.isfile(source):
-                ap.error(f'input does not exist: {source}')
     os.makedirs(CACHE, exist_ok=True)
     rtkey = runtime_key()
     mode = 'obj' if a.obj else 'c'
@@ -282,13 +294,13 @@ def main():
             if a.limit:
                 files = files[:a.limit]
             for f in files:
-                futs[ex.submit(compare, f, mode, rtkey)] = g
+                futs[ex.submit(compare, f, mode, rtkey)] = (g, f)
         for fu in cf.as_completed(futs):
-            g = futs[fu]
+            g, source = futs[fu]
             try:
                 r = fu.result()
             except Exception as e:  # harness failure
-                r = dict(name='?', result='harness-error', why=str(e))
+                r = dict(name=os.path.relpath(source, ROOT), result='harness-error', why=str(e))
             results.setdefault(g, []).append(r)
             if a.v or r['result'] not in ('same', 'same-refusal', 'skip'):
                 print('%-12s %-45s %s' % (r['result'], r['name'], r.get('why', '')[:160]), flush=True)
@@ -298,20 +310,37 @@ def main():
     rows = []
     tot = dict(n=0, same=0)
     for g, rs in results.items():
-        c = {k: sum(1 for r in rs if r['result'] == k) for k in ('same', 'same-refusal', 'diff', 'model-error', 'skip', 'harness-error')}
+        c = {k: sum(1 for r in rs if r['result'] == k) for k in ('same', 'same-refusal', 'diff', 'model-error', 'unsupported-asm', 'skip', 'harness-error')}
         n = len(rs) - c['skip']
         tot['n'] += n
         tot['same'] += c['same']
         ms = [r['model_s'] for r in rs if 'model_s' in r]
-        rows.append((g, n, c['same'], c['diff'], c['model-error'], c['skip'], c['harness-error'], c['same-refusal'],
+        rows.append((g, n, c['same'], c['diff'], c['model-error'], c['skip'], c['harness-error'], c['same-refusal'], c['unsupported-asm'],
                      (sum(ms) / len(ms)) if ms else 0))
-    print('\n%-14s %6s %6s %6s %6s %6s %6s %7s' %
-          ('corpus', 'total', 'same', 'diff', 'merr', 'skip', 'herr', 'refusal'))
+    print('\n%-14s %6s %6s %6s %6s %6s %6s %7s %6s' %
+          ('corpus', 'total', 'same', 'diff', 'merr', 'skip', 'herr', 'refusal', 'asm'))
     for r in rows:
-        print('%-14s %6d %6d %6d %6d %6d %6d %7d' % r[:8])
+        print('%-14s %6d %6d %6d %6d %6d %6d %7d %6d' % r[:9])
     print('%-14s %6d %6d   (%.0f s wall)' % ('all', tot['n'], tot['same'], wall))
     if not a.no_report:
         write_report(results, rows, tot, mode, wall)
+    if a.json_out:
+        pins = {p: hashlib.sha256(open(os.path.join(ROOT, p), 'rb').read()).hexdigest()
+                for p in ['vendor/TINYCC_REV', 'patches/0001-tcc-rv64i-soft.patch',
+                          'patches/0002-tcc-baremetal-run.patch', 'patches/0003-tcc-c11.patch',
+                          'patches/0004-tcc-binary128-literals.patch', 'c/build/base.elf',
+                          'c/src/gen_embed.sh', 'scripts/model_diff.py', '.lake/build/bin/tcc_model']}
+        pins.update({os.path.relpath(f, ROOT): hashlib.sha256(open(f, 'rb').read()).hexdigest()
+                     for _, fs in groups for f in fs})
+        with open(a.json_out, 'w') as out:
+            json.dump(dict(command=sys.argv, runtime_key=rtkey, pins=pins, results=results,
+                           rows=rows, totals=tot, wall_seconds=wall,
+                           reference='rv64emu diagnostic; Sail arena equality pending',
+                           compiler_args=['-std=c11', '-w']), out, indent=2)
+            out.write('\n')
+    if tot['same'] < a.require_success:
+        print(f'required {a.require_success} identical successful arenas, got {tot["same"]}', file=sys.stderr)
+        return 1
     return int(any(r['result'] not in ('same', 'same-refusal', 'skip')
                    for rs in results.values() for r in rs))
 
@@ -327,10 +356,10 @@ def write_report(results, rows, tot, mode, wall):
         L += ['Mode `--obj`: link-only. The program is compiled by the host cross tcc and loaded as /prog.o'
               ' with an empty /prog.c, so this checks the model\'s object/archive loading, GOT/PLT,'
               ' relocation and arena layout, not its compiler.', '']
-    L += ['| corpus | programs | identical | different | model error | skipped | harness error | matching refusal | model s/prog |',
-          '|---|---|---|---|---|---|---|---|---|']
+    L += ['| corpus | programs | identical | different | model error | skipped | harness error | matching refusal | unsupported asm | model s/prog |',
+          '|---|---|---|---|---|---|---|---|---|---|']
     for r in rows:
-        L.append('| %s | %d | %d | %d | %d | %d | %d | %d | %.2f |' % r)
+        L.append('| %s | %d | %d | %d | %d | %d | %d | %d | %d | %.2f |' % r)
     L += ['| **all** | **%d** | **%d** | | | | | | |' % (tot['n'], tot['same']), '',
           'Wall time %.0f s.' % wall, '']
     bad = [r for rs in results.values() for r in rs if r['result'] not in ('same', 'same-refusal', 'skip')]
