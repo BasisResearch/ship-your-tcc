@@ -543,6 +543,7 @@ structure BufferedFile where
   buf_end : Nat := 0
   bufStart : Nat := 0          -- index of `buffer[0]`
   fd : Int32 := -1
+  trigraph_pending : Nat := 0  -- trailing question marks across physical reads
   line_num : Int32 := 1
   line_ref : Int32 := 0
   ifndef_macro : Int32 := 0

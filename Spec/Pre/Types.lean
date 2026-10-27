@@ -147,7 +147,7 @@ structure Ext where
 `Spec/Pre/Tcc/Cfg.lean` (generated from tcc's sources) sets them for tcc. -/
 structure PreCfg where
   /-- Phase 1 (§5.1.1.2p1): replace the nine trigraph sequences (§5.2.1.1).
-  ISO C11 requires it; tcc does not implement trigraphs (`cfgTcc`: false). -/
+  ISO C11 requires it; patched tcc enables it in C11 mode (`cfgTcc`: true). -/
   trigraphs : Bool
   /-- The `u8`, `u` and `U` prefixes of string literals and character
   constants (§6.4.5, §6.4.4.4), new in C11. tcc's default mode is C99

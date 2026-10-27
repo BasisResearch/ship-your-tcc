@@ -25,17 +25,55 @@ open C
 @[inline] def isidnum (c : Int32) : M UInt8 := do
   return (← get).isidnum_table[(c + 1).toNat']!
 
+/-- `tcc_trigraphs(buf, len)`: C11 phase 1 on a physical byte block.
+The refiller holds up to two trailing question marks for the next block.
+Synthetic token/paste/pragma buffers never enter this translation. -/
+def tcc_trigraphs (buf : ByteArray) : ByteArray := Id.run do
+  let mut out := ByteArray.empty
+  let mut i := 0
+  for _ in [0:buf.size] do
+    if i ≥ buf.size then break
+    let mut c := buf.get! i
+    if c == 63 && i + 2 < buf.size && buf.get! (i + 1) == 63 then
+      let r : Option UInt8 := match (buf.get! (i + 2)).toNat with
+        | 61 => some 35 | 47 => some 92 | 39 => some 94
+        | 40 => some 91 | 41 => some 93 | 33 => some 124
+        | 60 => some 123 | 62 => some 125 | 45 => some 126
+        | _ => none
+      if let some v := r then
+        c := v
+        i := i + 2
+    out := out.push c
+    i := i + 1
+  return out
+
 /-- `handle_eob()` -/
 def handle_eob : M Int32 := do
   let bf ← curFile
   if bf.buf_ptr ≥ bf.buf_end then
     let mut data := ByteArray.empty
     if bf.fd ≥ 0 then
-      match ← Host.read bf.fd IO_BUF_SIZE with
-      | some d => data := d
-      | none => pure ()
+      if (← get).cversion ≥ 201112 && (← get).parse_flags &&& PARSE_FLAG_ASM_FILE == 0 then
+        -- Each empty non-EOF result accumulates another question mark;
+        -- after at most three reads one byte must be emitted.
+        let mut pending := bf.trigraph_pending
+        for _ in [0:3] do
+          let raw := (← Host.read bf.fd (IO_BUF_SIZE - pending)).getD ByteArray.empty
+          modify fun s => { s with total_bytes := s.total_bytes + UInt32.ofNat raw.size }
+          let input := ByteArray.mk (Array.replicate pending (63 : UInt8)) ++ raw
+          pending := 0
+          if raw.size > 0 then
+            for _ in [0:2] do
+              if pending < input.size && input.get! (input.size - pending - 1) == 63 then
+                pending := pending + 1
+              else break
+          modFile fun f => { f with trigraph_pending := pending }
+          data := tcc_trigraphs (input.extract 0 (input.size - pending))
+          if data.size > 0 || raw.size == 0 then break
+      else
+        data := (← Host.read bf.fd IO_BUF_SIZE).getD ByteArray.empty
+        modify fun s => { s with total_bytes := s.total_bytes + UInt32.ofNat data.size }
     let len := data.size
-    modify fun s => { s with total_bytes := s.total_bytes + UInt32.ofNat len }
     modFile fun f =>
       let b := f.buf
       let f := { f with buf := ByteArray.empty }

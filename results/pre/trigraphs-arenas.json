@@ -1,0 +1,374 @@
+{
+  "command": [
+    "scripts/model_diff.py",
+    "--no-report",
+    "--json-out",
+    "results/pre/trigraphs-arenas.json",
+    "--require-success",
+    "28",
+    "-j",
+    "2",
+    "results/repro/tcc_pp_trigraphs.c",
+    "results/repro/tcc_pragma_macro_operand.c",
+    "c/tests/c11/pragma.c",
+    "build/test-c11/trigraph_boundary_33_1.c",
+    "build/test-c11/trigraph_boundary_33_2.c",
+    "build/test-c11/trigraph_boundary_39_1.c",
+    "build/test-c11/trigraph_boundary_39_2.c",
+    "build/test-c11/trigraph_boundary_40_1.c",
+    "build/test-c11/trigraph_boundary_40_2.c",
+    "build/test-c11/trigraph_boundary_41_1.c",
+    "build/test-c11/trigraph_boundary_41_2.c",
+    "build/test-c11/trigraph_boundary_45_1.c",
+    "build/test-c11/trigraph_boundary_45_2.c",
+    "build/test-c11/trigraph_boundary_47_1.c",
+    "build/test-c11/trigraph_boundary_47_2.c",
+    "build/test-c11/trigraph_boundary_60_1.c",
+    "build/test-c11/trigraph_boundary_60_2.c",
+    "build/test-c11/trigraph_boundary_61_1.c",
+    "build/test-c11/trigraph_boundary_61_2.c",
+    "build/test-c11/trigraph_boundary_62_1.c",
+    "build/test-c11/trigraph_boundary_62_2.c",
+    "build/test-c11/trigraph_comment_boundary_1.c",
+    "build/test-c11/trigraph_comment_boundary_2.c",
+    "build/test-c11/trigraph_eof_1.c",
+    "build/test-c11/trigraph_eof_2.c",
+    "build/test-c11/trigraph_eof_3.c",
+    "build/test-c11/trigraph_eof_4.c",
+    "build/trigraph-sail-probe.c"
+  ],
+  "runtime_key": "00bc124b91e20ea1d0d94f0f9112840dd0316a07b80775c0c1ee77765a2c236d",
+  "pins": {
+    "vendor/TINYCC_REV": "76ca376f1f96cf1b316713d8f94d91c8629445929d1e7474792fd76610bce1c0",
+    "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+    "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+    "patches/0003-tcc-c11.patch": "c04d8ea9ea276ccd9e9fa48ead302a045ce2d3a1eaa9335c458dd1ee3d887f75",
+    "patches/0004-tcc-binary128-literals.patch": "4dfcc192c23a777b1b335e9052a416956886b1071c3de1e8da403b5b194e221e",
+    "c/build/base.elf": "dd68588c90240c9ec14d0ac56d4b11ee1f25c115fd0341869a3fb5537ed6555b",
+    "c/src/gen_embed.sh": "68534ee3a238c143bf4e749fcb0ea43e8b53933c4a9d6843422d995c879d7d76",
+    "scripts/model_diff.py": "e152de067a2f2da91f8cc2edd1b61ba9101351b53241650729dc7aab8f489af0",
+    ".lake/build/bin/tcc_model": "7e3a9fbff199e0815d24693a26937f451f63a01e307ca5618163e724c372d7bc",
+    "results/repro/tcc_pp_trigraphs.c": "81b52fb9b821a9103cfe48a6fe3d3f8092c13478ae090b2082c530f3db574395",
+    "results/repro/tcc_pragma_macro_operand.c": "75fb0e1133edd3b2606d085e5fbd307cce44044fa14642369a8805ed8d4a9f32",
+    "c/tests/c11/pragma.c": "8791af9c4d3610dbbd3e47a99a477cd0c74e8235fb014d6d66fbcd5dacdbad2c",
+    "build/test-c11/trigraph_boundary_33_1.c": "1444172f23b393a115e8965ba1627965ad37fc0f1bae5f60b2d70895e1c582f9",
+    "build/test-c11/trigraph_boundary_33_2.c": "3d9f2bc1810199ea1bb63f211d30cdbef224654fafe29f1f37fa030ead7b8f40",
+    "build/test-c11/trigraph_boundary_39_1.c": "e85dbe6c15ce9563b2fd9dbcecbdcd20814a8d4a763e8ce99eee1093d16fd2fc",
+    "build/test-c11/trigraph_boundary_39_2.c": "33a92af9ca29c7f55d408d275b0b212e63d8ee5578f420e07bd417943395085b",
+    "build/test-c11/trigraph_boundary_40_1.c": "09f07f91a863d9b71d5e8aba21ab4526a72643f927e4e25432b22d863c4f0ae2",
+    "build/test-c11/trigraph_boundary_40_2.c": "ae1e33d599905899970d33cb49d5a654234e3eb945326b78845d7cbedb037392",
+    "build/test-c11/trigraph_boundary_41_1.c": "e3c262bd3368bf421d38b2b1e98d63b0abdbbb54d30e617f236277fab4602d84",
+    "build/test-c11/trigraph_boundary_41_2.c": "251f728c445bf17d8672eefaf62073de5add687cf17ca3542c916d076e082442",
+    "build/test-c11/trigraph_boundary_45_1.c": "4456e466e3193612820239c60d845e969631cd5f91181f870bbcd6541c4e5341",
+    "build/test-c11/trigraph_boundary_45_2.c": "3d2a670761e3685c3f4164ff26edc7ed639895afa2598c278a65f5bf0b51564a",
+    "build/test-c11/trigraph_boundary_47_1.c": "d376060b9dee11ea81ed1fb89c71b9b398757a0693d41b6255bfdd571b08749d",
+    "build/test-c11/trigraph_boundary_47_2.c": "b5224d6e9a55768561b86e8a51846ac0f9335cfca9e75c11d77b7c6eb684c347",
+    "build/test-c11/trigraph_boundary_60_1.c": "a791fe136cbe046eaf58d38cce93359d4b36f9596e411419fc4f6e9e3ee58170",
+    "build/test-c11/trigraph_boundary_60_2.c": "79f7531d9e04a2af8115ee82e87647fdd8e464f6d82ef19e22dbcf1e630c3dcb",
+    "build/test-c11/trigraph_boundary_61_1.c": "0c5c601450bb0f7c68f87bb13f116bb7fa7e8214ff33f07468464f61f780dcbc",
+    "build/test-c11/trigraph_boundary_61_2.c": "6975bdedddc927e2a87c4744e3383239675f0fbd0931d7b9796cd445a1321136",
+    "build/test-c11/trigraph_boundary_62_1.c": "04bd2ec524426369347ee108ca2bac1bad40e93b75ee304ca31144e123a5c086",
+    "build/test-c11/trigraph_boundary_62_2.c": "3b2517b95adb9b86d135a041bce24e5e576d50fc92c4134748d090db2fc859aa",
+    "build/test-c11/trigraph_comment_boundary_1.c": "7ae737e7e0719018e0f510313d07e5a1082b29171aa9da60405f47875e48fc8f",
+    "build/test-c11/trigraph_comment_boundary_2.c": "22f5f02120257610b10a323d972d60bfb9709881ef1d5dd26da92357db6ab3e4",
+    "build/test-c11/trigraph_eof_1.c": "a6d99cb4ec3b6983236190df916634279181924f7ca69a0a83ee3ed9846edb07",
+    "build/test-c11/trigraph_eof_2.c": "7a0ffac8c66f9b3d2f8dc69a13d830706644eb4a5698f5cf4f85eb5a1b79e3b0",
+    "build/test-c11/trigraph_eof_3.c": "b469c4d13d89cbe4f9bdf050f25a95290cccc1b44532bc4dfdaa344c985fa642",
+    "build/test-c11/trigraph_eof_4.c": "3b13af1761b13a7cf3d49e8314f5e2da51d787ba73de5fcb44355735245b656f",
+    "build/trigraph-sail-probe.c": "d6552f6881b1c8361e211fd3237871594f7b3397318ca5660d4fa8749cd7ff26"
+  },
+  "results": {
+    "results/repro": [
+      {
+        "name": "results/repro/tcc_pragma_macro_operand.c",
+        "model_s": 0.08663797378540039,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 79724 bytes"
+      },
+      {
+        "name": "results/repro/tcc_pp_trigraphs.c",
+        "model_s": 0.09563326835632324,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 80332 bytes"
+      }
+    ],
+    "build/test-c11": [
+      {
+        "name": "build/test-c11/trigraph_boundary_33_1.c",
+        "model_s": 0.01760721206665039,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13044 bytes"
+      },
+      {
+        "name": "build/test-c11/trigraph_boundary_33_2.c",
+        "model_s": 0.016974687576293945,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13044 bytes"
+      },
+      {
+        "name": "build/test-c11/trigraph_boundary_39_1.c",
+        "model_s": 0.020109176635742188,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13044 bytes"
+      },
+      {
+        "name": "build/test-c11/trigraph_boundary_39_2.c",
+        "model_s": 0.01666116714477539,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13044 bytes"
+      },
+      {
+        "name": "build/test-c11/trigraph_boundary_40_1.c",
+        "model_s": 0.017188310623168945,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13044 bytes"
+      },
+      {
+        "name": "build/test-c11/trigraph_boundary_40_2.c",
+        "model_s": 0.016730785369873047,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13044 bytes"
+      },
+      {
+        "name": "build/test-c11/trigraph_boundary_41_1.c",
+        "model_s": 0.01698160171508789,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13044 bytes"
+      },
+      {
+        "name": "build/test-c11/trigraph_boundary_41_2.c",
+        "model_s": 0.01557612419128418,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13044 bytes"
+      },
+      {
+        "name": "build/test-c11/trigraph_boundary_45_1.c",
+        "model_s": 0.016227006912231445,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13044 bytes"
+      },
+      {
+        "name": "build/test-c11/trigraph_boundary_45_2.c",
+        "model_s": 0.01584601402282715,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13044 bytes"
+      },
+      {
+        "name": "build/test-c11/trigraph_boundary_47_1.c",
+        "model_s": 0.01658773422241211,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13044 bytes"
+      },
+      {
+        "name": "build/test-c11/trigraph_boundary_47_2.c",
+        "model_s": 0.01741766929626465,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13044 bytes"
+      },
+      {
+        "name": "build/test-c11/trigraph_boundary_60_1.c",
+        "model_s": 0.01682281494140625,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13044 bytes"
+      },
+      {
+        "name": "build/test-c11/trigraph_boundary_60_2.c",
+        "model_s": 0.016956806182861328,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13044 bytes"
+      },
+      {
+        "name": "build/test-c11/trigraph_boundary_61_1.c",
+        "model_s": 0.017998933792114258,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13044 bytes"
+      },
+      {
+        "name": "build/test-c11/trigraph_boundary_61_2.c",
+        "model_s": 0.016761064529418945,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13044 bytes"
+      },
+      {
+        "name": "build/test-c11/trigraph_boundary_62_1.c",
+        "model_s": 0.016807079315185547,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13044 bytes"
+      },
+      {
+        "name": "build/test-c11/trigraph_boundary_62_2.c",
+        "model_s": 0.016437053680419922,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13044 bytes"
+      },
+      {
+        "name": "build/test-c11/trigraph_comment_boundary_1.c",
+        "model_s": 0.016928434371948242,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13028 bytes"
+      },
+      {
+        "name": "build/test-c11/trigraph_comment_boundary_2.c",
+        "model_s": 0.01663064956665039,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13028 bytes"
+      },
+      {
+        "name": "build/test-c11/trigraph_eof_1.c",
+        "model_s": 0.016025543212890625,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13028 bytes"
+      },
+      {
+        "name": "build/test-c11/trigraph_eof_2.c",
+        "model_s": 0.016435861587524414,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13028 bytes"
+      },
+      {
+        "name": "build/test-c11/trigraph_eof_3.c",
+        "model_s": 0.015868425369262695,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13028 bytes"
+      },
+      {
+        "name": "build/test-c11/trigraph_eof_4.c",
+        "model_s": 0.01701498031616211,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13028 bytes"
+      }
+    ],
+    "c/tests/c11": [
+      {
+        "name": "c/tests/c11/pragma.c",
+        "model_s": 0.08766508102416992,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 79748 bytes"
+      }
+    ],
+    "build": [
+      {
+        "name": "build/trigraph-sail-probe.c",
+        "model_s": 0.020913124084472656,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13652 bytes"
+      }
+    ]
+  },
+  "rows": [
+    [
+      "results/repro",
+      2,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.09113562107086182
+    ],
+    [
+      "build/test-c11",
+      24,
+      24,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.01685813069343567
+    ],
+    [
+      "c/tests/c11",
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.08766508102416992
+    ],
+    [
+      "build",
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.020913124084472656
+    ]
+  ],
+  "totals": {
+    "n": 28,
+    "same": 28
+  },
+  "wall_seconds": 0.6838028430938721,
+  "reference": "rv64emu diagnostic; Sail arena equality pending",
+  "compiler_args": [
+    "-std=c11",
+    "-w"
+  ]
+}

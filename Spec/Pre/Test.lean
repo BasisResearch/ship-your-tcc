@@ -28,10 +28,11 @@ def runPP (cfg : PreCfg) (fs : FileSys) (s : String) : Option (List PPToken) :=
   | .ok ts => some ts
   | .error _ => none
 
-/-- `src` preprocesses to the predefined text's tokens followed by `expected`'s. -/
+/-- `src` preprocesses to the predefined text's tokens followed by `expected`'s.
+The printed result is already past phase 1; do not translate it again. -/
 def ppIs (cfg : PreCfg) (fs : FileSys) (src expected : String) : Bool :=
   match runPP cfg fs "", runPP cfg fs src with
-  | some pre, some out => out == pre ++ toksOf cfg expected
+  | some pre, some out => out == pre ++ toksOf { cfg with trigraphs := false } expected
   | _, _ => false
 
 /-- `src` is rejected (a constraint violation). -/
@@ -43,6 +44,19 @@ def testFS : FileSys := ⟨Tcc.imageFS.files ++ [(bs "/vers2.h", bs "vers2_h_con
 
 def both (src expected : String) : Bool :=
   ppIs cfgIso testFS src expected && ppIs Tcc.cfgTcc testFS src expected
+
+/-! ### C11 §5.1.1.2 / §5.2.1.1: phase 1, once per physical file. -/
+#guard phase1 Tcc.cfgTcc (bs "??=??(??/??)??'??<??!??>??-") == bs "#[\\]^{|}~"
+#guard phase1 Tcc.cfgTcc (bs "???=????!??x??") == bs "?#??|??x??"
+#guard (phases12 Tcc.cfgTcc (bs "??=define X 4??/\n2\n")).map (·.c) == bs "#define X 42\n"
+#guard both "??=define X 7\nint a??(1??) = ??< X ??>;\n" "int a[1] = {7};"
+#guard both "// comment ??/\n#error hidden\n/??/\n* hidden *??/\n/42\n" "42"
+#guard both "??=define S(x) ??=x\nS(?\\\n?=)\n" "\"??=\""
+#guard both "#define S(x) #x\n#define Q ?\n#define M(x) S(x?=)\nM(Q)\n" "\"??=\""
+#guard both "\"??=??(??)??'??<??!??>??-\"\n" "\"#[]^{|}~\""
+#guard both "??=line 300\n__LINE__??/\n+ __LINE__\n" "300 + 301"
+#guard ppIs Tcc.cfgTcc ⟨testFS.files ++ [(bs "/tri~.h", bs "??=define H 7??/\n3\n")]⟩
+  "??=include \"tri??-.h\"\nH\n" "73"
 
 /-! ### §6.10.3.5 EXAMPLE 1 -/
 #guard both "#define TABSIZE 100
@@ -167,12 +181,12 @@ LISTING ( ..\\listing.dir )
   | some out => out == [⟨.pragmaBegin, []⟩] ++ toksOf cfgIso "listing on \"..\\listing.dir\"" ++ [⟨.pragmaEnd, []⟩]
   | none => false)
 
-/-! ### Trigraphs (§5.2.1.1): on in `cfgIso`, off in tcc's configuration. -/
+/-! ### Trigraphs (§5.2.1.1): required by both C11 configurations. -/
 #guard ppIs cfgIso testFS "??=define X a??/
 b
 X ??( ??)
 " "ab [ ]"
-#guard ppIs Tcc.cfgTcc testFS "??( ??)\n" "? ? ( ? ? )"
+#guard ppIs Tcc.cfgTcc testFS "??( ??)\n" "[ ]"
 
 /-! ### `#if` arithmetic is in intmax_t / uintmax_t (§6.10.1p4). -/
 #guard both "#if 0xFFFFFFFF + 1 == 0x100000000 && -1 < 0 && -1 > 0u && (0 ? 1u : -1) > 0

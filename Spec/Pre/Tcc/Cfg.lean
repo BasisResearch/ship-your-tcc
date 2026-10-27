@@ -16,7 +16,8 @@ tcc's choices for C11 translation phases 1–4 (`CSem.Pre.PreCfg`).
   equal, in order, to `riscv64-tcc -dM -E` of an empty file.
 
 The compiler is invoked with `-std=c11` (`cversion` 201112), including
-`u8`/`u`/`U` literal prefixes (`c11Prefixes` true). Implementation-defined choices (tccpp.c): no trigraphs; `$` and bytes
+C11 trigraph replacement before splicing and `u8`/`u`/`U` literal prefixes
+(`trigraphs` and `c11Prefixes` true, patch 0003). Implementation-defined choices (tccpp.c): `$` and bytes
 ≥ 0x80 are identifier characters (`tccpp_new`, `dollars_in_identifiers`);
 CR is white space (`is_space`); `<…>` from macro-replaced tokens is joined
 without spaces (`parse_include`); plain `char` unsigned (riscv64-gen.c
@@ -59,7 +60,7 @@ def predefsE : String := "#define __TINYC__ 928\n#define __riscv 1\n#define __ri
 
 /-- The image's `tcc -run /prog.c`. -/
 def cfgTcc : PreCfg where
-  trigraphs := false
+  trigraphs := true
   c11Prefixes := true
   extraIdChar := fun c => c = 36 ∨ c ≥ 128
   extraSpace := fun c => c = 13

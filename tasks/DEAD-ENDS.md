@@ -84,3 +84,25 @@
 - Repin workers cannot resolve GitHub or open the systemd bus in their sandbox.
   Lead-fetched immutable upstream/Lem checkouts plus frozen-input build requests
   resolve this; do not resend a task that ends at those infrastructure checks.
+
+- C11 trigraph worker (2026-10-27): translating physical input alone makes
+  macro/stringification-produced `??=` in `tcc -E` output translate on a later
+  compilation. Preserve the source encoding too: escape the second question
+  mark of a string/character trigraph spelling and separate adjacent `?`
+  tokens. The direct run initially printed `trigraphs 0`, while its -E round
+  trip printed `trigraphs 2`; both now print zero. Do not route synthetic
+  paste or `_Pragma` buffers through phase 1.
+- C11 trigraph build fixtures: the first capped build compiled both drivers
+  but rejected an old test expecting trigraphs disabled and a new include
+  test with no `tccdefs.h` in its filesystem. Update the old expectation and
+  extend the existing test filesystem; the matching capped rebuild passes.
+- Existing tcc physical-line lookahead defect: `#line 300\nint x = __LINE__`
+  immediately followed by backslash/newline and `;` initializes x to 301,
+  whereas GCC and CSem say 300. A literal backslash reproduces it without
+  trigraphs. The trigraph regression checks a splice after the semicolon;
+  the CSem regression retains the exact physical line semantics. This is
+  separate unfinished work, not a reason to change CSem or Supported.
+- Sail command detail: `lean_riscv_emulator --max-steps N` only enforces N
+  in its traced loop. Include `--trace-pcs` (even an empty file) for a bounded
+  probe. The initial untraced diagnostic completed successfully, but the final
+  accepted probe used `--trace-pcs` and a wall timeout on the final image.

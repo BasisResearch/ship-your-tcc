@@ -9,7 +9,9 @@ representations."
 * The source character set is the set of bytes (`Bytes`): no decoding.
 * The end-of-line indicator CR LF becomes new-line; a lone CR stays (phase 3
   may treat it as white space, `PreCfg.extraSpace`).
-* Trigraphs (§5.2.1.1) only when `cfg.trigraphs`.
+* Trigraphs (§5.2.1.1) only when `cfg.trigraphs` (required for C11).
+  This pass runs exactly once per physical file, including headers, before
+  splicing, comment recognition and literals; macro results never reenter it.
 
 Phase 2: "Each instance of a backslash character (\) immediately followed by
 a new-line character is deleted, splicing physical source lines to form
