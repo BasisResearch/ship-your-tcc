@@ -1,0 +1,60 @@
+{
+  "command": [
+    "scripts/model_diff.py",
+    "build/missing-path-parent.c",
+    "--no-report",
+    "--json-out",
+    "build/missing-path-parent.model.json",
+    "-j",
+    "1"
+  ],
+  "runtime_key": "8cf288a9db58b47a4df1edbca3910d688fb570d0e3645b6dcc447710bf856df9",
+  "pins": {
+    "vendor/TINYCC_REV": "76ca376f1f96cf1b316713d8f94d91c8629445929d1e7474792fd76610bce1c0",
+    "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+    "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+    "patches/0003-tcc-c11.patch": "acab00b49fd73b1423aca24d9b9281fb843f5788c29dffcacaf5bd5a15db3ff4",
+    "patches/0004-tcc-binary128-literals.patch": "4dfcc192c23a777b1b335e9052a416956886b1071c3de1e8da403b5b194e221e",
+    "c/build/base.elf": "567b92acdeacbf0170ea7b760e25b64a58f5e543a35a6440e0dfe84e91ff1474",
+    "c/src/gen_embed.sh": "68534ee3a238c143bf4e749fcb0ea43e8b53933c4a9d6843422d995c879d7d76",
+    "scripts/model_diff.py": "defdc64d303cc839b7d77d8413390950358e5bbe2ef617104bae306b553b7f20",
+    ".lake/build/bin/tcc_model": "c275c4219a67c90d84a127bbd873121855169586204fca13ec7ebd6fd679f7d0",
+    "build/missing-path-parent.c": "3ea0a23c5cd6399898703210af0412ad634beb77d32ca1486cb24255e768feb4"
+  },
+  "results": {
+    "build": [
+      {
+        "name": "build/missing-path-parent.c",
+        "model_s": 0.01186227798461914,
+        "ref": "exit",
+        "model": "exit",
+        "result": "same-refusal",
+        "why": "both stop: exit 1"
+      }
+    ]
+  },
+  "rows": [
+    [
+      "build",
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0.01186227798461914
+    ]
+  ],
+  "totals": {
+    "n": 1,
+    "same": 0
+  },
+  "wall_seconds": 0.5317888259887695,
+  "reference": "rv64emu diagnostic; Sail arena equality pending",
+  "compiler_args": [
+    "-std=c11",
+    "-w"
+  ]
+}

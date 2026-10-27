@@ -67,7 +67,9 @@ The comparator now requires exact equality by default and fails on malformed
 protocol/crashes. Its 608-input diagnostic rerun has 600 exact tcc agreements
 and the same eight residuals (results/pre/acceptance-contract.md). A newly
 confirmed trigraph deviation needs a compiler patch and model reflection;
-remaining C11 coverage is work, not a change to the contract.
+remaining C11 coverage is work, not a change to the contract. The include
+filesystem also incorrectly normalizes away missing directories before lookup
+(results/pre/path-resolution.md); a shared traversal repair is queued after repin.
 
 Builds are serialized across these lanes, capped at 12 GB. The two inherited
 `results/review/*.json` handoffs are retained as dated records; all 345 hashes

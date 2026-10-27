@@ -1,0 +1,4 @@
+build/missing-path-parent.c                                  tcc=tcc-error  gcc=-         
+    tcc err: /Users/kirancodes/tmp/pre_diff_6u97jv82/tmp491g5k0w/prog.c:1: error: include file 'missing/../lib/tcc/include/stddef.h' not found
+tcc: {'tcc-error': 1}
+gcc: {'-': 1}
