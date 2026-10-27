@@ -240,3 +240,11 @@ cleanup run matches, with no byte mismatch. The full gate and 15-case native bou
 evidence is recorded in results/model/direct-float-fixed-2026-10-27.md.
 The literal-connection Statement, all-corpus Sail coverage and F3 proofs stay
 open; these are not new Supported exclusions.
+
+Raw frontend checkpoint 604256c / rebased ceb85b6 is under integrated review:
+physical/include/macro provenance, pure per-TU Digest and UCN identity, with
+18 full-Cabs agreements and unchanged 614/664 parser classifications.
+The worker full gate passes; the combined IEEE/literal gate is running.
+Pack-layout consumption and actual library identity remain explicit whole-C
+duties; the checked entry reports them and is not installed universally in F0.
+The independent allocation-oracle recovery task is now assigned to Sol slot 1.

@@ -38,13 +38,12 @@ pushes main without force. Record unsuccessful approaches in
 The launcher follows 4ct-digest's MANAGER.md/codexwork.sh workflow, adapted
 to this project's two-worker limit and shared Lean build lock.
 
-Current assignments, 2026-10-27: slot 1 runs `tasks/f1-raw-frontend.md`
-in sol-f2-tokens (branch sol/f1-raw); slot 2 runs
-`tasks/f1-anonymous-members.md` in sol-c11-line. The pure IEEE candidate has landed through its integrated gate; the lead
-now investigates direct compiler literal rounding. Exact preprocessing/pragma and
-designator integration is landed, including the explicit model/observer gate
-and three native arena captures. Allocation-oracle recovery, compiler literal
-rounding and anonymous-member compiler repairs remain queued tasks.
+Current assignments, 2026-10-27: the raw-source frontend checkpoint is under
+lead integration after worker review/gate. Slot 1 next runs
+`tasks/f1-allocation-oracle.md` in sol-csem-repin (branch sol/f1-allocation);
+slot 2 finishes anonymous-member semantics in sol-c11-line. The lead repairs
+compiler anonymous-container qualifiers. Pure IEEE and direct source-literal
+rounding are adopted; raw pack/layout and library-identity gaps remain explicit.
 
 Frozen build requests use the shared 12 GB lock. Changed inputs invalidate
 a request; freeze a new hash manifest before retrying. Infrastructure limits
@@ -55,3 +54,6 @@ workers must not repin or mutate it during independent semantic tasks.
 Lead review is delivered in worktree `build/lead-note.txt` and frozen build
 receipts. Workers read it before new build requests and before finalizing;
 requested corrections must be resolved or returned as an explicit obstruction.
+
+Keep build receipts compact: inspect ID/status/lead notes, and verify large
+hash manifests with scripts. Do not repeatedly print whole manifests or logs.

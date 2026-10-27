@@ -39,10 +39,11 @@ removed. Patch 0004 fixes compiler literals using exact integer rounding;
 public libc `strtold` still needs correction in the library lane. Matching refusals likewise do not satisfy the F3 success criterion.
 
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
-two at a time, following MANAGER.md. Slot 1 connects raw preprocessing to
-the Cabs frontend; slot 2 repairs anonymous-member semantics (CSEM-07).
+two at a time, following MANAGER.md. Slot 1's reviewed raw frontend checkpoint
+is under lead integration; its next task is the allocation oracle. Slot 2
+repairs anonymous-member semantics (CSEM-07).
 The pure IEEE implementation is integrated after the combined gate; the lead
-validates the direct-rounding compiler/model repair while both frontend lanes continue. Exact-token/pragma integration is now
+repairs anonymous-container qualifier inheritance in the compiler/model. Exact-token/pragma integration is now
 validated with the nested-designator repair: strengthened full gate, 147
 positive/14 invalid C11 checks, 18 protocol tests, 64 focused positives and
 17 joint rejections. The 619-input corpus has 613 raw/611 spec agreements;
@@ -139,3 +140,11 @@ now surface these lead notes before finalization.
 
 None currently. Implementation defects and unfinished obligations are work
 items, not requests to weaken the target.
+
+Raw frontend checkpoint 604256c (rebased ceb85b6) passes its worker gate,
+18 independent full-Cabs comparisons and unchanged F2/parser baselines. Its
+combined gate with adopted IEEE/literal changes is running before landing.
+The checked entry explicitly diagnoses unimplemented pack consumption and
+library-identity mismatches; this is not a Supported restriction or universal
+F0 substitution. Allocation recovery proceeds independently in external Sol
+slot 1; the reviewed task rejects the draft's unbounded/negative-size answers.

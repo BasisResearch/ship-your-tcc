@@ -22,6 +22,7 @@ Test default equivalence, multiple valid placements, rejected overlapping/unalig
 free/reallocation and pointer-observable C cases. Validate against known tcc/Sail outcomes without injecting bytes.
 Keep new allocation nondeterminism separate from independent evaluation-order choices and UB classification.
 Preserve repin, digest, RV64 config, FS and adopted IEEE work; no stale diff3/generated-copy wholesale import.
+Slot 2 independently repairs anonymous containers/layout; lead will combine its changes. Do not edit its tree.
 Final full scripts/check.sh --csem, pure-cone/axiom checks and focused evidence required.
 Write results/csem/allocation-oracle.md with pins, exact results, provenance and remaining obligations.
 Do not edit STATUS/PHASES; provide ledger text and dead ends. Final RESULT: landed <commit> | stuck <where>.
