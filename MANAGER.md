@@ -40,8 +40,8 @@ to this project's two-worker limit and shared Lean build lock.
 
 Current assignments, 2026-10-27: slot 1 runs `tasks/f1-raw-frontend.md`
 in sol-f2-tokens (branch sol/f1-raw); slot 2 runs
-`tasks/f1-anonymous-members.md` in sol-c11-line. The lead integrates the
-reviewed IEEE candidate in sol-csem-repin. Exact preprocessing/pragma and
+`tasks/f1-anonymous-members.md` in sol-c11-line. The pure IEEE candidate has landed through its integrated gate; the lead
+now investigates direct compiler literal rounding. Exact preprocessing/pragma and
 designator integration is landed, including the explicit model/observer gate
 and three native arena captures. Allocation-oracle recovery, compiler literal
 rounding and anonymous-member compiler repairs remain queued tasks.

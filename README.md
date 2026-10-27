@@ -21,6 +21,13 @@ C source through compilation and execution. DESIGN-COMPILER.md specifies
 refusal disjunct. The existing per-program theorem is its non-vacuity witness;
 STATUS.md records the active F0–F3 work.
 
+Current F0–F3 validation: exact phase-4 observation and nested designators are
+integrated; 1,339 independent fast arenas and three complete native Sail arenas
+match on the combined image. CSem now uses pure binary32/64/128 values, with
+zero native floating in its checked cones. F1–F3 and the whole-compiler theorem
+remain open; literal rounding, newlib binary128 formatting/sqrt and other
+recorded semantic gaps still require work.
+
 ## The target: RV64I
 
 The shared executable Sail model implements RV64I only. `mul`, `div`, atomics,

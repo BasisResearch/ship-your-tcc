@@ -30,7 +30,7 @@ external bug reporting; no external contact is authorized or planned.
 | F1 pure seams | `agent-a249bbaa5b1df80ec` | digest retirement integrated; main's full CSem gate passes: 19 unit executables, 113 baseline oracle results; remaining partial/native seams inventoried |
 | F1 ABI/allocation | `agent-a4ab6bbd8c0be5325` | RV64 configuration reader integrated after capped build/full gate; 10/15 probes agree, float/bitfield/enum/stdin gaps remain; allocator recovery still open |
 | F1 filesystem | `agent-ad868c434f5f27398` | integrated after full gate: descriptor fstat, structural state ordering and link proxy repaired; eight exact Sail byte/exit agreements, repeated with RV64 config; mkdir remains a separate missing-library gap |
-| F1 IEEE | `agent-a45cb08cf87ce958c` | reviewed candidate replaces native floating with pure configured bits; frozen worker gate passes, lead integrated gate running; target literal/printf/sqrtl gaps retained |
+| F1 IEEE | `agent-a45cb08cf87ce958c` | integrated after worker and combined full gates: pure 32/64/128 bits, zero native floating in both cones, unchanged 113-case baseline; literal/printf/sqrtl gaps and connection Statements remain open |
 | F3 compiler model | `agent-a05464165befb7074` (recovery merged) | patched C11 model integrated after capped build and combined full gate; 1,670 independent fast arenas including 1,051 generated successes; four full Sail arenas now agree; all-corpus Sail equality remains open |
 
 F3 review found reference-derived long-double bytes supplied to the model.
@@ -41,7 +41,8 @@ public libc `strtold` still needs correction in the library lane. Matching refus
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
 two at a time, following MANAGER.md. Slot 1 connects raw preprocessing to
 the Cabs frontend; slot 2 repairs anonymous-member semantics (CSEM-07).
-The lead integrates the reviewed pure IEEE candidate through the combined gate. Exact-token/pragma integration is now
+The pure IEEE implementation is integrated after the combined gate; the lead
+investigates compiler literal rounding while both frontend lanes continue. Exact-token/pragma integration is now
 validated with the nested-designator repair: strengthened full gate, 147
 positive/14 invalid C11 checks, 18 protocol tests, 64 focused positives and
 17 joint rejections. The 619-input corpus has 613 raw/611 spec agreements;
