@@ -3,6 +3,7 @@
 import LemLib
 
 import CerberusFresh
+import CerbImplCfg
 import CerbGlobal
 import Core
 import CerbDebug
@@ -125,7 +126,7 @@ def stringFromInit_path0 (xs : List init_element0) : String :=
   lemStringConcat "" (List.map stringFromInit_element0 xs)
 
 /- STD §6.7.9#3 -/
-def check_initialised_type_constraint (loc1 : CerbLocation.Loc) (ty1 : ctype) :
+def check_initialised_type_constraint [CerbImplCfg.Impl] (loc1 : CerbLocation.Loc) (ty1 : ctype) :
     state_with_markers → exceptM (Unit × state_with_markers) error :=
   stExpect_bind (cabs_to_ail_is_complete_object ty1) (fun (is_complete_object1 : Bool) =>
     lem_if not (is_array_unknown_size ty1 || (is_complete_object1 && not (is_vla ty1))) then
@@ -926,8 +927,9 @@ def translate_character_constant (p : (Option cabs_character_prefix × String)) 
   | (pref_opt, str) =>
     (maybe0 none ((fun (x : cabs_character_prefix)=> some (translate_character_prefix x))) pref_opt,
       str)
-def evaluate_integer_constant_expression0 [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (loc1 : CerbLocation.Loc) (ty_opt : Option ctype) (expr1 : expression Unit) :
+def evaluate_integer_constant_expression0 [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (loc1 : CerbLocation.Loc) (ty_opt : Option ctype)
+    (expr1 : expression Unit) :
     state_with_markers → exceptM (Int × state_with_markers) error :=
   stExpect_bind get_core_eval_stuff (fun (core_env : (Fmap String sym × fun_map Unit × impl)) =>
     stExpect_bind get_sigma_sofar (fun (sigm : sigma Unit) =>
@@ -1258,7 +1260,8 @@ partial def reduces_to_ddecl_identifier (ddecltor : direct_declarator) : Bool :=
   | DDecl_function _ _ => false
 
 /- STD §6.7.2.1#3, except for the flexible array part -/
-def check_members { a b : Type } (membrDefs : List (identifier × (b × a × qualifiers × ctype))) :
+def check_members { a b : Type } [CerbImplCfg.Impl]
+    (membrDefs : List (identifier × (b × a × qualifiers × ctype))) :
     state_with_markers → exceptM (Unit × state_with_markers) error :=
   lemListFoldr
     (fun (m : state_with_markers → exceptM (Unit × state_with_markers) (CerbLocation.Loc × cause))
@@ -1322,8 +1325,8 @@ instance (priority := 500) : Lem_Basic_classes.Ord0 stmt_context where
   isGreater := defaultGreater
   isGreaterEqual := defaultGreaterEq
 mutual
-partial def desugar_expression0 [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def desugar_expression0 [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (c : cabs_expression) :
     state_with_markers → exceptM (expression Unit × state_with_markers) error :=
   match c with
@@ -1913,8 +1916,8 @@ partial def desugar_expression0 [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Swi
                  | (AnnotatedExpression _ _ _ expr_) => stExpect_return expr_)))
          (fun (z : expression_ Unit) =>
            stExpect_return (AnnotatedExpression () ([] : List annot) loc1 z)))
-partial def desugar_struct_declaration [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def desugar_struct_declaration [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (struct_decl : struct_declaration) :
     state_with_markers → exceptM
@@ -1982,8 +1985,8 @@ partial def desugar_struct_declaration [LemFuel] [CerberusFresh.Digest] [CerbGlo
          (fun (_ : Unit) =>
            stExpect_return
              ([] : List (identifier × (attributes × Option alignment × qualifiers × ctype)))))
-partial def desugar_struct_declarator [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def desugar_struct_declarator [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (has_alignment : Bool)
     (struct_decltor : struct_declarator) :
     state_with_markers → exceptM
@@ -2020,8 +2023,8 @@ partial def desugar_struct_declarator [LemFuel] [CerberusFresh.Digest] [CerbGlob
        else
          fun (_ : state_with_markers) =>
            fail0 (loc1, DESUGAR (Desugar_NotYetSupported "bit-fields"))))
-partial def desugar_init_declarator_BROKEN [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def desugar_init_declarator_BROKEN [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (base_qs : qualifiers)
     (base_ty : ctype) (l : List storage_class_specifier) (idecltor : init_declarator) :
     state_with_markers → exceptM
@@ -2117,8 +2120,8 @@ partial def desugar_init_declarator_BROKEN [LemFuel] [CerberusFresh.Digest] [Cer
                                                stExpect_return (some z)));
                                      stExpect_return
                                        (ident, false, (qs, ty1), mk_desug_init)))))))))
-partial def desugar_init_declarator [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def desugar_init_declarator [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (attrs1 : attributes)
     (isAtomic : Bool) (has_alignment : Bool) (base_qs : qualifiers) (base_ty : ctype)
     (l : List storage_class_specifier) (idecltor : init_declarator) :
@@ -2255,8 +2258,8 @@ partial def desugar_init_declarator [LemFuel] [CerberusFresh.Digest] [CerbGlobal
                                                    | (Identifier loc1 _) => loc1, ident_attrs,
                                                     link1, sym1, false, (qs, ty1),
                                                     mk_desug_init))))))))))))
-partial def check_storage_class_specifiers [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def check_storage_class_specifiers [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (decl_ctxt : declaration_context) (scs : List storage_class_specifier) :
     state_with_markers → exceptM (Unit × state_with_markers) error :=
@@ -2291,8 +2294,8 @@ partial def check_storage_class_specifiers [LemFuel] [CerberusFresh.Digest] [Cer
               DESUGAR (Desugar_UndefinedBehaviour UB060_block_scope_function_with_storage_class)))
       else
         CerbUtils.STD_ "§6.7.1#8" (/- TODO -/ stExpect_return ()))
-partial def desugar_enumerator [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def desugar_enumerator [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (p : (identifier × Option cabs_expression)) :
     state_with_markers → exceptM
@@ -2319,8 +2322,8 @@ partial def desugar_enumerator [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Swit
                  compatible with the enum? -/
                     evaluate_integer_constant_expression0 loc1 (some signed_int) d_e)
                     (fun (n : Int) => stExpect_return (ident, some (loc1, n)))))))
-partial def desugar_alignment_specifier [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def desugar_alignment_specifier [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (align_spec : alignment_specifier) :
     state_with_markers → exceptM (Option alignment × state_with_markers) error :=
@@ -2381,8 +2384,8 @@ partial def desugar_alignment_specifier [LemFuel] [CerberusFresh.Digest] [CerbGl
                               DESUGAR (Desugar_ConstraintViolation AlignasInvalidIntegerConstant))
                       else
                         stExpect_return (some (AlignInteger n)))))))
-partial def desugar_parameter_type_list [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def desugar_parameter_type_list [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (fundef1 : fundef)
     (p : parameter_type_list) :
     state_with_markers → exceptM
@@ -2420,8 +2423,8 @@ partial def desugar_parameter_type_list [LemFuel] [CerberusFresh.Digest] [CerbGl
             stExpect_return
               (some ([] : List (Option identifier × (qualifiers × ctype × Bool))), isVariadic))
         | _ => stExpect_return (params_opt, isVariadic))
-partial def desugar_type_name [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def desugar_type_name [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (t5 : type_name) :
     state_with_markers → exceptM ((qualifiers × ctype) × state_with_markers) error :=
   match t5 with
@@ -2441,7 +2444,7 @@ partial def desugar_type_name [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switc
                  | (qs, ty1) =>
                    stExpect_return (qs, (lem_if isAtomic then wrap_atomic ty1 else ty1)))))
 partial def desugar_and_register_static_assert_declaration [LemFuel] [CerberusFresh.Digest]
-    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
+    [CerbImplCfg.Impl] [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (sa_decl : static_assert_declaration) :
     state_with_markers → exceptM (Unit × state_with_markers) error :=
@@ -2467,8 +2470,8 @@ partial def desugar_and_register_static_assert_declaration [LemFuel] [CerberusFr
                              (StaticAssertFailed (string_of_string_literal lit))))
                  else
                    stExpect_return ()))))
-partial def wip_desugar_initializer_ [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def wip_desugar_initializer_ [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (dur : storageDuration) (current_ty : ctype) (init : initializer_) :
     state_with_markers → exceptM ((ctype × expression Unit) × state_with_markers) error :=
@@ -2657,7 +2660,7 @@ partial def wip_desugar_initializer_ [LemFuel] [CerberusFresh.Digest] [CerbGloba
           E.return (current_ty', constructValue tagDefs xs current_ty') -/
                   )))
 partial def _UNUSED_static_thread_implicit_initializer [LemFuel] [CerberusFresh.Digest]
-    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
+    [CerbImplCfg.Impl] [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (tagDefs1 : Fmap sym tag_definition0) (c : ctype) :
     constant :=
@@ -2738,8 +2741,8 @@ partial def _UNUSED_static_thread_implicit_initializer [LemFuel] [CerberusFresh.
     | Struct of identifier * list (Cabs.Symbol.identifier * ctype) /- TODO: no bitfields for now -/
     | Union of identifier * list (Cabs.Symbol.identifier * ctype) /- TODO: no bitfields for now -/ -/
           )))
-partial def desugar_array_declarator [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def desugar_array_declarator [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (under_array1 : under_array)
     (a : array_declarator) :
     state_with_markers → exceptM ((qualifiers → ctype → (qualifiers × ctype)) × state_with_markers)
@@ -2848,8 +2851,8 @@ partial def desugar_array_declarator [LemFuel] [CerberusFresh.Digest] [CerbGloba
              | none => /- here the array declarator: has no size expression -/
                stExpect_return (fun (qs : qualifiers) (ty1 : ctype) =>
                  perform_adjust qs (Ctype [Aloc loc1] (Array0 ty1 none)))))
-partial def desugar_pointer_declarator [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def desugar_pointer_declarator [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (p : pointer_declarator) :
     state_with_markers → exceptM ((qualifiers → ctype → (qualifiers × ctype)) × state_with_markers)
         error :=
@@ -2883,8 +2886,8 @@ partial def desugar_pointer_declarator [LemFuel] [CerberusFresh.Digest] [CerbGlo
           stExpect_return
             (fun (base_qs : qualifiers) (base_ty : ctype) =>
               (tquals_qs, mk_pointer_ctype base_qs base_ty))))
-partial def desugar_abstract_declarator [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def desugar_abstract_declarator [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (under_array1 : under_array) :
     abstract_declarator → state_with_markers → exceptM
@@ -2908,7 +2911,7 @@ partial def desugar_abstract_declarator [LemFuel] [CerberusFresh.Digest] [CerbGl
                 stExpect_return (fun (base_qs : qualifiers) (base_ty : ctype) =>
                   match mk_pointer_qs_ctype base_qs base_ty with
                   | (ptr_qs, ptr_ty) => mk_qs_ctype ptr_qs ptr_ty))))
-partial def desugar_direct_abstract_declarator [LemFuel] [CerberusFresh.Digest]
+partial def desugar_direct_abstract_declarator [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
     [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (under_array1 : under_array) :
@@ -2993,8 +2996,8 @@ partial def desugar_direct_abstract_declarator [LemFuel] [CerberusFresh.Digest]
                           (fun (base_qs : qualifiers) (base_ty : ctype) =>
                             mk_qs_ctype no_qualifiers
                               (Ctype ([] : List annot) (mk_fun_ctype (base_qs, base_ty)))))))))
-partial def desugar_type_specifiers [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def desugar_type_specifiers [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (specs : List cabs_type_specifier) :
     state_with_markers → exceptM ((qualifiers × ctype) × state_with_markers) error :=
@@ -3348,8 +3351,8 @@ partial def desugar_type_specifiers [LemFuel] [CerberusFresh.Digest] [CerbGlobal
               fun (_ : state_with_markers) =>
                 fail0
                   (loc1, DESUGAR (Desugar_ConstraintViolation IllegalTypeSpecifierInDeclaration)))))
-partial def register_enumerators [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def register_enumerators [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (tag_loc : CerbLocation.Loc)
     (tag_sym : sym) (enums : List (identifier × Option cabs_expression)) :
     state_with_markers → exceptM (List Int × state_with_markers) error :=
@@ -3402,8 +3405,8 @@ partial def register_enumerators [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Sw
       (fun (p : (Int × List Int)) =>
         match p with
         | (_, ns_rev) => stExpect_return ns_rev)
-partial def desugar_direct_declarator [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def desugar_direct_declarator [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (fundef1 : fundef)
     (under_array1 : under_array) :
     direct_declarator → state_with_markers → exceptM
@@ -3482,8 +3485,8 @@ partial def desugar_direct_declarator [LemFuel] [CerberusFresh.Digest] [CerbGlob
                             mk_qs_ctype no_qualifiers
                               (Ctype [Aloc (loc_of_direct_declarator ddecltor)]
                                 (mk_fun_ctype (base_qs, base_ty))))))))))
-partial def desugar_parameter_declaration [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def desugar_parameter_declaration [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (is_first : Bool)
     (fundef1 : fundef) (param_decl : parameter_declaration) :
     state_with_markers → exceptM
@@ -3665,8 +3668,8 @@ partial def desugar_parameter_declaration [LemFuel] [CerberusFresh.Digest] [Cerb
                                          UniqueVoidParameterInFunctionDeclaration))
                              else /- NOTE: base on §6.7.6.3#12, this allows incomplete types -/
                                stExpect_return ret))))))))
-partial def desugar_declarator [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def desugar_declarator [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (fundef1 : fundef)
     (d : declarator) :
     state_with_markers → exceptM
@@ -3689,8 +3692,8 @@ partial def desugar_declarator [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Swit
                   (fun (base_qs : qualifiers) (base_ty : ctype) =>
                     match mk_pointer_qs_ctype base_qs base_ty with
                     | (ptr_qs, ptr_ty) => mk_qs_ctype ptr_qs ptr_ty))))
-partial def desugar_alignment_specifiers [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def desugar_alignment_specifiers [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (decl_ty : ctype) (xs : List alignment_specifier) :
     state_with_markers → exceptM (Option alignment × state_with_markers) error :=
@@ -3816,8 +3819,8 @@ partial def desugar_alignment_specifiers [LemFuel] [CerberusFresh.Digest] [CerbG
                  fail0
                    (loc1, DESUGAR (Desugar_ConstraintViolation (AlignasLessThanRequired decl_ty))))
              | some LemOrdering.LT => stExpect_return (some al))))
-partial def pathFromDesigs_aux [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def pathFromDesigs_aux [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (acc : List init_element0) :
     List designator → state_with_markers → exceptM (List init_element0 × state_with_markers)
         error :=
@@ -3855,7 +3858,7 @@ partial def pathFromDesigs_aux [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Swit
       | Desig_member memb_ident :: xs =>
         (pathFromDesigs_aux _lemReader_enum_definitions _lemReader_tagDefs)
           (Elem_member0 memb_ident :: acc) xs)
-partial def pathFromDesigs [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
+partial def pathFromDesigs [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (desigs : List designator) :
     state_with_markers → exceptM (List init_element0 × state_with_markers) error :=
@@ -3863,7 +3866,7 @@ partial def pathFromDesigs [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches
   | desigs =>
     (pathFromDesigs_aux _lemReader_enum_definitions _lemReader_tagDefs) ([] : List init_element0)
       desigs
-partial def foo_aux [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
+partial def foo_aux [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (l : List (init_path0 × expression Unit)) (l0 : List (init_path0 × init_path0 × ctype))
@@ -4209,7 +4212,7 @@ partial def foo_aux [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
                                           (foo_aux _lemReader_enum_definitions _lemReader_tagDefs)
                                             /- entity_ty -/ (List.reverse inner1 ++ acc) elems'
                                             unknown_array xs')))))))))
-partial def foo [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
+partial def foo [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (entity_ty : ctype)
     (init_ : initializer_) :
@@ -4321,8 +4324,8 @@ partial def foo [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
                Int)) =>
              match p with
              | (ret, _, _) => stExpect_return (entity_ty, ret))))
-partial def desugar_declaration_base [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def desugar_declaration_base [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (attrs1 : attributes)
     (specifs : specifiers) (idecltors : List init_declarator) :
     state_with_markers → exceptM (List (sym × Option (expression Unit)) × state_with_markers)
@@ -4616,8 +4619,8 @@ partial def desugar_declaration_base [LemFuel] [CerberusFresh.Digest] [CerbGloba
                     ([] : List (sym × Option (expression Unit))) idecltors)
                   ((fun (x : List (sym × Option (expression Unit)))=>
                     stExpect_return (List.reverse x)))))
-partial def desugar_block_statement [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def desugar_block_statement [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (self : cabs_statement → desugM (statement Unit)) (ss : List cabs_statement) :
     state_with_markers → exceptM
@@ -4674,8 +4677,8 @@ partial def desugar_block_statement [LemFuel] [CerberusFresh.Digest] [CerbGlobal
                       | _, _ => Prod.snd z :: acc)) ([] : List (statement Unit))
                  (lemListZip ss d_ss);
              stExpect_return (bs, d_ss'))))
-partial def desugar_statement_aux [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def desugar_statement_aux [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (ctx : stmt_context)
     (c : cabs_statement) :
     state_with_markers → exceptM (statement Unit × state_with_markers) error :=
@@ -5446,7 +5449,7 @@ partial def desugar_statement_aux [LemFuel] [CerberusFresh.Digest] [CerbGlobal.S
               stExpect_return (AilSmarker id1 z))))
        (fun (z : statement_ Unit) => stExpect_return (mk_statement_full loc1 desug_info2 attrs1 z)))
 end
-def desugar_statement [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
+def desugar_statement [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (stmt : cabs_statement) :
     state_with_markers → exceptM (statement Unit × state_with_markers) error :=
@@ -5621,8 +5624,8 @@ def cn_resolve_ordinary_id_other (loc1 : CerbLocation.Loc) (nm : identifier) :
         (fun (_ : state_with_markers) =>
           fail0 (loc1, DESUGAR (Desugar_CN (CNErr_unknown_c_identifier nm)))))
 
-partial def desugar_cn_expr [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def desugar_cn_expr [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (c : cn_expr identifier type_name) :
     state_with_markers → exceptM (cn_expr sym ctype × state_with_markers) error :=
@@ -5886,7 +5889,7 @@ partial def desugar_cn_expr [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switche
            stExpect_return (CNExpr_default z)))
       (fun (ret : cn_expr_ sym ctype) => stExpect_return (CNExpr loc1 ret))
 
-def desugar_cn_pred [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
+def desugar_cn_pred [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) :
     cn_pred identifier type_name → state_with_markers → exceptM
@@ -5911,7 +5914,7 @@ def desugar_cn_pred [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
           let sym1 := ensure_not_c_variable sym_resolved;
           stExpect_return (CN_named sym1))
 
-def desugar_cn_resource [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
+def desugar_cn_resource [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) :
     cn_resource identifier type_name → state_with_markers → exceptM
@@ -5949,7 +5952,7 @@ def desugar_cn_resource [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
                               match u with
                               | () => stExpect_return (CN_each sym1 bTy e loc1 pred1 es))))))))
 
-def desugar_o_cn_func_body [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
+def desugar_o_cn_func_body [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) :
     Option (cn_expr identifier type_name) → state_with_markers → exceptM
@@ -5961,7 +5964,7 @@ def desugar_o_cn_func_body [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches
       stExpect_bind ((desugar_cn_expr _lemReader_enum_definitions _lemReader_tagDefs) body)
         (fun (body' : cn_expr sym ctype) => stExpect_return (some body'))
 
-def desugar_cn_assertion [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
+def desugar_cn_assertion [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (a : cn_assertion identifier type_name) :
@@ -5989,8 +5992,8 @@ def desugar_cn_assertion [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
                         match u with
                         | () => stExpect_return (CN_assert_qexp sym1 bTy e1 e2)))))))
 
-partial def desugar_cn_clause_aux [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def desugar_cn_clause_aux [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (clause : cn_clause identifier type_name) :
     state_with_markers → exceptM (cn_clause sym ctype × state_with_markers) error :=
@@ -6018,7 +6021,7 @@ partial def desugar_cn_clause_aux [LemFuel] [CerberusFresh.Digest] [CerbGlobal.S
     stExpect_bind ((desugar_cn_expr _lemReader_enum_definitions _lemReader_tagDefs) ret)
       (fun (ret' : cn_expr sym ctype) => stExpect_return (CN_return loc1 ret'))
 
-def desugar_cn_clause [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
+def desugar_cn_clause [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (clause : cn_clause identifier type_name) :
@@ -6032,8 +6035,8 @@ def desugar_cn_clause [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
             match u with
             | () => stExpect_return clause)))
 
-partial def desugar_cn_clauses [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+partial def desugar_cn_clauses [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (clauses : cn_clauses identifier type_name) :
     state_with_markers → exceptM (cn_clauses sym ctype × state_with_markers) error :=
@@ -6053,8 +6056,8 @@ partial def desugar_cn_clauses [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Swit
         stExpect_bind ((desugar_cn_clauses _lemReader_enum_definitions _lemReader_tagDefs) cs)
           (fun (z : cn_clauses sym ctype) => stExpect_return (f z)))
 
-def desugar_maybe_cn_clauses [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+def desugar_maybe_cn_clauses [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) :
     Option (cn_clauses identifier type_name) → state_with_markers → exceptM
         (Option (cn_clauses sym ctype) × state_with_markers) error :=
@@ -6093,8 +6096,8 @@ def desugar_cn_output (p : (CerbLocation.Loc × cn_base_type identifier)) :
     stExpect_bind (desugar_cn_base_type loc1 bt) (fun (bt' : cn_base_type sym) =>
       stExpect_return (loc1, bt'))
 
-def desugar_and_register_cn_predicate [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+def desugar_and_register_cn_predicate [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (pred1 : cn_predicate identifier type_name) :
     state_with_markers → exceptM (Unit × state_with_markers) error :=
@@ -6145,8 +6148,8 @@ def desugar_and_register_cn_type_synonym (ts : cn_type_synonym identifier) :
   stExpect_bind (desugar_cn_base_type ts.cn_tysyn_loc ts.cn_tysyn_rhs)
     (fun (bt : cn_base_type sym) => register_cn_type_synonym ts.cn_tysyn_name bt)
 
-def desugar_and_register_cn_function [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+def desugar_and_register_cn_function [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (func : cn_function identifier type_name) :
     state_with_markers → exceptM (Unit × state_with_markers) error :=
@@ -6162,7 +6165,7 @@ def desugar_and_register_cn_function [LemFuel] [CerberusFresh.Digest] [CerbGloba
                 stExpect_return (func.cn_func_attrs, return_bty', args, body)))))
 
 /- adapting desugar_cn_clause -/
-def desugar_cn_condition [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
+def desugar_cn_condition [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (condition : cn_condition identifier type_name) :
@@ -6183,7 +6186,7 @@ def desugar_cn_condition [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
       (fun (assrt' : cn_assertion sym ctype) => stExpect_return (CN_cconstr loc1 assrt'))
 
 /- in cn 'conditions' the scoping follows the list structure -/
-def desugar_cn_conditions [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
+def desugar_cn_conditions [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (conditions : List (cn_condition identifier type_name)) :
@@ -6191,8 +6194,8 @@ def desugar_cn_conditions [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
   stExpect_mapM (desugar_cn_condition _lemReader_enum_definitions _lemReader_tagDefs) conditions
 
 /- copying and adjusting desugar_and_register_cn_function -/
-def desugar_and_register_cn_lemma [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+def desugar_and_register_cn_lemma [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (lmma : cn_lemma identifier type_name) :
     state_with_markers → exceptM (Unit × state_with_markers) error :=
@@ -6218,7 +6221,7 @@ def desugar_and_register_cn_fun_spec (spec : cn_decl_spec identifier type_name) 
       register_cn_fun_spec loc1 fun_sym spec.cn_decl_name marker_id1
         (stExpect_return (spec.cn_decl_args, spec.cn_func_spec0))))
 
-def desugar_cn_statement [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
+def desugar_cn_statement [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (c : cn_statement identifier type_name) :
@@ -6327,8 +6330,8 @@ def desugar_cn_statement [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
 /- END CN -/
 /- TODO: check + annotate with STD -/
 
-def desugar_and_register_function_definition [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+def desugar_and_register_function_definition [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (f : function_definition) :
     state_with_markers → exceptM (Unit × state_with_markers) (CerbLocation.Loc × cause) :=
   match f with
@@ -6494,8 +6497,8 @@ def desugar_and_register_function_definition [LemFuel] [CerberusFresh.Digest] [C
          function identifier, so add it here -/
                                     (CerbLocation.withCursorFrom fundef_loc loc1, marker_id1,
                                       fundef_attrs, List.map Prod.fst bindings1, d_stmt))))))))
-def desugar_and_register_external_declaration [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+def desugar_and_register_external_declaration [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (edecl : external_declaration) :
     state_with_markers → exceptM (Unit × state_with_markers) (CerbLocation.Loc × cause) :=
@@ -6855,7 +6858,7 @@ def register_additional_cn_var [CerberusFresh.Digest] (id1 : identifier) :
 /- address-space-bound slice (2026-09-17): the second parameter is the address-space top
    the desugar state is seeded with (E.initial_state), read back by the const-expr
    mini-run; the driver passes the same value here and to the execution entry. -/
-def desugar [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
+def desugar [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (sup : Nat)
     (address_space_top1 : Int) (core_eval_stuff1 : (Fmap String sym × fun_map Unit × impl))

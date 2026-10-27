@@ -16,7 +16,8 @@ open advance_info step_kind driver_error
 /- lem: fuel_measure obligations (statements generated here; proofs in the hand-written module imported above) -/
 
 /- lem: fuel_measure obligation for `hack` (generated; declare {lean} fuel_measure val hack = `lemSize pexpr1` assuming `CerbCoreShape.IsValuePexpr pexpr1`; the hypothesis is the binder `lemHyp`, before `lemFuel` — on inputs violating it the wrapper may exhaust): the worker is fuel-STABLE at the measure (equal to the wrapper at every fuel at or above it). The proof is hand-written in `Driver_lemMeasureProofs.hack_measure_sufficient`, stated with exactly these binders; a missing or mistyped theorem fails the build (a `sorry` is the sorry/axiom gates' job). -/
-theorem hack_measure_sufficient [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+theorem hack_measure_sufficient [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (core_extern1 : Fmap sym sym) (env1 : List (Fmap sym value)) (mem_st : CerbMem.MemState)
     (core_file1 : generic_file Unit core_run_annotation) (concur_sym_map : Fmap sym object_value)

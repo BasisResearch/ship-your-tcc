@@ -5,6 +5,7 @@ import LemLib
 import CerbLocation
 import CerbMem
 import CerbPP
+import CerbImplCfg
 import CerbUtils
 import Core_reduction_aux
 import CerbDebug
@@ -54,7 +55,8 @@ def fresh_excluded_id { a : Type } : core_run_state → exceptM (t0 Nat × core_
 def fresh_symbol0 { a : Type } : core_run_state → exceptM (t0 sym × core_run_state) a :=
   runS fresh_symbol'
 
-def eval_pexpr20 { a : Type } [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def eval_pexpr20 { a : Type } [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (th_st : thread_state)
     (core_extern : Fmap sym sym) (mem_st : CerbMem.MemState)
     (file : generic_file Unit core_run_annotation) (pe : generic_pexpr Unit sym) :
@@ -70,7 +72,7 @@ def eval_pexpr20 { a : Type } [LemFuel] (_lemReader_enum_definitions : Fmap sym 
 end E
 open E
 
-def full_eval_pexpr_lemFuel { b : Type } [LemFuel] (lemFuel : Nat)
+def full_eval_pexpr_lemFuel { b : Type } [LemFuel] [CerbImplCfg.Impl] (lemFuel : Nat)
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (th_st : thread_state)
     (core_extern1 : Fmap sym sym) (mem_st : CerbMem.MemState)
@@ -89,12 +91,12 @@ def full_eval_pexpr_lemFuel { b : Type } [LemFuel] (lemFuel : Nat)
             core_extern1 mem_st file1 pe'
         | Sum.inr cval => stExceptUndef_return cval))
 
-def full_eval_pexpr { b : Type } [LemFuel] :
+def full_eval_pexpr { b : Type } [LemFuel] [CerbImplCfg.Impl] :
     (Fmap sym integerType) -> (Fmap sym (CerbLocation.Loc × tag_definition)) -> thread_state → Fmap
         sym sym → CerbMem.MemState → generic_file Unit core_run_annotation → generic_pexpr Unit
         sym → b → exceptM (t0 value × b) core_run_cause :=
   full_eval_pexpr_lemFuel LemFuel.fuel
-theorem full_eval_pexpr_lemFuel_zero { b : Type } [LemFuel]
+theorem full_eval_pexpr_lemFuel_zero { b : Type } [LemFuel] [CerbImplCfg.Impl]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (th_st : thread_state)
     (core_extern1 : Fmap sym sym) (mem_st : CerbMem.MemState)
@@ -1730,7 +1732,7 @@ def process_impl_proc { a : Type }
            (t0 thread_state × core_run_state) core_run_cause))
   | _ => (failwithI "Core_reduction.process_impl_proc ==> TODO" : core_step2)
 
-def step_ctx [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def step_ctx [LemFuel] [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (mem_st : CerbMem.MemState)
     (file1 : generic_file Unit core_run_annotation) (core_extern1 : Fmap sym sym)
     (current_tid : Nat) (p : (Option Nat × thread_state)) :

@@ -2,6 +2,7 @@
 
 import LemLib
 
+import CerbImplCfg
 import CerbLocation
 import Nondeterminism
 import Ctype
@@ -1392,7 +1393,7 @@ partial def either_sequence { a b : Type } (xs : List (Sum a b)) : Sum a (List b
   of types. The first one is the type of return value and
   the remaining ones are types of arguments.
 -/
-def try_usual_arithmetic (_lemReader_enum_definitions : Fmap sym integerType)
+def try_usual_arithmetic [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (c : ctype) (c0 : ctype) :
     Option ctype :=
   match c, c0 with
@@ -1406,7 +1407,7 @@ def try_usual_arithmetic (_lemReader_enum_definitions : Fmap sym integerType)
                ((usual_arithmetic_integer _lemReader_enum_definitions _lemReader_tagDefs)
                  ((integerImpl _lemReader_enum_definitions _lemReader_tagDefs) ()) ity1 ity2))))
      | _, _ => none)
-partial def resolve_arg (_lemReader_enum_definitions : Fmap sym integerType)
+partial def resolve_arg [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (n : Nat)
     (get_arg : Nat → (ctype × Bool)) (get_spec : Nat → intrinsics_arg_spec) (p : (ctype × Bool))
     (spec : intrinsics_arg_spec) :
@@ -1452,7 +1453,8 @@ partial def resolve_arg (_lemReader_enum_definitions : Fmap sym integerType)
          | CopyArg _ => Sum.inl "CopyArg -- dual indirection not allowed!"
          | spec' => resolve_arg1 (get_arg i) spec'))
 
-def derive_intrinsic_signature (_lemReader_enum_definitions : Fmap sym integerType)
+def derive_intrinsic_signature [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (args : List (ctype × Bool))
     (p : (instrinsics_ret_spec × List intrinsics_arg_spec)) :
     Sum String (ctype × List ctype) :=

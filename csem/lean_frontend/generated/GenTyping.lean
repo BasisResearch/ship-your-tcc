@@ -5,6 +5,7 @@ import LemLib
 import CerbLocation
 import CerbDebug
 import CerberusFresh
+import CerbImplCfg
 import CerbPP
 import CerbGlobal
 import CerbMem
@@ -62,7 +63,7 @@ def lookup_tag_definition { a : Type } (s : sigma a) (sym1 : sym) : Option tag_d
 
 /- NOTE: move in_range and try_ranges inside gen_typing_type_of_constant if Lem ever allows
    recursive functions inside other functions... -/
-def in_range (_lemReader_enum_definitions : Fmap sym integerType)
+def in_range [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (n : Int) (ity : integerType) :
     errorM Bool :=
@@ -80,7 +81,7 @@ def in_range (_lemReader_enum_definitions : Fmap sym integerType)
      | (min2, max2) =>
        ErrorM (fun (ts : List (List String)) => Sum.inr ((intLteb min2 n && intLteb n max2), ts)))
 
-partial def try_ranges (_lemReader_enum_definitions : Fmap sym integerType)
+partial def try_ranges [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (n : Int) :
     List integerType → errorM integerType :=
@@ -96,7 +97,8 @@ partial def try_ranges (_lemReader_enum_definitions : Fmap sym integerType)
           | true => ErrorM (fun (ts : List (List String)) => Sum.inr (ity, ts))
           | false => (try_ranges _lemReader_enum_definitions _lemReader_tagDefs) loc1 n acc)
 
-def gen_typing_type_of_constant (_lemReader_enum_definitions : Fmap sym integerType)
+def gen_typing_type_of_constant [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (iCst : integerConstant) :
     errorM genIntegerType :=
@@ -618,7 +620,8 @@ def annotate_stringLiteral (p : (Option encodingPrefix × List (CerbLocation.Loc
          ((AilEstr (pref_opt, strs),
            GenLValueType no_qualifiers
              (Ctype ([] : List annot) (Array0 elem_ty (some (Int.ofNat (id sz))))) false), ts)))
-partial def typecheck_constant (_lemReader_enum_definitions : Fmap sym integerType)
+partial def typecheck_constant [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (cst : constant) :
     errorM genType :=
@@ -859,7 +862,7 @@ instance (priority := 500) : Lem_Basic_classes.Ord0 annotation_context where
   isGreater := defaultGreater
   isGreaterEqual := defaultGreaterEq
 mutual
-partial def annotate_rvalue (_lemReader_enum_definitions : Fmap sym integerType)
+partial def annotate_rvalue [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (annotate_block1 : sigma Unit → List
       (sym ×
@@ -888,7 +891,8 @@ partial def annotate_rvalue (_lemReader_enum_definitions : Fmap sym integerType)
                | GenLValueType qs ty1 isRegister =>
                  (AnnotatedExpression (GenLValueType qs ty1 isRegister) std_annots loc1 expr_,
                    inject_type ty1), ts)))
-partial def annotate_assignee (_lemReader_enum_definitions : Fmap sym integerType)
+partial def annotate_assignee [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (annotate_block1 : sigma Unit → List
       (sym ×
@@ -921,7 +925,8 @@ partial def annotate_assignee (_lemReader_enum_definitions : Fmap sym integerTyp
                       (AilEatomic e2)), ts))
               else
                 ErrorM (fun (ts : List (List String)) => Sum.inr (e2, ts))))
-partial def annotate_expression (_lemReader_enum_definitions : Fmap sym integerType)
+partial def annotate_expression [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (annotate_block1 : sigma Unit → List
       (sym ×
@@ -3092,7 +3097,7 @@ partial def annotate_expression (_lemReader_enum_definitions : Fmap sym integerT
              let annots1 := (fun x y => x ++ y) std_annots (List.map Astd annots1);
              (perform_decays _lemReader_enum_definitions _lemReader_tagDefs) sigm ctx
                (AnnotatedExpression gtc annots1 loc1 expr_'))))
-partial def perform_decays (_lemReader_enum_definitions : Fmap sym integerType)
+partial def perform_decays [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (sigm : sigma Unit)
     (ctx : annotation_context) (a_expr : expression genTypeCategory) :
     errorM (expression genTypeCategory) :=
@@ -3192,7 +3197,8 @@ partial def perform_decays (_lemReader_enum_definitions : Fmap sym integerType)
               | _ => a_expr, ts))
        else
          ErrorM (fun (ts : List (List String)) => Sum.inr (a_expr, ts))))
-partial def annotate_arguments_aux (_lemReader_enum_definitions : Fmap sym integerType)
+partial def annotate_arguments_aux [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (add_casts : Bool)
     (annotate_block1 : sigma Unit → List
       (sym ×
@@ -3272,7 +3278,8 @@ partial def annotate_arguments_aux (_lemReader_enum_definitions : Fmap sym integ
        ErrorM (fun (_ : List (List String)) =>
          Sum.inl
            (loc1, (TError_ConstraintViolation (FunctionCallTooFewArguments n_params n_args)))))
-partial def annotate_definition_aux (_lemReader_enum_definitions : Fmap sym integerType)
+partial def annotate_definition_aux [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (annotate_block1 : sigma Unit → List
       (sym ×
@@ -3422,7 +3429,7 @@ partial def annotate_definition_aux (_lemReader_enum_definitions : Fmap sym inte
             | (AnnotatedExpression _ _ loc1 _) => loc1),
             (TError_ConstraintViolation (IllegalInitialisation kind1)))))
 end
-def annotate_definition (_lemReader_enum_definitions : Fmap sym integerType)
+def annotate_definition [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (annotate_block1 : sigma Unit → List
       (sym ×
@@ -3467,7 +3474,8 @@ def annotate_definition (_lemReader_enum_definitions : Fmap sym integerType)
      | _, none =>
        (failwithI "annotate_definition: symbol not found in the context" : errorM
          (sym × Option (expression genTypeCategory))))
-partial def annotate_definitions (_lemReader_enum_definitions : Fmap sym integerType)
+partial def annotate_definitions [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (annotate_block1 : sigma Unit → gamma → bindings → List (statement Unit) → errorM
       (List (statement genTypeCategory))) (sigm : sigma Unit)
@@ -3493,7 +3501,8 @@ partial def annotate_definitions (_lemReader_enum_definitions : Fmap sym integer
               ErrorM (fun (ts : List (List String)) => Sum.inr ((d :: ds), ts))))
 
 mutual
-partial def annotate_statement_ (_lemReader_enum_definitions : Fmap sym integerType)
+partial def annotate_statement_ [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (sigm : sigma Unit)
     (gamm : List
@@ -3626,7 +3635,8 @@ partial def annotate_statement_ (_lemReader_enum_definitions : Fmap sym integerT
     bind3 (annotate_statement1 s) (fun (s' : statement genTypeCategory) =>
       ErrorM (fun (ts : List (List String)) => Sum.inr ((AilSmarker id1 s'), ts)))
 
-partial def annotate_statement (_lemReader_enum_definitions : Fmap sym integerType)
+partial def annotate_statement [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (sigm : sigma Unit)
     (gamm : List
       (ail_identifier ×
@@ -3639,7 +3649,7 @@ partial def annotate_statement (_lemReader_enum_definitions : Fmap sym integerTy
     (fun (node' : statement_ genTypeCategory) =>
       ErrorM (fun (ts : List (List String)) =>
         Sum.inr ((mk_statement_full stmt.loc stmt.desug_info0 stmt.attrs node'), ts)))
-partial def annotate_block (_lemReader_enum_definitions : Fmap sym integerType)
+partial def annotate_block [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (ty_opt : Option ctype)
     (sigm : sigma Unit)
     (gamm : List
@@ -3687,7 +3697,7 @@ end
 let annotate_block sigm gamm ty stmts =
   E.mapM (annotate_statement sigm gamm ty) stmts -/
 
-def annotate_sigma (_lemReader_enum_definitions : Fmap sym integerType)
+def annotate_sigma [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (sigm : sigma Unit) :
     errorM (sigma genTypeCategory) :=
   bind3
@@ -3934,7 +3944,7 @@ def annotate_sigma (_lemReader_enum_definitions : Fmap sym integerType)
                        cn_idents := sigm.cn_idents } : sigma genTypeCategory)), ts)))))
 /- NOTE: this is the only thing this module exports -/
 
-def annotate_program (_lemReader_enum_definitions : Fmap sym integerType)
+def annotate_program [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (p : (Option sym × sigma Unit)) :
     errorM (Option sym × sigma genTypeCategory) :=

@@ -1,5 +1,9 @@
 import CerbEscape
 import CerbFail
+import CerbImplCfg
+
+local instance : CerbImplCfg.Impl := ⟨CerbImplCfg.cerberusDefault⟩
+
 
 /-! Byte/text boundary tests, imported and run by pp-test. The all-byte
 expected string is OCaml 5.4.0 `String.escaped (String.init 256 Char.chr)`,

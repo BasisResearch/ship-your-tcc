@@ -208,7 +208,7 @@ LEM_SRC_LEAN = $(filter-out frontend/model/core_unstruct.lem,$(LEM_SRC)) \
 # lean_frontend/docs/2026-10-05_pnvi-s1-switch-parameter-record.md §3).
 # lean_digest.lem (ship-your-tcc F1b, 2026-10-21) declares the per-TU symbol
 # digest's instance reader (CerberusFresh.Digest), the same mechanism.
-LEM_SRC_LEAN_ONLY = frontend/model/lean_switches.lem frontend/model/lean_digest.lem
+LEM_SRC_LEAN_ONLY = frontend/model/lean_switches.lem frontend/model/lean_digest.lem frontend/model/lean_impl.lem
 ####
 
 PRELUDE_SRC_DIR = ocaml_frontend/generated

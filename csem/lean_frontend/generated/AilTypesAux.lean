@@ -3,6 +3,7 @@
 import LemLib
 
 import CerbDebug
+import CerbImplCfg
 import CerberusFresh
 import CerberusImpl
 import CerbGlobal
@@ -39,13 +40,13 @@ def sub_qualifiers (qs1 : qualifiers) (qs2 : qualifiers) : Bool :=
     ((((not qs1.restrict) || qs2.restrict)) && (((not qs1.volatile) || qs2.volatile)))
 /- == Predicates on integerTypes ============================================ -/
 
-def is_signed_ity0 (_lemReader_enum_definitions : Fmap sym integerType)
+def is_signed_ity0 [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) :
     integerType → Bool :=
   (is_signed_ity _lemReader_enum_definitions _lemReader_tagDefs)
 /- STD §6.2.5#6, sentence 4 -/
 
-def is_unsigned_ity (_lemReader_enum_definitions : Fmap sym integerType)
+def is_unsigned_ity [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (ity : integerType) :
     Bool :=
   not ((is_signed_ity0 _lemReader_enum_definitions _lemReader_tagDefs) ity)
@@ -308,7 +309,7 @@ def is_incomplete { a : Type } (sigm : sigma a) (ty1 : ctype) : Bool := not (is_
 def in_integer_range (impl2 : implementation) (n : Int) (ity : integerType) : Bool :=
   mem n (integer_range impl2 ity)
 def in_min_integer_range (n : Int) (ity : integerType) : Bool := mem n (min_integer_range ity)
-def le_integer_range (_lemReader_enum_definitions : Fmap sym integerType)
+def le_integer_range [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (impl2 : implementation)
     (ity1 : integerType) (ity2 : integerType) :
     Bool :=
@@ -534,7 +535,7 @@ def make_corresponding_unsigned : integerType → integerType :=
     | Signed ibty => Unsigned ibty
     | ity => ity
 
-def integer_promotion (_lemReader_enum_definitions : Fmap sym integerType)
+def integer_promotion [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (impl2 : implementation) :
     integerType → integerType :=
   fun (x : integerType) =>
@@ -559,7 +560,7 @@ def integer_promotion (_lemReader_enum_definitions : Fmap sym integerType)
       else
         ity)
 
-def promotion (_lemReader_enum_definitions : Fmap sym integerType)
+def promotion [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (impl2 : implementation) :
     ctype → Option ctype :=
   fun (x : ctype) =>
@@ -572,7 +573,8 @@ def promotion (_lemReader_enum_definitions : Fmap sym integerType)
               ((integer_promotion _lemReader_enum_definitions _lemReader_tagDefs) impl2 ity))))
     | _ => none
 
-def usual_arithmetic_integer_CHERI (_lemReader_enum_definitions : Fmap sym integerType)
+def usual_arithmetic_integer_CHERI [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (impl2 : implementation)
     (ity1 : integerType) (ity2 : integerType) :
     integerType :=
@@ -615,7 +617,8 @@ def usual_arithmetic_integer_CHERI (_lemReader_enum_definitions : Fmap sym integ
      else
        make_corresponding_unsigned promoted_ity2)
 
-def usual_arithmetic_integer_default (_lemReader_enum_definitions : Fmap sym integerType)
+def usual_arithmetic_integer_default [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (impl2 : implementation)
     (ity1 : integerType) (ity2 : integerType) :
     integerType := /- TODO: this is not standard, but in cerberus we don't treat (u)intptr_t and size_t as an aliased types -/
@@ -664,7 +667,7 @@ def usual_arithmetic_integer_default (_lemReader_enum_definitions : Fmap sym int
          else
            make_corresponding_unsigned promoted_ity2)))
 
-def usual_arithmetic_integer (_lemReader_enum_definitions : Fmap sym integerType)
+def usual_arithmetic_integer [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (impl2 : implementation)
     (ity1 : integerType) (ity2 : integerType) :
     integerType := /- TODO: this is a temporary hack, we need to add a type alias mechanism to Ocaml_implemetation.implemention -/
@@ -1156,7 +1159,7 @@ def is_standard_signed_integer_type (c : ctype) : Bool :=
 def is_extended_signed_integer_type (_ : ctype) : Bool := false
 /- STD §6.2.5#4, sentence 4 -/
 
-def is_signed_integer_type (_lemReader_enum_definitions : Fmap sym integerType)
+def is_signed_integer_type [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (c : ctype) :
     Bool :=
   match c with
@@ -1183,7 +1186,7 @@ def is_standard_unsigned_integer_type (c : ctype) : Bool :=
 /- STD §6.2.5#6, sentence 3 -/
 
 def is_extended_unsigned_integer_type (_ : ctype) : Bool := false
-def is_unsigned_integer_type (_lemReader_enum_definitions : Fmap sym integerType)
+def is_unsigned_integer_type [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (c : ctype) :
     Bool :=
   match c with

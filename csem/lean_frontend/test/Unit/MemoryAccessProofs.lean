@@ -1,5 +1,9 @@
 import CerbFailProofs
 import CerbMemAccessFacts
+import CerbImplCfg
+
+local instance : CerbImplCfg.Impl := ⟨CerbImplCfg.cerberusDefault⟩
+
 
 /-
   SC WP0 erasure pins (records docs/2026-09-25_sc-wp0-passive-access.md,

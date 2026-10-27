@@ -4,6 +4,7 @@ import LemLib
 
 import CerbDebug
 import CerberusFresh
+import CerbImplCfg
 import AilTypesAux
 import AilTyping
 import IntegerImpl
@@ -240,7 +241,8 @@ def usual_arithmetic (gty1 : genType) (gty2 : genType) : genType := /- STD §6.3
      | _, _ =>
        (failwithI "GenTypesAux.usual_arithmetic must only be called on arithmetic types" : genType))
 
-partial def interpret_genIntegerType (_lemReader_enum_definitions : Fmap sym integerType)
+partial def interpret_genIntegerType [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (impl2 : implementation) (git : genIntegerType) :
     errorM integerType :=
@@ -269,7 +271,7 @@ partial def interpret_genIntegerType (_lemReader_enum_definitions : Fmap sym int
                 (((usual_arithmetic_integer _lemReader_enum_definitions _lemReader_tagDefs) impl2
                   ity1 ity2), ts))))
 
-def interpret_genBasicType (_lemReader_enum_definitions : Fmap sym integerType)
+def interpret_genBasicType [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (impl2 : implementation) :
     genBasicType → errorM basicType :=
@@ -282,7 +284,8 @@ def interpret_genBasicType (_lemReader_enum_definitions : Fmap sym integerType)
           ErrorM (fun (ts : List (List String)) => Sum.inr ((Integer ity), ts)))
     | GenFloating fty => ErrorM (fun (ts : List (List String)) => Sum.inr ((Floating fty), ts))
 
-partial def interpret_genType (_lemReader_enum_definitions : Fmap sym integerType)
+partial def interpret_genType [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (impl2 : implementation) (gty : genType) :
     errorM ctype :=
@@ -305,7 +308,8 @@ partial def interpret_genType (_lemReader_enum_definitions : Fmap sym integerTyp
       (fun (ty1 : ctype) => ret (Atomic ty1))
   | GenByte => ret Byte
 
-def interpret_genTypeCategory (_lemReader_enum_definitions : Fmap sym integerType)
+def interpret_genTypeCategory [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (impl2 : implementation) :
     genTypeCategory → errorM typeCategory :=

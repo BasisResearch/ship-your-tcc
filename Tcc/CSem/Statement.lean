@@ -38,13 +38,12 @@ What is provisional (F0Params, each a later phase's deliverable):
   the image generator's model, F6 (the witness uses `TccSumElf`).
 
 Known F0 gaps of the definitions themselves (PHASES.md, F0):
-* `cfgTcc` is the fork's default implementation (LP64, signed `char`, the
-  x86_64 `.impl` file, upstream's address-space top), not tcc's RV64 ABI
-  (DESIGN §3.3, F1); only `exitStatus` and `argv` are tcc's.
-* native seams in the cone (DESIGN §3.4, F1): the per-TU symbol digest is an
-  `@[extern]` global read by `Symbol.fresh` (`CerberusFresh`), `CoreParser`
-  and `CabsImport` contain `partial` definitions, floats are Lean's `Float`.
-  The statement elaborates over them; no proof can unfold them.
+* `cfgTcc` supplies the patched RV64I/lp64 implementation reader (F1).
+  Binary32/128 execution and bit-field lowering remain concrete residual
+  obligations (results/csem/f1-config.md); allocation remains upstream's
+  deterministic allocator pending its separate recovery.
+* Native float operations and partial frontend/Core parsers remain inherited
+  seams. The pure per-TU Digest reader is retained.
 * divergence: `outcomes` admits `.diverges o` when, for all large fuel, some
   fuel-exhausted branch has printed a prefix of `o`; it does not yet require
   `o` to be exactly the limit of one branch's output (F4's relational outcome
@@ -92,6 +91,9 @@ abbrev FrontEnd := List UInt8 → Option (String × translation_unit)
 fork's driver takes, as data. -/
 structure Config where
   frontEnd : FrontEnd
+  /-- Implementation-defined ABI and builtin choices, read throughout the pipeline. -/
+  implementation : CerbImplCfg.Params
+  implFileName : String
   /-- the runtime directory the library files are stamped with (their
   locations are library locations, as in the fork's driver) -/
   runtime : String
@@ -123,10 +125,11 @@ inductive Verdict where
 them (`runPipeline`: `CoreParser.parseLibraryFile`, `loadCoreStdlib`,
 `loadCoreImpl`). -/
 def stdlib (cfg : Config) : Except String ((Fmap String sym × fun_map Unit) × impl) := do
+  letI : CerbImplCfg.Impl := ⟨cfg.implementation⟩
   let lib := filenameConcat cfg.runtime "libcore"
   let std ← CoreParser.parseLibraryFile (filenameConcat lib "std.core") cfg.stdCore
   let imp ← CoreParser.parseLibraryFile
-    (filenameConcat lib "impls/gcc_4.9.0_x86_64-apple-darwin10.8.0.impl") cfg.implFile
+    (filenameConcat (filenameConcat lib "impls") cfg.implFileName) cfg.implFile
   pure (loadCoreStdlib std, loadCoreImpl imp)
 
 /-- An elaboration failure at `loc`: fuel exhaustion, a static UB, or a
@@ -137,7 +140,7 @@ def elabFailure (loc : CerbLocation.Loc) (ub : Bool) : Verdict :=
 
 /-- Cabs → Core for one TU: the fork driver's `frontendTU` without its IO
 (same calls, same arguments; the supply starts at 0 as in `runPipeline`). -/
-def elaborate [LemFuel] [CerbGlobal.Switches] [CerberusFresh.Digest] (cfg : Config)
+def elaborate [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] [CerberusFresh.Digest] (cfg : Config)
     (std : (Fmap String sym × fun_map Unit) × impl) (tu : translation_unit) :
     Except Verdict (file Unit × Nat) :=
   let ((ailnames, stdFunMap), coreImpl) := std
@@ -184,6 +187,7 @@ def leafVerdict : nd_status driver_result driver_error driver_state × List Stri
 and the exhaustive ND run of `main` (the fork's `runPipeline` for one TU,
 `--nolibc`, the default switch set). -/
 def verdicts (cfg : Config) (src : List UInt8) (n : Nat) : List Verdict :=
+  letI : CerbImplCfg.Impl := ⟨cfg.implementation⟩
   letI : LemFuel := ⟨n⟩
   letI : CerbGlobal.Switches := ⟨CerbGlobal.defaultSwitches⟩
   match cfg.frontEnd src, stdlib cfg with
@@ -261,21 +265,23 @@ structure Fits (P : F0Params) (src : List UInt8) : Prop where
 /-- **`TccImage src elf`**: `elf` is the `tcc -run` image with `/prog.c = src`. -/
 def TccImage (P : F0Params) (src : List UInt8) (elf : ELF64File) : Prop := P.image src elf
 
-/-- **`cfgTcc`** (DESIGN §3.3) in its F0 form: the fork's default
-implementation (its LP64 `CerberusImpl`, the x86_64 `.impl` file, upstream's
-address-space top 0xFFFFFFFFFFFF) with tcc's observable exit status and argv.
-F1 sets the rest of §3.3's table. -/
+/-- **`cfgTcc`** (DESIGN §3.3): patched TinyCC RV64I/lp64, pinned
+newlib errno, and the ordinary no-extra-library image command line. The
+allocator cursor is an executable resolution, pending allocation recovery;
+it is not a claim about the image's stack/data/heap addresses. -/
 def cfgTcc (fe : CSem.FrontEnd) : CSem.Config where
   frontEnd := fe
+  implementation := CerbImplCfg.tccRV64
+  implFileName := CerbImplCfg.tccRV64.implFileName
   runtime := "/csem/runtime"
   stdCore := include_str "../../csem/runtime/libcore/std.core"
-  implFile := include_str "../../csem/runtime/libcore/impls/gcc_4.9.0_x86_64-apple-darwin10.8.0.impl"
-  addressSpaceTop := 0xFFFFFFFFFFFF
+  implFile := CerbImplCfg.tccRV64.implFileText
+  addressSpaceTop := 2 ^ (8 * CerbImplCfg.tccRV64.sizeofPointer) - 1
   /- `tcc -run /prog.c` passes argv = {"/prog.c"} (c/src/gen_embed.sh,
   tcc's main.c) -/
-  argv := ["/prog.c"]
+  argv := [CerbImplCfg.tccRV64.argv0]
   /- the image's `_exit` sends `(uint32_t)code` through HTIF (c/src/htif.c) -/
-  exitStatus := fun v => (v % 2 ^ 32).toNat
+  exitStatus := fun v => (v % 2 ^ CerbImplCfg.tccRV64.exitBits).toNat
 
 /-- **The headline, F0 form** (DESIGN-COMPILER.md §1, no refusal disjunct):
 for every C source with no undefined behaviour under CSem, supported and

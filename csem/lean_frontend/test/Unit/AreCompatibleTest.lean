@@ -16,6 +16,10 @@
   false, `{int a[2]}`/`{int a[2]}` true. -/
 import LemLib
 import Ctype_aux
+import CerbImplCfg
+
+local instance : CerbImplCfg.Impl := ⟨CerbImplCfg.cerberusDefault⟩
+
 
 open Lem_Map
 

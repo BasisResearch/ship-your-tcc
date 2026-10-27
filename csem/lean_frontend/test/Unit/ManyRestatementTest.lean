@@ -21,6 +21,10 @@
 import Monadic_parsing
 import CerbParserProgress
 import Monadic_parsing_lemMeasureProofs
+import CerbImplCfg
+
+local instance : CerbImplCfg.Impl := ⟨CerbImplCfg.cerberusDefault⟩
+
 
 set_option autoImplicit false
 

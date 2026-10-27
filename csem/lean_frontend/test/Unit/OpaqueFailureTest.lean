@@ -3,6 +3,10 @@ import CerbGlobal
 import CerbUtils
 import CerbMemAllocatorProofs
 import Lean.Elab.Command
+import CerbImplCfg
+
+local instance : CerbImplCfg.Impl := ⟨CerbImplCfg.cerberusDefault⟩
+
 
 /-! # OpaqueFailureTest — the hand-written seams' failure leaves have NO kernel equation
 

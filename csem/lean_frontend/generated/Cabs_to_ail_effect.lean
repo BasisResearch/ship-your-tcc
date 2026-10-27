@@ -3,6 +3,7 @@
 import LemLib
 
 import CerbDebug
+import CerbImplCfg
 import Core
 import CerbLocation
 import CerberusFresh
@@ -2634,16 +2635,17 @@ def get_tag_definitions :
    builders below and, as a MAP, by the D3 seeds (the value the Lean enum
    reader takes at a desugar-time read; dead on OCaml). -/
 
-def enum_definitions_of_tag_definitions (tagDefs1 : Fmap sym tag_definition0) :
+def enum_definitions_of_tag_definitions [CerbImplCfg.Impl] (tagDefs1 : Fmap sym tag_definition0) :
     List (sym × integerType) :=
   lemListFoldr
     (fun (p : (sym × tag_definition0)) (acc : List (sym × integerType)) =>
       match p, acc with
       | (sym1, def1), acc =>
         (match def1 with
-         | Enum_definition ns => (sym1, enum_compatible_type ns) :: acc
+         | Enum_definition ns => (sym1, CerberusImpl.enum_compatible_type ns) :: acc
          | _ => acc)) ([] : List (sym × integerType)) (fmapElements tagDefs1)
-def enum_map_of_tag_definitions (tagDefs1 : Fmap ail_identifier tag_definition0) :
+def enum_map_of_tag_definitions [CerbImplCfg.Impl]
+    (tagDefs1 : Fmap ail_identifier tag_definition0) :
     Fmap sym integerType :=
   Lem_Map.fromList (enum_definitions_of_tag_definitions tagDefs1)
 /- The tag-definition table at DESUGAR time is EMPTY on both engines: the
@@ -2678,7 +2680,7 @@ def make_composite_fdecl_seeded (en : Fmap sym integerType)
     (d2 : ((qualifiers × ctype) × Option (List (qualifiers × ctype × Bool)) × Bool × Bool × Bool)) :
     Option fun_declaration :=
   (make_composite_fdecl en tds) d1 d2
-def alignof_ty_seeded (en : Fmap sym integerType)
+def alignof_ty_seeded [CerbImplCfg.Impl] (en : Fmap sym integerType)
     (tds : Fmap sym (CerbLocation.Loc × tag_definition))
     (pseudo_tagDefs : Fmap ail_identifier (List (Option alignment × ctype))) (ty1 : ctype) :
     Option Nat :=
@@ -2855,8 +2857,8 @@ def fetch_object_declaration (sym1 : sym) :
                 state_with_markers → exceptM
                 ((Bool × CerbLocation.Loc × storageDuration × Bool × Option alignment × qualifiers ×
                   ctype) × state_with_markers) error))))
-def register_global_object_definition2 (loc1 : CerbLocation.Loc) (sym1 : sym) (link1 : linkage)
-    (gdef : global_definition) :
+def register_global_object_definition2 [CerbImplCfg.Impl] (loc1 : CerbLocation.Loc) (sym1 : sym)
+    (link1 : linkage) (gdef : global_definition) :
     state_with_markers → exceptM (Unit × state_with_markers) error :=
   stExpect_bind get_inner (fun (st : state) =>
     let do_update : global_definition → state_with_markers → exceptM (Unit × state_with_markers)
@@ -2994,8 +2996,8 @@ def function_is_defined (sym1 : sym) :
     (setMemberBy (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2) sym1
       (fmapDomainBy (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2)
         st.function_definitions0)))
-def register_function_declaration (loc1 : CerbLocation.Loc) (attrs1 : attributes) (sym1 : sym)
-    (is_proto : Bool)
+def register_function_declaration [CerbImplCfg.Impl] (loc1 : CerbLocation.Loc) (attrs1 : attributes)
+    (sym1 : sym) (is_proto : Bool)
     (decl :
       ((qualifiers × ctype) × Option (List (qualifiers × ctype × Bool)) × Bool × Bool × Bool)) :
     state_with_markers → exceptM (Unit × state_with_markers) error := /- DEBUG -/
@@ -3095,7 +3097,8 @@ def register_function_declaration (loc1 : CerbLocation.Loc) (attrs1 : attributes
                       (fmapAddBy (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2) sym1
                         (is_proto, loc1, attrs1, decl) st.function_declarations) })))))
 
-def get_alignof : state_with_markers → exceptM ((ctype → Option Nat) × state_with_markers) error :=
+def get_alignof [CerbImplCfg.Impl] :
+    state_with_markers → exceptM ((ctype → Option Nat) × state_with_markers) error :=
   stExpect_bind get_tag_definitions (fun (tagDefs1 : Fmap sym tag_definition0) =>
     let pseudo_tagDefs :=
       fmapMap
@@ -3122,7 +3125,7 @@ def get_alignof : state_with_markers → exceptM ((ctype → Option Nat) × stat
         z))
 
 /- STD §6.7.5#7 -/
-def get_compatible_alignment_requirements (loc1 : CerbLocation.Loc)
+def get_compatible_alignment_requirements [CerbImplCfg.Impl] (loc1 : CerbLocation.Loc)
     (new_align_opt : Option alignment) (prev_align_opt : Option alignment) :
     state_with_markers → exceptM (Option alignment × state_with_markers) error :=
   stExpect_bind get_alignof (fun (alignof_ty : ctype → Option Nat) =>
@@ -3186,7 +3189,7 @@ def get_compatible_alignment_requirements (loc1 : CerbLocation.Loc)
             fail0 (loc1, DESUGAR (Desugar_TODO "error msg: need a better implementation")))))
 /- TODO: the redeclaration check don't mix external/internal declarations -/
 
-def register_external_object_declaration (sym1 : sym)
+def register_external_object_declaration [CerbImplCfg.Impl] (sym1 : sym)
     (p :
       (Bool × CerbLocation.Loc × attributes × storageDuration × Bool × Option alignment ×
         qualifiers × ctype)) :
@@ -3543,7 +3546,8 @@ let remove_block_scoped_identifiers st xs =
   ) xs
 -/
 
-def mk_current_ail_sigma : state_with_markers → exceptM (sigma Unit × state_with_markers) error :=
+def mk_current_ail_sigma [CerbImplCfg.Impl] :
+    state_with_markers → exceptM (sigma Unit × state_with_markers) error :=
   stExpect_bind get_tag_definitions (fun (ident_tagDefs : Fmap sym tag_definition0) =>
     stExpect_return
       (({ declarations :=
@@ -3579,12 +3583,12 @@ def mk_current_ail_sigma : state_with_markers → exceptM (sigma Unit × state_w
           cn_datatypes := ([] : List (cn_datatype sym)),
           cn_decl_specs := ([] : List (Nat × sym × cn_decl_spec identifier type_name)),
           cn_idents := fmapEmpty } : sigma Unit)))
-def cabs_to_ail_is_complete_object (ty1 : ctype) :
+def cabs_to_ail_is_complete_object [CerbImplCfg.Impl] (ty1 : ctype) :
     state_with_markers → exceptM (Bool × state_with_markers) error :=
   stExpect_bind mk_current_ail_sigma (fun (sigm : sigma Unit) =>
     stExpect_return (is_complete_object sigm ty1))
 
-def cabs_to_ail_effect_is_incomplete (ty1 : ctype) :
+def cabs_to_ail_effect_is_incomplete [CerbImplCfg.Impl] (ty1 : ctype) :
     state_with_markers → exceptM (Bool × state_with_markers) error :=
   stExpect_bind mk_current_ail_sigma (fun (sigm : sigma Unit) =>
     stExpect_return (is_incomplete sigm ty1))
@@ -3592,7 +3596,7 @@ def cabs_to_ail_effect_is_incomplete (ty1 : ctype) :
 /- TODO: ... -/
 def map_union { a b : Type } [MapKeyType b] : Fmap b a → Fmap b a → Fmap b a :=
   (fun (m1 : Fmap b a) (m2 : Fmap b a)=> fmapUnionBy (@mapKeyCompare b _) m1 m2)
-def extract_program (startup_str : String) :
+def extract_program [CerbImplCfg.Impl] (startup_str : String) :
     state_with_markers → exceptM ((Option sym × sigma Unit) × state_with_markers) error :=
   stExpect_bind get_inner (fun (st : state) =>
     let startup_sym_opt :=
@@ -3916,7 +3920,7 @@ def get_gamma_sofar :
 /- Returns what would the Ail sigma be so far -/
 /- TODO: factorise with extract_program -/
 
-def get_sigma_sofar :
+def get_sigma_sofar [CerbImplCfg.Impl] :
     state_with_markers → exceptM (sigma Unit × state_with_markers) (CerbLocation.Loc × cause) :=
   read_inner (fun (st : state) =>
     let decls1 :=

@@ -3,6 +3,7 @@
 import LemLib
 
 import CerbMem
+import CerbImplCfg
 import CerberusFresh
 import CerbGlobal
 import CerbDebug
@@ -86,8 +87,9 @@ open A
    seed is not used by the lem body itself (only injected on Lean), so
    without it lem would generalise it to a type variable. -/
 
-def run_const_expr_driver [LemFuel] [CerbGlobal.Switches] (en : Fmap sym integerType)
-    (tds : Fmap sym (CerbLocation.Loc × tag_definition)) (dr_st : driver_state) :
+def run_const_expr_driver [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
+    (en : Fmap sym integerType) (tds : Fmap sym (CerbLocation.Loc × tag_definition))
+    (dr_st : driver_state) :
     List (nd_status driver_result driver_error driver_state × List String × driver_state) :=
   let driver_action :=
     nd_bind ((driver2 en tds) false) (fun (u : Unit) =>
@@ -107,8 +109,8 @@ def run_const_expr_driver [LemFuel] [CerbGlobal.Switches] (en : Fmap sym integer
    redirect ambiently); the desugM caller draws/restores the dead
    field — behavior unchanged. -/
 
-def evalConstantExpressionAux [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+def evalConstantExpressionAux [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (sup : Nat)
     (address_space_top1 : Int) (loc1 : CerbLocation.Loc)
     (p :
@@ -232,8 +234,8 @@ def evalConstantExpressionAux [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switc
                      (failwithI "TODO error: the driver found less/more than one active execution" :
                        exceptM (value × Nat) (CerbLocation.Loc × cause)))))))
 
-def evalIntegerConstantExpression [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (_lemReader_enum_definitions : Fmap sym integerType)
+def evalIntegerConstantExpression [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (sup : Nat)
     (address_space_top1 : Int) (loc1 : CerbLocation.Loc)
     (core_env : (Fmap String sym × fun_map Unit × impl)) (sigm : sigma Unit) (ty_opt : Option ctype)
@@ -274,7 +276,7 @@ def evalIntegerConstantExpression [LemFuel] [CerberusFresh.Digest] [CerbGlobal.S
               (String.append (CerbLocation.stringFromLocation loc1)
                 ", Mini_pipeline.evalIntegerConstantExpression") : exceptM (Int × Nat)
               (CerbLocation.Loc × cause))))))
-def typecheckAil (_lemReader_enum_definitions : Fmap sym integerType)
+def typecheckAil [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (sigm : sigma Unit)
     (gamm : List
       (ail_identifier ×
@@ -304,14 +306,14 @@ def typecheckAil (_lemReader_enum_definitions : Fmap sym integerType)
    the two seeds have DIFFERENT types, so a positional slip (audit N1) is a
    type error, not a silent value change. -/
 
-def evalIntegerConstantExpression_seeded [LemFuel] [CerberusFresh.Digest] [CerbGlobal.Switches]
-    (en : Fmap sym integerType) (tds : Fmap sym (CerbLocation.Loc × tag_definition)) (sup : Nat)
-    (address_space_top1 : Int) (loc1 : CerbLocation.Loc)
-    (core_env : (Fmap String sym × fun_map Unit × impl)) (sigm : sigma Unit) (ty_opt : Option ctype)
-    (expr1 : expression Unit) :
+def evalIntegerConstantExpression_seeded [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
+    [CerbGlobal.Switches] (en : Fmap sym integerType)
+    (tds : Fmap sym (CerbLocation.Loc × tag_definition)) (sup : Nat) (address_space_top1 : Int)
+    (loc1 : CerbLocation.Loc) (core_env : (Fmap String sym × fun_map Unit × impl))
+    (sigm : sigma Unit) (ty_opt : Option ctype) (expr1 : expression Unit) :
     exceptM (Int × Nat) error :=
   (evalIntegerConstantExpression en tds) sup address_space_top1 loc1 core_env sigm ty_opt expr1
-def typecheckAil_seeded (en : Fmap sym integerType)
+def typecheckAil_seeded [CerbImplCfg.Impl] (en : Fmap sym integerType)
     (tds : Fmap sym (CerbLocation.Loc × tag_definition)) (sigm : sigma Unit)
     (gamm : List
       (ail_identifier ×
@@ -332,7 +334,7 @@ def typecheckAil_seeded (en : Fmap sym integerType)
    sentence at the next lem-lean touch, not this slice): "a reader_seed does
    not re-seed closures constructed outside its extent". -/
 
-def annotate_expression_seeded (en : Fmap sym integerType)
+def annotate_expression_seeded [CerbImplCfg.Impl] (en : Fmap sym integerType)
     (tds : Fmap sym (CerbLocation.Loc × tag_definition)) (ret_ty : Option ctype) (sigm : sigma Unit)
     (gamm : List
       (ail_identifier ×
@@ -343,11 +345,11 @@ def annotate_expression_seeded (en : Fmap sym integerType)
 /- the desugarer reads the typed expression's ctype right after (S-9): the
    genType -> ctype interpretation normalises integer types -/
 
-def qualified_ctype_of_seeded (en : Fmap sym integerType)
+def qualified_ctype_of_seeded [CerbImplCfg.Impl] (en : Fmap sym integerType)
     (tds : Fmap sym (CerbLocation.Loc × tag_definition)) (a_expr : expression genTypeCategory) :
     (qualifiers × ctype) :=
   (qualified_ctype_of en tds) a_expr
-def in_range_of_signed_int (_lemReader_enum_definitions : Fmap sym integerType)
+def in_range_of_signed_int [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (n : Int) :
     Option Bool :=
   match eval_integer_value

@@ -102,6 +102,10 @@
   empty pass).
 -/
 import Lean
+import CerbImplCfg
+
+local instance : CerbImplCfg.Impl := ⟨CerbImplCfg.cerberusDefault⟩
+
 open Lean
 
 /-- The consumer's cone: `drive` and its cold start, the CerbND runners, the

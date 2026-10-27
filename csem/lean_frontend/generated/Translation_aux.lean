@@ -3,6 +3,7 @@
 import LemLib
 
 import CerbDebug
+import CerbImplCfg
 import CerberusFresh
 import CerbLocation
 import Boot
@@ -216,7 +217,7 @@ let exp_type_of a_expr =
 -/
 /- NOTE: it does not depend on the annotation state -/
 
-def ctype_of (_lemReader_enum_definitions : Fmap sym integerType)
+def ctype_of [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (a_expr : expression genTypeCategory) :
     ctype :=
@@ -237,7 +238,7 @@ def ctype_of (_lemReader_enum_definitions : Fmap sym integerType)
 
 /- NOTE: it does not depend on the annotation state -/
 
-def qualified_ctype_of (_lemReader_enum_definitions : Fmap sym integerType)
+def qualified_ctype_of [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (a_expr : expression genTypeCategory) :
     (qualifiers × ctype) :=
@@ -307,7 +308,7 @@ let mk_usual_arithmetic_conversions mk_pexpr (ty1, pe1) (ty2, pe2) =
     mk_pexpr pe1 pe2
 -/
 
-def combine_params_args (_lemReader_enum_definitions : Fmap sym integerType)
+def combine_params_args [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (params : List (qualifiers × ctype × Bool)) (es : List (expression genTypeCategory)) :
     List (ctype × expression genTypeCategory) :=

@@ -2,6 +2,7 @@
 
 import LemLib
 
+import CerbImplCfg
 import CerberusImpl
 import CerbDebug
 import Mem_common
@@ -220,7 +221,7 @@ def tmp_XOR (width : Nat) (n1 : Int) (n2 : Int) : Int :=
   let nbits := 8 * width;
   decode nbits (tmp_XOR_aux nbits (encode nbits n1) (encode nbits n2))
 
-def simplify_integer_value_base_lemFuel (lemFuel : Nat)
+def simplify_integer_value_base_lemFuel [CerbImplCfg.Impl] (lemFuel : Nat)
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (ival_ : integer_value_base) :
@@ -436,11 +437,11 @@ def simplify_integer_value_base_lemFuel (lemFuel : Nat)
           (let f := either0 (fun (z : Int) => IVconcrete z) (fun (z : integer_value_base) => z);
            Sum.inr (IVbitwise ity (BW_XOR (f x) (f y))))))
 
-def simplify_integer_value_base [LemFuel] :
+def simplify_integer_value_base [LemFuel] [CerbImplCfg.Impl] :
     (Fmap sym integerType) -> (Fmap sym (CerbLocation.Loc × tag_definition)) -> integer_value_base →
         Sum Int integer_value_base :=
   simplify_integer_value_base_lemFuel LemFuel.fuel
-theorem simplify_integer_value_base_lemFuel_zero
+theorem simplify_integer_value_base_lemFuel_zero [CerbImplCfg.Impl]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (ival_ : integer_value_base) :
@@ -448,13 +449,14 @@ theorem simplify_integer_value_base_lemFuel_zero
         (Sum.inr ival_) :=
   rfl
 
-def eval_integer_value_base [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def eval_integer_value_base [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (ival_ : integer_value_base) :
     Option Int :=
   either0 (fun (n : Int) => some n) (fun (_ : integer_value_base) => none)
     ((simplify_integer_value_base _lemReader_enum_definitions _lemReader_tagDefs) ival_)
-def lifted_simplify_integer_value_base [LemFuel]
+def lifted_simplify_integer_value_base [LemFuel] [CerbImplCfg.Impl]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (ival_ : integer_value_base) :

@@ -4,11 +4,13 @@ import LemLib
 
 import CerbLocation
 import CerbMem
+import CerbImplCfg
 import CerbGlobal
 import CerbDecode
 import CerbDebug
 import CerbPP
 import CerbFS
+import CerberusImpl
 import Global
 import Pp
 import Mem_aux
@@ -248,7 +250,7 @@ def get_thread_states [LemFuel] :
     ndM (List (thread_id × (Option thread_id × thread_state))) step_kind driver_error
         (mem_constraint CerbMem.IntegerValue) driver_state :=
   nd_bind nd_get (fun (dr_st : driver_state) => nd_return dr_st.core_state0.thread_states)
-def print_eval_conv_aux_lemFuel [LemFuel] (lemFuel : Nat)
+def print_eval_conv_aux_lemFuel [LemFuel] [CerbImplCfg.Impl] (lemFuel : Nat)
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (dr_st : driver_state)
     (th_st : thread_state) (pe : generic_pexpr Unit sym) :
@@ -281,11 +283,11 @@ def print_eval_conv_aux_lemFuel [LemFuel] (lemFuel : Nat)
      | Exception err =>
        nd_return (Sum.inl (CerbLocation.other "Driver.print_eval_conv_aux", CORE_RUN err)))
 
-def print_eval_conv_aux [LemFuel] :
+def print_eval_conv_aux [LemFuel] [CerbImplCfg.Impl] :
     (Fmap sym integerType) -> (Fmap sym (CerbLocation.Loc × tag_definition)) -> driver_state →
         thread_state → pexpr → memM (Sum error (t0 value)) :=
   print_eval_conv_aux_lemFuel LemFuel.fuel
-theorem print_eval_conv_aux_lemFuel_zero [LemFuel]
+theorem print_eval_conv_aux_lemFuel_zero [LemFuel] [CerbImplCfg.Impl]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (dr_st : driver_state)
     (th_st : thread_state) (pe : generic_pexpr Unit sym) :
@@ -294,7 +296,8 @@ theorem print_eval_conv_aux_lemFuel_zero [LemFuel]
           (NDkilled (Error0 CerbFuel.fuelExhaustedLoc CerbFuel.fuelExhaustedMsg), st))) :=
   rfl
 
-def printf_eval_conv [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def printf_eval_conv [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (dr_st : driver_state)
     (th_st : thread_state) (cty : ctype) (mval : CerbMem.MemValue) :
     ndM (Sum error (t0 value)) String mem_error (mem_constraint CerbMem.IntegerValue)
@@ -323,7 +326,7 @@ def liftCore_run { a : Type } [LemFuel]
           | Undef loc1 ubs => kill (Undef0 loc1 ubs)
           | Error loc1 str => kill (Error0 loc1 str))
     | Exception err => kill (Other (DErr_core_run err)))
-def drive_fs_step [LemFuel] [CerbGlobal.Switches]
+def drive_fs_step [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (tid1 : Nat)
     (th_st : thread_state) (dr_st : driver_state) (fs_oper1 : fs_oper) :
@@ -359,7 +362,7 @@ def drive_fs_step [LemFuel] [CerbGlobal.Switches]
     driver_state :=
     (fun (e : CerbFS.FsError) =>
       let errname := CerbFS.fs_string_of_error e;
-      let err := translate_errno (String.append "__cerbvar_" errname);
+      let err := CerberusImpl.translate_errno (String.append "__cerbvar_" errname);
       let err_mval := CerbMem.integerValueMval (Signed Int_) (CerbMem.integerIval err);
       liftMem
         ((CerbMem.storeM _lemReader_enum_definitions _lemReader_tagDefs)
@@ -788,7 +791,7 @@ def update_core_state (core_st : core_state) (dr_st : driver_state) : driver_sta
   { dr_st with core_state0 := core_st }
 /- POST REDUCTION SEMANTICS -/
 
-def action_request_sequential2 [LemFuel] [CerbGlobal.Switches]
+def action_request_sequential2 [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (tid1 : Nat) (aid1 : Nat) :
@@ -912,7 +915,7 @@ def action_request_sequential2 [LemFuel] [CerbGlobal.Switches]
               { { dr_st with trace := ME_kill loc1 is_dynamic1 ptr_val :: dr_st.trace } with
                 core_state0 := update_thread_state tid1 (mk_th_st' aid1) dr_st.core_state0 })))))
 
-def perform_action_request2 [LemFuel] [CerbGlobal.Switches]
+def perform_action_request2 [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (with_concurrency : Bool)
     (loc1 : CerbLocation.Loc) (tid1 : Nat) (request : action_request2 thread_state) :
@@ -930,7 +933,7 @@ def perform_action_request2 [LemFuel] [CerbGlobal.Switches]
         nd_bind (liftCore_run (runS fresh_action_id')) (fun (aid1 : Nat) =>
           (action_request_sequential2 _lemReader_enum_definitions _lemReader_tagDefs) loc1 tid1 aid1
             request))))
-def perform_memop_request2 [LemFuel] [CerbGlobal.Switches]
+def perform_memop_request2 [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (memop1 : generic_memop sym) (cvals : List value) (tid1 : Nat)
@@ -1161,7 +1164,7 @@ instance (priority := 500) : Lem_Basic_classes.Ord0 advance_info where
   isGreater := defaultGreater
   isGreaterEqual := defaultGreaterEq
 
-def advance_step [LemFuel] [CerbGlobal.Switches]
+def advance_step [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (tid1 : Nat)
     (step1 : core_step2) :
@@ -1295,8 +1298,8 @@ def find_can_advance (steps : List core_step2) : Option core_step2 :=
   | [] => none
   | step1 :: steps' => (lem_if can_advance step1 then some step1 else find_can_advance steps')
 
-def drive_nonmemory_steps_aux2_lemFuel [LemFuel] [CerbGlobal.Switches] (lemFuel : Nat)
-    (_lemReader_enum_definitions : Fmap sym integerType)
+def drive_nonmemory_steps_aux2_lemFuel [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
+    (lemFuel : Nat) (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (acc : Fmap thread_id (List core_step2)) :
     List Nat → ndM (Fmap thread_id (List core_step2)) step_kind driver_error
@@ -1337,12 +1340,12 @@ def drive_nonmemory_steps_aux2_lemFuel [LemFuel] [CerbGlobal.Switches] (lemFuel 
                   (drive_nonmemory_steps_aux2_lemFuel lemFuel _lemReader_enum_definitions
                     _lemReader_tagDefs) acc xs'')))
 
-def drive_nonmemory_steps_aux2 [LemFuel] [CerbGlobal.Switches] :
+def drive_nonmemory_steps_aux2 [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches] :
     (Fmap sym integerType) -> (Fmap sym (CerbLocation.Loc × tag_definition)) -> Fmap thread_id
         (List core_step2) → List Nat → ndM (Fmap thread_id (List core_step2)) step_kind driver_error
         (mem_constraint CerbMem.IntegerValue) driver_state :=
   drive_nonmemory_steps_aux2_lemFuel LemFuel.fuel
-theorem drive_nonmemory_steps_aux2_lemFuel_zero [LemFuel] [CerbGlobal.Switches]
+theorem drive_nonmemory_steps_aux2_lemFuel_zero [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (acc : Fmap thread_id (List core_step2)) :
@@ -1534,7 +1537,7 @@ let rec drive_nonmemory_steps_aux (acc: map Mem.thread_id (list Core_reduction.c
 end
 -/
 
-def new_drive_core_threads [LemFuel] [CerbGlobal.Switches]
+def new_drive_core_threads [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (_ : Unit) :
     ndM (List (Nat × Option core_step2)) step_kind driver_error
@@ -1789,7 +1792,7 @@ def prepare_exit (core_st : core_state) (cval : value) : core_state :=
 
 /- performing all action and memop requests until there are no more -/
 
-def process_core_step2 [LemFuel] [CerbGlobal.Switches]
+def process_core_step2 [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (with_concurrency : Bool)
     (driver21 : Bool → ndM Unit step_kind driver_error (mem_constraint CerbMem.IntegerValue)
@@ -1930,7 +1933,7 @@ def process_core_step2 [LemFuel] [CerbGlobal.Switches]
            | Step_nd2 _ => "Step_nd2")) : ndM Unit step_kind driver_error
         (mem_constraint CerbMem.IntegerValue) driver_state)
 
-def driver2_lemFuel [LemFuel] [CerbGlobal.Switches] (lemFuel : Nat)
+def driver2_lemFuel [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches] (lemFuel : Nat)
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (with_concurrency : Bool) :
     ndM Unit step_kind driver_error (mem_constraint CerbMem.IntegerValue) driver_state :=
@@ -2254,11 +2257,11 @@ def driver2_lemFuel [LemFuel] [CerbGlobal.Switches] (lemFuel : Nat)
     -/
                        )))))))))
 
-def driver2 [LemFuel] [CerbGlobal.Switches] :
+def driver2 [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches] :
     (Fmap sym integerType) -> (Fmap sym (CerbLocation.Loc × tag_definition)) -> Bool → driverM
         Unit :=
   driver2_lemFuel LemFuel.fuel
-theorem driver2_lemFuel_zero [LemFuel] [CerbGlobal.Switches]
+theorem driver2_lemFuel_zero [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (with_concurrency : Bool) :
     driver2_lemFuel 0 _lemReader_enum_definitions _lemReader_tagDefs with_concurrency =
@@ -2266,7 +2269,8 @@ theorem driver2_lemFuel_zero [LemFuel] [CerbGlobal.Switches]
           (NDkilled (Error0 CerbFuel.fuelExhaustedLoc CerbFuel.fuelExhaustedMsg), st))) :=
   rfl
 
-def hack_lemFuel [LemFuel] (lemFuel : Nat) (_lemReader_enum_definitions : Fmap sym integerType)
+def hack_lemFuel [LemFuel] [CerbImplCfg.Impl] (lemFuel : Nat)
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (core_extern1 : Fmap sym sym) (env1 : List (Fmap sym value)) (mem_st : CerbMem.MemState)
     (core_file1 : generic_file Unit core_run_annotation) (concur_sym_map : Fmap sym object_value)
@@ -2295,7 +2299,7 @@ def hack_lemFuel [LemFuel] (lemFuel : Nat) (_lemReader_enum_definitions : Fmap s
             (String.append "Driver.hack, UNDEF/ERROR:" (CerbPP.stringFromCore_pexpr pexpr1)) :
             value))))
 
-def hack [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def hack [LemFuel] [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (core_extern1 : Fmap sym sym) (env1 : List (Fmap sym value)) (mem_st : CerbMem.MemState)
     (core_file1 : generic_file Unit core_run_annotation) (concur_sym_map : Fmap sym object_value)
@@ -2303,7 +2307,8 @@ def hack [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
     value :=
   hack_lemFuel (generic_pexpr.lemSize pexpr1) _lemReader_enum_definitions _lemReader_tagDefs
     core_extern1 env1 mem_st core_file1 concur_sym_map pexpr1
-theorem hack_lemFuel_zero [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+theorem hack_lemFuel_zero [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (core_extern1 : Fmap sym sym) (env1 : List (Fmap sym value)) (mem_st : CerbMem.MemState)
     (core_file1 : generic_file Unit core_run_annotation) (concur_sym_map : Fmap sym object_value)
@@ -2340,7 +2345,7 @@ instance (priority := 500) : Lem_Basic_classes.Ord0 driver_result where
   isGreater := defaultGreater
   isGreaterEqual :=
     defaultGreaterEq /- (string * (bool * Cmm_op.symState * Core.value) * (nat * nat)) -/
-def finalize [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def finalize [LemFuel] [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (debug_str : String)
     (dr_st : driver_state) :
     driver_result :=
@@ -2437,7 +2442,7 @@ def driver_update_thread_state { a b c : Type } (tid1 : Nat) (th_st : thread_sta
   nd_update (fun (dr_st : driver_state) =>
     { dr_st with core_state0 := update_thread_state tid1 th_st dr_st.core_state0 })
 
-def driver_globals [LemFuel] [CerbGlobal.Switches]
+def driver_globals [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (with_concurrency : Bool)
     (file1 : generic_file Unit core_run_annotation) :
@@ -2549,7 +2554,7 @@ def driver_globals [LemFuel] [CerbGlobal.Switches]
                                           driver_state)))))))) glob_defs)
             (fun (_ : Unit) => nd_return tid0)))
 
-def prepare_main_args [LemFuel] [CerbGlobal.Switches]
+def prepare_main_args [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (callconv : calling_convention) (tid0 : Nat) (main_sym : sym) (arg_strs : List String)
@@ -2647,7 +2652,8 @@ def prepare_main_args [LemFuel] [CerbGlobal.Switches]
                Vloaded (LVspecified (OVinteger (CerbMem.integerIval number_of_args)));
              let argv_cval := Vloaded (LVspecified (OVpointer argv_array_ptr_val));
              nd_return (argc_cval, argv_cval))))
-def drive [LemFuel] [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
+def drive [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (with_concurrency : Bool)
     (file1 : generic_file Unit core_run_annotation) (arg_strs : List String) :
     ndM driver_result step_kind driver_error (mem_constraint CerbMem.IntegerValue) driver_state :=

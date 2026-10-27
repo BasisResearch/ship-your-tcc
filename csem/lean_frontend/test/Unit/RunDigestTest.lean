@@ -1,6 +1,10 @@
 import CabsImport
 import Driver
 import Lean.Elab.Command
+import CerbImplCfg
+
+local instance : CerbImplCfg.Impl := ⟨CerbImplCfg.cerberusDefault⟩
+
 
 /-! D-S acceptance: kernel equations on the generated mint and entry, the actual
 production digest selector, and the digest carried by a committed cabs-json.

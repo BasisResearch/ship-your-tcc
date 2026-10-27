@@ -9,6 +9,7 @@ import CerbPP
 import CerbUtils
 import CerbGlobal
 import CerberusFresh
+import CerbImplCfg
 import Core_run_aux
 import Cmm_csem
 import Cmm_aux
@@ -164,7 +165,8 @@ def core_run_return { a b d : Type } : d → stExceptUndefM d b a := stExceptUnd
 
   /- NOTE: the inline is important because Lem is buggy -/
 
-def step_eval_pexprs { a : Type } [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def step_eval_pexprs { a : Type } [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (th_st : thread_state)
     (core_extern : Fmap sym sym) (mem_st : CerbMem.MemState)
     (file : generic_file Unit core_run_annotation) (pes : List (generic_pexpr Unit sym)) :
@@ -185,7 +187,7 @@ def step_eval_pexprs { a : Type } [LemFuel] (_lemReader_enum_definitions : Fmap 
              | ELoc_normal ((_, loc1) :: _) => some loc1) core_extern th_st.env (some mem_st) file
             false) pes)))
 
-def core_run_step_eval_pexpr { a : Type } [LemFuel]
+def core_run_step_eval_pexpr { a : Type } [LemFuel] [CerbImplCfg.Impl]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (th_st : thread_state)
     (core_extern : Fmap sym sym) (mem_st : CerbMem.MemState)
@@ -206,7 +208,8 @@ def core_run_step_eval_pexpr { a : Type } [LemFuel]
            | ELoc_normal ((_, loc1) :: _) => some loc1) core_extern th_st.env (some mem_st) file
           false pe)))
 
-def core_run_eval_pexpr { a : Type } [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def core_run_eval_pexpr { a : Type } [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (th_st : thread_state)
     (core_extern : Fmap sym sym) (mem_st : CerbMem.MemState)
     (file : generic_file Unit core_run_annotation) (pe : generic_pexpr Unit sym) :
@@ -225,7 +228,8 @@ def core_run_eval_pexpr { a : Type } [LemFuel] (_lemReader_enum_definitions : Fm
            | ELoc_normal ((_, loc1) :: _) => some loc1) core_extern th_st.env (some mem_st) file
           pe)))
 
-def eval_pexpr2 { a : Type } [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def eval_pexpr2 { a : Type } [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (th_st : thread_state)
     (core_extern : Fmap sym sym) (mem_st : CerbMem.MemState)
     (file : generic_file Unit core_run_annotation) (pe : generic_pexpr Unit sym) :
@@ -244,7 +248,8 @@ def eval_pexpr2 { a : Type } [LemFuel] (_lemReader_enum_definitions : Fmap sym i
            | ELoc_normal ((_, loc1) :: _) => some loc1) core_extern th_st.env (some mem_st) file
           pe)))
 
-def wrapped_eval_pexpr2 { a : Type } [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def wrapped_eval_pexpr2 { a : Type } [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (th_st : thread_state)
     (core_extern : Fmap sym sym) (mem_st : CerbMem.MemState)
     (file : generic_file Unit core_run_annotation) (pe : generic_pexpr Unit sym) :
@@ -989,7 +994,8 @@ instance (priority := 500) : Lem_Basic_classes.Ord0 core_step where
     match core_step.compare_derived x y with
     | .lt => false
     | _ => true
-def core_action_step [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def core_action_step [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (arena_annots : List annot)
     (core_extern1 : Fmap sym sym) (mem_st : CerbMem.MemState)
     (file1 : generic_file Unit core_run_annotation) (current_tid : Nat)
@@ -1539,7 +1545,7 @@ KKK
                     thread_state
 -/
        )
-def core_thread_step2 [LemFuel] [CerbGlobal.Switches]
+def core_thread_step2 [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (mem_st : CerbMem.MemState)
     (file1 : generic_file Unit core_run_annotation) (core_extern1 : Fmap sym sym)

@@ -1,6 +1,10 @@
 import CerberusImpl
 import Implementation
 import Lean.Elab.Command
+import CerbImplCfg
+
+local instance : CerbImplCfg.Impl := ⟨CerbImplCfg.cerberusDefault⟩
+
 
 /-! # EnumDataTest — the enum's compatible type is PROGRAM DATA the kernel can see
 

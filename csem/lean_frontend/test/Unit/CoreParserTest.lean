@@ -7,6 +7,10 @@
 -/
 
 import CoreParser
+import CerbImplCfg
+
+local instance : CerbImplCfg.Impl := ⟨CerbImplCfg.cerberusDefault⟩
+
 open Std.Internal.Parsec.String
 
 set_option autoImplicit true

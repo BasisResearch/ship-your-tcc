@@ -29,7 +29,7 @@ theorem find_array_index_measure_sufficient (size : Nat) (i : Nat) (ival_ : inte
     lemMeasureLe
 
 /- lem: fuel_measure obligation for `easy_update_mem_value_aux` (generated; declare {lean} fuel_measure val easy_update_mem_value_aux = `List.length sh + 1`): the worker is fuel-STABLE at the measure (equal to the wrapper at every fuel at or above it). The proof is hand-written in `Defacto_memory_lemMeasureProofs.easy_update_mem_value_aux_measure_sufficient`, stated with exactly these binders; a missing or mistyped theorem fails the build (a `sorry` is the sorry/axiom gates' job). -/
-theorem easy_update_mem_value_aux_measure_sufficient [LemFuel]
+theorem easy_update_mem_value_aux_measure_sufficient [LemFuel] [CerbImplCfg.Impl]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (is_strong : Bool) (write_ty : ctype) (sh : List shift_path_element)
@@ -44,7 +44,7 @@ theorem easy_update_mem_value_aux_measure_sufficient [LemFuel]
     current_mval lemFuel lemMeasureLe
 
 /- lem: fuel_measure obligation for `memcmp_load_aux` (generated; declare {lean} fuel_measure val memcmp_load_aux = `Int.toNat (max_offset - offset) + 1`): the worker is fuel-STABLE at the measure (equal to the wrapper at every fuel at or above it). The proof is hand-written in `Defacto_memory_lemMeasureProofs.memcmp_load_aux_measure_sufficient`, stated with exactly these binders; a missing or mistyped theorem fails the build (a `sorry` is the sorry/axiom gates' job). -/
-theorem memcmp_load_aux_measure_sufficient [LemFuel]
+theorem memcmp_load_aux_measure_sufficient [LemFuel] [CerbImplCfg.Impl]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (ptrval : impl_pointer_value) (offset : Int) (max_offset : Int) (acc : List impl_mem_value)

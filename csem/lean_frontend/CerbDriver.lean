@@ -666,7 +666,7 @@ def printUndefinedLine (ub : String) (stderr : String) (loc : String) : IO Unit 
     evaluation barrier, `CerberusFresh.forceIO`, so the compiler could not
     sink it past the next TU's set; both are deleted.) This is
     frontend-only: the run receives `runDigest tunits` as data. -/
-def frontendTU [LemFuel] [CerbGlobal.Switches] (quiet : Bool) (digest : String) (supply : Nat) (addressSpaceTop : Int)
+def frontendTU [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (quiet : Bool) (digest : String) (supply : Nat) (addressSpaceTop : Int)
     (coreEvalStuff : Fmap String sym × fun_map Unit × impl)
     (ailnames : Fmap String sym) (stdFunMap : fun_map Unit) (coreImpl : impl)
     (tunit : translation_unit) : IO (Except UInt8 (file Unit × Nat)) :=
@@ -779,7 +779,7 @@ def frontendTU [LemFuel] [CerbGlobal.Switches] (quiet : Bool) (digest : String) 
 
 /-- Load and assemble the libc library Core file (see the module note at
     "C-libc loading" above). -/
-def loadLibc [LemFuel] [CerbGlobal.Switches] (runtime : String) (quiet : Bool) (supply0 : Nat) (addressSpaceTop : Int)
+def loadLibc [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (runtime : String) (quiet : Bool) (supply0 : Nat) (addressSpaceTop : Int)
     (coreEvalStuff : Fmap String sym × fun_map Unit × impl)
     (ailnames : Fmap String sym) (stdFunMap : fun_map Unit) (coreImpl : impl)
     (libcCorePath : String) (libcTuJsons : List String) :
@@ -1050,7 +1050,7 @@ def loadLibc [LemFuel] [CerbGlobal.Switches] (runtime : String) (quiet : Bool) (
     `ppCoreSignature`); the default human-readable mode is unchanged (and
     keeps its historical exit-code behavior: 0 even on semantic stage
     failures). -/
-def runPipeline [LemFuel] [CerbGlobal.Switches] (runtime : String) (batch : Bool) (ppCore : Bool)
+def runPipeline [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (runtime : String) (batch : Bool) (ppCore : Bool)
     (firstTrace : Bool)
     -- the address-space top (address-space-bound slice, 2026-09-17): ONE value for
     -- both entry points — the desugarer's const-expr mini-run (via frontendTU →
@@ -1058,6 +1058,7 @@ def runPipeline [LemFuel] [CerbGlobal.Switches] (runtime : String) (batch : Bool
     (addressSpaceTop : Int)
     (callFn : Option (String × List Int)) (traceNodes : Bool)
     (libc : Option (String × List String))
+    (argv0 : String)
     (progArgs : List String)
     (tunits : List (String × translation_unit)) : IO UInt8 := do
   -- Progress chatter: human mode only (batch and pp-core keep stdout clean)
@@ -1100,11 +1101,9 @@ def runPipeline [LemFuel] [CerbGlobal.Switches] (runtime : String) (batch : Bool
   say "  loading implementation..."
   -- pipeline.ml:47 `Filename.concat (core_stdlib_path ()) ("impls/" ^ impl_name ^ ".impl")`
   -- under the same runtime tree (Z-01; BUG-2 as above)
-  let implPath := filenameConcat (filenameConcat runtime "libcore") "impls/gcc_4.9.0_x86_64-apple-darwin10.8.0.impl"
-  -- pipeline.ml:48-49: missing impl file is an error on the oracle too
-  unless ← System.FilePath.pathExists implPath do
-    refuseRuntime s!"couldn't find the implementation file (looked at: `{implPath}')"
-  let implContent ← IO.FS.readFile implPath
+  let implPath := filenameConcat (filenameConcat runtime "libcore/impls")
+    CerbImplCfg.Impl.params.implFileName
+  let implContent := CerbImplCfg.Impl.params.implFileText
   let implFile ← match CoreParser.parseLibraryFile implPath implContent with
     | .ok f => pure f
     | .error e => throw (IO.Error.userError s!"failed to parse impl file: {e}")
@@ -1232,7 +1231,7 @@ def runPipeline [LemFuel] [CerbGlobal.Switches] (runtime : String) (batch : Bool
     -- non-batch; progArgs is the parsed --args list (empty without the
     -- flag, so the historical ["cmdname"] argv is byte-unchanged).
     let driverAction := match callFn with
-      | none => drive runFile.enumDefs runFile.tagDefs false runFile ("cmdname" :: progArgs)
+      | none => drive runFile.enumDefs runFile.tagDefs false runFile (argv0 :: progArgs)
       | some (fname, argInts) =>
         CerbCall.driveCall runFile.enumDefs runFile.tagDefs (runDigest tunits) runFile fname
           (argInts.map CerbCall.intValue)
@@ -1579,6 +1578,8 @@ def cerbMain (args : List String) : IO Unit := do
   -- accepted, every other value refused); a repeated option is refused as cmdliner
   -- does. (flag text as given, value)
   let mut switchesArg : Option (String × String) := none
+  let mut implArg : Option String := none
+  let mut argv0Arg : Option String := none
   let mut restArgs : List String := []
   -- --parse-core consumes its file list itself (below); nothing to scan
   let mut pending := if parseCoreMode then [] else rest1
@@ -1598,6 +1599,8 @@ def cerbMain (args : List String) : IO Unit := do
         IO.Process.exit 2
       progArgsStr := some v; pending := rest
     | "--trace-nodes" :: rest => traceNodes := true; pending := rest
+    | "--impl" :: v :: rest => implArg := some v; pending := rest
+    | "--argv0" :: v :: rest => argv0Arg := some v; pending := rest
     | "--fuel" :: v :: rest => fuelStr := some v; pending := rest
     | "--address-space-top" :: v :: rest => addressSpaceTopStr := some v; pending := rest
     | "--runtime" :: v :: rest =>
@@ -1609,7 +1612,7 @@ def cerbMain (args : List String) : IO Unit := do
         IO.Process.exit 2
       switchesArg := some (s!"--switches {v}", v); pending := rest
     | ["--libc"] | ["--libc-tu"] | ["--call"] | ["--call-args"]
-    | ["--args"] | ["--fuel"] | ["--address-space-top"] | ["--runtime"] | ["--switches"] =>
+    | ["--impl"] | ["--argv0"] | ["--args"] | ["--fuel"] | ["--address-space-top"] | ["--runtime"] | ["--switches"] =>
       IO.eprintln "cerberus-lean: --libc/--libc-tu/--call/--call-args/\
         --args/--fuel/--address-space-top/--runtime/--switches require an argument"
       IO.Process.exit 1
@@ -1739,6 +1742,7 @@ def cerbMain (args : List String) : IO Unit := do
           pure buf
         else IO.FS.readFile file
       let label := if file == "--stdin" then "<stdin>" else file
+      letI : CerbImplCfg.Impl := ⟨CerbImplCfg.cerberusDefault⟩
       match CoreParser.parseFile input with
       | .ok cf =>
         let total := cf.funs.length + cf.procs.length + cf.impls.length +
@@ -1796,7 +1800,15 @@ def cerbMain (args : List String) : IO Unit := do
   -- general path, the set only selects the arms (no PNVI-only entry point). No other
   -- instance of `CerbGlobal.Switches` exists in this repository
   -- (speedbump: `scripts/check_no_fuel_numerals.sh` rule W1).
-  let code ← (letI : LemFuel := ⟨fuel⟩; letI : CerbGlobal.Switches := ⟨switchSet⟩; runPipeline runtimeDir batchMode ppCoreMode firstTrace
-    addressSpaceTop callFn traceNodes libc progArgs tunits)
+  let implParams ← match implArg with
+    | none => pure CerbImplCfg.cerberusDefault
+    | some name => match CerbImplCfg.byName name with
+      | some p => pure p
+      | none => do
+        IO.eprintln s!"cerberus-lean: unknown implementation: {name}"
+        IO.Process.exit 2
+  let argv0 := argv0Arg.getD implParams.argv0
+  let code ← (letI : CerbImplCfg.Impl := ⟨implParams⟩; letI : LemFuel := ⟨fuel⟩; letI : CerbGlobal.Switches := ⟨switchSet⟩; runPipeline runtimeDir batchMode ppCoreMode firstTrace
+    addressSpaceTop callFn traceNodes libc argv0 progArgs tunits)
   if code != 0 then
     IO.Process.exit code

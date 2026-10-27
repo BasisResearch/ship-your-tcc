@@ -2,6 +2,7 @@
 
 import LemLib
 
+import CerbImplCfg
 import CerberusImpl
 import Ctype
 import AilSyntax
@@ -38,8 +39,9 @@ open Lem_Num Lem_Pervasives Lem_List Lem_Set Lem_Map Lem_Maybe Lem_Function
    compatible type is `signed int` iff an enumerator is negative, else
    `unsigned int`.  SHARED body: both engines compute it. -/
 
-def enum_compatible_type (ns : List Int) : integerType :=
-  lem_if List.any ns (fun (n : Int) => intLtb n ((0 : Int))) then Signed Int_ else Unsigned Int_
+/- lem: replaced by its target representation: 
+def  enum_compatible_type  (ns : List Int)  : integerType := 
+  lem_if  List.any  ns  (fun (n : Int) =>  <  n  0) then  Signed  Int_  else  Unsigned  Int_ -/
 /- target-coverage stub only: the reader mechanism rewrites every applied
    `enum_definitions ()` site to the reader parameter (as CerbTags.tagDefsUnreachable) -/
 
@@ -102,21 +104,21 @@ def resolve_enum (_lemReader_enum_definitions : Fmap sym integerType)
    match on Common.normalise_integerType_'s result, and Common.precision_ity
    (:68-70) calls sizeof_ity first. -/
 
-def is_signed_ity (_lemReader_enum_definitions : Fmap sym integerType)
+def is_signed_ity [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (ity : integerType) :
     Bool :=
   CerberusImpl.is_signed_ity ((resolve_enum _lemReader_enum_definitions _lemReader_tagDefs) ity)
-def sizeof_ity (_lemReader_enum_definitions : Fmap sym integerType)
+def sizeof_ity [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (ity : integerType) :
     Option Nat :=
   CerberusImpl.sizeof_ity
     ((CerberusImpl.normalise_integerType _lemReader_enum_definitions _lemReader_tagDefs) ity)
-def precision_ity (_lemReader_enum_definitions : Fmap sym integerType)
+def precision_ity [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (ity : integerType) :
     Option Nat :=
   CerberusImpl.precision_ity
     ((CerberusImpl.normalise_integerType _lemReader_enum_definitions _lemReader_tagDefs) ity)
-def alignof_ity (_lemReader_enum_definitions : Fmap sym integerType)
+def alignof_ity [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (ity : integerType) :
     Option Nat :=
   CerberusImpl.alignof_ity
@@ -127,7 +129,7 @@ def alignof_ity (_lemReader_enum_definitions : Fmap sym integerType)
    enum registry — so the Lean rep needs the map: a reader consumer too
    (charter erratum, record §0). -/
 
-def integerImpl (_lemReader_enum_definitions : Fmap sym integerType)
+def integerImpl [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (_ : Unit) :
     implementation :=
   make_implementation Two'sComplement (is_signed_ity _lemReader_enum_definitions _lemReader_tagDefs)
@@ -715,7 +717,8 @@ partial def normalise_ctype (_lemReader_enum_definitions : Fmap sym integerType)
        | Union0 _ => ty_
        | Byte => ty_)
 
-def is_compatible_with_size_t (_lemReader_enum_definitions : Fmap sym integerType)
+def is_compatible_with_size_t [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (ity : integerType) :
     Bool :=
   match (sizeof_ity _lemReader_enum_definitions _lemReader_tagDefs) ity,
@@ -725,7 +728,8 @@ def is_compatible_with_size_t (_lemReader_enum_definitions : Fmap sym integerTyp
   | _, _ => /- the Implementation is not sufficiently specified -/
     (failwithI "Implementation.is_compatible_with_size_t" : Bool)
 
-def is_compatible_with_ptrdiff_t (_lemReader_enum_definitions : Fmap sym integerType)
+def is_compatible_with_ptrdiff_t [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (ity : integerType) :
     Bool :=
   match (sizeof_ity _lemReader_enum_definitions _lemReader_tagDefs) ity,
@@ -738,7 +742,8 @@ def is_compatible_with_ptrdiff_t (_lemReader_enum_definitions : Fmap sym integer
   /- val is_signed_ity: Ctype.integerType -> bool
 val sizeof_ity: Ctype.integerType -> maybe nat -/
 
-def is_signed_or_unsigned_aux (_lemReader_enum_definitions : Fmap sym integerType)
+def is_signed_or_unsigned_aux [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (ibty : integerBaseType) :
     ctype → Bool :=
   fun (c : ctype) =>
@@ -762,7 +767,7 @@ def is_signed_or_unsigned_aux (_lemReader_enum_definitions : Fmap sym integerTyp
        | Basic (Integer Ptrdiff_t) =>
          (is_compatible_with_ptrdiff_t _lemReader_enum_definitions _lemReader_tagDefs) (Signed ibty)
        | _ => false)
-def is_signed_or_unsigned (_lemReader_enum_definitions : Fmap sym integerType)
+def is_signed_or_unsigned [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (ibty : integerBaseType) :
     ctype → Bool :=
   fun (ty1 : ctype) =>

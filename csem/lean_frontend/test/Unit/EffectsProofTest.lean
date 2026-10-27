@@ -15,6 +15,10 @@ import Ctype_aux
 import Ctype
 import Symbol
 import Core_run
+import CerbImplCfg
+
+local instance : CerbImplCfg.Impl := ⟨CerbImplCfg.cerberusDefault⟩
+
 
 set_option autoImplicit true
 

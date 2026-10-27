@@ -1,5 +1,9 @@
 import CabsImport
 import CerbLocation
+import CerbImplCfg
+
+local instance : CerbImplCfg.Impl := ⟨CerbImplCfg.cerberusDefault⟩
+
 
 /-! Cabs JSON position import (2026-10-16, cerberus-caesium filing 2): the position
 object `{file, line, col, lexing_file, lexing_line}` carries the LEXING position

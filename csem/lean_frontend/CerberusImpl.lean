@@ -7,26 +7,120 @@
   These functions are referenced by `declare lean target_rep` in implementation.lem
   and work with the Lem-generated types from IntegerType.lean and Ctype.lean.
 
-  ABI: LP64 (x86_64-apple-darwin), matching Cerberus DefaultImpl.
+  ABI: a PARAMETER since ship-your-tcc F1 (DESIGN-COMPILER.md §3.3): every
+  layout/signedness fact below reads `CerbImplCfg.Impl.params` (the instance
+  reader `impl_params`, frontend/model/lean_impl.lem). At
+  `CerbImplCfg.cerberusDefault` each function is Cerberus DefaultImpl's
+  (LP64, x86_64-apple-darwin) exactly as before; `CerbImplCfg.tccRV64` is
+  tcc's riscv64 lp64 ABI.
 -/
 
 import IntegerType
 import Ctype
+import CerbImplCfg
 
 namespace CerberusImpl
+
+/-- Builtins.translate_errno: retain the complete upstream name domain, but
+read the pinned newlib 4.5.0 sys/errno.h values for RV64. Unknown names fail
+as they do in builtins.lem. The focused probe checks observable values. -/
+def translate_errno [CerbImplCfg.Impl] : String → Int
+  | "__cerbvar_EDOM" => if CerbImplCfg.Impl.params.newlibErrno then 33 else 1
+  | "__cerbvar_EILSEQ" => if CerbImplCfg.Impl.params.newlibErrno then 138 else 2
+  | "__cerbvar_ERANGE" => if CerbImplCfg.Impl.params.newlibErrno then 34 else 3
+  | "__cerbvar_E2BIG" => if CerbImplCfg.Impl.params.newlibErrno then 7 else 4
+  | "__cerbvar_EACCES" => if CerbImplCfg.Impl.params.newlibErrno then 13 else 5
+  | "__cerbvar_EADDRINUSE" => if CerbImplCfg.Impl.params.newlibErrno then 112 else 6
+  | "__cerbvar_EADDRNOTAVAIL" => if CerbImplCfg.Impl.params.newlibErrno then 125 else 7
+  | "__cerbvar_EAFNOSUPPORT" => if CerbImplCfg.Impl.params.newlibErrno then 106 else 8
+  | "__cerbvar_EAGAIN" => if CerbImplCfg.Impl.params.newlibErrno then 11 else 9
+  | "__cerbvar_EALREADY" => if CerbImplCfg.Impl.params.newlibErrno then 120 else 10
+  | "__cerbvar_EBADF" => if CerbImplCfg.Impl.params.newlibErrno then 9 else 11
+  | "__cerbvar_EBADMSG" => if CerbImplCfg.Impl.params.newlibErrno then 77 else 12
+  | "__cerbvar_EBUSY" => if CerbImplCfg.Impl.params.newlibErrno then 16 else 13
+  | "__cerbvar_ECANCELED" => if CerbImplCfg.Impl.params.newlibErrno then 140 else 14
+  | "__cerbvar_ECHILD" => if CerbImplCfg.Impl.params.newlibErrno then 10 else 15
+  | "__cerbvar_ECONNABORTED" => if CerbImplCfg.Impl.params.newlibErrno then 113 else 16
+  | "__cerbvar_ECONNREFUSED" => if CerbImplCfg.Impl.params.newlibErrno then 111 else 17
+  | "__cerbvar_ECONNRESET" => if CerbImplCfg.Impl.params.newlibErrno then 104 else 18
+  | "__cerbvar_EDEADLK" => if CerbImplCfg.Impl.params.newlibErrno then 45 else 19
+  | "__cerbvar_EDESTADDRREQ" => if CerbImplCfg.Impl.params.newlibErrno then 121 else 20
+  | "__cerbvar_EDQUOT" => if CerbImplCfg.Impl.params.newlibErrno then 132 else 21
+  | "__cerbvar_EEXIST" => if CerbImplCfg.Impl.params.newlibErrno then 17 else 22
+  | "__cerbvar_EFAULT" => if CerbImplCfg.Impl.params.newlibErrno then 14 else 23
+  | "__cerbvar_EFBIG" => if CerbImplCfg.Impl.params.newlibErrno then 27 else 24
+  | "__cerbvar_EHOSTUNREACH" => if CerbImplCfg.Impl.params.newlibErrno then 118 else 25
+  | "__cerbvar_EIDRM" => if CerbImplCfg.Impl.params.newlibErrno then 36 else 26
+  | "__cerbvar_EINPROGRESS" => if CerbImplCfg.Impl.params.newlibErrno then 119 else 27
+  | "__cerbvar_EINTR" => if CerbImplCfg.Impl.params.newlibErrno then 4 else 28
+  | "__cerbvar_EINVAL" => if CerbImplCfg.Impl.params.newlibErrno then 22 else 29
+  | "__cerbvar_EIO" => if CerbImplCfg.Impl.params.newlibErrno then 5 else 30
+  | "__cerbvar_EISCONN" => if CerbImplCfg.Impl.params.newlibErrno then 127 else 31
+  | "__cerbvar_EISDIR" => if CerbImplCfg.Impl.params.newlibErrno then 21 else 32
+  | "__cerbvar_ELOOP" => if CerbImplCfg.Impl.params.newlibErrno then 92 else 33
+  | "__cerbvar_EMFILE" => if CerbImplCfg.Impl.params.newlibErrno then 24 else 34
+  | "__cerbvar_EMLINK" => if CerbImplCfg.Impl.params.newlibErrno then 31 else 35
+  | "__cerbvar_EMSGSIZE" => if CerbImplCfg.Impl.params.newlibErrno then 122 else 36
+  | "__cerbvar_EMULTIHOP" => if CerbImplCfg.Impl.params.newlibErrno then 74 else 37
+  | "__cerbvar_ENAMETOOLONG" => if CerbImplCfg.Impl.params.newlibErrno then 91 else 38
+  | "__cerbvar_ENETDOWN" => if CerbImplCfg.Impl.params.newlibErrno then 115 else 39
+  | "__cerbvar_ENETRESET" => if CerbImplCfg.Impl.params.newlibErrno then 126 else 40
+  | "__cerbvar_ENETUNREACH" => if CerbImplCfg.Impl.params.newlibErrno then 114 else 41
+  | "__cerbvar_ENFILE" => if CerbImplCfg.Impl.params.newlibErrno then 23 else 42
+  | "__cerbvar_ENOBUFS" => if CerbImplCfg.Impl.params.newlibErrno then 105 else 43
+  | "__cerbvar_ENODATA" => if CerbImplCfg.Impl.params.newlibErrno then 61 else 44
+  | "__cerbvar_ENODEV" => if CerbImplCfg.Impl.params.newlibErrno then 19 else 45
+  | "__cerbvar_ENOENT" => if CerbImplCfg.Impl.params.newlibErrno then 2 else 46
+  | "__cerbvar_ENOEXEC" => if CerbImplCfg.Impl.params.newlibErrno then 8 else 47
+  | "__cerbvar_ENOLCK" => if CerbImplCfg.Impl.params.newlibErrno then 46 else 48
+  | "__cerbvar_ENOLINK" => if CerbImplCfg.Impl.params.newlibErrno then 67 else 49
+  | "__cerbvar_ENOMEM" => if CerbImplCfg.Impl.params.newlibErrno then 12 else 50
+  | "__cerbvar_ENOMSG" => if CerbImplCfg.Impl.params.newlibErrno then 35 else 51
+  | "__cerbvar_ENOPROTOOPT" => if CerbImplCfg.Impl.params.newlibErrno then 109 else 52
+  | "__cerbvar_ENOSPC" => if CerbImplCfg.Impl.params.newlibErrno then 28 else 53
+  | "__cerbvar_ENOSR" => if CerbImplCfg.Impl.params.newlibErrno then 63 else 54
+  | "__cerbvar_ENOSTR" => if CerbImplCfg.Impl.params.newlibErrno then 60 else 55
+  | "__cerbvar_ENOSYS" => if CerbImplCfg.Impl.params.newlibErrno then 88 else 56
+  | "__cerbvar_ENOTCONN" => if CerbImplCfg.Impl.params.newlibErrno then 128 else 57
+  | "__cerbvar_ENOTDIR" => if CerbImplCfg.Impl.params.newlibErrno then 20 else 58
+  | "__cerbvar_ENOTEMPTY" => if CerbImplCfg.Impl.params.newlibErrno then 90 else 59
+  | "__cerbvar_ENOTRECOVERABLE" => if CerbImplCfg.Impl.params.newlibErrno then 141 else 60
+  | "__cerbvar_ENOTSOCK" => if CerbImplCfg.Impl.params.newlibErrno then 108 else 61
+  | "__cerbvar_ENOTSUP" => if CerbImplCfg.Impl.params.newlibErrno then 134 else 62
+  | "__cerbvar_ENOTTY" => if CerbImplCfg.Impl.params.newlibErrno then 25 else 63
+  | "__cerbvar_ENXIO" => if CerbImplCfg.Impl.params.newlibErrno then 6 else 64
+  | "__cerbvar_EOPNOTSUPP" => if CerbImplCfg.Impl.params.newlibErrno then 95 else 65
+  | "__cerbvar_EOVERFLOW" => if CerbImplCfg.Impl.params.newlibErrno then 139 else 66
+  | "__cerbvar_EOWNERDEAD" => if CerbImplCfg.Impl.params.newlibErrno then 142 else 67
+  | "__cerbvar_EPERM" => if CerbImplCfg.Impl.params.newlibErrno then 1 else 68
+  | "__cerbvar_EPIPE" => if CerbImplCfg.Impl.params.newlibErrno then 32 else 69
+  | "__cerbvar_EPROTO" => if CerbImplCfg.Impl.params.newlibErrno then 71 else 70
+  | "__cerbvar_EPROTONOSUPPORT" => if CerbImplCfg.Impl.params.newlibErrno then 123 else 71
+  | "__cerbvar_EPROTOTYPE" => if CerbImplCfg.Impl.params.newlibErrno then 107 else 72
+  | "__cerbvar_EROFS" => if CerbImplCfg.Impl.params.newlibErrno then 30 else 73
+  | "__cerbvar_ESPIPE" => if CerbImplCfg.Impl.params.newlibErrno then 29 else 74
+  | "__cerbvar_ESRCH" => if CerbImplCfg.Impl.params.newlibErrno then 3 else 75
+  | "__cerbvar_ESTALE" => if CerbImplCfg.Impl.params.newlibErrno then 133 else 76
+  | "__cerbvar_ETIME" => if CerbImplCfg.Impl.params.newlibErrno then 62 else 77
+  | "__cerbvar_ETIMEDOUT" => if CerbImplCfg.Impl.params.newlibErrno then 116 else 78
+  | "__cerbvar_ETXTBSY" => if CerbImplCfg.Impl.params.newlibErrno then 26 else 79
+  | "__cerbvar_EWOULDBLOCK" => if CerbImplCfg.Impl.params.newlibErrno then 11 else 80
+  | "__cerbvar_EXDEV" => if CerbImplCfg.Impl.params.newlibErrno then 18 else 81
+  | name => failwithI ("Unknown errno code: " ++ name)
+
 
 /-! ## Target Configuration -/
 
 /-- Maximum alignment in bytes (LP64).
     Corresponds to: DefaultImpl.max_alignment in ocaml_implementation.ml:151-152 -/
-def max_alignment : Nat := 8
+def max_alignment [CerbImplCfg.Impl] : Nat := CerbImplCfg.Impl.params.maxAlignment
 
 /-- DefaultImpl.sizeof_pointer / alignof_pointer — ocaml_implementation.ml:
     117-121 `Some 8` (the record fields impl_mem.ml reads at :153-158,
     :219-225, :1160-1164, :2134; zero-discrepancy literal census #2 — CerbMem
     reads these instead of its own literal). -/
-def sizeof_pointer : Option Nat := some 8
-def alignof_pointer : Option Nat := some 8
+def sizeof_pointer [CerbImplCfg.Impl] : Option Nat := some CerbImplCfg.Impl.params.sizeofPointer
+def alignof_pointer [CerbImplCfg.Impl] : Option Nat := some CerbImplCfg.Impl.params.alignofPointer
 
 /-! ## Integer Type Properties -/
 
@@ -94,6 +188,22 @@ def resolveEnum (enumDefs : EnumDefs) : integerType → integerType
     branch and this value is never consulted. -/
 def register_enum (_ : sym) (_ : List Int) : Bool := true
 
+/-- The compatible integer type of an enumerated type with enumerator values
+    `ns` — the implementation parameter `enumRule` (implementation.lem's
+    shared body is the `gcc` rule). `tcc`: tccgen.c struct_decl ("set integral
+    type of the enum"): no negative value → `unsigned int`, or `unsigned long`
+    if the largest exceeds `UINT_MAX`; else `int`, or `long` if a value is
+    outside `int`. -/
+def enum_compatible_type [CerbImplCfg.Impl] (ns : List Int) : integerType :=
+  let anyNeg := ns.any (fun n => n < 0)
+  match CerbImplCfg.Impl.params.enumRule with
+  | .gcc => if anyNeg then .Signed .Int_ else .Unsigned .Int_
+  | .tcc =>
+    if !anyNeg then
+      if ns.any (fun n => n > 4294967295) then .Unsigned .Long else .Unsigned .Int_
+    else if ns.any (fun n => n > 2147483647 || n < -2147483648) then .Signed .Long
+    else .Signed .Int_
+
 /-! ## Integer Type Properties -/
 
 /-- Whether an integer type is signed.
@@ -107,9 +217,9 @@ def register_enum (_ : sym) (_ : List Int) : Bool := true
     both engines), CerbMem resolves through `resolveEnum` — so the `Enum` arm
     here is the OCaml's `assert false`: unreachable by construction, a loud
     leaf. -/
-def is_signed_ity (ity : integerType) : Bool :=
+def is_signed_ity [CerbImplCfg.Impl] (ity : integerType) : Bool :=
   match ity with
-  | .Char0 => true      -- char_is_signed = true for DefaultImpl
+  | .Char0 => CerbImplCfg.Impl.params.charSigned  -- DefaultImpl: char_is_signed = true
   | .Bool0 => false
   | .Signed _ => true
   | .Unsigned _ => false
@@ -211,24 +321,26 @@ def normalise_integerType (enumDefs : EnumDefs)
     Zero-discrepancy Z2-I-01/03: the previous per-width arithmetic
     (`(n+7)/8`, nested `if`s) computed a size for EVERY width where the
     oracle aliases four widths and crashes on the rest. -/
-def sizeof_ity (ity : integerType) : Option Nat :=
+def sizeof_ity [CerbImplCfg.Impl] (ity : integerType) : Option Nat :=
+  let p := CerbImplCfg.Impl.params
   match normalise_aliases ity with
   | .Char0 | .Bool0 => some 1                                            -- :174-176
   | .Signed ibty | .Unsigned ibty =>                                     -- :177-193
     some (match ibty with
       | .Ichar => 1
-      | .Short => 2
-      | .Int_ => 4
-      | .Long | .LongLong => 8
+      | .Short => p.sizeofShort
+      | .Int_ => p.sizeofInt
+      | .Long => p.sizeofLong
+      | .LongLong => p.sizeofLongLong
       | .IntN_t _ | .Int_leastN_t _ | .Int_fastN_t _ | .Intmax_t | .Intptr_t =>
         failwithI "assert false: DefaultImpl.sizeof_ity reached an un-normalised base type (ocaml_implementation.ml:188-193)")
   | .Enum0 _ | .Wchar_t | .Wint_t | .Size_t | .Ptrdiff_t =>
     failwithI "assert false: DefaultImpl.sizeof_ity reached an un-normalised type (ocaml_implementation.ml:195-200)"
-  | .Ptraddr_t => some 8                                                 -- :201
+  | .Ptraddr_t => some p.sizeofPointer                                   -- :201
 
 /-- Precision (number of value bits) of an integer type.
     Corresponds to: Common.precision_ity in ocaml_implementation.ml -/
-def precision_ity (ity : integerType) : Option Nat :=
+def precision_ity [CerbImplCfg.Impl] (ity : integerType) : Option Nat :=
   match sizeof_ity ity with
   | some n =>
     if is_signed_ity ity then some (8 * n - 1) else some (8 * n)
@@ -242,26 +354,47 @@ def precision_ity (ity : integerType) : Option Nat :=
     represented in 8 bytes; the natural 4/16 sizes are explicitly hacked
     to 8 there). We mirror the BEHAVIOR, hack included, for byte-level
     parity with the OCaml concrete memory model. -/
-def sizeof_fty : floatingType → Option Nat
-  | .RealFloating .Float0 => some 8      -- OCaml: Some 8 (* TODO:hack ==> 4 *)
-  | .RealFloating .Double => some 8
-  | .RealFloating .LongDouble => some 8  -- OCaml: Some 8 (* TODO:hack ==> 16 *)
+def sizeof_fty [CerbImplCfg.Impl] : floatingType → Option Nat
+  | .RealFloating .Float0 => some CerbImplCfg.Impl.params.float.size      -- DefaultImpl: Some 8 (* TODO:hack ==> 4 *)
+  | .RealFloating .Double => some CerbImplCfg.Impl.params.double.size
+  | .RealFloating .LongDouble => some CerbImplCfg.Impl.params.longDouble.size  -- DefaultImpl: Some 8 (* TODO:hack ==> 16 *)
+
+/-- The value format of a real floating type (ship-your-tcc F1: CerbImplCfg;
+    DefaultImpl holds all three in an OCaml float, binary64). -/
+def format_fty [CerbImplCfg.Impl] : floatingType → CerbImplCfg.FloatFormat
+  | .RealFloating .Float0 => CerbImplCfg.Impl.params.float.format
+  | .RealFloating .Double => CerbImplCfg.Impl.params.double.format
+  | .RealFloating .LongDouble => CerbImplCfg.Impl.params.longDouble.format
 
 /-- Alignment of an integer type in bytes.
     Corresponds to: DefaultImpl.alignof_ity in ocaml_implementation.ml:214-243
     — textually the same table as sizeof_ity (:172-201), normalisation
     first, `assert false` on the un-normalised arms; hence `= sizeof_ity`. -/
-def alignof_ity : integerType → Option Nat
-  := sizeof_ity
+def alignof_ity [CerbImplCfg.Impl] (ity : integerType) : Option Nat :=
+  let p := CerbImplCfg.Impl.params
+  match normalise_aliases ity with
+  | .Char0 | .Bool0 => some 1
+  | .Signed ibty | .Unsigned ibty =>
+    some (match ibty with
+      | .Ichar => 1
+      | .Short => p.alignofShort
+      | .Int_ => p.alignofInt
+      | .Long => p.alignofLong
+      | .LongLong => p.alignofLongLong
+      | .IntN_t _ | .Int_leastN_t _ | .Int_fastN_t _ | .Intmax_t | .Intptr_t =>
+        failwithI "assert false: DefaultImpl.alignof_ity reached an un-normalised base type (ocaml_implementation.ml:230-235)")
+  | .Enum0 _ | .Wchar_t | .Wint_t | .Size_t | .Ptrdiff_t =>
+    failwithI "assert false: DefaultImpl.alignof_ity reached an un-normalised type (ocaml_implementation.ml:237-242)"
+  | .Ptraddr_t => some p.alignofPointer
 
 /-- Alignment of a floating type in bytes.
     Corresponds to: DefaultImpl.alignof_fty in ocaml_implementation.ml:247-253
     — 8 for all three real floating types, same TODO:hack comments as
     sizeof_fty (see above); behavior mirrored, hack included. -/
-def alignof_fty : floatingType → Option Nat
-  | .RealFloating .Float0 => some 8      -- OCaml: Some 8 (* TODO:hack ==> 4 *)
-  | .RealFloating .Double => some 8
-  | .RealFloating .LongDouble => some 8  -- OCaml: Some 8 (* TODO:hack ==> 16 *)
+def alignof_fty [CerbImplCfg.Impl] : floatingType → Option Nat
+  | .RealFloating .Float0 => some CerbImplCfg.Impl.params.float.align      -- DefaultImpl: Some 8 (* TODO:hack ==> 4 *)
+  | .RealFloating .Double => some CerbImplCfg.Impl.params.double.align
+  | .RealFloating .LongDouble => some CerbImplCfg.Impl.params.longDouble.align  -- DefaultImpl: Some 8 (* TODO:hack ==> 16 *)
 
 /-- Alignment of a full ctype, including struct/union via tag definitions.
     Corresponds to: Ocaml_implementation.alignof_proxy in ocaml_implementation.ml
@@ -271,7 +404,7 @@ def alignof_fty : floatingType → Option Nat
     integer member type with `(get ()).alignof_ity`, i.e. through the enum
     registry, so this rep takes the readers (`enum_definitions`, `tagDefs`, sorted
     order) and resolves an Enum through the map before the type-only `alignof_ity`. -/
-partial def alignof_ty (enumDefs : EnumDefs)
+partial def alignof_ty [CerbImplCfg.Impl] (enumDefs : EnumDefs)
     (_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (tagDefs : Fmap sym (List (Option alignment × ctype)))
     (ty : ctype) : Option Nat :=
@@ -300,7 +433,7 @@ partial def alignof_ty (enumDefs : EnumDefs)
   | Ctype _ (Array0 elem_ty _) => alignof_ty enumDefs _tagDefs tagDefs elem_ty
   | Ctype _ (Function _ _ _) => none
   | Ctype _ (FunctionNoParams _) => none
-  | Ctype _ (Pointer _ _) => some 8  -- pointer alignment on LP64
+  | Ctype _ (Pointer _ _) => some CerbImplCfg.Impl.params.alignofPointer  -- DefaultImpl: 8 (LP64)
   | Ctype _ (Atomic atom_ty) => alignof_ty enumDefs _tagDefs tagDefs atom_ty
   | Ctype _ (Struct tag_sym) =>
     match lookupTag tag_sym with

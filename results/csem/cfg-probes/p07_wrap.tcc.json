@@ -1,0 +1,44 @@
+{
+  "command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-2/scripts/run_tcc_sail.sh",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-2/c/tests/cfg/p07_wrap.c"
+  ],
+  "source_sha256": "71e88d125fec4ae2e05cf4ee935d02264f42a143174772ec5758d9020c2798cf",
+  "image_pins": {
+    "vendor/TINYCC_REV": "76ca376f1f96cf1b316713d8f94d91c8629445929d1e7474792fd76610bce1c0",
+    "c/Makefile": "da471980111e20621fab6e8bd18e2cc163e818b6b2f2accbd7b63255a235ad02",
+    "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+    "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+    "patches/0003-tcc-c11.patch": "8ce084ebb702b1889a0d56603e7a1551d0171225f761bb131926d73d46acc9c5",
+    "patches/0004-tcc-binary128-literals.patch": "4dfcc192c23a777b1b335e9052a416956886b1071c3de1e8da403b5b194e221e",
+    "c/src/crt0.S": "cc07e24cf267b3d5d7272700dd11d6af7cfbda6defbd5a2592128856795dd00a",
+    "c/src/gen_embed.sh": "68534ee3a238c143bf4e749fcb0ea43e8b53933c4a9d6843422d995c879d7d76",
+    "c/src/htif.c": "cf2027a1d3da3107f821ea6eef1b992113d2b8b7124dda9d25cb4485ae47ae19",
+    "c/src/link.ld": "d05d111da0b8378c3fd0a34253dc3434a79f158ec7f2265615fa9016fd19c06e",
+    "c/src/main.c": "18898207b53872535ee223bcc0af3bbaf952fc1ed0e206656a3478c4ef256783",
+    "c/src/runmain.c": "d445b7836024d23ccbbbb57402db2cfff35ece9fd2649cf03898beb5d6bca9e7",
+    "c/src/strip_headers.py": "5242b2e21e3adc7745c3e532f86898dab4a5aecd1553e0a2b7e756d78e77ea3f",
+    "c/src/tcc-config/config.h": "0e65d6fb5551df208e32db8ab9c2f6866889e4220afb329447e1c02f6ce7d0ba",
+    "scripts/cfg_probes.py": "b3d4c416e201087646dc4b6728362497fb1995f2b1cdfb012d4ff6e20f69674c",
+    "scripts/run_tcc_sail.sh": "9a7737b4ac7a3578db6d1597a1c8224800e912cae30592e95c772f7637737ac8",
+    "scripts/sail_console.py": "7ed4fceae118690184500b7cfa133387905c33ea2ae0e40a61283806f095dbd5",
+    "/Users/kirancodes/Documents/code/ship-your-lua/riscv-lean/lean_emulator/.lake/build/bin/lean_riscv_emulator": "8989bde8a95345de658fb9c9111e15ce4a5561bc747dab28f798080f0778120b"
+  },
+  "exit": 1,
+  "raw_stdout": "-56 4464 -294967296 -1\n-4 -1 -5\n253\n",
+  "stderr": "",
+  "meta": [
+    "compile_steps=11997633",
+    "program_steps=9951",
+    "steps=12007609"
+  ],
+  "wall_s": 324.11,
+  "measured_utc": "2026-10-21T02:48:20Z",
+  "status": "defined",
+  "outcomes": [
+    [
+      "-56 4464 -294967296 -1\n-4 -1 -5\n253\n",
+      1
+    ]
+  ]
+}

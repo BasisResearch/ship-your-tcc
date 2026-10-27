@@ -93,6 +93,8 @@ open Lem_Basic_classes (ordCompare)
 
 namespace CerbCall
 
+variable [CerbImplCfg.Impl]
+
 /-! ## Argument values (the Lean-value → Core-value boundary) -/
 
 /-- A C `int`-shaped Core argument value: the loaded specified integer

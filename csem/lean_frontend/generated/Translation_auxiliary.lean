@@ -16,7 +16,8 @@ open case_selector0 expr_ctx atomic_explicit test_operator
 /- lem: fuel_measure obligations (statements generated here; proofs in the hand-written module imported above) -/
 
 /- lem: fuel_measure obligation for `translate_constant` (generated; declare {lean} fuel_measure val translate_constant = `lemSize cst`): the worker is fuel-STABLE at the measure (equal to the wrapper at every fuel at or above it). The proof is hand-written in `Translation_lemMeasureProofs.translate_constant_measure_sufficient`, stated with exactly these binders; a missing or mistyped theorem fails the build (a `sorry` is the sorry/axiom gates' job). -/
-theorem translate_constant_measure_sufficient (_lemReader_enum_definitions : Fmap sym integerType)
+theorem translate_constant_measure_sufficient [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (cst : constant)
     (lemFuel : Nat) (lemMeasureLe : (constant.lemSize cst) ≤ lemFuel) :
     translate_constant_lemFuel lemFuel _lemReader_enum_definitions _lemReader_tagDefs cst =

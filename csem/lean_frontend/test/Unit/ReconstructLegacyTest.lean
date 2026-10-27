@@ -3,6 +3,10 @@ import CerbGlobal
 -- PNVI arc-end audit F3: compiles the theorem-only seam in row 1 (nothing else in the
 -- row-1 build imports it); its theorems' cones are pinned by check_theorem_axioms.sh.
 import CerbMemDefaultFacts
+import CerbImplCfg
+
+local instance : CerbImplCfg.Impl := ⟨CerbImplCfg.cerberusDefault⟩
+
 
 /-! # ReconstructLegacyTest — the default-mode `reconstructValue` wrappers equal the pre-S2 text
 
@@ -401,7 +405,7 @@ theorem foldl_snd_eq {α β γ : Type} {F : γ × β → α → γ × β} {G : �
 theorem reconstructValueAbst_default_snd_eq_legacy (fo : Address → OverlapResult) :
     ∀ (lemFuel : Nat) (enumDefs : EnumDefs) (ambient : TagDefs) (unionmap : List (Int × identifier))
       (funptrmap : Funptrmap) (addr : Int) (ty : ctype) (bytes : List AbsByte),
-      (@reconstructValueAbst_lemFuel ⟨CerbGlobal.defaultSwitches⟩ lemFuel enumDefs ambient fo unionmap funptrmap addr ty bytes).2 =
+      (@reconstructValueAbst_lemFuel _ ⟨CerbGlobal.defaultSwitches⟩ lemFuel enumDefs ambient fo unionmap funptrmap addr ty bytes).2 =
         reconstructValueLegacy_lemFuel lemFuel enumDefs ambient unionmap funptrmap addr ty bytes := by
   intro lemFuel
   induction lemFuel with
@@ -478,7 +482,7 @@ theorem reconstructValue_eq_legacy (enumDefs : EnumDefs) (ambient : TagDefs)
     `loadM`/`doLoad`), at the default switch set: the legacy value, for every state. -/
 theorem loadM_reconstruct_default (st : MemState) (enumDefs : EnumDefs) (ambient : TagDefs)
     (addr : Int) (ty : ctype) (bytes : List AbsByte) :
-    (@reconstructValueAbst ⟨CerbGlobal.defaultSwitches⟩ enumDefs ambient (@findOverlapping ⟨CerbGlobal.defaultSwitches⟩ st)
+    (@reconstructValueAbst _ ⟨CerbGlobal.defaultSwitches⟩ enumDefs ambient (@findOverlapping ⟨CerbGlobal.defaultSwitches⟩ st)
         st.lastUsedUnionMembers st.funptrmap addr ty bytes).2 =
       reconstructValueLegacy enumDefs ambient st.lastUsedUnionMembers st.funptrmap addr ty bytes :=
   reconstructValueAbst_default_snd_eq_legacy _ _ enumDefs ambient _ _ addr ty bytes
@@ -568,9 +572,9 @@ def checks : List (String × Bool) :=
     ("splitBytesProv: consecutive offsets over differing provenances are NotValidPtrProv", !(splitBytesProv [{ prov := .Prov_some 1, copyOffset := some 0 }, { prov := .Prov_some 2, copyOffset := some 1 }]).2),
     ("mkIval: PNVI strips the provenance", match @mkIval swAEUDI (.Prov_some 4) 9 with | .IV .Prov_none 9 => true | _ => false),
     ("mkIval: default keeps it", match @mkIval swDefault (.Prov_some 4) 9 with | .IV (.Prov_some 4) 9 => true | _ => false),
-    ("reconstruct, default: shared provenance, closure unused", provEq (provOf (@reconstructValueAbst swDefault fmapEmpty default closure7 [] [] 0 pt ptrBytes).2) (some .Prov_none)),
-    ("reconstruct, AE_UDI: NotValidPtrProv consults find_overlaping", provEq (provOf (@reconstructValueAbst swAEUDI fmapEmpty default closure7 [] [] 0 pt ptrBytes).2) (some (.Prov_some 7))),
-    ("reconstruct, integer leaf: taint = provs_of_bytes", taintEq (@reconstructValueAbst swDefault fmapEmpty default closure7 [] [] 0
+    ("reconstruct, default: shared provenance, closure unused", provEq (provOf (@reconstructValueAbst _ swDefault fmapEmpty default closure7 [] [] 0 pt ptrBytes).2) (some .Prov_none)),
+    ("reconstruct, AE_UDI: NotValidPtrProv consults find_overlaping", provEq (provOf (@reconstructValueAbst _ swAEUDI fmapEmpty default closure7 [] [] 0 pt ptrBytes).2) (some (.Prov_some 7))),
+    ("reconstruct, integer leaf: taint = provs_of_bytes", taintEq (@reconstructValueAbst _ swDefault fmapEmpty default closure7 [] [] 0
         (Ctype [] (.Basic (.Integer (.Signed .Int_)))) [{ prov := .Prov_some 2, value := some 1 }, { value := some 0 }, { value := some 0 }, { value := some 0 }]).1 (.NewTaint [2])),
     ("wrapper = full reconstruction at default, closure fixed, taint dropped",
       provEq (provOf (CerbMem.reconstructValue fmapEmpty default [] [] 0 pt ptrBytes)) (some .Prov_none)) ]

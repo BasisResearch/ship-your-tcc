@@ -14,6 +14,10 @@
 
 import CerbPP
 import Unit.BatchEscapeTest
+import CerbImplCfg
+
+local instance : CerbImplCfg.Impl := ⟨CerbImplCfg.cerberusDefault⟩
+
 
 open CerbPP
 

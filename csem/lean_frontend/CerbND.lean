@@ -319,7 +319,7 @@ X_lemFuel driverFuel`, `drive_wrapper_defeq`, the hand-written mirror
 `drive_lemFuel`) are replaced by the ∀-fuel forms: every fuel'd entry is
 FUEL-PARAMETRIC, `@X ⟨n⟩ = X_lemFuel n` for every `n`, by `rfl`; the
 generated `drive [LemFuel]` IS the fuel-parametric pipeline (the consumer
-writes `@drive ⟨n⟩ …` where it wrote `CerbND.drive_lemFuel n …`). -/
+writes `@drive ⟨n⟩ _ …` where it wrote `CerbND.drive_lemFuel n …`). -/
 
 section FuelContract
 
@@ -374,14 +374,14 @@ too: `@X ⟨n⟩ sws = @X_lemFuel ⟨n⟩ sws n`). The statement
 that used to read `X = X_lemFuel CerbFuel.driverFuel` is the instance
 `n := 100000000` of these. -/
 
-theorem driver2_wrapper_defeq (n : Nat) (sws : CerbGlobal.Switches) :
-    @driver2 ⟨n⟩ sws = @driver2_lemFuel ⟨n⟩ sws n := rfl
+theorem driver2_wrapper_defeq [CerbImplCfg.Impl] (n : Nat) (sws : CerbGlobal.Switches) :
+    @driver2 ⟨n⟩ _ sws = @driver2_lemFuel ⟨n⟩ _ sws n := rfl
 
 theorem print_eval_conv_aux_wrapper_defeq (n : Nat) :
     @print_eval_conv_aux ⟨n⟩ = @print_eval_conv_aux_lemFuel ⟨n⟩ n := rfl
 
-theorem drive_nonmemory_steps_aux2_wrapper_defeq (n : Nat) (sws : CerbGlobal.Switches) :
-    @drive_nonmemory_steps_aux2 ⟨n⟩ sws = @drive_nonmemory_steps_aux2_lemFuel ⟨n⟩ sws n := rfl
+theorem drive_nonmemory_steps_aux2_wrapper_defeq [CerbImplCfg.Impl] (n : Nat) (sws : CerbGlobal.Switches) :
+    @drive_nonmemory_steps_aux2 ⟨n⟩ _ sws = @drive_nonmemory_steps_aux2_lemFuel ⟨n⟩ _ sws n := rfl
 
 /- `hack_wrapper_defeq` LEFT this list at the 2026-09-08 fuel-pending close-out:
    `hack` is MEASURED (`hack_lemFuel (lemSize pexpr1) …` under the hypothesis

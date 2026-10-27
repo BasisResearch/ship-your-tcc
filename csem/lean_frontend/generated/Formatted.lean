@@ -3,6 +3,7 @@
 import LemLib
 
 import CerbMem
+import CerbImplCfg
 import CerbGlobal
 import CerbLocation
 import CerbDecode
@@ -721,8 +722,8 @@ def showNonNegativeWithBasis (useUpper : Bool) (b : Nat) (n : Nat) : List Char :
 
 /- the third argument specify have many characters to load at most -/
 
-def load_character_array_aux_lemFuel [LemFuel] [CerbGlobal.Switches] (lemFuel : Nat)
-    (_lemReader_enum_definitions : Fmap sym integerType)
+def load_character_array_aux_lemFuel [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
+    (lemFuel : Nat) (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (elem_ty : ctype)
     (ptrval : CerbMem.PointerValue) (prec_n_opt : Option Nat) (acc : List Char) :
     ndM (List Char) String mem_error (mem_constraint CerbMem.IntegerValue) CerbMem.MemState :=
@@ -801,11 +802,11 @@ def load_character_array_aux_lemFuel [LemFuel] [CerbGlobal.Switches] (lemFuel : 
                         CerbMem.MemValue → ndM (List Char) String mem_error
                         (mem_constraint CerbMem.IntegerValue) CerbMem.MemState))))))))
 
-def load_character_array_aux [LemFuel] [CerbGlobal.Switches] :
+def load_character_array_aux [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches] :
     (Fmap sym integerType) -> (Fmap sym (CerbLocation.Loc × tag_definition)) -> ctype →
         CerbMem.PointerValue → Option Nat → List Char → memM (List Char) :=
   load_character_array_aux_lemFuel LemFuel.fuel
-theorem load_character_array_aux_lemFuel_zero [LemFuel] [CerbGlobal.Switches]
+theorem load_character_array_aux_lemFuel_zero [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (elem_ty : ctype)
     (ptrval : CerbMem.PointerValue) (prec_n_opt : Option Nat) (acc : List Char) :
@@ -823,7 +824,7 @@ theorem load_character_array_aux_lemFuel_zero [LemFuel] [CerbGlobal.Switches]
    payload is the ND monad's ABSORBING kill at the fuel atom (as the driver
    family's), never `nd_return []` — a value printf would continue with. -/
 
-def load_character_array [LemFuel] [CerbGlobal.Switches]
+def load_character_array [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (elem_ty : ctype)
     (ptrval : CerbMem.PointerValue) (prec_n_opt : Option Nat) :
@@ -840,7 +841,7 @@ def load_character_array [LemFuel] [CerbGlobal.Switches]
       (load_character_array_aux _lemReader_enum_definitions _lemReader_tagDefs) elem_ty ptrval'
         prec_n_opt ([] : List Char))
 
-def is_illtyped_conversion (_lemReader_enum_definitions : Fmap sym integerType)
+def is_illtyped_conversion [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (expected_ty : ctype)
     (arg_ty : ctype) :
     Bool :=
@@ -859,7 +860,8 @@ def is_illtyped_conversion (_lemReader_enum_definitions : Fmap sym integerType)
 /- TODO: need the length modifier to perform the loads using the proper ctype -/
 /- Ctype.ctype -> -/
 
-def convert [LemFuel] [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
+def convert [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (eval_conv : ctype → CerbMem.MemValue → ndM (Sum (CerbLocation.Loc × cause) (t0 value)) String
       mem_error (mem_constraint CerbMem.IntegerValue) CerbMem.MemState)
@@ -1192,7 +1194,8 @@ def convert [LemFuel] [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap 
     nd_return (Sum.inr (Defined (false, ['%'], args)))
   /- Ctype.ctype -> -/
 
-def printf_aux [LemFuel] [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
+def printf_aux [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (eval_conv : ctype → CerbMem.MemValue → memM (Sum error (t0 value))) (acc : List Char)
     (fs : List format_) (ty_ptrvals : List (ctype × CerbMem.PointerValue)) :
@@ -1257,7 +1260,7 @@ def printf_aux [LemFuel] [CerbGlobal.Switches] (_lemReader_enum_definitions : Fm
    tail); recursion under monadic continuations — Lean derives it
    (threadB finding 3). -/
 
-def store_chars_in_array [LemFuel] [CerbGlobal.Switches]
+def store_chars_in_array [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (zero_terminated : Bool)
     (ptrval : CerbMem.PointerValue) :
@@ -1299,7 +1302,8 @@ def store_chars_in_array [LemFuel] [CerbGlobal.Switches]
    recursion under monadic continuations — Lean derives it. -/
 /- Ctype.ctype -> -/
 
-def vsnprintf [LemFuel] [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
+def vsnprintf [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (eval_conv : ctype → CerbMem.MemValue → memM (Sum error (t0 value)))
     (s_ptrval : CerbMem.PointerValue) (n_ival : CerbMem.IntegerValue) (frmt : List Char)
@@ -1337,7 +1341,8 @@ def vsnprintf [LemFuel] [CerbGlobal.Switches] (_lemReader_enum_definitions : Fma
 /- TODO: return -1, if "encoding error" -/
 /- Ctype.ctype -> -/
 
-def printf [LemFuel] [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
+def printf [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (eval_conv : ctype → CerbMem.MemValue → memM (Sum error (t0 value))) (frmt : List Char)
     (args : List (ctype × CerbMem.PointerValue)) :
@@ -1352,7 +1357,8 @@ def printf [LemFuel] [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap s
 /- TODO: return -1, if "encoding error" -/
 /- Ctype.ctype -> -/
 
-def vprintf [LemFuel] [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
+def vprintf [LemFuel] [CerbImplCfg.Impl] [CerbGlobal.Switches]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (eval_conv : ctype → CerbMem.MemValue → memM (Sum error (t0 value))) (frmt : List Char)
     (ap_idx : Int) :

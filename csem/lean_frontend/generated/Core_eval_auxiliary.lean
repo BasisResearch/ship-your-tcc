@@ -21,7 +21,7 @@ theorem pull_constrained_measure_sufficient (n : Nat) (g : generic_pexpr Unit sy
   Core_eval_lemMeasureProofs.pull_constrained_measure_sufficient n g lemFuel lemMeasureLe
 
 /- lem: fuel_measure obligation for `step_eval_pexpr` (generated; declare {lean} fuel_measure val step_eval_pexpr = `lemSize pexpr1`): the worker is fuel-STABLE at the measure (equal to the wrapper at every fuel at or above it). The proof is hand-written in `Core_eval_lemMeasureProofs.step_eval_pexpr_measure_sufficient`, stated with exactly these binders; a missing or mistyped theorem fails the build (a `sorry` is the sorry/axiom gates' job). -/
-theorem step_eval_pexpr_measure_sufficient [LemFuel]
+theorem step_eval_pexpr_measure_sufficient [LemFuel] [CerbImplCfg.Impl]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (n : Nat)
     (loc1 : CerbLocation.Loc) (parent_call_loc_opt : Option CerbLocation.Loc)

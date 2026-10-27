@@ -143,6 +143,8 @@ roots = [
   "Implementation", "Implementation_auxiliary",
   "Lean_switches", "Lean_switches_auxiliary",
   "Lean_digest", "Lean_digest_auxiliary",
+  "Lean_impl", "Lean_impl_auxiliary",
+  "CerbImplCfg",
   "IntegerImpl", "IntegerImpl_auxiliary",
   "IntegerType", "IntegerType_auxiliary",
   "Linux", "Linux_auxiliary",

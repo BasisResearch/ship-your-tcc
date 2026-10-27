@@ -11,3 +11,5 @@ open Lem_Num Lem_Pervasives Lem_List Lem_Set Lem_Map Lem_Maybe Lem_Function
   Lem_Set_extra Lem_List_extra Lem_Relation Lem_Tuple Lem_String Lem_Word
   Lem_Sorting
 open implementation_constant
+
+/- lem: theorem enum_compatible_type_def_lemma not translated -/

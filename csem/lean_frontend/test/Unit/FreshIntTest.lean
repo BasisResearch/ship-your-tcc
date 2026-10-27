@@ -14,6 +14,10 @@
 import Symbol
 import CerberusFresh
 import LemLib
+import CerbImplCfg
+
+local instance : CerbImplCfg.Impl := ⟨CerbImplCfg.cerberusDefault⟩
+
 
 def assertNotEqual {α : Type} [BEq α] [Repr α] (label : String) (a b : α) : IO Bool := do
   if a == b then

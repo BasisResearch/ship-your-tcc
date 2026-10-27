@@ -90,7 +90,7 @@ theorem unqualifyAndUnatomic_measure_sufficient (cty : ctype) (lemFuel : Nat)
     unqualifyAndUnatomic_lemFuel lemFuel cty = unqualifyAndUnatomic cty :=
   unqualifyAndUnatomic_stable_aux (ctype.lemSize cty) cty lemFuel (ctype.lemSize cty) (Nat.le_refl _) lemMeasureLe (Nat.le_refl _)
 
-theorem memValueToBytes_stable_aux (enumDefs : CerberusImpl.EnumDefs) (k : Nat) :
+theorem memValueToBytes_stable_aux [CerbImplCfg.Impl] (enumDefs : CerberusImpl.EnumDefs) (k : Nat) :
     ∀ (ambient : CerbTags.TagDefsMap) (funptrmap : Funptrmap) (v : MemValue) (f g : Nat),
     memValueSize v ≤ k → memValueSize v ≤ f → memValueSize v ≤ g →
     memValueToBytes_lemFuel f enumDefs ambient funptrmap v = memValueToBytes_lemFuel g enumDefs ambient funptrmap v := by
@@ -127,7 +127,7 @@ theorem memValueToBytes_stable_aux (enumDefs : CerberusImpl.EnumDefs) (k : Nat) 
 
 /-- THE OBLIGATION (the seam twin of the generated shape; its `[LemFuel]`
     went at C4 with the layout oracle's — audit F-A5). -/
-theorem memValueToBytes_measure_sufficient (enumDefs : CerberusImpl.EnumDefs) (ambient : CerbTags.TagDefsMap) (funptrmap : Funptrmap)
+theorem memValueToBytes_measure_sufficient [CerbImplCfg.Impl] (enumDefs : CerberusImpl.EnumDefs) (ambient : CerbTags.TagDefsMap) (funptrmap : Funptrmap)
     (val_ : MemValue) (lemFuel : Nat) (lemMeasureLe : memValueSize val_ ≤ lemFuel) :
     memValueToBytes_lemFuel lemFuel enumDefs ambient funptrmap val_ = memValueToBytes enumDefs ambient funptrmap val_ :=
   memValueToBytes_stable_aux enumDefs (memValueSize val_) ambient funptrmap val_ lemFuel (memValueSize val_)
@@ -796,7 +796,7 @@ theorem membersPot_le_entry (ambient tagDefs : CerbTags.TagDefsMap) (R : Entry �
     parameters, `(lemHyp : H)`, `(lemFuel : Nat)`, `(lemMeasureLe : μ ≤ lemFuel)`,
     conclusion `worker lemFuel … = wrapper …`) -/
 
-theorem alignofCtype_measure_sufficient (enumDefs : CerberusImpl.EnumDefs) (ambient : CerbTags.TagDefsMap) (cty : ctype)
+theorem alignofCtype_measure_sufficient [CerbImplCfg.Impl] (enumDefs : CerberusImpl.EnumDefs) (ambient : CerbTags.TagDefsMap) (cty : ctype)
     (lemHyp : CerbTagsWf.Acyclic ambient) (lemFuel : Nat)
     (lemMeasureLe : CerbTagsWf.envBound ambient cty ≤ lemFuel) :
     alignofCtype_lemFuel lemFuel enumDefs ambient ambient cty = alignofCtype enumDefs ambient cty := by
@@ -807,7 +807,7 @@ theorem alignofCtype_measure_sufficient (enumDefs : CerberusImpl.EnumDefs) (ambi
     (fun _ _ h => lookup_mem_entries h) (pot ambient ambient R (entries ambient) cty)).1
   exact h cty lemFuel (envBound ambient cty) (Nat.le_refl _) (by unfold envBound at lemMeasureLe; omega) (by unfold envBound; omega)
 
-theorem sizeofCtype_measure_sufficient (enumDefs : CerberusImpl.EnumDefs) (ambient : CerbTags.TagDefsMap) (cty : ctype)
+theorem sizeofCtype_measure_sufficient [CerbImplCfg.Impl] (enumDefs : CerberusImpl.EnumDefs) (ambient : CerbTags.TagDefsMap) (cty : ctype)
     (lemHyp : CerbTagsWf.Acyclic ambient) (lemFuel : Nat)
     (lemMeasureLe : CerbTagsWf.envBound ambient cty ≤ lemFuel) :
     sizeofCtype_lemFuel lemFuel enumDefs ambient ambient cty = sizeofCtype enumDefs ambient cty := by
@@ -818,7 +818,7 @@ theorem sizeofCtype_measure_sufficient (enumDefs : CerberusImpl.EnumDefs) (ambie
     (fun _ _ h => lookup_mem_entries h) (pot ambient ambient R (entries ambient) cty + 1)).2.1
   exact h cty lemFuel (envBound ambient cty) (Nat.le_refl _) (by unfold envBound at lemMeasureLe; omega) (by unfold envBound; omega)
 
-theorem memberAlign_measure_sufficient (enumDefs : CerberusImpl.EnumDefs) (ambient : CerbTags.TagDefsMap) (alignOpt : Option alignment) (ty : ctype)
+theorem memberAlign_measure_sufficient [CerbImplCfg.Impl] (enumDefs : CerberusImpl.EnumDefs) (ambient : CerbTags.TagDefsMap) (alignOpt : Option alignment) (ty : ctype)
     (lemHyp : CerbTagsWf.Acyclic ambient) (lemFuel : Nat)
     (lemMeasureLe : CerbTagsWf.memberBound ambient alignOpt ty ≤ lemFuel) :
     memberAlign_lemFuel lemFuel enumDefs ambient ambient alignOpt ty = memberAlign enumDefs ambient alignOpt ty := by
@@ -830,7 +830,7 @@ theorem memberAlign_measure_sufficient (enumDefs : CerberusImpl.EnumDefs) (ambie
   exact h alignOpt ty lemFuel (memberBound ambient alignOpt ty) (Nat.le_refl _)
     (by unfold memberBound at lemMeasureLe; omega) (by unfold memberBound; omega)
 
-theorem offsetsofMembers_measure_sufficient (enumDefs : CerberusImpl.EnumDefs) (ambient : CerbTags.TagDefsMap)
+theorem offsetsofMembers_measure_sufficient [CerbImplCfg.Impl] (enumDefs : CerberusImpl.EnumDefs) (ambient : CerbTags.TagDefsMap)
     (members : List (identifier × (attributes × Option alignment × qualifiers × ctype)))
     (lemHyp : CerbTagsWf.Acyclic ambient) (lemFuel : Nat)
     (lemMeasureLe : CerbTagsWf.membersBound ambient members ≤ lemFuel) :
@@ -843,7 +843,7 @@ theorem offsetsofMembers_measure_sufficient (enumDefs : CerberusImpl.EnumDefs) (
   exact h members lemFuel (membersBound ambient members) (Nat.le_refl _)
     (by unfold membersBound at lemMeasureLe; omega) (by unfold membersBound; omega)
 
-theorem offsetsof_measure_sufficient (enumDefs : CerberusImpl.EnumDefs) (ambient tagDefs : CerbTags.TagDefsMap) (tagSym : sym) (ignoreFlexible : Bool)
+theorem offsetsof_measure_sufficient [CerbImplCfg.Impl] (enumDefs : CerberusImpl.EnumDefs) (ambient tagDefs : CerbTags.TagDefsMap) (tagSym : sym) (ignoreFlexible : Bool)
     (lemHyp : CerbTagsWf.AcyclicPair ambient tagDefs) (lemFuel : Nat)
     (lemMeasureLe : CerbTagsWf.offsetsofBound ambient tagDefs ≤ lemFuel) :
     offsetsof_lemFuel lemFuel enumDefs ambient tagDefs tagSym ignoreFlexible = offsetsof enumDefs ambient tagDefs tagSym ignoreFlexible := by
@@ -910,7 +910,7 @@ theorem foldl_offs_mem {α : Type} (F : (List (identifier × ctype × Nat) × Na
       · exact Or.inl h
     · exact Or.inr ⟨a', List.mem_cons_of_mem _ ha', hty⟩
 
-theorem offsetsofMembers_types (n : Nat) (enumDefs : CerberusImpl.EnumDefs) (ambient tagDefs : CerbTags.TagDefsMap) (members : List Member) :
+theorem offsetsofMembers_types [CerbImplCfg.Impl] (n : Nat) (enumDefs : CerberusImpl.EnumDefs) (ambient tagDefs : CerbTags.TagDefsMap) (members : List Member) :
     ∀ x ∈ (offsetsofMembers_lemFuel (n + 1) enumDefs ambient tagDefs members).1, ∃ mb ∈ members, x.2.1 = mb.2.2.2.2 := by
   intro x hx
   simp only [offsetsofMembers_lemFuel, List.mem_reverse] at hx
@@ -921,7 +921,7 @@ theorem offsetsofMembers_types (n : Nat) (enumDefs : CerberusImpl.EnumDefs) (amb
 /-- `offsetsof` on a tag KNOWN to resolve (`hl`): every member type it returns
     is among the definition's `memberTypes`. The unknown-tag arm is excluded by
     `hl` — the struct arm of `reconstructValue` supplies it from its own guard. -/
-theorem offsetsof_types (n : Nat) (enumDefs : CerberusImpl.EnumDefs) (ambient tagDefs : CerbTags.TagDefsMap) (t : sym) (flag : Bool)
+theorem offsetsof_types [CerbImplCfg.Impl] (n : Nat) (enumDefs : CerberusImpl.EnumDefs) (ambient tagDefs : CerbTags.TagDefsMap) (t : sym) (flag : Bool)
     (v : Entry) (hl : lookup tagDefs t = some v) :
     ∀ x ∈ (offsetsof_lemFuel (n + 2) enumDefs ambient tagDefs t flag).1, x.2.1 ∈ memberTypes v.2 := by
   intro x hx
@@ -946,7 +946,7 @@ theorem offsetsof_types (n : Nat) (enumDefs : CerberusImpl.EnumDefs) (ambient ta
     (the full `abst` — switch set, `find_overlaping` closure, taint); the
     closure and the instance are fixed through the induction (never recursed
     on), the taint rides along in the pair. -/
-theorem reconstructValueAbst_stable_aux [CerbGlobal.Switches] (enumDefs : CerberusImpl.EnumDefs) (ambient : CerbTags.TagDefsMap)
+theorem reconstructValueAbst_stable_aux [CerbImplCfg.Impl] [CerbGlobal.Switches] (enumDefs : CerberusImpl.EnumDefs) (ambient : CerbTags.TagDefsMap)
     (findOverlapping : Address → OverlapResult) (R : Entry → Nat)
     (hR : Ranked (lookup ambient) (lookup ambient) R) (k : Nat) :
     ∀ (unionmap : List (Int × identifier)) (funptrmap : Funptrmap) (addr : Int) (ty : ctype) (bytes : List AbsByte) (f g : Nat),
@@ -1037,7 +1037,7 @@ theorem reconstructValueAbst_stable_aux [CerbGlobal.Switches] (enumDefs : Cerber
 /-- THE OBLIGATION of the full reconstruction (PNVI arc S2; the seam twin of the
     generated `assuming` shape; register row `CerbMem.reconstructValueAbst_lemFuel`
     in scripts/fuel_hypotheses.txt). -/
-theorem reconstructValueAbst_measure_sufficient [CerbGlobal.Switches] (enumDefs : CerberusImpl.EnumDefs) (ambient : CerbTags.TagDefsMap)
+theorem reconstructValueAbst_measure_sufficient [CerbImplCfg.Impl] [CerbGlobal.Switches] (enumDefs : CerberusImpl.EnumDefs) (ambient : CerbTags.TagDefsMap)
     (findOverlapping : Address → OverlapResult) (unionmap : List (Int × identifier))
     (funptrmap : Funptrmap) (addr : Int) (ty : ctype) (bytes : List AbsByte)
     (lemHyp : CerbTagsWf.Acyclic ambient) (lemFuel : Nat)
@@ -1055,13 +1055,13 @@ theorem reconstructValueAbst_measure_sufficient [CerbGlobal.Switches] (enumDefs 
     `reconstructValue` are the `.2` of the full reconstruction pinned at
     `⟨CerbGlobal.defaultSwitches⟩` with the closure `noOverlapping`, so this is the
     full obligation's second projection. -/
-theorem reconstructValue_measure_sufficient (enumDefs : CerberusImpl.EnumDefs) (ambient : CerbTags.TagDefsMap) (unionmap : List (Int × identifier))
+theorem reconstructValue_measure_sufficient [CerbImplCfg.Impl] (enumDefs : CerberusImpl.EnumDefs) (ambient : CerbTags.TagDefsMap) (unionmap : List (Int × identifier))
     (funptrmap : Funptrmap) (addr : Int) (ty : ctype) (bytes : List AbsByte)
     (lemHyp : CerbTagsWf.Acyclic ambient) (lemFuel : Nat)
     (lemMeasureLe : CerbTagsWf.envBound ambient ty ≤ lemFuel) :
     reconstructValue_lemFuel lemFuel enumDefs ambient unionmap funptrmap addr ty bytes =
       reconstructValue enumDefs ambient unionmap funptrmap addr ty bytes :=
-  congrArg Prod.snd (@reconstructValueAbst_measure_sufficient ⟨CerbGlobal.defaultSwitches⟩ enumDefs ambient
+  congrArg Prod.snd (@reconstructValueAbst_measure_sufficient _ ⟨CerbGlobal.defaultSwitches⟩ enumDefs ambient
     noOverlapping unionmap funptrmap addr ty bytes lemHyp lemFuel lemMeasureLe)
 
 end Reconstruct

@@ -38,6 +38,8 @@ val enum_compatible_type: list integer -> Ctype.integerType
 let enum_compatible_type ns =
   if List.any (fun n -> n < 0) ns then Ctype.Signed Ctype.Int_ else Ctype.Unsigned Ctype.Int_
 
+declare lean target_rep function enum_compatible_type = `CerberusImpl.enum_compatible_type`
+
 val enum_definitions: unit -> map Symbol.sym Ctype.integerType
 declare ocaml target_rep function enum_definitions = `Ocaml_implementation.enum_definitions`
 (* target-coverage stub only: the reader mechanism rewrites every applied

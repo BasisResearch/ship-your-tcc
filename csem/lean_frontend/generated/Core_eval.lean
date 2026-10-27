@@ -2,6 +2,7 @@
 
 import LemLib
 
+import CerbImplCfg
 import CerbDebug
 import CerbPP
 import CerberusFresh
@@ -39,7 +40,7 @@ fun wrapI(ty: ctype, n: integer) : integer :=
     r
   else
     r - dlt -/
-def mk_wrapI (_lemReader_enum_definitions : Fmap sym integerType)
+def mk_wrapI [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (ity : integerType)
     (ival : CerbMem.IntegerValue) :
     CerbMem.IntegerValue :=
@@ -64,7 +65,7 @@ def mk_wrapI (_lemReader_enum_definitions : Fmap sym integerType)
       else
         <Integer.conv_nonrepresentable_signed_integer>(ty, n)
 -/
-def mk_conv_int (_lemReader_enum_definitions : Fmap sym integerType)
+def mk_conv_int [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (ity : integerType)
     (ival : CerbMem.IntegerValue) :
     CerbMem.IntegerValue :=
@@ -86,7 +87,8 @@ def mk_conv_int (_lemReader_enum_definitions : Fmap sym integerType)
            (mk_wrapI _lemReader_enum_definitions _lemReader_tagDefs) ity n_ival)
       | _, _ => (failwithI "Core_eval.mk_conv_int" : CerbMem.IntegerValue))
 
-def mk_iop : iop → CerbMem.IntegerValue → CerbMem.IntegerValue → CerbMem.IntegerValue :=
+def mk_iop [CerbImplCfg.Impl] :
+    iop → CerbMem.IntegerValue → CerbMem.IntegerValue → CerbMem.IntegerValue :=
   fun (x : iop) =>
     match x with
     | IOpAdd =>
@@ -106,7 +108,7 @@ def mk_iop : iop → CerbMem.IntegerValue → CerbMem.IntegerValue → CerbMem.I
       (fun (x : CerbMem.IntegerValue) (y : CerbMem.IntegerValue) =>
         CerbMem.opIval IntDiv x (CerbMem.opIval IntExp (CerbMem.integerIval ((2 : Int))) y))
 
-def mk_wrapI_op (_lemReader_enum_definitions : Fmap sym integerType)
+def mk_wrapI_op [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (ity : integerType)
     (iop1 : iop) (ival1 : CerbMem.IntegerValue) (ival2 : CerbMem.IntegerValue) :
     CerbMem.IntegerValue :=
@@ -114,7 +116,8 @@ def mk_wrapI_op (_lemReader_enum_definitions : Fmap sym integerType)
   let ival2 = mk_conv_int ity ival2 in -/
   (mk_wrapI _lemReader_enum_definitions _lemReader_tagDefs) ity (mk_iop iop1 ival1 ival2)
 
-def mk_call_catch_exceptional_condition (_lemReader_enum_definitions : Fmap sym integerType)
+def mk_call_catch_exceptional_condition [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (ity : integerType)
     (iop1 : iop) (ival1 : CerbMem.IntegerValue) (ival2 : CerbMem.IntegerValue) :
     Option CerbMem.IntegerValue :=
@@ -364,7 +367,7 @@ theorem pull_constrained_lemFuel_zero (n : Nat) (g : generic_pexpr Unit sym) :
     pull_constrained_lemFuel 0 n g = (fuelExhausted g) :=
   rfl
 
-def step_eval_peop (loc1 : CerbLocation.Loc)
+def step_eval_peop [CerbImplCfg.Impl] (loc1 : CerbLocation.Loc)
     (self : generic_pexpr Unit sym → exceptM (t0 (generic_pexpr Unit sym)) core_run_cause)
     (binop1 : binop) (pe1 : generic_pexpr Unit sym) (pe2 : generic_pexpr Unit sym) :
     exceptM (t0 (generic_pexpr_ Unit sym)) core_run_cause :=
@@ -600,7 +603,7 @@ def step_eval_peop (loc1 : CerbLocation.Loc)
    important for the Coq backend).  To fully evaluate a pure expression,
    it is necessary to call eval repeatedly until is_value returns True. -/
 
-def step_eval_pexpr_lemFuel [LemFuel] (lemFuel : Nat)
+def step_eval_pexpr_lemFuel [LemFuel] [CerbImplCfg.Impl] (lemFuel : Nat)
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (n : Nat)
     (loc1 : CerbLocation.Loc) (parent_call_loc_opt : Option CerbLocation.Loc)
@@ -1325,7 +1328,8 @@ KKK:              EU.return (PEval (Vloaded (LVspecified (OVstruct tag_sym xs)))
                      (Illformed_program "PEare_compatible: the operands should be ctypes")
                  | _, _ => exception_undef_return (PEare_compatible pe1 pe2))))))
 
-def step_eval_pexpr [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def step_eval_pexpr [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (n : Nat)
     (loc1 : CerbLocation.Loc) (parent_call_loc_opt : Option CerbLocation.Loc)
     (core_extern1 : Fmap sym sym) (env1 : List (Fmap sym value))
@@ -1335,7 +1339,8 @@ def step_eval_pexpr [LemFuel] (_lemReader_enum_definitions : Fmap sym integerTyp
   step_eval_pexpr_lemFuel (generic_pexpr.lemSize pexpr1) _lemReader_enum_definitions
     _lemReader_tagDefs n loc1 parent_call_loc_opt core_extern1 env1 mem_st_opt file1 hasConstrained
     pexpr1
-theorem step_eval_pexpr_lemFuel_zero [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+theorem step_eval_pexpr_lemFuel_zero [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (n : Nat)
     (loc1 : CerbLocation.Loc) (parent_call_loc_opt : Option CerbLocation.Loc)
     (core_extern1 : Fmap sym sym) (env1 : List (Fmap sym value))
@@ -1346,7 +1351,7 @@ theorem step_eval_pexpr_lemFuel_zero [LemFuel] (_lemReader_enum_definitions : Fm
         (fuelExhausted (Result (Undef CerbLocation.Loc.unknown []))) :=
   rfl
 
-def eval_pexpr_aux2_lemFuel [LemFuel] (lemFuel : Nat)
+def eval_pexpr_aux2_lemFuel [LemFuel] [CerbImplCfg.Impl] (lemFuel : Nat)
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (current_call_loc_opt : Option CerbLocation.Loc) (core_extern1 : Fmap sym sym)
@@ -1383,12 +1388,13 @@ def eval_pexpr_aux2_lemFuel [LemFuel] (lemFuel : Nat)
                 (eval_pexpr_aux2_lemFuel lemFuel _lemReader_enum_definitions _lemReader_tagDefs)
                   loc1 current_call_loc_opt core_extern1 env1 mem_st_opt file1 pe'))))
 
-def eval_pexpr_aux2 [LemFuel] :
+def eval_pexpr_aux2 [LemFuel] [CerbImplCfg.Impl] :
     (Fmap sym integerType) -> (Fmap sym (CerbLocation.Loc × tag_definition)) -> CerbLocation.Loc →
         Option CerbLocation.Loc → Fmap sym sym → List (Fmap sym value) → Option CerbMem.MemState →
         file core_run_annotation → pexpr → t1 (Sum pexpr value) core_run_cause :=
   eval_pexpr_aux2_lemFuel LemFuel.fuel
-theorem eval_pexpr_aux2_lemFuel_zero [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+theorem eval_pexpr_aux2_lemFuel_zero [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (current_call_loc_opt : Option CerbLocation.Loc) (core_extern1 : Fmap sym sym)
     (env1 : List (Fmap sym value)) (mem_st_opt : Option CerbMem.MemState)
@@ -1400,7 +1406,7 @@ theorem eval_pexpr_aux2_lemFuel_zero [LemFuel] (_lemReader_enum_definitions : Fm
 
 /- ============================================================================================== -/
 
-def eval_pexpr_aux_broken_lemFuel [LemFuel] (lemFuel : Nat)
+def eval_pexpr_aux_broken_lemFuel [LemFuel] [CerbImplCfg.Impl] (lemFuel : Nat)
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (current_call_loc_opt : Option CerbLocation.Loc) (core_extern1 : Fmap sym sym)
@@ -1421,12 +1427,12 @@ def eval_pexpr_aux_broken_lemFuel [LemFuel] (lemFuel : Nat)
           (eval_pexpr_aux_broken_lemFuel lemFuel _lemReader_enum_definitions _lemReader_tagDefs)
             loc1 current_call_loc_opt core_extern1 env1 mem_st_opt file1 pe'))
 
-def eval_pexpr_aux_broken [LemFuel] :
+def eval_pexpr_aux_broken [LemFuel] [CerbImplCfg.Impl] :
     (Fmap sym integerType) -> (Fmap sym (CerbLocation.Loc × tag_definition)) -> CerbLocation.Loc →
         Option CerbLocation.Loc → Fmap sym sym → List (Fmap sym value) → Option CerbMem.MemState →
         file core_run_annotation → pexpr → t1 value core_run_cause :=
   eval_pexpr_aux_broken_lemFuel LemFuel.fuel
-theorem eval_pexpr_aux_broken_lemFuel_zero [LemFuel]
+theorem eval_pexpr_aux_broken_lemFuel_zero [LemFuel] [CerbImplCfg.Impl]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (current_call_loc_opt : Option CerbLocation.Loc) (core_extern1 : Fmap sym sym)
@@ -1437,7 +1443,7 @@ theorem eval_pexpr_aux_broken_lemFuel_zero [LemFuel]
         (Result (Error CerbFuel.fuelExhaustedLoc CerbFuel.fuelExhaustedMsg)) :=
   rfl
 
-def eval_pexpr [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def eval_pexpr [LemFuel] [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (current_call_loc_opt : Option CerbLocation.Loc) (core_extern1 : Fmap sym sym)
     (env1 : List (Fmap sym value)) (mem_st_opt : Option CerbMem.MemState)

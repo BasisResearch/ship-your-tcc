@@ -10,3 +10,5 @@ open Lem_Num Lem_Pervasives Lem_List Lem_Set Lem_Map Lem_Maybe Lem_Function
   Lem_String_extra Lem_Num_extra Lem_Set_helpers Lem_Either Lem_Assert_extra
   Lem_Set_extra Lem_List_extra Lem_Relation Lem_Tuple Lem_String Lem_Word
   Lem_Sorting
+
+/- lem: theorem translate_errno_def_lemma not translated -/

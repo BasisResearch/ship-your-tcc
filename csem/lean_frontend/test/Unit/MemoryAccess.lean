@@ -1,5 +1,9 @@
 import CerbFailProofs
 import Unit.MemoryAccessProofs
+import CerbImplCfg
+
+local instance : CerbImplCfg.Impl := ⟨CerbImplCfg.cerberusDefault⟩
+
 
 namespace MemoryAccess
 open CerbMem CerbFail

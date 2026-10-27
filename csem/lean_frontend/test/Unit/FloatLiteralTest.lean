@@ -24,6 +24,10 @@
     exact arithmetic bounded by the format.
 -/
 import CerbFloat
+import CerbImplCfg
+
+local instance : CerbImplCfg.Impl := ⟨CerbImplCfg.cerberusDefault⟩
+
 
 def hex64 (b : UInt64) : String :=
   let ds := Nat.toDigits 16 b.toNat

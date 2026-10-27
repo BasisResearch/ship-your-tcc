@@ -4,6 +4,7 @@ import LemLib
 
 import CerbLocation
 import CerbPP
+import CerbImplCfg
 import CerbDebug
 import CerberusFresh
 import CerbFloat
@@ -313,14 +314,15 @@ def explicitAllocationIdFromInteger_value_aux (ival_ : integer_value_base) :
 end
 
 /- Making an indirection here, so that future crazy optimisations won't be duplicated all over. -/
-def mk_op_ival_ [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def mk_op_ival_ [LemFuel] [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (iop1 : integer_operator)
     (ival_1 : integer_value_base) (ival_2 : integer_value_base) :
     integer_value_base :=
   (lifted_simplify_integer_value_base _lemReader_enum_definitions _lemReader_tagDefs)
     (IVop iop1 [ival_1, ival_2])
 
-def mk_offsetof_ival_ [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def mk_offsetof_ival_ [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (acc : integer_value_base)
     (tag_sym : sym) (memb_ident : identifier) :
     integer_value_base :=
@@ -360,7 +362,8 @@ def get_allocation_id (ptr_val_ : pointer_value_base) : Option Nat :=
   | PVfromint (IVfromptr _ _ ptr_val_' _) => get_allocation_id ptr_val_'
   | _ => (failwithI "TODO: get_allocation_id, wildcard" : Option Nat)
 
-def integer_value_baseFromShift_path [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def integer_value_baseFromShift_path [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (sh : List shift_path_element) :
     integer_value_base :=
@@ -433,13 +436,15 @@ theorem mkUnspec_lemFuel_zero (_lemReader_enum_definitions : Fmap sym integerTyp
 
 /- BEGIN API IMPLEMENTATION ===================================================================== -/
 
-def impl_eval_integer_value [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def impl_eval_integer_value [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (i : impl_integer_value) :
     Option Int :=
   match i with
   | (IV _ ival_) => (eval_integer_value_base _lemReader_enum_definitions _lemReader_tagDefs) ival_
 
-def impl_offsetof_ival { a : Type } [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def impl_offsetof_ival { a : Type } [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (tagDefs1 : a)
     (tag_sym : sym) (memb_ident : identifier) :
     impl_integer_value := /-  IV Prov_none (lifted_simplify_integer_value_base (IVoffsetof tag_sym membr_ident)) -/
@@ -582,7 +587,7 @@ def impl_allocate_region { a : Type } [LemFuel] (tid1 : a) (pref : prefix0) (i :
 -/
 
 /- TODO: wip -/
-def real_address_expression_of_pointer [LemFuel]
+def real_address_expression_of_pointer [LemFuel] [CerbImplCfg.Impl]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (i : impl_pointer_value) :
     integer_value_base :=
@@ -603,14 +608,16 @@ def real_address_expression_of_pointer [LemFuel]
 /- TODO: (for statics) this is not doing the right thing -/
 /- TODO: by calling real_address_expression_of_pointer, this is now correct -/
 
-def address_expression_of_pointer [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def address_expression_of_pointer [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (ptr_val : impl_pointer_value) :
     ndM integer_value_base String mem_error (mem_constraint impl_integer_value) impl_mem_state :=
   nd_return
     ((real_address_expression_of_pointer _lemReader_enum_definitions _lemReader_tagDefs) ptr_val)
 
-def impl_kill { a : Type } [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def impl_kill { a : Type } [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (is_dynamic1 : a) (i : impl_pointer_value) :
     ndM Unit String mem_error (mem_constraint impl_integer_value) impl_mem_state :=
@@ -708,7 +715,8 @@ def fetch_first_write_event (pred1 : write_event → Bool) :
   return (fetch_first_write_event_aux pred st.writes)
 -/
 
-def apply_shift_path_element [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def apply_shift_path_element [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (lvalue_ty : ctype)
     (spe : shift_path_element) (mval : impl_mem_value) :
     ndM impl_mem_value String mem_error (mem_constraint impl_integer_value)
@@ -872,7 +880,7 @@ let mk_byteof ival_ = function
 end
 -/
 
-def project_to_lvalue_type { a b c d : Type } [Inhabited a]
+def project_to_lvalue_type { a b c d : Type } [CerbImplCfg.Impl] [Inhabited a]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (c1 : ctype)
     (mval : impl_mem_value) :
@@ -981,7 +989,8 @@ def project_to_lvalue_type { a b c d : Type } [Inhabited a]
                    (String.append "\nmval ===> " (CerbPP.stringFromMem_value mval)))))
          (fun _ => (failwithI "TODO: project_to_lvalue_type" : ndM impl_mem_value c d b a)))))
 
-def apply_shift_path [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def apply_shift_path [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (lvalue_ty : ctype)
     (sh : List shift_path_element) (mval : impl_mem_value) :
     ndM impl_mem_value String mem_error (mem_constraint impl_integer_value) impl_mem_state :=
@@ -1016,7 +1025,8 @@ val to_shift_path: tag_definitions -> list (ctype * integer_value) -> shift_path
 let to_shift_path tagDefs xs =
 -/
 
-def insert_element_to_path [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def insert_element_to_path [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (sh : List shift_path_element) (spe2 : shift_path_element) :
     List shift_path_element :=
@@ -1033,7 +1043,8 @@ def insert_element_to_path [LemFuel] (_lemReader_enum_definitions : Fmap sym int
      | _, _ => Lem_List.snoc spe2 sh)
   | none => [spe2]
 
-def internal_shift_ptrval [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def internal_shift_ptrval [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (ptr_val : impl_pointer_value) (spe : shift_path_element) :
     impl_pointer_value :=
@@ -1056,7 +1067,8 @@ def internal_shift_ptrval [LemFuel] (_lemReader_enum_definitions : Fmap sym inte
 -/
          )
 
-def impl_array_shift_ptrval [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def impl_array_shift_ptrval [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (ptr_val : impl_pointer_value) (ty1 : ctype) (i : impl_integer_value) :
     impl_pointer_value :=
@@ -1072,7 +1084,8 @@ def impl_array_shift_ptrval [LemFuel] (_lemReader_enum_definitions : Fmap sym in
         (internal_shift_ptrval _lemReader_enum_definitions _lemReader_tagDefs) ptr_val
           (SPE_array ty1 ival_))))
 
-def impl_member_shift_ptrval [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def impl_member_shift_ptrval [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (ptr_val : impl_pointer_value) (tag_sym : sym) (memb_ident : identifier) :
     impl_pointer_value :=
@@ -1090,7 +1103,7 @@ def impl_max_ival (ity : integerType) : impl_integer_value :=
 def impl_min_ival (ity : integerType) : impl_integer_value :=
   IV Prov_none (/- lifted_simplify_integer_value_base -/ (IVmin ity))
 
-def impl_op_ival [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def impl_op_ival [LemFuel] [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (iop1 : integer_operator)
     (i : impl_integer_value) (i0 : impl_integer_value) :
     impl_integer_value :=
@@ -1099,7 +1112,7 @@ def impl_op_ival [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
     IV (combine_prov prov1 prov2)
       ((mk_op_ival_ _lemReader_enum_definitions _lemReader_tagDefs) iop1 ival_1 ival_2)
 
-def impl_sizeof_ival_aux (_lemReader_enum_definitions : Fmap sym integerType)
+def impl_sizeof_ival_aux [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (c : ctype) :
     integer_value_base :=
   match c with
@@ -1131,7 +1144,7 @@ def impl_sizeof_ival_aux (_lemReader_enum_definitions : Fmap sym integerType)
        IVsizeof (Ctype ([] : List annot) (Union0 tag_sym))
      | Byte => IVconcrete ((1 : Int)))
 
-def impl_sizeof_ival (_lemReader_enum_definitions : Fmap sym integerType)
+def impl_sizeof_ival [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (ty1 : ctype) :
     impl_integer_value :=
   IV Prov_none ((impl_sizeof_ival_aux _lemReader_enum_definitions _lemReader_tagDefs) ty1)
@@ -1342,7 +1355,8 @@ def isBeginningShift (_lemReader_enum_definitions : Fmap sym integerType)
          mem_error (mem_constraint impl_integer_value) impl_mem_state)
      | (memb_ident', _) :: _ => nd_return (idEqual memb_ident memb_ident'))
 
-def is_one_past_pointer [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def is_one_past_pointer [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (i : impl_pointer_value) :
     ndM Bool String mem_error (mem_constraint impl_integer_value) impl_mem_state :=
   match i with
@@ -1414,7 +1428,8 @@ let rec integerTypes_of_ival ival =
 -/
 
 /- WIP -/
-def impl_eq_ptrval { a : Type } [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def impl_eq_ptrval { a : Type } [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : a)
     (ptr_val1 : impl_pointer_value) (ptr_val2 : impl_pointer_value) :
     ndM Bool String mem_error (mem_constraint impl_integer_value) impl_mem_state :=
@@ -1528,7 +1543,7 @@ def impl_eq_ptrval { a : Type } [LemFuel] (_lemReader_enum_definitions : Fmap sy
            (failwithI "WIP: Mem.eq_ptrval, not (Just alloc_id1, Just alloc_id2)" : ndM Bool String
              mem_error (mem_constraint impl_integer_value) impl_mem_state)))
 
-def silly_sh_eq [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def silly_sh_eq [LemFuel] [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (sh1 : List shift_path_element) (sh2 : List shift_path_element) :
     Option Bool :=
@@ -1570,7 +1585,7 @@ def silly_sh_eq [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
   | _, _ => some false
 
 /- TODO: more .... -/
-def impl_ne_ptrval { a b c d e : Type } [LemFuel] [Inhabited a]
+def impl_ne_ptrval { a b c d e : Type } [LemFuel] [CerbImplCfg.Impl] [Inhabited a]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : e)
     (i : impl_pointer_value) (i0 : impl_pointer_value) :
@@ -1600,7 +1615,8 @@ def impl_ne_ptrval { a b c d e : Type } [LemFuel] [Inhabited a]
            (String.append (CerbPP.stringFromPointer_value ptrval1)
              (String.append " <|> " (CerbPP.stringFromPointer_value ptrval2)))) : ndM Bool c d b a))
 
-def impl_lt_ptrval { a : Type } [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def impl_lt_ptrval { a : Type } [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : a)
     (ptrval1 : impl_pointer_value) (ptrval2 : impl_pointer_value) :
     ndM Bool String mem_error (mem_constraint impl_integer_value) impl_mem_state :=
@@ -1610,7 +1626,8 @@ def impl_lt_ptrval { a : Type } [LemFuel] (_lemReader_enum_definitions : Fmap sy
       ptrval2;
   condM "lt_ptrval" (mk_iv_constr MC_lt ival_1 ival_2)
 
-def impl_gt_ptrval { a : Type } [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def impl_gt_ptrval { a : Type } [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : a)
     (ptrval1 : impl_pointer_value) (ptrval2 : impl_pointer_value) :
     ndM Bool String mem_error (mem_constraint impl_integer_value) impl_mem_state :=
@@ -1620,7 +1637,8 @@ def impl_gt_ptrval { a : Type } [LemFuel] (_lemReader_enum_definitions : Fmap sy
       ptrval2;
   condM "gt_ptrval" (mk_iv_constr MC_lt ival_2 ival_1)
 
-def impl_le_ptrval { a : Type } [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def impl_le_ptrval { a : Type } [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : a)
     (ptrval1 : impl_pointer_value) (ptrval2 : impl_pointer_value) :
     ndM Bool String mem_error (mem_constraint impl_integer_value) impl_mem_state :=
@@ -1630,7 +1648,8 @@ def impl_le_ptrval { a : Type } [LemFuel] (_lemReader_enum_definitions : Fmap sy
       ptrval2;
   condM "le_ptrval" (mk_iv_constr MC_le ival_1 ival_2)
 
-def impl_ge_ptrval { a : Type } [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def impl_ge_ptrval { a : Type } [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : a)
     (ptrval1 : impl_pointer_value) (ptrval2 : impl_pointer_value) :
     ndM Bool String mem_error (mem_constraint impl_integer_value) impl_mem_state :=
@@ -1656,7 +1675,8 @@ expression P points one past the last element of the array object, even though
 the expression (Q)+1 does not point to an element of the array object.
 -/
 /- STD §6.5.6#9 -/
-def impl_diff_ptrval { a : Type } [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def impl_diff_ptrval { a : Type } [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (ty1 : a) (ptrval1 : impl_pointer_value) (ptrval2 : impl_pointer_value) :
     impl_memM impl_integer_value :=
@@ -1706,7 +1726,8 @@ def impl_diff_ptrval { a : Type } [LemFuel] (_lemReader_enum_definitions : Fmap 
         | () => "MerrPtrdiff 3")) (fun (_ : Unit) => defacto_fail loc1 MerrPtrdiff)
 
 /- TODO: looks too simple to be true -/
-def impl_intcast_ptrval [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def impl_intcast_ptrval [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (ref_ty : ctype) (ity : integerType) (i : impl_pointer_value) :
     ndM impl_integer_value String mem_error (mem_constraint impl_integer_value) impl_mem_state :=
@@ -1766,7 +1787,7 @@ def impl_eq_ival (i : impl_integer_value) (i0 : impl_integer_value) : Option Boo
      | IVconcrete n1, IVconcrete n2 => some (n1 == n2)
      | _, _ => none)
 
-def impl_lt_ival [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def impl_lt_ival [LemFuel] [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (i : impl_integer_value)
     (i0 : impl_integer_value) :
     Option Bool :=
@@ -1908,7 +1929,7 @@ theorem has_concurRead_lemFuel_zero (ival_ : integer_value_base) :
     has_concurRead_lemFuel 0 ival_ = (fuelExhausted false) :=
   rfl
 
-def impl_le_ival [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def impl_le_ival [LemFuel] [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (i : impl_integer_value)
     (i0 : impl_integer_value) :
     Option Bool :=
@@ -2199,7 +2220,7 @@ def get_allocation_size { a b c : Type } [LemFuel] (alloc_id : Nat) :
         integer_value_base b c a impl_mem_state))
 /- Decide whether a given pointer value can be use to perform a store -/
 
-def can_store [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def can_store [LemFuel] [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (i : impl_pointer_value) :
     ndM (Sum access_error Nat) String mem_error (mem_constraint impl_integer_value)
@@ -2284,7 +2305,7 @@ theorem find_array_index_lemFuel_zero (size : Nat) (i : Nat) (ival_ : integer_va
 /- TODO: bug HOL -- "failure in internal translation to tupled format" -/
 /- TODO: with temporary simplification -/
 
-def easy_update_mem_value_aux_lemFuel [LemFuel] (lemFuel : Nat)
+def easy_update_mem_value_aux_lemFuel [LemFuel] [CerbImplCfg.Impl] (lemFuel : Nat)
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (is_strong : Bool) (write_ty : ctype) (sh : List shift_path_element)
@@ -2477,14 +2498,15 @@ def easy_update_mem_value_aux_lemFuel [LemFuel] (lemFuel : Nat)
                   (failwithI "WIP: easy_update_mem_value_aux" : ndM impl_mem_value String mem_error
                     (mem_constraint impl_integer_value) impl_mem_state))))))))
 
-def easy_update_mem_value_aux [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def easy_update_mem_value_aux [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (is_strong : Bool) (write_ty : ctype) (sh : List shift_path_element)
     (write_mval : impl_mem_value) (current_mval : impl_mem_value) :
     impl_memM impl_mem_value :=
   easy_update_mem_value_aux_lemFuel (List.length sh + 1) _lemReader_enum_definitions
     _lemReader_tagDefs loc1 is_strong write_ty sh write_mval current_mval
-theorem easy_update_mem_value_aux_lemFuel_zero [LemFuel]
+theorem easy_update_mem_value_aux_lemFuel_zero [LemFuel] [CerbImplCfg.Impl]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (is_strong : Bool) (write_ty : ctype) (sh : List shift_path_element)
@@ -2497,7 +2519,8 @@ theorem easy_update_mem_value_aux_lemFuel_zero [LemFuel]
 
 /- TODO: bug HOL -- "failure in internal translation to tupled format" -/
 
-def easy_update_mem_value [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def easy_update_mem_value [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (is_strong : Bool)
     (w : write_event) (current_mval : impl_mem_value) :
     ndM impl_mem_value String mem_error (mem_constraint impl_integer_value) impl_mem_state :=
@@ -2528,7 +2551,8 @@ def easy_update_mem_value [LemFuel] (_lemReader_enum_definitions : Fmap sym inte
               (fun _ => nd_return ret))))))
 /- update the memory state with a write event for a given allocation id -/
 
-def register_write_event [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def register_write_event [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (alloc_id : Nat)
     (w0 : write_event) :
     ndM Unit String mem_error (mem_constraint impl_integer_value) impl_mem_state :=
@@ -2573,7 +2597,8 @@ def register_write_event [LemFuel] (_lemReader_enum_definitions : Fmap sym integ
             print_debugM 5 (fun (u : Unit) =>
               match u with
               | () => "EXITING register_write_event")))
-def perform_access { a : Type } [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def perform_access { a : Type } [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (accessKind : access_kind)
     (loc1 : CerbLocation.Loc) (lvalue_ty : ctype) (ptrval : impl_pointer_value)
     (do_normal : Nat → ndM a String mem_error (mem_constraint impl_integer_value) impl_mem_state)
@@ -2632,7 +2657,8 @@ def stringFromWrite_event (w : write_event) : String :=
             (String.append ") ==> ptrval= "
               (String.append (CerbPP.stringFromPointer_value ptrval)
                 (String.append "; mval= " (CerbPP.stringFromMem_value mval)))))))
-def ival_footprintFromWrite_event [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def ival_footprintFromWrite_event [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (w : write_event) :
     ndM (integer_value_base × integer_value_base) String mem_error
         (mem_constraint impl_integer_value) impl_mem_state :=
@@ -2645,7 +2671,7 @@ def ival_footprintFromWrite_event [LemFuel] (_lemReader_enum_definitions : Fmap 
             (mk_op_ival_ _lemReader_enum_definitions _lemReader_tagDefs) IntAdd ptr_ival_
               ((mk_op_ival_ _lemReader_enum_definitions _lemReader_tagDefs) IntSub (IVsizeof ty1)
                 (IVconcrete ((1 : Int))))))
-def isOccludedBy [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def isOccludedBy [LemFuel] [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (wevent1 : write_event)
     (wevent2 : write_event) :
     ndM Bool String mem_error (mem_constraint impl_integer_value) impl_mem_state :=
@@ -2674,7 +2700,8 @@ def anyM { a b c d e : Type } [LemFuel] (pred1 : e → ndM Bool c d b a) :
         | true => nd_return true
         | false => anyM pred1 xs)
 
-def discardOccluded_write_events [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def discardOccluded_write_events [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (view_ptrval : impl_pointer_value) (view_ty : ctype) (wevents : List write_event) :
     ndM (List write_event) String mem_error (mem_constraint impl_integer_value) impl_mem_state :=
@@ -2706,7 +2733,7 @@ def discardOccluded_write_events [LemFuel] (_lemReader_enum_definitions : Fmap s
                       | false => nd_return (wevent :: acc))))) ([] : List write_event) wevents)
 
 /- BEGIN ACCESS ================================================================================= -/
-def impl_load [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def impl_load [LemFuel] [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (lvalue_ty : ctype) (i : impl_pointer_value) :
     impl_memM (impl_footprint × impl_mem_value) :=
@@ -2822,7 +2849,7 @@ let impl_load_OLD ty (PV _ ptrval_ sh as ptrval) : impl_memM (impl_footprint * i
   end
 -/
 
-def impl_store [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def impl_store [LemFuel] [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
     (lvalue_ty : ctype) (is_locking : Bool) (ptrval : impl_pointer_value) (mval : impl_mem_value) :
     ndM impl_footprint String mem_error (mem_constraint impl_integer_value) impl_mem_state :=
@@ -2858,7 +2885,7 @@ def impl_memcpy { a b c d e : Type } [Inhabited a] (_ : b) (ptr_val1 : c) (ptr_v
   (failwithI "WIP: Symbolic memcpy" : a)
 /- BEGIN MEMCMP ================================================================================= -/
 
-def memcmp_load_aux_lemFuel [LemFuel] (lemFuel : Nat)
+def memcmp_load_aux_lemFuel [LemFuel] [CerbImplCfg.Impl] (lemFuel : Nat)
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (ptrval : impl_pointer_value) (offset : Int) (max_offset : Int) (acc : List impl_mem_value) :
@@ -2881,13 +2908,15 @@ def memcmp_load_aux_lemFuel [LemFuel] (lemFuel : Nat)
             (memcmp_load_aux_lemFuel lemFuel _lemReader_enum_definitions _lemReader_tagDefs) ptrval
               (offset + (1 : Int)) max_offset (mval :: acc)))
 
-def memcmp_load_aux [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def memcmp_load_aux [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (ptrval : impl_pointer_value) (offset : Int) (max_offset : Int) (acc : List impl_mem_value) :
     impl_memM (List impl_mem_value) :=
   memcmp_load_aux_lemFuel (Int.toNat (max_offset - offset) + 1) _lemReader_enum_definitions
     _lemReader_tagDefs ptrval offset max_offset acc
-theorem memcmp_load_aux_lemFuel_zero [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+theorem memcmp_load_aux_lemFuel_zero [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (ptrval : impl_pointer_value) (offset : Int) (max_offset : Int) (acc : List impl_mem_value) :
     memcmp_load_aux_lemFuel 0 _lemReader_enum_definitions _lemReader_tagDefs ptrval offset
@@ -2896,7 +2925,7 @@ theorem memcmp_load_aux_lemFuel_zero [LemFuel] (_lemReader_enum_definitions : Fm
           (NDkilled (Error0 CerbFuel.fuelExhaustedLoc CerbFuel.fuelExhaustedMsg), st))) :=
   rfl
 
-def memcmp_compare [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def memcmp_compare [LemFuel] [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (p : (impl_mem_value × impl_mem_value)) :
     impl_memM Int :=
@@ -2924,7 +2953,8 @@ def memcmp_compare [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType
        (failwithI "memcmp_compare" : ndM Int String mem_error (mem_constraint impl_integer_value)
          impl_mem_state))
 
-def fold_memcmp_compare [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def fold_memcmp_compare [LemFuel] [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (mvals1 : List impl_mem_value) (mvals2 : List impl_mem_value) (ord_acc : Int) :
     ndM Int String mem_error (mem_constraint impl_integer_value) impl_mem_state :=
@@ -2941,7 +2971,7 @@ def fold_memcmp_compare [LemFuel] (_lemReader_enum_definitions : Fmap sym intege
   else
     nd_return ord_acc
 
-def impl_memcmp [LemFuel] (_lemReader_enum_definitions : Fmap sym integerType)
+def impl_memcmp [LemFuel] [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
     (ptr_val1 : impl_pointer_value) (ptr_val2 : impl_pointer_value)
     (size_ival : impl_integer_value) :

@@ -4,6 +4,10 @@ import Core_run
 import Core_reduction
 import Core_eval
 import Core_aux_lemMeasureProofs
+import CerbImplCfg
+
+local instance : CerbImplCfg.Impl := ⟨CerbImplCfg.cerberusDefault⟩
+
 
 /-! # MatchPatternArityTest — kernel facts for cerberus-sl hidden-state note item 7
 

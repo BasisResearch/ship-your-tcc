@@ -2,6 +2,7 @@
 
 import LemLib
 
+import CerbImplCfg
 import CerbDebug
 import CerberusFresh
 import CerbCtypeMeasure
@@ -486,7 +487,7 @@ instance (priority := 500) : Lem_Basic_classes.Ord0 integer_type_match where
     | .lt => false
     | _ => true
 
-def match_integer_ctype (_lemReader_enum_definitions : Fmap sym integerType)
+def match_integer_ctype [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (c : ctype) :
     integer_type_match :=
   match c with

@@ -1,0 +1,82 @@
+(* LEAN-ONLY lem module: the implementation-defined parameters as an
+   instance-implicit parameter (ship-your-tcc F1, DESIGN-COMPILER.md §3.3,
+   `cfgTcc`). The lean_switches.lem mechanism, unchanged: in the Lean
+   generation list only (Makefile LEM_SRC_LEAN_ONLY), so the generated OCaml
+   is untouched; `declare` statements emit nothing.
+
+   `impl_params` is an instance reader: a read emits the projection
+   `CerbImplCfg.Impl.params` (the record CerbImplCfg.Params: char
+   signedness, integer/pointer sizes and alignments, the three real floating
+   types' formats/sizes/alignments, max alignment, the enum and bit-field
+   rules), and every definition that transitively calls one of the consumers
+   below binds `[CerbImplCfg.Impl]`. The consumers are the target_rep'd vals
+   whose hand-written Lean bodies (CerberusImpl.lean, CerbMem.lean) read the
+   parameters; their call sites are unchanged. No lem code reads
+   `impl_params ()` directly.
+
+   OCaml counterpart: `Ocaml_implementation.get ()` (the DefaultImpl record),
+   which this fork's `CerbImplCfg.cerberusDefault` reproduces. *)
+
+open import Pervasives
+import Implementation Mem Builtins
+
+type impl_params
+declare lean target_rep type impl_params = `CerbImplCfg.Params`
+
+val impl_params : unit -> impl_params
+(* target coverage: the projection itself (what the instance reader emits at
+   a read); it typechecks only where a `[CerbImplCfg.Impl]` instance is in
+   scope *)
+declare lean target_rep function impl_params u = `CerbImplCfg.Impl.params`
+declare {lean} reader val impl_params = instance `CerbImplCfg.Impl.params`
+
+(* implementation.lem: the layout and signedness reps (CerberusImpl.lean) *)
+declare {lean} reader_consumer val Implementation.max_alignment = instance impl_params
+declare {lean} reader_consumer val Implementation.sizeof_fty = instance impl_params
+declare {lean} reader_consumer val Implementation.alignof_fty = instance impl_params
+declare {lean} reader_consumer val Implementation.is_signed_ity_norm = instance impl_params
+declare {lean} reader_consumer val Implementation.sizeof_ity_norm = instance impl_params
+declare {lean} reader_consumer val Implementation.precision_ity_norm = instance impl_params
+declare {lean} reader_consumer val Implementation.alignof_ity_norm = instance impl_params
+declare {lean} reader_consumer val Implementation.alignof_ty = instance impl_params
+declare {lean} reader_consumer val Implementation.enum_compatible_type = instance impl_params
+
+(* mem.lem: the memory interface vals whose CerbMem.lean bodies consult a
+   size, an alignment, a signedness or a floating format *)
+declare {lean} reader_consumer val Mem.allocate_object = instance impl_params
+declare {lean} reader_consumer val Mem.kill = instance impl_params
+declare {lean} reader_consumer val Mem.load = instance impl_params
+declare {lean} reader_consumer val Mem.store = instance impl_params
+declare {lean} reader_consumer val Mem.lt_ptrval = instance impl_params
+declare {lean} reader_consumer val Mem.gt_ptrval = instance impl_params
+declare {lean} reader_consumer val Mem.le_ptrval = instance impl_params
+declare {lean} reader_consumer val Mem.ge_ptrval = instance impl_params
+declare {lean} reader_consumer val Mem.diff_ptrval = instance impl_params
+declare {lean} reader_consumer val Mem.validForDeref_ptrval = instance impl_params
+declare {lean} reader_consumer val Mem.isWellAligned_ptrval = instance impl_params
+declare {lean} reader_consumer val Mem.ptrfromint = instance impl_params
+declare {lean} reader_consumer val Mem.intfromptr = instance impl_params
+declare {lean} reader_consumer val Mem.array_shift_ptrval = instance impl_params
+declare {lean} reader_consumer val Mem.member_shift_ptrval = instance impl_params
+declare {lean} reader_consumer val Mem.eff_array_shift_ptrval = instance impl_params
+declare {lean} reader_consumer val Mem.eff_member_shift_ptrval = instance impl_params
+declare {lean} reader_consumer val Mem.memcpy = instance impl_params
+declare {lean} reader_consumer val Mem.memcmp = instance impl_params
+declare {lean} reader_consumer val Mem.realloc = instance impl_params
+declare {lean} reader_consumer val Mem.va_copy = instance impl_params
+declare {lean} reader_consumer val Mem.va_arg = instance impl_params
+declare {lean} reader_consumer val Mem.va_end = instance impl_params
+declare {lean} reader_consumer val Mem.va_list = instance impl_params
+declare {lean} reader_consumer val Mem.copy_alloc_id = instance impl_params
+declare {lean} reader_consumer val Mem.concurRead_ival = instance impl_params
+declare {lean} reader_consumer val Mem.max_ival = instance impl_params
+declare {lean} reader_consumer val Mem.min_ival = instance impl_params
+declare {lean} reader_consumer val Mem.op_ival = instance impl_params
+declare {lean} reader_consumer val Mem.offsetof_ival = instance impl_params
+declare {lean} reader_consumer val Mem.sizeof_ival = instance impl_params
+declare {lean} reader_consumer val Mem.alignof_ival = instance impl_params
+declare {lean} reader_consumer val Mem.bitwise_and_ival = instance impl_params
+declare {lean} reader_consumer val Mem.bitwise_or_ival = instance impl_params
+declare {lean} reader_consumer val Mem.bitwise_xor_ival = instance impl_params
+
+declare {lean} reader_consumer val Builtins.translate_errno = instance impl_params

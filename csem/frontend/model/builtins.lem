@@ -86,7 +86,7 @@ end
 (* errno.h, the values are chosen arbitrarily *)
 (* NOTE: this is used by the driver *)
 val translate_errno: string -> integer
-let translate_errno = function
+let translate_errno name = match name with
   | "__cerbvar_EDOM"            -> 1
   | "__cerbvar_EILSEQ"          -> 2
   | "__cerbvar_ERANGE"          -> 3
@@ -170,6 +170,8 @@ let translate_errno = function
   | "__cerbvar_EXDEV"           -> 81
   | str -> error $ "Unknown errno code: " ^ str
 end
+
+declare lean target_rep function translate_errno = `CerberusImpl.translate_errno`
 
 val encode_memory_order: Cmm_csem.memory_order -> integer
 let encode_memory_order  = function

@@ -1151,13 +1151,13 @@ mutual
 
 -- Pexpr helpers (only those called from pPexprAtom dispatch)
 
-private partial def pPexprParen : P PE := do
+private partial def pPexprParen [CerbImplCfg.Impl] : P PE := do
   lexSym "("
   let pe ← pPexpr
   lexSym ")"
   return pe
 
-private partial def pPexprMinus : P PE := do
+private partial def pPexprMinus [CerbImplCfg.Impl] : P PE := do
   lexSym "-"
   -- Zero-discrepancy Z2-CP-01: `-inf` / `-nan` are single float VALUES in the
   -- pp's output (`string_of_float neg_infinity` = "-inf"), not `0 - inf`.
@@ -1179,7 +1179,7 @@ private partial def pPexprMinus : P PE := do
   let pe ← pPexprPrec 5
   return (mkPE (PEop OpSub (mkPE (PEval (Vobject (OVinteger (CerbMem.integerIval 0))))) pe))
 
-private partial def pPexprStruct : P PE := do
+private partial def pPexprStruct [CerbImplCfg.Impl] : P PE := do
   lexSym "("
   lexKw "struct"
   let s ← lexSymId
@@ -1194,7 +1194,7 @@ private partial def pPexprStruct : P PE := do
   lexSym "}"
   return (mkPE (PEstruct s mems))
 
-private partial def pPexprUnion : P PE := do
+private partial def pPexprUnion [CerbImplCfg.Impl] : P PE := do
   lexSym "("
   lexKw "union"
   let s ← lexSymId
@@ -1214,7 +1214,7 @@ private partial def pPexprListEmpty : P PE := do
   let innerBTy := ensureListBTy bTy
   return (mkPE (PEctor (Cnil innerBTy) []))
 
-private partial def pPexprListLiteral : P PE := do
+private partial def pPexprListLiteral [CerbImplCfg.Impl] : P PE := do
   lexSym "["
   let pes ← sepByComma pPexpr
   lexSym "]"
@@ -1223,7 +1223,7 @@ private partial def pPexprListLiteral : P PE := do
   let innerBTy := ensureListBTy bTy
   return (mkListPE innerBTy pes)
 
-private partial def pPexprTuple : P PE := do
+private partial def pPexprTuple [CerbImplCfg.Impl] : P PE := do
   lexSym "("
   let first ← pPexpr
   lexSym ","
@@ -1239,13 +1239,13 @@ private partial def pPexprTuple : P PE := do
     is not recoverable from the text; we record BTy_unit in the Cnil —
     consumers never read it (match_pattern ignores the Cnil/Vlist type
     arguments, core_aux.lem:2028-2035, 2426-2429). -/
-private partial def pPexprListNoAnnot : P PE := do
+private partial def pPexprListNoAnnot [CerbImplCfg.Impl] : P PE := do
   lexSym "["
   let pes ← sepByComma pPexpr
   lexSym "]"
   return (mkListPE BTy_unit pes)
 
-partial def pPexprAtom (minPrec : Nat := 0) : P PE := do
+partial def pPexprAtom [CerbImplCfg.Impl] (minPrec : Nat := 0) : P PE := do
   -- Dispatch on first character to avoid trying all alternatives
   let c ← peek?
   match c with
@@ -1599,7 +1599,7 @@ above). -/
 
 /-- Parse `cond then e1 else e2` after the `if` keyword; `bounded`
     restricts the branches to atoms (see the ambiguity note above). -/
-private partial def pPexprIfTail (bounded : Bool) : P PE := do
+private partial def pPexprIfTail [CerbImplCfg.Impl] (bounded : Bool) : P PE := do
   let pe1 ← pPexprCondChain
   lexKw "then"
   let pe2 ← if bounded then pPexprPrec 8 else pPexpr
@@ -1609,13 +1609,13 @@ private partial def pPexprIfTail (bounded : Bool) : P PE := do
 
 /-- Parse an if-condition: a leading `if` atom is the promotion wrapper
     (operand-bounded), continued by the ordinary binop chain. -/
-private partial def pPexprCondChain : P PE := do
+private partial def pPexprCondChain [CerbImplCfg.Impl] : P PE := do
   match ← attempt (some <$> (do lexKw "if"; pPexprIfTail true)) <|> pure none with
   | some lhs => pPexprBinopLoop lhs 0
   | none => pPexpr
 
 /-- Binop / cons precedence-climbing loop continuing from a parsed lhs. -/
-private partial def pPexprBinopLoop (lhs0 : PE) (minPrec : Nat) : P PE := do
+private partial def pPexprBinopLoop [CerbImplCfg.Impl] (lhs0 : PE) (minPrec : Nat) : P PE := do
   let mut lhs := lhs0
   while true do
     -- Phase 1: try to match operator with sufficient precedence (with backtracking)
@@ -1650,12 +1650,12 @@ private partial def pPexprBinopLoop (lhs0 : PE) (minPrec : Nat) : P PE := do
   return lhs
 
 /-- Precedence climbing parser for binary operators and :: cons. -/
-private partial def pPexprPrec (minPrec : Nat) : P PE := do
+private partial def pPexprPrec [CerbImplCfg.Impl] (minPrec : Nat) : P PE := do
   let lhs ← pPexprAtom minPrec
   pPexprBinopLoop lhs minPrec
 
 /-- Parse a pure expression with full operator precedence. -/
-partial def pPexpr : P PE := pPexprPrec 0
+partial def pPexpr [CerbImplCfg.Impl] : P PE := pPexprPrec 0
 
 end
 
@@ -1665,7 +1665,7 @@ mutual
 
 -- Action helpers
 
-private partial def pActionCreate : P Act := do
+private partial def pActionCreate [CerbImplCfg.Impl] : P Act := do
   lexKw "create"
   lexSym "("
   let pe1 ← pPexpr
@@ -1674,7 +1674,7 @@ private partial def pActionCreate : P Act := do
   lexSym ")"
   return (Create pe1 pe2 (PrefOther "Core"))
 
-private partial def pActionCreateReadOnly : P Act := do
+private partial def pActionCreateReadOnly [CerbImplCfg.Impl] : P Act := do
   lexKw "create_readonly"
   lexSym "("
   let pe1 ← pPexpr
@@ -1685,7 +1685,7 @@ private partial def pActionCreateReadOnly : P Act := do
   lexSym ")"
   return (CreateReadOnly pe1 pe2 pe3 (PrefOther "Core"))
 
-private partial def pActionAlloc : P Act := do
+private partial def pActionAlloc [CerbImplCfg.Impl] : P Act := do
   lexKw "alloc"
   lexSym "("
   let pe1 ← pPexpr
@@ -1694,14 +1694,14 @@ private partial def pActionAlloc : P Act := do
   lexSym ")"
   return (Alloc0 pe1 pe2 (PrefOther "Core"))
 
-private partial def pActionFree : P Act := do
+private partial def pActionFree [CerbImplCfg.Impl] : P Act := do
   lexKw "free"
   lexSym "("
   let pe ← pPexpr
   lexSym ")"
   return (Kill Dynamic0 pe)
 
-private partial def pActionKill : P Act := do
+private partial def pActionKill [CerbImplCfg.Impl] : P Act := do
   lexKw "kill"
   lexSym "("
   let ct ← pCoreCtype
@@ -1710,7 +1710,7 @@ private partial def pActionKill : P Act := do
   lexSym ")"
   return (Kill (Static0 ct) pe)
 
-private partial def pActionStore : P Act := do
+private partial def pActionStore [CerbImplCfg.Impl] : P Act := do
   lexKw "store"
   lexSym "("
   let pe1 ← pPexpr
@@ -1722,7 +1722,7 @@ private partial def pActionStore : P Act := do
   lexSym ")"
   return (Store0 false pe1 pe2 pe3 mo)
 
-private partial def pActionStoreLock : P Act := do
+private partial def pActionStoreLock [CerbImplCfg.Impl] : P Act := do
   lexKw "store_lock"
   lexSym "("
   let pe1 ← pPexpr
@@ -1734,7 +1734,7 @@ private partial def pActionStoreLock : P Act := do
   lexSym ")"
   return (Store0 true pe1 pe2 pe3 mo)
 
-private partial def pActionLoad : P Act := do
+private partial def pActionLoad [CerbImplCfg.Impl] : P Act := do
   lexKw "load"
   lexSym "("
   let pe1 ← pPexpr
@@ -1744,7 +1744,7 @@ private partial def pActionLoad : P Act := do
   lexSym ")"
   return (Load0 pe1 pe2 mo)
 
-private partial def pActionSeqRMW : P Act := do
+private partial def pActionSeqRMW [CerbImplCfg.Impl] : P Act := do
   lexKw "seq_rmw"
   lexSym "("
   let pe1 ← pPexpr
@@ -1764,7 +1764,7 @@ private partial def pActionSeqRMW : P Act := do
   -- with seq_rmw exists in no corpus.
   return (SeqRMW false pe1 pe2 s pe3)
 
-private partial def pActionSeqRMWForward : P Act := do
+private partial def pActionSeqRMWForward [CerbImplCfg.Impl] : P Act := do
   lexKw "seq_rmw_with_forward"
   lexSym "("
   let pe1 ← pPexpr
@@ -1777,7 +1777,7 @@ private partial def pActionSeqRMWForward : P Act := do
   lexSym ")"
   return (SeqRMW true pe1 pe2 s pe3)
 
-private partial def pActionRMW : P Act := do
+private partial def pActionRMW [CerbImplCfg.Impl] : P Act := do
   lexKw "rmw"
   lexSym "("
   let pe1 ← pPexpr
@@ -1802,7 +1802,7 @@ private partial def pActionFence : P Act := do
   return (Fence0 mo)
 
 /-- Parse a memory action. -/
-private partial def pAction : P Act := do
+private partial def pAction [CerbImplCfg.Impl] : P Act := do
   -- Peek at first char to narrow alternatives
   let c ← peek?
   match c with
@@ -1816,7 +1816,7 @@ private partial def pAction : P Act := do
   | _ => fail "expected action keyword"
 
 /-- Parse a paction (action with polarity). -/
-private partial def pPaction : P PAct :=
+private partial def pPaction [CerbImplCfg.Impl] : P PAct :=
       (attempt (do
         let startB ← getByte
         lexKw "neg"
@@ -1838,20 +1838,20 @@ private partial def pPaction : P PAct :=
 
 -- Expr helpers
 
-private partial def pExprParen : P Expr' := do
+private partial def pExprParen [CerbImplCfg.Impl] : P Expr' := do
   lexSym "("
   let e ← pExpr
   lexSym ")"
   return e
 
-private partial def pExprPure : P Expr' := do
+private partial def pExprPure [CerbImplCfg.Impl] : P Expr' := do
   lexKw "pure"
   lexSym "("
   let pe ← pPexpr
   lexSym ")"
   return (mkE (Epure pe))
 
-private partial def pExprMemop : P Expr' := do
+private partial def pExprMemop [CerbImplCfg.Impl] : P Expr' := do
   lexKw "memop"
   lexSym "("
   let memop ← pMemopOp
@@ -1860,7 +1860,7 @@ private partial def pExprMemop : P Expr' := do
   lexSym ")"
   return (mkE (Ememop memop pes))
 
-private partial def pExprLet : P Expr' := do
+private partial def pExprLet [CerbImplCfg.Impl] : P Expr' := do
   lexKw "let"
   let pat ← pPattern
   lexSym "="
@@ -1869,7 +1869,7 @@ private partial def pExprLet : P Expr' := do
   let e ← pExpr
   return (mkE (Elet pat pe e))
 
-private partial def pExprLetWeak : P Expr' := do
+private partial def pExprLetWeak [CerbImplCfg.Impl] : P Expr' := do
   lexKw "let"
   lexKw "weak"
   let pat ← pPattern
@@ -1879,7 +1879,7 @@ private partial def pExprLetWeak : P Expr' := do
   let e2 ← pExpr
   return (mkE (Ewseq pat e1 e2))
 
-private partial def pExprLetStrong : P Expr' := do
+private partial def pExprLetStrong [CerbImplCfg.Impl] : P Expr' := do
   lexKw "let"
   lexKw "strong"
   let pat ← pPattern
@@ -1889,7 +1889,7 @@ private partial def pExprLetStrong : P Expr' := do
   let e2 ← pExpr
   return (mkE (Esseq pat e1 e2))
 
-private partial def pExprIf : P Expr' := do
+private partial def pExprIf [CerbImplCfg.Impl] : P Expr' := do
   lexKw "if"
   let pe ← pPexpr
   lexKw "then"
@@ -1898,7 +1898,7 @@ private partial def pExprIf : P Expr' := do
   let e3 ← pExpr
   return (mkE (Eif pe e2 e3))
 
-private partial def pExprCase : P Expr' := do
+private partial def pExprCase [CerbImplCfg.Impl] : P Expr' := do
   lexKw "case"
   let pe ← pPexpr
   lexKw "of"
@@ -1910,7 +1910,7 @@ private partial def pExprCase : P Expr' := do
   lexKw "end"
   return (mkE (Ecase pe pairs.toList))
 
-private partial def pExprPcall : P Expr' := do
+private partial def pExprPcall [CerbImplCfg.Impl] : P Expr' := do
   lexKw "pcall"
   lexSym "("
   let nm ← pName
@@ -1919,7 +1919,7 @@ private partial def pExprPcall : P Expr' := do
   lexSym ")"
   return (mkE (Eproc () nm pes))
 
-private partial def pExprCcall : P Expr' := do
+private partial def pExprCcall [CerbImplCfg.Impl] : P Expr' := do
   lexKw "ccall"
   lexSym "("
   let peTy ← pPexpr
@@ -1929,21 +1929,21 @@ private partial def pExprCcall : P Expr' := do
   lexSym ")"
   return (mkE (Eccall () peTy pe pes))
 
-private partial def pExprUnseq : P Expr' := do
+private partial def pExprUnseq [CerbImplCfg.Impl] : P Expr' := do
   lexKw "unseq"
   lexSym "("
   let es ← sepByComma pExpr
   lexSym ")"
   return (mkE (Eunseq es))
 
-private partial def pExprBound : P Expr' := do
+private partial def pExprBound [CerbImplCfg.Impl] : P Expr' := do
   lexKw "bound"
   lexSym "("
   let e ← pExpr
   lexSym ")"
   return (mkE (Ebound e))
 
-private partial def pExprSave : P Expr' := do
+private partial def pExprSave [CerbImplCfg.Impl] : P Expr' := do
   lexKw "save"
   let s ← lexSymId
   lexSym ":"
@@ -1961,7 +1961,7 @@ private partial def pExprSave : P Expr' := do
   let e ← pExpr
   return (mkE (Esave (s, bTy) xs e))
 
-private partial def pExprRun : P Expr' := do
+private partial def pExprRun [CerbImplCfg.Impl] : P Expr' := do
   lexKw "run"
   let s ← lexSymId
   lexSym "("
@@ -1969,21 +1969,21 @@ private partial def pExprRun : P Expr' := do
   lexSym ")"
   return (mkE (Erun () s pes))
 
-private partial def pExprNd : P Expr' := do
+private partial def pExprNd [CerbImplCfg.Impl] : P Expr' := do
   lexKw "nd"
   lexSym "("
   let es ← sepByComma pExpr
   lexSym ")"
   return (mkE (End es))
 
-private partial def pExprPar : P Expr' := do
+private partial def pExprPar [CerbImplCfg.Impl] : P Expr' := do
   lexKw "par"
   lexSym "("
   let es ← sepByComma pExpr
   lexSym ")"
   return (mkE (Epar es))
 
-private partial def pExprNeg : P Expr' := do
+private partial def pExprNeg [CerbImplCfg.Impl] : P Expr' := do
   let startB ← getByte
   lexKw "neg"
   lexSym "("
@@ -1993,11 +1993,11 @@ private partial def pExprNeg : P Expr' := do
   lexWs
   return (mkE (Eaction (Paction Neg0 (Action (markerLoc startB endB) () act))))   -- .mly:1745-1746, spans `neg ( … )`
 
-private partial def pExprAction : P Expr' := do
+private partial def pExprAction [CerbImplCfg.Impl] : P Expr' := do
   let pact ← pPaction
   return (mkE (Eaction pact))
 
-private partial def pExprAtom : P Expr' := do
+private partial def pExprAtom [CerbImplCfg.Impl] : P Expr' := do
   -- First-char dispatch to reduce attempt chains
   let c ← peek?
   match c with
@@ -2048,7 +2048,7 @@ structure agree by construction). Hand-written std.core has zero `;`
 sequencing; the readings differ only on hand-written Core. -/
 
 -- Handle semicolon sequencing: e1 ; e2 (layout rule above)
-private partial def pExprSeq (startCol : Nat) (lhs : Expr') : P Expr' := do
+private partial def pExprSeq [CerbImplCfg.Impl] (startCol : Nat) (lhs : Expr') : P Expr' := do
   let seq ← attempt (do
       lexSym ";"
       let c ← getCol
@@ -2060,7 +2060,7 @@ private partial def pExprSeq (startCol : Nat) (lhs : Expr') : P Expr' := do
   else return lhs
 
 /-- Parse an effectful expression. -/
-partial def pExpr : P Expr' := do
+partial def pExpr [CerbImplCfg.Impl] : P Expr' := do
   let col ← getCol
   let lhs ← pExprAtom
   pExprSeq col lhs
@@ -2120,7 +2120,7 @@ private partial def pDefFields : P (List (identifier × (attributes × Option al
   | _ => return (fields, none)
 
 /-- Parse a fun declaration. -/
-private partial def pFunDecl : P Decl := do
+private partial def pFunDecl [CerbImplCfg.Impl] : P Decl := do
   lexKw "fun"
   -- Check if this is an impl fun (next token is <...>)
   let c? ← peek?
@@ -2158,7 +2158,7 @@ private partial def pFunDecl : P Decl := do
     pairs; consumed by `hasAilname` :48-52, which takes the HEAD attribute,
     at Proc_decl symbolification :1037-1041). Spacing like `ailname= "x"`
     (std.core:398) is tolerated because lexing skips whitespace. -/
-private partial def pProcDecl : P Decl := do
+private partial def pProcDecl [CerbImplCfg.Impl] : P Decl := do
   lexKw "proc"
   -- optional attributes
   let attrs ← (attempt (do
@@ -2228,7 +2228,7 @@ private partial def pDefUnion : P Decl := do
   return (Decl.tagDecl tag (loc0, UnionDef fields))
 
 /-- Parse a def declaration (impl constant or struct/union). -/
-private partial def pDefDecl : P Decl := do
+private partial def pDefDecl [CerbImplCfg.Impl] : P Decl := do
   lexKw "def"
   -- Check what follows: <impl>, struct, union
   let c? ← peek?
@@ -2247,7 +2247,7 @@ private partial def pDefDecl : P Decl := do
     (attempt pDefStruct) <|> pDefUnion
 
 /-- Parse a glob declaration. -/
-private partial def pGlobDecl : P Decl := do
+private partial def pGlobDecl [CerbImplCfg.Impl] : P Decl := do
   lexKw "glob"
   let s ← lexSymId
   lexSym ":"
@@ -2275,7 +2275,7 @@ private partial def pBuiltinDecl : P Decl := do
   return (Decl.builtinDecl s (BuiltinDecl loc0 bTy paramTys))
 
 /-- Parse a single top-level declaration. -/
-private partial def pDeclaration : P Decl :=
+private partial def pDeclaration [CerbImplCfg.Impl] : P Decl :=
       (attempt pFunDecl)
   <|> (attempt pProcDecl)
   <|> (attempt pDefDecl)
@@ -2302,7 +2302,7 @@ structure CoreFile where
   ailnames : List (String × sym) := []
 
 /-- Recursive declaration loop — errors propagate immediately (no while-loop swallowing). -/
-private partial def pCoreFileGo (result : CoreFile) : P CoreFile := do
+private partial def pCoreFileGo [CerbImplCfg.Impl] (result : CoreFile) : P CoreFile := do
   lexWs
   match ← peek? with
   | none => return result  -- EOF
@@ -2338,7 +2338,7 @@ private partial def pCoreFileGo (result : CoreFile) : P CoreFile := do
     `start: decls= nonempty_list(declaration) EOF` — an EMPTY input is a
     Parser.Error on the oracle (zero-discrepancy Z2-CP-11: this returned an
     empty CoreFile). -/
-private partial def pCoreFile : P CoreFile := do
+private partial def pCoreFile [CerbImplCfg.Impl] : P CoreFile := do
   let cf ← pCoreFileGo {}
   if cf.funs.isEmpty && cf.procs.isEmpty && cf.impls.isEmpty && cf.tagDefs.isEmpty
       && cf.globs.isEmpty && cf.builtins.isEmpty then
@@ -2459,7 +2459,7 @@ private def scanHashCollisions (input : String) : Option (String × String) :=
     Fails if parsing produces an error (an EMPTY file is a parse error,
     Z2-CP-11). FAIL-STOPS (arc-14 F3, sem:G6) if the input contains two
     distinct hash-colliding identifiers — see the tripwire note above. -/
-private def parseRaw (input : String) : Except String CoreFile :=
+private def parseRaw [CerbImplCfg.Impl] (input : String) : Except String CoreFile :=
   match scanHashCollisions input with
   | some (a, b) =>
     .error s!"SYMBOL-HASH COLLISION (fail-stop): distinct Core identifiers '{a}' and '{b}' share String.hash {a.hash}; CoreParser symbol identity (mkSym) would silently conflate them (arc-14 F3 tripwire, cf. the CERB_FRESH_BASE floor probe)"
@@ -2704,7 +2704,7 @@ def stampLibraryFile (file : String) (input : String) (cf : CoreFile) : CoreFile
     unit tests): every parse-time position marker is erased to
     `Loc.unknown`, so these nodes print and classify exactly as before the
     Z-01 Pos row (`relocFile`'s `lib := none`). -/
-def parseFile (input : String) : Except String CoreFile :=
+def parseFile [CerbImplCfg.Impl] (input : String) : Except String CoreFile :=
   (parseRaw input).map (relocFile { lib := none })
 
 /-- Parse a LIBRARY `.core`/`.impl` file loaded from `file` (the runtime
@@ -2713,11 +2713,11 @@ def parseFile (input : String) : Except String CoreFile :=
     exact (line, column) on the `PEundef` and `Action` nodes (the two
     behaviour-bearing node classes, Z-01 Pos row), file-only on the rest
     (the section comment). -/
-def parseLibraryFile (file : String) (input : String) : Except String CoreFile :=
+def parseLibraryFile [CerbImplCfg.Impl] (file : String) (input : String) : Except String CoreFile :=
   (parseRaw input).map (stampLibraryFile file input)
 
 /-- Parse a .core file and return a human-readable summary. -/
-def parseFileSummary (input : String) : Except String String :=
+def parseFileSummary [CerbImplCfg.Impl] (input : String) : Except String String :=
   match parseFile input with
   | .ok cf =>
     let nFun := cf.funs.length

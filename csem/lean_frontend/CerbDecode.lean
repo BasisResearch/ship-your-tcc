@@ -56,7 +56,7 @@ def decode_integer_constant (str : String) : basis × Int :=
     (always non-negative) remainder, = Lean's Int.emod — then subtracts
     the modulus when r > max. E.g. '\xFF' → 255 → -1 (survey finding 26;
     previously the wrap was missing entirely). -/
-private def wrapChar (n : Int) : Int :=
+private def wrapChar [CerbImplCfg.Impl] (n : Int) : Int :=
   -- decode.ml:204-210: the range is READ from the implementation record —
   -- `if impl.is_signed_ity Ctype.Char then (-(2^(8-1)), 2^(8-1)-1) else
   -- (0, 2^8-1)`; routed through the same CerberusImpl mirror here
@@ -153,7 +153,7 @@ private def decode_character_constant_aux (str : String) : Int :=
 /-- Decode a C character constant string to its integer value (ASCII).
     Corresponds to: Decode.decode_character_constant in decode.ml:201-219
     — the aux decode followed by the final wrapI (decode.ml:219). -/
-def decode_character_constant (str : String) : Int :=
+def decode_character_constant [CerbImplCfg.Impl] (str : String) : Int :=
   wrapChar (decode_character_constant_aux str)
 
 /-- Escape a character for display — used by formatted.lem's
