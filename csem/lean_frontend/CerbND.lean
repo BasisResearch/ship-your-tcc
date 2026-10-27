@@ -377,8 +377,8 @@ that used to read `X = X_lemFuel CerbFuel.driverFuel` is the instance
 theorem driver2_wrapper_defeq [CerbImplCfg.Impl] (n : Nat) (sws : CerbGlobal.Switches) :
     @driver2 ⟨n⟩ _ sws = @driver2_lemFuel ⟨n⟩ _ sws n := rfl
 
-theorem print_eval_conv_aux_wrapper_defeq (n : Nat) :
-    @print_eval_conv_aux ⟨n⟩ = @print_eval_conv_aux_lemFuel ⟨n⟩ n := rfl
+theorem print_eval_conv_aux_wrapper_defeq [CerbImplCfg.Impl] (n : Nat) :
+    @print_eval_conv_aux ⟨n⟩ _ = @print_eval_conv_aux_lemFuel ⟨n⟩ _ n := rfl
 
 theorem drive_nonmemory_steps_aux2_wrapper_defeq [CerbImplCfg.Impl] (n : Nat) (sws : CerbGlobal.Switches) :
     @drive_nonmemory_steps_aux2 ⟨n⟩ _ sws = @drive_nonmemory_steps_aux2_lemFuel ⟨n⟩ _ sws n := rfl

@@ -5,7 +5,7 @@ set_option autoImplicit false
 namespace TranslationFuelTest
 
 -- Fresh-symbol operations receive the translation unit digest explicitly.
-variable [CerberusFresh.Digest]
+variable [CerberusFresh.Digest] [CerbImplCfg.Impl]
 
 -- The measured wrappers use data-derived fuel, with no ambient instance.
 example (enums : Fmap sym integerType)

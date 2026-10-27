@@ -1,0 +1,13 @@
+
+c/build/base.elf:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+00000000800007f4 <_exit>:
+    800007f4:	02051713          	slli	a4,a0,0x20
+    800007f8:	01f75793          	srli	a5,a4,0x1f
+    800007fc:	0017e793          	ori	a5,a5,1
+    80000800:	0007c717          	auipc	a4,0x7c
+    80000804:	30f73023          	sd	a5,768(a4) # 8007cb00 <tohost>
+    80000808:	0000006f          	j	80000808 <_exit+0x14>

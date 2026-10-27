@@ -125,10 +125,9 @@ inductive Verdict where
 them (`runPipeline`: `CoreParser.parseLibraryFile`, `loadCoreStdlib`,
 `loadCoreImpl`). -/
 def stdlib (cfg : Config) : Except String ((Fmap String sym × fun_map Unit) × impl) := do
-  letI : CerbImplCfg.Impl := ⟨cfg.implementation⟩
   let lib := filenameConcat cfg.runtime "libcore"
-  let std ← CoreParser.parseLibraryFile (filenameConcat lib "std.core") cfg.stdCore
-  let imp ← CoreParser.parseLibraryFile
+  let std ← @CoreParser.parseLibraryFile ⟨cfg.implementation⟩ (filenameConcat lib "std.core") cfg.stdCore
+  let imp ← @CoreParser.parseLibraryFile ⟨cfg.implementation⟩
     (filenameConcat (filenameConcat lib "impls") cfg.implFileName) cfg.implFile
   pure (loadCoreStdlib std, loadCoreImpl imp)
 

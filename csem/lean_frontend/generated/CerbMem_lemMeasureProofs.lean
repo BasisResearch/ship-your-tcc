@@ -445,7 +445,7 @@ theorem pot_mkArray (c : ctype) :
 
 /-- Stability of the five layout workers above their potentials: one joint
     strong induction on the bound `k` (the C2/C3 template, five parts). -/
-theorem layout_stable_aux
+theorem layout_stable_aux [CerbImplCfg.Impl]
     (hR : Ranked (lookup tagDefs) (lookup ambient) R)
     (hLS : ∀ t v, lookup tagDefs t = some v → v ∈ L) (hLU : ∀ t v, lookup ambient t = some v → v ∈ L)
     (k : Nat) :

@@ -82,9 +82,9 @@ example : sizeof_ity eU t (.Signed (.IntN_t 128)) = some 16 := by rfl   -- fail-
 
 /-! ## GCC's rule, in lem -/
 
-example : enum_compatible_type [0, 1] = .Unsigned .Int_ := rfl
-example : enum_compatible_type [-1, 1] = .Signed .Int_ := rfl
-example : enum_compatible_type [] = .Unsigned .Int_ := rfl
+example : CerberusImpl.enum_compatible_type [0, 1] = .Unsigned .Int_ := rfl
+example : CerberusImpl.enum_compatible_type [-1, 1] = .Signed .Int_ := rfl
+example : CerberusImpl.enum_compatible_type [] = .Unsigned .Int_ := rfl
 
 /-! ## register_enum is the pure value on Lean -/
 

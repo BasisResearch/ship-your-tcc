@@ -348,7 +348,7 @@ def countDecls : List external_declaration → Nat × Nat × Nat
     | .EDecl_decl _ => (funcs, decls + 1, other)
     | _ => (funcs, decls, other + 1)
 
-def selfTest : IO Unit := do
+def selfTest [CerbImplCfg.Impl] : IO Unit := do
   IO.println "cerberus-lean: loaded"
   match CerberusImpl.sizeof_ity (Signed Int_) with
   | some n => IO.println s!"  sizeof(int) = {n}"
@@ -1370,7 +1370,7 @@ def defaultAddressSpaceTop : Int := 0xFFFFFFFFFFFF  -- ADDRESS-SPACE-DEFAULT (th
     pointer size (`none`) makes the domain EMPTY — every top is refused (fail-closed). The consumer's
     invariant `MemWF.la_wf` needs `lastAddress ≤ 2^64` and `la_pos` positivity; consumer theorems
     quantify `∀ top` under this domain. -/
-def addressSpaceLimit : Nat := match CerberusImpl.sizeof_pointer with
+def addressSpaceLimit [CerbImplCfg.Impl] : Nat := match CerberusImpl.sizeof_pointer with
   | some bytes => 2 ^ (8 * bytes)
   | none => 0
 
@@ -1633,6 +1633,13 @@ def cerbMain (args : List String) : IO Unit := do
           let _ ← judgeSwitches flag value
         refuseFlag a
       restArgs := restArgs ++ [a]; pending := rest
+  let implParams ← match implArg with
+    | none => pure CerbImplCfg.cerberusDefault
+    | some name => match CerbImplCfg.byName name with
+      | some p => pure p
+      | none => do
+        IO.eprintln s!"cerberus-lean: unknown implementation: {name}"
+        IO.Process.exit 2
   -- --switches (PNVI arc S4): the run's switch set — `CerbGlobal.defaultSwitches` (= `[]`,
   -- switches.ml:47-48) without the option, `[.PNVI .AE_UDI]` for `--switches=PNVI_ae_udi`;
   -- every other value is refused here (`judgeSwitches`). Supplied below beside the fuel.
@@ -1669,7 +1676,7 @@ def cerbMain (args : List String) : IO Unit := do
       | some n =>
         -- the DOMAIN 0 < top < 2^64 (addressSpaceLimit; the fork oracle's converter refuses with the
         -- SAME sentence — mirror doctrine; only its exit code is cmdliner's)
-        if n == 0 || n ≥ addressSpaceLimit then do
+        if n == 0 || n ≥ @addressSpaceLimit ⟨implParams⟩ then do
           IO.eprintln s!"cerberus-lean: refused — --address-space-top {s}: the address-space top must fit an LP64 pointer: 0 < top < 2^64 (CerberusImpl.sizeof_pointer = some 8; the allocator's initial cursor; default {defaultAddressSpaceTop}; see VALIDATION.md, address-space top)"
           IO.Process.exit 2
         else pure (n : Int)
@@ -1714,7 +1721,7 @@ def cerbMain (args : List String) : IO Unit := do
   -- impossible by construction, so there is no stratification invariant
   -- left to probe.
   if args.length == 0 then
-    selfTest
+    @selfTest ⟨implParams⟩
     return
 
   -- --parse-core: test the Core text parser
@@ -1742,8 +1749,8 @@ def cerbMain (args : List String) : IO Unit := do
           pure buf
         else IO.FS.readFile file
       let label := if file == "--stdin" then "<stdin>" else file
-      letI : CerbImplCfg.Impl := ⟨CerbImplCfg.cerberusDefault⟩
-      match CoreParser.parseFile input with
+      let parsed := (letI : CerbImplCfg.Impl := ⟨implParams⟩; CoreParser.parseFile input)
+      match parsed with
       | .ok cf =>
         let total := cf.funs.length + cf.procs.length + cf.impls.length +
                      cf.tagDefs.length + cf.globs.length + cf.builtins.length
@@ -1800,13 +1807,6 @@ def cerbMain (args : List String) : IO Unit := do
   -- general path, the set only selects the arms (no PNVI-only entry point). No other
   -- instance of `CerbGlobal.Switches` exists in this repository
   -- (speedbump: `scripts/check_no_fuel_numerals.sh` rule W1).
-  let implParams ← match implArg with
-    | none => pure CerbImplCfg.cerberusDefault
-    | some name => match CerbImplCfg.byName name with
-      | some p => pure p
-      | none => do
-        IO.eprintln s!"cerberus-lean: unknown implementation: {name}"
-        IO.Process.exit 2
   let argv0 := argv0Arg.getD implParams.argv0
   let code ← (letI : CerbImplCfg.Impl := ⟨implParams⟩; letI : LemFuel := ⟨fuel⟩; letI : CerbGlobal.Switches := ⟨switchSet⟩; runPipeline runtimeDir batchMode ppCoreMode firstTrace
     addressSpaceTop callFn traceNodes libc argv0 progArgs tunits)

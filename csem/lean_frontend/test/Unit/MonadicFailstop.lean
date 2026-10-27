@@ -2,7 +2,10 @@ import CerbFailProofs
 
 /- Executable witnesses, not kernel evaluation. The fuel is supplied by
    test_unit.sh. Kernel propagation contracts live in CerbFailProofs. -/
+import CerbImplCfg
+
 namespace MonadicFailstop
+local instance : CerbImplCfg.Impl := ⟨CerbImplCfg.cerberusDefault⟩
 open CerbMem CerbFail
 set_option autoImplicit true
 

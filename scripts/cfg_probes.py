@@ -14,6 +14,8 @@ import json
 import os
 from pathlib import Path
 import re
+import signal
+import shutil
 import subprocess
 import tempfile
 import time
@@ -33,6 +35,15 @@ def pins():
     files += [ROOT / 'scripts' / s for s in ['cfg_probes.py', 'run_tcc_sail.sh', 'sail_console.py']]
     emu = Path(os.environ.get('EMU', Path.home() / 'Documents/code/ship-your-lua/riscv-lean/lean_emulator/.lake/build/bin/lean_riscv_emulator'))
     files.append(emu)
+    # Pin the actual cross compiler, RV64I archives and image runtime objects.
+    gcc = sorted((Path.home() / 'toolchains').glob('xpack-riscv-none-elf-gcc-15.2.0-*/bin/riscv-none-elf-gcc'))[0]
+    files.append(gcc)
+    for arg in ['-print-file-name=libc.a', '-print-file-name=libm.a', '-print-libgcc-file-name']:
+        files.append(Path(subprocess.check_output([str(gcc), '-march=rv64i', '-mabi=lp64', arg], text=True).strip()))
+    files += [ROOT / 'c/build' / n for n in ['crt0.o', 'htif.o', 'main.o', 'tcc.o', 'fs.list']]
+    for line in (ROOT / 'c/build/fs.list').read_text().splitlines():
+        if line.strip():
+            files.append(Path(line.split('=', 1)[1]))
     return {str(p.relative_to(ROOT)) if p.is_relative_to(ROOT) else str(p): sha(p) for p in files}
 
 
@@ -58,6 +69,9 @@ DEFINED = re.compile(r'^Defined \{value: "Specified\((-?\d+)\)", stdout: "((?:[^
 
 def measure(probe, side, image_pins, timeout):
     env = dict(os.environ, MAX_STEPS='400000000')
+    # Retain each image only long enough to hash it; no shared scratch image.
+    if side == 'tcc':
+        env['KEEP_WORK'] = '1'
     cmd = [str(ROOT / 'scripts/run_tcc_sail.sh'), str(probe)] if side == 'tcc' else [
         str(ROOT / 'scripts/csem_run.sh'), '--impl', 'tcc-rv64', '--address-space-top',
         '18446744073709551615', str(probe)]
@@ -68,15 +82,23 @@ def measure(probe, side, image_pins, timeout):
         meta = Path(d) / 'meta'; meta.touch(); env['ORACLE_META'] = str(meta)
         t0 = time.monotonic()
         try:
-            p = subprocess.run(cmd, cwd=ROOT, env=env, capture_output=True, timeout=timeout)
-            rc, raw, err = p.returncode, p.stdout.decode('utf-8', 'backslashreplace'), p.stderr.decode('utf-8', 'backslashreplace')
+            p = subprocess.Popen(cmd, cwd=ROOT, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, start_new_session=True)
+            stdout, stderr = p.communicate(timeout=timeout)
+            rc, raw, err = p.returncode, stdout.decode('utf-8', 'backslashreplace'), stderr.decode('utf-8', 'backslashreplace')
         except subprocess.TimeoutExpired as e:
-            # subprocess.run kills/waits for its child; record timeout as error.
-            rc, raw, err = 124, (e.stdout or b'').decode(errors='backslashreplace'), 'HARNESS TIMEOUT'
+            # Kill and reap the whole oracle process group, including Sail.
+            os.killpg(p.pid, signal.SIGKILL)
+            stdout, stderr = p.communicate()
+            rc, raw, err = 124, stdout.decode(errors='backslashreplace'), stderr.decode(errors='backslashreplace') + '\nHARNESS TIMEOUT'
         r = dict(command=cmd, source_sha256=sha(probe), image_pins=image_pins, exit=rc,
                  raw_stdout=raw, stderr=err, meta=meta.read_text().splitlines(),
                  wall_s=round(time.monotonic()-t0, 2), measured_utc=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()))
     if side == 'tcc':
+        work = re.search(r'^work: (.+)$', err, re.M)
+        if work:
+            scratch = Path(work[1])
+            r['elf_sha256'] = sha(scratch / 'prog.elf') if (scratch / 'prog.elf').exists() else None
+            shutil.rmtree(scratch)
         complete = any(m.startswith('program_steps=') for m in r['meta'])
         r['status'] = 'defined' if complete and rc >= 0 and rc not in (124,125) else 'harness-error'
         r['outcomes'] = [[raw, rc]] if r['status'] == 'defined' else []
@@ -123,6 +145,8 @@ def main():
     a.add_argument('probes',nargs='*'); args=a.parse_args()
     if not 1 <= args.jobs <= 8: a.error('--jobs must be in 1..8')
     probes=[p for p in sorted((ROOT/'c/tests/cfg').glob('*.c')) if not args.probes or any(n in p.stem for n in args.probes)]
+    # Ensure pinned runtime objects reflect current patches before taking pins.
+    subprocess.run(['make', '-s', '-C', str(ROOT/'c'), 'BUILD=build', 'FLAGS=0', 'ELF=build/base.elf', 'build/base.elf'], check=True, stdout=subprocess.DEVNULL)
     image_pins=pins()
     sides=['tcc'] if args.tcc_only else ['csem'] if args.csem_only else ['tcc','csem']
     with concurrent.futures.ThreadPoolExecutor(args.jobs) as pool:

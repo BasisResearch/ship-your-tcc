@@ -1,0 +1,122 @@
+== (1) ISA
+== (2) forbidden tokens
+== (2b) generator drift
+== (2c) CSem text gates
+check_exec_totality: CLEAN (22 generated modules + hand-written CerbND, 0 allowlisted)
+check_exec_purity: CLEAN (11 modules)
+check_sorry_token: OK (343 files scanned comment-stripped — generated 230, hand-written+test 78, LemLib 35; 0 sorry tokens)
+== (3b) discipline
+== (3c) abstraction gate
+== (4) generated files
+== (5) lake build
+== (6) axioms
+'Tcc.Prog.Sum.prints' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Prog.Sum.terminates' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Prog.Sum.unique' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Prog.Sum.prints_modelX' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Prog.Sum.runPfProgram_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Prog.Sum.expectedOut_eq_utf8' depends on axioms: [propext]
+'Tcc.Clight.runPfProgram_prints' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Clight.runPf_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Clight.runPf_unique' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Clight.premises_satisfiable' depends on axioms: [propext, Quot.sound]
+'Tcc.Clight.modelX_printfModel' depends on axioms: [propext]
+'Tcc.Clight.modelX_extDeterm' depends on axioms: [propext, Quot.sound]
+'Tcc.Boot.cutConfig_captured' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Boot.chunkView_sub' depends on axioms: [propext, Quot.sound]
+'Tcc.Boot.ElfReset.pc' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Capture.Sum.cut_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Capture.Sum.hostView_elf' depends on axioms: [propext, Quot.sound]
+'Tcc.Capture.Sum.TccSumElf.host' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Capture.Sum.tohostAddr_eq' does not depend on any axioms
+'Tcc.Capture.Sum.sum_halts_from_reset' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Prog.Sum.Machine.sim_B0' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Prog.Sum.Machine.replay' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Prog.Sum.Machine.sum_halts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.EndToEnd.tcc_run_sum' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.EndToEnd.tcc_run_sum_halts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Boot.row_jalr' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Boot.row_putchar' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Boot.row_exit' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Boot.row_step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Boot.writeLog_get' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Ccp.run_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Ccp.exec_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Ccp.sim_cut' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Ccp.tableOK_of_all' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Ccp.run_trans' depends on axioms: [propext]
+'Tcc.Ccp.store_bytes' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Ccp.load_bytes' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Clight.runPf_soundOn' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Clight.runPfProgram_printsOn' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Printf.machX_shape' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Printf.machX_extDeterm' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Printf.machX_model' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Printf.machX_out' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Printf.imgMakes_of_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Printf.Sum.entry0' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Printf.Sum.ret0' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Printf.Sum.call0' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Printf.Sum.imgMakes0' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.Printf.Sum.prints_sumX' depends on axioms: [propext, Classical.choice, Quot.sound]
+== (6b) axioms of the patch-0002 audit
+'Tcc.Audit.step_eq' depends on axioms: [propext, CC.externalFunctionsSem, CC.inlineAssemblySem, Classical.choice, Quot.sound]
+'Tcc.Audit.externalCall_eq' depends on axioms: [propext, CC.externalFunctionsSem, CC.inlineAssemblySem, Quot.sound]
+'Tcc.Audit.externalCallOrig_eq' depends on axioms: [propext, CC.externalFunctionsSem, CC.inlineAssemblySem, Quot.sound]
+'Tcc.Audit.stepOrig_iff' depends on axioms: [propext, CC.externalFunctionsSem, CC.inlineAssemblySem, Classical.choice, Quot.sound]
+'Tcc.Audit.stepWith_determ_certora' depends on axioms: [propext, CC.externalFunctionsSem, CC.externalFunctionsSemDeterm, CC.inlineAssemblySem, CC.inlineAssemblySemDeterm, Classical.choice, Quot.sound]
+== (8) CSem gates (scripts/csem_gates.sh)
+== csem (1) copy-set sync, lem-sync stamp
+== csem (2) build
+csem_build: peak 186 MiB
+csem_build: cpu 0 s
+csem_build: LemLib LemLibTests CerberusLean CerberusLeanTest csem_run TccCSem core-parser-test effects-proof-test totality-proof-test fresh-int-test pp-test fuel-exemplar-test monadic-failstop-test allocator-soundness-test float-literal-test are-compatible-test many-restatement-test opaque-failure-test enum-data-test run-digest-test cabs-import-test match-pattern-arity-test memory-access-test reconstruct-legacy-test pnvi-arms-test: exit 0, wall 2 s
+== csem (3) unit executables
+  ok   core-parser-test
+  ok   effects-proof-test
+  ok   totality-proof-test
+  ok   fresh-int-test
+  ok   pp-test
+  ok   fuel-exemplar-test
+  ok   monadic-failstop-test
+  ok   allocator-soundness-test
+  ok   float-literal-test
+  ok   are-compatible-test
+  ok   many-restatement-test
+  ok   opaque-failure-test
+  ok   enum-data-test
+  ok   run-digest-test
+  ok   cabs-import-test
+  ok   match-pattern-arity-test
+  ok   memory-access-test
+  ok   reconstruct-legacy-test
+  ok   pnvi-arms-test
+== csem (4) purity, totality, axiom census, sorry token
+check_exec_purity: SELFTEST OK (17 plants with the declared verdict and message; real tree CLEAN)
+check_exec_purity: CLEAN (11 modules)
+check_exec_totality: CLEAN (22 generated modules + hand-written CerbND, 0 allowlisted)
+test_exec_totality: OK (8 plants and 2 clean controls)
+check_theorem_axioms: hand-written axiom census OK (0 axioms — the arc-17 S2b end state)
+check_theorem_axioms: generated-tree census OK (230 files: 0 axioms, boundary-opaque population = the 2 registered rows exactly-once (incl. CerbFuel.fuelExhaustedLoc), 0 unsafeCast)
+check_theorem_axioms: C2 ratchet OK (343 files scanned recursively: 0 axioms, 0 runEffectful, seam population = the 8 pinned path-qualified counted rows exactly incl. the extern class; lem tests/ scaffolds asserted outside the surface)
+check_theorem_axioms: D14 grep-ban OK (no native_decide/bv_decide in 1 tree(s) + 54 hand-written seam files + LemLibTest.lean)
+check_theorem_axioms: driver2 cone sorryAx-free + ofReduce*-free + DAEMON-free (arc-8 S3 bar)
+check_theorem_axioms: C2 entry census OK (9 entries, every cone ⊆ [propext, Classical.choice, Quot.sound])
+check_theorem_axioms: mem-scale S1 leg OK (35 C1/C3 + PNVI-S2 wrapper equality + CerbMemDefaultFacts bridge + CerbMemAccessFacts erasure theorems, every cone ⊆ [propext, Classical.choice, Quot.sound])
+check_theorem_axioms: FUEL arc leg OK (63 contract lemmas — generated _zero, runner leaves/parametricity, ∀-fuel exemplar, measured obligations, fail-stop propagation, and six-worker ND stability, every cone ⊆ [propext, Classical.choice, Quot.sound])
+check_theorem_axioms: OK (effect-retirement C2 bar: zero axiom declarations anywhere; entry cones ⊆ the standard three)
+check_sorry_token: OK (343 files scanned comment-stripped — generated 230, hand-written+test 78, LemLib 35; 0 sorry tokens)
+== csem (5) generator drift
+csem_regen: OK (generated/ = lem(2d3a492758cb23dc4e417f2961983d25b36ce130) of csem/frontend + hand-written copies; 230 files)
+== csem (6) exec lane vs the OCaml oracle (csem/tests/minimal)
+csem_lane: CERB_SKIP 5, MATCH 90, UB_MATCH 18; 113 files, 113 as baselined
+csem_gates: OK
+== (8b) axioms of the F0 statement over CSem
+'Tcc.TccRunCorrect_Statement' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.TccppCorrect_Statement' does not depend on any axioms
+'Tcc.TccRunCorrectWitnessSum_Statement' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.CSem.outcomes' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.CSem.NoUB' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.CSem.verdicts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Tcc.instDecidableSupported' depends on axioms: [propext, Classical.choice, Quot.sound]
+check: OK

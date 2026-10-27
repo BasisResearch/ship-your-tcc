@@ -282,7 +282,7 @@ theorem loop_step_done {k : Nat} (fl : Nat) (eds : Fmap sym integerType) (tds : 
     (acc : Fmap thread_id (List core_step2))
     {dst : driver_state} {th : thread_state} {v : value}
     (hth : dst.core_state0.thread_states = [(0, (none, th))])
-    (hsteps : @step_ctx ⟨Nat.succ k⟩ eds tds dst.layout_state dst.core_file dst.core_extern 0
+    (hsteps : @step_ctx ⟨Nat.succ k⟩ _ eds tds dst.layout_state dst.core_file dst.core_extern 0
       (none, th) = [Step_done2 v]) :
     runOne (@drive_nonmemory_steps_aux2_lemFuel ⟨Nat.succ k⟩ _ sw₀ (Nat.succ (Nat.succ fl))
         eds tds acc [0]) dst =
@@ -295,7 +295,7 @@ theorem loop_step_done {k : Nat} (fl : Nat) (eds : Fmap sym integerType) (tds : 
             dst.core_state0.thread_states with
           | some z => z
           | none => failwithI _;
-        @step_ctx ⟨Nat.succ k⟩ eds tds dst.layout_state dst.core_file dst.core_extern 0 th_info) = _
+        @step_ctx ⟨Nat.succ k⟩ _ eds tds dst.layout_state dst.core_file dst.core_extern 0 th_info) = _
     rw [hth]
     exact hsteps
   · dsimp only [find_can_advance, can_advance]
@@ -307,7 +307,7 @@ theorem process_done {k : Nat} (eds : Fmap sym integerType) (tds : Fmap sym (Cer
       (mem_constraint CerbMem.IntegerValue) driver_state)
     (v : value) (dst : driver_state) (th : thread_state)
     (hth : dst.core_state0.thread_states = [(0, (none, th))]) :
-    runOne (@process_core_step2 ⟨Nat.succ k⟩ sw₀ eds tds false cont (Step_done2 v)) dst =
+    runOne (@process_core_step2 ⟨Nat.succ k⟩ _ sw₀ eds tds false cont (Step_done2 v)) dst =
       (NDactive (), { dst with core_state0 :=
         { dst.core_state0 with thread_states :=
             [(0, (none, { th with stack0 := Stack_empty, arena := mk_value_e v }))] } }) := by
@@ -374,7 +374,7 @@ theorem finalize_done {k : Nat} (eds : Fmap sym integerType) (tds : Fmap sym (Ce
     (s : String) (dst : driver_state) (th : thread_state) (v : value)
     (hth : dst.core_state0.thread_states = [(0, (none, th))])
     (harena : th.arena = mk_value_e v) :
-    (@finalize ⟨Nat.succ k⟩ eds tds s dst).dres_core_value = v := by
+    (@finalize ⟨Nat.succ k⟩ _ eds tds s dst).dres_core_value = v := by
   unfold finalize
   rw [hth]
   dsimp only
@@ -560,7 +560,7 @@ theorem drive_after_setup (k : Nat) (top : Int) (digest : String) (h : 8 ≤ top
       = (NDactive (), dstD)) :
     runOne (@drive ⟨Nat.succ (Nat.succ k)⟩ _ sw₀ fmapEmpty fmapEmpty false exemplarFile ["cmdname"])
         (@dst₀ ⟨Nat.succ (Nat.succ k)⟩ 0 top digest)
-      = (NDactive (@finalize ⟨Nat.succ (Nat.succ k)⟩ fmapEmpty fmapEmpty "drive (without concur)" dstD), dstD) := by
+      = (NDactive (@finalize ⟨Nat.succ (Nat.succ k)⟩ _ fmapEmpty fmapEmpty "drive (without concur)" dstD), dstD) := by
   conv => lhs; unfold drive
   -- driver_globals: spawn thread 0, no globals
   refine (runOne_bind_active (z := (0 : Nat)) (s' := _) rfl).trans ?_
