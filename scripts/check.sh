@@ -107,7 +107,8 @@ scripts/gen_cclib_audit.sh --check || fail "Tcc/Audit/StepOrig.lean stale"
 [ "${1:-}" = "--static-only" ] && { echo "check: static stages OK"; exit 0; }
 if [ -f lakefile.toml ] || [ -f lakefile.lean ]; then
   echo "== (5) lake build"
-  lock=${SYT_LAKE_LOCK:-build/lake.lock}
+  common=$(git rev-parse --path-format=absolute --git-common-dir) || fail "git common directory"
+  lock=${SYT_LAKE_LOCK:-$(dirname "$common")/build/lake.lock}
   mkdir -p "$(dirname "$lock")"
   # the generated replay first, a few parts at a time (each part is a 1-3 GB
   # Lean process; all of them at once would exceed the 12 GB cap)

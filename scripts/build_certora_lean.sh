@@ -6,6 +6,9 @@
 set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
 root=$(cd "$here/.." && pwd)
+common=$(git -C "$root" rev-parse --path-format=absolute --git-common-dir)
+lock=${SYT_LAKE_LOCK:-$(dirname "$common")/build/lake.lock}
+mkdir -p "$(dirname "$lock")"
 case "${1:-cclib}" in
   cclib)  dir="$root/build/certora/src/export"; targets=(CCLib Clightdefs) ;;
   runner) dir="$root"; targets=(clight_run) ;;
@@ -13,6 +16,6 @@ case "${1:-cclib}" in
 esac
 cd "$dir"
 start=$(date +%s)
-flock "${SYT_LAKE_LOCK:-$root/build/lake.lock}" systemd-run --user --scope -q -p MemoryMax=12G \
+flock "$lock" systemd-run --user --scope -q -p MemoryMax=12G \
   taskset -c 0-7 env LEAN_NUM_THREADS=4 lake build "${targets[@]}"
 echo "lake build ${targets[*]} in $dir took $(( $(date +%s) - start ))s"

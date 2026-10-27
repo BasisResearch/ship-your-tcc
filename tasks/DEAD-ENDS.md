@@ -68,3 +68,10 @@
   macro table/stack through rescanning and argument expansion; markers alone
   cannot represent these effects. Operand macros must expand before checking
   for one string literal. Regression: c/tests/c11/pragma.c's RESTORE macro.
+
+- Lead gate launches must set the common absolute SYT_LAKE_LOCK. check.sh's
+  old relative default overrode csem_build.sh's shared default, allowing two
+  capped builds in separate worktrees to overlap. Observed during ABI/FS
+  integration on Oct 27; no OOM, and overlap ended before further builds.
+  check.sh and the Certora helper now derive the default from Git's common
+  directory, so worktree gates serialize even without the environment.
