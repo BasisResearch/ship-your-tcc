@@ -113,3 +113,8 @@ fingerprint and fresh C11 comparison are required before accepting new counts.
 2026-10-27: the original RV64-config and C11-model tasks are integrated.
 The scheduled upstream repin evaluation is active in Sol slot 2; adoption
 requires its documented gates and lead review. The main pin is unchanged.
+
+Repin candidate 704c4e69/e6d8db56 passes its full 4.34 gate and focused
+comparisons, but adoption is deferred for a valid non-first union-initializer
+refusal. Repair on the preserved candidate via tasks/f1-union-initializers.md;
+no Supported restriction or user decision is needed. The main pin stays old.

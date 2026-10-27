@@ -39,9 +39,11 @@ removed. Patch 0004 fixes compiler literals using exact integer rounding;
 public libc `strtold` still needs correction in the library lane. Matching refusals likewise do not satisfy the F3 success criterion.
 
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
-two at a time, following MANAGER.md. Slot 1 repairs the confirmed C11
-physical-line splice deviation in tcc/model; slot 2 evaluates the scheduled upstream
-repin in sol-csem-repin, with the main pin unchanged until review. The compiler-handoff collector and strict model_diff consumer are integrated.
+two at a time, following MANAGER.md. Slot 1 implements exact phase-4 token observation in sol-f2-tokens; the
+line-splice repair has passed focused/Sail checks and is in its final gate.
+Slot 2 has evaluated the scheduled upstream repin in sol-csem-repin: full
+gate passes, but adoption is deferred until its valid-union refusal is
+repaired. Main retains its current pin; tasks/f1-union-initializers.md is next. The compiler-handoff collector and strict model_diff consumer are integrated.
 Fresh 1,412-input comparison: 1,308 arenas (1,299 generated), 104 refusals,
 zero mismatches/harness/model errors (results/model/handoff-integration.md). The RV64 reader and image filesystem are
 integrated; their fresh probes and remaining semantic gaps are documented.
@@ -83,6 +85,14 @@ Parser recovery builds in main and the repository gate passes. Approved
 GNU forms, K&R definitions and connection to F2/raw-source CSem remain open.
 Inherited hard-linked Lake caches have been isolated for active lanes;
 main's CSem objects were rebuilt before accepting the digest retirement.
+
+
+The line-repair broad review has 1,419 identical fast arenas / 1,556 inputs,
+129 refusals, seven assembly gaps and one previously recorded compiler
+instruction-limit failure; no byte differences or model errors
+(results/model/line-broad-review.md). The broad run correctly exits nonzero
+for the remaining gaps. The IEEE draft review and follow-up task are recorded
+in results/csem/ieee-recovery-review.json and tasks/f1-ieee-recovery.md.
 
 ## Needs user
 

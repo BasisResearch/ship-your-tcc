@@ -42,10 +42,11 @@ Queued 2026-10-27: after tasks/f3-c11-model.md and tasks/f1-rv64-config.md
 land, assign tasks/csem-repin.md before another CSem semantic-change task.
 Keep both current slots on their existing pin; see CSEM-UPSTREAM.md.
 
-Current assignments after C11-model integration on Oct 27: slot 1 runs
-`tasks/f2-line-splice.md` in sol-c11-line; slot 2 continues the scheduled
-repin with `tasks/csem-repin-continue.md` in sol-csem-repin. Trigraph and
-handoff collector work are integrated. The next independent F2 assignment is
-`tasks/f2-token-stream.md`; shared path traversal waits for the repin work.
-Frozen build requests are serviced under the shared 12 GB lock. A changed
-input invalidates the request; freeze a new hash manifest before retrying.
+Current assignments on Oct 27: slot 1 runs `tasks/f2-token-stream.md` in
+sol-f2-tokens, on the reviewed line repair while its landing gate completes.
+Slot 2 has evaluated the repin; retain main's old pin until the valid-union
+regression is repaired by `tasks/f1-union-initializers.md` on the candidate.
+The generic path task and recovered IEEE task remain queued. Frozen build
+requests use the shared 12 GB lock. Changed inputs invalidate a request;
+freeze a new hash manifest before retrying. Infrastructure limits are handled
+by the lead service, not by uncapped builds or user permission requests.
