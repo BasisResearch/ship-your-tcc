@@ -90,3 +90,11 @@ components keep their own licences.
 |---|---|---|
 | `patches/0003-tcc-c11.patch` | this project, completing the recovered `results/review/c11-wip/0003-draft.patch` (handoff commit a2f61de); applied after 0001/0002 to TinyCC 43c7708, under TinyCC's LGPL-2.1-or-later | UTF literal types/concatenation, digraph spelling, `_Pragma`, UCN spelling/identity, presumed filenames, stringification, union overrides; no copied library proof |
 | `scripts/test_tcc_c11.py`, `c/tests/c11/` | this project; reuse existing `scripts/test_tcc_patch.sh`, `scripts/run_tcc_sail.sh` and their already-attributed sister-project runtime/Sail harness | host/GCC and preprocessing checks, cross objects and ISA checks, generated buffer-boundary fixtures, full compiler on Sail |
+
+The F1 image-filesystem fork (`CerbFS`, Lem driver/runtime proxies and
+`Tcc/CSem/FsModel.lean`) builds on the imported Cerberus / REMS semantics and
+cerberus-lean / Mike Dodds / Oath runtime. Its image-specific behavior is
+derived from this repository's `c/src/htif.c`; it was recovered from the prior
+agent worktree and reviewed with descriptor-based fstat, structural ordering
+and link proxy repairs. See `results/csem/f1-filesystem.md`. This is an
+executable model and differential evidence, not a reused library proof.
