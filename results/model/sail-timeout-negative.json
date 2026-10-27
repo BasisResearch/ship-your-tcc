@@ -1,0 +1,78 @@
+{
+  "command": [
+    "scripts/model_diff.py",
+    "results/model/trigraph-sail-capture/probe.c",
+    "--sail-capture",
+    "build/capture-cut-parametric/capture_cut",
+    "--sail-max-steps",
+    "30000000",
+    "--sail-timeout",
+    "1",
+    "--no-report",
+    "--json-out",
+    "results/model/sail-timeout-negative.json",
+    "--require-success",
+    "1",
+    "-j",
+    "1"
+  ],
+  "runtime_key": "179bb6ca417e94bd05d1786d700cd42434d4edc04a717c489bcedac38b037edd",
+  "pins": {
+    "vendor/TINYCC_REV": "76ca376f1f96cf1b316713d8f94d91c8629445929d1e7474792fd76610bce1c0",
+    "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+    "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+    "patches/0003-tcc-c11.patch": "c04d8ea9ea276ccd9e9fa48ead302a045ce2d3a1eaa9335c458dd1ee3d887f75",
+    "patches/0004-tcc-binary128-literals.patch": "4dfcc192c23a777b1b335e9052a416956886b1071c3de1e8da403b5b194e221e",
+    "c/build/base.elf": "57735ac567fb92a8164efc95cc4c3dc8fe03ef3a3cd8dc6c586e51a1cd2bd958",
+    "c/src/gen_embed.sh": "68534ee3a238c143bf4e749fcb0ea43e8b53933c4a9d6843422d995c879d7d76",
+    "scripts/model_diff.py": "6fab1c29ac671896b91fa6e75f064a78c871b77b3f582e163dcaf4aaf84f7bb9",
+    ".lake/build/bin/tcc_model": "7e3a9fbff199e0815d24693a26937f451f63a01e307ca5618163e724c372d7bc",
+    "results/model/trigraph-sail-capture/probe.c": "d6552f6881b1c8361e211fd3237871594f7b3397318ca5660d4fa8749cd7ff26"
+  },
+  "results": {
+    "results/model/trigraph-sail-capture": [
+      {
+        "name": "results/model/trigraph-sail-capture/probe.c",
+        "result": "harness-error",
+        "why": "Command '['systemd-run', '--user', '--scope', '--unit', 'syt-sail-95f38f8edbfa416a834810d86e09491d.scope', '-p', 'MemoryMax=12G', '/usr/bin/python3', '/data/home/kirancodes/Documents/code/ship-your-tcc/scripts/capture_cut.py', 'capture', '--elf', '/data/home/kirancodes/Documents/code/ship-your-tcc/build/model_diff/cache/d1b38464303e98eac76b6ae0.elf', '--source', '/data/home/kirancodes/Documents/code/ship-your-tcc/results/model/trigraph-sail-capture/probe.c', '--out', '/data/home/kirancodes/Documents/code/ship-your-tcc/build/model_diff/work/sail-cut-zs1a4q45/capture', '--binary', '/data/home/kirancodes/Documents/code/ship-your-tcc/build/capture-cut-parametric/capture_cut', '--max-steps', '30000000']' timed out after 1 seconds"
+      }
+    ]
+  },
+  "rows": [
+    [
+      "results/model/trigraph-sail-capture",
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0
+    ]
+  ],
+  "totals": {
+    "n": 1,
+    "same": 0
+  },
+  "wall_seconds": 1.5029551982879639,
+  "reference": "native Sail full arenas plus rv64emu; refusals have no Sail coverage",
+  "sail_settings": {
+    "binary": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/capture-cut-parametric/capture_cut",
+    "binary_sha256": "2fe637d6e77e2741606bb67e5f7f07751a1a90dd1d5467f75aca3288cf5663bf",
+    "build_manifest_sha256": "6f829539787d74997a6fa542d9d4cd04b9a62dca3950f50b237458694bf571e6",
+    "max_steps": 30000000,
+    "timeout_seconds": 1,
+    "scripts": {
+      "scripts/capture_cut.py": "f1e7a0da02e424298e5659884ef430b7bd6098753bef02d8d136f9b5f61a6d2d",
+      "scripts/gen_capture_cut.py": "d01897950f68f4fb68ca0ffc2fd15b6a6e0e759ec189fd389e36d05feabccd01",
+      "scripts/compare_sail_arena.py": "c6495bde62cb803fcab2438008677a9966f9e2905aa49430561b1dddcd22ac1f",
+      "scripts/model_diff.py": "6fab1c29ac671896b91fa6e75f064a78c871b77b3f582e163dcaf4aaf84f7bb9"
+    }
+  },
+  "compiler_args": [
+    "-std=c11",
+    "-w"
+  ]
+}

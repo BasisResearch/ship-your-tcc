@@ -1,0 +1,201 @@
+{
+  "command": [
+    "scripts/model_diff.py",
+    "c/tests/c11/pragma.c",
+    "c/tests/c11/union.c",
+    "c/tests/c11/utf_literals.c",
+    "--sail-capture",
+    "build/capture-cut-parametric/capture_cut",
+    "--sail-max-steps",
+    "30000000",
+    "--sail-timeout",
+    "1200",
+    "--no-report",
+    "--json-out",
+    "results/model/sail-c11-batch.json",
+    "--require-success",
+    "3",
+    "-j",
+    "3",
+    "-v"
+  ],
+  "runtime_key": "179bb6ca417e94bd05d1786d700cd42434d4edc04a717c489bcedac38b037edd",
+  "pins": {
+    "vendor/TINYCC_REV": "76ca376f1f96cf1b316713d8f94d91c8629445929d1e7474792fd76610bce1c0",
+    "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+    "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+    "patches/0003-tcc-c11.patch": "c04d8ea9ea276ccd9e9fa48ead302a045ce2d3a1eaa9335c458dd1ee3d887f75",
+    "patches/0004-tcc-binary128-literals.patch": "4dfcc192c23a777b1b335e9052a416956886b1071c3de1e8da403b5b194e221e",
+    "c/build/base.elf": "57735ac567fb92a8164efc95cc4c3dc8fe03ef3a3cd8dc6c586e51a1cd2bd958",
+    "c/src/gen_embed.sh": "68534ee3a238c143bf4e749fcb0ea43e8b53933c4a9d6843422d995c879d7d76",
+    "scripts/model_diff.py": "6fab1c29ac671896b91fa6e75f064a78c871b77b3f582e163dcaf4aaf84f7bb9",
+    ".lake/build/bin/tcc_model": "7e3a9fbff199e0815d24693a26937f451f63a01e307ca5618163e724c372d7bc",
+    "c/tests/c11/pragma.c": "8791af9c4d3610dbbd3e47a99a477cd0c74e8235fb014d6d66fbcd5dacdbad2c",
+    "c/tests/c11/union.c": "a8f66609526b08e0748138b135429acfc46a4b2f95b93565c9df39ae30b2ea02",
+    "c/tests/c11/utf_literals.c": "ed390832b178e5fd18e7387d2e7a0d47907b5b835ede4035c14f60adf0324b32"
+  },
+  "results": {
+    "c/tests/c11": [
+      {
+        "name": "c/tests/c11/pragma.c",
+        "model_s": 0.13149237632751465,
+        "ref": "ran",
+        "model": "ran",
+        "reference": "native Sail + rv64emu",
+        "sail": {
+          "status": "equal",
+          "evidence": "native Sail observation; not a theorem",
+          "compared_bytes": 4194304,
+          "model_payload_bytes": 79748,
+          "arena_sha256": "6883b40ce347c2618b69c49e1d536d8d355e55de02e260d869c2d3d7f8a8a8ee",
+          "model_arena_sha256": "b762c7dff8ad41ee45196c97ce8c04ba7756067ee121fce3584eeef37b46487e",
+          "trace_sha256": null,
+          "capture_manifest_sha256": "593daa7407f4fb8ac98a40e1bb1a7ef76003bdb012a4db5434a31eb685ee8172",
+          "elf_sha256": "4e33f1930339e6231d8b09585c12d004ede7eb6a810b3b7069d39bbcdb068f44",
+          "source_sha256": "8791af9c4d3610dbbd3e47a99a477cd0c74e8235fb014d6d66fbcd5dacdbad2c",
+          "steps": 12908292,
+          "pc": 2147490632,
+          "handoff": {
+            "x10": 2252341916,
+            "x14": 2252341248,
+            "x15": 668
+          },
+          "capture_settings": {
+            "binary": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/capture-cut-parametric/capture_cut",
+            "binary_sha256": "2fe637d6e77e2741606bb67e5f7f07751a1a90dd1d5467f75aca3288cf5663bf",
+            "build_manifest_sha256": "6f829539787d74997a6fa542d9d4cd04b9a62dca3950f50b237458694bf571e6",
+            "max_steps": 30000000,
+            "timeout_seconds": 1200,
+            "scripts": {
+              "scripts/capture_cut.py": "f1e7a0da02e424298e5659884ef430b7bd6098753bef02d8d136f9b5f61a6d2d",
+              "scripts/gen_capture_cut.py": "d01897950f68f4fb68ca0ffc2fd15b6a6e0e759ec189fd389e36d05feabccd01",
+              "scripts/compare_sail_arena.py": "c6495bde62cb803fcab2438008677a9966f9e2905aa49430561b1dddcd22ac1f",
+              "scripts/model_diff.py": "6fab1c29ac671896b91fa6e75f064a78c871b77b3f582e163dcaf4aaf84f7bb9"
+            }
+          }
+        },
+        "result": "same",
+        "why": "arena 79748 bytes"
+      },
+      {
+        "name": "c/tests/c11/utf_literals.c",
+        "model_s": 0.29958510398864746,
+        "ref": "ran",
+        "model": "ran",
+        "reference": "native Sail + rv64emu",
+        "sail": {
+          "status": "equal",
+          "evidence": "native Sail observation; not a theorem",
+          "compared_bytes": 4194304,
+          "model_payload_bytes": 80372,
+          "arena_sha256": "5533111ced0f6bf0a76507b496147a9a3c85dfefacf895c3e9ec3dba8c79d4e3",
+          "model_arena_sha256": "82a0bd82e601a8e297f7f16020416bf1e45e2cedb1cba57797516dd49dfe02c8",
+          "trace_sha256": null,
+          "capture_manifest_sha256": "38836d57a1b9c293e5c4716a010fde823f1cf840d788e53f9fd758d57d2a18ac",
+          "elf_sha256": "5f21c6fb623f8800e26f97f1eb46c9968fc668440b76495838eae1b9e312185a",
+          "source_sha256": "ed390832b178e5fd18e7387d2e7a0d47907b5b835ede4035c14f60adf0324b32",
+          "steps": 13171390,
+          "pc": 2147490632,
+          "handoff": {
+            "x10": 2252342468,
+            "x14": 2252341248,
+            "x15": 1220
+          },
+          "capture_settings": {
+            "binary": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/capture-cut-parametric/capture_cut",
+            "binary_sha256": "2fe637d6e77e2741606bb67e5f7f07751a1a90dd1d5467f75aca3288cf5663bf",
+            "build_manifest_sha256": "6f829539787d74997a6fa542d9d4cd04b9a62dca3950f50b237458694bf571e6",
+            "max_steps": 30000000,
+            "timeout_seconds": 1200,
+            "scripts": {
+              "scripts/capture_cut.py": "f1e7a0da02e424298e5659884ef430b7bd6098753bef02d8d136f9b5f61a6d2d",
+              "scripts/gen_capture_cut.py": "d01897950f68f4fb68ca0ffc2fd15b6a6e0e759ec189fd389e36d05feabccd01",
+              "scripts/compare_sail_arena.py": "c6495bde62cb803fcab2438008677a9966f9e2905aa49430561b1dddcd22ac1f",
+              "scripts/model_diff.py": "6fab1c29ac671896b91fa6e75f064a78c871b77b3f582e163dcaf4aaf84f7bb9"
+            }
+          }
+        },
+        "result": "same",
+        "why": "arena 80372 bytes"
+      },
+      {
+        "name": "c/tests/c11/union.c",
+        "model_s": 0.17540621757507324,
+        "ref": "ran",
+        "model": "ran",
+        "reference": "native Sail + rv64emu",
+        "sail": {
+          "status": "equal",
+          "evidence": "native Sail observation; not a theorem",
+          "compared_bytes": 4194304,
+          "model_payload_bytes": 81132,
+          "arena_sha256": "be7899d8402cb7ed4e6b480920eb83396a6e43cf1cf8f0c90a79d9bb12140cf5",
+          "model_arena_sha256": "771cdb5e6d4f6d8e2b868704f075d2a585bc1325918d26eb3bbe7f27ff849fa3",
+          "trace_sha256": null,
+          "capture_manifest_sha256": "96eb631a5237a68ebb58fe2ced2ba4bb2edc115c7d0fd4b4097dca975476a544",
+          "elf_sha256": "f716f100ea6bce24da7adab4470a41e0375494684a148f6025495cd22504c0a8",
+          "source_sha256": "a8f66609526b08e0748138b135429acfc46a4b2f95b93565c9df39ae30b2ea02",
+          "steps": 13311282,
+          "pc": 2147490632,
+          "handoff": {
+            "x10": 2252343160,
+            "x14": 2252341248,
+            "x15": 1912
+          },
+          "capture_settings": {
+            "binary": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/capture-cut-parametric/capture_cut",
+            "binary_sha256": "2fe637d6e77e2741606bb67e5f7f07751a1a90dd1d5467f75aca3288cf5663bf",
+            "build_manifest_sha256": "6f829539787d74997a6fa542d9d4cd04b9a62dca3950f50b237458694bf571e6",
+            "max_steps": 30000000,
+            "timeout_seconds": 1200,
+            "scripts": {
+              "scripts/capture_cut.py": "f1e7a0da02e424298e5659884ef430b7bd6098753bef02d8d136f9b5f61a6d2d",
+              "scripts/gen_capture_cut.py": "d01897950f68f4fb68ca0ffc2fd15b6a6e0e759ec189fd389e36d05feabccd01",
+              "scripts/compare_sail_arena.py": "c6495bde62cb803fcab2438008677a9966f9e2905aa49430561b1dddcd22ac1f",
+              "scripts/model_diff.py": "6fab1c29ac671896b91fa6e75f064a78c871b77b3f582e163dcaf4aaf84f7bb9"
+            }
+          }
+        },
+        "result": "same",
+        "why": "arena 81132 bytes"
+      }
+    ]
+  },
+  "rows": [
+    [
+      "c/tests/c11",
+      3,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.20216123263041177
+    ]
+  ],
+  "totals": {
+    "n": 3,
+    "same": 3
+  },
+  "wall_seconds": 344.5574383735657,
+  "reference": "native Sail full arenas plus rv64emu; refusals have no Sail coverage",
+  "sail_settings": {
+    "binary": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/capture-cut-parametric/capture_cut",
+    "binary_sha256": "2fe637d6e77e2741606bb67e5f7f07751a1a90dd1d5467f75aca3288cf5663bf",
+    "build_manifest_sha256": "6f829539787d74997a6fa542d9d4cd04b9a62dca3950f50b237458694bf571e6",
+    "max_steps": 30000000,
+    "timeout_seconds": 1200,
+    "scripts": {
+      "scripts/capture_cut.py": "f1e7a0da02e424298e5659884ef430b7bd6098753bef02d8d136f9b5f61a6d2d",
+      "scripts/gen_capture_cut.py": "d01897950f68f4fb68ca0ffc2fd15b6a6e0e759ec189fd389e36d05feabccd01",
+      "scripts/compare_sail_arena.py": "c6495bde62cb803fcab2438008677a9966f9e2905aa49430561b1dddcd22ac1f",
+      "scripts/model_diff.py": "6fab1c29ac671896b91fa6e75f064a78c871b77b3f582e163dcaf4aaf84f7bb9"
+    }
+  },
+  "compiler_args": [
+    "-std=c11",
+    "-w"
+  ]
+}

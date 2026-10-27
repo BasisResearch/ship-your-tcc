@@ -20,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 LUA = Path.home() / "Documents/code/ship-your-lua"
 TOOLCHAIN = Path.home() / ".elan/toolchains/leanprover--lean4---v4.34.0"
 OUT = ROOT / "build/capture-cut"
-LIMIT = 8_000_000
+DEFAULT_LIMIT = 8_000_000
 
 
 def sha(path):
@@ -139,6 +139,10 @@ def capture(args):
     build_manifest = json.loads(build_path.read_text())
     if sha(binary) != build_manifest["binary_sha256"]:
         raise ValueError("capture binary does not match build.json")
+    if build_manifest["generator_sha256"] != sha(Path(__file__).with_name("gen_capture_cut.py")):
+        raise ValueError("capture generator changed; rebuild the utility")
+    if args.max_steps < 0:
+        raise ValueError("step limit must be nonnegative")
     syms = symbols(args.nm, elf)
     target = syms["tcc_baremetal_enter"]
     base, end = syms["__tccrun_start"], syms["__tccrun_end"]
@@ -151,7 +155,7 @@ def capture(args):
     # Preserve diagnostics if interrupted or unsuccessful. cut.json is emitted
     # only after successful completion and validation of every expected output.
     with (out / "native.stdout").open("wb") as stdout, (out / "native.stderr").open("wb") as stderr:
-        run([binary, elf, target, base, end - base, out], stdout=stdout, stderr=stderr)
+        run([binary, elf, target, base, end - base, out, args.max_steps], stdout=stdout, stderr=stderr)
     if sha(elf) != elf_hash or sha(source) != source_hash:
         raise ValueError("source or ELF changed during capture")
     keys = ["pc", "steps", "tick", "cycles", "defined_registers", "memory_map_size", "arena_present_bytes"]
@@ -159,7 +163,7 @@ def capture(args):
     if len(values) != len(keys):
         raise ValueError("invalid capture metadata")
     data = dict(zip(keys, values))
-    if data["pc"] != target or not 0 <= data["steps"] <= LIMIT:
+    if data["pc"] != target or not 0 <= data["steps"] <= args.max_steps:
         raise ValueError("wrong cut or invalid step count")
     arena, presence = (out / "arena.bin").read_bytes(), (out / "arena.present.bin").read_bytes()
     if len(arena) != end - base or len(presence) != end - base:
@@ -177,7 +181,7 @@ def capture(args):
                 boundary="first pre-instruction state at tcc_baremetal_enter",
                 source=str(source), source_sha256=source_hash, elf=str(elf), elf_sha256=elf_hash,
                 binary_sha256=sha(binary), build_manifest_sha256=sha(build_path),
-                arena_base=base, arena_end=end, flags=0, step_limit=LIMIT,
+                arena_base=base, arena_end=end, flags=0, step_limit=args.max_steps,
                 presence_encoding="one byte per arena address: 0 absent, 1 present",
                 files={p.name: {"bytes": p.stat().st_size, "sha256": sha(p)}
                        for p in sorted(out.iterdir()) if p.is_file()})
@@ -197,6 +201,8 @@ def main():
     c.add_argument("--source", type=Path, required=True)
     c.add_argument("--out", type=Path, required=True)
     c.add_argument("--binary", type=Path, default=OUT / "capture_cut")
+    c.add_argument("--max-steps", type=int, default=DEFAULT_LIMIT,
+                   help="finite runtime instruction limit (default: %(default)s)")
     c.add_argument("--nm", type=Path, default=Path.home() / "toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin/riscv-none-elf-nm")
     args = ap.parse_args()
     try:

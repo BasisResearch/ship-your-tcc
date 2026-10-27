@@ -24,33 +24,34 @@ def currentPC (s : CapturedState) : IO Nat := do
 
 -- Stop before the cut instruction. The step body is OCaml's bootdump loop,
 -- calling the same frozen API as the machine relation, without changing Sail.
-def observe (path : String) (target : Nat) : IO CutState := do
+def observe (path : String) (target limit : Nat) : IO CutState := do
   let .ok (.elf64 elf) ← readElf path | throw (IO.userError "expected ELF64")
   let initial : CapturedState := ⟨{}, (), initializeMemory .B64 elf, (), 0, #[]⟩
   let .ok _ σ := (Vsa.setupElf elf).run initial | throw (IO.userError "setup failed")
   let mut c : CutState := ⟨σ, 0, 0⟩
-  for _ in [:8000000] do
+  for _ in [:limit] do
     if (← currentPC c.state) == target then return c
     match (Vsa.stepOnce c.tick c.steps).run c.state with
     | .ok (.inr (tick, steps)) σ' => c := ⟨σ', tick, steps⟩
     | _ => throw (IO.userError s!"stopped before cut at {c.steps}")
   if (← currentPC c.state) == target then return c
-  throw (IO.userError "cut not reached within 8000000 steps")
+  throw (IO.userError s!"cut not reached within {limit} steps")
 
 def parseNat (s : String) : IO Nat := do
   let some n := s.toNat? | throw (IO.userError s!"expected decimal Nat: {s}")
   return n
 
 def main (args : List String) : IO Unit := do
-  let (elf, pcText, baseText, sizeText, outText) ← match args with
-    | [elf, pc, base, size, out] => pure (elf, pc, base, size, out)
-    | _ => throw (IO.userError "usage: capture_cut ELF PC ARENA_BASE ARENA_SIZE OUTDIR (decimal numbers)")
+  let (elf, pcText, baseText, sizeText, outText, limitText) ← match args with
+    | [elf, pc, base, size, out, limit] => pure (elf, pc, base, size, out, limit)
+    | _ => throw (IO.userError "usage: capture_cut ELF PC ARENA_BASE ARENA_SIZE OUTDIR STEP_LIMIT (decimal numbers)")
   let target ← parseNat pcText
   let base ← parseNat baseText
   let size ← parseNat sizeText
+  let limit ← parseNat limitText
   unless base == 0x86400000 && size == 0x400000 do
     throw (IO.userError "expected ship-your-tcc's 4 MiB arena")
-  let c ← observe elf target
+  let c ← observe elf target limit
   -- FLAGS=0 is checked against ELF bytes by the host wrapper. Confirm that no
   -- compile/dump console output preceded the cut; never silently strip it.
   unless c.state.sailOutput.isEmpty do

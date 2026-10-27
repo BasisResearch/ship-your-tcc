@@ -120,22 +120,28 @@ def parse_arena(path):
     return hdr, lines[5]
 
 
-def ref_run(prog, extra, args, libs, rtkey):
+def ref_run(prog, extra, args, libs, rtkey, sail=None):
     """scripts/ref_arena.sh, cached: (status, data) where status is 'ran'
     (data = arena path) or 'exit' (data = (code, console bytes))."""
     key = sha('independent-c11-handoff-v4', Path(prog).read_bytes(), repr(extra), repr(args), repr(libs), rtkey, Path(ROOT, 'c/src/gen_embed.sh').read_bytes(),
               *[Path(h).read_bytes() for _, h in extra])
+    if sail:
+        key = sha(key, 'native-sail-full-arena-v1', json.dumps(sail, sort_keys=True))
     base = os.path.join(CACHE, key)
     if os.path.exists(base + '.status'):
         st = Path(base + '.status').read_text().split()
         if st and st[0] == 'ran':
             parse_arena(base + '.arena')
+            if sail:
+                validate_sail_cache(base, sail)
             return 'ran', base + '.arena', st[1] if len(st) > 1 else ''
         # Old caches can contain emulator limits/traps classified as exits.
         # Re-run those records; neither is a compiler refusal.
         if len(st) >= 2 and st[0] == 'exit' and 0 < int(st[1]) <= 255 and int(st[1]) not in (124, 126):
             return 'exit', (int(st[1]), Path(base + '.console').read_bytes()), st[2] if len(st) > 2 else ''
     env = dict(os.environ)
+    if sail:
+        env['ELF_OUT'] = base + '.elf'
     env['TCC_ARGS'] = ''.join('"%s",' % a for a in args)
     # a non-empty TCC_LIBS turns off ref_arena.sh's own -lm retry (we retry here,
     # for the reference and the model alike); ' ' embeds no library
@@ -155,6 +161,8 @@ def ref_run(prog, extra, args, libs, rtkey):
         if not re.fullmatch(rb'rv64emu: steps=\d+ compile_steps=\d+ exit=- status=handoff', records[0]):
             raise RuntimeError('invalid handoff completion record: '+prog)
         parse_arena(base + '.arena')
+        if sail:
+            capture_sail(base, prog, sail)
         Path(base + '.status').write_text('ran\n')
         return 'ran', base + '.arena', ''
     m = re.fullmatch(rb'rv64emu: steps=\d+ compile_steps=- exit=(-?\d+) status=exit', records[0])
@@ -164,6 +172,73 @@ def ref_run(prog, extra, args, libs, rtkey):
     lm = 'lm' if not libs and b'unresolved reference' in con else ''
     Path(base + '.status').write_text('exit %d %s\n' % (code, lm))
     return 'exit', (code, con), lm
+
+
+def validate_sail_cache(base, sail):
+    from compare_sail_arena import compare as compare_cut
+    evidence = json.loads(Path(base + '.sail.json').read_text())
+    if (evidence['status'] != 'equal' or evidence['compared_bytes'] != 4 * 1024 * 1024 or
+            evidence['capture_settings'] != sail or
+            evidence['model_arena_sha256'] != hashlib.sha256(Path(base + '.arena').read_bytes()).hexdigest()):
+        raise RuntimeError('invalid cached Sail arena evidence: ' + base)
+    observed = compare_cut(Path(base + '.sail'), Path(base + '.arena'))
+    if any(evidence.get(k) != v for k, v in observed.items()):
+        raise RuntimeError('cached Sail capture differs from evidence: ' + base)
+    return evidence
+
+
+def capture_sail(base, prog, sail):
+    """A fast handoff selects an image; only Sail supplies the second observation.
+
+    No cached success is published until all 4 MiB and handoff metadata agree.
+    A failed/limited capture is a harness error, never a compiler refusal.
+    """
+    import gzip
+    import shutil
+    import uuid
+    from compare_sail_arena import compare as compare_cut
+    available = int(next(line.split()[1] for line in Path('/proc/meminfo').read_text().splitlines()
+                         if line.startswith('MemAvailable:'))) * 1024
+    if available < 25 * 1024 ** 3:
+        raise RuntimeError('less than 25 GiB available before Sail capture; retry later')
+    if hashlib.sha256(Path(sail['binary']).read_bytes()).hexdigest() != sail['binary_sha256']:
+        raise RuntimeError('Sail capture binary changed during comparison')
+    if hashlib.sha256(Path(sail['binary']).with_name('build.json').read_bytes()).hexdigest() != sail['build_manifest_sha256']:
+        raise RuntimeError('Sail capture build manifest changed during comparison')
+    for name, digest in sail['scripts'].items():
+        if hashlib.sha256(Path(ROOT, name).read_bytes()).hexdigest() != digest:
+            raise RuntimeError('Sail capture script changed during comparison: ' + name)
+    with tempfile.TemporaryDirectory(prefix='sail-cut-', dir=WORK) as tmp:
+        cut = Path(tmp) / 'capture'
+        unit = 'syt-sail-' + uuid.uuid4().hex + '.scope'
+        command = ['systemd-run', '--user', '--scope', '--unit', unit, '-p', 'MemoryMax=12G',
+                   sys.executable, os.path.join(ROOT, 'scripts/capture_cut.py'), 'capture',
+                   '--elf', base + '.elf', '--source', prog, '--out', str(cut),
+                   '--binary', sail['binary'], '--max-steps', str(sail['max_steps'])]
+        with open(base + '.sail.log', 'wb') as log:
+            try:
+                result = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT,
+                                        timeout=sail['timeout_seconds'])
+            except subprocess.TimeoutExpired:
+                # Only this invocation's uniquely named scope is stopped.
+                subprocess.run(['systemctl', '--user', 'stop', unit], check=True,
+                               stdout=log, stderr=subprocess.STDOUT)
+                raise
+        if result.returncode:
+            raise RuntimeError(f'Sail capture failed ({result.returncode}); see {base}.sail.log')
+        evidence = compare_cut(cut, Path(base + '.arena'))
+        evidence['capture_settings'] = sail
+        # Retain compact complete captures. ELF is retained on failures; for a
+        # successful case its exact hash plus image/source inputs are recorded.
+        retained = Path(base + '.sail')
+        retained.mkdir(exist_ok=True)
+        for path in cut.iterdir():
+            if path.name in ('arena.bin', 'arena.present.bin'):
+                (retained / (path.name + '.gz')).write_bytes(gzip.compress(path.read_bytes(), mtime=0))
+            else:
+                shutil.copyfile(path, retained / path.name)
+        Path(base + '.sail.json').write_text(json.dumps(evidence, indent=2) + '\n')
+    os.unlink(base + '.elf')
 
 
 def model_run(prog, extra, args, libs, tag):
@@ -213,7 +288,7 @@ def disasm(data, base, off, width=24):
         os.unlink(name)
 
 
-def compare(prog, mode, rtkey):
+def compare(prog, mode, rtkey, sail=None):
     name = os.path.relpath(prog, ROOT)
     tag = sha(name, mode)
     # gen_embed and ModelMain both prepend -std=c11 to these identical args.
@@ -233,12 +308,16 @@ def compare(prog, mode, rtkey):
         empty = os.path.join(objdir, 'empty.c')
         open(empty, 'w').close()
         extra, args, src = [('/prog.o', obj)], ['-w', '/prog.o'], empty
-    rst, rdata, lm = ref_run(src, extra, args, [], rtkey)
+    rst, rdata, lm = ref_run(src, extra, args, [], rtkey, sail)
     libs = ['-lm'] if lm else []
     if lm:
-        rst, rdata, _ = ref_run(src, extra, args, libs, rtkey)
+        rst, rdata, _ = ref_run(src, extra, args, libs, rtkey, sail)
     mst, mdata, dt = model_run(src, extra, args, libs, tag)
     res = dict(name=name, model_s=dt, ref=rst, model=mst)
+    if sail:
+        res['reference'] = 'native Sail + rv64emu' if rst == 'ran' else 'rv64emu refusal only; no Sail coverage'
+        if rst == 'ran':
+            res['sail'] = validate_sail_cache(rdata.removesuffix('.arena'), sail)
     if mst == 'model-error':
         res.update(result='unsupported-asm' if mdata in ('model-error unsupported: asm statement', 'model-error unsupported: global asm block') else 'model-error', why=mdata)
         return res
@@ -287,10 +366,25 @@ def main():
     ap.add_argument('--no-report', action='store_true')
     ap.add_argument('--json-out', help='retain every case, counts and input/image pins')
     ap.add_argument('--require-success', type=int, default=0, help='minimum identical successful arenas')
+    ap.add_argument('--sail-capture', type=Path, help='also compare every successful arena with this native Sail capture binary')
+    ap.add_argument('--sail-max-steps', type=int, default=100_000_000)
+    ap.add_argument('--sail-timeout', type=int, default=3600, help='seconds per native capture')
     ap.add_argument('-v', action='store_true')
     a = ap.parse_args()
     if a.j < 1 or a.j > 8:
         sys.exit('at most 8 concurrent emulator runs on the shared box')
+    sail = None
+    if a.sail_capture:
+        if a.sail_max_steps < 0 or a.sail_timeout <= 0:
+            ap.error('Sail runtime limits must be nonnegative steps and positive seconds')
+        binary = a.sail_capture.resolve()
+        manifest = binary.parent / 'build.json'
+        sail = dict(binary=str(binary), binary_sha256=hashlib.sha256(binary.read_bytes()).hexdigest(),
+                    build_manifest_sha256=hashlib.sha256(manifest.read_bytes()).hexdigest(),
+                    max_steps=a.sail_max_steps, timeout_seconds=a.sail_timeout,
+                    scripts={p: hashlib.sha256(Path(ROOT, p).read_bytes()).hexdigest()
+                             for p in ('scripts/capture_cut.py', 'scripts/gen_capture_cut.py',
+                                       'scripts/compare_sail_arena.py', 'scripts/model_diff.py')})
     groups = []
     for t in a.targets:
         if t == 'all':
@@ -328,6 +422,7 @@ def main():
                 if os.path.exists(symbol_tmp):
                     os.unlink(symbol_tmp)
     os.makedirs(CACHE, exist_ok=True)
+    os.makedirs(WORK, exist_ok=True)
     rtkey = runtime_key()
     mode = 'obj' if a.obj else 'c'
     results = {}
@@ -338,7 +433,7 @@ def main():
             if a.limit:
                 files = files[:a.limit]
             for f in files:
-                futs[ex.submit(compare, f, mode, rtkey)] = (g, f)
+                futs[ex.submit(compare, f, mode, rtkey, sail)] = (g, f)
         for fu in cf.as_completed(futs):
             g, source = futs[fu]
             try:
@@ -367,7 +462,7 @@ def main():
         print('%-14s %6d %6d %6d %6d %6d %6d %7d %6d' % r[:9])
     print('%-14s %6d %6d   (%.0f s wall)' % ('all', tot['n'], tot['same'], wall))
     if not a.no_report:
-        write_report(results, rows, tot, mode, wall)
+        write_report(results, rows, tot, mode, wall, sail)
     if a.json_out:
         pins = {p: hashlib.sha256(open(os.path.join(ROOT, p), 'rb').read()).hexdigest()
                 for p in ['vendor/TINYCC_REV', 'patches/0001-tcc-rv64i-soft.patch',
@@ -379,7 +474,9 @@ def main():
         with open(a.json_out, 'w') as out:
             json.dump(dict(command=sys.argv, runtime_key=rtkey, pins=pins, results=results,
                            rows=rows, totals=tot, wall_seconds=wall,
-                           reference='rv64emu diagnostic; Sail arena equality pending',
+                           reference=('native Sail full arenas plus rv64emu; refusals have no Sail coverage' if sail
+                                      else 'rv64emu diagnostic; Sail arena equality pending'),
+                           sail_settings=sail,
                            compiler_args=['-std=c11', '-w']), out, indent=2)
             out.write('\n')
     if tot['same'] < a.require_success:
@@ -389,13 +486,17 @@ def main():
                    for rs in results.values() for r in rs))
 
 
-def write_report(results, rows, tot, mode, wall):
+def write_report(results, rows, tot, mode, wall, sail=None):
     os.makedirs(os.path.dirname(REPORT), exist_ok=True)
     rev = subprocess.run(['git', '-C', ROOT, 'rev-parse', '--short', 'HEAD'], capture_output=True, text=True).stdout.strip()
     L = ['# F3: TccModel against tcc, byte for byte', '',
          'Generated by `scripts/model_diff.py%s` at %s (commit %s). Reference: the image\'s tcc -run on'
          ' build/rv64emu (scripts/ref_arena.sh); model: `tcc_model`. "same" = identical arena. Matching compile/link refusals are reported separately and do not count toward the F3 exit criterion.' % (' --obj' if mode == 'obj' else '',
                                                                                  time.strftime('%Y-%m-%d %H:%M'), rev), '']
+    if sail:
+        L += ['Native Sail capture is also enabled: every successful arena matches all 4 MiB'
+              ' and handoff metadata on Sail. Refusals are fast-reference diagnostics only.'
+              ' These are native observations, not reachability proofs.', '']
     if mode == 'obj':
         L += ['Mode `--obj`: link-only. The program is compiled by the host cross tcc and loaded as /prog.o'
               ' with an empty /prog.c, so this checks the model\'s object/archive loading, GOT/PLT,'
