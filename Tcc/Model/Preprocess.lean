@@ -1,5 +1,6 @@
 import Tcc.Model.Tie
 import Spec.Pre.Compare
+import Spec.ImageFiles
 
 /-! Exact phase-4 interface. No pretty printing, literal decoding, adjacent
 string concatenation or spelling canonicalisation occurs in this projection.
@@ -31,27 +32,17 @@ def preprocessTokens (R : Rec) (observe : Bool := true) : M Unit := do
       ppSeen := if obs.event == 0 then s.ppSeen else s.ppSeen.insert obs.event () }
   throw (.fuel "preprocessTokens")
 
-/-- Image directory nodes, as provided to the host file model by the driver. -/
-def ppDirs (files : Std.HashMap ByteArray ByteArray) : Std.HashMap ByteArray Unit := Id.run do
-  let mut dirs := ({} : Std.HashMap ByteArray Unit).insert ByteArray.empty ()
-  for (p, _) in files do
-    for i in [1:p.size] do
-      if p.get! i == 47 then dirs := dirs.insert (p.extract 0 i) ()
-  return dirs
-
-/-- Pure initial state, with the source installed as a physical file so the
-modeled block refiller performs trigraph translation and splicing. -/
+/-- Pure initial state using the image's ordered table initializer. The
+source is a physical file, so the modeled refiller performs phases 1–2. -/
 def preprocessState (src : ByteArray) (fs : List (CSem.Pre.Bytes × CSem.Pre.Bytes)) : TccSt := Id.run do
-  let mut files : Std.HashMap ByteArray ByteArray := {}
-  let mut total := src.size
-  for (p, b) in fs do
-    let p := ByteArray.mk p.toArray
-    if !files.contains p then
-      files := files.insert p (ByteArray.mk b.toArray)
-      total := total + b.length
-  files := files.insert "/prog.c".toUTF8 src
+  let entries := ("/prog.c".toUTF8.toList, src.data) ::
+    fs.map (fun (p, b) => (p, b.toArray))
+  let image := ImageFiles.views entries
+  let files := image.files.foldl (fun m (p, d) => m.insert p d) ({} : Std.HashMap ByteArray ByteArray)
+  let dirs := image.dirs.foldl (fun m p => m.insert p ()) ({} : Std.HashMap ByteArray Unit)
+  let total := entries.foldl (fun n (_, b) => n + b.size) 0
   return {
-    fsFiles := files, fsDirs := ppDirs files, fds := Array.replicate 3 none,
+    fsFiles := files, fsDirs := dirs, fds := Array.replicate 3 none,
     fuel := 16 * total + 4096 }
 
 /-- Full observation, including the state after the final token. -/
