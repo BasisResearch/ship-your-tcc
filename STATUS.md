@@ -19,8 +19,8 @@ Takeover in progress, resumed 2026-10-27. The approved target is
 
 Mike Dodds's upstream follow-up is tracked in CSEM-UPSTREAM.md. README and
 ATTRIBUTION prominently credit Cerberus / Cambridge REMS and cerberus-lean /
-Mike Dodds / Oath. Repin evaluation is active in tasks/csem-repin.md now that
-the original RV64-config and C11-model tasks have landed; it uses a fresh worktree. Kiran owns
+Mike Dodds / Oath. The scheduled repin evaluation is complete (results/csem/repin-2026-10-27.md);
+adoption awaits the valid-union initializer repair in the preserved candidate. Kiran owns
 external bug reporting; no external contact is authorized or planned.
 
 | lane | recovery source | review and next check |
@@ -40,10 +40,10 @@ public libc `strtold` still needs correction in the library lane. Matching refus
 
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
 two at a time, following MANAGER.md. Slot 1 implements exact phase-4 token observation in sol-f2-tokens; the
-line-splice repair has passed focused/Sail checks and is in its final gate.
+line-splice repair is integrated after focused/Sail checks and the full gate.
 Slot 2 has evaluated the scheduled upstream repin in sol-csem-repin: full
 gate passes, but adoption is deferred until its valid-union refusal is
-repaired. Main retains its current pin; tasks/f1-union-initializers.md is next. The compiler-handoff collector and strict model_diff consumer are integrated.
+repaired. Main retains its current pin; tasks/f1-union-initializers.md is active. The compiler-handoff collector and strict model_diff consumer are integrated.
 Fresh 1,412-input comparison: 1,308 arenas (1,299 generated), 104 refusals,
 zero mismatches/harness/model errors (results/model/handoff-integration.md). The RV64 reader and image filesystem are
 integrated; their fresh probes and remaining semantic gaps are documented.
@@ -76,7 +76,7 @@ Further C11 coverage remains work, not a change to the contract. Macro argument/
 agreements with patched tcc/GCC; 609/617 exact tcc corpus agreements, with
 the same eight residuals (results/pre/line-spec-repaired.md). The include
 filesystem also incorrectly normalizes away missing directories before lookup
-(results/pre/path-resolution.md); a shared traversal repair is queued after repin.
+(results/pre/path-resolution.md); the lead is validating a repair that reuses CerbFS traversal and ordered initialization.
 
 Builds are serialized across these lanes, capped at 12 GB. The two inherited
 `results/review/*.json` handoffs are retained as dated records; all 345 hashes
@@ -88,8 +88,10 @@ main's CSem objects were rebuilt before accepting the digest retirement.
 
 
 The line-repair broad review has 1,419 identical fast arenas / 1,556 inputs,
-129 refusals, seven assembly gaps and one previously recorded compiler
-instruction-limit failure; no byte differences or model errors
+129 refusals, seven assembly gaps and one recorded runner instruction-limit
+failure. A separate 529-million-step cleanup run now matches the model,
+raising successful coverage to 1,420 (results/model/cleanup-followup.md);
+no byte differences or model errors
 (results/model/line-broad-review.md). The broad run correctly exits nonzero
 for the remaining gaps. The IEEE draft review and follow-up task are recorded
 in results/csem/ieee-recovery-review.json and tasks/f1-ieee-recovery.md.

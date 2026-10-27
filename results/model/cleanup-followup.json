@@ -1,0 +1,21 @@
+{
+  "status": "same",
+  "model_seconds": 57.035369873046875,
+  "arena_sha256": "bfa937b2ab5980ba5d44c633930a3af507199d289dfd31dc67ffbb903f2874c3",
+  "source_sha256": "0afc8a310c76b085757b19f306aa10c8acfd2b4902237915db1e08ae299b52f0",
+  "runtime_key": "406fffa86d18c8a746d968677fffef0b2942b60fbbf664c0b86e2d6199b7fe6e",
+  "model_sha256": "e392cfd3b30fce20995570bdfd163a8b42cac850dea0ff2696b282907159b3ce",
+  "reference": "independent fast RV64I interpreter; no full Sail claim",
+  "steps": 529772356,
+  "compile_steps": 529772331,
+  "max_steps": 4000000000,
+  "serialized_arena_bytes": 2436821,
+  "reference_record": "rv64emu: steps=529772356 compile_steps=529772331 exit=- status=handoff",
+  "pins": {
+    "patches/0003-tcc-c11.patch": "339764213946bd593368936df56e1bdca99aa8cbb2a59bc95d7aac2f78b448a3",
+    "scripts/ref_arena.sh": "f3978ba20c9e0ff651fe082e123c191a1cf28cb7e336e243a3c308ef4eb67e55",
+    "scripts/model_diff.py": "6fab1c29ac671896b91fa6e75f064a78c871b77b3f582e163dcaf4aaf84f7bb9",
+    "c/build/base.elf": "73897e99aada3df0d498d1b8bd395c0b4ee2d8a5cefd91e3a5e3ccad3d98bb17",
+    "Tcc/Model/PpMacro.lean": "cb48b87852a0f90709c8296d4f91c4d088511dc6a0263d7685fcf98c91f619d8"
+  }
+}
