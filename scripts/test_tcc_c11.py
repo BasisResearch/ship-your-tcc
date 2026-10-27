@@ -32,6 +32,7 @@ CASES = {
     'c/tests/c11/ucn.c': 'ucn 0\n',
     'c/tests/c11/union.c': 'union 0\n',
     'c/tests/c11/line_include.c': 'line elsewhere/relative.c 0\n',
+    'results/repro/tcc_pragma_macro_operand.c': 'pragma operands 0\n',
 }
 COMMANDS = []
 
@@ -115,7 +116,7 @@ def main():
         # the compiler changes on Sail. line_include needs its sibling header
         # in the image; that behavior is covered above on host and cross.
         run(['scripts/test_tcc_patch.sh'] + list(CASES))
-        full = list(CASES)[:7]
+        full = list(CASES)[:7] + ['results/repro/tcc_pragma_macro_operand.c']
         def full_image(f):
             meta = OUT / (Path(f).stem + '.meta')
             meta.unlink(missing_ok=True)

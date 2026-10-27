@@ -1,0 +1,9 @@
+{
+  "vendor/TINYCC_REV": "76ca376f1f96cf1b316713d8f94d91c8629445929d1e7474792fd76610bce1c0",
+  "patches/0003-tcc-c11.patch": "acab00b49fd73b1423aca24d9b9281fb843f5788c29dffcacaf5bd5a15db3ff4",
+  "patches/0004-tcc-binary128-literals.patch": "4dfcc192c23a777b1b335e9052a416956886b1071c3de1e8da403b5b194e221e",
+  "scripts/test_tcc_c11.py": "a0be4924df1feff3930bff85110c62dfbc4a491b63d5efb1b817425fe38fc3ec",
+  "results/repro/tcc_pragma_macro_operand.c": "75fb0e1133edd3b2606d085e5fbd307cce44044fa14642369a8805ed8d4a9f32",
+  "c/build/base.elf": "24e414e9f4c9d27c9a03d515238f5bd9cc09f104d004ef40c9efc6211127989a",
+  "build/cross/riscv64-tcc": "b26b488bd2689cba52a7148505bdfa1887f38944f6bbb10efc5c398d41cf04f0"
+}

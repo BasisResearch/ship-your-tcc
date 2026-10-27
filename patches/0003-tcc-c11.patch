@@ -292,7 +292,7 @@ index 1b63467..f43a003 100644
          /* for possible subsequent similar declarations */
          if (flexible_array)
 diff --git a/tccpp.c b/tccpp.c
-index fd59104..c4f1734 100644
+index fd59104..203e807 100644
 --- a/tccpp.c
 +++ b/tccpp.c
 @@ -51,7 +51,36 @@ static TokenString unget_buf;
@@ -800,7 +800,7 @@ index fd59104..c4f1734 100644
  #define PP_PRINT(x)
  #endif
  
-+static void pragma_operator(void);
++static void pragma_operator(Sym **nested_list);
 +
  static int macro_subst(
      TokenString *tok_str,
@@ -852,7 +852,7 @@ index fd59104..c4f1734 100644
 +            str = tok_str_alloc();
 +            str->str = (int *)macro_str;
 +            begin_macro(str, 2);
-+            pragma_operator();
++            pragma_operator(nested_list);
 +            while (macro_stack != str) {
 +                TOK_GET(&t, &macro_ptr, &cval);
 +                if (!t) end_macro();
@@ -870,7 +870,7 @@ index fd59104..c4f1734 100644
                  /* and mark so it doesn't get subst'd again */
                  t |= SYM_FIELD;
                  goto no_subst;
-@@ -3466,10 +3612,156 @@ static int macro_subst(
+@@ -3466,10 +3612,170 @@ static int macro_subst(
      return nosubst;
  }
  
@@ -939,7 +939,7 @@ index fd59104..c4f1734 100644
 +
 +/* C11 6.10.9: macro-expand the operand, destringize only \\" and \\\\,
 +   then use exactly the #pragma parser. Isolate its token/file stream. */
-+static void pragma_operator(void)
++static void pragma_operator(Sym **nested_list)
 +{
 +    int flags = parse_flags, saved_tok_flags;
 +    const char *s;
@@ -953,6 +953,20 @@ index fd59104..c4f1734 100644
 +    next();
 +    if (tok != '(') expect("(");
 +    next();
++    /* A replacement-list stream is normally already expanded, so next()
++       does not expand its identifiers.  macro_subst invokes us before that
++       rescanning is complete: expand the operand using the same active-macro
++       list, including function-like operands and their argument stream. */
++    if (tok >= TOK_IDENT) {
++        Sym *operand_macro = define_find(tok);
++        if (operand_macro && !sym_find2(*nested_list, canonical_ident(tok))) {
++            TokenString *operand = tok_str_alloc();
++            macro_subst_tok(operand, nested_list, operand_macro);
++            tok_str_add(operand, 0);
++            begin_macro(operand, 1);
++            next();
++        }
++    }
 +    if (tok != TOK_PPSTR) expect("string literal in _Pragma");
 +    s = tokc.str.data;
 +    if (*s == 'L') ++s;
@@ -1027,7 +1041,7 @@ index fd59104..c4f1734 100644
      while (macro_ptr) {
  redo:
          t = *macro_ptr;
-@@ -3495,7 +3787,7 @@ redo:
+@@ -3495,7 +3801,7 @@ redo:
              }
          }
          tok = t;
@@ -1036,7 +1050,7 @@ index fd59104..c4f1734 100644
      }
  
      next_nomacro();
-@@ -3510,17 +3802,39 @@ redo:
+@@ -3510,17 +3816,40 @@ redo:
              begin_macro(&tokstr_buf, 0);
              goto redo;
          }
@@ -1048,7 +1062,8 @@ index fd59104..c4f1734 100644
 +    if (parse_flags & (PARSE_FLAG_TOK_STR | PARSE_FLAG_TOK_NUM))
 +        tok = t = canonical_ident(t);
 +    if (t == tok_pragma_op && (parse_flags & PARSE_FLAG_PREPROCESS)) {
-+        pragma_operator();
++        Sym *nested_list = NULL;
++        pragma_operator(&nested_list);
 +        goto next_token;
 +    }
 +    if (parse_flags & PARSE_FLAG_TOK_STR) {
@@ -1079,7 +1094,7 @@ index fd59104..c4f1734 100644
      }
  }
  
-@@ -3767,6 +4081,10 @@ ST_FUNC void tccpp_new(TCCState *s)
+@@ -3767,6 +4096,10 @@ ST_FUNC void tccpp_new(TCCState *s)
          p = r;
      }
  
