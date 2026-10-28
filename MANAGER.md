@@ -39,10 +39,11 @@ The launcher follows 4ct-digest's MANAGER.md/codexwork.sh workflow, adapted
 to this project's two-worker limit and shared Lean build lock.
 
 Current assignments, 2026-10-28: slot 1 runs tasks/f1-enum-bitfields.md in
-sol-csem-repin. Slot 2 now runs tasks/f3-physical-transform-proofs.md in sol-f2-tokens;
-reviewed multi-TU checkpoint96c520e awaits combined main integration.
+sol-csem-repin. Slot 2 has completed physical-proof checkpoint b42f766 in
+sol-f2-tokens; it and multi-TU checkpoint 96c520e await combined main integration.
+Next slot-2 assignment: tasks/f1-gnu-conditional-semantics.md.
 Bitfields and GNU expression syntax are adopted after their combined gates.
-Reviewed member attributes await rebuilt-image integration.
+Member attributes are adopted after rebuilt-image integration.
 The local replay-erasure theorem is adopted after its combined gate; eleven
 ghost contracts remain open. Both workers use reviewed integration bases,
 and the lead independently gates each final combination before adoption.
@@ -64,8 +65,8 @@ requested corrections must be resolved or returned as an explicit obstruction.
 Keep build receipts compact: inspect ID/status/lead notes, and verify large
 hash manifests with scripts. Do not repeatedly print whole manifests or logs.
 
-Next integration duty: combine reviewed member attributes with adopted GNU
-syntax, rebuild the compiler image for patch0005, and repeat native controls. Assertion-message adoption has a
+Next integration duty: combine reviewed multi-TU checkpoint 96c520e with the adopted
+member attributes/GNU syntax and repeat the full gate plus fresh native104. Assertion-message adoption has a
 fresh combined default gate, source-identical worker full gate and fresh native
 image observation. Bitfield review must preserve known bits through character
 copies and distinguish historical frozen references from current representation

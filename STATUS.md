@@ -28,7 +28,7 @@ external bug reporting; no external contact is authorized or planned.
 | C11 patches | new `codex-c11` worktree; existing F2 reproducers | patch 0003 integrated: 7/7 full compiler Sail reproducers; combined 0003/0004 host/cross tests and main gate pass |
 | F1 grammar | `agent-a31b97b8f1c090141` | integrated: main capped build and full comparison pass, 614 exact Cabs agreements / 664 inputs; 41 joint rejections, 9 preprocessing failures |
 | F1 pure seams | `agent-a249bbaa5b1df80ec` | digest retirement integrated; main's full CSem gate passes: 19 unit executables, 113 baseline oracle results; remaining partial/native seams inventoried |
-| F1 ABI/allocation | `agent-a4ab6bbd8c0be5325` | RV64 reader and bounded allocation oracle adopted after full gates; fresh p04/p09/p10 checks close the earlier IEEE/stdin probe failures; bitfield representation is adopted; enum coverage and memory connections remain |
+| F1 ABI/allocation | `agent-a4ab6bbd8c0be5325` | RV64 reader and bounded allocation oracle adopted after full gates; fresh p04/p09/p10 checks close the earlier IEEE/stdin probe failures; bitfield representation and member attributes are adopted; enum coverage and memory connections remain |
 | F1 filesystem | `agent-ad868c434f5f27398` | integrated after full gate: descriptor fstat, structural state ordering and link proxy repaired; eight exact Sail byte/exit agreements, repeated with RV64 config; mkdir remains a separate missing-library gap |
 | F1 IEEE | `agent-a45cb08cf87ce958c` | integrated after worker and combined full gates: pure 32/64/128 bits, zero native floating in both cones, unchanged 113-case baseline; literal/printf/sqrtl gaps and connection Statements remain open |
 | F3 compiler model | `agent-a05464165befb7074` (recovery merged) | patched C11 model integrated after capped build and combined full gate; 1,345 matching fast arenas / 1,815 inputs, including 1,082 C-generator and 80 mutant successes; all three repaired include fixtures and the 78-case anonymous-member batch have full Sail evidence; all-corpus Sail equality remains open |
@@ -40,9 +40,10 @@ public libc `strtold` still needs correction in the library lane. Matching refus
 
 The lead runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most two
 at a time, following MANAGER.md. Slot 1 now handles implementation-defined enum bitfields;
-slot 2 proves the pure physical-transform correspondence after submitting
-reviewed multi-translation-unit checkpoint96c520e. C11 bitfields and GNU expression syntax are adopted after their combined full
-gates; the reviewed member-attribute checkpoint awaits rebuilt-image integration. Assertion-message encodings are adopted. Local replay erasure is proved
+slot 2 has submitted reviewed physical-proof checkpoint b42f766 after
+reviewed multi-translation-unit checkpoint 96c520e. Their combined adoption is next;
+slot 2 then takes tasks/f1-gnu-conditional-semantics.md. C11 bitfields and GNU expression syntax are adopted after their combined full
+gates; member attributes are now adopted after rebuilt-image integration. Assertion-message encodings are adopted. Local replay erasure is proved
 and adopted. Array-to-pointer alignment decay is adopted after the combined image/gate validation. Complete _Generic/_Static_assert syntax is adopted after its combined gate
 and independent raw/native checks. Binding meaning and actual model-owned compiler-injected
 opening authority are adopted after their combined gate and independent raw
@@ -560,6 +561,18 @@ No new user decision or change to Supported/Fits.
 Next enum follow-up: repair valid unnamed enum fields and direct enum
 `_Generic` associations in tcc/model (tasks/f3-enum-colon-forms.md). Keep the
 independently measured GCC type-selection differences separate.
+
+Member attributes adopted (2026-10-28): patch 0005 fixes per-declarator attribute
+state leaking between sibling members; the matching model and shared CSem
+layout/Cabs changes pass the combined full gate on 3,577 primary + 269 supplementary
+inputs, with 18 separately checked metadata pins. All 90 bitfield checks, 54 raw/text syntax controls (46 defined and 8 GCC
+diagnostics), 42 independent layouts and 46 Menhir Cabs agreements pass; eight
+Menhir placement limitations remain separate. A fresh full Sail run of the 42-row batch
+matches GCC (21,589,947 compile/679,065 program steps), and six inherited
+complete 4 MiB native comparisons plus their full program runs pass. See
+results/csem/bitfield-attributes-integration-2026-10-28.md. Enum policy/valid
+compiler refusals, whole frontend/compiler proofs and memory/volatile transport
+remain open. Reviewed multi-TU checkpoint 96c520e is next for combination. Sum cuts stay frozen.
 
 ## Needs user
 

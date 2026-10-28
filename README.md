@@ -30,9 +30,12 @@ also include the repaired 78-case anonymous-member batch. CSem now uses pure bin
 zero native floating in its checked cones. Its anonymous-member repair passes
 92 focused checks and the combined full gate. C11 bitfield representation and
 single-evaluation compound lowering are now adopted after the full combined
-gate: 82 required semantic checks and a fresh 80-case native batch pass. GNU
-member attributes, enum bitfield policy, aggregate-value initialization and
-concrete memory/volatile-event transport remain open
+gate: the original 82 semantic checks and 80-case native batch pass. GNU
+member attributes are now adopted with patch 0005 after the rebuilt-image gate:
+90 bitfield checks, 42 matching layouts and a fresh 42-row native batch pass
+([attribute integration](results/csem/bitfield-attributes-integration-2026-10-28.md)).
+Enum bitfield policy, aggregate-value initialization and concrete
+memory/volatile-event transport remain open
 ([bitfield integration](results/csem/bitfields-integration-2026-10-28.md)). The raw-source frontend reaches
 positioned Cabs with retained provenance; its 18 independent comparisons and
 combined gate pass. Runtime-library identity now reaches the semantic consumers
@@ -434,3 +437,15 @@ independent arena checks and retained native Sail evidence are in
 [results/model/direct-float-fixed-2026-10-27.md](results/model/direct-float-fixed-2026-10-27.md).
 The original failing image remains documented separately; the compiler/model
 literal refinement theorem and public libc conversions remain open.
+
+Member attributes adopted (2026-10-28): patch 0005 fixes per-declarator attribute
+state leaking between sibling members; the matching model and shared CSem
+layout/Cabs changes pass the combined full gate on 3,577 primary + 269 supplementary
+inputs, with 18 separately checked metadata pins. All 90 bitfield checks, 54 raw/text syntax controls (46 defined and 8 GCC
+diagnostics), 42 independent layouts and 46 Menhir Cabs agreements pass; eight
+Menhir placement limitations remain separate. A fresh full Sail run of the 42-row batch
+matches GCC (21,589,947 compile/679,065 program steps), and six inherited
+complete 4 MiB native comparisons plus their full program runs pass. See
+results/csem/bitfield-attributes-integration-2026-10-28.md. Enum policy/valid
+compiler refusals, whole frontend/compiler proofs and memory/volatile transport
+remain open. Reviewed multi-TU checkpoint 96c520e is next for combination. Sum cuts stay frozen.

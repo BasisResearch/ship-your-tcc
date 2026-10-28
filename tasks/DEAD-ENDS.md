@@ -1176,3 +1176,10 @@ an explicit follow-up, not established by arena equality.
 - Final bitattr staging also cannot create this worktree's read-only index.lock.
   Retain commit-stage.stderr and use the existing frozen scoped lead commit
   handoff; no alternate index/object store or semantic rerun is needed.
+
+Lead attribute packaging, 2026-10-28: tarfile's default link preservation left
+five host-build Makefile symbolic links in an otherwise regular-file archive.
+The strict member/hash verification rejected it. Use dereference=True for
+portable captures and verify all regular bytes; the retry passes 13,141 members.
+The initial cause label guessed inode deduplication; retained type-2 entries
+identify symbolic links. The failed archive remains in build/bitattr-package-failed-1.
