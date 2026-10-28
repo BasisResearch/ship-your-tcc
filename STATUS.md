@@ -39,8 +39,9 @@ removed. Patch 0004 fixes compiler literals using exact integer rounding;
 public libc `strtold` still needs correction in the library lane. Matching refusals likewise do not satisfy the F3 success criterion.
 
 The lead runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most two
-at a time, following MANAGER.md. Slot 1 now handles C11 bitfield semantics;
-slot 2 constructs general GNU expression syntax. Assertion-message encodings are adopted. Local replay erasure is proved
+at a time, following MANAGER.md. Slot 1 now handles per-member GNU bitfield attributes;
+slot 2 retains complete multi-translation-unit ghost records. The reviewed
+C11 bitfield and GNU expression checkpoints are awaiting combined adoption. Assertion-message encodings are adopted. Local replay erasure is proved
 and adopted. Array-to-pointer alignment decay is adopted after the combined image/gate validation. Complete _Generic/_Static_assert syntax is adopted after its combined gate
 and independent raw/native checks. Binding meaning and actual model-owned compiler-injected
 opening authority are adopted after their combined gate and independent raw
@@ -489,6 +490,21 @@ Eleven ghost proof contracts and F1–F3 completion remain open; sum cuts stay
 frozen. Slot 2 handles GNU expression syntax. Slot 1 continues bitfields/shared
 compound lowering, including the review-discovered character-copy defect;
 GNU trailing bitfield attributes are queued in tasks/f1-bitfield-attributes.md.
+
+Review checkpoint, 2026-10-28: C11 bitfields and the shared CSEM-14 compound
+lvalue repair are committed for integration. The corrected combined gate has
+passed all 82 required semantic cases and is running native controls. Its first
+failure was an old csem_raw executable consumed before rebuild; the gate ordering
+is repaired and the failed receipt is retained. Independent combined layout,
+control and 58-case continuation checks pass. A fresh 80-case full compiler/program
+Sail batch matches GCC on every output row. Adoption is pending the completed
+full gate and portable archive verification; no whole-proof completion is claimed.
+GNU conditional/typeof/choose construction checkpoint 7e5f0c7 passes its full
+worker gate (3,381 frozen inputs); the lead independently verified all 15,217
+archive members, including six complete native arena exports. Its main adoption
+also awaits combination. Slots now handle per-member bitfield attributes and
+ordered per-TU ghost records. Enum bitfields and four compiler bitfield diagnostic
+deviations remain separate follow-ups. No sum cuts have been regenerated.
 
 ## Needs user
 

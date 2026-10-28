@@ -611,3 +611,18 @@ Eleven ghost proof contracts and F1–F3 completion remain open; sum cuts stay
 frozen. Slot 2 handles GNU expression syntax. Slot 1 continues bitfields/shared
 compound lowering, including the review-discovered character-copy defect;
 GNU trailing bitfield attributes are queued in tasks/f1-bitfield-attributes.md.
+
+Review checkpoint, 2026-10-28: C11 bitfields and the shared CSEM-14 compound
+lvalue repair are committed for integration. The corrected combined gate has
+passed all 82 required semantic cases and is running native controls. Its first
+failure was an old csem_raw executable consumed before rebuild; the gate ordering
+is repaired and the failed receipt is retained. Independent combined layout,
+control and 58-case continuation checks pass. A fresh 80-case full compiler/program
+Sail batch matches GCC on every output row. Adoption is pending the completed
+full gate and portable archive verification; no whole-proof completion is claimed.
+GNU conditional/typeof/choose construction checkpoint 7e5f0c7 passes its full
+worker gate (3,381 frozen inputs); the lead independently verified all 15,217
+archive members, including six complete native arena exports. Its main adoption
+also awaits combination. Slots now handle per-member bitfield attributes and
+ordered per-TU ghost records. Enum bitfields and four compiler bitfield diagnostic
+deviations remain separate follow-ups. No sum cuts have been regenerated.
