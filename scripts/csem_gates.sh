@@ -72,8 +72,8 @@ export CSEM_ORACLE="$fork/_build/default/backend/driver/main.exe"
 export CSEM_RUNTIME="$fork/_build/install/default"
 
 echo "== csem (3a) allocation policies, default equivalence and independent choices"
-python3 scripts/allocation_oracle_check.py || fail "allocation replay evidence"
-python3 scripts/allocation_default_check.py || fail "default allocation equivalence"
+python3 scripts/allocation_oracle_check.py --out build/allocation-gate || fail "allocation replay evidence"
+python3 scripts/allocation_default_check.py --out build/allocation-gate || fail "default allocation equivalence"
 
 echo "== csem (3b) C11 union initializer specified outcomes"
 python3 scripts/gen_union_c11_observation.py --check || fail "C11 union observation fixture drift"

@@ -15,8 +15,9 @@ def verdicts(r):
     return [s for s in r['stdout'].splitlines() if s.startswith(('Defined {', 'Undefined {', 'Error {', 'ModelFailure {'))]
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument('--sail', action='store_true'); args = ap.parse_args()
-    OUT.mkdir(parents=True, exist_ok=True)
+    ap = argparse.ArgumentParser(); ap.add_argument('--sail', action='store_true')
+    ap.add_argument('--out', type=Path, default=OUT); args = ap.parse_args()
+    args.out.mkdir(parents=True, exist_ok=True)
     rows = []; failed = []
     def check(name, result, pred):
         result['name'] = name; result['pass'] = bool(pred(result)); rows.append(result)
@@ -63,6 +64,6 @@ def main():
     report={'source_sha256':{str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (ROOT/'csem/tests/allocation').glob('*.c')},
             'csem_binary_sha256':hashlib.sha256((ROOT/'.lake/build/bin/csem_run').read_bytes()).hexdigest(),
             'rows':rows,'failed':failed,'samples_are_semantics':False}
-    (OUT/'focused.json').write_text(json.dumps(report,indent=2)+'\n')
+    (args.out/'focused.json').write_text(json.dumps(report,indent=2)+'\n')
     return bool(failed)
 if __name__ == '__main__': raise SystemExit(main())

@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Default bump execution vs the pinned OCaml oracle and retained Sail pointer case."""
 from pathlib import Path
-import subprocess,json,hashlib
-root=Path(__file__).resolve().parents[1];out=root/'results/csem/allocation-oracle'
+import subprocess,json,hashlib,argparse
+root=Path(__file__).resolve().parents[1]
+ap=argparse.ArgumentParser();ap.add_argument('--out',type=Path,default=root/'results/csem/allocation-oracle')
+out=ap.parse_args().out;out.mkdir(parents=True,exist_ok=True)
 p=subprocess.check_output(['bash','-c','source scripts/csem_env.sh; printf "%s\\n%s\\n" "$CSEM_ORACLE" "$CSEM_RUNTIME"'],text=True).splitlines();oracle,runtime=p
 rows=[]
 for src in sorted(Path('csem/tests/allocation').glob('*.c')):
