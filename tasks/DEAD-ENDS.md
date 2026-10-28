@@ -1083,3 +1083,13 @@ an explicit follow-up, not established by arena equality.
 - Patch 0009's five single-space blank context lines are required unified-diff
   markers. The lead reviewed their cached whitespace warnings as acceptable;
   do not strip those markers and corrupt the compatibility patch.
+- Bitfield integration gate ordering (2026-10-28): worker full2 passed after
+  its focused raw build, but the first combined gate consumed the previous
+  assertion checkpoint's csem_raw binary. Its exact hash matched that prior
+  image; all 72 required defined bitfield cases failed before elaboration,
+  while ten constraint checks passed. csem_gates stage2 built csem_run but
+  omitted csem_raw; check.sh rebuilt raw only later, after this new consumer.
+  Add csem_raw/csem_cparse to the earlier explicit build. Retain the failed
+  frozen receipt, complete observations and binary-hash diagnosis. Do not
+  repair this by priming a cache, weakening cases, or treating stale failures
+  as semantic regressions. The new combined gate must pass from that state.

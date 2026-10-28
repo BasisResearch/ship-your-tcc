@@ -40,7 +40,9 @@ csem/tools/check_lem_sync.sh --check-lean || fail "lem-sync stamp"
 
 if [ $build = 1 ]; then
   echo "== csem (2) build"
-  scripts/csem_build.sh LemLib LemLibTests CerberusLean CerberusLeanTest csem_run TccCSem "${UNIT[@]}" \
+  # The raw bitfield checks below run before check.sh's later raw audit stage.
+  # Rebuild their executables here; a preceding focused build is not a dependency.
+  scripts/csem_build.sh LemLib LemLibTests CerberusLean CerberusLeanTest csem_run csem_raw csem_cparse TccCSem "${UNIT[@]}" \
     || fail "CSem build"
 fi
 
