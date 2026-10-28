@@ -11,7 +11,7 @@ From the repository root, launch a background worker with a retained shell:
 editing a script while bash is waiting inside it can corrupt its resumption.
 The retained shell also prevents this execution environment from reaping
 an orphaned launch before its worker starts.
-The launcher checks memory, locks the slot, rebases a clean worktree on main,
+The launcher checks memory, locks the slot, updates a clean worktree onto main, preserving already reviewed merges,
 and records `logs/sol-<slot>-<time>.log`. `WORKTREE=/absolute/path` adopts a
 reviewed recovery worktree; dirty worktrees and conflicts stop the launch
 without discarding changes. Every Lean build holds the shared
@@ -38,19 +38,18 @@ pushes main without force. Record unsuccessful approaches in
 The launcher follows 4ct-digest's MANAGER.md/codexwork.sh workflow, adapted
 to this project's two-worker limit and shared Lean build lock.
 
-Current assignments, 2026-10-28: slot 1 runs tasks/f1-enum-bitfields.md in
-sol-csem-repin. Slot 2 has completed physical-proof checkpoint b42f766 in
-sol-f2-tokens; it and multi-TU checkpoint 96c520e await combined main integration.
-Slot 2 now runs tasks/f1-gnu-conditional-semantics.md from combined base 75a2df8.
-Bitfields and GNU expression syntax are adopted after their combined gates.
-Member attributes are adopted after rebuilt-image integration.
-The local replay-erasure theorem is adopted after its combined gate; eleven
-ghost contracts remain open. Both workers use reviewed integration bases,
-and the lead independently gates each final combination before adoption.
-Original branches and evidence remain preserved. No third worker runs.
-Bitfield compiler constraints, general declaration constraints, other upstream
-invocation modes, complete multi-TU ghost construction and runtime body coverage
-remain queued. The bitfield diagnostic task depends on the F1 native review.
+Current assignments, 2026-10-28: slot 1 runs tasks/f3-enum-colon-forms.md in
+sol-csem-repin, after independently reviewed enum checkpoint7907c3a. Slot 2
+runs tasks/f1-gnu-conditional-semantics.md in sol-f2-tokens. The latter keeps
+its observed GNU bitfield-promotion compiler bug separate; its compiler/model
+repair is queued after enum colon forms. Multi-TU96c520e and pure physical
+proofsb42f766 are adopted at main925f88d after the combined full gate, independent
+postchecks, portable verification and fresh same-ELF native104 execution.
+Both physical-origin/read-view Statements are proved for arbitrary bytes;
+read/refill/host, raw and whole-command construction/erasure remain open.
+Original checkpoints and failed evidence remain preserved. No third worker runs.
+Bitfield/general declaration constraints, VLA semantics, include-guard opening
+schedules, pack-layout transport and runtime body coverage remain work items.
 
 Frozen build requests use the shared 12 GB lock. Changed inputs invalidate
 a request; freeze a new hash manifest before retrying. Infrastructure limits
@@ -65,23 +64,13 @@ requested corrections must be resolved or returned as an explicit obstruction.
 Keep build receipts compact: inspect ID/status/lead notes, and verify large
 hash manifests with scripts. Do not repeatedly print whole manifests or logs.
 
-Next integration duty: combine reviewed multi-TU checkpoint 96c520e with the adopted
-member attributes/GNU syntax and repeat the full gate plus fresh native104. Assertion-message adoption has a
-fresh combined default gate, source-identical worker full gate and fresh native
-image observation. Bitfield review must preserve known bits through character
-copies and distinguish historical frozen references from current representation
-profiles. Keep GNU trailing-attribute parser failures and compiler constraint
-diagnostic gaps explicit; their follow-up tasks remain queued. The local replay theorem changes no runtime
-behavior and proves no whole-run construction or binary refinement duty.
+Next integration duty: combine reviewed enum semantics and the pending compiler
+repair with shared GNU conditional lowering after each worker's full gate.
+Native GNU bitfield-promotion mismatch remains a compiler repair, not a new
+cfgTcc policy. All final combinations receive their own pinned validation;
+old full-gate receipts do not certify a newly merged semantic base.
 
-The active pure physical-transform proof task is
-tasks/f3-physical-transform-proofs.md. Retain the unchanged named
-Statements, arbitrary-byte scope and standard-axiom audit; a checked obstruction
-is preferable to silently weakening a statement. Slot 1 handles enum bitfield policy. Subsequent F1 tasks include general
-declaration constraints, GNU conditional lowering and VLA types/storage. Compiler diagnostic and declaration constraints remain
-separate tasks. Keep at most two external workers active.
-
-After the enum semantic checkpoint, prioritize tasks/f3-enum-colon-forms.md:
-valid unnamed enum fields/direct enum generic associations currently refuse.
-Preserve GCC expression-type policy differences as a separate axis. Invalid
-bitfield diagnostics, GNU conditional semantics and VLA storage remain queued.
+Next F1 work includes tasks/f1-vla-semantics.md and general declaration
+constraints. The independent include-guard opening schedule and pack-layout
+consumption also need repair without inventing model reads or erasing metadata.
+Keep at most two external Sol workers; all Lean builds share the12GB lock.

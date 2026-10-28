@@ -747,3 +747,10 @@ slot1 now repairs valid enum-colon compiler/model refusals. Slot2 retains GNU
 conditional shared semantics, with its separate native bitfield-promotion bug
 queued for compiler/model repair. F1–F3 and tcc_run_correct stay open; sum cuts
 remain frozen. Main executable artifact refresh follows this adoption.
+
+After multi-TU/physical adoption, main image/symbols and seven executable
+targets refresh successfully on the same4,162 source paths, with the exact
+post-gate launcher-only change separately pinned. Slot1 now runs enum-colon
+compiler/model repair; slot2 GNU conditional semantics. The include-guard
+opening mismatch is queued as tasks/f2-include-guard-openings.md. No new user
+decision or universal theorem is claimed.
