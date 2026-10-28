@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "source": "vendor/tinycc/tests/tests2/104_inline.c",
+  "source_sha256": "9aac867b6451bd167f16ca6dbcfe8c75f84ff5ba01c29878c0942cede6737b84",
+  "before_run": [
+    {
+      "image_path": "/104+_inline.c",
+      "source": "vendor/tinycc/tests/tests2/104+_inline.c",
+      "sha256": "5f5a744e33f558578b9b3720003de0bcf61805e381d1c9df2a08f3c7a2586147"
+    }
+  ],
+  "provenance": {
+    "path": "vendor/tinycc/tests/tests2/Makefile",
+    "sha256": "cf6eb16c2d9ebcbe0dba2853d02d6a9dcf1400a20caa397d543b5efba47b35f8"
+  }
+}

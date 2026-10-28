@@ -1,0 +1,7 @@
+{
+  "initial_probe": "both successful complete fast arenas identical; separate source files and upstream argument order",
+  "unit_tests": "first fixture test compared lexical /Users temporary path with canonical /data/home; corrected expected path resolution, 4/4 pass",
+  "native_first_run": "source_fixtures.py manifest-read was changed while capture was running, so retain as development evidence; rerun current frozen harness before final adoption",
+  "remaining_provenance": "Ghost.runRaw is one translation unit and GhostExport does not export complete per-unit opening logs for multi-TU command; this manifest/arena checkpoint does not establish full multi-TU provenance",
+  "historical_counts": "unchanged; 104 and 104+ standalone refusals retained separately"
+}

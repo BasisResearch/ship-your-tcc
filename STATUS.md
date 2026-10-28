@@ -373,6 +373,16 @@ coverage is claimed, and sum cuts stay frozen. Slot 1 now owns CSem alignment/
 array constraints; slot 2 owns injected-opening authority and independent raw
 frontend comparison. The reviewed binding checkpoint is not yet adopted.
 
+Explicit corpus invocation checkpoint (2026-10-28): the upstream 104 inline
+pair now has a pinned two-translation-unit manifest. The combined full gate
+passes (3,583 inputs); one successful arena matches the fast reference and
+all 4 MiB on native Sail after 11,459,979 compiler steps. Both standalone files
+still refuse independently, and historical broad counts remain unchanged.
+Complete per-unit ghost construction/opening provenance remains open; the
+manifest does not establish that connection. Other upstream executable-link,
+TLS, pthread and snippet-driver invocations remain classified duties. Evidence:
+results/model/corpus-invocations.md. No sum cuts are regenerated.
+
 ## Needs user
 
 None currently. Implementation defects and unfinished obligations are work

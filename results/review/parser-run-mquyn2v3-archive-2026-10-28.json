@@ -1,0 +1,9 @@
+{
+  "source": ".claude/worktrees/agent-a31b97b8f1c090141/build/f1a/run-mquyn2v3",
+  "archive": "build/recovery/parser-run-mquyn2v3-2026-10-28/captures.tar.gz",
+  "archive_sha256": "0725baf519e5bb4421149025d4e7f513f34ef2413abe8c48392401a4144f9132",
+  "member_count": 4612,
+  "uncompressed_bytes": 1156380753,
+  "archive_bytes": 52651061,
+  "reason": "Inactive inherited parser captures; every member verified before removing loose duplicates. Source checkout and original observations unchanged."
+}

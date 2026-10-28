@@ -1,0 +1,9 @@
+{
+  "source": ".claude/worktrees/agent-a31b97b8f1c090141/build/f1a/csmith",
+  "archive": "build/recovery/parser-csmith-2026-10-28/captures.tar.gz",
+  "archive_sha256": "ae6cfdaad189bdc3428972b920718b660a3d15d6335b3e244fb753e908972117",
+  "member_count": 400,
+  "uncompressed_bytes": 671158162,
+  "archive_bytes": 32144346,
+  "reason": "Inactive inherited parser captures; every member verified before removing loose duplicates. Source checkout and original observations unchanged."
+}

@@ -247,3 +247,10 @@ extension of the TinyCC 43c7708 translation, LGPL-2.1-or-later. It preserves
 separate declaration/type/expression alignment carriers and a named open RV64
 representation obligation. No new library or machine proof is reused; the
 existing Sail/build harness provenance above applies.
+
+The opt-in `c/invocations/tinycc-104-inline.json` follows TinyCC 43c7708's
+`tests/tests2/Makefile` ordering for `104+_inline.c -run 104_inline.c` and reuses
+both pristine test sources. Its manifest pins all three upstream files; the
+wrapper, input guards and evidence packaging are project work. See
+results/model/corpus-invocations.md. TinyCC's existing license/provenance row
+continues to cover the unmodified upstream sources.

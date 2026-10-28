@@ -484,3 +484,13 @@ agreement, fuel and binary refinement remain open. Evidence:
 results/model/physical-integration-2026-10-28.md. Binding checkpoint adoption
 awaits its model connection and combined gate; CSem alignment/array constraints
 are the other active lane. No new native Sail or sum regeneration is included.
+
+Explicit corpus invocation checkpoint (2026-10-28): the upstream 104 inline
+pair now has a pinned two-translation-unit manifest. The combined full gate
+passes (3,583 inputs); one successful arena matches the fast reference and
+all 4 MiB on native Sail after 11,459,979 compiler steps. Both standalone files
+still refuse independently, and historical broad counts remain unchanged.
+Complete per-unit ghost construction/opening provenance remains open; the
+manifest does not establish that connection. Other upstream executable-link,
+TLS, pthread and snippet-driver invocations remain classified duties. Evidence:
+results/model/corpus-invocations.md. No sum cuts are regenerated.

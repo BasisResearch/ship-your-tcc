@@ -1,0 +1,182 @@
+{
+  "command": [
+    "scripts/model_diff.py",
+    "--invocations",
+    "--no-report",
+    "--json-out",
+    "build/inline-bundle-review/native-final.json",
+    "--require-success",
+    "1",
+    "-j",
+    "1",
+    "--sail-capture",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/capture-cut-parametric/capture_cut",
+    "--sail-max-steps",
+    "40000000",
+    "--sail-timeout",
+    "1200",
+    "c/invocations/tinycc-104-inline.json"
+  ],
+  "runtime_key": "828a01ddd60efca9ac97692c3ff372d11c55c5e9e73be40d0c180427b7cfd1fb",
+  "pins": {
+    "vendor/TINYCC_REV": "76ca376f1f96cf1b316713d8f94d91c8629445929d1e7474792fd76610bce1c0",
+    "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+    "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+    "patches/0003-tcc-c11.patch": "6bd9e9b2c3035a70d0fdecc524c24dfbc4f3937217a87df7c3e58faa9f160ca4",
+    "patches/0004-tcc-binary128-literals.patch": "15d4a95ec667c9ec18ea2be3fc1475c1178668853fea28213c3061afa0f863ff",
+    "c/build/base.elf": "736dbd13329fb31cb7a49f58c7b33aa788ad739e3714eba940312703dde82d06",
+    "c/src/gen_embed.sh": "68534ee3a238c143bf4e749fcb0ea43e8b53933c4a9d6843422d995c879d7d76",
+    "scripts/model_diff.py": "ab13368709839e61bfd015dcf3fb1ce21e6d7b52b38384e603f6ffe5e3f295db",
+    "scripts/source_fixtures.py": "8bd91c7d988bcd2af43dfc8c2b8f435376b842e7a3ceeb988bba439baecb609e",
+    ".lake/build/bin/tcc_model": "b43bdcf09dc136ed0ecb49e5307ab49d0adb4cdfc039a94747db62d058d5f03e",
+    "c/invocations/tinycc-104-inline.json": "5dd17cfac9ba006f7ba5f5c2d9766c9e9774107710ed7c5d9db275582ea946b3",
+    "vendor/tinycc/tests/tests2/104_inline.c": "9aac867b6451bd167f16ca6dbcfe8c75f84ff5ba01c29878c0942cede6737b84",
+    "vendor/tinycc/tests/tests2/Makefile": "cf6eb16c2d9ebcbe0dba2853d02d6a9dcf1400a20caa397d543b5efba47b35f8",
+    "vendor/tinycc/tests/tests2/104+_inline.c": "5f5a744e33f558578b9b3720003de0bcf61805e381d1c9df2a08f3c7a2586147",
+    "vendor/tinycc/tests/tests2/18_include.h": "a60b9358ef0821a80bc72288819aa82166461532292665dc7445814f08b0f86f",
+    "vendor/tinycc/tests/tests2/18_include2.h": "ed726fc0aab006f867de5f64f0b9da684c994ec48175f4e1f09d75d91f19938f",
+    "vendor/tinycc/tests/tests2/threads.h": "5582e00ed2fd25bd523e550608ba23995d201d3ec1b5742a3b6bbb0e6bd9590d"
+  },
+  "results": {
+    "invocations": [
+      {
+        "name": "c/invocations/tinycc-104-inline.json",
+        "model_s": 0.1476120948791504,
+        "ref": "ran",
+        "model": "ran",
+        "invocation": {
+          "argv": [
+            "tcc",
+            "-std=c11",
+            "-w",
+            "/104+_inline.c",
+            "-run",
+            "/prog.c"
+          ],
+          "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/vendor/tinycc/tests/tests2/104_inline.c",
+          "files": [
+            [
+              "/104_inline.c",
+              "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/vendor/tinycc/tests/tests2/104_inline.c"
+            ],
+            [
+              "/tests2/104_inline.c",
+              "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/vendor/tinycc/tests/tests2/104_inline.c"
+            ],
+            [
+              "/18_include.h",
+              "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/vendor/tinycc/tests/tests2/18_include.h"
+            ],
+            [
+              "/tests2/18_include.h",
+              "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/vendor/tinycc/tests/tests2/18_include.h"
+            ],
+            [
+              "/18_include2.h",
+              "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/vendor/tinycc/tests/tests2/18_include2.h"
+            ],
+            [
+              "/tests2/18_include2.h",
+              "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/vendor/tinycc/tests/tests2/18_include2.h"
+            ],
+            [
+              "/threads.h",
+              "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/vendor/tinycc/tests/tests2/threads.h"
+            ],
+            [
+              "/tests2/threads.h",
+              "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/vendor/tinycc/tests/tests2/threads.h"
+            ],
+            [
+              "/104+_inline.c",
+              "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/vendor/tinycc/tests/tests2/104+_inline.c"
+            ],
+            [
+              "/tests2/104+_inline.c",
+              "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/vendor/tinycc/tests/tests2/104+_inline.c"
+            ]
+          ]
+        },
+        "reference": "native Sail + rv64emu",
+        "sail": {
+          "status": "equal",
+          "evidence": "native Sail observation; not a theorem",
+          "compared_bytes": 4194304,
+          "model_payload_bytes": 84548,
+          "arena_sha256": "b1c5269ca46a92b73676d758efdb1bf19a0bbaaf1442a81226d6570bba167fe6",
+          "model_arena_sha256": "ec0a470a98e0d1102965ff3bd18dcf7bce66760a6356a16abe47b7940ec91f78",
+          "trace_sha256": null,
+          "capture_manifest_sha256": "8d23260650e421f7316931d712bcc04797a07c860c49678a99bfc4fff6e394fa",
+          "elf_sha256": "08e51b3720a9fdc455d73d3f33d8235711e161135a834dffd79bed04f4276ff6",
+          "source_sha256": "9aac867b6451bd167f16ca6dbcfe8c75f84ff5ba01c29878c0942cede6737b84",
+          "steps": 11459979,
+          "pc": 2147490632,
+          "handoff": {
+            "x10": 2252344940,
+            "x14": 2252341248,
+            "x15": 3692
+          },
+          "capture_settings": {
+            "binary": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/capture-cut-parametric/capture_cut",
+            "binary_sha256": "2fe637d6e77e2741606bb67e5f7f07751a1a90dd1d5467f75aca3288cf5663bf",
+            "build_manifest_sha256": "6f829539787d74997a6fa542d9d4cd04b9a62dca3950f50b237458694bf571e6",
+            "max_steps": 40000000,
+            "timeout_seconds": 1200,
+            "scripts": {
+              "scripts/capture_cut.py": "f1e7a0da02e424298e5659884ef430b7bd6098753bef02d8d136f9b5f61a6d2d",
+              "scripts/gen_capture_cut.py": "d01897950f68f4fb68ca0ffc2fd15b6a6e0e759ec189fd389e36d05feabccd01",
+              "scripts/compare_sail_arena.py": "c6495bde62cb803fcab2438008677a9966f9e2905aa49430561b1dddcd22ac1f",
+              "scripts/model_diff.py": "ab13368709839e61bfd015dcf3fb1ce21e6d7b52b38384e603f6ffe5e3f295db"
+            }
+          }
+        },
+        "result": "same",
+        "why": "arena 84548 bytes"
+      }
+    ]
+  },
+  "rows": [
+    [
+      "invocations",
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.1476120948791504
+    ]
+  ],
+  "totals": {
+    "n": 1,
+    "same": 1
+  },
+  "wall_seconds": 271.40031814575195,
+  "reference": "native Sail full arenas plus rv64emu; refusals have no Sail coverage",
+  "sail_settings": {
+    "binary": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/capture-cut-parametric/capture_cut",
+    "binary_sha256": "2fe637d6e77e2741606bb67e5f7f07751a1a90dd1d5467f75aca3288cf5663bf",
+    "build_manifest_sha256": "6f829539787d74997a6fa542d9d4cd04b9a62dca3950f50b237458694bf571e6",
+    "max_steps": 40000000,
+    "timeout_seconds": 1200,
+    "scripts": {
+      "scripts/capture_cut.py": "f1e7a0da02e424298e5659884ef430b7bd6098753bef02d8d136f9b5f61a6d2d",
+      "scripts/gen_capture_cut.py": "d01897950f68f4fb68ca0ffc2fd15b6a6e0e759ec189fd389e36d05feabccd01",
+      "scripts/compare_sail_arena.py": "c6495bde62cb803fcab2438008677a9966f9e2905aa49430561b1dddcd22ac1f",
+      "scripts/model_diff.py": "ab13368709839e61bfd015dcf3fb1ce21e6d7b52b38384e603f6ffe5e3f295db"
+    }
+  },
+  "compiler_args": null,
+  "invocations": {
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/invocations/tinycc-104-inline.json": [
+      "tcc",
+      "-std=c11",
+      "-w",
+      "/104+_inline.c",
+      "-run",
+      "/prog.c"
+    ]
+  }
+}

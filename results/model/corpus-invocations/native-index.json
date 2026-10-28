@@ -1,0 +1,16 @@
+[
+  {
+    "name": "native",
+    "cache_key": "b6966871e82fdfb8fd03f298",
+    "model_sha256": "ec0a470a98e0d1102965ff3bd18dcf7bce66760a6356a16abe47b7940ec91f78",
+    "steps": 11459979,
+    "adopted": false
+  },
+  {
+    "name": "native-final",
+    "cache_key": "36b76f9fcde0b8d06d6c70ab",
+    "model_sha256": "ec0a470a98e0d1102965ff3bd18dcf7bce66760a6356a16abe47b7940ec91f78",
+    "steps": 11459979,
+    "adopted": true
+  }
+]

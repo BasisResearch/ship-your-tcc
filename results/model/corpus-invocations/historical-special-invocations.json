@@ -1,0 +1,142 @@
+[
+  {
+    "corpus": "tests2",
+    "source": "build/tcc-src/tests/tests2/104+_inline.c",
+    "source_sha256": "5f5a744e33f558578b9b3720003de0bcf61805e381d1c9df2a08f3c7a2586147",
+    "cache_key": "235206370ab10bc820527ede",
+    "status": "exit 1 \n",
+    "console_sha256": "e4d7b9fd93fe6f0e4e5cd376aaad7763609f8dce9bd14b644bcbd2aa85b61988",
+    "console": "tcc: error: unresolved reference to 'main'\n",
+    "libs": [
+      "-lm"
+    ]
+  },
+  {
+    "corpus": "tests2",
+    "source": "build/tcc-src/tests/tests2/104_inline.c",
+    "source_sha256": "9aac867b6451bd167f16ca6dbcfe8c75f84ff5ba01c29878c0942cede6737b84",
+    "cache_key": "12fe0948dcb4d08a410b8e43",
+    "status": "exit 1 \n",
+    "console_sha256": "13a39fdda24c5ed36a0d1b734162ed8c9c42427e734b2e7f90352e19a1980e0e",
+    "console": "tcc: error: unresolved reference to 'check_exports'\n",
+    "libs": [
+      "-lm"
+    ]
+  },
+  {
+    "corpus": "tests2",
+    "source": "build/tcc-src/tests/tests2/106_versym.c",
+    "source_sha256": "307a9856e76abfee5dd9a918e9662ec4d31dde188b24dd786db35b92ad9835f5",
+    "cache_key": "1fcbe5313df00d908fcfee81",
+    "status": "exit 1 \n",
+    "console_sha256": "39d56fcd3abacc55a3b513d1d7923a71662d68e6f79edb5a31df37360301fcec",
+    "console": "/prog.c:14: error: 'PTHREAD_PROCESS_SHARED' undeclared\n",
+    "libs": []
+  },
+  {
+    "corpus": "tests2",
+    "source": "build/tcc-src/tests/tests2/113_btdll.c",
+    "source_sha256": "a835639c8ddcb57e6522f8e7f8930c15ed8cf9fceaa694a918fe7a50652e3e63",
+    "cache_key": "171bf54c4eac73f7c87c4058",
+    "status": "exit 1 \n",
+    "console_sha256": "995970fcdd20077cfc06e71462dbab36a0e44ba9236ecbb919c60465f10edcb1",
+    "console": "tcc: error: unresolved reference to 'tcc_backtrace'\ntcc: error: unresolved reference to 'f_1'\ntcc: error: unresolved reference to 'f_2'\n",
+    "libs": [
+      "-lm"
+    ]
+  },
+  {
+    "corpus": "tests2",
+    "source": "build/tcc-src/tests/tests2/120+_alias.c",
+    "source_sha256": "686981bfb14d26c674f350f115c88e70cf1312d7c7879564d9cf3f59319d182d",
+    "cache_key": "54c4f43f163660c7e091ad38",
+    "status": "exit 1 \n",
+    "console_sha256": "aed46e3073bde7fe11f4df460d765a676444bc503c882244c97def6831ef134e",
+    "console": "tcc: error: unresolved reference to 'target'\ntcc: error: unresolved reference to 'alias_for_target'\ntcc: error: unresolved reference to 'alias_int'\ntcc: error: unresolved reference to 'g_int'\ntcc: error: unresolved reference to 'main'\n",
+    "libs": [
+      "-lm"
+    ]
+  },
+  {
+    "corpus": "tests2",
+    "source": "build/tcc-src/tests/tests2/120_alias.c",
+    "source_sha256": "6ee639bf9324c437878eda79f11c4b5ee411c76599e7c37d3832ae6ebe9b3f3e",
+    "cache_key": "1511dc8cc4927dc5d0e72155",
+    "status": "exit 1 \n",
+    "console_sha256": "2d8c582080aa71d763387ce63125d8499f99900e34b66271038276ba92d0de9e",
+    "console": "tcc: error: unresolved reference to 'inunit2'\n",
+    "libs": [
+      "-lm"
+    ]
+  },
+  {
+    "corpus": "tests2",
+    "source": "build/tcc-src/tests/tests2/124_atomic_counter.c",
+    "source_sha256": "2a06e2d0159ce8f5183d6301844496cb76d7f0f00f4886485353ca8d3d0abef5",
+    "cache_key": "910df23ce265979c25c20ff0",
+    "status": "exit 1 \n",
+    "console_sha256": "7b9d4a9929f59f896004cd6d5cbc8718627496b94e59096b4c19e3924d406a63",
+    "console": "tcc: error: unresolved reference to '__atomic_fetch_add_1'\ntcc: error: unresolved reference to '__atomic_fetch_add_2'\ntcc: error: unresolved reference to '__atomic_fetch_add_4'\ntcc: error: unresolved reference to '__atomic_fetch_add_8'\ntcc: error: unresolved reference to '__atomic_load_1'\ntcc: error: unresolved reference to '__atomic_load_2'\ntcc: error: unresolved reference to '__atomic_load_4'\ntcc: error: unresolved reference to '__atomic_load_8'\ntcc: error: unresolved reference to '__atomic_compare_exchange_1'\ntcc: error: unresolved reference to '__atomic_compare_exchange_2'\ntcc: error: unresolved reference to '__atomic_compare_exchange_4'\ntcc: error: unresolved reference to '__atomic_compare_exchange_8'\ntcc: error: unresolved reference to 'atomic_flag_test_and_set'\ntcc: error: unresolved reference to 'atomic_flag_clear'\ntcc: error: unresolved reference to '__atomic_store_1'\ntcc: error: unresolved reference to '__atomic_store_2'\ntcc: error: unresolved reference to '__atomic_store_4'\ntcc: error: unresolved reference to '__atomic_store_8'\ntcc: error: unresolved reference to 'pthread_create'\ntcc: error: unresolved reference to 'pthread_join'\n",
+    "libs": [
+      "-lm"
+    ]
+  },
+  {
+    "corpus": "tests2",
+    "source": "build/tcc-src/tests/tests2/125_atomic_misc.c",
+    "source_sha256": "83e94bbd5a84105d1aa85e68e949af18e9109ce06546452887f491d2a8e2380b",
+    "cache_key": "d7d9241208ca0ab3131a48ba",
+    "status": "exit 1 \n",
+    "console_sha256": "e4d7b9fd93fe6f0e4e5cd376aaad7763609f8dce9bd14b644bcbd2aa85b61988",
+    "console": "tcc: error: unresolved reference to 'main'\n",
+    "libs": [
+      "-lm"
+    ]
+  },
+  {
+    "corpus": "tests2",
+    "source": "build/tcc-src/tests/tests2/144_tls.c",
+    "source_sha256": "48ba175f1a75e0c701f792d3dcad3ee52f85a625581d6978b10b952b94d92e6c",
+    "cache_key": "0733a801948328e359312b49",
+    "status": "exit 1 \n",
+    "console_sha256": "0f429ea669535872a5251a33db965598639f00681598cedefb70b8159adf60cd",
+    "console": "tcc: error: thread-local storage not supported with -run\n",
+    "libs": []
+  },
+  {
+    "corpus": "tests2",
+    "source": "build/tcc-src/tests/tests2/146_tls_extern.c",
+    "source_sha256": "0a186a73dab208fad4bb373ea5b5c03d22f2776dca1aefb032d6b6f810ef0bee",
+    "cache_key": "e49ab60d92d09bfa57940729",
+    "status": "exit 1 \n",
+    "console_sha256": "1d9bd9a0e863296e0c9079c571b784715484e85ee989af3e9a32a5dea1c9e06a",
+    "console": "tcc: error: unresolved reference to 'extern_tls_short'\ntcc: error: unresolved reference to 'extern_tls_float'\n",
+    "libs": [
+      "-lm"
+    ]
+  },
+  {
+    "corpus": "tests2",
+    "source": "build/tcc-src/tests/tests2/60_errors_and_warnings.c",
+    "source_sha256": "fbc50839ad2f13286f8b6aa08f1a734c182f67e498eec34646644a4c34069e35",
+    "cache_key": "bf334e1277351b67977e4199",
+    "status": "exit 1 \n",
+    "console_sha256": "e4d7b9fd93fe6f0e4e5cd376aaad7763609f8dce9bd14b644bcbd2aa85b61988",
+    "console": "tcc: error: unresolved reference to 'main'\n",
+    "libs": [
+      "-lm"
+    ]
+  },
+  {
+    "corpus": "tests2",
+    "source": "build/tcc-src/tests/tests2/96_nodata_wanted.c",
+    "source_sha256": "e3e2448f786b908f9200f28f7d3641f2db12985d45402e1dfdccf2dfd307fdc4",
+    "cache_key": "3c213c3532e59efdf65eb184",
+    "status": "exit 1 \n",
+    "console_sha256": "e4d7b9fd93fe6f0e4e5cd376aaad7763609f8dce9bd14b644bcbd2aa85b61988",
+    "console": "tcc: error: unresolved reference to 'main'\n",
+    "libs": [
+      "-lm"
+    ]
+  }
+]

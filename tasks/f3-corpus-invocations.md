@@ -6,7 +6,8 @@ One Lean build: root build/lake.lock, systemd MemoryMax=12G, free -g >=25. No bu
 This worktree only; no push/main merge. Freeze sources through matching completed receipts.
 Target: represent the intended upstream multi-file test invocations in the F3 corpus.
 Read the historical-refusal review: no-main fragments and missing companion units are distinct.
-Start with tests2/104_inline.c and 104+_inline.c; consult pristine TinyCC test Makefile/expected output.
+The 104 inline pair's explicit manifest and full native arena are now adopted; do not repeat it.
+Read results/model/corpus-invocations.md; remaining executable-link/snippet invocations stay open.
 Preserve separate translation units, storage/linkage and argv order; do not concatenate into a header.
 Represent companion sources or objects with explicit input manifests shared by model and reference.
 Keep compiler input bytes independent of captured output; use -std=c11 for tcc.
@@ -19,6 +20,6 @@ Files: corpus invocation/fixture setup, model command-line inputs if necessary, 
 Run focused independent arenas and at least one complete native Sail arena for the repaired bundle.
 Ensure actual source openings remain complete in model/spec provenance, including companions.
 Require the full repository gate after any semantic/model change; never regenerate existing sum cuts.
-Done: intended inline bundle compiles independently and matches, with precise remaining harness duties.
+Done: remaining intended invocations are represented honestly, with precise unresolved harness duties.
 Write results/model/corpus-invocations.md, record failed approaches and ledger suggestions.
 Final RESULT: landed <commit> | stuck <where>.

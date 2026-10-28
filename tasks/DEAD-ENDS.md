@@ -726,3 +726,14 @@ requested corrections until the lead surfaced them explicitly.
   correspondence. Normalize only physically adjacent CRLF: splice deletion
   must not create a second phase-one transformation. Keep lone CR, CR-at-EOF
   and synthesized terminal LF distinct from actual physical reads.
+
+## Explicit multi-TU corpus invocation review, 2026-10-28
+
+Do not concatenate 104_inline.c and 104+_inline.c or retry them as standalone
+successes. Upstream orders the companion before `-run` and keeps separate
+translation units. The pinned manifest now passes complete native/fast arena
+checks; old standalone refusals remain separate. The first development native
+capture overlapped a manifest-reader cleanup, so a second frozen capture is
+the adopted evidence. The temporary-path test failure was canonical path
+comparison, not compiler behavior. Complete multi-TU ghost provenance remains
+an explicit follow-up, not established by arena equality.

@@ -36,7 +36,7 @@ import subprocess
 import sys
 import tempfile
 import time
-from source_fixtures import fixture_files, fixture_entries
+from source_fixtures import fixture_files, fixture_entries, load_invocation
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TC = next(d for d in [os.path.expanduser('~/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin')] if os.path.isdir(d))
@@ -309,7 +309,7 @@ def disasm(data, base, off, width=24):
         os.unlink(name)
 
 
-def compare(prog, mode, rtkey, sail=None):
+def compare(prog, mode, rtkey, sail=None, invocation=None):
     name = os.path.relpath(prog, ROOT)
     tag = sha(name, mode)
     # gen_embed and ModelMain both prepend -std=c11 to these identical args.
@@ -317,6 +317,8 @@ def compare(prog, mode, rtkey, sail=None):
     # parent-directory aliases. Inputs never come from observed compiler output.
     extra = [(virtual, str(host)) for virtual, host in fixture_entries(prog)]
     args, src = ['-w'], prog
+    if invocation is not None:
+        extra, args, src = invocation['extra'], invocation['args'], invocation['source']
     if mode == 'obj':
         objdir = os.path.join(WORK, 'obj')
         os.makedirs(objdir, exist_ok=True)
@@ -335,6 +337,8 @@ def compare(prog, mode, rtkey, sail=None):
         rst, rdata, _ = ref_run(src, extra, args, libs, rtkey, sail)
     mst, mdata, dt = model_run(src, extra, args, libs, tag)
     res = dict(name=name, model_s=dt, ref=rst, model=mst)
+    if invocation is not None:
+        res['invocation'] = dict(argv=invocation['argv'], source=invocation['source'], files=invocation['extra'])
     if sail:
         res['reference'] = 'native Sail + rv64emu' if rst == 'ran' else 'rv64emu refusal only; no Sail coverage'
         if rst == 'ran':
@@ -382,6 +386,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('targets', nargs='+')
     ap.add_argument('--obj', action='store_true')
+    ap.add_argument('--invocations', action='store_true', help='targets are byte-pinned multi-TU invocation manifests')
     ap.add_argument('-j', type=int, default=8)
     ap.add_argument('--limit', type=int, default=0)
     ap.add_argument('--no-report', action='store_true')
@@ -394,6 +399,14 @@ def main():
     a = ap.parse_args()
     if a.j < 1 or a.j > 8:
         sys.exit('at most 8 concurrent emulator runs on the shared box')
+    if a.invocations and a.obj:
+        ap.error('--invocations and --obj cannot be combined')
+    a.invocation_data = {}
+    if a.invocations:
+        try:
+            a.invocation_data = {os.path.abspath(t): load_invocation(t, ROOT) for t in a.targets}
+        except (OSError, ValueError, KeyError, TypeError) as e:
+            ap.error(str(e))
     sail = None
     if a.sail_capture:
         if a.sail_max_steps < 0 or a.sail_timeout <= 0:
@@ -408,7 +421,9 @@ def main():
                                        'scripts/compare_sail_arena.py', 'scripts/model_diff.py')})
     groups = []
     for t in a.targets:
-        if t == 'all':
+        if a.invocations:
+            groups.append(('invocations', [os.path.abspath(t)]))
+        elif t == 'all':
             groups += [(c, corpus_files(c)) for c in CORPORA]
         elif t in CORPORA:
             groups.append((t, corpus_files(t)))
@@ -456,7 +471,9 @@ def run_comparison(a, groups, sail):
     os.makedirs(WORK, exist_ok=True)
     rtkey = runtime_key()
     inputs = {str(p): hashlib.sha256(p.read_bytes()).hexdigest()
-              for _, files in groups for f in files for p in fixture_files(f)}
+              for _, files in groups for f in files for p in ([] if a.invocations else fixture_files(f))}
+    for invocation in a.invocation_data.values():
+        inputs.update(invocation['pins'])
     mode = 'obj' if a.obj else 'c'
     results = {}
     t0 = time.time()
@@ -464,7 +481,7 @@ def run_comparison(a, groups, sail):
         futs = {}
         for g, files in groups:
             for f in files:
-                futs[ex.submit(compare, f, mode, rtkey, sail)] = (g, f)
+                futs[ex.submit(compare, f, mode, rtkey, sail, a.invocation_data.get(f))] = (g, f)
         for fu in cf.as_completed(futs):
             g, source = futs[fu]
             try:
@@ -510,7 +527,8 @@ def run_comparison(a, groups, sail):
                            reference=('native Sail full arenas plus rv64emu; refusals have no Sail coverage' if sail
                                       else 'rv64emu diagnostic; Sail arena equality pending'),
                            sail_settings=sail,
-                           compiler_args=['-std=c11', '-w']), out, indent=2)
+                           compiler_args=(None if a.invocations else ['-std=c11', '-w']),
+                           invocations={p: d['argv'] for p, d in a.invocation_data.items()}), out, indent=2)
             out.write('\n')
     if tot['same'] < a.require_success:
         print(f'required {a.require_success} identical successful arenas, got {tot["same"]}', file=sys.stderr)

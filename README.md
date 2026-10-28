@@ -56,7 +56,10 @@ controls on model-produced positioned tokens; the representation proof and remai
 (results/model/typedef-integration-2026-10-28.md). The C generator's unary-minus
 lexing defect is repaired: a separate fresh 1,200-input batch has 1,200 identical
 arenas and no refusals, with the full gate passing. Historical corpus counts
-remain unchanged (results/model/cgen-negation-2026-10-28.md).
+remain unchanged (results/model/cgen-negation-2026-10-28.md). An explicit upstream
+two-file inline invocation now matches a complete native Sail arena, with its
+separate standalone refusals retained; multi-unit ghost provenance stays open
+(results/model/corpus-invocations.md).
 
 The latest preprocessing corpus has 618 exact model/reference and 616 exact
 spec/reference agreements across 622 inputs. The image's opened-path once
