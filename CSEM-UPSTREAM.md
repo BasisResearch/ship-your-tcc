@@ -476,3 +476,32 @@ alignment inside packed aggregates. Menhir's remaining placement diagnostics,
 general compiler-action leading-specifier construction, enum policy and prior
 C11 constraint-acceptance deviations remain explicit whole-compiler duties.
 No supported-source restriction or external upstream contact is introduced.
+
+### CSEM-15 reviewed repair and additional findings (2026-10-28)
+
+Reviewed checkpoint2904c35 replaces the shared omitted-middle conditional TODO
+with actual Core evaluation, preserving one evaluation and the strong sequence
+boundary, selected-result conversions and volatile receipts. It is awaiting
+main adoption. The exact original probe fails at the TODO in the existing
+pristine704c4e69 executable and passes repaired raw CSem/shared OCaml/GCC plus
+a fresh full compiler Sail run. Clean Git/Lem identity was checked, but the
+pristine executable was not rebuilt; retain that provenance limit when reporting.
+
+The work also finds an inherited composite-pointer helper which compares left
+qualifiers twice and retains only those qualifiers, and an arithmetic-constant
+classifier lacking ordinary/GNU conditional cases. The existing pristine binary
+returns1 for the ordinary qualified-pointer control and diagnoses both static
+conditional initializers; the ordinary control establishes that these are not
+only GNU-parser omissions. The shared repairs are in the same checkpoint.
+
+The full gate and portable review pass (4,227 inputs;19,698 members/10 frozen
+receipts). Fifty defined raw/GCC controls pass; shared OCaml agrees on47 and has
+three named target-bitfield/binary32 limitations. Four UB and four constraint
+controls remain separate. The native compiler batch's49/50 result is a distinct
+TinyCC GNU bitfield-promotion defect; do not report it as a CSem wrong answer.
+The report and exact reproducers are in checkpoint2904c35 under
+results/csem/gnu-conditional-semantics.md and c/tests/gnu-conditional/.
+Kiran owns reporting. No external contact has been made.
+
+CSEM-16 is now assigned to the second external Sol worker as the general VLA
+semantics task; no VLA implementation or completed connection is yet claimed.

@@ -41,7 +41,7 @@ public libc `strtold` still needs correction in the library lane. Matching refus
 The lead runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most two
 at a time, following MANAGER.md. Slot 1 now repairs valid enum-colon compiler forms after reviewed enum semantics;
 physical-proof checkpoint b42f766 and multi-translation-unit checkpoint 96c520e
-are adopted together at main925f88d. Slot 2 now runs tasks/f1-gnu-conditional-semantics.md. C11 bitfields and GNU expression syntax are adopted after their combined full
+are adopted together at main925f88d. Slot 2 now runs tasks/f1-vla-semantics.md after reviewed GNU checkpoint2904c35. C11 bitfields and GNU expression syntax are adopted after their combined full
 gates; member attributes are now adopted after rebuilt-image integration. Assertion-message encodings are adopted. Local replay erasure is proved
 and adopted. Array-to-pointer alignment decay is adopted after the combined image/gate validation. Complete _Generic/_Static_assert syntax is adopted after its combined gate
 and independent raw/native checks. Binding meaning and actual model-owned compiler-injected
@@ -657,6 +657,18 @@ tasks/f2-pack-layout-consumption.md. Host boundary evidence retains six
 matching layout controls and two separate post-brace GCC diagnostics; tcc
 samples the active cap when laying out the completed aggregate. No semantic
 implementation or native proof is claimed by this planning evidence.
+
+GNU conditional checkpoint2904c35 is reviewed and committed, not yet adopted
+on main. Its full gate passes4,227 pinned inputs; independent portable review
+verifies19,698 archive members/10 matching frozen receipts and six complete
+inherited native gate captures. The retained native batch has49/50 zero rows;
+the GNU bitfield type-selection bug remains compiler work, not a cfgTcc policy.
+Initial missing capture exports and the gzip verifier error are preserved;
+pristine observations explicitly use an existing binary, not a clean rebuild.
+Slot2 now runs tasks/f1-vla-semantics.md on34c8cc2 (reviewed GNU checkpoint plus
+main938fa20); slot1 continues enum-colon full validation. Guard native evidence
+now includes three fresh complete captures and same-ELF zero-exit executions;
+its full gate and independent postchecks remain pending. No user decision.
 
 ## Needs user
 

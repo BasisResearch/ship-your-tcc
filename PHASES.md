@@ -782,3 +782,15 @@ tasks/f2-pack-layout-consumption.md. Host boundary evidence retains six
 matching layout controls and two separate post-brace GCC diagnostics; tcc
 samples the active cap when laying out the completed aggregate. No semantic
 implementation or native proof is claimed by this planning evidence.
+
+GNU conditional checkpoint2904c35 is reviewed and committed, not yet adopted
+on main. Its full gate passes4,227 pinned inputs; independent portable review
+verifies19,698 archive members/10 matching frozen receipts and six complete
+inherited native gate captures. The retained native batch has49/50 zero rows;
+the GNU bitfield type-selection bug remains compiler work, not a cfgTcc policy.
+Initial missing capture exports and the gzip verifier error are preserved;
+pristine observations explicitly use an existing binary, not a clean rebuild.
+Slot2 now runs tasks/f1-vla-semantics.md on34c8cc2 (reviewed GNU checkpoint plus
+main938fa20); slot1 continues enum-colon full validation. Guard native evidence
+now includes three fresh complete captures and same-ELF zero-exit executions;
+its full gate and independent postchecks remain pending. No user decision.
