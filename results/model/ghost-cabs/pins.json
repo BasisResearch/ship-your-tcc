@@ -1,0 +1,32 @@
+{
+  "source_parent": "8371087",
+  "lean_toolchain": "leanprover/lean4:v4.34.0",
+  "full_gate": "ghost-gate-2",
+  "explicit_build": "ghost-13",
+  "oracle_key": "db28f95fedcb38cac435c74ab6ff3d264b9d597ef2b6182505feb7a76943e953",
+  "executables": {
+    ".lake/build/bin/tcc_ghost": "137e264c9383b75dacb4bf400866615a47829f0c93c3f5332738a0825bf59e39",
+    ".lake/build/bin/tcc_model": "9ec1675c56ad805a2da06b70bf353e57538104e570574580558102699957128a",
+    ".lake/build/bin/tcc_pre_tokens": "c3af698248ce1e946d3e30a52bfccbdc6c12331572b285080f7bf3c46c6738d2",
+    ".lake/build/bin/pre_spec": "7aebea96161ed6338893e8b9a2fc3107381483a5667b7cb881664ea71dac135d"
+  },
+  "evidence": {
+    "raw-comparison.json": "854dc54493f9d29bb653a150f440f4a765d4e54a86dfb8c4ecd76d6817a96fa7",
+    "raw-diagnostic.json": "2e6cd1c26c443e6d6d176d00174765ea08973c913479fd2a5ea875e34a840d79",
+    "fixture-comparison.json": "cb695458e4609b45001c59024819e629b97258182cd8e870ea4b025499941fc5",
+    "arena-comparison.json": "f2ae94556a084d3f870c04c046e6df56fb1a4bd42b94b480077fdf157dff173b",
+    "build-history.tar.gz": "1e277ff8f3bf5a7936949994a5ba15e35162f7e891283dfcad90e10886b6e085",
+    "header-spec.stderr": "653a00908430d397a8bd5e7c8032d82fabb452511161f9a6ba3d6ad62f0fbad4",
+    "artifacts.tar.gz": "fcb415db17dc1e93f670d0f5c7c134fd9243041a45575763b571cfdb84c88645",
+    "exit-statuses.json": "fca87e34234db3e8bab4da522f75338d03c7ab5330357e496573446dfca970c4",
+    "erasure-comparison.json": "0144ace30873296e43740976582660bee0d24ce8f84f8aaabd5f6637c6ede400",
+    "lead-note.txt": "80b8053f5befa57dc51081bc1776691779f39ba4762a4327c2b9a3cb162a26f4",
+    "header-token-stream.c": "7defcd1b4c27b3d546dfb85238f48b0b080f80d4dbb5e7190122d608113d3868",
+    "validate_erasure.py": "5dacc4de35c8eef7afa4c522b1902493c8c4a0493ff39781743b9b4ada1356bf",
+    "header-obstruction.json": "b925c37a1268621f5cdee4a4571653818af5b103149a97175a81664fe892b47d",
+    "ghost-13.request.json.gz": "c01220f088c97145041df3e76f87dc206f144bfdff210ccab9d67bac7f89fc10",
+    "ghost-gate-2.request.json.gz": "4ff6938a11646c7e32c974c0dd519660d2b4eca3b50043ac3b89b2dc4721ab76",
+    "ghost-gate-2.result.json.gz": "627ede0ce7c229698cfb46dec51084a424a0fb5c9041e0ec75a5e739c15cb370",
+    "ghost-13.result.json.gz": "ab37d14c951a33461c9c672661f1e62072c76a9a5cb6579634d16cd90c9ecb0a"
+  }
+}

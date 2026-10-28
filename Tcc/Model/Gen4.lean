@@ -17,6 +17,7 @@ def skip_or_save_block (R : Rec) (save : Bool) : M (Option TokArr) := do
   let braces := (← getTok) == 123
   let mut level : Int32 := 0
   let mut str : TokenString := {}
+  let mut positions : Array (Nat × Nat) := #[]
   let fuel ← fuelM
   for _ in [0:fuel] do
     let t ← getTok
@@ -24,7 +25,12 @@ def skip_or_save_block (R : Rec) (save : Bool) : M (Option TokArr) := do
     if t == C.TOK_EOF then
       if save || level > 0 then tcc_error_s R "unexpected end of file"
       else break
-    if save then str ← tok_str_add_tok str
+    if save then
+      if (← get).ghostEnabled then
+        let ln := (← curFile).line_num
+        let word := str.len.toNat' + (if ln != str.last_line_num then 2 else 0)
+        positions := positions.push (word,(← get).ghostCurrent)
+      str ← tok_str_add_tok str
     R.next
     if t == 123 || t == 40 || t == 91 then
       level := level + 1
@@ -32,8 +38,12 @@ def skip_or_save_block (R : Rec) (save : Bool) : M (Option TokArr) := do
       level := level - 1
       if level == 0 && braces && t == 125 then break
   if save then
+    if (← get).ghostEnabled then positions := positions.push (str.len.toNat', (← get).ghostCurrent)
     str := tok_str_add str C.TOK_EOF
-    return some (str.str.extract 0 str.len.toNat')
+    let tokens := str.str.extract 0 str.len.toNat'
+    if (← get).ghostEnabled then
+      modify fun s => { s with ghostSaved := s.ghostSaved.push ⟨tokens,positions⟩ }
+    return some tokens
   return none
 
 /-- `unary()` call part: the function call at vtop (tok == '(') -/
@@ -141,7 +151,7 @@ def unary_call (R : Rec) : M Unit := do
     if t == VT_BYTE || t == VT_SHORT || t == VT_BOOL then
       modVt 0 fun v => { v with r := (v.r.toInt32' ||| BFVAL_MUSTCAST 1).toUInt16' }
   if sx.f_func_noreturn != 0 then CODE_OFF
-  gwrap (gm - 1) "call"
+  gwrap (← gleft gm) .call
 
 /-- `unary()` postfix operators -/
 def unary_postfix (R : Rec) : M Unit := do
@@ -151,7 +161,7 @@ def unary_postfix (R : Rec) : M Unit := do
     if tk == TOK_INC || tk == TOK_DEC then
       inc R true tk
       R.next
-      gnode (if tk == TOK_INC then "postinc" else "postdec") #[] 1
+      gnode (if tk == TOK_INC then .postinc else .postdec) 1
     else if tk == 46 || tk == TOK_ARROW then
       if tk == TOK_ARROW then indir R
       let qualifiers := (← vtt) &&& VT_QUAL
@@ -168,33 +178,33 @@ def unary_postfix (R : Rec) : M Unit := do
         setVtType 0 (← parse_btype_qualify R (← vt).type qualifiers)
       if (← vtt) &&& VT_ARRAY == 0 then
         modVt 0 fun v => { v with r := v.r ||| VT_LVAL.toUInt16' }
-      gnode (if tk == TOK_ARROW then "arrow" else "member") #[← getTok] 1
       R.next
+      gnode (if tk == TOK_ARROW then .arrow else .member) 1
     else if tk == 91 then
       R.next
       R.gexpr
       R.gen_op 43
       indir R
       skip R 93
-      gnode "index" #[] 2
+      gnode .index 2
     else if tk == 40 then
       unary_call R
     else
       break
 
 /-- the ghost node kind of a primary/prefix expression starting with `tok` -/
-def unaryGhostKind (tok : Int32) : String :=
-  if C.TOK_HAS_VALUE tok then (if TOK_IS_STR tok then "str" else "const")
-  else if tok == 42 then "deref" else if tok == 38 then "addr" else if tok == 33 then "lnot"
-  else if tok == 126 then "bnot" else if tok == 43 then "uplus" else if tok == 45 then "neg"
-  else if tok == TOK_INC then "preinc" else if tok == TOK_DEC then "predec"
-  else if tok == TOK_SIZEOF then "sizeof"
-  else if tok == TOK_ALIGNOF1 || tok == TOK_ALIGNOF2 || tok == TOK_ALIGNOF3 then "alignof"
-  else if tok == TOK_GENERIC then "generic" else if tok == TOK_LAND then "labeladdr"
-  else if tok == TOK___FUNC__ || tok == TOK___FUNCTION__ then "func"
-  else if tok == TOK___NAN__ || tok == TOK___SNAN__ || tok == TOK___INF__ then "const"
-  else if (tok ≥ TOK_builtin_types_compatible_p && tok ≤ TOK___atomic_nand_fetch) || tok == TOK___riscv64_clear_cache then "builtin"
-  else "ident"
+def unaryGhostKind (tok : Int32) : Ghost.Production :=
+  if C.TOK_HAS_VALUE tok then (if TOK_IS_STR tok then .string else .constant)
+  else if tok == 42 then .deref else if tok == 38 then .addr else if tok == 33 then .lnot
+  else if tok == 126 then .bnot else if tok == 43 then .uplus else if tok == 45 then .neg
+  else if tok == TOK_INC then .preinc else if tok == TOK_DEC then .predec
+  else if tok == TOK_SIZEOF then .sizeof
+  else if tok == TOK_ALIGNOF1 || tok == TOK_ALIGNOF2 || tok == TOK_ALIGNOF3 then .alignof
+  else if tok == TOK_GENERIC then .generic else if tok == TOK_LAND then .labeladdr
+  else if tok == TOK___FUNC__ || tok == TOK___FUNCTION__ then .func
+  else if tok == TOK___NAN__ || tok == TOK___SNAN__ || tok == TOK___INF__ then .constant
+  else if (tok ≥ TOK_builtin_types_compatible_p && tok ≤ TOK___atomic_nand_fetch) || tok == TOK___riscv64_clear_cache then .builtin
+  else .ident
 
 /-- `unary()` -/
 def unary (R : Rec) : M Unit := do
@@ -216,7 +226,6 @@ def unary (R : Rec) : M Unit := do
     let ad : AttributeDef := { sec := (← get).rodata_section }
     R.decl_initializer_alloc type ad VT_CONST 2 0 0
   let gm ← gmark
-  let tc0 := (← get).tokc
   let mut gwrapped := false
   if tok == TOK_LCHAR || tok == TOK_CINT || tok == TOK_CCHAR then pushTokc VT_INT
   else if tok == TOK_U16CHAR then pushTokc (VT_SHORT ||| VT_UNSIGNED)
@@ -249,15 +258,15 @@ def unary (R : Rec) : M Unit := do
         let mut r : Int32 := if (← get).global_expr != 0 then VT_CONST else VT_LOCAL
         if type.t &&& VT_ARRAY == 0 then r := r ||| VT_LVAL
         R.decl_initializer_alloc type {} r 1 0 0
-        gwrap gm "complit" #[type.t]
+        gwrap gm .complit
       else if t == TOK_SOTYPE then
         vpush R type
-        gwrap gm "type" #[type.t]
+        gwrap gm .type
         return
       else
         R.unary
         R.gen_cast type
-        gwrap gm "cast" #[type.t]
+        gwrap gm .cast
       gwrapped := true
     else if (← getTok) == 123 then
       let saved_nocode_wanted := (← get).nocode_wanted
@@ -269,11 +278,12 @@ def unary (R : Rec) : M Unit := do
       R.block STMT_EXPR
       if saved_nocode_wanted != 0 then modify fun s => { s with nocode_wanted := saved_nocode_wanted }
       skip R 41
-      gwrap gm "stmtexpr"
+      gwrap gm .stmtexpr
       gwrapped := true
     else
       R.gexpr
       skip R 41
+      gwrap gm .paren
       gwrapped := true
   else if tok == 42 then
     R.next
@@ -498,7 +508,7 @@ def unary (R : Rec) : M Unit := do
     else if r == VT_CONST && IS_ENUM_VAL sx.type.t then
       setVtCi 0 sx.enum_val.toUInt64
   if !gwrapped then
-    gwrap gm (unaryGhostKind tok) #[tok, tc0.lo.toUInt32.toInt32, (tc0.lo >>> 32).toUInt32.toInt32]
+    gwrap gm (unaryGhostKind tok)
   unary_postfix R
 
 

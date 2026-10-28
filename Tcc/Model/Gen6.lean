@@ -353,13 +353,13 @@ def block_return (R : Rec) : M Unit := do
   CODE_OFF
 
 /-- the ghost node kind of a statement starting with `t` -/
-def stmtGhostKind (t : Int32) : String :=
-  if t == TOK_IF then "if" else if t == TOK_WHILE then "while" else if t == 123 then "block"
-  else if t == TOK_RETURN then "return" else if t == TOK_BREAK then "break"
-  else if t == TOK_CONTINUE then "continue" else if t == TOK_FOR then "for" else if t == TOK_DO then "do"
-  else if t == TOK_SWITCH then "switch" else if t == TOK_CASE then "case" else if t == TOK_DEFAULT then "default"
-  else if t == TOK_GOTO then "goto" else if t == TOK_ASM1 || t == TOK_ASM2 || t == TOK_ASM3 then "asm"
-  else if t == 59 then "empty" else "label"
+def stmtGhostKind (t : Int32) : Ghost.Production :=
+  if t == TOK_IF then .ifStmt else if t == TOK_WHILE then .whileStmt else if t == 123 then .block
+  else if t == TOK_RETURN then .returnStmt else if t == TOK_BREAK then .breakStmt
+  else if t == TOK_CONTINUE then .continueStmt else if t == TOK_FOR then .forStmt else if t == TOK_DO then .doStmt
+  else if t == TOK_SWITCH then .switchStmt else if t == TOK_CASE then .caseStmt else if t == TOK_DEFAULT then .defaultStmt
+  else if t == TOK_GOTO then .gotoStmt else if t == TOK_ASM1 || t == TOK_ASM2 || t == TOK_ASM3 then .asmStmt
+  else if t == 59 then .empty else .label
 
 /-- one pass of `block(flags)`: returns true for `goto again` -/
 def blockOnce (R : Rec) (flags : Int32) : M Bool := do
@@ -410,6 +410,7 @@ def blockOnce (R : Rec) (flags : Int32) : M Bool := do
     let fuel ← fuelM
     for _ in [0:fuel] do
       if (← getTok) != TOK_LABEL then break
+      let gl ← gmark
       for _ in [0:fuel] do
         R.next
         let tk ← getTok
@@ -418,6 +419,7 @@ def blockOnce (R : Rec) (flags : Int32) : M Bool := do
         R.next
         if (← getTok) != 44 then break
       skip R 59
+      gwrap gl .localLabels
     for _ in [0:fuel] do
       if (← getTok) == 125 then break
       let _ ← R.decl VT_LOCAL
@@ -535,16 +537,19 @@ def blockOnce (R : Rec) (flags : Int32) : M Bool := do
       R.gexpr
       vpop R
     skip R 59
-    gwrap gm "expr"
+    gwrap gm .exprStmt
   else if !afterLabel then
     gwrap gm (stmtGhostKind t)
   return false
 
 /-- `block(flags)` -/
 def block (R : Rec) (flags : Int32) : M Unit := do
+  let gm ← gmark
   let fuel ← fuelM
   for _ in [0:fuel] do
-    if !(← blockOnce R flags) then return
+    if !(← blockOnce R flags) then
+      if (← get).ghost.size > gm.height+1 then gwrap gm .labelled
+      return
   throw (.fuel "block")
 
 end Tcc.Model

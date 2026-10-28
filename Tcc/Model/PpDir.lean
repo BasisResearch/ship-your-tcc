@@ -295,7 +295,7 @@ def expr_preprocess (R : Rec) : M Bool := do
   R.next
   let gm ← gmark
   let c ← R.expr_const
-  gdrop gm
+  gdrop gm .preprocessorExpression
   if (← getTok) != TOK_EOF then tcc_error_s R "..."
   modify fun s => { s with pp_expr := 0 }
   end_macro
@@ -394,7 +394,11 @@ def unget_tok (last_tok : Int32) : M Unit := do
     let _ ← begin_macro .ungetBuf str.str 0 0
   else
     let _ ← begin_macro .heap str.str 0 1
+  if s.ghostEnabled then
+    if let some fr := (← get).macro_stack.head? then
+      modify fun st => { st with ghostReplay := st.ghostReplay.insert fr.id #[(0,s.ghostCurrent)] }
   setTok last_tok
+  if last_tok != 0 then modify fun st => { st with ghostCurrent := st.ghostPrior }
 
 /-- `pragma_parse(s1)`: whether the pragma was handled -/
 def pragma_parse_body (R : Rec) : M Bool := do
@@ -508,7 +512,7 @@ def pragma_parse_body (R : Rec) : M Bool := do
 replays those tokens with numeric/string conversion for the existing effect
 parser. Macro expansion (including counters) happens only during collection.
 Phase-4 once/push/pop pragmas keep their original path and emit no event. -/
-def pragma_parse (R : Rec) : M Bool := do
+def pragma_parse_observed (R : Rec) : M Bool := do
   R.next_nomacro
   let t ← getTok
   if !(← get).observePP || t == Tok.TOK_once || t == Tok.TOK_push_macro || t == Tok.TOK_pop_macro then
@@ -547,8 +551,22 @@ def pragma_parse (R : Rec) : M Bool := do
   modify fun s => { s with parse_flags := flags }
   return handled
 
+/-- Ghost recording does not expand or execute a pragma a second time. -/
+def pragma_parse (R : Rec) : M Bool := do
+  let before ← get
+  let handled ← pragma_parse_observed R
+  if before.ghostEnabled then
+    modify fun s => { s with
+      ghostPragmas := s.ghostPragmas.push {
+        beforeToken := (before.ghostInput.map (·.spelling.size)).getD 0,
+        keyword := before.tok, packBefore := before.pack_stack, packAfter := s.pack_stack,
+        packPointerBefore := before.pack_stack_ptr, packPointerAfter := s.pack_stack_ptr,
+        librariesBefore := before.pragma_libs, librariesAfter := s.pragma_libs,
+        counterBefore := before.pp_counter, counterAfter := s.pp_counter } }
+  return handled
+
 /-- `preprocess(is_bof)` -/
-def preprocess (R : Rec) (is_bof0 : Int32) : M Unit := do
+def preprocess_body (R : Rec) (is_bof0 : Int32) : M Unit := do
   let saved_parse_flags := (← get).parse_flags
   modify fun s => { s with parse_flags := PARSE_FLAG_PREPROCESS ||| PARSE_FLAG_TOK_NUM ||| PARSE_FLAG_TOK_STR |||
                                            PARSE_FLAG_LINEFEED ||| (s.parse_flags &&& PARSE_FLAG_ASM_FILE) }
@@ -696,6 +714,14 @@ def preprocess (R : Rec) (is_bof0 : Int32) : M Unit := do
   else if !theEnd then
     skip_to_eol R true
   modify fun s => { s with parse_flags := saved_parse_flags }
+
+/-- Directive operands have preprocessing syntax, not phase-seven parser
+syntax. The existing directive still executes once with the same state. -/
+def preprocess (R : Rec) (is_bof : Int32) : M Unit := do
+  let parsing := (← get).ghostParsing
+  modify fun s => { s with ghostParsing := false }
+  preprocess_body R is_bof
+  modify fun s => { s with ghostParsing := parsing }
 
 /-! ## string and number literals -/
 

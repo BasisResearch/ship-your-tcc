@@ -64,6 +64,7 @@ def decl_initializer_alloc (R : Rec) (type0 : CType) (ad : AttributeDef) (r0 : I
         p := { p with flex_array_ref := fx.type.ref }
         size := -1
   if size < 0 then
+    let savedSlot := (← get).ghostSaved.size
     if has_init == 0 then tcc_error_s R "unknown type size"
     if has_init == 2 then
       let mut str : TokenString := {}
@@ -78,11 +79,14 @@ def decl_initializer_alloc (R : Rec) (type0 : CType) (ad : AttributeDef) (r0 : I
       init_str ← R.skip_or_save_block
     unget_tok 0
     let toks := init_str.getD #[]
-    let _ ← begin_macro .heap toks 0 1
+    let replayFrame ← begin_macro .heap toks 0 1
+    if (← get).ghostEnabled then
+      if let some saved := (← get).ghostSaved[savedSlot]? then
+        modify fun s => { s with ghostReplay := s.ghostReplay.insert replayFrame saved.positions }
     R.next
     let gmd ← gmark
     R.decl_initializer p.sec p.local_offset p.flex_array_ref (← curT tloc tval) 0 (DIF_FIRST ||| DIF_SIZE_ONLY)
-    gdrop gmd    -- the dry run's syntax is parsed again below
+    gdrop gmd .initializerDryRun    -- the dry run's syntax is parsed again below
     -- prepare second initializer parsing
     modify fun s => { s with macro_ptr := some { arr := toks, pos := 0 } }
     R.next
@@ -321,7 +325,7 @@ def gen_function (R : Rec) (sym : SymId) : M Unit := do
     t := VT_VOID }, func_var := 0, ind := 0,
     func_ind := -1, nocode_wanted := DATA_ONLY_WANTED }
   check_vstack R
-  gwrap gm "fundef" #[(← getSym sym).v]
+  gwrap gm .fundef
   R.next
 
 /-- `gen_inline_functions(s)` -/
@@ -411,7 +415,9 @@ def decl_one_body (R : Rec) (l : Int32) (btype : CType) (adbase : AttributeDef) 
       let fname := (← curFile).filename
       let i := (← get).inline_fns.size
       modify fun s => { s with inline_fns := s.inline_fns.push { sym := sym, filename := fname } }
+      let gd ← gmark
       let toks ← R.skip_or_save_block
+      gwrap gd .deferredFunction
       modify fun s => { s with inline_fns := s.inline_fns.modify i fun x => { x with func_str := toks } }
     else
       modify fun s => { s with cur_text_section := s.text_section }
@@ -477,7 +483,9 @@ def decl_one_body (R : Rec) (l : Int32) (btype : CType) (adbase : AttributeDef) 
       type := { type with t := type.t &&& ~~~VT_EXTERN }
       if has_init != 0 then R.next
       else if l == VT_CONST then type := { type with t := type.t ||| VT_EXTERN }
+      let gi ← gmark
       R.decl_initializer_alloc type ad r has_init v l
+      if has_init != 0 then gwrap gi .initializer
     if ad.alias_target != 0 && l == VT_CONST then
       let atsym ← sym_find ad.alias_target
       let atx ← getSym atsym
@@ -496,13 +504,14 @@ def decl_one (R : Rec) (l : Int32) (btype : CType) (adbase : AttributeDef) (oldi
     M (Option Int32 × Bool) := do
   let gm ← gmark
   let r ← decl_one_body R l btype adbase oldint
-  gwrap gm "decl" #[btype.t]
+  gwrap gm .initDecl
   return r
 
 /-- `decl(l)` -/
 def decl (R : Rec) (l : Int32) : M Int32 := do
   let fuel ← fuelM
   for _ in [0:fuel] do
+    let gd ← gmark
     let mut oldint := false
     let (found, btype0, adbase) ← R.parse_btype {} (b2i (l == VT_LOCAL))
     let mut btype := btype0
@@ -528,15 +537,21 @@ def decl (R : Rec) (l : Int32) : M Int32 := do
         pure ()
       else if IS_ENUM btype.t then pure ()
       else tcc_warning R "useless type defines no instances".toUTF8
-      if l == VT_JMP then return 1
+      if l == VT_JMP then
+        gwrap gd .declaration
+        return 1
       R.next
+      gwrap gd .declaration
       continue
     for _ in [0:fuel] do
       let (ret, brk) ← decl_one R l btype adbase oldint
       match ret with
-      | some r => return r
+      | some r =>
+        gwrap gd .declaration
+        return r
       | none => pure ()
       if brk then break
+    gwrap gd .declaration
   return 0
 
 /-! ## tccgen_init / tccgen_compile / tccgen_finish -/
@@ -572,11 +587,16 @@ def tccgen_compile (R : Rec) : M Int32 := do
     nocode_wanted := DATA_ONLY_WANTED, debug_modes := 0, global_expr := 0 }
   tcc_debug_start
   modify fun s => { s with parse_flags := PARSE_FLAG_PREPROCESS ||| PARSE_FLAG_TOK_NUM ||| PARSE_FLAG_TOK_STR }
+  if (← get).ghostEnabled && !(← get).ghostFixture then
+    let start := CSemCParser.Phase7.startPos "/model-phase4.c"
+    modify fun s => { s with
+      ghostParsing := true, ghostInput := some ⟨⟨⟨#[],start⟩,#[],#[]⟩,#[]⟩ }
   let gm ← gmark
   R.next
   let _ ← R.decl VT_CONST
   R.gen_inline_functions
-  gwrap gm "tu"
+  gwrap gm .tu
+  modify fun s => { s with ghostParsing := s.ghostFixture }
   check_vstack R
   tcc_eh_frame_end
   return 0

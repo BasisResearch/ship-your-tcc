@@ -479,3 +479,40 @@ requested corrections until the lead surfaced them explicitly.
   one worktree serialize cache/scratch access, and duplicate selected paths
   are rejected. Two simultaneous real comparisons and maintained subprocess
   exclusion/release controls pass. The old stopped overlap remains a failure.
+- Ghost Cabs continuation (2026-10-28): the inherited checkpoint was never
+  validated. The historical ghost-1 receipt failed, and ghost-2 still failed
+  on a nested Option/ParsedDeclarator pattern in typeName. Type the intermediate
+  or qualify ParsedDeclarator.abstract; no budget change is appropriate.
+  The build service writes its current completion to worker-build.result;
+  archive it under the request ID only after checking that ID. Waiting only
+  for a uniquely named receipt can miss an already completed failed build.
+- Ghost build continuation: requests ghost-3 through ghost-8 exposed inherited
+  multiline record layout errors in State/PpDir/PpMacro/Gen8/GhostDriver, then
+  a reserved `syntax` field name and missing JSON instances for UInt8 lists.
+  Use aligned record fields, a non-keyword witness field, and explicit byte
+  naturals at the IO boundary. ghost-10 rejected a Lean namespace-alias draft;
+  use the explicit CabsExport namespace. These failed receipts are retained,
+  not counted as validation.
+- Ghost comparison: cfgTcc's predefined text injects real tccdefs.h C
+  declarations, starting with a GNU aligned attribute and macro-generated
+  builtin prototypes. Both syntax adapters currently fail before the tested
+  declaration. The first 56/56 nonsuccess run is diagnostic only. Shared-token
+  fixtures now explicitly omit predefined text; actual raw-source runs keep
+  the header and fail strict acceptance. Do not strip that header from the
+  ordinary compiler or use fixture successes as ordinary-TU coverage.
+- Ghost acceptance: a zero exit status with 56 explicit nonsuccesses hid total
+  omission. The strict default now requires named exact controls and a minimum
+  count, with explicit --diagnostic for residual exploration. Keep source hashes
+  as well as executable hashes; a dirty source revision alone is not a pin.
+- Saved ghost replay must bind to the specific captured token string/frame,
+  not search by structural equality of token arrays. Identical syntax at two
+  source occurrences has different identities. Include the saved EOF sentinel's
+  original lookahead identity; otherwise replay invents an extra language EOF
+  and changes initializer boundaries.
+- Ghost full gate 1 passed its Lean/axiom/purity/test stages but stopped because
+  this fresh worktree lacked build/fork-oracle/<content-key>. The exact engine
+  db28f95fedcb38cac435c74ab6ff3d264b9d597ef2b6182505feb7a76943e953
+  already exists in the shared root cache. Its script-derived content key and
+  artifact/overlay manifests verify. Link that immutable engine into the local
+  ignored build cache; do not repin or mutate the shared toolchain or rebuild
+  a different oracle. The subsequent frozen gate retains this same source pin.

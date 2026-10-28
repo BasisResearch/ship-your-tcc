@@ -1,0 +1,101 @@
+[
+  {
+    "check": "fixture",
+    "command": [
+      "python3",
+      "scripts/ghost_cabs_cmp.py",
+      "--build-id",
+      "ghost-gate-2",
+      "--out",
+      "build/ghost-cabs-final"
+    ],
+    "exit": 0,
+    "expected_exit": 0,
+    "matched": true
+  },
+  {
+    "check": "raw-strict",
+    "command": [
+      "python3",
+      "scripts/ghost_cabs_cmp.py",
+      "--build-id",
+      "ghost-gate-2",
+      "--raw",
+      "--case",
+      "scalar-declarations",
+      "--case",
+      "definition",
+      "--case",
+      "incomplete-array",
+      "--out",
+      "build/ghost-raw-final"
+    ],
+    "exit": 1,
+    "expected_exit": 1,
+    "matched": true
+  },
+  {
+    "check": "raw-diagnostic",
+    "command": [
+      "python3",
+      "scripts/ghost_cabs_cmp.py",
+      "--build-id",
+      "ghost-gate-2",
+      "--raw",
+      "--diagnostic",
+      "--case",
+      "scalar-declarations",
+      "--out",
+      "build/ghost-raw-diagnostic"
+    ],
+    "exit": 0,
+    "expected_exit": 0,
+    "matched": true
+  },
+  {
+    "check": "arena",
+    "command": [
+      "python3",
+      "scripts/model_diff.py",
+      "--no-report",
+      "--json-out",
+      "build/ghost-byte-final.json",
+      "--require-success",
+      "7",
+      "-j",
+      "4",
+      "build/ghost-byte-inputs/ghost-control.c",
+      "build/ghost-byte-inputs/ghost-declarations.c",
+      "build/ghost-byte-inputs/ghost-designators.c",
+      "build/ghost-byte-inputs/ghost-gnu.c",
+      "build/ghost-byte-inputs/ghost-pragmas.c",
+      "build/ghost-byte-inputs/ghost-spellings.c",
+      "build/ghost-byte-inputs/ghost-typedef.c"
+    ],
+    "exit": 0,
+    "expected_exit": 0,
+    "matched": true
+  },
+  {
+    "check": "erasure",
+    "command": [
+      "python3",
+      "results/model/ghost-cabs/validate_erasure.py"
+    ],
+    "exit": 0,
+    "expected_exit": 0,
+    "matched": true
+  },
+  {
+    "check": "zero-minimum",
+    "command": [
+      "python3",
+      "scripts/ghost_cabs_cmp.py",
+      "--min-exact",
+      "0"
+    ],
+    "exit": 2,
+    "expected_exit": 2,
+    "matched": true
+  }
+]

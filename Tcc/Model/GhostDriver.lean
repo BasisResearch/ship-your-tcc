@@ -1,0 +1,121 @@
+import Tcc.Model.Tie
+import Tcc.Model.Preprocess
+
+/-! Focused shared-token driver. Phase-four spelling and provenance are the
+only external syntax inputs. The compiler lexer/parser/codegen run on a
+virtual token-per-line buffer. Cabs is constructed by their parsing actions,
+never by CSemCParser.parsePositioned. This is an independent testing seam;
+connecting the ordinary preprocessor's replay locations is an open duty. -/
+namespace Tcc.Model.Ghost
+open C
+
+/-- The one-token-per-line transport never runs phases 1-2 again: synthetic
+buffers use tcc_open_bf. Original spelling and provenance stay in Input. -/
+def transport (input : Input) : ByteArray :=
+  input.spelling.foldl (fun b t => b ++ ⟨t.spell.toArray⟩ ++ "\n".toUTF8) ByteArray.empty
+
+/-- Erase every ghost field, retaining all parser/codegen/compiler state. -/
+def erase (s : TccSt) : TccSt :=
+  { s with
+    ghostEnabled := false, ghostFixture := false, ghostParsing := false,
+    ghostNextDepth := 0, ghostStringCapture := false, ghostLexOffset := 0,
+    ghostSaved := #[], ghostReplay := {}, ghostSources := #[], ghostOrigins := #[], ghostPragmas := #[],
+    ghostInput := none, ghostCurrent := 0, ghostPrior := 0,
+    ghost := #[], ghostAudit := #[], ghostDrops := #[], ghostTokenErrors := #[] }
+
+def action (R : Rec) (src : ByteArray) : M Unit := do
+  tccpp_new R
+  tccelf_new
+  tcc_open_bf "/ghost-tokens.c".toUTF8 (some src)
+  tccgen_init R
+  let _ ← tccgen_compile R
+
+/-- No reference AST, diagnostic digest, or reference code/data is an input. -/
+def run (input : Input) (observe : Bool := true) : EStateM.Result Err TccSt Unit :=
+  let src := transport input
+  let fuel := 16*src.size+4096
+  let initial : TccSt := {
+    fuel := fuel, cversion := 201112, warn_none := 1,
+    error_set_jmp_enabled := 1, output_type := TCC_OUTPUT_MEMORY,
+    ghostFixture := observe, ghostParsing := observe,
+    ghostInput := if observe then some input else none }
+  (action (Tie.tie fuel) src).run initial
+
+/-- The ordinary physical-source lexer, preprocessor and compiler parser.
+Only model source bytes/files enter this computation; the spec parser is
+absent. Pragma effects execute through the unchanged compilation path. -/
+def rawAction (R : Rec) : M Unit := do
+  if (← tcc_open "/prog.c".toUTF8) < 0 then throw (.internal "missing /prog.c")
+  preprocess_start R AFF_TYPE_C
+  tccelf_new
+  tccgen_init R
+  let _ ← tccgen_compile R
+
+def runRaw (src : ByteArray) (fs : List (CSem.Pre.Bytes × CSem.Pre.Bytes))
+    (observe : Bool := true) : EStateM.Result Err TccSt Unit :=
+  let base := preprocessState src fs
+  let initial := { base with
+    ghostEnabled := observe, cversion := 201112, warn_none := 1,
+    error_set_jmp_enabled := 1, output_type := TCC_OUTPUT_MEMORY,
+    tcc_lib_path := "/lib/tcc".toUTF8,
+    sysinclude_paths := #["/lib/tcc/include".toUTF8, "/include".toUTF8] }
+  (rawAction (Tie.tie base.fuel)).run initial
+
+def output (s : TccSt) : Except Gap translation_unit := do
+  if !s.ghostTokenErrors.isEmpty then
+    throw ⟨.tu,⟨0,s.ghostCurrent⟩,"token/provenance transport disagreement"⟩
+  match s.ghost.toList with
+  | [f] => match ← f.value with
+    | .translationUnit tu => pure tu
+    | _ => throw ⟨.tu,f.range,"model did not construct a translation unit"⟩
+  | _ => throw ⟨.tu,⟨0,s.ghostCurrent⟩,"model ghost stack has extra/missing productions"⟩
+
+/-- Whole parser/codegen state erasure, including identical errors. F3/F6
+must prove this by induction on the modeled actions. Finite byte comparisons
+do not supply this proposition. -/
+def Erasure_Statement : Prop :=
+  ∀ input,
+    match run input true, run input false with
+    | .ok _ a, .ok _ b => erase a = erase b
+    | .error e a, .error e' b => e = e' ∧ erase a = erase b
+    | _, _ => False
+
+/-- Exact typed agreement on a shared positioned token fixture. No arbitrary
+normalizer is parameterized here. Whole-C coverage, fuel adequacy and the
+ordinary raw-source connection remain required for DESIGN §6.2. -/
+def ParserAgreement_Statement (cfg : CSemCParser.ParseCfg) : Prop :=
+  ∀ input s tu,
+    run input = .ok () s → output s = .ok tu →
+    CSemCParser.parsePositioned cfg input.language.positioned = .ok tu
+
+/-- Ordinary-source erasure is a separate unproved obligation from fixture
+transport. It includes all compiler state and both success/error outcomes. -/
+def RawErasure_Statement : Prop :=
+  ∀ src fs,
+    match runRaw src fs, runRaw src fs false with
+    | .ok _ a, .ok _ b => erase a = erase b
+    | .error e a, .error e' b => e = e' ∧ erase a = erase b
+    | _, _ => False
+
+/-- Named witness for required total ghost construction, without a compiler
+refusal or a missing-construction disjunct. Supplied by F3/F6 for all
+Supported/Fits programs, not by filtering differential successes. -/
+structure RawConstruction (src : ByteArray) (fs : List (CSem.Pre.Bytes × CSem.Pre.Bytes)) where
+  state : TccSt
+  tree : translation_unit
+  compiled : runRaw src fs = .ok () state
+  constructed : output state = .ok tree
+
+def RawConstruction_Statement (supported fits : ByteArray → Prop)
+    (fs : List (CSem.Pre.Bytes × CSem.Pre.Bytes)) : Prop :=
+  ∀ src, supported src → fits src → Nonempty (RawConstruction src fs)
+
+/-- Raw source parser agreement with the model's own retained positioned
+stream; source provenance/phase-four correctness and binary refinement remain
+independent obligations. No arbitrary syntax normalization is allowed. -/
+def RawParserAgreement_Statement (cfg : CSemCParser.ParseCfg) : Prop :=
+  ∀ src fs s tu input,
+    runRaw src fs = .ok () s → s.ghostInput = some input → output s = .ok tu →
+    CSemCParser.parsePositioned cfg input.language.positioned = .ok tu
+
+end Tcc.Model.Ghost

@@ -437,3 +437,8 @@ root = "RawFrontEndMain"
 name = "allocation-oracle-test"
 srcDir = "csem/lean_frontend/test"
 root = "Unit.AllocationOracleTest"
+# Independent model parser actions -> typed Cabs on shared token fixtures.
+[[lean_exe]]
+name = "tcc_ghost"
+srcDir = "lean/Ghost"
+root = "GhostMain"

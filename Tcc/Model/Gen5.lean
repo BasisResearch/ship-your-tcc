@@ -55,7 +55,7 @@ def expr_infix : Nat → Rec → Int32 → M Unit
         R.unary
         if precedence (← getTok) > p2 then expr_infix fuel R (p2 + 1)
         R.gen_op t
-        gnode "binop" #[t] 2
+        gnode .binop 2
       t ← getTok
 where
   expr_landor : Nat → Rec → Int32 → M Unit
@@ -88,7 +88,7 @@ where
       if f then modify fun s => { s with nocode_wanted := s.nocode_wanted - 1 }
     else
       gvtst_set R i t
-    gwrap (gm - 1) "logop" #[op]
+    gwrap (← gleft gm) .logop
 
 /-- `is_cond_bool(sv)` -/
 def is_cond_bool (sv : SValue) : Bool :=
@@ -148,7 +148,7 @@ def expr_cond : Nat → Rec → M Unit
       gvtst_set R 0 t1
       gvtst_set R 1 t2
       R.gen_cast type
-      gwrap gm "cond"
+      gwrap gm (if g then .condGNU else .cond)
       return
     let islv := VT_STRUCT == (type.t &&& VT_BTYPE)
     if c != 1 then
@@ -178,7 +178,7 @@ def expr_cond : Nat → Rec → M Unit
         setVtR 0 r2
       gsym R tt
     if islv then indir R
-    gwrap gm "cond"
+    gwrap gm (if g then .condGNU else .cond)
 
 /-- `expr_eq()` -/
 def expr_eq (R : Rec) : M Unit := do
@@ -195,7 +195,7 @@ def expr_eq (R : Rec) : M Unit := do
       R.expr_eq
       R.gen_op (TOK_ASSIGN_OP t)
     R.vstore
-    gwrap gm "assign" #[t]
+    gwrap gm .assign
 
 /-- `gexpr()` -/
 def gexpr (R : Rec) : M Unit := do
@@ -213,7 +213,7 @@ def gexpr (R : Rec) : M Unit := do
       let t ← vtt
       if t != VT_VOID && t &&& VT_BTYPE != VT_STRUCT then
         let _ ← R.gv (RC_TYPE t)
-    gwrap gm "comma"
+    gwrap gm .comma
 
 /-- `expr_const1()` -/
 def expr_const1 (R : Rec) : M Unit := do

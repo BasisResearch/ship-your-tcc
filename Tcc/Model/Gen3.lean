@@ -540,6 +540,7 @@ def sym_to_attr (ad : AttributeDef) (s : Sym) : AttributeDef :=
 
 /-- `parse_btype(type, ad, ignore_label)`: (type_found, type, ad) -/
 def parse_btype (R : Rec) (_ad0 : AttributeDef) (ignore_label : Int32) : M (Bool × CType × AttributeDef) := do
+  let gm ← gmark
   let mut ad : AttributeDef := {}
   let mut type_found := false
   let mut typespec_found := false
@@ -724,6 +725,7 @@ def parse_btype (R : Rec) (_ad0 : AttributeDef) (ignore_label : Int32) : M (Bool
   if bt2 == VT_LONG then t := t ||| VT_LLONG
   type := { type with t := t }
   check_restrict_type R type
+  if type_found then gwrap gm .specifiers
   return (type_found, type, ad)
 
 /-- `convert_parameter_type(pt)` -/
@@ -935,6 +937,7 @@ def post_type : Nat → Rec → CType → AttributeDef → Int32 → Int32 → M
 def type_decl_loc : Nat → Rec → CType → AttributeDef → Int32 → M (CType × AttributeDef × Int32 × CLoc)
   | 0, _, _, _, _ => throw (.fuel "type_decl")
   | fuel+1, R, type0, ad0, td => do
+    let gm ← gmark
     let mut type := type0
     let mut ad := ad0
     let storage := type.t &&& VT_STORAGE
@@ -985,6 +988,7 @@ def type_decl_loc : Nat → Rec → CType → AttributeDef → Int32 → M (CTyp
     check_restrict_type R type
     ad ← parse_attribute R ad
     type := { type with t := type.t ||| storage }
+    gwrap gm .declarator
     return (type, ad, v, ret)
 
 /-- `type_decl(type, ad, &v, td)`: (type, ad, v) -/

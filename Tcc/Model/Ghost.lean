@@ -1,29 +1,125 @@
-/-!
-# TccModel: the provisional ghost AST
+import CSemCParser.Phase7
 
-DESIGN-COMPILER.md §4.1/§6.2: tcc parses in one pass, so the model's parse
-functions also produce the abstract syntax they parsed, for Layer B's
-parser agreement with the fork's Cabs. Until F1 has the fork's Lean Cabs
-in this repository, the ghost output is this small, generic tree; F1
-replaces this module (and the model's few `ghost*` calls) with Cabs.
+/-! Typed syntax retained by the modeled compiler's parsing actions. The input
+is a positioned *token* fixture, never a reference syntax tree. Ordinary
+compilation does not enable this testing seam. Production fragments are built
+in parser order, before CType/value folding; an unimplemented construction is
+an explicit diagnostic, never a successful empty translation unit. -/
+namespace Tcc.Model.Ghost
+open CSemCParser
 
-A `GNode` is a constructor name (`"binop"`, `"call"`, `"if"`, `"decl"`,
-...), the source tokens it carries (operator, identifier, literal text) and
-its children, in source order.
--/
+structure Input where
+  language : Phase7.Input
+  spelling : Array CSem.Pre.PPToken
 
-namespace Tcc.Model
+/-- Model-owned file identity/content and token origin. Buffer offsets are
+kept separately from physical offsets; transformations and macro derivations
+that lack a complete mapping cause an explicit gap, never an invented site. -/
+structure ModelSource where
+  id : Nat
+  openedAs : ByteArray
+  contents : ByteArray
 
-inductive GNode where
-  | node (kind : String) (toks : Array Int32) (kids : Array GNode)
+structure ModelOrigin where
+  source : Nat
+  bufferOffset : Nat
+  physicalOffset : Option Nat
+  presumed : ByteArray
+  line : Nat
+  includeFiles : Array Nat
+  macroFrames : Array Nat
+
+/-- Original source identities indexed by word offset in a saved compiler
+initializer/body token string. Replaying does not create source occurrences. -/
+structure SavedTokens where
+  tokens : Array Int32
+  positions : Array (Nat × Nat)
+
+structure PragmaEffect where
+  beforeToken : Nat
+  keyword : Int32
+  packBefore : Array Int32
+  packAfter : Array Int32
+  packPointerBefore : Nat
+  packPointerAfter : Nat
+  librariesBefore : Array ByteArray
+  librariesAfter : Array ByteArray
+  counterBefore : Int32
+  counterAfter : Int32
+
+/-- Half-open indices into the shared source token/provenance table. Replays
+retain these identities rather than allocating new source occurrences. -/
+structure Range where
+  first : Nat := 0
+  last : Nat := 0
+  deriving Inhabited, BEq, Repr
+
+inductive Production where
+  | ident | constant | string | paren | deref | addr | lnot | bnot | uplus | neg
+  | preinc | predec | postinc | postdec | sizeof | alignof | func | builtin
+  | generic | labeladdr | call | arrow | member | index | complit | type | cast | stmtexpr
+  | binop | logop | cond | condGNU | assign | comma
+  | specifiers | declarator | initializer | initDecl | declaration | fundef | tu
+  | ifStmt | whileStmt | block | returnStmt | breakStmt | continueStmt | forStmt | doStmt
+  | switchStmt | caseStmt | defaultStmt | gotoStmt | asmStmt | empty | label | exprStmt
+  | labelled | staticAssert | deferredFunction | localLabels
+  deriving Inhabited, BEq, Repr
+
+structure Gap where
+  production : Production
+  range : Range
+  reason : String
+  deriving Inhabited, Repr
+
+/-- Labels are completed by the next statement in the modeled block, rather
+than discarded or represented as a null statement. -/
+inductive Label where
+  | named (id : identifier)
+  | caseValue (lo : cabs_expression) (hi : Option cabs_expression)
+  | defaultValue
   deriving Inhabited
 
-namespace GNode
-def kind : GNode → String
-  | .node k _ _ => k
-def kids : GNode → Array GNode
-  | .node _ _ ks => ks
-def leaf (k : String) (toks : Array Int32 := #[]) : GNode := .node k toks #[]
-end GNode
+inductive ParsedDeclarator where
+  | concrete (value : declarator)
+  | abstract (value : Option abstract_declarator)
+  deriving Inhabited
 
-end Tcc.Model
+inductive Syntax where
+  | expression (value : cabs_expression)
+  | typeName (value : type_name)
+  | specs (value : specifiers)
+  | decl (value : ParsedDeclarator)
+  | initializer (value : initializer_)
+  | initDecl (value : init_declarator)
+  | declaration (value : cabs_declaration)
+  | functionBody (value : cabs_statement)
+  | functionDeclarator (decl : declarator) (body : cabs_statement)
+  | external (value : external_declaration)
+  | statement (value : cabs_statement)
+  | label (value : Label)
+  | translationUnit (value : translation_unit)
+  deriving Inhabited
+
+structure Fragment where
+  production : Production
+  range : Range
+  value : Except Gap Syntax
+  deriving Inhabited
+
+structure Mark where
+  height : Nat := 0
+  first : Nat := 0
+  deriving Inhabited
+
+/-- Dropping a repeated dry run is explicit. The original token/provenance
+input and the audit of its parser actions remain available. -/
+inductive DropReason where
+  | preprocessorExpression | initializerDryRun
+  deriving Repr
+
+structure Drop where
+  range : Range
+  reason : DropReason
+  fragments : Array Fragment
+
+end Tcc.Model.Ghost

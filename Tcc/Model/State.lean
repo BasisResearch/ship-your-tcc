@@ -1,4 +1,5 @@
 import Tcc.Model.Types
+import Tcc.Model.GhostCabs
 
 /-!
 # TccModel: the global state `TccSt` and the monad `M`
@@ -215,7 +216,25 @@ structure TccSt where
   /-- the arena's bytes (from run_ptr) as relocated -/
   arena : ByteArray := ByteArray.empty
   -- ===== ghost =====
-  ghost : Array GNode := #[]
+  /-- Optional positioned token fixture. No AST/digest/oracle fields. -/
+  ghostEnabled : Bool := false
+  ghostFixture : Bool := false
+  ghostParsing : Bool := false
+  ghostNextDepth : Nat := 0
+  ghostStringCapture : Bool := false
+  ghostLexOffset : Nat := 0
+  ghostSaved : Array Ghost.SavedTokens := #[]
+  ghostReplay : Std.HashMap Nat (Array (Nat × Nat)) := {}
+  ghostSources : Array Ghost.ModelSource := #[]
+  ghostOrigins : Array Ghost.ModelOrigin := #[]
+  ghostPragmas : Array Ghost.PragmaEffect := #[]
+  ghostInput : Option Ghost.Input := none
+  ghostCurrent : Nat := 0
+  ghostPrior : Nat := 0
+  ghost : Array Ghost.Fragment := #[]
+  ghostAudit : Array Ghost.Fragment := #[]
+  ghostDrops : Array Ghost.Drop := #[]
+  ghostTokenErrors : Array String := #[]
   deriving Inhabited
 
 abbrev M := EStateM Err TccSt
@@ -323,34 +342,52 @@ def curFile : M BufferedFile := do
     let b := { b with buf := ByteArray.empty }
     { b with buf := f d }
 
-/-! ## ghost output (DESIGN-COMPILER.md §4.1, §6.2)
+/-! ## Typed ghost output (DESIGN §4.1/§6.2)
 
-tcc parses in one pass; the model's parse functions return the syntax
-they parsed on the ghost stack `TccSt.ghost`: each parse function leaves
-exactly one `GNode` for its construct there (its children are the nodes
-its sub-parses left). Ghost nodes have no influence on tcc's state. -/
+Actions only modify the named ghost fields. Syntax errors are retained as
+Ghost.Gap values and do not change compilation or its output bytes. -/
 
-/-- the current ghost-stack height -/
-@[inline] def gmark : M Nat := do return (← get).ghost.size
+@[inline] def gmark : M Ghost.Mark := do
+  let s ← get
+  return ⟨s.ghost.size, s.ghostCurrent⟩
 
-/-- replace the ghost nodes above `mark` by one node holding them -/
-def gwrap (mark : Nat) (kind : String) (toks : Array Int32 := #[]) : M Unit :=
+/-- Extend an operator's mark to include its already-parsed left operand. -/
+def gleft (m : Ghost.Mark) : M Ghost.Mark := do
+  let s ← get
+  if m.height == 0 then return m
+  return ⟨m.height-1, (s.ghost.getD (m.height-1) default).range.first⟩
+
+/-- Fold exactly the production's children into a typed Cabs fragment. -/
+def gwrap (mark : Ghost.Mark) (kind : Ghost.Production) : M Unit :=
   modify fun s =>
-    let g := s.ghost
-    let s := { s with ghost := #[] }
-    let m := min mark g.size
-    let kids := g.extract m g.size
-    { s with ghost := (g.extract 0 m).push (.node kind toks kids) }
+    match s.ghostInput with
+    | none => s
+    | some input =>
+      let g := s.ghost
+      let m := min mark.height g.size
+      let kids := g.extract m g.size
+      let last := kids.foldl (fun n f => max n f.range.last) s.ghostCurrent
+      let last := if kind == .block && s.tok == 125 && s.local_scope == 0 then last+1 else last
+      let range : Ghost.Range := ⟨mark.first, last⟩
+      let f : Ghost.Fragment := ⟨kind, range, Ghost.build ⟨input,kind,range,kids⟩⟩
+      { s with ghost := (g.extract 0 m).push f, ghostAudit := s.ghostAudit.push f }
 
-/-- a node from the top `n` ghost nodes -/
-def gnode (kind : String) (toks : Array Int32 := #[]) (n : Nat := 0) : M Unit := do
-  let h ← gmark
-  gwrap (h - n) kind toks
+def gnode (kind : Ghost.Production) (n : Nat := 0) : M Unit := do
+  let s ← get
+  let h := s.ghost.size - n
+  let first := if n == 0 then s.ghostCurrent else (s.ghost.getD h default).range.first
+  gwrap ⟨h,first⟩ kind
 
-/-- drop the ghost nodes above `mark` (constant expressions tcc evaluates
-for the preprocessor, dry runs it repeats) -/
-def gdrop (mark : Nat) : M Unit :=
-  modify fun s => { s with ghost := s.ghost.extract 0 (min mark s.ghost.size) }
+/-- Only duplicated initializer dry runs and preprocessing expressions may
+be dropped; their syntax and the reason remain in the audit. -/
+def gdrop (mark : Ghost.Mark) (reason : Ghost.DropReason) : M Unit :=
+  modify fun s =>
+    if s.ghostInput.isNone then s else
+    let m := min mark.height s.ghost.size
+    let dropped := s.ghost.extract m s.ghost.size
+    { s with
+      ghost := s.ghost.extract 0 m,
+      ghostDrops := s.ghostDrops.push ⟨⟨mark.first,s.ghostCurrent⟩,reason,dropped⟩ }
 
 /-- console output (stdout and stderr share the HTIF console) -/
 def putConsole (b : ByteArray) : M Unit :=

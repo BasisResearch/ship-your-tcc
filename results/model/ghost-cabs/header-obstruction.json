@@ -1,0 +1,112 @@
+{
+  "command": [
+    ".lake/build/bin/csem_cparse",
+    "--json",
+    "--gnu",
+    "build/ghost-header-token-stream.c",
+    "/model-raw-tokens.c"
+  ],
+  "exit": 1,
+  "stderr": "/model-raw-tokens.c:11:1: error: expected a declarator (at punctuator)\n",
+  "tokens": [
+    {
+      "index": 0,
+      "spell": "struct"
+    },
+    {
+      "index": 1,
+      "spell": "__uint128__"
+    },
+    {
+      "index": 2,
+      "spell": "{"
+    },
+    {
+      "index": 3,
+      "spell": "char"
+    },
+    {
+      "index": 4,
+      "spell": "x"
+    },
+    {
+      "index": 5,
+      "spell": "["
+    },
+    {
+      "index": 6,
+      "spell": "16"
+    },
+    {
+      "index": 7,
+      "spell": "]"
+    },
+    {
+      "index": 8,
+      "spell": ";"
+    },
+    {
+      "index": 9,
+      "spell": "}"
+    },
+    {
+      "index": 10,
+      "spell": "__attribute"
+    },
+    {
+      "index": 11,
+      "spell": "("
+    },
+    {
+      "index": 12,
+      "spell": "("
+    },
+    {
+      "index": 13,
+      "spell": "__aligned__"
+    },
+    {
+      "index": 14,
+      "spell": "("
+    },
+    {
+      "index": 15,
+      "spell": "16"
+    },
+    {
+      "index": 16,
+      "spell": ")"
+    },
+    {
+      "index": 17,
+      "spell": ")"
+    },
+    {
+      "index": 18,
+      "spell": ")"
+    },
+    {
+      "index": 19,
+      "spell": ";"
+    },
+    {
+      "index": 20,
+      "spell": "typedef"
+    },
+    {
+      "index": 21,
+      "spell": "char"
+    },
+    {
+      "index": 22,
+      "spell": "*"
+    },
+    {
+      "index": 23,
+      "spell": "__builtin_va_list"
+    }
+  ],
+  "source_sha256": "10cbd96a7e13be63624df9f1a96cf2e73b50cb25f2e45c47f22d174f08e35485",
+  "rendered_sha256": "7defcd1b4c27b3d546dfb85238f48b0b080f80d4dbb5e7190122d608113d3868",
+  "binary_sha256": "ba3eaaafc3f92a57be4102ce1522fe77c12847f0a577517197535627d220c634"
+}

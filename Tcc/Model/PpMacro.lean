@@ -84,7 +84,7 @@ def next_nomacro (R : Rec) : M Unit := do
     match lbl with
     | .redo =>
       let line := (← curFile).line_num
-      modify fun s => { s with tok_line := line }
+      modify fun s => { s with tok_line := line, ghostLexOffset := if s.ghostEnabled then p else s.ghostLexOffset }
       c ← rd p
       if c == 32 || c == 9 then
         setTok c
@@ -847,7 +847,7 @@ def pragmaOperandNext (R : Rec) (events0 : TokenString) : M TokenString := do
 
 /-- `_Pragma`: expand the operand, destringize only quote/backslash,
 then run the existing pragma parser on isolated file/token/macro buffers. -/
-def pragma_operator (R : Rec) (nested0 : Option SymId) : M (Option SymId) := do
+def pragma_operator_body (R : Rec) (nested0 : Option SymId) : M (Option SymId) := do
   let mut operandEvents : TokenString := {}
   let saved_tok_line := (← get).tok_line
   let mut nested := nested0
@@ -931,9 +931,20 @@ def pragma_operator (R : Rec) (nested0 : Option SymId) : M (Option SymId) := do
     let _ ← begin_macro .heap operandEvents.str 0 1
   return nested
 
+/-- Keep _Pragma's operand lexer outside the language-token view; retain the
+normal once-only expansion and pragma effects. -/
+def pragma_operator (R : Rec) (nested : Option SymId) : M (Option SymId) := do
+  let parsing := (← get).ghostParsing
+  modify fun s => { s with ghostParsing := false }
+  let result ← pragma_operator_body R nested
+  modify fun s => { s with ghostParsing := parsing }
+  return result
+
 /-- Phase 6 selects the common prefix before decoding each literal.
 Separate spellings preserve escape boundaries, e.g. "\\x12" "3". -/
 def parse_string_concat (R : Rec) : M Unit := do
+  let savedGhostStrings := (← get).ghostStringCapture
+  if (← get).ghostEnabled then modify fun s => { s with ghostStringCapture := true }
   let flags := (← get).parse_flags
   modify fun s => { s with parse_flags := s.parse_flags &&& ~~~PARSE_FLAG_TOK_STR }
   let mut literals : Array ByteArray := #[]
@@ -974,6 +985,8 @@ def parse_string_concat (R : Rec) : M Unit := do
     if out.size != 0 then out := out.extract 0 (out.size - (TOK_STR_SIZE st.tok).toNat')
     out := out ++ st.tokc.sdata.extract 0 st.tokc.strSize.toNat'
   modify fun s => { s with tokcstr := out, tokc := s.tokc.setStr out (Int32.ofNat out.size) }
+
+  modify fun s => { s with ghostStringCapture := savedGhostStrings }
 
 /-- `macro_subst(tok_str, nested_list, macro_str)` -/
 def macro_subst (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) (macro_str0 : TokPtr) :
@@ -1042,14 +1055,82 @@ def macro_subst (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) (mac
   modify fun s => { s with tok_line := saved_tok_line }
   return (tok_str, nested, nosubst)
 
+/-- Attach MODEL-produced raw spelling before conversion. Shared-token
+fixtures use their declared virtual transport; normal runs grow their own
+positioned view, with explicit diagnostics for incomplete provenance/replay. -/
+def ghostTokenStart : M Nat := do
+  let s ← get
+  if s.ghostInput.isNone then return 0
+  if s.ghostFixture then
+    let line := if s.macro_ptr.isSome then ((s.file.head?).map (·.line_num)).getD s.tok_line else s.tok_line
+    let i := if s.tok == TOK_EOF then
+        ((s.ghostInput.map (·.language.positioned.tokens.size)).getD 1)-1
+      else line.toNat'-1
+    modify fun st => { st with ghostPrior := st.ghostCurrent, ghostCurrent := i }
+    return i
+  if !s.ghostParsing || (s.ghostNextDepth != 1 && !s.ghostStringCapture) then return s.ghostCurrent
+  let some input := s.ghostInput | return 0
+  let fr := s.macro_stack.head?
+  if let some frame := fr then
+    if let some positions := s.ghostReplay.get? frame.id then
+      -- The caller records the word offset before TOK_GET advances it.
+      if let some (_,i) := positions.find? (fun (word,_) => word == s.ghostLexOffset) then
+        modify fun st => { st with ghostPrior := st.ghostCurrent, ghostCurrent := i }
+        return i
+  let f := (s.file.head?).getD default
+  let raw := (s.fds.getD f.fd.toNat' none).map (·.data) |>.getD ByteArray.empty
+  let bufLen := f.buf_end-f.bufStart
+  let readEnd := ((s.fds.getD f.fd.toNat' none).map (·.pos)).getD 0
+  let offset := readEnd-bufLen+(s.ghostLexOffset-f.bufStart)
+  let obs ← ppObservation
+  let pp : CSem.Pre.PPToken := ⟨match obs.kind with
+    | .ident => .ident | .number => .ppNumber | .charLit => .charConst
+    | .stringLit => .strLit | .punct => .punct | _ => .other, obs.spell.toList⟩
+  let lexical ← if s.tok == TOK_EOF then pure CSemCParser.Tok.EOF
+    else match CSemCParser.Phase7.token { gnu := true } pp with
+      | .ok t => pure t
+      | .error e =>
+        modify fun st => { st with ghostTokenErrors := st.ghostTokenErrors.push e }
+        pure CSemCParser.Tok.EOF
+  let verified := s.macro_ptr.isNone && raw.extract offset (offset+obs.spell.size) == obs.spell
+  let physical := if verified then some offset else none
+  let col := (raw.extract 0 offset).data.toList.reverse.takeWhile (· != 10) |>.length |>.add 1
+  let physicalLine := (raw.extract 0 offset).data.toList.count 10 + 1
+  let file := Bytes.toStr f.filename
+  let i := input.spelling.size
+  let sp : CerbLocation.Pos := ⟨file,s.tok_line.toNat',col,"/model-phase4.c",2*i+2⟩
+  let ep := { sp with col := col+obs.spell.size }
+  let origin : CSem.Pre.Origin := if verified then
+    .source ⟨⟨f.true_filename.toList,CSem.Pre.FileSys.normComponents f.true_filename.toList,
+      ⟨offset,physicalLine,col⟩,⟨offset+obs.spell.size,physicalLine,col+obs.spell.size⟩⟩,
+      f.filename.toList,s.tok_line.toNat',s.tok_line.toNat',[]⟩ else .unavailable
+  let view := input.language
+  let view := { view with
+    positioned := { view.positioned with
+      tokens := view.positioned.tokens.push ⟨lexical,sp,ep⟩ },
+    origins := if s.tok == TOK_EOF then view.origins else view.origins.push origin }
+  let input := { input with
+    language := view,
+    spelling := if s.tok == TOK_EOF then input.spelling else input.spelling.push pp }
+  modify fun st => { st with
+    ghostInput := some input, ghostPrior := st.ghostCurrent, ghostCurrent := i,
+    ghostSources := if st.ghostSources.any (fun x => x.id == f.id) then st.ghostSources
+      else st.ghostSources.push ⟨f.id,f.true_filename,raw⟩,
+    ghostOrigins := st.ghostOrigins.push ⟨f.id,s.ghostLexOffset,physical,f.filename,s.tok_line.toNat',
+      st.file.toArray.map (·.id),st.macro_stack.toArray.map (·.id)⟩,
+    ghostTokenErrors := if verified || s.tok == TOK_EOF then st.ghostTokenErrors else
+      st.ghostTokenErrors.push s!"incomplete model provenance/replay for token {i}" }
+  return i
+
 /-- `next()`, including patch 0003's common convert path. Macro tokens
 retain spelling until conversion; `_Pragma` executes before the next token. -/
-def next (R : Rec) : M Unit := do
+def next_body (R : Rec) : M Unit := do
   let fuel ← fuelM
   for _ in [0:fuel] do
     let st ← get
     match st.macro_ptr with
     | some mp =>
+      if st.ghostEnabled then modify fun s => { s with ghostLexOffset := mp.pos }
       let t := mp.get
       if TOK_HAS_VALUE t then
         let (tk, cv, mp') := tok_get mp st.tokc
@@ -1065,6 +1146,7 @@ def next (R : Rec) : M Unit := do
         continue
       else if t == TOK_EOF then
         setTok t
+        let _ ← ghostTokenStart
         return
       else
         modify fun s => { s with macro_ptr := some { mp with pos := mp.pos + 1 } }
@@ -1085,6 +1167,10 @@ def next (R : Rec) : M Unit := do
           let _ ← begin_macro .tokstrBuf ts.str 0 0
           continue
     let pf := (← get).parse_flags
+    if (← getTok) == (← get).tok_pragma_op && pf &&& PARSE_FLAG_PREPROCESS != 0 then
+      let _ ← pragma_operator R none
+      continue
+    let ghostStart ← ghostTokenStart
     if pf &&& (PARSE_FLAG_TOK_STR ||| PARSE_FLAG_TOK_NUM) != 0 then
       setTok (← canonical_ident (← getTok))
     let t ← getTok
@@ -1110,8 +1196,16 @@ def next (R : Rec) : M Unit := do
         if c == 76 || c == 117 || c == 85 || c == 56 then i := i + 1 else break
       if tc.sdata.get! i == 34 then parse_string_concat R
       else parse_string R tc.sdata (tc.strSize - 1).toNat'
+    if (← get).ghostInput.isSome then
+      modify fun st => { st with ghostCurrent := ghostStart }
     return
   throw (.fuel "next")
+
+def next (R : Rec) : M Unit := do
+  if (← get).ghostInput.isNone then return ← next_body R
+  modify fun s => { s with ghostNextDepth := s.ghostNextDepth+1 }
+  next_body R
+  modify fun s => { s with ghostNextDepth := s.ghostNextDepth-1 }
 
 /-- `pp_error(cs)`: the text error1 prints for a bad #if expression -/
 def pp_error (R : Rec) : M ByteArray := do
