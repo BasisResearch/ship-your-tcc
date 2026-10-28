@@ -643,3 +643,10 @@ requested corrections until the lead surfaced them explicitly.
   case. Preserve that comparison and binary pin. Rebuild csem_cparse in the
   CSem gate and run the maintained GNU/header checks there; a default library
   build alone does not refresh every executable used by the comparison.
+
+- GNU evidence recovery (2026-10-28): do not infer the execution category from
+  a generic native-program label. scripts/run_tcc_sail.sh executes the full
+  compiler on Sail, whereas run_xgcc_sail.sh runs a cross-compiled program.
+  The GNU tcc matrix has 8,256,889 compile steps; retained metadata and command
+  pins settle the classification. The initial lead prose was corrected without
+  changing any captured observation or increasing a success count.

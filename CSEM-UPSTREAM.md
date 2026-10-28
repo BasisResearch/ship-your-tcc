@@ -300,8 +300,9 @@ member alignment remains independent. The Lean memory reader and normal-budget
 fuel proof are adapted, and generated Core quotation retains the fields.
 Twenty-three focused cases agree with GCC, and three explicitly labeled
 historical-Menhir counterparts agree with the patched concrete OCaml engine.
-The complete 21-case cross-program Sail matrix preserves three tcc typedef
-query failures, which belong to the compiler task rather than CSem semantics.
+The complete 21-case matrix pairs a GCC cross-program Sail run with full
+tcc-run compiler execution on Sail; the latter preserves three typedef query
+failures, which belong to the compiler task rather than CSem semantics.
 The new oracle preserves its stated upstream floating scope; arity shims are
 not claims of symbolic/CHERI GNU-layout support. Nonliteral ICEs, pragma pack,
 other GNU effects and injected binding/runtime meaning remain open. The old

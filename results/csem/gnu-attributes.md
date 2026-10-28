@@ -129,10 +129,13 @@ attribute aliases. These are finite executions, not universal NoUB proofs.
 
 ## Actual GCC and tcc/Sail observations
 
-These are cross-compiled program executions on Sail, not full tcc-run-on-Sail
-executions. The retained complete 21-case matrix executes all cases without
+The GCC observations are cross-compiled program executions on Sail. The tcc
+observations execute the full compiler image with `tcc -run` on Sail; their
+metadata records separate compile/program counts. The retained complete
+21-case matrix executes all cases without
 stopping at its first failure. xPack GCC/Sail prints mask0 and exits0.
-Patched tcc/Sail prints mask28672 and exits1: precisely typedef-up,
+Patched tcc/Sail takes 8,256,889 compile steps and 3,513 program steps,
+prints mask28672 and exits1: precisely typedef-up,
 typedef-down and typedef-chain. The older complete batch stops at case13;
 its nonzero result is retained rather than counted as agreement. These native
 observations precede the two additional declaration/alias controls in the
@@ -250,3 +253,11 @@ worker base are historical; main has already adopted the separate CSEM-10
 repair and it must survive integration. The required next binding task also
 updates the Supported visitor's stale reliance on parser rejection, admitting
 genuine injected bindings by resolved identity while excluding user asm labels.
+
+Evidence-label correction: the lead's initial recovery prose incorrectly
+called the tcc observations cross-compiled program runs. The preserved
+commands invoke scripts/run_tcc_sail.sh and the metadata records compiler
+execution. The 21-case matrix has 8,256,889 compile / 3,513 program steps;
+the member-expression probe has 13,420,116 / 4,561; the earlier stopping batch
+has 4,394,200 / 459. The GCC counterparts are separate cross-program runs.
+This corrects the label only; no capture, outcome, pin or success count changes.
