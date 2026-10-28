@@ -234,3 +234,14 @@ match fresh full tcc/Sail runs on the original binary128-precision,
 binary32-conversion and stdin-EOF probes. See
 results/csem/config-followup-2026-10-28.md for all three captures and pins.
 This updates local repair evidence; it is not a new pristine-upstream check.
+
+**PATCH-10 — explicit runtime allocation resolutions (2026-10-28).** The local
+fork keeps the bump runner as its default and adds checked finite RV64
+placement functions, generic placement contracts, invalid-resolution
+classification and lifetime byte clearing on address reuse. The semantic
+outcome set quantifies these functions; finite CLI replays are only tests.
+The combined gate and focused evidence are in results/csem/allocation-oracle.md.
+This is a compiler-verification interface extension, not a claim that the
+upstream deterministic allocator violates its documented baseline. Frontend
+mini-runs and machine-memory simulation remain separate obligations. No report
+has been sent externally.

@@ -32,7 +32,10 @@ positioned Cabs with retained provenance; its 18 independent comparisons and
 combined gate pass, while pack/layout and library-origin consumption remain
 open (results/csem/raw-frontend.md). F1–F3 and the whole-compiler theorem
 remain open; newlib binary128 formatting/sqrt and other
-recorded semantic gaps still require work.
+recorded semantic gaps still require work. The runtime allocation oracle is
+adopted after the combined gate: arbitrary checked placements enter CSem's
+outcome set, with generic placement contracts and 21 focused checks. The
+machine-memory simulation remains open (results/csem/allocation-oracle.md).
 
 The latest preprocessing corpus has 618 exact model/reference and 616 exact
 spec/reference agreements across 622 inputs. The image's opened-path once

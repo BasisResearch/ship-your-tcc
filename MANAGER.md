@@ -39,8 +39,8 @@ The launcher follows 4ct-digest's MANAGER.md/codexwork.sh workflow, adapted
 to this project's two-worker limit and shared Lean build lock.
 
 Current assignments, 2026-10-28: slot 1 runs tasks/f1-library-identity.md in
-sol-c11-line. Slot 2 continues tasks/f3-ghost-cabs.md in sol-f2-tokens. The lead
-integrates the reviewed allocation checkpoint in sol-csem-repin. Both workers
+sol-c11-line. Slot 2 continues tasks/f3-ghost-cabs.md in sol-f2-tokens. The allocation checkpoint is adopted after its combined gate; the lead
+reviews the remaining F3 corpus fixtures and native captures. Both workers
 resumed after their usage-limit interruption; unfinished edits were preserved.
 Anonymous-member, IEEE, compiler qualifier, direct literal and once-cache
 repairs are adopted. The next independent F1 task is tasks/f1-bitfields.md;

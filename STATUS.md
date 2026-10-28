@@ -28,7 +28,7 @@ external bug reporting; no external contact is authorized or planned.
 | C11 patches | new `codex-c11` worktree; existing F2 reproducers | patch 0003 integrated: 7/7 full compiler Sail reproducers; combined 0003/0004 host/cross tests and main gate pass |
 | F1 grammar | `agent-a31b97b8f1c090141` | integrated: main capped build and full comparison pass, 614 exact Cabs agreements / 664 inputs; 41 joint rejections, 9 preprocessing failures |
 | F1 pure seams | `agent-a249bbaa5b1df80ec` | digest retirement integrated; main's full CSem gate passes: 19 unit executables, 113 baseline oracle results; remaining partial/native seams inventoried |
-| F1 ABI/allocation | `agent-a4ab6bbd8c0be5325` | RV64 configuration reader integrated after capped build/full gate; 10/15 probes agree, float/bitfield/enum/stdin gaps remain; allocator recovery still open |
+| F1 ABI/allocation | `agent-a4ab6bbd8c0be5325` | RV64 reader and bounded allocation oracle adopted after full gates; fresh p04/p09/p10 checks close the earlier IEEE/stdin probe failures; bitfields and GNU enum coverage remain |
 | F1 filesystem | `agent-ad868c434f5f27398` | integrated after full gate: descriptor fstat, structural state ordering and link proxy repaired; eight exact Sail byte/exit agreements, repeated with RV64 config; mkdir remains a separate missing-library gap |
 | F1 IEEE | `agent-a45cb08cf87ce958c` | integrated after worker and combined full gates: pure 32/64/128 bits, zero native floating in both cones, unchanged 113-case baseline; literal/printf/sqrtl gaps and connection Statements remain open |
 | F3 compiler model | `agent-a05464165befb7074` (recovery merged) | patched C11 model integrated after capped build and combined full gate; 1,670 independent fast arenas including 1,051 generated successes; four full Sail arenas now agree; all-corpus Sail equality remains open |
@@ -40,7 +40,7 @@ public libc `strtold` still needs correction in the library lane. Matching refus
 
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
 two at a time, following MANAGER.md. Slot 1 now handles semantic library-source
-identity, while the lead integrates the reviewed allocation checkpoint. Slot 2
+identity; the bounded allocation checkpoint is adopted. Slot 2
 continues ghost Cabs from modeled compiler parser actions. Both resumed after
 the interruption; the latest continuation status is below. The anonymous-member repair is adopted with IEEE after its combined gate.
 The pure IEEE implementation is integrated after the combined gate; the compiler/model
@@ -174,8 +174,8 @@ reproducer. See results/pre/once-cache-2026-10-28.md. Sum cuts remain frozen.
 Both external Sol processes stopped at their usage limit during the interruption;
 their source changes are preserved. Both slots restarted successfully on Oct 28:
 slot 1 handles library identity and slot 2 resumes ghost Cabs. Allocation
-checkpoint ccc00ed has a passing frozen worker gate and native placement
-observation; the lead is combining it with raw/anonymous/once semantics.
+checkpoint ccc00ed and its combined raw/anonymous/once integration pass;
+the reviewed implementation is adopted with native placement evidence.
 Ghost Cabs remains work in progress; ordinary source mapping is required.
 No unfinished checkpoint is claimed as an adopted implementation.
 The next independent CSem coverage task is tasks/f1-bitfields.md (CSEM-08):
@@ -185,6 +185,15 @@ checks now agree exactly between CSem and full Sail: binary128 precision,
 binary32 rounding/conversion and stdin EOF/feof. Exact captures are in
 results/csem/config-followup-2026-10-28.md; the earlier failures remain dated
 evidence. This does not recertify the other twelve configuration probes.
+
+Allocation adoption (2026-10-28): arbitrary checked placement functions now
+range over CSem.outcomes; default bump execution is retained. The combined
+full gate, 21 allocation checks, six default/historical comparisons and 11
+raw frontend tests pass, with all 2,293 source hashes verified. Generic
+placement/dispatch proofs use standard axioms. Invalid replies have no C
+outcome and remain separate from UB/refusal. BumpPlacementPre, frontend
+constant-expression mini-runs, memory simulation and eventual fuel adequacy
+remain explicit F4/F5 duties. See results/csem/allocation-oracle.md.
 
 ## Needs user
 

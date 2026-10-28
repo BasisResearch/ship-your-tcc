@@ -1,6 +1,6 @@
 Allocation oracle recovery, 2026-10-27; worker checkpoint reviewed 2026-10-28.
 The frozen worker gate and focused comparisons pass. Combined integration
-with the subsequent raw/anonymous/once-cache changes remains pending.
+with raw/anonymous/once-cache semantics now also passes, as recorded below.
 
 Pins: Cerberus `704c4e697845127bced66c93fa0763eb51527ca4`, Lem
 `e6d8db5680962f49060257d6c2bcb13c284b910f`, Lean 4.34.0. C11, the repin,
@@ -88,7 +88,7 @@ Proposed ledger text (STATUS.md and PHASES.md are intentionally untouched):
 quantified by CSem.outcomes, with the ordinary bump execution retained as
 one resolution. Invalid answers are rejected independently of C UB and
 model refusal; no OOM answer is invented. Generic acceptance soundness,
-completeness, rejection, default dispatch preservation and active placement
+checked-answer acceptance/rejection, default dispatch preservation and active placement
 freshness/alignment/bounds are proved. Bump's cursor premise is the named
 BumpPlacementPre supplied by F4's reachable memory invariant. Focused tests
 cover independent evaluation order, UB, pointer observations and lifetime
@@ -156,3 +156,20 @@ The lead verified all frozen source hashes, the three focused-result binary
 hashes and the completed receipt before preserving this checkpoint. Its
 combined integration is a separate required check; no earlier failed gate
 is accepted as validation.
+
+Combined adoption, 2026-10-28: the regenerated candidate passes the full CSem
+gate with raw frontend, anonymous containers, IEEE and image once-cache semantics.
+All 2,293 frozen source hashes are verified. The 21 allocation checks, six
+default/historical comparisons, eleven raw frontend methods and 92 anonymous
+member controls pass; both semantic cones contain no native floating and all
+new proof audits use only the standard axioms. The explicit bump invariant,
+frontend mini-run and F4/F5 obligations above remain required.
+
+The first combined gate wrote its fresh checks over earlier result files.
+Those outputs were retained separately and the historical files restored.
+The gate now supplies an explicit build/ output directory to both allocation
+check scripts. The final full gate and 21-case native-placement replay pass
+with that correction; semantic sources are unchanged. The exact independent
+OCaml overlay/artifact manifests, final logs and source/binary pins are in
+allocation-oracle/integration/. This establishes the reviewed F1 checkpoint,
+not the machine/Core memory simulation or tcc_run_correct.

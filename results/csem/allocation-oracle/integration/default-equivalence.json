@@ -1,0 +1,77 @@
+{
+  "rows": [
+    {
+      "source": "csem/tests/allocation/evaluation-order.c",
+      "sha256": "29011fff3a1056d25990101437effefa206d9103859bb22bc27e4f2668f4989d",
+      "oracle_exit": 0,
+      "csem_exit": 0,
+      "oracle_stdout": "EXECUTION 0:\nDefined {value: \"Specified(12)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\nEXECUTION 1:\nDefined {value: \"Specified(21)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+      "csem_stdout": "EXECUTION 0:\nDefined {value: \"Specified(12)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\nEXECUTION 1:\nDefined {value: \"Specified(21)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+      "oracle_stderr": "Time spent: 0.031771 seconds\n",
+      "csem_stderr": "cerberus-lean switches: []\n",
+      "match": true
+    },
+    {
+      "source": "csem/tests/allocation/global-address.c",
+      "sha256": "8bc9af244c24940eb79caff31781721b493be59572067ce92e855941b3c346d2",
+      "oracle_exit": 0,
+      "csem_exit": 0,
+      "oracle_stdout": "Defined {value: \"Specified(0)\", stdout: \"object=281474976710648 value=7\\n\", stderr: \"\", blocked: \"false\"}\n",
+      "csem_stdout": "Defined {value: \"Specified(0)\", stdout: \"object=281474976710648 value=7\\n\", stderr: \"\", blocked: \"false\"}\n",
+      "oracle_stderr": "Time spent: 0.035887 seconds\n",
+      "csem_stderr": "cerberus-lean switches: []\n",
+      "match": true
+    },
+    {
+      "source": "csem/tests/allocation/order.c",
+      "sha256": "66bf0f59a75725b80badc4f4e4560dbdd18122e51ff085d8d63d7f5ccd47bfb4",
+      "oracle_exit": 0,
+      "csem_exit": 0,
+      "oracle_stdout": "Defined {value: \"Specified(22)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+      "csem_stdout": "Defined {value: \"Specified(22)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+      "oracle_stderr": "Time spent: 0.032029 seconds\n",
+      "csem_stderr": "cerberus-lean switches: []\n",
+      "match": true
+    },
+    {
+      "source": "csem/tests/allocation/reuse.c",
+      "sha256": "9965b48213aaceb0663b5b1f65e254ad09518d679cfcda246fa3fad750923e3a",
+      "oracle_exit": 0,
+      "csem_exit": 0,
+      "oracle_stdout": "Defined {value: \"Specified(0)\", stdout: \"old=281474976710584 new=281474976710560 reuse=0 value=19\\n\", stderr: \"\", blocked: \"false\"}\n",
+      "csem_stdout": "Defined {value: \"Specified(0)\", stdout: \"old=281474976710584 new=281474976710560 reuse=0 value=19\\n\", stderr: \"\", blocked: \"false\"}\n",
+      "oracle_stderr": "Time spent: 0.042857 seconds\n",
+      "csem_stderr": "cerberus-lean switches: []\n",
+      "match": true
+    },
+    {
+      "source": "csem/tests/allocation/undefined.c",
+      "sha256": "689993f7513c784612dedf2f512c25b13440a824c4e77e2c015ca3625c062172",
+      "oracle_exit": 1,
+      "csem_exit": 1,
+      "oracle_stdout": "Undefined {ub: \"UB_CERB002a_out_of_bound_load\", stderr: \"\", loc: \"<3:25--3:29>\"}\n",
+      "csem_stdout": "Undefined {ub: \"UB_CERB002a_out_of_bound_load\", stderr: \"\", loc: \"<3:25--3:29>\"}\n",
+      "oracle_stderr": "Time spent: 0.036460 seconds\n",
+      "csem_stderr": "cerberus-lean switches: []\n",
+      "match": true
+    },
+    {
+      "source": "c/tests/cfg/p12_pointer.c",
+      "known_sail_record": "results/csem/cfg-probes/p12_pointer.tcc.json",
+      "source_sha256": "10e0034a12fdf5afde386feb8069b0cc4e59b41c28a94c12f0477d6e0587c4d7",
+      "sail_outcomes": [
+        [
+          "null=0 bits=64 roundtrip=1\n",
+          0
+        ]
+      ],
+      "sail_measured_utc": "2026-10-27T18:15:13Z",
+      "current_csem_stdout": "Defined {value: \"Specified(0)\", stdout: \"null=0 bits=64 roundtrip=1\\n\", stderr: \"\", blocked: \"false\"}\n",
+      "current_csem_stderr": "cerberus-lean switches: []\n",
+      "match": true,
+      "scope": "Same source, historical target run; no recertification of old image pins"
+    }
+  ],
+  "failed": [],
+  "csem_binary_sha256": "8c48da7e4d50d5eafcac362909b025dc8c15c5029c104b91965d54928e4ea85f"
+}

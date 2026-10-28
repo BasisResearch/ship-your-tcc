@@ -432,3 +432,16 @@ requested corrections until the lead surfaced them explicitly.
   pragma-once cache. Its realpath stub preserves spelling, unlike the host.
   The initial repaired-fixture run exposed this mismatch; retained evidence
   is results/pre/once-cache-2026-10-28/before-once-policy-*.json.
+
+- Allocation recovery: do not import the old draft wholesale. It admits
+  unbounded Int addresses, treats none as fabricated OOM, and names absent
+  proofs. The accepted recovery checks finite bounds and rejects resolutions
+  explicitly; BumpPlacementPre is still a reachable-state obligation.
+- Allocation reuse must clear stale region bytes when a dead address is
+  reused. The old no-write allocation body assumed monotone bump placement.
+- Compare default bump executions under the same implementation reader:
+  RV64 malloc alignment is 16, versus the default oracle's 8. Retain the
+  ABI-mismatched diagnostic rather than normalizing observed addresses.
+- Allocation gate scripts must write fresh observations to build/ (explicit
+  --out), not rewrite prior frozen results. The combined check caught this
+  evidence-management defect; final semantic sources are unchanged.

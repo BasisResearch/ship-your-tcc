@@ -1,0 +1,33 @@
+{
+  "revision": "41d8acafcb35ab059482d7e944f71d1e7802220b",
+  "full_gate_exit": 0,
+  "source_pins_verified": 2293,
+  "source_changes_since_first_combined_gate": [
+    "scripts/allocation_oracle_check.py",
+    "scripts/allocation_default_check.py",
+    "scripts/csem_gates.sh"
+  ],
+  "change_scope": "Gate evidence output directories only; semantic sources unchanged",
+  "focused_checks": 21,
+  "default_and_historical_checks": 6,
+  "raw_frontend_methods": 11,
+  "csem_binary_sha256": "8c48da7e4d50d5eafcac362909b025dc8c15c5029c104b91965d54928e4ea85f",
+  "oracle": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/fork-oracle/9e775864dfd595f06f61463e4ff16d6664b5aa7dea800e471cd821462c73602f",
+  "sha256": {
+    "anonymous.json": "37adb1d0779e925daddb5f4d6af43ed9dd543377f3ea7444b43ec91caa8ac862",
+    "csem-cone.log.gz": "0c063c46028dfa52ade7f44dc7193dfed1079a116030867c582593767fb33eee",
+    "default-equivalence.json": "d06e72a4db8c24b17c8cab259c8a001c78fa1ce85f8386990659d498ae96b04a",
+    "first-combined-validation.json": "859b3c94836dd26bb2ebaafc7e91242b2d6bfc9f80e535fe28ca71898c1fb999",
+    "focused.json": "6624f42ecd0a0c1d60256509797947cd819cde26d369fdfcd939048281137c83",
+    "focused.log.gz": "2cc65e72cd60c4185fdd9e47d225c0211bda4e6190300217ce48d37a87abb6a8",
+    "gate.log.gz": "ba3738f1d82669776a80ce6c26ee610be4c34f8b70594693d79e95e586c46894",
+    "oracle.adapter-inputs.sha256": "50c46be42541a23fadcfa2f05245e2756854515743eab449234f1e041296e321",
+    "oracle.artifacts.sha256": "977039b3599c42f834f69cb3b0e025c332dfba37cbee4c336927cc99407cd29e",
+    "oracle.complete": "ecd5f2538a3f29cc950833343203395da2aa5ae0b5a09a25b542a5cf1f35ad8c",
+    "oracle.log.gz": "1e74f40257e4d8c5cea6be6c6d9047da7bf66a3694acdd8c24fa3d6b32595e4d",
+    "oracle.overlay.sha256": "5acb585f41f25e735489e01f8f42914307e096ba397d3b4e19dfb2a9ce5ab91e",
+    "oracle.shared-sources.sha256": "0f81adf28f66948afdc29c50d16571d15f75a22bc86ecf1f5a6b566910079015",
+    "raw-focused.log.gz": "a0c2d844cd5e43226db2ea231d9be38a2cc4aa8ddac3e7e317b25cf8ee3c7b47",
+    "source-pins.json.gz": "4a449482e8d03c3487711d4b73a631ba391c3fa007b1e7dde2f6b30eb9c71470"
+  }
+}

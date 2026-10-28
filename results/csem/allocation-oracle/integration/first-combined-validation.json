@@ -1,0 +1,11 @@
+{
+  "revision": "33b8c76dfac2c0b1c6268296b8ff5154ec79d35a",
+  "gate_exit": 0,
+  "oracle_exit": 0,
+  "source_count": 2293,
+  "sources_verified": true,
+  "focused_checks": 21,
+  "default_checks": 6,
+  "raw_frontend_methods": 11,
+  "binary_sha256": "8c48da7e4d50d5eafcac362909b025dc8c15c5029c104b91965d54928e4ea85f"
+}
