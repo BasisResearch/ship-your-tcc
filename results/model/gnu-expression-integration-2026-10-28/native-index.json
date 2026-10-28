@@ -1,0 +1,296 @@
+[
+  {
+    "prefix": "0",
+    "report": "gates/unevaluated-syntax-gate.SIYIRu/native/arenas.json",
+    "inventory": {
+      "evidence": "native observations; not reachability proofs",
+      "exporter_sha256": "8fa33c617923dbe960f5582aa7b580216e39a015348727c507d0769d38b3c123",
+      "report_sha256": "43301593e2da727a7b6fc276a79a166aa84675a08fefb2155a7422b6d0c99c73",
+      "successes": 1,
+      "residuals": [],
+      "rows": [
+        {
+          "source": "build/unevaluated-syntax-gate.SIYIRu/syntax/batch.c",
+          "directory": "aae8cd1d2df28518f8e1fecd",
+          "comparison": {
+            "status": "equal",
+            "evidence": "native Sail observation; not a theorem",
+            "compared_bytes": 4194304,
+            "model_payload_bytes": 13348,
+            "arena_sha256": "e913601c5046b1587468fe1dec4232974fc1249a7cd2fa8ae4733a7c5b83c6c5",
+            "model_arena_sha256": "5a3b509a075745826fe30d42485d7ddb634f7bd213a17c9a31241702fe0913df",
+            "trace_sha256": null,
+            "capture_manifest_sha256": "cc9224faf3100436496d0169576b47dc085137a252c97e7547abc4c0b89f0cc0",
+            "elf_sha256": "ef4b607f19bbfa45e1cbe2e60b2e5b08e2b0804c276b5abf0ad6a5b9a0ff9ccb",
+            "source_sha256": "c09279538ea6254f691e86e15762de2f7ee975636022a3ebb65da27a4a6064e8",
+            "steps": 3489892,
+            "pc": 2147490632,
+            "handoff": {
+              "x10": 2252341540,
+              "x14": 2252341248,
+              "x15": 292
+            }
+          },
+          "files": {
+            "arena.bin.gz": "0b20e3159e0e00c24f20053ebec152b78bda565da64726ad0a757a7677f9665a",
+            "arena.present.bin.gz": "a270d5f6ad9b74f8ab9dabce23f557bf3cdd6cd212bb7194831c0e8facf46759",
+            "console.repr.txt": "eb92a90a8fbc1020de59f62e527480dc5d396402edb88b6beddb89a663c207d2",
+            "console.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cut.json": "cc9224faf3100436496d0169576b47dc085137a252c97e7547abc4c0b89f0cc0",
+            "cut.tsv": "6eb874f09db0eb184aeddacf1c005ff29bb8d3dfbbbe32ac1081946367643d19",
+            "model.arena.gz": "f77aecb22f5496cbec4c32b0088d766e29a044f3d750ceb7bfaa0ba588e444da",
+            "native.stderr": "9b5abdd2c54053e5bda600e68b1d9213c19f6b77013130366d7ab27ddd6278f6",
+            "native.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "registers.txt": "cace6415252d7ea64286b911e5f715fe858f96c2df96c56ab83ef703189c1611",
+            "source.c": "c09279538ea6254f691e86e15762de2f7ee975636022a3ebb65da27a4a6064e8"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "prefix": "1",
+    "report": "gates/assert-messages-gate.WpJvIj/native/arenas.json",
+    "inventory": {
+      "evidence": "native observations; not reachability proofs",
+      "exporter_sha256": "8fa33c617923dbe960f5582aa7b580216e39a015348727c507d0769d38b3c123",
+      "report_sha256": "61b52e63d65e397cd4736a592677a95537c59c5d6fd7837fcefb93fba71116e6",
+      "successes": 1,
+      "residuals": [],
+      "rows": [
+        {
+          "source": "build/assert-messages-gate.WpJvIj/syntax/batch.c",
+          "directory": "a53cad943f8e7e9f728b83d8",
+          "comparison": {
+            "status": "equal",
+            "evidence": "native Sail observation; not a theorem",
+            "compared_bytes": 4194304,
+            "model_payload_bytes": 13100,
+            "arena_sha256": "552d6392a8725709554e9990b98adcd24a796a8badf2b9481c0087499943ef43",
+            "model_arena_sha256": "0ffc7cdbefec421305182e6318bd74fc1119cbbc290e49c1eb563160ee0eae79",
+            "trace_sha256": null,
+            "capture_manifest_sha256": "f91394b8ce72c2636f49dc3671fb3fc3a3eb383964a08b61b32a63f5927ece2f",
+            "elf_sha256": "47daea2916c3fbbf58ec0fe486df37fd2adb9df2ff3d7d9179d21b879b381a10",
+            "source_sha256": "3c47da51aa55795a3771544cb4f183ae2d9a8229f51c971871e85495e065fdd9",
+            "steps": 3605779,
+            "pc": 2147490632,
+            "handoff": {
+              "x10": 2252341360,
+              "x14": 2252341248,
+              "x15": 112
+            }
+          },
+          "files": {
+            "arena.bin.gz": "dbef5931834409e980b7a88d9228e6be3fddbf56a11b64f3bf1152898eb23cef",
+            "arena.present.bin.gz": "1952e8671ff2981300b223f9bcc67072c4ac3689b8450d1867573fffc661bb4c",
+            "console.repr.txt": "eb92a90a8fbc1020de59f62e527480dc5d396402edb88b6beddb89a663c207d2",
+            "console.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cut.json": "f91394b8ce72c2636f49dc3671fb3fc3a3eb383964a08b61b32a63f5927ece2f",
+            "cut.tsv": "7d78080567bb80d861c37a2e3dedd1cdef1da264aad3f7fff1a4b22b62697413",
+            "model.arena.gz": "bb789cd5a13a2ccf5bb52488b4399175630e2a5fbb48512109701f4537dffb40",
+            "native.stderr": "9b5abdd2c54053e5bda600e68b1d9213c19f6b77013130366d7ab27ddd6278f6",
+            "native.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "registers.txt": "64c5cf94052da8f6431ef0d94c7db548110f12940c5d61ebb7c645b11736b30e",
+            "source.c": "3c47da51aa55795a3771544cb4f183ae2d9a8229f51c971871e85495e065fdd9"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "prefix": "2",
+    "report": "gates/gnu-expr-gate.5OXMq5/arenas/native/arenas.json",
+    "inventory": {
+      "evidence": "native observations; not reachability proofs",
+      "exporter_sha256": "8fa33c617923dbe960f5582aa7b580216e39a015348727c507d0769d38b3c123",
+      "report_sha256": "2691698631ec5b6f4885bb84f26ab7fb18191f4f6208dd802017c87b035f8078",
+      "successes": 1,
+      "residuals": [],
+      "rows": [
+        {
+          "source": "build/gnu-expr-gate.5OXMq5/arenas/inputs/batch.c",
+          "directory": "4573b83c054178430e9cd933",
+          "comparison": {
+            "status": "equal",
+            "evidence": "native Sail observation; not a theorem",
+            "compared_bytes": 4194304,
+            "model_payload_bytes": 13764,
+            "arena_sha256": "426f50cfb955109d4f7c39a34ec5f68b366154ddd8799412c95132f63ef666a3",
+            "model_arena_sha256": "402e2b869e73be7db6d10cc921b6ad1143e2ad546ea441a7e959736175268dda",
+            "trace_sha256": null,
+            "capture_manifest_sha256": "cded0b48f2e9e075528a8e1b7aa645c7da9a707b0e579db228a0530aae8014cc",
+            "elf_sha256": "0cfd1a085e303c53e3212ecbeec574640d2a5ea664bd87d83c2f4cd3048fc40f",
+            "source_sha256": "9cd03c700a734d5bba251aebb47d1eaa3e003b7f5c525bc4fb5b21a38d8ca79a",
+            "steps": 3517476,
+            "pc": 2147490632,
+            "handoff": {
+              "x10": 2252341956,
+              "x14": 2252341248,
+              "x15": 708
+            }
+          },
+          "files": {
+            "arena.bin.gz": "cd323bcff4682ffd642d1588e3e1d3a2734efcff89fd5871b86da93976168b63",
+            "arena.present.bin.gz": "2aea974b0b785589c6087aeef11de53a21a24b06ab8415baa80c261863004bf0",
+            "console.repr.txt": "eb92a90a8fbc1020de59f62e527480dc5d396402edb88b6beddb89a663c207d2",
+            "console.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cut.json": "cded0b48f2e9e075528a8e1b7aa645c7da9a707b0e579db228a0530aae8014cc",
+            "cut.tsv": "b42b2c5dae99f502ced318df505b5383c91dcffcf4beb8c84ff584db8f31850f",
+            "model.arena.gz": "ade8f07f4fd8c4c4d8f5eba231ff5493117e6855c6f730702a86eeedd1e435b9",
+            "native.stderr": "9b5abdd2c54053e5bda600e68b1d9213c19f6b77013130366d7ab27ddd6278f6",
+            "native.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "registers.txt": "ecaee352f01cf483f2d850a4336751bc0f53345b1d1cbd82bcceeb4329cbc0e6",
+            "source.c": "9cd03c700a734d5bba251aebb47d1eaa3e003b7f5c525bc4fb5b21a38d8ca79a"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "prefix": "3",
+    "report": "gates/array-decay-gate.OYZooq/comparison/array-alias-decay-native/arenas.json",
+    "inventory": {
+      "evidence": "native observations; not reachability proofs",
+      "exporter_sha256": "8fa33c617923dbe960f5582aa7b580216e39a015348727c507d0769d38b3c123",
+      "report_sha256": "04d983c3e468ea39e5f853f4e5c9675581415359ee0cf5ec024a2a26e1542702",
+      "successes": 1,
+      "residuals": [],
+      "rows": [
+        {
+          "source": "build/array-decay-gate.OYZooq/comparison/inputs/array-alias-decay.c",
+          "directory": "51d294dad6782d6be1650d99",
+          "comparison": {
+            "status": "equal",
+            "evidence": "native Sail observation; not a theorem",
+            "compared_bytes": 4194304,
+            "model_payload_bytes": 13052,
+            "arena_sha256": "2f5e67f8c34160c0422e3811c98adf4a8657e14232b0433a598cd686b5e93ab1",
+            "model_arena_sha256": "34f3cac9bb001dc256d4737082f8c1c6e1d09f306d5405e993b78bc2078ef30c",
+            "trace_sha256": null,
+            "capture_manifest_sha256": "4371985f24d3b5837ee94c04238feb40d696f94cd2e716eba29c0aea8cc0f2f9",
+            "elf_sha256": "d57e1c09284e3090a15136e7641192baf4abdd2e0b9e5db9ac6a16ceefeb890a",
+            "source_sha256": "6cdf554582f9deee451b1013077991faa1650fb8d687df9a2c8192a70c7ccada",
+            "steps": 3380808,
+            "pc": 2147490632,
+            "handoff": {
+              "x10": 2252341288,
+              "x14": 2252341248,
+              "x15": 40
+            }
+          },
+          "files": {
+            "arena.bin.gz": "35adcf1b95179de0362726d9b8b2f79849c97f265c7a4e9e2a4d79472ee8e2a9",
+            "arena.present.bin.gz": "dbc3f57a7571abaffa0513666b4dcca3df0952ab6db87c61a8614591fd451575",
+            "console.repr.txt": "eb92a90a8fbc1020de59f62e527480dc5d396402edb88b6beddb89a663c207d2",
+            "console.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cut.json": "4371985f24d3b5837ee94c04238feb40d696f94cd2e716eba29c0aea8cc0f2f9",
+            "cut.tsv": "1f1100ee20771f3728f28d7e52fa51a6ada51d44bc82ebc5dccdcc897303351f",
+            "model.arena.gz": "046aba6671efb8270c646168075ae5cf445b43dbbc440372e83fd015883700d3",
+            "native.stderr": "9b5abdd2c54053e5bda600e68b1d9213c19f6b77013130366d7ab27ddd6278f6",
+            "native.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "registers.txt": "d266adcd403a5232c2b88145c1ef6107eaa221cfaed0097fea2c7aa8304abf13",
+            "source.c": "6cdf554582f9deee451b1013077991faa1650fb8d687df9a2c8192a70c7ccada"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "prefix": "4",
+    "report": "gates/array-decay-gate.OYZooq/comparison/calls-spill-native/arenas.json",
+    "inventory": {
+      "evidence": "native observations; not reachability proofs",
+      "exporter_sha256": "8fa33c617923dbe960f5582aa7b580216e39a015348727c507d0769d38b3c123",
+      "report_sha256": "3e4788ae69901b132ff96461bc45d3778852145a9aaa5e0166d8ce666be18a97",
+      "successes": 1,
+      "residuals": [],
+      "rows": [
+        {
+          "source": "build/array-decay-gate.OYZooq/comparison/inputs/calls-spill.c",
+          "directory": "9823dc796e5d7d84a3478018",
+          "comparison": {
+            "status": "equal",
+            "evidence": "native Sail observation; not a theorem",
+            "compared_bytes": 4194304,
+            "model_payload_bytes": 13620,
+            "arena_sha256": "eb2f929934c4c8d20d2d1b0c34b14d916e475cc39f8bd6b265658282eea72bd7",
+            "model_arena_sha256": "686d634a17ae73e66f82417ceae9eeb6c938e1536f9c1f95a6c5a60cc7d85f7d",
+            "trace_sha256": null,
+            "capture_manifest_sha256": "5d0dbfba345a3aa08e1742e0e53a5ca96b248a541e1d762bbfaee33832063d03",
+            "elf_sha256": "fac0d31cad2fb9cc5eb5e23baea89ecb50bf98c7640dbcbc8c86a9153ab7d08e",
+            "source_sha256": "6ad745c12723db33a74507d4557927d75acd9530c76806f5f5b098673c2109b4",
+            "steps": 3464585,
+            "pc": 2147490632,
+            "handoff": {
+              "x10": 2252341704,
+              "x14": 2252341248,
+              "x15": 456
+            }
+          },
+          "files": {
+            "arena.bin.gz": "bf40b743a1d5601b4016785ea4d988051e115076790658ecf38e4c700fcf7bdd",
+            "arena.present.bin.gz": "01319474bc63500b26f2b4e088f3b4ed7ed1e340b8e007436f1994d59eec34b3",
+            "console.repr.txt": "eb92a90a8fbc1020de59f62e527480dc5d396402edb88b6beddb89a663c207d2",
+            "console.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cut.json": "5d0dbfba345a3aa08e1742e0e53a5ca96b248a541e1d762bbfaee33832063d03",
+            "cut.tsv": "c2c37f3f1f8307fd0b38de01ff393e31899a2c89cbecd4b6b753080875284480",
+            "model.arena.gz": "3b4fa50e61bd0eff333cfb816c7a1dd8fa4f0236b8a89067ca8ddc24dd53eff5",
+            "native.stderr": "9b5abdd2c54053e5bda600e68b1d9213c19f6b77013130366d7ab27ddd6278f6",
+            "native.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "registers.txt": "c792a0fb1b6d509e72cce4be43b30f3e88a6ed3296d66c183ef2f4da18be749c",
+            "source.c": "6ad745c12723db33a74507d4557927d75acd9530c76806f5f5b098673c2109b4"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "prefix": "5",
+    "report": "gates/array-decay-gate.OYZooq/comparison/element-referent-native/arenas.json",
+    "inventory": {
+      "evidence": "native observations; not reachability proofs",
+      "exporter_sha256": "8fa33c617923dbe960f5582aa7b580216e39a015348727c507d0769d38b3c123",
+      "report_sha256": "0cd20080886b8e5f4a59ae2abc9dea6404f482c12de47d2d75e56d7ff5e242fc",
+      "successes": 1,
+      "residuals": [],
+      "rows": [
+        {
+          "source": "build/array-decay-gate.OYZooq/comparison/inputs/element-referent.c",
+          "directory": "fdb1beb8041df4f73ea8e7a8",
+          "comparison": {
+            "status": "equal",
+            "evidence": "native Sail observation; not a theorem",
+            "compared_bytes": 4194304,
+            "model_payload_bytes": 13108,
+            "arena_sha256": "611d40815113d8e5cc4f76574dfe53605790041d334955451257b06f7a53ccce",
+            "model_arena_sha256": "72b0bbd15a4e626b467c86f41481bdea990accbb5bd0aed7b2136691595ea32b",
+            "trace_sha256": null,
+            "capture_manifest_sha256": "7b6ec760a1b5efa63cac0fa1d79dacc9d3e57d5f768d0dcf68554768e5e0659e",
+            "elf_sha256": "69c2220e6e629b232e81c2cf8c34c588fb44323f5381f0fc2859a778f7c1f36a",
+            "source_sha256": "a346ce953df7e1926974377aa9526066c8fbbf6413805f65cf2f47aae1466b1f",
+            "steps": 3392324,
+            "pc": 2147490632,
+            "handoff": {
+              "x10": 2252341288,
+              "x14": 2252341248,
+              "x15": 40
+            }
+          },
+          "files": {
+            "arena.bin.gz": "546bd05197d2c103e581735fa5dbe0f15c0d8a05e6ccd7b2c66812a5c7b644c5",
+            "arena.present.bin.gz": "a42ff089f0115e5f9af86456cff949e24e7b758960485ee1511ed65826f1146d",
+            "console.repr.txt": "eb92a90a8fbc1020de59f62e527480dc5d396402edb88b6beddb89a663c207d2",
+            "console.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "cut.json": "7b6ec760a1b5efa63cac0fa1d79dacc9d3e57d5f768d0dcf68554768e5e0659e",
+            "cut.tsv": "b73c5b3a63af1591c7e6d5ad667898b167d32e340e0bd006417b27544de8b890",
+            "model.arena.gz": "5de156fc4be7b49a40281b0587d27a30dc66a8c9147598c73a1e4ba2db81efd5",
+            "native.stderr": "9b5abdd2c54053e5bda600e68b1d9213c19f6b77013130366d7ab27ddd6278f6",
+            "native.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "registers.txt": "2bd1819d1287d60a1baacbdfa4c55c22381fb3a6667fe1e9d4ff60625a9324b0",
+            "source.c": "a346ce953df7e1926974377aa9526066c8fbbf6413805f65cf2f47aae1466b1f"
+          }
+        }
+      ]
+    }
+  }
+]

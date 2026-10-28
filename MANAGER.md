@@ -38,10 +38,10 @@ pushes main without force. Record unsuccessful approaches in
 The launcher follows 4ct-digest's MANAGER.md/codexwork.sh workflow, adapted
 to this project's two-worker limit and shared Lean build lock.
 
-Current assignments, 2026-10-28: slot 1 runs tasks/f1-bitfield-attributes.md in
+Current assignments, 2026-10-28: slot 1 runs tasks/f1-enum-bitfields.md in
 sol-csem-repin. Slot 2 runs tasks/f3-multitu-ghost.md in sol-f2-tokens.
-Bitfields are adopted after the combined full gate; the reviewed GNU
-expression checkpoint awaits combination.
+Bitfields and GNU expression syntax are adopted after their combined gates.
+Reviewed member attributes await rebuilt-image integration.
 The local replay-erasure theorem is adopted after its combined gate; eleven
 ghost contracts remain open. Both workers use reviewed integration bases,
 and the lead independently gates each final combination before adoption.
@@ -63,8 +63,8 @@ requested corrections must be resolved or returned as an explicit obstruction.
 Keep build receipts compact: inspect ID/status/lead notes, and verify large
 hash manifests with scripts. Do not repeatedly print whole manifests or logs.
 
-Next integration duty: combine reviewed GNU expression syntax with adopted
-bitfields and the shared compound-lvalue repair. Assertion-message adoption has a
+Next integration duty: combine reviewed member attributes with adopted GNU
+syntax, rebuild the compiler image for patch0005, and repeat native controls. Assertion-message adoption has a
 fresh combined default gate, source-identical worker full gate and fresh native
 image observation. Bitfield review must preserve known bits through character
 copies and distinguish historical frozen references from current representation
@@ -75,6 +75,6 @@ behavior and proves no whole-run construction or binary refinement duty.
 After the active per-TU collection task, queue the pure physical-transform
 proofs in tasks/f3-physical-transform-proofs.md. Retain the unchanged named
 Statements, arbitrary-byte scope and standard-axiom audit; a checked obstruction
-is preferable to silently weakening a statement. Slot 1 follows member attributes
-with enum bitfield policy. Compiler diagnostic and declaration constraints remain
+is preferable to silently weakening a statement. Slot 1 handles enum bitfield policy. Subsequent F1 tasks include general
+declaration constraints, GNU conditional lowering and VLA types/storage. Compiler diagnostic and declaration constraints remain
 separate tasks. Keep at most two external workers active.

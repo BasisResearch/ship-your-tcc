@@ -39,9 +39,9 @@ removed. Patch 0004 fixes compiler literals using exact integer rounding;
 public libc `strtold` still needs correction in the library lane. Matching refusals likewise do not satisfy the F3 success criterion.
 
 The lead runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most two
-at a time, following MANAGER.md. Slot 1 now handles per-member GNU bitfield attributes;
-slot 2 retains complete multi-translation-unit ghost records. C11 bitfields are adopted after the combined full gate; the reviewed GNU
-expression checkpoint awaits combined adoption. Assertion-message encodings are adopted. Local replay erasure is proved
+at a time, following MANAGER.md. Slot 1 now handles implementation-defined enum bitfields;
+slot 2 retains complete multi-translation-unit ghost records. C11 bitfields and GNU expression syntax are adopted after their combined full
+gates; the reviewed member-attribute checkpoint awaits rebuilt-image integration. Assertion-message encodings are adopted. Local replay erasure is proved
 and adopted. Array-to-pointer alignment decay is adopted after the combined image/gate validation. Complete _Generic/_Static_assert syntax is adopted after its combined gate
 and independent raw/native checks. Binding meaning and actual model-owned compiler-injected
 opening authority are adopted after their combined gate and independent raw
@@ -525,6 +525,24 @@ as do F1-F3 and eleven ghost contracts. No Supported/Fits exclusions or sum-cut
 regeneration. GNU expression syntax is reviewed, awaiting combination; slot 2
 retains per-TU ghost records. Pure physical-transform proofs are the next queued
 proof task, tasks/f3-physical-transform-proofs.md; no third worker runs.
+
+GNU expression syntax adoption (2026-10-28): actual compiler actions now
+retain conditional/typeof/choose Cabs. The fresh combined full gate passes
+3,480 primary inputs with 269 unchanged supplementary pins. All 50 positive
+controls agree in three syntax scopes; ten refusals and two GNU policy
+acceptances remain separate. Six complete native 4 MiB comparisons and their
+full compiler/program runs pass. Original56 coverage is50/51/50, physical58
+with four guards and inherited15ghostpairs pass. See
+results/model/gnu-expression-integration-2026-10-28.md.
+Additional raw semantic probes expose inherited GNU ?: lowering and VLA
+coverage gaps: three defined-zero controls, one GNU conditional driver error,
+and six VLA elaboration failures, while GCC/host tcc return zero on all ten.
+These failures are preserved and queued as CSEM-15/CSEM-16; syntax success is
+not semantic execution. No new Supported restriction or user decision.
+GNU member attributes checkpoint5c2f70f is reviewed, awaiting rebuilt-image
+combination; slot1 now handles enum fields and slot2 per-TU ghost records.
+Physical-transform proofs remain queued after the per-TU task. Eleven ghost
+contracts, F1-F3 and the headline theorem remain open. Sum cuts stay frozen.
 
 ## Needs user
 

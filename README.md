@@ -46,7 +46,7 @@ outcome set, with generic placement contracts and 21 focused checks. The
 machine-memory simulation remains open (results/csem/allocation-oracle.md).
 
 Compiler-action Cabs now agrees with independent raw preprocessing/parsing on
-47/56 fixtures. All 18 compiler-injected opening controls and 58 physical-origin
+50/56 fixtures. All 18 compiler-injected opening controls and 58 physical-origin
 controls pass, with complete header aliases and user asm exclusions preserved.
 The combined gate, fifteen erasure pairs and eighteen independent fast arenas
 pass; a new complete native Sail arena matches the static/builtin memcpy
@@ -65,6 +65,11 @@ arena and separate successful full program run validate the rebuilt image
 ([assertion integration](results/model/assertion-messages-integration-2026-10-28.md)).
 The original generic suite now has 22 valid controls, 11 invalid controls and
 one separate no-message extension; its historical wide-message refusal is retained.
+GNU conditional/typeof/choose construction is adopted: 50 exact controls in
+three scopes and six complete native arena comparisons pass with the combined
+gate. Separate raw semantic probes retain GNU conditional lowering and VLA
+failures; their repair tasks remain open
+([GNU integration](results/model/gnu-expression-integration-2026-10-28.md)).
 GNU declaration syntax/layout has 23 semantic controls and six actual-header
 parses. Compiler typedef alignment is now
 repaired: three full compiler Sail probes succeed and two new complete native

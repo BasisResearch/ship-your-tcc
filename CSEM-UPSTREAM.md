@@ -436,3 +436,29 @@ implementation-defined enum fields and four tcc constraint defects remain
 separate work items; the latter are not Cerberus bugs. Original p05's percent-x
 argument mismatch is not established as a libc defect; its corrected-print
 variant is a separate probe. Kiran owns external reporting; none was sent.
+
+### Additional whole-language coverage triage, 2026-10-28
+
+**CSEM-15 — GNU omitted-middle conditional lowering placeholder.** The local
+raw-CSem side-effect probe reports a missing startup function, whereas its
+ordinary-conditional control and GCC/host tcc return zero. Shared
+`translation.lem` still records a TODO and returns a skip node for
+`AilEcond e1 Nothing e3`. That marker is also present in pristine704c4e69
+(line2320). This is an inherited coverage limitation, not a demonstrated wrong
+defined result or a claimed pristine execution comparison. Preserve one
+condition evaluation and proper selected-result conversions when repairing;
+queued task: tasks/f1-gnu-conditional-semantics.md.
+
+**CSEM-16 — variably modified types / VLA storage refused.** Five typeof/VLA
+controls and a separate standard C11 VLA program fail local raw elaboration;
+GCC and patched host tcc return zero. Pristine704c4e69
+`cabs_to_ail.lem` line1903 has the same explicit nonconstant-bound refusal.
+This is a target-coverage limitation, not an upstream promise of full VLA
+support or a wrong-answer claim. General runtime bounds, evaluation points,
+sizeof/typeof, scope and storage/provenance need implementation; queued task:
+tasks/f1-vla-semantics.md. Neither gap becomes a Supported exclusion.
+
+Exact sources, bounded raw/GCC/host captures, current binary pins and pristine
+source-level checks are in the GNU integration archive's semantic-probes.
+See results/model/gnu-expression-integration-2026-10-28.md. Kiran owns external
+reporting; no external message or issue was sent.

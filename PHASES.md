@@ -646,3 +646,21 @@ as do F1-F3 and eleven ghost contracts. No Supported/Fits exclusions or sum-cut
 regeneration. GNU expression syntax is reviewed, awaiting combination; slot 2
 retains per-TU ghost records. Pure physical-transform proofs are the next queued
 proof task, tasks/f3-physical-transform-proofs.md; no third worker runs.
+
+GNU expression syntax adoption (2026-10-28): actual compiler actions now
+retain conditional/typeof/choose Cabs. The fresh combined full gate passes
+3,480 primary inputs with 269 unchanged supplementary pins. All 50 positive
+controls agree in three syntax scopes; ten refusals and two GNU policy
+acceptances remain separate. Six complete native 4 MiB comparisons and their
+full compiler/program runs pass. Original56 coverage is50/51/50, physical58
+with four guards and inherited15ghostpairs pass. See
+results/model/gnu-expression-integration-2026-10-28.md.
+Additional raw semantic probes expose inherited GNU ?: lowering and VLA
+coverage gaps: three defined-zero controls, one GNU conditional driver error,
+and six VLA elaboration failures, while GCC/host tcc return zero on all ten.
+These failures are preserved and queued as CSEM-15/CSEM-16; syntax success is
+not semantic execution. No new Supported restriction or user decision.
+GNU member attributes checkpoint5c2f70f is reviewed, awaiting rebuilt-image
+combination; slot1 now handles enum fields and slot2 per-TU ghost records.
+Physical-transform proofs remain queued after the per-TU task. Eleven ghost
+contracts, F1-F3 and the headline theorem remain open. Sum cuts stay frozen.

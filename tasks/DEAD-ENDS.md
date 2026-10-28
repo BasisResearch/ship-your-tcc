@@ -1128,3 +1128,11 @@ an explicit follow-up, not established by arena equality.
   use the existing frozen scoped lead commit service after archive/source
   verification. No alternate Git index/object store or semantic rerun repairs
   this environment restriction.
+
+- GNU integration semantic review: raw driver process exit0 does not mean
+  Defined(0). Inspect the semantics field. Ten source-pinned probes yield three
+  defined-zero controls, one GNU conditional startup error and six VLA
+  elaboration failures despite GCC/host success. The inherited GNU ?: branch
+  records TODO/returns skip; array elaboration refuses nonconstant bounds.
+  Keep these as F1 tasks CSEM-15/16, not syntax successes, source exclusions,
+  claims of fresh native execution or confirmed pristine wrong answers.
