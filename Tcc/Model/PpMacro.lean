@@ -72,6 +72,59 @@ inductive NL where
   | redo | parseSharp | identSlow | maybeSpace | maybeNewline | parseSimple | identFast | parseNum | strConst | done | keep
   deriving BEq, Inhabited
 
+/-- A cursor is tied to a particular source opening before lexing starts.
+Refill may replace the buffer while one token is being read. A non-identity
+physical buffer (including phase-one transformations) is an explicit gap. -/
+def ghostLexStart (p : Nat) : M Unit := do
+  let st ← get
+  if !st.ghostEnabled then return
+  let f := (st.file.head?).getD default
+  let fd := st.fds.getD f.fd.toNat' none
+  let raw := (fd.map (·.data)).getD ByteArray.empty
+  let readEnd := (fd.map (·.pos)).getD 0
+  let base := readEnd-(f.buf_end-f.bufStart)
+  let identity := f.fd >= 0 && f.trigraph_pending == 0 &&
+    raw.extract base readEnd == f.buf.extract f.bufStart f.buf_end
+  modify fun s => { s with
+    ghostLexOffset := p, ghostLexSourceId := f.id,
+    ghostLexPhysicalStart := if identity && f.bufStart <= p && p <= f.buf_end then some (base+p-f.bufStart) else none }
+
+/-- Record the modeled physical lexer occurrence before any conversion or
+macro substitution. Synthetic model buffers are explicitly unavailable but
+complete as synthetic origins; unverified physical mappings remain gaps. -/
+def ghostLexOrigin : M Unit := do
+  let st ← get
+  if !st.ghostEnabled then return
+  if st.tok == TOK_EOF || st.tok == TOK_LINEFEED || st.tok == 32 || st.tok == 9 then
+    modify fun s => { s with ghostTokOrigin := 0 }
+    return
+  let f := (st.file.head?).getD default
+  if f.fd < 0 then
+    let id ← gorigin .unavailable none true
+    modify fun s => { s with ghostTokOrigin := id }
+    return
+  let source := st.ghostSources.find? (fun x => x.id == f.id)
+  let raw := (source.map (·.contents)).getD ByteArray.empty
+  let readEnd := ((st.fds.getD f.fd.toNat' none).map (·.pos)).getD 0
+  let offset := st.ghostLexPhysicalStart.getD 0
+  let obs ← ppObservation
+  let base := readEnd-(f.buf_end-f.bufStart)
+  let identity := f.trigraph_pending == 0 && raw.extract base readEnd == f.buf.extract f.bufStart f.buf_end
+  let verified := source.isSome && st.ghostLexSourceId == f.id && st.ghostLexPhysicalStart.isSome && identity &&
+    raw.extract offset (offset+obs.spell.size) == obs.spell
+  let before := (raw.extract 0 offset).toList
+  let col := (before.reverse.takeWhile (· != 10)).length+1
+  let line := before.count 10+1
+  let anchor : Ghost.ModelOrigin := ⟨f.id,st.ghostLexOffset,
+    if verified then some offset else none,f.filename,st.tok_line.toNat',
+    st.file.toArray.map (·.id),st.macro_stack.toArray.map (·.id)⟩
+  let origin : CSem.Pre.Origin := if verified then .source
+    ⟨⟨(source.map (·.openedAs.toList)).getD [],(source.map (·.identity)).getD [],
+      ⟨offset,line,col⟩,⟨offset+obs.spell.size,line,col+obs.spell.size⟩⟩,
+      f.filename.toList,st.tok_line.toNat',st.tok_line.toNat',(source.map (·.includes)).getD []⟩ else .unavailable
+  let id ← gorigin origin (some anchor) (verified && (source.map (·.includeComplete)).getD false)
+  modify fun s => { s with ghostTokOrigin := id }
+
 /-- `next_nomacro()` -/
 def next_nomacro (R : Rec) : M Unit := do
   let fuel ← fuelM
@@ -84,7 +137,8 @@ def next_nomacro (R : Rec) : M Unit := do
     match lbl with
     | .redo =>
       let line := (← curFile).line_num
-      modify fun s => { s with tok_line := line, ghostLexOffset := if s.ghostEnabled then p else s.ghostLexOffset }
+      modify fun s => { s with tok_line := line }
+      ghostLexStart p
       c ← rd p
       if c == 32 || c == 9 then
         setTok c
@@ -366,9 +420,11 @@ def next_nomacro (R : Rec) : M Unit := do
     | .done =>
       modify fun s => { s with tok_flags := 0 }
       setBufPtr p
+      ghostLexOrigin
       return
     | .keep =>
       setBufPtr p
+      ghostLexOrigin
       return
   throw (.fuel "next_nomacro")
 
@@ -378,6 +434,13 @@ def next_nomacro (R : Rec) : M Unit := do
 is transformed again, lift its events before the transformed output and
 remove them from the semantic token string (including newly exposed edge
 spaces). Ordinary arguments and ordinary compilation are unchanged. -/
+def ghostSymPtr (id : SymId) (expanded : Bool := false) : M TokPtr := do
+  let sx ← getSym id
+  let st ← get
+  return {
+    arr := (if expanded then sx.e else sx.d).getD #[],
+    ghostOrigins := (if expanded then st.ghostSymE else st.ghostSymD).getD id #[] }
+
 def observationArgs (template : TokPtr) (args : SymId) : M TokenString := do
   let fuel ← fuelM
   let mut q := template
@@ -393,13 +456,14 @@ def observationArgs (template : TokPtr) (args : SymId) : M TokenString := do
   for _ in [0:fuel] do
     if arg == 0 then break
     let sx ← getSym arg
-    let mut ptr : TokPtr := { arr := sx.d.getD #[] }
+    let mut ptr ← ghostSymPtr arg
     let mut clean : TokenString := {}
     let mut found := false
     let mut real := false
     let mut space := false
     let mut line : Option CValue := none
     for _ in [0:fuel] do
+      let origin := ptr.origin
       let (t, cv, ptr') := TOK_GET ptr {}
       ptr := ptr'
       if t == TOK_EOF then break
@@ -411,13 +475,15 @@ def observationArgs (template : TokPtr) (args : SymId) : M TokenString := do
       else
         if real && space then clean := tok_str_add clean 32
         if let some ln := line then clean := tok_str_add2 clean TOK_PPLINE ln
-        clean := tok_str_add2 clean t cv
+        clean := tok_str_add2 clean t cv origin
         real := true
         space := false
         line := none
     if found then
       clean := tok_str_add clean TOK_EOF
       modSym arg fun x => { x with d := some (clean.str.extract 0 clean.len.toNat') }
+      if (← get).ghostEnabled then
+        modify fun s => { s with ghostSymD := s.ghostSymD.insert arg clean.ghostOrigins }
     arg := sx.prev
   return events
 
@@ -432,6 +498,7 @@ def macro_arg_subst (R : Rec) (nested0 : Option SymId) (macro_str0 : TokPtr) (ar
   let mut t0 : Int32 := 0
   let mut t1 : Int32 := 0
   for _ in [0:fuel] do
+    let origin := ms.origin
     let (t, cval, ms') := TOK_GET ms {}
     ms := ms'
     if t == 0 then break
@@ -444,12 +511,15 @@ def macro_arg_subst (R : Rec) (nested0 : Option SymId) (macro_str0 : TokPtr) (ar
       let s ← sym_find2 args (← canonical_ident tt)
       if s != 0 then
         let mut cs : ByteArray := ByteArray.empty.push 34
-        let mut st : TokPtr := { arr := ((← getSym s).d.getD #[]) }
+        let mut operands : Array Nat := #[]
+        let mut st ← ghostSymPtr s
         for _ in [0:fuel] do
           if st.get == TOK_EOF then break
+          let opOrigin := st.origin
           let (t2, cv2, st') := TOK_GET st {}
           st := st'
           if t2 == TOK_PPLINE then continue
+          if t2 != 32 then operands := operands.push opOrigin
           let sb ← get_tok_str t2 (some cv2)
           for ch in sb.data do
             if t2 == TOK_PPSTR && (ch == 92 || ch == 34) then cs := cs.push 92
@@ -457,14 +527,15 @@ def macro_arg_subst (R : Rec) (nested0 : Option SymId) (macro_str0 : TokPtr) (ar
         cs := (cs.push 34).push 0
         modify fun s => { s with tokcstr := cs }
         modify fun s => { s with tok_line := subst_line }
-        str := tok_str_add2_line str TOK_PPSTR ((default : CValue).setStr cs (Int32.ofNat cs.size)) subst_line
+        let node ← gderive .stringify (← get).ghostExpansionOrigin operands
+        str := tok_str_add2_line str TOK_PPSTR ((default : CValue).setStr cs (Int32.ofNat cs.size)) subst_line node
       else
         expect R "macro parameter after '#'"
     else if t ≥ TOK_IDENT then
       let s ← sym_find2 args (← canonical_ident t)
       if s != 0 then
         let sx ← getSym s
-        let mut st : TokPtr := { arr := sx.d.getD #[] }
+        let mut st ← ghostSymPtr s
         let mut n := 0
         let mut t2 : Int32 := 0
         for _ in [0:fuel] do
@@ -497,28 +568,35 @@ def macro_arg_subst (R : Rec) (nested0 : Option SymId) (macro_str0 : TokPtr) (ar
         if addVar then
           let sx ← getSym s
           match sx.e with
-          | some e => st := { arr := e }
+          | some _ => st ← ghostSymPtr s true
           | none =>
             let (str2, nested', _) ← R.macro_subst {} nested st
             nested := nested'
             let str2 := tok_str_add str2 TOK_EOF
             let e := str2.str.extract 0 str2.len.toNat'
             modSym s fun x => { x with e := some e }
-            st := { arr := e }
+            if (← get).ghostEnabled then
+              modify fun state => { state with ghostSymE := state.ghostSymE.insert s str2.ghostOrigins }
+            st ← ghostSymPtr s true
         for _ in [0:fuel] do
           if st.get == TOK_EOF then break
+          let operand := st.origin
           let (t3, cv3, st') := TOK_GET st {}
           st := st'
-          str := tok_str_add2 str t3 cv3
+          let node ← gderive (.argument ((← get).ghostArgIndex.getD s 0)) (← get).ghostExpansionOrigin #[operand]
+          str := tok_str_add2 str t3 cv3 node
       else
         modify fun s => { s with tok_line := subst_line }
-        str := tok_str_add2_line str t cval subst_line
+        let node ← gderive .replacement (← get).ghostExpansionOrigin #[origin]
+        str := tok_str_add2_line str t cval subst_line node
     else
       modify fun s => { s with tok_line := subst_line }
-      str := tok_str_add2_line str t cval subst_line
+      let node ← gderive .replacement (← get).ghostExpansionOrigin #[origin]
+      str := tok_str_add2_line str t cval subst_line node
     if t != 32 then
       t0 := t1; t1 := t
   str := tok_str_add str 0
+  if (← get).ghostEnabled then modify fun s => { s with ghostLastOrigins := str.ghostOrigins }
   return (str.str.extract 0 str.len.toNat', nested)
 
 /-- `macro_twosharps(ptr0)` -/
@@ -529,6 +607,7 @@ def macro_twosharps (R : Rec) (ptr0 : TokPtr) : M TokArr := do
   modify fun s => { s with tokcstr := ByteArray.empty }
   let mut ptr := ptr0
   for _ in [0:fuel] do
+    let mut origin := ptr.origin
     let (t1', cv1, ptr') := TOK_GET ptr {}
     ptr := ptr'
     let mut t1 := t1'
@@ -551,9 +630,12 @@ def macro_twosharps (R : Rec) (ptr0 : TokPtr) : M TokArr := do
         t2 := ptr.get
         if !(t2 == 32 || t2 == TOK_PPJOIN || t2 == TOK_PPLINE) then break
         ptr := { ptr with pos := ptr.pos + (if t2 == TOK_PPLINE then 2 else 1) }
+      let rightOrigin := ptr.origin
       let (t2', cv2, ptr') := TOK_GET ptr {}
       ptr := ptr'
       if t2' == TOK_PLCHLDR then continue
+      origin ← if t1 == TOK_PLCHLDR then pure rightOrigin
+        else gderive .paste (← get).ghostExpansionOrigin #[origin,rightOrigin]
       if t1 != TOK_PLCHLDR then
         let s1 ← get_tok_str t1 (some cv1)
         modify fun s => { s with tokcstr := s.tokcstr ++ s1 }
@@ -570,7 +652,7 @@ def macro_twosharps (R : Rec) (ptr0 : TokPtr) : M TokArr := do
         next_nomacro R
         let st ← get
         modify fun s => { s with tok_line := line }
-        ms1 := tok_str_add2_line ms1 st.tok st.tokc line
+        ms1 := tok_str_add2_line ms1 st.tok st.tokc line origin
         let f ← curFile
         if f.buf.get! f.buf_ptr == 0 then break
         ms1 := tok_str_add ms1 32
@@ -583,9 +665,10 @@ def macro_twosharps (R : Rec) (ptr0 : TokPtr) : M TokArr := do
       modify fun s => { s with tokcstr := ByteArray.empty }
     if t1 != TOK_PLCHLDR then
       modify fun s => { s with tok_line := line }
-      ms1 := tok_str_add2_line ms1 t1 cv1 line
+      ms1 := tok_str_add2_line ms1 t1 cv1 line origin
   ms1 := tok_str_add ms1 0
   modify fun s => { s with tok_line := saved_tok_line }
+  if (← get).ghostEnabled then modify fun s => { s with ghostLastOrigins := ms1.ghostOrigins }
   return ms1.str.extract 0 ms1.len.toNat'
 
 /-- `peek_file(ws_str)` -/
@@ -649,8 +732,9 @@ def next_argstream (R : Rec) (nested0 : Option SymId) (ws0 : Option TokenString)
           if t != 32 then found := some t; break
           m := { m with pos := m.pos + 1 }
         else
+          let origin := m.origin
           let (tk, cv, mp') := TOK_GET m (← get).tokc
-          modify fun s => { s with tok := tk, tokc := cv, macro_ptr := some mp' }
+          modify fun s => { s with tok := tk, tokc := cv, macro_ptr := some mp', ghostTokOrigin := origin }
           if tk == TOK_PPLINE then
             modify fun s => { s with tok_line := cv.i.toUInt32.toInt32 }
             m := mp'
@@ -698,7 +782,7 @@ def pragmaStreamMetadata (out0 input : TokenString) (spaces : Bool) : TokenStrin
   return out
 
 /-- `macro_subst_tok(tok_str, nested_list, s)` -/
-def macro_subst_tok (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) (s : SymId) :
+def macro_subst_tok_body (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) (s : SymId) :
     M (TokenString × Option SymId × Int32) := do
   let fuel ← fuelM
   let subst_line := (← get).tok_line
@@ -709,6 +793,7 @@ def macro_subst_tok (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) 
   match sx.d with
   | some d =>
     let mut mstr : TokArr := d
+    let mut origins := (← get).ghostSymD.getD s #[]
     if sx.type.t &&& MACRO_FUNC != 0 then
       let saved_parse_flags := (← get).parse_flags
       modify fun s => { s with parse_flags := s.parse_flags ||| PARSE_FLAG_SPACES ||| PARSE_FLAG_LINEFEED ||| PARSE_FLAG_ACCEPT_STRAYS }
@@ -717,12 +802,13 @@ def macro_subst_tok (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) 
       if t != 40 then
         modify fun s => { s with parse_flags := saved_parse_flags }
         modify fun s => { s with tok_line := subst_line }
-        tok_str := tok_str_add2_line tok_str v {} subst_line
+        tok_str := tok_str_add2_line tok_str v {} subst_line (← get).ghostExpansionOrigin
         tok_str := pragmaStreamMetadata tok_str (ws.getD {}) (saved_parse_flags &&& PARSE_FLAG_SPACES != 0)
         return (tok_str, nested, 0)
       tok_str := pragmaStreamMetadata tok_str (ws.getD {}) false
       -- argument macro
       let mut args : SymId := 0
+      let mut argIndex := 0
       let mut sa := sx.next
       -- Consume the opening parenthesis separately, lifting only the
       -- metadata between the macro name and '(', never argument events.
@@ -759,13 +845,18 @@ def macro_subst_tok (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) 
             if tt == 40 then parlevel := parlevel + 1
             if tt == 41 then parlevel := parlevel - 1
             if tt == 32 then str := { str with need_spc := str.need_spc ||| 1 }
-            else str := tok_str_add2_line str tt (← get).tokc (← get).tok_line
+            else str := tok_str_add2_line str tt (← get).tokc (← get).tok_line (← get).ghostTokOrigin
             let (t', n', _) ← next_argstream R nested none
             tt := t'; nested := n'
           str := tok_str_add str TOK_EOF
           let sav := (← getSym sa).v
           let sa1 ← sym_push2 args (sav &&& ~~~SYM_FIELD) sat 0
           modSym sa1 fun x => { x with d := some (str.str.extract 0 str.len.toNat') }
+          if (← get).ghostEnabled then
+            modify fun state => { state with
+              ghostSymD := state.ghostSymD.insert sa1 str.ghostOrigins,
+              ghostArgIndex := state.ghostArgIndex.insert sa1 argIndex }
+          argIndex := argIndex+1
           args := sa1
           sa := (← getSym sa).next
           if tt == 41 then
@@ -778,9 +869,10 @@ def macro_subst_tok (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) 
         i := 1
       -- now subst each arg
       modify fun s => { s with tok_line := subst_line }
-      let (ms, nested') ← macro_arg_subst R nested { arr := mstr } args
+      let (ms, nested') ← macro_arg_subst R nested { arr := mstr, ghostOrigins := origins } args
       nested := nested'
       mstr := ms
+      origins := (← get).ghostLastOrigins
       -- free memory
       let mut a := args
       for _ in [0:fuel] do
@@ -789,13 +881,17 @@ def macro_subst_tok (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) 
         sym_free a
         a := a1
       modify fun s => { s with parse_flags := saved_parse_flags }
+    else
+      origins ← origins.mapM fun (word,node) => do
+        return (word,← gderive .replacement (← get).ghostExpansionOrigin #[node])
     modify fun s => { s with tok_line := subst_line }
     -- process '##'s
-    let jstr ← if sx.type.t &&& MACRO_JOIN != 0 then macro_twosharps R { arr := mstr } else pure mstr
+    let jstr ← if sx.type.t &&& MACRO_JOIN != 0 then macro_twosharps R { arr := mstr, ghostOrigins := origins } else pure mstr
+    if sx.type.t &&& MACRO_JOIN != 0 then origins := (← get).ghostLastOrigins
     let top := nested.getD 0
     modify fun s => { s with tok_line := subst_line }
     let sa ← sym_push2 top v 0 0
-    let (ts, nested', ret) ← R.macro_subst tok_str (some sa) { arr := jstr }
+    let (ts, nested', ret) ← R.macro_subst tok_str (some sa) { arr := jstr, ghostOrigins := origins }
     tok_str := ts
     nested := nested'
     -- pop nested defined symbol
@@ -827,8 +923,19 @@ def macro_subst_tok (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) 
     else add := false
     if add then
       let cv := (default : CValue).setStr (cstrval.push 0) (Int32.ofNat (cstrval.size + 1))
-      tok_str := tok_str_add2_line tok_str t cv (← get).tok_line
+      let node ← gderive .builtin (← get).ghostExpansionOrigin
+      tok_str := tok_str_add2_line tok_str t cv (← get).tok_line node
     return (tok_str, nested, 0)
+
+/-- Invocation identity is a shadow stack; source spelling, token words and
+all normal macro effects are computed by the unchanged modeled operations. -/
+def macro_subst_tok (R : Rec) (tokens : TokenString) (nested : Option SymId) (sym : SymId) :
+    M (TokenString × Option SymId × Int32) := do
+  let st ← get
+  modify fun s => { s with ghostExpansionOrigin := s.ghostTokOrigin }
+  let result ← macro_subst_tok_body R tokens nested sym
+  modify fun s => { s with ghostExpansionOrigin := st.ghostExpansionOrigin }
+  return result
 
 /-- Observer events emitted while expanding an operand have no syntactic
 width. Carry them to the outer operator's result before checking its literal. -/
@@ -943,6 +1050,7 @@ def pragma_operator (R : Rec) (nested : Option SymId) : M (Option SymId) := do
 /-- Phase 6 selects the common prefix before decoding each literal.
 Separate spellings preserve escape boundaries, e.g. "\\x12" "3". -/
 def parse_string_concat (R : Rec) : M Unit := do
+  let savedOrigin := (← get).ghostTokOrigin
   let savedGhostStrings := (← get).ghostStringCapture
   if (← get).ghostEnabled then modify fun s => { s with ghostStringCapture := true }
   let flags := (← get).parse_flags
@@ -986,7 +1094,7 @@ def parse_string_concat (R : Rec) : M Unit := do
     out := out ++ st.tokc.sdata.extract 0 st.tokc.strSize.toNat'
   modify fun s => { s with tokcstr := out, tokc := s.tokc.setStr out (Int32.ofNat out.size) }
 
-  modify fun s => { s with ghostStringCapture := savedGhostStrings }
+  modify fun s => { s with ghostStringCapture := savedGhostStrings, ghostTokOrigin := savedOrigin }
 
 /-- `macro_subst(tok_str, nested_list, macro_str)` -/
 def macro_subst (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) (macro_str0 : TokPtr) :
@@ -998,6 +1106,7 @@ def macro_subst (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) (mac
   let mut ms := macro_str0
   let mut nosubst : Int32 := 0
   for _ in [0:fuel] do
+    let origin := ms.origin
     let (t0, cval, ms') := TOK_GET ms {}
     ms := ms'
     let mut t := t0
@@ -1007,7 +1116,7 @@ def macro_subst (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) (mac
       continue
     let mut noSubst := false
     if t == (← get).tok_pragma_op && nosubst == 0 && (← get).parse_flags &&& PARSE_FLAG_PREPROCESS != 0 then
-      let id ← begin_macro .heap ms.arr ms.pos 2
+      let id ← begin_macro .heap ms.arr ms.pos 2 ms.ghostOrigins
       nested ← pragma_operator R nested
       for _ in [0:fuel] do
         match (← get).macro_stack with
@@ -1032,7 +1141,8 @@ def macro_subst (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) (mac
         t := t ||| SYM_FIELD
         noSubst := true
       else
-        let id ← begin_macro .heap ms.arr ms.pos 2
+        let id ← begin_macro .heap ms.arr ms.pos 2 ms.ghostOrigins
+        modify fun state => { state with ghostTokOrigin := origin }
         let (ts, nested', ns) ← macro_subst_tok R tok_str nested s
         tok_str := ts; nested := nested'; nosubst := ns
         match (← get).macro_stack with
@@ -1049,7 +1159,7 @@ def macro_subst (R : Rec) (tok_str0 : TokenString) (nested0 : Option SymId) (mac
     else
       noSubst := true
     if noSubst then
-      tok_str := tok_str_add2_line tok_str t cval (← get).tok_line
+      tok_str := tok_str_add2_line tok_str t cval (← get).tok_line origin
       if nosubst != 0 && t != 40 then nosubst := 0
       if t == Tok.TOK_DEFINED && (← get).pp_expr != 0 then nosubst := 1
   modify fun s => { s with tok_line := saved_tok_line }
@@ -1077,11 +1187,7 @@ def ghostTokenStart : M Nat := do
       if let some (_,i) := positions.find? (fun (word,_) => word == s.ghostLexOffset) then
         modify fun st => { st with ghostPrior := st.ghostCurrent, ghostCurrent := i }
         return i
-  let f := (s.file.head?).getD default
-  let raw := (s.fds.getD f.fd.toNat' none).map (·.data) |>.getD ByteArray.empty
-  let bufLen := f.buf_end-f.bufStart
-  let readEnd := ((s.fds.getD f.fd.toNat' none).map (·.pos)).getD 0
-  let offset := readEnd-bufLen+(s.ghostLexOffset-f.bufStart)
+  let record := s.ghostOriginTable.getD s.ghostTokOrigin default
   let obs ← ppObservation
   let pp : CSem.Pre.PPToken := ⟨match obs.kind with
     | .ident => .ident | .number => .ppNumber | .charLit => .charConst
@@ -1092,35 +1198,35 @@ def ghostTokenStart : M Nat := do
       | .error e =>
         modify fun st => { st with ghostTokenErrors := st.ghostTokenErrors.push e }
         pure CSemCParser.Tok.EOF
-  let verified := s.macro_ptr.isNone && raw.extract offset (offset+obs.spell.size) == obs.spell
-  let physical := if verified then some offset else none
-  let col := (raw.extract 0 offset).data.toList.reverse.takeWhile (· != 10) |>.length |>.add 1
-  let physicalLine := (raw.extract 0 offset).data.toList.count 10 + 1
-  let file := Bytes.toStr f.filename
   let i := input.spelling.size
-  let sp : CerbLocation.Pos := {
-    file := file, line := s.tok_line.toNat', col := col,
-    lexingFile := "/model-phase4.c", lexingLine := 2*i+2 }
-  let ep := { sp with col := col+obs.spell.size }
-  let origin : CSem.Pre.Origin := if verified then
-    .source ⟨⟨f.true_filename.toList,CSem.Pre.FileSys.normComponents f.true_filename.toList,
-      ⟨offset,physicalLine,col⟩,⟨offset+obs.spell.size,physicalLine,col+obs.spell.size⟩⟩,
-      f.filename.toList,s.tok_line.toNat',s.tok_line.toNat',[]⟩ else .unavailable
+  let width := match CSemCParser.Phase7.parserSpelling { gnu := true } pp with
+    | .ok spelling => spelling.length
+    | .error _ => obs.spell.size
+  let (sp,ep) := if s.tok == TOK_EOF then
+      let e := match input.language.positioned.tokens.back? with
+        | some t => { t.ep with line := t.ep.line+1, col := 1, lexingLine := 2*i+1 }
+        | none => input.language.positioned.start
+      (e,e)
+    else match record.origin.site with
+      | some site => CSemCParser.Phase7.position "/model-phase4.c" i site width
+      | none =>
+        -- Declared virtual coordinates only, never an invented physical site.
+        let p := { input.language.positioned.start with lexingLine := 2*i+2 }
+        (p,{ p with col := p.col+width })
   let view := input.language
   let view := { view with
-    positioned := { view.positioned with
-      tokens := view.positioned.tokens.push ⟨lexical,sp,ep⟩ },
-    origins := if s.tok == TOK_EOF then view.origins else view.origins.push origin }
+    positioned := { view.positioned with tokens := view.positioned.tokens.push { tok := lexical, sp := sp, ep := ep } },
+    origins := if s.tok == TOK_EOF then view.origins else view.origins.push record.origin }
   let input := { input with
     language := view,
     spelling := if s.tok == TOK_EOF then input.spelling else input.spelling.push pp }
+  let valid := record.complete && record.origin.site.isSome
   modify fun st => { st with
     ghostInput := some input, ghostPrior := st.ghostCurrent, ghostCurrent := i,
-    ghostSources := if st.ghostSources.any (fun x => x.id == f.id) then st.ghostSources
-      else st.ghostSources.push ⟨f.id,f.true_filename,raw⟩,
-    ghostOrigins := st.ghostOrigins.push ⟨f.id,s.ghostLexOffset,physical,f.filename,s.tok_line.toNat',
-      st.file.toArray.map (·.id),st.macro_stack.toArray.map (·.id)⟩,
-    ghostTokenErrors := if verified || s.tok == TOK_EOF then st.ghostTokenErrors else
+    ghostOrigins := match record.anchor with
+      | some anchor => st.ghostOrigins.push anchor
+      | none => st.ghostOrigins,
+    ghostTokenErrors := if valid || s.tok == TOK_EOF then st.ghostTokenErrors else
       st.ghostTokenErrors.push s!"incomplete model provenance/replay for token {i}" }
   return i
 
@@ -1132,7 +1238,7 @@ def next_body (R : Rec) : M Unit := do
     let st ← get
     match st.macro_ptr with
     | some mp =>
-      if st.ghostEnabled then modify fun s => { s with ghostLexOffset := mp.pos }
+      if st.ghostEnabled then modify fun s => { s with ghostLexOffset := mp.pos, ghostTokOrigin := mp.origin }
       let t := mp.get
       if TOK_HAS_VALUE t then
         let (tk, cv, mp') := tok_get mp st.tokc
@@ -1166,7 +1272,7 @@ def next_body (R : Rec) : M Unit := do
           let (ts, _, _) ← macro_subst_tok R buf (some 0) s
           let ts := tok_str_add ts 0
           modify fun st => { st with tokstr_buf := ts }
-          let _ ← begin_macro .tokstrBuf ts.str 0 0
+          let _ ← begin_macro .tokstrBuf ts.str 0 0 ts.ghostOrigins
           continue
     let pf := (← get).parse_flags
     if (← getTok) == (← get).tok_pragma_op && pf &&& PARSE_FLAG_PREPROCESS != 0 then
@@ -1205,7 +1311,9 @@ def next_body (R : Rec) : M Unit := do
 
 def next (R : Rec) : M Unit := do
   if (← get).ghostInput.isNone then return ← next_body R
-  modify fun s => { s with ghostNextDepth := s.ghostNextDepth+1 }
+  modify fun s => { s with
+    ghostPriorOrigin := if s.ghostEnabled && s.ghostParsing && s.ghostNextDepth == 0 then s.ghostTokOrigin else s.ghostPriorOrigin,
+    ghostNextDepth := s.ghostNextDepth+1 }
   next_body R
   modify fun s => { s with ghostNextDepth := s.ghostNextDepth-1 }
 

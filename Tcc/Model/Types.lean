@@ -502,9 +502,13 @@ structure TokenSym where
 structure TokPtr where
   arr : TokArr := #[]
   pos : Nat := 0
+  /-- Erased shadow metadata; never encoded in arr. -/
+  ghostOrigins : Ghost.OriginMap := #[]
   deriving Inhabited
 
 @[inline] def TokPtr.get (p : TokPtr) (k : Nat := 0) : Int32 := p.arr[p.pos + k]?.getD 0
+
+@[inline] def TokPtr.origin (p : TokPtr) : Nat := p.ghostOrigins.at p.pos
 
 /-- `TokenString` used as an accumulator (tok_str_add & co.): `str` holds
 `len` valid words. -/
@@ -514,6 +518,7 @@ structure TokenString where
   need_spc : Int32 := 0
   allocated_len : Int32 := 0
   last_line_num : Int32 := -1
+  ghostOrigins : Ghost.OriginMap := #[]
   deriving Inhabited
 
 /-- which TokenString a macro-stack frame belongs to (tccpp.c's statics

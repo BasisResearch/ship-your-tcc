@@ -39,6 +39,19 @@ def Context.pointId (c : Context) (i : Nat) : Build identifier := do
   | .NAME s => pure (Identifier (.point (c.token i).sp) s)
   | _ => c.fail "expected retained identifier reference"
 
+/-- A declared name is identified by the modeled compiler action. The
+independent spec lexer may classify builtin names differently; it does not
+choose what the model parsed as a name. Canonical identity still preserves
+UCN/UTF-8 spelling through the shared token-level identity conversion. -/
+def Context.rawIdentifier (c : Context) (i : Nat) (point : Bool := false) : Build identifier := do
+  let p ← match c.input.spelling[i]? with
+    | some p => pure p | none => c.fail "missing declared-name spelling"
+  if p.kind != .ident then return ← c.fail "declared name is not an identifier token"
+  let canonical ← match CSemCParser.Phase7.canonicalIdentifier true p.spell with
+    | .ok name => pure name | .error e => c.fail e
+  let name := CSemCParser.Lex.slice ⟨canonical.toArray⟩ 0 canonical.length
+  return Identifier (if point then .point (c.token i).sp else c.loc ⟨i,i+1⟩) name
+
 def Context.values (c : Context) : Build (Array Syntax) :=
   c.children.mapM (fun f => f.value)
 
@@ -99,11 +112,76 @@ def storage : Tok → Option storage_class_specifier
   | .THREAD_LOCAL => some .SC_Thread_local | .AUTO => some .SC_auto
   | .REGISTER => some .SC_register | _ => none
 
+def Context.rawSpelling (c : Context) (i : Nat) : String :=
+  match c.input.spelling[i]? with
+  | none => ""
+  | some t => CSemCParser.Lex.slice ⟨t.spell.toArray⟩ 0 t.spell.length
+
+/-- Fixed syntax projection: preserve the GNU attribute's raw identifier and
+all argument tokens/locations in Cabs's generic attribute carrier. This does
+not assert an alignment/cleanup/linkage meaning or erase unknown attributes.
+The independent grammar/meaning connection is still an open F1 obligation. -/
+def buildGnuAttributes (c : Context) : Build attributes := do
+  let mut i := c.range.first
+  let mut attrs : List attribute0 := []
+  for _ in [0:c.range.last-c.range.first] do
+    if i >= c.range.last then break
+    if (c.token i).tok != .ATTRIBUTE || (c.token (i+1)).tok != .LPAREN ||
+        (c.token (i+2)).tok != .LPAREN then return ← c.fail "GNU attribute group boundary"
+    let ns ← c.rawIdentifier i
+    i := i+3
+    for _ in [0:c.range.last-c.range.first] do
+      if (c.token i).tok == .RPAREN then break
+      if (c.token i).tok == .COMMA then
+        i := i+1
+        continue
+      let id ← c.rawIdentifier i
+      i := i+1
+      let mut args : List (Loc × String × List (Loc × String)) := []
+      if (c.token i).tok == .LPAREN then
+        i := i+1
+        let mut first := i
+        let mut depth := 0
+        let mut tokens : List (Loc × String) := []
+        for _ in [0:c.range.last-c.range.first] do
+          if i >= c.range.last then return ← c.fail "unterminated GNU attribute argument"
+          let t := (c.token i).tok
+          if depth == 0 && (t == .RPAREN || t == .COMMA) then
+            let loc := if i > first then c.loc ⟨first,first+1⟩
+              else CerbLocation.Loc.region (c.token i).sp (c.token i).sp .noCursor
+            args := args ++ [(loc,String.intercalate " " (tokens.map Prod.snd),tokens)]
+            tokens := []
+            i := i+1
+            if t == .RPAREN then break
+            first := i
+          else
+            if t == .LPAREN || t == .LBRACK || t == .LBRACE then depth := depth+1
+            else if t == .RPAREN || t == .RBRACK || t == .RBRACE then depth := depth-1
+            tokens := tokens ++ [(c.loc ⟨i,i+1⟩,c.rawSpelling i)]
+            i := i+1
+      attrs := attrs ++ [⟨some ns,id,args⟩]
+      if (c.token i).tok == .COMMA then i := i+1
+      else break
+    if (c.token i).tok != .RPAREN || (c.token (i+1)).tok != .RPAREN then
+      return ← c.fail "GNU attribute closing boundary"
+    i := i+2
+  if i != c.range.last then return ← c.fail "GNU attribute action range"
+  return Attrs attrs
+
+def Context.attributesAt (c : Context) (i : Nat) : Build (List attribute0 × Nat) := do
+  match c.children.find? (fun f => f.production == .gnuAttrs && f.range.first == i) with
+  | none => pure ([],i)
+  | some f => match ← f.value with
+    | .attributes (Attrs xs) => pure (xs,f.range.last)
+    | _ => c.fail "attribute child kind"
+
 /-- Recover a structured specifier only inside parse_btype's action, using
 its member/declarator/expression children. Never infer syntax from layout. -/
 def buildStructuredSpecifier (c : Context) (i : Nat) : Build (cabs_type_specifier × Nat) := do
   let keyword := (c.token i).tok
-  let mut j := i+1
+  let (attrsBefore,j0) ← c.attributesAt (i+1)
+  let mut attrs := attrsBefore
+  let mut j := j0
   let mut name := none
   if let .NAME _ := (c.token j).tok then name := some (← c.id j); j := j+1
   if keyword == .STRUCT || keyword == .UNION then
@@ -141,10 +219,13 @@ def buildStructuredSpecifier (c : Context) (i : Nat) : Build (cabs_type_specifie
         j := j+1
       if (c.token j).tok != .RBRACE then return ← c.fail "aggregate specifier boundary"
       members := some fields; j := j+1
-    let sp := if keyword == .STRUCT then .TSpec_struct (Attrs []) name members
-      else .TSpec_union (Attrs []) name members
+    let (suffix,k) ← c.attributesAt j
+    attrs := attrs ++ suffix; j := k
+    let sp := if keyword == .STRUCT then .TSpec_struct (Attrs attrs) name members
+      else .TSpec_union (Attrs attrs) name members
     return (TSpec (c.loc ⟨i,j⟩) sp,j)
   if keyword == .ENUM then
+    if !attrs.isEmpty then return ← c.fail "enum attribute attachment remains explicit"
     let mut members := none
     if (c.token j).tok == .LBRACE then
       j := j+1
@@ -174,6 +255,13 @@ def buildSpecs (c : Context) : Build specifiers := do
   for _ in [0:c.range.last-c.range.first] do
     if i >= c.range.last then break
     let t := (c.token i).tok
+    if let some f := c.children.find? (fun f => f.production == .typedefName && f.range.first == i) then
+      match ← f.value with
+      | .identifier id =>
+        s := { s with type_specifiers := s.type_specifiers ++ [TSpec (c.loc f.range) (.TSpec_name id)] }
+        i := f.range.last
+        continue
+      | _ => return ← c.fail "typedef-name action kind"
     if t == .STRUCT || t == .UNION || t == .ENUM then
       let (sp,j) ← buildStructuredSpecifier c i
       s := { s with type_specifiers := s.type_specifiers ++ [sp] }; i := j
@@ -210,22 +298,29 @@ mutual
     let mut direct : Option direct_declarator := none
     let mut absDirect : Option direct_abstract_declarator := none
     if i < stop then
-      match (c.token i).tok with
-      | .NAME _ =>
-        direct := some (.DDecl_identifier (Attrs []) (← c.id i)); i := i + 1
-      | .LPAREN =>
-        -- A child beginning after '(' is a parenthesized declarator. A
-        -- parameter specifier child instead identifies an abstract function.
-        let isParam := c.children.any (fun f => f.range.first == i+1 && f.production == .specifiers)
-        if !isParam && (c.token (i+1)).tok != .RPAREN then
-          let (d, j) ← buildDeclarator fuel c (i+1) stop
-          if (c.token j).tok != .RPAREN then return ← c.fail "declarator parenthesis boundary"
-          match d with
-          | .concrete d => direct := some (.DDecl_declarator d)
-          | .abstract (some d) => absDirect := some (.DAbs_abs_declarator d)
-          | _ => return ← c.fail "empty parenthesized declarator"
-          i := j+1
-      | _ => pure ()
+      if let some f := c.children.find? (fun f => f.production == .declName && f.range.first == i) then
+        match ← f.value with
+        | .identifier id =>
+          direct := some (.DDecl_identifier (Attrs []) id)
+          i := f.range.last
+        | _ => return ← c.fail "declarator-name action kind"
+      else
+       match (c.token i).tok with
+       | .NAME _ =>
+         direct := some (.DDecl_identifier (Attrs []) (← c.id i)); i := i + 1
+       | .LPAREN =>
+         -- A child beginning after '(' is a parenthesized declarator. A
+         -- parameter specifier child instead identifies an abstract function.
+         let isParam := c.children.any (fun f => f.range.first == i+1 && f.production == .specifiers)
+         if !isParam && (c.token (i+1)).tok != .RPAREN then
+           let (d, j) ← buildDeclarator fuel c (i+1) stop
+           if (c.token j).tok != .RPAREN then return ← c.fail "declarator parenthesis boundary"
+           match d with
+           | .concrete d => direct := some (.DDecl_declarator d)
+           | .abstract (some d) => absDirect := some (.DAbs_abs_declarator d)
+           | _ => return ← c.fail "empty parenthesized declarator"
+           i := j+1
+       | _ => pure ()
     let (d, a, j) ← buildSuffix fuel c directStart direct absDirect i stop
     match d, a, ptr with
     | some d, _, _ => pure (.concrete (declarator.Declarator ptr d), j)
@@ -270,6 +365,13 @@ mutual
       match d with
       | some d => buildSuffix fuel c start (some (.DDecl_array d ar)) none (j+1) stop
       | none => buildSuffix fuel c start none (some (.DAbs_array a ar)) (j+1) stop
+    | .ATTRIBUTE =>
+      let (xs,j) ← c.attributesAt i
+      if j == i then return ← c.fail "missing GNU attribute parser action"
+      match d with
+      | some (.DDecl_identifier (Attrs old) id) =>
+        buildSuffix fuel c start (some (.DDecl_identifier (Attrs (old++xs)) id)) none j stop
+      | _ => c.fail "GNU suffix attribute placement needs a typed attachment"
     | .LPAREN =>
       let (ps, j) ← buildParams fuel c (i+1) stop
       match d with
@@ -554,8 +656,40 @@ def buildStatement (c : Context) : Build Syntax := do
     return wrap (.CabsSfor init cond step ss[0]!)
   | _ => c.fail "statement action needs typed construction"
 
+/-- Fixed asm-label carrier. It retains the raw asm keyword and every
+literal token/location as a generic attribute on the declared identifier.
+This is syntax data, not a claim that CSem already implements that binding.
+NormalizationAgreement_Statement owes the independent syntax/meaning link. -/
+def asmBindingAttribute (c : Context) (r : Range) : Build attribute0 := do
+  let ns ← c.rawIdentifier r.first
+  let id := Identifier (c.loc ⟨r.first,r.first+1⟩) "asm_label"
+  let first := r.first+2
+  let last := r.last-1
+  let tokens := (List.range (last-first)).map (fun k =>
+    (c.loc ⟨first+k,first+k+1⟩,c.rawSpelling (first+k)))
+  pure ⟨some ns,id,[(c.loc ⟨first,first+1⟩,String.intercalate " " (tokens.map Prod.snd),tokens)]⟩
+
+mutual
+ def addDeclaratorAttribute (d : declarator) (attr : attribute0) : declarator :=
+  match d with | .Declarator p dd => .Declarator p (addDirectAttribute dd attr)
+ def addDirectAttribute (d : direct_declarator) (attr : attribute0) : direct_declarator :=
+  match d with
+  | .DDecl_identifier (Attrs xs) id => .DDecl_identifier (Attrs (xs++[attr])) id
+  | .DDecl_declarator d => .DDecl_declarator (addDeclaratorAttribute d attr)
+  | .DDecl_array d a => .DDecl_array (addDirectAttribute d attr) a
+  | .DDecl_function d ps => .DDecl_function (addDirectAttribute d attr) ps
+end
+
 def build (c : Context) : Build Syntax := do
   match c.production with
+  | .declName => return .identifier (← c.rawIdentifier c.range.first)
+  | .typedefName => return .identifier (← c.rawIdentifier c.range.first true)
+  | .gnuAttrs => return .attributes (← buildGnuAttributes c)
+  | .asmLabel =>
+    let value ← buildExpression { c with production := .string, range := ⟨c.range.first+2,c.range.last-1⟩, children := #[] }
+    match value with
+    | .expression (CabsExpression _ (.CabsEstring literal)) => return .asmBinding literal
+    | _ => return ← c.fail "asm binding string construction"
   | .specifiers => return .specs (← buildSpecs c)
   | .declarator =>
     let (d,j) ← buildDeclarator (4*(c.range.last-c.range.first+2)) c c.range.first c.range.last
@@ -573,6 +707,14 @@ def build (c : Context) : Build Syntax := do
     | [.decl (.concrete d), .initializer v] =>
       return .initDecl (InitDecl (c.loc ⟨c.children[0]!.range.first,c.children[1]!.range.last⟩) d (some v))
     | [.decl (.concrete d), .functionBody s] => return .functionDeclarator d s
+    | [.decl (.concrete d), .asmBinding _] =>
+      let attr ← asmBindingAttribute c c.children[1]!.range
+      return .initDecl (InitDecl (c.loc ⟨c.children[0]!.range.first,c.children[1]!.range.last⟩)
+        (addDeclaratorAttribute d attr) none)
+    | [.decl (.concrete d), .asmBinding _, .initializer v] =>
+      let attr ← asmBindingAttribute c c.children[1]!.range
+      return .initDecl (InitDecl (c.loc ⟨c.children[0]!.range.first,c.children[2]!.range.last⟩)
+        (addDeclaratorAttribute d attr) (some v))
     | _ => return ← c.fail "init-declarator action children"
   | .declaration =>
     let vs ← c.values

@@ -6,6 +6,16 @@ only external syntax inputs. The compiler lexer/parser/codegen run on a
 virtual token-per-line buffer. Cabs is constructed by their parsing actions,
 never by CSemCParser.parsePositioned. This is an independent testing seam;
 connecting the ordinary preprocessor's replay locations is an open duty. -/
+namespace Tcc.Model
+
+/-- One eraser per annotated compiler shape; compiler token words stay intact. -/
+def TokPtr.eraseGhost (p : TokPtr) : TokPtr := { p with ghostOrigins := #[] }
+def TokenString.eraseGhost (s : TokenString) : TokenString := { s with ghostOrigins := #[] }
+def MacroFrame.eraseGhost (f : MacroFrame) : MacroFrame :=
+  { f with str := f.str.eraseGhost, prev_ptr := f.prev_ptr.map TokPtr.eraseGhost }
+
+end Tcc.Model
+
 namespace Tcc.Model.Ghost
 open C
 
@@ -19,9 +29,18 @@ def erase (s : TccSt) : TccSt :=
   { s with
     ghostEnabled := false, ghostFixture := false, ghostParsing := false,
     ghostNextDepth := 0, ghostStringCapture := false, ghostLexOffset := 0,
-    ghostSaved := #[], ghostReplay := {}, ghostSources := #[], ghostOrigins := #[], ghostPragmas := #[],
+    ghostLexPhysicalStart := none, ghostLexSourceId := 0, ghostPriorOrigin := 0,
+    ghostTokOrigin := 0, ghostExpansionOrigin := 0,
+    ghostOriginTable := #[⟨.unavailable,none,false⟩],
+    ghostSymD := {}, ghostSymE := {}, ghostArgIndex := {}, ghostLastOrigins := #[],
+    macro_ptr := s.macro_ptr.map TokPtr.eraseGhost,
+    macro_stack := s.macro_stack.map MacroFrame.eraseGhost,
+    pragma_emitted := s.pragma_emitted.eraseGhost,
+    tokstr_buf := s.tokstr_buf.eraseGhost,
+    unget_buf := s.unget_buf.eraseGhost,
+    ghostSaved := #[], ghostReplay := {}, ghostFdSources := {}, ghostDirective := none, ghostSources := #[], ghostOrigins := #[], ghostPragmas := #[],
     ghostInput := none, ghostCurrent := 0, ghostPrior := 0,
-    ghost := #[], ghostAudit := #[], ghostDrops := #[], ghostTokenErrors := #[] }
+    ghost := #[], ghostAudit := #[], ghostNormalizations := #[], ghostDrops := #[], ghostTokenErrors := #[] }
 
 def action (R : Rec) (src : ByteArray) : M Unit := do
   tccpp_new R
@@ -117,5 +136,12 @@ def RawParserAgreement_Statement (cfg : CSemCParser.ParseCfg) : Prop :=
   ∀ src fs s tu input,
     runRaw src fs = .ok () s → s.ghostInput = some input → output s = .ok tu →
     CSemCParser.parsePositioned cfg input.language.positioned = .ok tu
+
+/-- Agreement for the fixed GNU-attribute, asm-binding and logical-chain
+encodings recorded in ghostNormalizations. This is exact Cabs equality,
+not a caller-selected relation, and remains unproved. F1 must provide the
+independent grammar/meaning link; F3 must prove the action construction. -/
+def NormalizationAgreement_Statement (cfg : CSemCParser.ParseCfg) : Prop :=
+  RawParserAgreement_Statement cfg
 
 end Tcc.Model.Ghost

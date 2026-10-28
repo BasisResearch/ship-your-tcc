@@ -218,6 +218,7 @@ instruction-identity claim is made. No generated recovery files were imported.
 | component | provenance |
 |---|---|
 | Compiler-action typed ghost (`Tcc/Model/Ghost*.lean`, `lean/Ghost/GhostMain.lean`, `scripts/ghost_cabs_cmp.py`) | Local instrumentation of this project's manual TinyCC 43c7708 translation. Reuses Cerberus/cerberus-lean's Cabs types and the existing `CSemCParser.Phase7` token/literal conversion and `CabsExport` serializer at `vendor/CSEM_REV`; parser structure is constructed from modeled compiler actions, never the spec parser's returned Cabs. No machine/library routine proof is reused or claimed instruction-identical. |
+| Model-owned ghost origins/header continuation (`scripts/ghost_origins_cmp.py`, Host/Libtcc/Pp*/Gen* ghost fields) | Local shadow instrumentation of the same manual TinyCC translation and actual modeled host opening/directive/macro events. Uses this project's `Spec.Pre.Provenance` data types, Phase7 lexical conversion and existing generic Cabs attribute types; model attributes are constructed independently, following the F1 interface contract described in the lead review (exact GNU/asm introducer, attribute alias/asm_label and located argument token pieces). No spec grammar implementation, AST result, machine proof or library proof is copied. Generated model buffers explicitly have no resolved image identity. |
 
 - Function redeclaration identity (2026-10-28): reuses the fork's existing
   supply threading (`Symbol.fresh`, `LemLib.supplySplit`, Cabs-to-Ail/Core)

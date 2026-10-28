@@ -25,7 +25,7 @@ def setF (ad : AttributeDef) (pos w : UInt32) (v : UInt32) : AttributeDef :=
   { ad with f := setBits32 ad.f pos w v }
 
 /-- `parse_attribute(ad)` -/
-def parse_attribute (R : Rec) (ad0 : AttributeDef) : M AttributeDef := do
+def parse_attribute_body (R : Rec) (ad0 : AttributeDef) : M AttributeDef := do
   let fuel ← fuelM
   let mut ad := ad0
   for _ in [0:fuel] do   -- redo:
@@ -132,6 +132,14 @@ def parse_attribute (R : Rec) (ad0 : AttributeDef) : M AttributeDef := do
     skip R 41
     skip R 41
   throw (.fuel "parse_attribute")
+
+/-- Capture GNU syntax before its alignment/function flags are merged. -/
+def parse_attribute (R : Rec) (ad : AttributeDef) : M AttributeDef := do
+  let tk ← getTok
+  let mark ← gmark
+  let result ← parse_attribute_body R ad
+  if tk == TOK_ATTRIBUTE1 || tk == TOK_ATTRIBUTE2 then gwrap mark .gnuAttrs
+  return result
 
 /-! ## struct fields and layout -/
 
@@ -691,12 +699,14 @@ def parse_btype (R : Rec) (_ad0 : AttributeDef) (ignore_label : Int32) : M (Bool
         let s ← sym_find tok
         if s == 0 || (← getSym s).type.t &&& VT_TYPEDEF == 0 then theEnd := true
         else
+          let nameMark ← gmark
           let n := tok
           R.next
           if (← getTok) == 58 && ignore_label != 0 then
             unget_tok n
             theEnd := true
           else
+            gwrap nameMark .typedefName
             let sx ← getSym s
             t := t &&& ~~~(VT_BTYPE ||| VT_LONG)
             let uu := t &&& ~~~VT_QUAL
@@ -744,10 +754,13 @@ def parse_asm_str (R : Rec) : M ByteArray := do
 
 /-- `asm_label_instr()` -/
 def asm_label_instr (R : Rec) : M Int32 := do
+  let mark ← gmark
   R.next
   let astr ← parse_asm_str R
   skip R 41
-  return (← tok_alloc R (Bytes.cstrAt astr 0)).tok
+  let result ← tok_alloc R (Bytes.cstrAt astr 0)
+  gwrap mark .asmLabel
+  return result.tok
 
 /-! ## declarators -/
 
@@ -974,8 +987,10 @@ def type_decl_loc : Nat → Rec → CType → AttributeDef → Int32 → M (CTyp
       else
         abstract_ := true
     else if (← getTok) ≥ C.TOK_IDENT && td &&& TYPE_DIRECT != 0 then
+      let nameMark ← gmark
       v ← getTok
       R.next
+      gwrap nameMark .declName
     else
       abstract_ := true
     if abstract_ then

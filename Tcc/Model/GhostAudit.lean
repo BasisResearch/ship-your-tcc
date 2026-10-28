@@ -7,3 +7,4 @@ import Tcc.Model.GhostDriver
 #print axioms Tcc.Model.Ghost.RawErasure_Statement
 #print axioms Tcc.Model.Ghost.RawConstruction_Statement
 #print axioms Tcc.Model.Ghost.RawParserAgreement_Statement
+#print axioms Tcc.Model.Ghost.NormalizationAgreement_Statement

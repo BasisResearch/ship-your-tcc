@@ -21,14 +21,16 @@ def sectionBytes (s : TccSt) : Json := toJson (s.secs.toList.map fun sec =>
 
 def modelMetadata (s : TccSt) : List (String × Json) :=
   let input := s.ghostInput
-  [("tokens",toJson (((input.map (·.spelling)).getD #[]).toList.map fun t => (reprStr t.kind,t.spell.map UInt8.toNat))),
+  [("normalizations",GhostExport.normalizations s),("tokens",toJson (((input.map (·.spelling)).getD #[]).toList.map fun t => (reprStr t.kind,t.spell.map UInt8.toNat))),
    ("origins",toJson (((input.map (·.language.origins)).getD #[]).toList.map reprStr)),
    ("model_origins",Json.arr (s.ghostOrigins.map fun o => Json.mkObj [
      ("source",toJson o.source),("buffer_offset",toJson o.bufferOffset),
      ("physical_offset",toJson o.physicalOffset),("presumed",toJson (o.presumed.toList.map UInt8.toNat)),
      ("line",toJson o.line),("includes",toJson o.includeFiles),("macro_frames",toJson o.macroFrames)])),
    ("sources",Json.arr (s.ghostSources.map fun f => Json.mkObj [
-     ("id",toJson f.id),("opened_as",toJson (f.openedAs.toList.map UInt8.toNat)),("contents",toJson (f.contents.toList.map UInt8.toNat))])),
+     ("id",toJson f.id),("opened_as",toJson (f.openedAs.toList.map UInt8.toNat)),("contents",toJson (f.contents.toList.map UInt8.toNat)),
+     ("identity",toJson (f.identity.map (List.map UInt8.toNat))), ("generated",toJson f.generated),
+     ("included_at",toJson (f.includedAt.map reprStr)), ("include_complete",toJson f.includeComplete)])),
    ("pragmas",Json.arr (s.ghostPragmas.map fun p => Json.mkObj [
      ("before_token",toJson p.beforeToken),("keyword",toJson p.keyword.toInt),
      ("pack_before",toJson (p.packBefore.toList.map Int32.toInt)),
@@ -39,13 +41,23 @@ def modelMetadata (s : TccSt) : List (String × Json) :=
      ("counter_before",toJson p.counterBefore.toInt),("counter_after",toJson p.counterAfter.toInt)]))]
 
 def main (args : List String) : IO UInt32 := do
-  let (mode,path) ← match args with
-    | [mode,path] => pure (mode,path)
-    | _ => IO.eprintln "usage: tcc_ghost model|spec SOURCE"; return 2
+  let (mode,path,filesPath) ← match args with
+    | [mode,path] => pure (mode,path,none)
+    | [mode,path,"--files",filesPath] => pure (mode,path,some filesPath)
+    | _ => IO.eprintln "usage: tcc_ghost MODE SOURCE [--files JSON_STRING_PAIRS]"; return 2
+  let extra ← match filesPath with
+    | none => pure []
+    | some path =>
+      let text ← IO.FS.readFile path
+      let parsed := Json.parse text >>= (fromJson? (α := List (String × String)))
+      match parsed with
+      | .ok fs => pure (fs.map (fun (p,b) => (p.toUTF8.toList,b.toUTF8.toList)))
+      | .error e => IO.eprintln e; return 2
+  let fs := { CSem.Pre.Tcc.imageFS with files := extra ++ CSem.Pre.Tcc.imageFS.files }
   let src ← IO.FS.readBinFile path
   if mode == "raw-model" || mode == "raw-spec" then
-    let result := Ghost.runRaw src CSem.Pre.Tcc.imageFS.files
-    let plain := Ghost.runRaw src CSem.Pre.Tcc.imageFS.files false
+    let result := Ghost.runRaw src fs.files
+    let plain := Ghost.runRaw src fs.files false
     let s := match result with | .ok _ s | .error _ s => s
     let p := match plain with | .ok _ s | .error _ s => s
     let base := [("section_bytes_equal",toJson (sectionBytes s == sectionBytes p)),
@@ -70,12 +82,23 @@ def main (args : List String) : IO UInt32 := do
   -- above retain the actual compiler-injected header and its diagnostics.
   let cfg := { CSem.Pre.Tcc.cfgTcc with
     mainName := "/prog.c".toUTF8.toList, predefs := [] }
-  let pp ← match CSem.Pre.phases14WithOrigins cfg CSem.Pre.Tcc.imageFS src.toList with
+  let pp ← match CSem.Pre.phases14WithOrigins cfg fs src.toList with
     | .ok pp => pure pp
     | .error e => IO.println ((Json.mkObj [("status",toJson "preprocessing-error"),("error",toJson e.msg)]).compress); return 0
   let input ← match Phase7.convert { gnu := true } "/prog.c" pp with
     | .ok input => pure input
     | .error e => IO.println ((Json.mkObj [("status",toJson "phase7-error"),("error",toJson e)]).compress); return 0
+  if mode == "origin-spec" then
+    if !input.pragmas.isEmpty then
+      IO.println ((Json.mkObj [("status",toJson "unimplemented"),("error",toJson "origin fixture has pragma events")]).compress)
+      return 0
+    IO.println ((Json.mkObj [("status",toJson "ok"),
+      ("tokens",toJson (pp.tokens.map fun t => (reprStr t.token.kind,t.token.spell.map UInt8.toNat))),
+      ("origins",toJson (input.origins.toList.map reprStr)),
+      ("sources",Json.arr (pp.sources.toArray.map fun f => Json.mkObj [
+        ("opened_as",toJson (f.openedAs.map UInt8.toNat)), ("contents",toJson (f.contents.map UInt8.toNat)),
+        ("identity",toJson (f.identity.map (List.map UInt8.toNat))), ("included_at",toJson (f.includedAt.map reprStr))]))]).compress)
+    return 0
   if mode == "spec" then
     match parsePositioned { gnu := true } input.positioned with
     | .error e => IO.println ((Json.mkObj [("status",toJson "spec-rejected"),("error",toJson e.msg)]).compress)

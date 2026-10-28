@@ -97,13 +97,15 @@ def macro_is_equal (a0 b0 : Option TokArr) : M Bool := do
   | _, _ => return true
 
 /-- `define_push(v, macro_type, str, first_arg)` -/
-def define_push (R : Rec) (v macro_type : Int32) (str : Option TokArr) (first_arg : SymId) : M Unit := do
+def define_push (R : Rec) (v macro_type : Int32) (str : Option TokArr) (first_arg : SymId) (origins : Ghost.OriginMap := #[]) : M Unit := do
   let o ← define_find v
   let top := (← get).define_stack
   let s ← sym_push2 top v macro_type 0
   modify fun st => { st with define_stack := s }
   modSym s fun x => { x with d := str, next := first_arg }
   modTokSym v fun ts => { ts with sym_define := s }
+  if (← get).ghostEnabled then
+    modify fun st => { st with ghostSymD := st.ghostSymD.insert s origins }
   if o != 0 then
     let od := (← getSym o).d
     if !(← macro_is_equal od str) then
@@ -170,6 +172,9 @@ def search_cached_include (filename : ByteArray) (add : Bool) : M (Option Nat) :
 
 /-- `parse_include(s1, do_next, test)` -/
 def parse_include (R : Rec) (do_next : Bool) (test : Bool) : M Int32 := do
+  let before ← get
+  let parent := before.ghostSources.find? (fun s => s.id == ((before.file.head?).getD default).id)
+  let directive := before.ghostDirective
   let c0 ← skip_spaces R
   let mut name := ByteArray.empty
   let mut c := c0
@@ -231,6 +236,13 @@ def parse_include (R : Rec) (do_next : Bool) (test : Bool) : M Int32 := do
         return 1
     | none => pure ()
     if (← tcc_open buf) ≥ 0 then break
+  if before.ghostEnabled then
+    let id := (← curFile).id
+    modify fun s => { s with ghostSources := s.ghostSources.map (fun src =>
+      if src.id != id then src else { src with
+        includedAt := directive
+        includes := directive.toList ++ (parent.map (·.includes)).getD []
+        includeComplete := directive.isSome && (parent.map (·.includeComplete)).getD false }) }
   if test then
     tcc_close
   else
@@ -365,13 +377,13 @@ def parse_define (R : Rec) : M Unit := do
         tk := TOK_PPJOIN
         setTok tk
         t := t ||| MACRO_JOIN
-      str := tok_str_add2_spc str tk (← get).tokc
+      str := tok_str_add2_spc str tk (← get).tokc (← get).ghostTokOrigin
       t0 := tk
     R.next_nomacro
   modify fun s => { s with parse_flags := saved_parse_flags }
   str := tok_str_add str 0
   if t0 == TOK_PPJOIN then tcc_error_s R "'##' cannot appear at either end of macro"
-  define_push R v t (some (str.str.extract 0 str.len.toNat')) first
+  define_push R v t (some (str.str.extract 0 str.len.toNat')) first str.ghostOrigins
 
 /-! ## #pragma, #line -/
 
@@ -387,18 +399,18 @@ def unget_tok (last_tok : Int32) : M Unit := do
   let s ← get
   let useStatic := s.unget_buf.len == 0
   let mut str : TokenString := if useStatic then s.unget_buf else {}
-  if s.tok != TOK_EOF then str := tok_str_add2 str s.tok s.tokc
+  if s.tok != TOK_EOF then str := tok_str_add2 str s.tok s.tokc s.ghostTokOrigin
   str := tok_str_add str 0
   if useStatic then
     modify fun s => { s with unget_buf := str }
-    let _ ← begin_macro .ungetBuf str.str 0 0
+    let _ ← begin_macro .ungetBuf str.str 0 0 str.ghostOrigins
   else
-    let _ ← begin_macro .heap str.str 0 1
+    let _ ← begin_macro .heap str.str 0 1 str.ghostOrigins
   if s.ghostEnabled then
     if let some fr := (← get).macro_stack.head? then
       modify fun st => { st with ghostReplay := st.ghostReplay.insert fr.id #[(0,s.ghostCurrent)] }
   setTok last_tok
-  if last_tok != 0 then modify fun st => { st with ghostCurrent := st.ghostPrior }
+  if last_tok != 0 then modify fun st => { st with ghostCurrent := st.ghostPrior, ghostTokOrigin := st.ghostPriorOrigin }
 
 /-- `pragma_parse(s1)`: whether the pragma was handled -/
 def pragma_parse_body (R : Rec) : M Bool := do
@@ -715,13 +727,33 @@ def preprocess_body (R : Rec) (is_bof0 : Int32) : M Unit := do
     skip_to_eol R true
   modify fun s => { s with parse_flags := saved_parse_flags }
 
+/-- Capture the directive introducer before preprocessing consumes/replaces
+its file buffer. A generated buffer has no image identity; its retained bytes
+and opening ID still identify the exact directive occurrence. Non-identity
+physical mappings remain incomplete rather than guessing an include chain. -/
+def ghostDirectiveSpan : M (Option CSem.Pre.SourceSpan) := do
+  let s ← get
+  if !s.ghostEnabled then return none
+  let f := (s.file.head?).getD default
+  let some src := s.ghostSources.find? (fun x => x.id == f.id) | return none
+  let offset := if src.generated && src.contents == f.buf.extract f.bufStart f.buf_end then
+      some (s.ghostLexOffset-f.bufStart)
+    else if s.ghostLexSourceId == f.id then s.ghostLexPhysicalStart else none
+  let some offset := offset | return none
+  let width := if src.contents.get! offset == 35 then 1
+    else if src.contents.extract offset (offset+2) == "%:".toUTF8 then 2 else 0
+  if width == 0 then return none
+  return some (src.span offset width)
+
 /-- Directive operands have preprocessing syntax, not phase-seven parser
 syntax. The existing directive still executes once with the same state. -/
 def preprocess (R : Rec) (is_bof : Int32) : M Unit := do
   let parsing := (← get).ghostParsing
-  modify fun s => { s with ghostParsing := false }
+  let previous := (← get).ghostDirective
+  let directive ← ghostDirectiveSpan
+  modify fun s => { s with ghostParsing := false, ghostDirective := directive }
   preprocess_body R is_bof
-  modify fun s => { s with ghostParsing := parsing }
+  modify fun s => { s with ghostParsing := parsing, ghostDirective := previous }
 
 /-! ## string and number literals -/
 

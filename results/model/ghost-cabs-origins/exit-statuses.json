@@ -1,0 +1,75 @@
+[
+  {
+    "check": "origins",
+    "command": [
+      "python3",
+      "scripts/ghost_origins_cmp.py",
+      "--build-id",
+      "ghost-origins-12",
+      "--out",
+      "build/ghost-origins12-validation/origins"
+    ],
+    "exit": 0
+  },
+  {
+    "check": "fixtures",
+    "command": [
+      "python3",
+      "scripts/ghost_cabs_cmp.py",
+      "--build-id",
+      "ghost-origins-12",
+      "--out",
+      "build/ghost-origins12-validation/fixtures"
+    ],
+    "exit": 0
+  },
+  {
+    "check": "raw-strict",
+    "command": [
+      "python3",
+      "scripts/ghost_cabs_cmp.py",
+      "--build-id",
+      "ghost-origins-12",
+      "--raw",
+      "--case",
+      "scalar-declarations",
+      "--case",
+      "definition",
+      "--case",
+      "macro-provenance",
+      "--out",
+      "build/ghost-origins12-validation/raw"
+    ],
+    "exit": 1
+  },
+  {
+    "check": "erasure",
+    "command": [
+      "python3",
+      "results/model/ghost-cabs/validate_erasure.py"
+    ],
+    "exit": 0
+  },
+  {
+    "check": "arenas",
+    "command": [
+      "python3",
+      "scripts/model_diff.py",
+      "--no-report",
+      "--json-out",
+      "build/ghost-origins12-validation/arenas.json",
+      "--require-success",
+      "7",
+      "-j",
+      "4",
+      "build/ghost-byte-inputs/ghost-control.c",
+      "build/ghost-byte-inputs/ghost-declarations.c",
+      "build/ghost-byte-inputs/ghost-designators.c",
+      "build/ghost-byte-inputs/ghost-gnu.c",
+      "build/ghost-byte-inputs/ghost-pragmas.c",
+      "build/ghost-byte-inputs/ghost-spellings.c",
+      "build/ghost-byte-inputs/ghost-typedef.c"
+    ],
+    "exit": 0
+  }
+]

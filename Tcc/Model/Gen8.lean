@@ -68,12 +68,19 @@ def decl_initializer_alloc (R : Rec) (type0 : CType) (ad : AttributeDef) (r0 : I
     if has_init == 0 then tcc_error_s R "unknown type size"
     if has_init == 2 then
       let mut str : TokenString := {}
+      let mut positions : Ghost.OriginMap := #[]
       for _ in [0:fuel] do
         let tk ← getTok
         if !(TOK_IS_STR tk) then break
+        if (← get).ghostEnabled then
+          let ln := (← curFile).line_num
+          positions := positions.push (str.len.toNat'+(if ln != str.last_line_num then 2 else 0),(← get).ghostCurrent)
         str ← tok_str_add_tok str
         R.next
+      if (← get).ghostEnabled then positions := positions.push (str.len.toNat',(← get).ghostCurrent)
       str := tok_str_add str C.TOK_EOF
+      if (← get).ghostEnabled then
+        modify fun s => { s with ghostSaved := s.ghostSaved.push ⟨str.str.extract 0 str.len.toNat',positions⟩ }
       init_str := some (str.str.extract 0 str.len.toNat')
     else
       init_str ← R.skip_or_save_block
@@ -625,6 +632,7 @@ def tcc_compile (R : Rec) (filetype : Int32) (filename : ByteArray) (fd : Int32)
   let body : M Unit := do
     tcc_open_bf filename none
     modFile fun f => { f with fd := fd }
+    ghostRecordFile fd
     preprocess_start R filetype
     tccgen_init R
     tccelf_begin_file

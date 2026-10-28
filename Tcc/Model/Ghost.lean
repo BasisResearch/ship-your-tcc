@@ -19,6 +19,27 @@ structure ModelSource where
   id : Nat
   openedAs : ByteArray
   contents : ByteArray
+  /-- Resolved by the modeled host opening; empty for generated buffers. -/
+  identity : List CSem.Pre.Bytes := []
+  generated : Bool := false
+  includedAt : Option CSem.Pre.SourceSpan := none
+  includes : List CSem.Pre.SourceSpan := []
+  includeComplete : Bool := true
+
+/-- Physical byte points come only from the retained opening's bytes. -/
+def ModelSource.span (s : ModelSource) (offset width : Nat) : CSem.Pre.SourceSpan :=
+  let point := fun p =>
+    let before := (s.contents.extract 0 p).toList
+    { offset := p, line := before.count 10+1,
+      column := (before.reverse.takeWhile (· != 10)).length+1 : CSem.Pre.SourcePoint }
+  { openedAs := s.openedAs.toList, identity := s.identity,
+    start := point offset, stop := point (offset+width) }
+
+/-- A successful modeled host opening, retained before descriptors are reused. -/
+structure OpenedFile where
+  openedAs : ByteArray
+  resolved : ByteArray
+  contents : ByteArray
 
 structure ModelOrigin where
   source : Nat
@@ -34,6 +55,21 @@ initializer/body token string. Replaying does not create source occurrences. -/
 structure SavedTokens where
   tokens : Array Int32
   positions : Array (Nat × Nat)
+
+/-- Shadow metadata: compiler token words remain untouched. -/
+abbrev OriginMap := Array (Nat × Nat)
+
+def OriginMap.at (m : OriginMap) (word : Nat) : Nat :=
+  ((m.find? (fun p => p.1 == word)).map (·.2)).getD 0
+
+structure OriginRecord where
+  origin : CSem.Pre.Origin
+  anchor : Option ModelOrigin
+  complete : Bool
+  deriving Inhabited
+
+inductive Derivation where
+  | replacement | argument (index : Nat) | stringify | paste | builtin
 
 structure PragmaEffect where
   beforeToken : Nat
@@ -62,7 +98,7 @@ inductive Production where
   | specifiers | declarator | initializer | initDecl | declaration | fundef | tu
   | ifStmt | whileStmt | block | returnStmt | breakStmt | continueStmt | forStmt | doStmt
   | switchStmt | caseStmt | defaultStmt | gotoStmt | asmStmt | empty | label | exprStmt
-  | labelled | staticAssert | deferredFunction | localLabels
+  | labelled | staticAssert | deferredFunction | localLabels | gnuAttrs | asmLabel | declName | typedefName
   deriving Inhabited, BEq, Repr
 
 structure Gap where
@@ -87,6 +123,9 @@ inductive ParsedDeclarator where
 inductive Syntax where
   | expression (value : cabs_expression)
   | typeName (value : type_name)
+  | identifier (value : identifier)
+  | attributes (value : attributes)
+  | asmBinding (value : cabs_string_literal)
   | specs (value : specifiers)
   | decl (value : ParsedDeclarator)
   | initializer (value : initializer_)
@@ -99,6 +138,15 @@ inductive Syntax where
   | label (value : Label)
   | translationUnit (value : translation_unit)
   deriving Inhabited
+
+/-- Fixed, visible syntax encodings. None supplies semantic agreement. -/
+inductive NormalizationKind where
+  | gnuAttributeCarrier | asmBindingCarrier | logicalChainRestoration
+  deriving Repr
+
+structure NormalizationUse where
+  kind : NormalizationKind
+  range : Range
 
 structure Fragment where
   production : Production

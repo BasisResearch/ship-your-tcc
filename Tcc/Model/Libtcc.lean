@@ -360,7 +360,29 @@ def tcc_open_bf (filename : ByteArray) (init : Option ByteArray) : M Unit := do
     buf := buf, buf_ptr := UNGET_ROOM, buf_end := UNGET_ROOM + initlen, bufStart := UNGET_ROOM,
     fd := -1, line_num := 1, ifdef_stack_ptr := s.ifdef_stack_ptr,
     prev_tok_flags := s.tok_flags, filename := fname, true_filename := fname, id := id }
-  set { s with file := bf :: s.file, tok_flags := TOK_FLAG_BOL ||| TOK_FLAG_BOF }
+  set { s with
+    file := bf :: s.file
+    tok_flags := TOK_FLAG_BOL ||| TOK_FLAG_BOF
+    ghostSources := if s.ghostEnabled && init.isSome then s.ghostSources.push {
+        id := id
+        openedAs := filename
+        contents := init.getD ByteArray.empty
+        generated := true }
+      else s.ghostSources }
+
+/-- Bind a compiler file-opening ID to the descriptor actually returned by
+Host.openRd. This records empty files too and never consults #line labels. -/
+def ghostRecordFile (fd : Int32) : M Unit := do
+  let s ← get
+  if !s.ghostEnabled then return
+  let some opened := s.ghostFdSources.get? fd.toNat' | return
+  let id := ((s.file.head?).getD default).id
+  modify fun s => { s with
+    ghostSources := s.ghostSources.push {
+      id := id
+      openedAs := opened.openedAs
+      contents := opened.contents
+      identity := CSem.Pre.FileSys.normComponents opened.resolved.toList } }
 
 /-- `tcc_close()` -/
 def tcc_close : M Unit := do
@@ -384,6 +406,7 @@ def tcc_open (filename : ByteArray) : M Int32 := do
   if fd < 0 then return -1
   tcc_open_bf filename none
   modFile fun f => { f with fd := fd }
+  ghostRecordFile fd
   return 0
 
 end Tcc.Model

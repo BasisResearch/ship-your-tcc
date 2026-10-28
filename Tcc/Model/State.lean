@@ -223,8 +223,20 @@ structure TccSt where
   ghostNextDepth : Nat := 0
   ghostStringCapture : Bool := false
   ghostLexOffset : Nat := 0
+  ghostLexPhysicalStart : Option Nat := none
+  ghostLexSourceId : Nat := 0
+  ghostPriorOrigin : Nat := 0
+  ghostTokOrigin : Nat := 0
+  ghostExpansionOrigin : Nat := 0
+  ghostOriginTable : Array Ghost.OriginRecord := #[⟨.unavailable,none,false⟩]
+  ghostSymD : Std.HashMap SymId Ghost.OriginMap := {}
+  ghostSymE : Std.HashMap SymId Ghost.OriginMap := {}
+  ghostArgIndex : Std.HashMap SymId Nat := {}
+  ghostLastOrigins : Ghost.OriginMap := #[]
   ghostSaved : Array Ghost.SavedTokens := #[]
   ghostReplay : Std.HashMap Nat (Array (Nat × Nat)) := {}
+  ghostFdSources : Std.HashMap Nat Ghost.OpenedFile := {}
+  ghostDirective : Option CSem.Pre.SourceSpan := none
   ghostSources : Array Ghost.ModelSource := #[]
   ghostOrigins : Array Ghost.ModelOrigin := #[]
   ghostPragmas : Array Ghost.PragmaEffect := #[]
@@ -233,6 +245,7 @@ structure TccSt where
   ghostPrior : Nat := 0
   ghost : Array Ghost.Fragment := #[]
   ghostAudit : Array Ghost.Fragment := #[]
+  ghostNormalizations : Array Ghost.NormalizationUse := #[]
   ghostDrops : Array Ghost.Drop := #[]
   ghostTokenErrors : Array String := #[]
   deriving Inhabited
@@ -347,6 +360,31 @@ def curFile : M BufferedFile := do
 Actions only modify the named ghost fields. Syntax errors are retained as
 Ghost.Gap values and do not change compilation or its output bytes. -/
 
+def gorigin (origin : CSem.Pre.Origin) (anchor : Option Ghost.ModelOrigin)
+    (complete : Bool) : M Nat := do
+  let s ← get
+  if !s.ghostEnabled then return 0
+  let id := s.ghostOriginTable.size
+  set { s with ghostOriginTable := s.ghostOriginTable.push ⟨origin,anchor,complete⟩ }
+  return id
+
+/-- Derivations refer only to origins constructed by the modeled lexer and
+macro engine. Missing physical mappings remain explicitly incomplete. -/
+def gderive (kind : Ghost.Derivation) (invocation : Nat) (operands : Array Nat := #[]) : M Nat := do
+  let s ← get
+  if !s.ghostEnabled then return 0
+  let inv := s.ghostOriginTable.getD invocation default
+  let args := operands.map (fun i => s.ghostOriginTable.getD i default)
+  let first := args.getD 0 default
+  let origin : CSem.Pre.Origin := match kind with
+    | .replacement => .replacement inv.origin first.origin
+    | .argument i => .argument inv.origin i first.origin
+    | .stringify => .stringify inv.origin (args.toList.map (·.origin))
+    | .paste => .paste inv.origin first.origin (args.getD 1 default).origin
+    | .builtin => .builtin inv.origin
+  let anchor := match kind with | .argument _ => first.anchor | _ => inv.anchor
+  gorigin origin anchor (inv.complete && args.all (·.complete))
+
 @[inline] def gmark : M Ghost.Mark := do
   let s ← get
   return ⟨s.ghost.size, s.ghostCurrent⟩
@@ -370,7 +408,20 @@ def gwrap (mark : Ghost.Mark) (kind : Ghost.Production) : M Unit :=
       let last := if kind == .block && s.tok == 125 && s.local_scope == 0 then last+1 else last
       let range : Ghost.Range := ⟨mark.first, last⟩
       let f : Ghost.Fragment := ⟨kind, range, Ghost.build ⟨input,kind,range,kids⟩⟩
-      { s with ghost := (g.extract 0 m).push f, ghostAudit := s.ghostAudit.push f }
+      let normalization : Option Ghost.NormalizationKind := match f.value with
+        | .error _ => none
+        | .ok _ =>
+          if !s.ghostParsing then none
+          else if kind == .gnuAttrs then some .gnuAttributeCarrier
+          else if kind == .logop then some .logicalChainRestoration
+          else if kind == .initDecl && kids.any (fun child => match child.value with
+              | .ok (.asmBinding _) => true | _ => false) then some .asmBindingCarrier
+          else none
+      { s with
+        ghost := (g.extract 0 m).push f, ghostAudit := s.ghostAudit.push f,
+        ghostNormalizations := match normalization with
+          | none => s.ghostNormalizations
+          | some kind => s.ghostNormalizations.push ⟨kind,range⟩ }
 
 def gnode (kind : Ghost.Production) (n : Nat := 0) : M Unit := do
   let s ← get

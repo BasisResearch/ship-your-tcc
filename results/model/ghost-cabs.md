@@ -1,5 +1,10 @@
 # Compiler-action typed Cabs checkpoint
 
+Validated continuation: [model-owned origins and typed headers](ghost-cabs-origins.md)
+adds ordinary model-only Cabs, include ancestry and macro replay. Strict raw
+model/spec agreement and whole-C proof/coverage obligations remain open. The
+original checkpoint and its historical evidence below are preserved.
+
 This is an incomplete F3 checkpoint on 8371087 / adopted main 2c8599a.
 The ordinary whole-translation-unit target remains blocked. Its blockers are
 retained below, rather than counted as parser agreements or Supported exclusions.

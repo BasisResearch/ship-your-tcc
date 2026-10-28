@@ -269,7 +269,7 @@ def parse_pp_string (R : Rec) (p0 : Nat) (sep : Int32) (str0 : Option ByteArray)
 def tok_str_add (s : TokenString) (t : Int32) : TokenString :=
   let len := s.len.toNat'
   let str := if len < s.str.size then s.str.set! len t else s.str.push t
-  { s with str := str, len := s.len + 1 }
+  { s with str := str, len := s.len + 1, ghostOrigins := s.ghostOrigins.filter (fun p => p.1 < len) }
 
 /-- pack bytes into little-endian int words (as memcpy into an int array) -/
 def packBytes (b : ByteArray) : Array Int32 := Id.run do
@@ -284,7 +284,8 @@ def packBytes (b : ByteArray) : Array Int32 := Id.run do
   return out
 
 /-- `tok_str_add2(s, t, cv)` -/
-def tok_str_add2 (s : TokenString) (t : Int32) (cv : CValue) : TokenString := Id.run do
+def tok_str_add2 (s : TokenString) (t : Int32) (cv : CValue) (origin : Nat := 0) : TokenString := Id.run do
+  let word := s.len.toNat'
   let mut s := tok_str_add s t
   if t == TOK_CINT || t == TOK_CUINT || t == TOK_CCHAR || t == TOK_LCHAR || t == TOK_U16CHAR || t == TOK_U32CHAR || t == TOK_CFLOAT || t == TOK_LINENUM || t == TOK_PPLINE then
     s := tok_str_add s (cv.tab 0).toInt32
@@ -300,6 +301,7 @@ def tok_str_add2 (s : TokenString) (t : Int32) (cv : CValue) : TokenString := Id
     s := tok_str_add s (cv.tab 1).toInt32
     s := tok_str_add s (cv.tab 2).toInt32
     s := tok_str_add s (cv.tab 3).toInt32
+  if origin != 0 then s := { s with ghostOrigins := s.ghostOrigins.push (word,origin) }
   return s
 
 /-- `tok_str_add_tok(s)`: the current token, with line info -/
@@ -310,18 +312,18 @@ def tok_str_add_tok (s : TokenString) : M TokenString := do
     s := { s with last_line_num := ln }
     s := tok_str_add2 s TOK_LINENUM (CValue.ofI ln.toInt64.toUInt64)
   let st ← get
-  return tok_str_add2 s st.tok st.tokc
+  return tok_str_add2 s st.tok st.tokc st.ghostTokOrigin
 
 /-- `tok_str_add2_spc(s, t, cv)` -/
-def tok_str_add2_spc (s : TokenString) (t : Int32) (cv : CValue) : TokenString :=
+def tok_str_add2_spc (s : TokenString) (t : Int32) (cv : CValue) (origin : Nat := 0) : TokenString :=
   let s := if s.need_spc == 3 then tok_str_add s 32 else s
-  tok_str_add2 { s with need_spc := 2 } t cv
+  tok_str_add2 { s with need_spc := 2 } t cv origin
 
 /-- Macro token provenance does not move the physical input cursor. -/
-def tok_str_add2_line (s : TokenString) (t : Int32) (cv : CValue) (line : Int32) : TokenString :=
+def tok_str_add2_line (s : TokenString) (t : Int32) (cv : CValue) (line : Int32) (origin : Nat := 0) : TokenString :=
   let s := if s.need_spc == 3 then tok_str_add s 32 else s
   let s := tok_str_add2 { s with need_spc := 2 } TOK_PPLINE (CValue.ofI line.toInt64.toUInt64)
-  tok_str_add2 s t cv
+  tok_str_add2 s t cv origin
 
 /-- unpack `n` bytes from int words starting at word `w0` -/
 def unpackBytes (a : TokArr) (w0 n : Nat) : ByteArray := Id.run do
@@ -364,7 +366,7 @@ def tok_get (p : TokPtr) (cv0 : CValue) : Int32 × CValue × TokPtr := Id.run do
 
 /-- `begin_macro(str, alloc)`: `ref` says which TokenString it is; `arr`
 is its `str` (from offset `pos`) -/
-def begin_macro (ref : TSRef) (arr : TokArr) (pos : Nat) (alloc : Int32) : M Nat := do
+def begin_macro (ref : TSRef) (arr : TokArr) (pos : Nat) (alloc : Int32) (origins : Ghost.OriginMap := #[]) : M Nat := do
   let id ← freshId
   let s ← get
   let ln : Int32 := match s.file with
@@ -377,8 +379,8 @@ def begin_macro (ref : TSRef) (arr : TokArr) (pos : Nat) (alloc : Int32) : M Nat
     save_line_num := ln
     save_tok_line := s.tok_line
     alloc := alloc
-    str := ({ arr := arr, pos := pos } : TokPtr) }
-  set { s with macro_stack := fr :: s.macro_stack, macro_ptr := some { arr := arr, pos := pos } }
+    str := ({ arr := arr, pos := pos, ghostOrigins := origins } : TokPtr) }
+  set { s with macro_stack := fr :: s.macro_stack, macro_ptr := some { arr := arr, pos := pos, ghostOrigins := origins } }
   return id
 
 /-- `end_macro()` -/

@@ -1,0 +1,32 @@
+[
+  {
+    "check": "arenas-after-gate",
+    "command": [
+      "python3",
+      "scripts/model_diff.py",
+      "--no-report",
+      "--json-out",
+      "build/ghost-origins12-validation/arenas-after-gate.json",
+      "--require-success",
+      "7",
+      "-j",
+      "4",
+      "build/ghost-byte-inputs/ghost-control.c",
+      "build/ghost-byte-inputs/ghost-declarations.c",
+      "build/ghost-byte-inputs/ghost-designators.c",
+      "build/ghost-byte-inputs/ghost-gnu.c",
+      "build/ghost-byte-inputs/ghost-pragmas.c",
+      "build/ghost-byte-inputs/ghost-spellings.c",
+      "build/ghost-byte-inputs/ghost-typedef.c"
+    ],
+    "exit": 0
+  },
+  {
+    "check": "erasure-after-gate",
+    "command": [
+      "python3",
+      "results/model/ghost-cabs/validate_erasure.py"
+    ],
+    "exit": 0
+  }
+]

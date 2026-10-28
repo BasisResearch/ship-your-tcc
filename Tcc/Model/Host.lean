@@ -83,7 +83,11 @@ def openRd (path : ByteArray) : M Int32 := do
       fd := i + 1
     if fd ≥ 32 then return -1
     let fds := if s.fds.size ≤ fd then s.fds ++ Array.replicate (fd + 1 - s.fds.size) Option.none else s.fds
-    set { s with fds := fds.set! fd (some e) }
+    let ghostFdSources := if !s.ghostEnabled then s.ghostFdSources else
+      match r with
+      | .file p => s.ghostFdSources.insert fd { openedAs := path, resolved := p, contents := e.data }
+      | _ => s.ghostFdSources.erase fd
+    set { s with fds := fds.set! fd (some e), ghostFdSources := ghostFdSources }
     return Int32.ofNat fd
 
 /-- `_read(fd, buf, len)`: the bytes read (none: -1) -/
@@ -109,7 +113,7 @@ def lseekSet (fd : Int32) (off : Nat) : M Int64 := do
   | none => return -1
 
 def close (fd : Int32) : M Unit := do
-  modify fun s => if fd.toNat' < s.fds.size then { s with fds := s.fds.set! fd.toNat' none } else s
+  modify fun s => if fd.toNat' < s.fds.size then { s with fds := s.fds.set! fd.toNat' none, ghostFdSources := s.ghostFdSources.erase fd.toNat' } else s
 
 end Host
 end Tcc.Model

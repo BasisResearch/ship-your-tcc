@@ -1,0 +1,36 @@
+{
+  "source_parent": "31d18ba45a6944a8714a1f3f4d9b6b4581107999",
+  "source_manifest": "full-gate.request.json.gz",
+  "source_count": 2077,
+  "explicit_build": "ghost-origins-12",
+  "full_gate": "ghost-origins-gate-1",
+  "binary_hashes": {
+    ".lake/build/bin/tcc_model": "9a404e770dbb8704406db655e2e4def17fdbde5c6ea37f755b7f78c343c6a026",
+    ".lake/build/bin/tcc_ghost": "7e8320addc54037d795e3659babe5738c60ef51e7451493452b4892c39b0d2db",
+    ".lake/build/bin/tcc_pre_tokens": "c845689c1e5b5e30c8fce60aae6f74b8b2dfefc89b1164559aa8f8a816fa6348",
+    ".lake/build/bin/pre_spec": "7aebea96161ed6338893e8b9a2fc3107381483a5667b7cb881664ea71dac135d",
+    "c/build/base.elf": "be5acb99a33809cb85a256c3dcfab6352746bc1398bb89a4c0f206de8301ab64"
+  },
+  "tinycc_revision": "43c7708b85681a2fd4451c8a541af4494a8919b2 Sat Oct 3 20:18:54 2026 +0200 tccelf: Fix static linking with musl",
+  "csem_revision": "cerberus-lean 704c4e697845127bced66c93fa0763eb51527ca4\nlem-lean e6d8db5680962f49060257d6c2bcb13c284b910f\n# cerberus-lean: OathTech/cerberus-lean, branch mdd/cerberus-lean,\n# commit 2026-10-26 17:26:39 UTC (lead-fetched current snapshot 2026-10-27).\n# lem-lean: OathTech/lem-lean, branch mdd/lean-backend,\n# commit 2026-10-22 01:33:30 UTC; matching LemLib and generator.\n# Upstream targets Lean 4.35.0; this fork retains approved Lean 4.34.0.\n# Imported with scripts/csem_import.sh; local replay and validation recorded\n# in csem/PORT-4.34.md and results/csem/repin-2026-10-27.md.",
+  "artifact_scope": "Complete fixture/raw/origin captures, byte/on-off captures, command/exit reports, verified frozen source manifests and build receipts; no new native Sail run.",
+  "artifacts": {
+    "after-gate-exit-statuses.json": "326c6dc6a36e275ce3eaf02e0c5313cb3354eda4294a9f1aaca56c3acca047da",
+    "arenas.json": "6f6622168e26a416c5c31886109e1a0d9fbe1b030e895bc6ca74e1255e779f24",
+    "artifacts.tar.gz": "488b944b7a3b90369025e395d5be9d8a79235acca258b476fec31b4eca107bd3",
+    "build-history.tar.gz": "92a39a4fa617d66971a5c4e6c193bdb74fb4bb6197779bc4f296b38972f0d442",
+    "erasure.json": "1535fbfa58aba2b3f846822468c28cbc22704eff1f65b2b75a334cbaefddd320",
+    "exit-statuses.json": "d134554808918f2fd1fd8090c880192fdea8cad6ab199b8d4c21dd1556e774c8",
+    "explicit-build.request.json.gz": "ef0414b1fde9590c920bff0528a1bc289b82399cdade6a01218861bea57ca3f0",
+    "explicit-build.result.json.gz": "785a31264ef2f59a0879a1e8afa1a0160a50063147d25c0634e0d6e3a52a567f",
+    "fixtures.json": "66b1d8f7b6f2734fea7897d773bd3f37744be0dfd0c429c3c63126599b1f7848",
+    "full-gate.log.gz": "7e76ca338a63f10ccdb4f0f41d920d79539dab32d036cd29d53e3d90c8611f28",
+    "full-gate.request.json.gz": "de6b8e70dfcbaf4faa61e830e95643edc8e317a6e7e1b4cea0326a0b4e21935f",
+    "full-gate.result.json.gz": "fde3d4659eb6e655d7834d1260ee185567b6d5865fd61ce1d42ba05ea87a6f00",
+    "lead-review-final.txt": "fb7e55227883c99e6a4a53d2e7245da3eb2c2bfcf77a4a41b13874578ef6ab42",
+    "origin-redefinition-discovery.tar.gz": "ef94b35d6a8ca01c3fdd9df492df3a30e97d8f93dc439b500f9bd4efc9658889",
+    "origins.json": "5c9d1bbd67060e010160015ab21edb7304db04fe0094fef9e1a098836d342104",
+    "raw-strict.json": "3c851b87dec75c4d45f0d20481d6767d7b04bea30a79686c473b61d05fa0c9d8",
+    "verify.py": "a0b3b92232fec30d685ab49bd38a5af2cceeb4e3ecce48336f6602ee1571d7e0"
+  }
+}

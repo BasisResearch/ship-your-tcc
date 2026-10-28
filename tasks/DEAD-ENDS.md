@@ -560,3 +560,35 @@ requested corrections until the lead surfaced them explicitly.
   complete for nested/repeated includes; retain actual directive spans or an
   explicit incomplete-provenance gap. Carrier-only Cabs construction is not
   independent parser agreement or a semantic proof for injected asm aliases.
+
+- Ghost origin continuation: deriving physical offsets after lexing fails for
+  tokens crossing the 8 KiB refill. Capture a model-owned physical cursor
+  before the lexer consumes the token. Identity-buffer verification still
+  rejects trigraph/splice transformations; do not declare them mapped.
+- Folded adjacent-string initializer replay must bind its exact saved token
+  positions (including lookahead), or decoded A1A reappears as invented source
+  tokens. Extra tokens are an origin-transport bug, not a normalization.
+- Ordinary header construction needed the modeled name/typedef actions for
+  __builtin_va_list. A spec keyword classification must not choose whether the
+  model declared a name. Do not strip the actual builtin declaration.
+- Physical byte equality does not certify include history. Retaining only
+  ModelOrigin.includeFiles while setting SourceSite.includes=[] loses nested
+  and repeated directive provenance. Capture each directive's actual introducer
+  span before preprocessing and retain empty/repeated source openings too.
+- GNU/asm generic attribute carriers have an exact shared data contract: GNU
+  attr_ns is its located introducer; asm attr_ns is its located keyword and
+  attr_id is the located synthetic asm_label. Earlier ns=none/id=keyword
+  carriers retain fragments but cannot establish exact parser agreement.
+  Neither carrier proves alignment or linkage semantics. The independent
+  typedef-alignment compiler discrepancy remains outside this ghost repair.
+- Origin builds 1/4/9/10 failed on Lean code/record layout (including reserved
+  prefix and multiline record fields after a same-line field). Origin build 2
+  exposed the refill/string replay bugs; 3 repaired them. Preserve receipts;
+  no failed request or stale executable is passing evidence.
+- New repeated-include origin control exposes an actual observer/spec policy
+  difference: equal macro redefinition points at the second definition in the
+  modeled compiler (define_push installs a new symbol), while independent
+  Phase4 keeps the first definition. Keep the full differing Origin records;
+  do not choose the spec origin or normalize the histories to manufacture
+  equality. Separate repeated-declaration and nested/#line/alias controls
+  check include ancestry without concealing this discrepancy.

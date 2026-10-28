@@ -14,6 +14,9 @@ def gap (g : Gap) : Json := Json.mkObj [
 def value : Ghost.Syntax → Json
   | .expression e => CSemCParser.CabsExport.tag "expression" [("value",CSemCParser.CabsExport.expr e)]
   | .typeName t => CSemCParser.CabsExport.tag "typeName" [("value",CSemCParser.CabsExport.typeName t)]
+  | .identifier id => CSemCParser.CabsExport.tag "identifier" [("value",CSemCParser.CabsExport.ident id)]
+  | .attributes a => CSemCParser.CabsExport.tag "attributes" [("value",CSemCParser.CabsExport.attributes a)]
+  | .asmBinding s => CSemCParser.CabsExport.tag "asmBinding" [("literal",CSemCParser.CabsExport.stringLiteral s)]
   | .specs s => CSemCParser.CabsExport.tag "specifiers" [("value",CSemCParser.CabsExport.specs s)]
   | .decl (.concrete d) => CSemCParser.CabsExport.tag "declarator" [("value",CSemCParser.CabsExport.declarator d)]
   | .decl (.abstract a) => CSemCParser.CabsExport.tag "abstractDeclarator" [("value",CSemCParser.CabsExport.opt CSemCParser.CabsExport.absDecl a)]
@@ -34,11 +37,14 @@ def fragment (f : Fragment) : Json := Json.mkObj [
   ("gap",match f.value with | .ok _ => Json.null | .error e => gap e),
   ("syntax",match f.value with | .ok v => value v | .error _ => Json.null)]
 
+def normalizations (s : TccSt) : Json := Json.arr (s.ghostNormalizations.map fun n => Json.mkObj [
+  ("kind",toJson (reprStr n.kind)),("range",range n.range)])
+
 def artifact (s : TccSt) : Json :=
   let fields := match output s with
     | .ok tu => [("status",toJson "ok"),("cabs",CSemCParser.CabsExport.translationUnit tu)]
     | .error g => [("status",toJson "unimplemented"),("gap",gap g)]
-  Json.mkObj (fields ++ [("audit",Json.arr (s.ghostAudit.map fragment)),
+  Json.mkObj (fields ++ [("normalizations",normalizations s),("audit",Json.arr (s.ghostAudit.map fragment)),
     ("token_errors",toJson s.ghostTokenErrors),
     ("tokens",toJson (((s.ghostInput.map (·.spelling)).getD #[]).toList.map fun t =>
       (reprStr t.kind,t.spell.map UInt8.toNat))),
