@@ -193,13 +193,13 @@ structure CompilerEnvironmentImage_Statement (cfg : Config) (image : FileSys) : 
 one linker function must name exactly the same canonical symbols. Consequently
 function-pointer creation, storage and equality use the existing single
 `Mem.fun_ptrval` identity; there is no call-only alias rewrite. -/
-structure BindingResolution (binding : InjectedBinding) (core : file Unit) : Prop where
+structure BindingResolution (binding : InjectedBinding) (core : file Unit) where
   symbols : List sym
   nonempty : symbols ≠ []
   kind : linking_kind
-  alias : fmapLookup (.Identifier .unknown binding.identity.binding_name) core.extern = some (symbols, kind)
+  alias : fmapLookupBy (fun (a b : identifier) => Lem_Basic_classes.ordCompare a b) (.Identifier .unknown binding.identity.binding_name) core.extern = some (symbols, kind)
   target : ∀ targets k,
-    fmapLookup (.Identifier .unknown binding.identity.binding_linker_name) core.extern = some (targets, k) →
+    fmapLookupBy (fun (a b : identifier) => Lem_Basic_classes.ordCompare a b) (.Identifier .unknown binding.identity.binding_linker_name) core.extern = some (targets, k) →
       targets = symbols
 
 /-- OPEN F1/F3/F7 transport: actual raw elaboration must supply canonical
