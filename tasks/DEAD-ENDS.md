@@ -849,3 +849,20 @@ an explicit follow-up, not established by arena equality.
   ctype_of/qualified_ctype_of are projected verbatim from shared source; all
   unrelated translation_aux code stays pristine after the adopted patches.
   Oracle5 and the full gate pass; no stale or failed oracle counts as evidence.
+
+- Combined alignment postchecks attempt1: full gate passes3640 source pins, but
+  component receipt readers require sha256 while the lead request used the
+  service-supported source_hashes spelling. Preserve the successful gate and
+  failed postchecks; submit a new uniquely named request with unchanged source
+  hashes and the shared schema. Do not rewrite the original request/receipt.
+  The extra host-tcc matrix also selected a stale pre-typedef binary; raw Lean,
+  isolated OCaml and Cabs agree, but old host tcc fails42rows. Preserve that
+  binary/build tree and all observations, rebuild pristine+current patches,
+  then rerun. Those old host observations are not current compiler evidence.
+
+- Alignment integration packaging: including both old/current host source trees
+  includes filesystem symlinks. Default tar emits symlink records, while the
+  portable verifier intentionally requires independently hashed regular files.
+  Preserve the failed encoding in build/alignment-package-links.tar.xz;
+  repack the same inputs with dereference=True and verify every member. No
+  observation is removed and no failed package is adopted.

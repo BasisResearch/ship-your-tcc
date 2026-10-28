@@ -1,0 +1,85 @@
+{
+  "archive": ".claude/worktrees/sol-f2-tokens/results/model/injected-binding-origins/evidence.tar.xz",
+  "archive_sha256": "b20b388ac57ecf078a1f42bc903fc8d5c5df58068be5fb200173dedfbfe534cd",
+  "reason": "Completed binding observations only; all files verified against committed archive before unlink. Current unevaluated-syntax work, shared inputs and native caches untouched.",
+  "entries": [
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/binding-origin-controls-6",
+      "member_prefix": "build/binding-origin-controls-6",
+      "files": 145,
+      "bytes": 3365506
+    },
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/binding-origin-controls-4",
+      "member_prefix": "build/binding-origin-controls-4",
+      "files": 145,
+      "bytes": 3411449
+    },
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/binding-origin-controls-3",
+      "member_prefix": "build/binding-origin-controls-3",
+      "files": 145,
+      "bytes": 3260465
+    },
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/binding-origin-physical-4",
+      "member_prefix": "build/binding-origin-physical-4",
+      "files": 349,
+      "bytes": 260626618
+    },
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/binding-origin-physical-6",
+      "member_prefix": "build/binding-origin-physical-6",
+      "files": 349,
+      "bytes": 260626618
+    },
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/binding-origin-physical-3",
+      "member_prefix": "build/binding-origin-physical-3",
+      "files": 349,
+      "bytes": 260626618
+    },
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/binding-origin-raw-component-6",
+      "member_prefix": "build/binding-origin-raw-component-6",
+      "files": 281,
+      "bytes": 476242773
+    },
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/binding-origin-raw-component-4",
+      "member_prefix": "build/binding-origin-raw-component-4",
+      "files": 281,
+      "bytes": 476242372
+    },
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/binding-origin-raw-component-3",
+      "member_prefix": "build/binding-origin-raw-component-3",
+      "files": 281,
+      "bytes": 476242372
+    },
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/binding-origin-shared-3",
+      "member_prefix": "build/binding-origin-shared-3",
+      "files": 281,
+      "bytes": 2445937
+    },
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/binding-origin-shared-6",
+      "member_prefix": "build/binding-origin-shared-6",
+      "files": 281,
+      "bytes": 2446372
+    },
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/binding-origin-shared-4",
+      "member_prefix": "build/binding-origin-shared-4",
+      "files": 281,
+      "bytes": 2445937
+    },
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/binding-origin-independent-raw-6",
+      "member_prefix": "build/binding-origin-independent-raw-6",
+      "files": 281,
+      "bytes": 373389967
+    }
+  ]
+}

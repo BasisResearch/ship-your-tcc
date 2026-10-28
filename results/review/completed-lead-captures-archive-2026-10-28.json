@@ -1,0 +1,61 @@
+{
+  "reason": "Remove only inactive loose capture duplicates already retained byte-identically in committed evidence archives; all selected source files verified against archived members before unlink. Native capture caches and source inputs remain.",
+  "entries": [
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/binding-integrated/authority",
+      "archive": ".claude/worktrees/sol-c11-line/results/model/binding-integration-2026-10-28/captures.tar.xz",
+      "member_prefix": "combined/authority",
+      "files": 145,
+      "bytes": 3365685,
+      "archive_sha256": "1ec7b355a9f588b470c5120f826f7cccee2fec1b1f157edbb7927559ebec3c93"
+    },
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/binding-integrated/physical",
+      "archive": ".claude/worktrees/sol-c11-line/results/model/binding-integration-2026-10-28/captures.tar.xz",
+      "member_prefix": "combined/physical",
+      "files": 349,
+      "bytes": 260626617,
+      "archive_sha256": "1ec7b355a9f588b470c5120f826f7cccee2fec1b1f157edbb7927559ebec3c93"
+    },
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/binding-integrated/shared",
+      "archive": ".claude/worktrees/sol-c11-line/results/model/binding-integration-2026-10-28/captures.tar.xz",
+      "member_prefix": "combined/shared",
+      "files": 281,
+      "bytes": 2446371,
+      "archive_sha256": "1ec7b355a9f588b470c5120f826f7cccee2fec1b1f157edbb7927559ebec3c93"
+    },
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/binding-integrated/raw-component",
+      "archive": ".claude/worktrees/sol-c11-line/results/model/binding-integration-2026-10-28/captures.tar.xz",
+      "member_prefix": "combined/raw-component",
+      "files": 281,
+      "bytes": 476242772,
+      "archive_sha256": "1ec7b355a9f588b470c5120f826f7cccee2fec1b1f157edbb7927559ebec3c93"
+    },
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/binding-integrated/independent",
+      "archive": ".claude/worktrees/sol-c11-line/results/model/binding-integration-2026-10-28/captures.tar.xz",
+      "member_prefix": "combined/independent",
+      "files": 281,
+      "bytes": 373389966,
+      "archive_sha256": "1ec7b355a9f588b470c5120f826f7cccee2fec1b1f157edbb7927559ebec3c93"
+    },
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/physical-integrated/shared",
+      "archive": ".claude/worktrees/sol-c11-line/results/model/physical-integration-2026-10-28/captures.tar.xz",
+      "member_prefix": "observations/shared",
+      "files": 281,
+      "bytes": 2445508,
+      "archive_sha256": "037dc108f199aaecd9b04bbb8ab5120a28b32425dfc756366fc5655414d7cd03"
+    },
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/physical-integrated/onoff",
+      "archive": ".claude/worktrees/sol-c11-line/results/model/physical-integration-2026-10-28/captures.tar.xz",
+      "member_prefix": "observations/onoff",
+      "files": 145,
+      "bytes": 44239059,
+      "archive_sha256": "037dc108f199aaecd9b04bbb8ab5120a28b32425dfc756366fc5655414d7cd03"
+    }
+  ]
+}

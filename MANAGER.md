@@ -38,15 +38,15 @@ pushes main without force. Record unsuccessful approaches in
 The launcher follows 4ct-digest's MANAGER.md/codexwork.sh workflow, adapted
 to this project's two-worker limit and shared Lean build lock.
 
-Current assignments, 2026-10-28: slot 1 runs tasks/f1-gnu-alignment-semantics.md
-in sol-csem-repin, including CSEM-13 array constraints. Slot 2 now runs
-tasks/f3-unevaluated-syntax.md in sol-f2-tokens: complete C11 generic-selection
-and static-assert syntax from compiler actions. Its base is the reviewed binding
-and model-opening combination plus main's invocation harness; binding/authority adoption
-passed the fresh combined gate and comparisons. Original worker branches and
-all evidence remain preserved. No third worker runs. Bitfields, general
-declaration constraints, other upstream invocation modes and complete multi-TU
-ghost construction remain queued. Runtime coverage remains a separate duty.
+Current assignments, 2026-10-28: slot 1 runs tasks/f1-bitfields.md in
+sol-csem-repin. Slot 2 runs tasks/f3-array-alignment-decay.md in sol-f2-tokens,
+repairing the compiler's leaked array-alias alignment and its model. Both use
+reviewed alignment/binding bases; slot 2 also includes the reviewed generic/
+static-assert checkpoint. The lead independently gates each combination before
+main adoption. Original worker branches and all evidence remain preserved.
+No third worker runs. Wide static-assert messages, general declaration
+constraints, other upstream invocation modes, complete multi-TU ghost
+construction and runtime body coverage remain queued.
 
 Frozen build requests use the shared 12 GB lock. Changed inputs invalidate
 a request; freeze a new hash manifest before retrying. Infrastructure limits
@@ -61,8 +61,8 @@ requested corrections must be resolved or returned as an explicit obstruction.
 Keep build receipts compact: inspect ID/status/lead notes, and verify large
 hash manifests with scripts. Do not repeatedly print whole manifests or logs.
 
-Next integration duty: tasks/f3-injected-binding-origins.md follows the binding
-and physical-map checkpoints. Existing raw Cabs component checks parse model
-tokens; the additional comparison must call independent Raw.checked cfgTcc.
-Keep old counts and this stronger provenance obligation separate. Intended
-multi-file corpus invocations are queued in tasks/f3-corpus-invocations.md.
+Next integration duty: combine the reviewed generic/static-assert compiler
+actions with the newly adopted Cabs expression-alignment constructor. Keep
+shared-token, model-token parser and independent Raw.checked comparisons
+separately labeled. The array-decay worker must turn its precise compiler
+failure into a positive regression without changing CSem to match the bug.

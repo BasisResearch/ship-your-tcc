@@ -1,0 +1,9 @@
+{
+  "source": ".claude/worktrees/sol-csem-repin/build/f1a",
+  "archive": "build/recovery/completed-f1a-captures-2026-10-28/captures.tar.gz",
+  "archive_sha256": "ae3d00e934a7e392d89787f41b7dbaa91eb6b03dbc624e5b383b5145531c277b",
+  "member_count": 7609,
+  "uncompressed_bytes": 2331075250,
+  "archive_bytes": 105602080,
+  "reason": "Completed historical F1 parser captures; every file verified before removing loose duplicates. Current bitfield work and all source checkouts remain unchanged. Restore exact paths from the archive when needed."
+}

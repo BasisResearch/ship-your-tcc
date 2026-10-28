@@ -1,0 +1,1813 @@
+{
+  "rows": [
+    {
+      "case": "address-type",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "aggregate-array",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "aligned-pointer",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "array-function-array-local",
+      "invalid": true,
+      "raw_exit": 0,
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 1,
+      "ocaml_constraint_diagnostic": true,
+      "ocaml_verdicts": [],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 1,
+      "gcc_exit": null,
+      "tcc_compile_exit": 1,
+      "tcc_exit": null,
+      "status": "CONSTRAINT_DIAGNOSTIC"
+    },
+    {
+      "case": "array-function-array-typedef",
+      "invalid": true,
+      "raw_exit": 0,
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 1,
+      "ocaml_constraint_diagnostic": true,
+      "ocaml_verdicts": [],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 1,
+      "gcc_exit": null,
+      "tcc_compile_exit": 1,
+      "tcc_exit": null,
+      "status": "CONSTRAINT_DIAGNOSTIC"
+    },
+    {
+      "case": "array-function-array",
+      "invalid": true,
+      "raw_exit": 0,
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 1,
+      "ocaml_constraint_diagnostic": true,
+      "ocaml_verdicts": [],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 1,
+      "gcc_exit": null,
+      "tcc_compile_exit": 1,
+      "tcc_exit": null,
+      "status": "CONSTRAINT_DIAGNOSTIC"
+    },
+    {
+      "case": "array-function-pointer-array",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "array-incomplete-extern",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "array-int-array",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "array-overaligned-array",
+      "invalid": true,
+      "raw_exit": 0,
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 1,
+      "ocaml_constraint_diagnostic": true,
+      "ocaml_verdicts": [],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 1,
+      "gcc_exit": null,
+      "tcc_compile_exit": 1,
+      "tcc_exit": null,
+      "status": "CONSTRAINT_DIAGNOSTIC"
+    },
+    {
+      "case": "array-pointer",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "array-void-array-local",
+      "invalid": true,
+      "raw_exit": 0,
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 1,
+      "ocaml_constraint_diagnostic": true,
+      "ocaml_verdicts": [],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 1,
+      "gcc_exit": null,
+      "tcc_compile_exit": 1,
+      "tcc_exit": null,
+      "status": "CONSTRAINT_DIAGNOSTIC"
+    },
+    {
+      "case": "array-void-array-typedef",
+      "invalid": true,
+      "raw_exit": 0,
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 1,
+      "ocaml_constraint_diagnostic": true,
+      "ocaml_verdicts": [],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 1,
+      "gcc_exit": null,
+      "tcc_compile_exit": 1,
+      "tcc_exit": null,
+      "status": "CONSTRAINT_DIAGNOSTIC"
+    },
+    {
+      "case": "array-void-array",
+      "invalid": true,
+      "raw_exit": 0,
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 1,
+      "ocaml_constraint_diagnostic": true,
+      "ocaml_verdicts": [],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 1,
+      "gcc_exit": null,
+      "tcc_compile_exit": 1,
+      "tcc_exit": null,
+      "status": "CONSTRAINT_DIAGNOSTIC"
+    },
+    {
+      "case": "arrays",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "attribute-position-0",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 1,
+      "ocaml_exit": 1,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [],
+      "full_ocaml_cabs": false,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "OCAML_PLACEMENT_LIMITATION"
+    },
+    {
+      "case": "attribute-position-1",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 1,
+      "ocaml_exit": 1,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [],
+      "full_ocaml_cabs": false,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "OCAML_PLACEMENT_LIMITATION"
+    },
+    {
+      "case": "attribute-position-2",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "chain",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "common-types",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "deref",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "expression-address",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "expression-array",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "expression-global",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "expression-local",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "expression-parent",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "function-typeof",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 1,
+      "ocaml_constraint_diagnostic": true,
+      "ocaml_verdicts": [],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "FUNCTION_TYPE_POLICY_OBSTRUCTION"
+    },
+    {
+      "case": "functions",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 1,
+      "ocaml_constraint_diagnostic": true,
+      "ocaml_verdicts": [],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "FUNCTION_TYPE_POLICY_OBSTRUCTION"
+    },
+    {
+      "case": "nested-declarator",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "object-vs-type",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "pointer-qualifiers",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "pointers",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "prefix-attribute",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 1,
+      "ocaml_exit": 1,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [],
+      "full_ocaml_cabs": false,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "OCAML_PLACEMENT_LIMITATION"
+    },
+    {
+      "case": "qualified",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "queries",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "stronger",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "typeof",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "unary-types",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "weaker",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "transport-unary-plus",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "transport-unary-minus",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "transport-unary-not",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "transport-logical-not",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "transport-add-alias",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "transport-add-int",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "transport-shift-left",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "transport-shift-right",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "transport-band-alias",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "transport-band-int",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "transport-cond-alias",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "transport-cond-int",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "transport-comma",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "transport-assign",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "transport-compound",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "transport-preinc",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "transport-postinc",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "transport-cast-alias",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "transport-cast-int",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "transport-address",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "transport-indirect",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "transport-return",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "transport-statement",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "transport-generic",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "constraint-pointer-to-function-array",
+      "invalid": true,
+      "raw_exit": 0,
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 1,
+      "ocaml_constraint_diagnostic": true,
+      "ocaml_verdicts": [],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 1,
+      "gcc_exit": null,
+      "tcc_compile_exit": 1,
+      "tcc_exit": null,
+      "status": "CONSTRAINT_DIAGNOSTIC"
+    },
+    {
+      "case": "constraint-pointer-to-void-array",
+      "invalid": true,
+      "raw_exit": 0,
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 1,
+      "ocaml_constraint_diagnostic": true,
+      "ocaml_verdicts": [],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 1,
+      "gcc_exit": null,
+      "tcc_compile_exit": 1,
+      "tcc_exit": null,
+      "status": "CONSTRAINT_DIAGNOSTIC"
+    },
+    {
+      "case": "constraint-parameter-function-array",
+      "invalid": true,
+      "raw_exit": 0,
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 1,
+      "ocaml_constraint_diagnostic": true,
+      "ocaml_verdicts": [],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 1,
+      "gcc_exit": null,
+      "tcc_compile_exit": 1,
+      "tcc_exit": null,
+      "status": "CONSTRAINT_DIAGNOSTIC"
+    },
+    {
+      "case": "constraint-typename-void-array",
+      "invalid": true,
+      "raw_exit": 0,
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 1,
+      "ocaml_constraint_diagnostic": true,
+      "ocaml_verdicts": [],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 1,
+      "gcc_exit": null,
+      "tcc_compile_exit": 1,
+      "tcc_exit": null,
+      "status": "CONSTRAINT_DIAGNOSTIC"
+    },
+    {
+      "case": "constraint-nested-incomplete-array",
+      "invalid": true,
+      "raw_exit": 0,
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 1,
+      "ocaml_constraint_diagnostic": true,
+      "ocaml_verdicts": [],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 1,
+      "gcc_exit": null,
+      "tcc_compile_exit": 1,
+      "tcc_exit": null,
+      "status": "CONSTRAINT_DIAGNOSTIC"
+    },
+    {
+      "case": "array-alias-decay",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 1,
+      "status": "COMPILER_ARRAY_DECAY_DISCREPANCY"
+    },
+    {
+      "case": "member-return",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    },
+    {
+      "case": "unevaluated",
+      "invalid": false,
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "full_text_cabs": true,
+      "ocaml_parse_exit": 0,
+      "ocaml_exit": 0,
+      "ocaml_constraint_diagnostic": false,
+      "ocaml_verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "full_ocaml_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "tcc_compile_exit": 0,
+      "tcc_exit": 0,
+      "status": "DEFINED_ZERO"
+    }
+  ],
+  "counts": {
+    "COMPILER_ARRAY_DECAY_DISCREPANCY": 1,
+    "CONSTRAINT_DIAGNOSTIC": 12,
+    "DEFINED_ZERO": 53,
+    "FUNCTION_TYPE_POLICY_OBSTRUCTION": 2,
+    "OCAML_PLACEMENT_LIMITATION": 3
+  },
+  "pins": {
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_raw": "d8cba33334e56007aef4bd2814fd5e295a4d61c51211b8b3613825b91e5514ea",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_cparse": "8833cd22f6a5064c2379fe98f0d511256bd3a14f16838f91df728dfdec2b01d2",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/ee06b1562b7a991a3aacb8faac82698828228a6aa3290fa420e7c2276135f0b9/_build/default/backend/driver/main.exe": "8e4f467bb6d4a374290f041cea6b8b3f69273cd796d0050bcb3080f0c4b01766",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run": "3279177e7baa19a66e28bcd7c69c10bd82d46dc8d37d7066ebc802884bfd0457",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/array-incomplete-extern.c": "3e5a6ce0dccfcb0f790fb1ce4c5afa8ca9310cf0278f0352cdb19650809b8124",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/aggregate-array.c": "1ee89f7a0fb055d2438bb10b4fb660ed3ba622d58ecc2712ddb64ea0af750a88",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/attribute-position-0.c": "9443c202940b6fb350177e1ce798ec6be8ae7c7a368b9627888b8fbba228cdc7",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/array-void-array.c": "40fe8357e7c2a7970211a6e7ded5a3a20e68548e4e372b394d08d1f6d86e81b0",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/function-typeof.c": "e8f26d0b79447e7bfd18038a997b73d3aecdfea0680af05c2d76eecccb9f896a",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/expression-array.c": "3c6b669dbfbeeb45e582ccb856dfee6a7409357f490e41f45d504577865a3ee3",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/array-void-array-typedef.c": "4aa8354e4fec426ffc31f14582205b4d873866ceeca657a7620888defc84a997",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/address-type.c": "b4ba0df1aa554c85ec15ee5a10bef0dc89493df1c7fa2abed9a93f2a11bc209d",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/array-function-array.c": "d7d21719f543ff8fa4ab9710d1b64ef19b05169e7630ea0da9b0d5f7d76ffd4f",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/pointers.c": "d3533d3fff08f47800214d89638b7afcaba95248e6594aba4d0d613ab1a86194",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/chain.c": "9bd3524eee256b8804d4c9adca2cbe3209b27f4f6dfe70556447a147949115da",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/weaker.c": "705befdac2a3e92be0ec84561a0a407d9894761036ea2f564c8a602a462b306b",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/common-types.c": "c96b6081d08b7799294257b30d72bbeeaba546a4140a14d52169c4a44d0cc4ac",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/expression-address.c": "c187ca12e8a649b42fafc123c74814f5794cec13fe7cce812076d0774c1c28b1",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/deref.c": "ef54403ab63deab281c6d6f87e3833a95b997acf0d2e792396e2aedf98f7e3c6",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/nested-declarator.c": "886e4edb3073fa18ca9ed053613d956b2d2aeb3c83ad8cc66d78a0644566374c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/array-function-pointer-array.c": "e40f567d068792383af66c962fafb8f488eb4cfa533fc488c25131aabb645b57",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/attribute-position-2.c": "8b262cd814593b9a6b5954b2be7651ca2acbc83bb21af3e3f6dd210a8f552ae6",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/functions.c": "f94400a18896a2c7e9568b67b9c3349dbd6629a356faaee073395f83d177d340",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/typeof.c": "99111ea65a208a7583761cf048fbfe975b41907e2bd04d7ecc568da90b783214",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/array-function-array-typedef.c": "53be836765e549ab4a283d9408d6d2dd68535694d5382f39ec548114ad8452fe",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/queries.c": "f2bc99d1531d379204cae4ad6d12d3d45d42ae23997d41de482d74976c6ffe2b",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/array-void-array-local.c": "9564ed002d11928769b1c96d0a2e3e0a772c2300ca0a959cd647cd8a3d41be52",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/stronger.c": "35bac5045285fea2b1464d00dc97b2cf21c1572577dfbd2452dd4f19645043c1",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/array-pointer.c": "d85150289c993dd683bc9989fa4605af20ab9c4aad35e1b873e6dcb9584eac65",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/unary-types.c": "3b3997a1bb8f3bb5770d7bf731fe8e3a7fe4a7f4584016d1cc0a9b66abb418f0",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/expression-global.c": "d2969b7e34801b523a038328aadf9f7304944b7ad0e3a02b62475a1d23ee5324",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/object-vs-type.c": "5a84000b1d8d161492c34057fe9be30d693dfda2d74f74f5d5b5fb0204cdb1a2",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/aligned-pointer.c": "5e2dd6561219a3908adcd0a833de73ee7e41299de79a1fefcf58e03206a8e4f4",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/array-function-array-local.c": "ba3679a88588d3fb4afd31af677b126f191b1497df8eb2eda5aced8117b47566",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/expression-parent.c": "8e08e75bdec62ade4c593a063d9b187049484a22c09f810f95aa49e5dd57214a",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/qualified.c": "0a30972b1c1e4184013de69b219ff2e132ae6b1d99e35dfdb1aca0043fb26acd",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/array-overaligned-array.c": "ee039179d545f07f64105b8e8c0ef36c22a0fc4c82bd0f96ef4b4a002ed7fb0c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/prefix-attribute.c": "89517bbb49301007dad8695a9306f2e0c3713a743eda86be77bf64ae4b1c7286",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/array-int-array.c": "91a0a377e9e6ad4dcf9d7297eb367601084e3a1cc46ccf4a4084c8d3b7d0b647",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/expression-local.c": "98761669159c81116c8f60ace56f87be4f8e7a779fd51b670e25b920b6c03510",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/pointer-qualifiers.c": "ff59941cde0e3661294106dedc560f69ecd1b0487f626c9d6d6ab9461ed1cd4f",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/attribute-position-1.c": "911fd244e8518fb97b53513050928cba89076d34bb16387f0c4db3391ef91fe2",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/c/tests/csem-alignment/arrays.c": "f2ab92fa4467349596e518be9ce003ca2f7a3da6a8dd7bc7f03c6a2f0540a92f",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/test-c11/host/tcc": "463435f5a686d8ce196c33ff177c7ef89478f9632cd3087465b7b8a67fa9287a",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/address-type/input.c": "b4ba0df1aa554c85ec15ee5a10bef0dc89493df1c7fa2abed9a93f2a11bc209d",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/aggregate-array/input.c": "1ee89f7a0fb055d2438bb10b4fb660ed3ba622d58ecc2712ddb64ea0af750a88",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/aligned-pointer/input.c": "5e2dd6561219a3908adcd0a833de73ee7e41299de79a1fefcf58e03206a8e4f4",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/array-function-array-local/input.c": "ba3679a88588d3fb4afd31af677b126f191b1497df8eb2eda5aced8117b47566",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/array-function-array-typedef/input.c": "53be836765e549ab4a283d9408d6d2dd68535694d5382f39ec548114ad8452fe",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/array-function-array/input.c": "d7d21719f543ff8fa4ab9710d1b64ef19b05169e7630ea0da9b0d5f7d76ffd4f",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/array-function-pointer-array/input.c": "e40f567d068792383af66c962fafb8f488eb4cfa533fc488c25131aabb645b57",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/array-incomplete-extern/input.c": "3e5a6ce0dccfcb0f790fb1ce4c5afa8ca9310cf0278f0352cdb19650809b8124",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/array-int-array/input.c": "91a0a377e9e6ad4dcf9d7297eb367601084e3a1cc46ccf4a4084c8d3b7d0b647",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/array-overaligned-array/input.c": "ee039179d545f07f64105b8e8c0ef36c22a0fc4c82bd0f96ef4b4a002ed7fb0c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/array-pointer/input.c": "d85150289c993dd683bc9989fa4605af20ab9c4aad35e1b873e6dcb9584eac65",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/array-void-array-local/input.c": "9564ed002d11928769b1c96d0a2e3e0a772c2300ca0a959cd647cd8a3d41be52",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/array-void-array-typedef/input.c": "4aa8354e4fec426ffc31f14582205b4d873866ceeca657a7620888defc84a997",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/array-void-array/input.c": "40fe8357e7c2a7970211a6e7ded5a3a20e68548e4e372b394d08d1f6d86e81b0",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/arrays/input.c": "f2ab92fa4467349596e518be9ce003ca2f7a3da6a8dd7bc7f03c6a2f0540a92f",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/attribute-position-0/input.c": "9443c202940b6fb350177e1ce798ec6be8ae7c7a368b9627888b8fbba228cdc7",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/attribute-position-1/input.c": "911fd244e8518fb97b53513050928cba89076d34bb16387f0c4db3391ef91fe2",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/attribute-position-2/input.c": "8b262cd814593b9a6b5954b2be7651ca2acbc83bb21af3e3f6dd210a8f552ae6",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/chain/input.c": "9bd3524eee256b8804d4c9adca2cbe3209b27f4f6dfe70556447a147949115da",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/common-types/input.c": "c96b6081d08b7799294257b30d72bbeeaba546a4140a14d52169c4a44d0cc4ac",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/deref/input.c": "ef54403ab63deab281c6d6f87e3833a95b997acf0d2e792396e2aedf98f7e3c6",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/expression-address/input.c": "c187ca12e8a649b42fafc123c74814f5794cec13fe7cce812076d0774c1c28b1",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/expression-array/input.c": "3c6b669dbfbeeb45e582ccb856dfee6a7409357f490e41f45d504577865a3ee3",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/expression-global/input.c": "d2969b7e34801b523a038328aadf9f7304944b7ad0e3a02b62475a1d23ee5324",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/expression-local/input.c": "98761669159c81116c8f60ace56f87be4f8e7a779fd51b670e25b920b6c03510",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/expression-parent/input.c": "8e08e75bdec62ade4c593a063d9b187049484a22c09f810f95aa49e5dd57214a",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/function-typeof/input.c": "e8f26d0b79447e7bfd18038a997b73d3aecdfea0680af05c2d76eecccb9f896a",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/functions/input.c": "f94400a18896a2c7e9568b67b9c3349dbd6629a356faaee073395f83d177d340",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/nested-declarator/input.c": "886e4edb3073fa18ca9ed053613d956b2d2aeb3c83ad8cc66d78a0644566374c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/object-vs-type/input.c": "5a84000b1d8d161492c34057fe9be30d693dfda2d74f74f5d5b5fb0204cdb1a2",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/pointer-qualifiers/input.c": "ff59941cde0e3661294106dedc560f69ecd1b0487f626c9d6d6ab9461ed1cd4f",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/pointers/input.c": "d3533d3fff08f47800214d89638b7afcaba95248e6594aba4d0d613ab1a86194",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/prefix-attribute/input.c": "89517bbb49301007dad8695a9306f2e0c3713a743eda86be77bf64ae4b1c7286",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/qualified/input.c": "0a30972b1c1e4184013de69b219ff2e132ae6b1d99e35dfdb1aca0043fb26acd",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/queries/input.c": "f2bc99d1531d379204cae4ad6d12d3d45d42ae23997d41de482d74976c6ffe2b",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/stronger/input.c": "35bac5045285fea2b1464d00dc97b2cf21c1572577dfbd2452dd4f19645043c1",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/typeof/input.c": "99111ea65a208a7583761cf048fbfe975b41907e2bd04d7ecc568da90b783214",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/unary-types/input.c": "3b3997a1bb8f3bb5770d7bf731fe8e3a7fe4a7f4584016d1cc0a9b66abb418f0",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/weaker/input.c": "705befdac2a3e92be0ec84561a0a407d9894761036ea2f564c8a602a462b306b",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/transport-unary-plus/input.c": "20915e3cf5373e6a5fdcfe30dfc3dbe269560e99a5d56015e9bd1d4fc878bc87",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/transport-unary-minus/input.c": "82c7ea382982918b1371d7245c42a392c81b5c3fc6cd40596efcb5985861f29e",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/transport-unary-not/input.c": "2222f449462a78e523b11ff460cc09fe0348d82ff2dfda958328380ba4d82410",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/transport-logical-not/input.c": "aa04411666a9284c149493a83636ae05e4b292f3422d485f276986d90c9d40f6",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/transport-add-alias/input.c": "35deb03cedf03d7d84bf142837cd93be498260cc1984eef3dd5039b99db539de",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/transport-add-int/input.c": "1b28ec824654d425e2488c2fa3f2942112374dd966004cd8712c27bfac7dbdf6",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/transport-shift-left/input.c": "492b108ec0e295a921adf5f354d0839e4d518c654aa2e7cb5a102064f4ecac7d",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/transport-shift-right/input.c": "2b3b056a94e90bf0c66f28de63b82e2ba2d502ece8ceee99a39b200ac95a9f59",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/transport-band-alias/input.c": "bc50e9d58eb8fed9659c24a75cb60ef5ee9213355786b121507fb849aec545de",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/transport-band-int/input.c": "9b071fe0719c8d1c259c9eb59e897802481a6c8dcdf80cbfb74bd564b5921309",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/transport-cond-alias/input.c": "d4f713128701c7fe0bc2ad3a75cd02f942b211aec2e3c0ce5c126e9752c92c90",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/transport-cond-int/input.c": "3bc94755c56cc411f7ffa6101af116114edd66dee9cda593d98d968cad482869",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/transport-comma/input.c": "0aa5a727610267d7d21545c060a025f1e4803e76612c8ee75ac5a3d5ee4df413",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/transport-assign/input.c": "2698942ce78de83ad1426f27d25ba1bba524c49b5beec0e004d7e6361af97b4b",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/transport-compound/input.c": "74ff034258c9937cd952fa596dfc30e817177a8b5d85f8709a012e0b71087a96",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/transport-preinc/input.c": "16b2391c0533c87cd9db0580aff94a660470ff8a6aece122a50b315143c93c15",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/transport-postinc/input.c": "bd6926ea8431985375abf37e7c56cebe680f840dea08acf16c8a55fdcd1ea83c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/transport-cast-alias/input.c": "720606c446978420cbc581986d23cbc02849128924cd0f67dae66d994412cc3f",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/transport-cast-int/input.c": "b5fa4c5c8ed4bb63ad01a03eba7413315811be817b7ccf741f653f2f5495414d",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/transport-address/input.c": "86c60c0f51164ceeff041a0f3980d793c9ad15e84b57fb577452ba68e81567ea",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/transport-indirect/input.c": "3448dce22eaed9fc970beb74826d74bee26f32f966cd26ef7100fbb8e045081d",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/transport-return/input.c": "60c3a4e6b345c8111f4a1ac6df8ddab8649053bb28ba7291b36a8d4c6dd2d9ce",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/transport-statement/input.c": "bb08811d53fbb86a060dc8146dd54a719ccdb038108fc6ae5307040bcfd1c2cf",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/transport-generic/input.c": "84c6064c6402dd0e2abdedf142d0c84fdcb5f11127f69d0d2fa09182409562c7",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/constraint-pointer-to-function-array/input.c": "be8e6dccb515a247a172dbe9dceb0556e581be7b6c34b0437304e068633f454d",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/constraint-pointer-to-void-array/input.c": "7910c03ed4c629986ef0a06c79a415d3805f2e8903cb814530fc893182f6b3b4",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/constraint-parameter-function-array/input.c": "a827c67c081fe1cace240f8474d641ed6b05fa8e1370f03d8e83fdf11302658e",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/constraint-typename-void-array/input.c": "b55e0f04e0247e4446f1cd3ab63f8e8d800b040e1567a217ba65df7811a37bd4",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/constraint-nested-incomplete-array/input.c": "a1cbee94ebbd4f0f9af87e98734c595ac6a1670a3224a0c5b7fd885326b743da",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/array-alias-decay/input.c": "6cdf554582f9deee451b1013077991faa1650fb8d687df9a2c8192a70c7ccada",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/member-return/input.c": "0b740c999fe5b4c5b4bd15cbd49965d8f9cc84dbab744ed0a5b378c019725f5b",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/alignment-integrated/alignment/unevaluated/input.c": "8ed098fd4b1596588f42f7cbb124d03eb7725d7ded65271b8d27b32f203c2dec"
+  }
+}

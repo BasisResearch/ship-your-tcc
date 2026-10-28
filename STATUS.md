@@ -39,9 +39,9 @@ removed. Patch 0004 fixes compiler literals using exact integer rounding;
 public libc `strtold` still needs correction in the library lane. Matching refusals likewise do not satisfy the F3 success criterion.
 
 The lead runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most two
-at a time, following MANAGER.md. Slot 1 now handles CSem GNU alignment and
-array constraints; slot 2 handles complete C11 _Generic/_Static_assert syntax
-from compiler actions. Binding meaning and actual model-owned compiler-injected
+at a time, following MANAGER.md. Slot 1 now handles C11 bitfield semantics;
+slot 2 repairs compiler/model array-to-pointer alignment decay. The reviewed
+_Generic/_Static_assert syntax checkpoint awaits its combined main gate. Binding meaning and actual model-owned compiler-injected
 opening authority are adopted after their combined gate and independent raw
 comparison below. Physical-origin maps remain adopted with separate evidence.
 The earlier anonymous-member, IEEE, GNU syntax/layout, allocation and typedef
@@ -398,6 +398,23 @@ alloca intrinsic remain missing. Whole-C grammar, pack layout, multi-TU ghost
 construction, fuel and binary refinement remain work. Kiran's patch/bug list
 is updated without external contact. Slot 1 owns alignment/array constraints;
 slot 2 owns C11 generic/static-assert syntax. Sum cuts remain frozen.
+
+CSem alignment/array adoption (2026-10-28): the combined full gate passes with
+3,640 frozen inputs. The 71-case matrix retains 53 defined agreements,
+12 constraint diagnostics, two function-policy gaps, three parser-placement
+limits and one compiler array-decay discrepancy. All71 raw/text Cabs and
+68 Menhir-accepted Cabs/digests agree. Fresh combined independent raw remains
+45/56, with18 authority/six guards,58 physical/four guards,15 erasure pairs,
+18 independent fast arenas and the explicit inline pair passing. Rebuilt C11
+host/cross checks pass181positive22negative. The first postcheck schema error
+and stale host binary are preserved separately from accepted results. See
+results/model/alignment-integration-2026-10-28.md and the worker's distinct
+full compiler/cross-GCC Sail observations. Universal alignment/transport and
+whole-C obligations remain open; no new native/broad lead run or sum cuts.
+Slot1 now works on bitfields. Slot2 repairs the compiler/model array decay in
+tasks/f3-array-alignment-decay.md; generic/static-assert syntax is reviewed
+and awaits the next combined gate. Wide assertion messages are queued in
+tasks/f3-static-assert-messages.md. No scope restriction or user decision.
 
 ## Needs user
 

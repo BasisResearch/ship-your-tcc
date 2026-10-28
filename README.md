@@ -63,6 +63,14 @@ two-file inline invocation now matches a complete native Sail arena, with its
 separate standalone refusals retained; multi-unit ghost provenance stays open
 (results/model/corpus-invocations.md).
 
+CSem typedef alignment and early array constraints are now repaired through
+shared Lem typing and a distinct GNU expression-alignof constructor. The
+combined gate and 71-case matrix pass, keeping 53 defined agreements separate
+from invalid constraints, function-policy/parser gaps and an array-decay
+compiler discrepancy. The three original wrong results have independent full
+compiler and cross-GCC Sail observations; the compiler decay repair is next
+([alignment integration](results/model/alignment-integration-2026-10-28.md)).
+
 The latest preprocessing corpus has 618 exact model/reference and 616 exact
 spec/reference agreements across 622 inputs. The image's opened-path once
 cache and include fixtures now agree; residuals and full gate/Sail evidence

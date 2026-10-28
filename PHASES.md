@@ -517,3 +517,25 @@ intrinsic; multi-TU construction, pack layout, whole-C grammar, fuel and binary
 refinement remain open. No refusal disjunct, source restriction or sum regeneration.
 Slot 1 continues CSem alignment/array constraints; slot 2 now handles C11
 _Generic/_Static_assert construction in tasks/f3-unevaluated-syntax.md.
+
+CSem alignment/array adoption (2026-10-28): the combined full gate passes with
+3,640 frozen inputs. The 71-case matrix retains 53 defined agreements,
+12 constraint diagnostics, two function-policy gaps, three parser-placement
+limits and one compiler array-decay discrepancy. All71 raw/text Cabs and
+68 Menhir-accepted Cabs/digests agree. Fresh combined independent raw remains
+45/56, with18 authority/six guards,58 physical/four guards,15 erasure pairs,
+18 independent fast arenas and the explicit inline pair passing. Rebuilt C11
+host/cross checks pass181positive22negative. The first postcheck schema error
+and stale host binary are preserved separately from accepted results. See
+results/model/alignment-integration-2026-10-28.md and the worker's distinct
+full compiler/cross-GCC Sail observations. Universal alignment/transport and
+whole-C obligations remain open; no new native/broad lead run or sum cuts.
+Slot1 now works on bitfields. Slot2 repairs the compiler/model array decay in
+tasks/f3-array-alignment-decay.md; generic/static-assert syntax is reviewed
+and awaits the next combined gate. Wide assertion messages are queued in
+tasks/f3-static-assert-messages.md. No scope restriction or user decision.
+
+F1 keeps the existing type-query, parser and semantic transport obligations;
+F3/F6 TypeAlignmentRepr_Statement and all eleven ghost contracts remain open.
+The reviewed generic checkpoint adds AssociationReplayErasure_Statement, to be
+listed with its combined adoption rather than treated as an established law.
