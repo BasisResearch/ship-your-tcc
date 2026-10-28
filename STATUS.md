@@ -241,6 +241,13 @@ results/csem/function-redeclaration.md. Slot 1 now implements GNU attributes;
 CSEM-11's general constraint repair and concrete bitfields are queued. Function
 address/supply invariants and all whole-compiler proofs remain open.
 
+Main checkout refresh (2026-10-28): the explicit compiler/ghost/preprocessor
+and CSem executables were rebuilt under the shared 12 GB lock, then checked
+on the repaired pointer case, one compiler arena and one exact typed fixture.
+The older pinned binaries were hash-verified in a recovery archive before
+replacement. This adds no Sail coverage or theorem; operational evidence is
+results/review/main-artifact-refresh-2026-10-28/.
+
 ## Needs user
 
 None currently. Implementation defects and unfinished obligations are work

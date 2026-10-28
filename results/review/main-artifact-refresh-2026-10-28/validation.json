@@ -1,0 +1,40 @@
+{
+  "revision": "f5e56f6f666be08bf97d21ece2e133c7855272de",
+  "source_hashes_verified": 2303,
+  "build_exit": 0,
+  "targets": [
+    "tcc_model",
+    "tcc_pre_tokens",
+    "pre_spec",
+    "csem_raw",
+    "csem_run",
+    "tcc_ghost",
+    "Tcc.Model.GhostAudit",
+    "TccCSem"
+  ],
+  "old_binary_archive": {
+    "path": "build/recovery/main-before-ghost-pointer-2026-10-28/binaries.tar.gz",
+    "sha256": "2f2e68b155f3f1e04add690bb933d3f9c3f124f53215a9372f004e3b837804d5",
+    "members": {
+      ".lake/build/bin/tcc_model": "e4386bb334923e86742b14be3ec9c43e93712ac6cfb19feadbc75dba837c226e",
+      ".lake/build/bin/tcc_pre_tokens": "30d637de8e92520b8344648488a925164b0bcb8f09782cb2b99ddfa0883e3f9a",
+      ".lake/build/bin/pre_spec": "7aebea96161ed6338893e8b9a2fc3107381483a5667b7cb881664ea71dac135d",
+      ".lake/build/bin/csem_raw": "17c8066cc16b963ab235346768dd6bdb82c373943c3d38b8f2a5441c72d71a39",
+      ".lake/build/bin/csem_run": "fd484135a1718099aef2eef8084f49b67108d22e49036182f235905202b1ec9f"
+    }
+  },
+  "current_binary_hashes": {
+    ".lake/build/bin/tcc_model": "be608c04bd2ee7ddd34a328abf925e36d3d84f0964cea0406f5715a482821822",
+    ".lake/build/bin/tcc_pre_tokens": "a13f6a5d5a1f8908b40efefcfb487b54286499baa13c5c59edc1b33b8ba57ac4",
+    ".lake/build/bin/pre_spec": "7aebea96161ed6338893e8b9a2fc3107381483a5667b7cb881664ea71dac135d",
+    ".lake/build/bin/csem_raw": "298030bb23fbcf121f6df9b73295d16a0ef485c7858aa3297718866deab038c7",
+    ".lake/build/bin/csem_run": "092a0130ab0a5592ec106bce99d33ce24a54615b3f4a3a1088690fe07392102b",
+    ".lake/build/bin/tcc_ghost": "75157306040bc1e543c87b89412e5d2ee8e6d4562fe99c59d209d8775dc7f21d"
+  },
+  "controls": {
+    "pointer_defined_exit": 0,
+    "model_matching_arenas": 1,
+    "ghost_exact_shared_token_fixture": 1
+  },
+  "new_native_sail_runs": 0
+}
