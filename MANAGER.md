@@ -38,8 +38,10 @@ pushes main without force. Record unsuccessful approaches in
 The launcher follows 4ct-digest's MANAGER.md/codexwork.sh workflow, adapted
 to this project's two-worker limit and shared Lean build lock.
 
-Current assignments, 2026-10-28: slot 1 runs tasks/f3-enum-colon-forms.md in
-sol-csem-repin, after independently reviewed enum checkpoint7907c3a. Slot 2
+Current assignments, 2026-10-28: slot 1 completed enum-colon checkpoint
+c9d69fb after independently reviewed enum checkpoint7907c3a. The lead is
+combining this with reviewed GNU semantics and adopted guards before launching
+tasks/f3-gnu-conditional-bitfield-promotion.md in sol-csem-repin. Slot 2
 runs tasks/f1-vla-semantics.md in sol-f2-tokens after reviewed GNU checkpoint
 2904c35 and main938fa20 were merged at34c8cc2. The GNU checkpoint keeps
 its observed GNU bitfield-promotion compiler bug separate; its compiler/model
@@ -49,9 +51,9 @@ postchecks, portable verification and fresh same-ELF native104 execution.
 Both physical-origin/read-view Statements are proved for arbitrary bytes;
 read/refill/host, raw and whole-command construction/erasure remain open.
 Original checkpoints and failed evidence remain preserved. No third worker runs.
-The lead now validates tasks/f2-include-guard-openings.md with a related
-model EOF identifier repair; three fresh native captures/same-ELF executions
-pass, while its full gate/postchecks remain pending.
+The include-guard opening and model EOF identifier repairs are adopted at
+main b2f0c57 after the full 4,163-input gate and independent postchecks, including
+three fresh complete native captures and same-ELF executions.
 Bitfield/general declaration constraints, VLA semantics, pack-layout transport
 and runtime body coverage remain work items.
 

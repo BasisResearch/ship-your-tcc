@@ -691,6 +691,17 @@ with reviewed GNU conditional semantics and the queued bitfield-promotion fix.
 Slot 2 continues general VLA semantics; its focused Lean build passes, while
 broader runtime/type/constraint checks continue. No user decision is needed.
 
+
+Enum-colon checkpoint c9d69fb is committed after independent review: 4,623-input
+full gate, 59 focused classifications, 48 fast/on-off arenas and 20 complete
+native captures. The 19,989-artifact portable verifier and actual-ELF execution
+audit pass. Six inherited native runs are a separate validated invocation,
+not part of the full gate's zero optional-native count. The lead is combining
+this checkpoint with GNU2904c35 and adopted guard b2f0c57 before assigning the
+bitfield-promotion repair. These enum/GNU changes are not yet adopted on main;
+the new combination requires its own frozen gate. Main artifact refresh for
+the adopted guards is running under the shared lock and 12 GB cap.
+
 ## Needs user
 
 None currently. Implementation defects and unfinished obligations are work
