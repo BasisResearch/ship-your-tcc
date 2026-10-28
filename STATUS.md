@@ -555,6 +555,10 @@ The lead has rebuilt patch0005 and passed its host/cross C11 controls; the
 3,577-input combined gate and a fresh 42-row native layout batch are running.
 No new user decision or change to Supported/Fits.
 
+Next enum follow-up: repair valid unnamed enum fields and direct enum
+`_Generic` associations in tcc/model (tasks/f3-enum-colon-forms.md). Keep the
+independently measured GCC type-selection differences separate.
+
 ## Needs user
 
 None currently. Implementation defects and unfinished obligations are work

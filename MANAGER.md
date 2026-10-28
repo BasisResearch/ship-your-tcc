@@ -79,3 +79,8 @@ Statements, arbitrary-byte scope and standard-axiom audit; a checked obstruction
 is preferable to silently weakening a statement. Slot 1 handles enum bitfield policy. Subsequent F1 tasks include general
 declaration constraints, GNU conditional lowering and VLA types/storage. Compiler diagnostic and declaration constraints remain
 separate tasks. Keep at most two external workers active.
+
+After the enum semantic checkpoint, prioritize tasks/f3-enum-colon-forms.md:
+valid unnamed enum fields/direct enum generic associations currently refuse.
+Preserve GCC expression-type policy differences as a separate axis. Invalid
+bitfield diagnostics, GNU conditional semantics and VLA storage remain queued.

@@ -673,3 +673,9 @@ open; cached-opening/pack-layout residuals and absence of new native multi-TU
 evidence are explicit. Slot2 now attempts the unchanged PhysicalOriginMap and
 PhysicalReadView Statements with generic proofs or a checked counterexample.
 Member-attribute integration3577 and fresh native42-layout checks are in progress.
+
+Enum follow-up queued: tasks/f3-enum-colon-forms.md targets valid unnamed
+enum fields and direct enum generic associations rejected by tcc. These are
+compiler repair duties, separate from GCC bitfield type-selection policy and
+invalid-source constraint diagnostics. F1 enum evidence is still under review;
+no additional source exclusions or successful-refusal counts are introduced.
