@@ -125,6 +125,9 @@ inductive FootprintAccess where | W | R
 
 inductive Footprint where
   | FP (access : FootprintAccess) (base : Address) (size : Int)
+  /-- A bitfield's scalar-object access, distinct from neighboring fields in
+      the same byte. Auxiliary container preservation is not a C lvalue read. -/
+  | FPbits (access : FootprintAccess) (base : Address) (bitOffset width : Nat)
   deriving Inhabited
 
 /-- readonly_status — impl_mem.ml:400-402 -/
@@ -138,6 +141,9 @@ structure AbsByte where
   prov : Provenance := .Prov_none
   copyOffset : Option Int := none
   value : Option UInt8 := none
+  /-- Known value bits. `none` still means no known bits. Ordinary writes know
+      all eight; a field write can define bits in an indeterminate byte. -/
+  knownMask : UInt8 := 255
   deriving BEq, Inhabited, Repr
 
 /-- Taint status for PNVI-ae — the allocation's exposure flag,
@@ -187,6 +193,16 @@ structure Allocation where
 
 /-- A passive concrete load/store receipt; shared shape from mem_common.lem. -/
 abbrev AccessReceipt := access_receipt PointerValue MemValue
+
+/-- One abstract volatile access, before any padding-value choice. `receipt`'s
+    value may be unspecified; `representation` retains the known-bit domain
+    constraining the subsequent concrete choices. It is not a concrete-value
+    machine event. Connecting this abstract history to machine observations is
+    a separate refinement obligation. -/
+structure VolatileAccess where
+  receipt : AccessReceipt
+  representation : List AbsByte
+  deriving Inhabited
 
 /-- One allocation choice, independent of Core evaluation-order choices. Live ranges
 are half-open byte intervals; zero-sized ranges occupy no bytes. -/
@@ -245,6 +261,9 @@ structure MemState where
   lastUsed : Option StorageInstanceId := none
   requested : List (Address × Int) := []
   observations : Option (List AccessReceipt) := none
+  /-- Volatile accesses in reverse execution order, independently of diagnostic
+      capture. A field update records one load and one masked store. -/
+  volatileAccesses : List VolatileAccess := []
   deriving Inhabited
 
 /-- Idempotent enabling preserves any undrained prefix. -/
@@ -259,14 +278,15 @@ def stopObserving (st : MemState) : MemState := { st with observations := none }
 def takeObservations (st : MemState) : Option (List AccessReceipt × MemState) :=
   st.observations.map fun xs => (xs.reverse, { st with observations := some [] })
 
-/-- Faithful diagnostic view; no scalarization or location equivalence. -/
+/-- Whole-byte diagnostic view. Partial bit knowledge stays in `AbsByte`;
+    a partially known byte is displayed as unspecified, never as a known byte. -/
 def viewByte (b : AbsByte) : representation_byte_view :=
   let prov := match b.prov with
     | .Prov_none => .Observed_no_provenance
     | .Prov_some id => .Observed_allocation_provenance id
     | .Prov_symbolic id => .Observed_symbolic_provenance id
     | .Prov_device => .Observed_device_provenance
-  .Byte_view prov b.copyOffset (b.value.map fun v => Int.ofNat v.toNat)
+  .Byte_view prov b.copyOffset (if b.knownMask == 255 then b.value.map (fun v => Int.ofNat v.toNat) else none)
 
 /-- Capture work is proportional to the operation's bytes and only occurs when
     enabled. These receipts do not cause suspension or decide success. -/
@@ -277,6 +297,14 @@ def recordAccess (loc : CerbLocation.Loc) (kind : access_kind) (ty : ctype)
   | none => st
   | some xs =>
     { st with observations := some (.Access_receipt loc kind ty pv alloc addr (bytes.map viewByte) value locking :: xs) }
+
+/-- Persistent semantic volatile events, separate from optional diagnostics. -/
+def recordVolatileAccess (loc : CerbLocation.Loc) (kind : access_kind) (ty : ctype)
+    (pv : PointerValue) (alloc : Option Int) (addr : Int)
+    (bytes : List AbsByte) (value : MemValue) (locking : Option Bool) (st : MemState) : MemState :=
+  if is_volatile_access ty then
+    { st with volatileAccesses := ⟨.Access_receipt loc kind ty pv alloc addr (bytes.map viewByte) value locking, bytes⟩ :: st.volatileAccesses }
+  else st
 
 /-! ## Instances
 
@@ -355,10 +383,19 @@ def beqMemValueMembers : List (identifier × ctype × MemValue) → List (identi
 end
 
 instance : BEq MemValue where beq := beqMemValue
+instance : BEq VolatileAccess where
+  beq a b := a.receipt == b.receipt && a.representation == b.representation
 instance : BEq Footprint where
-  beq | .FP a1 b1 s1, .FP a2 b2 s2 => a1 == a2 && b1 == b2 && s1 == s2
+  beq
+    | .FP a1 b1 s1, .FP a2 b2 s2 => a1 == a2 && b1 == b2 && s1 == s2
+    | .FPbits a1 b1 o1 w1, .FPbits a2 b2 o2 w2 => a1 == a2 && b1 == b2 && o1 == o2 && w1 == w2
+    | _, _ => false
 instance : Ord Footprint where
-  compare | .FP _ b1 _, .FP _ b2 _ => compare b1 b2
+  compare f1 f2 :=
+    let start : Footprint → Int
+      | .FP _ b _ => b * 8
+      | .FPbits _ b o _ => b * 8 + o
+    compare (start f1) (start f2)
 instance : Ord IntegerValue where compare | .IV _ n1, .IV _ n2 => compare n1 n2
 -- Degenerate-by-design (see the reachability note above): never a set/map
 -- key on any path.
@@ -511,6 +548,7 @@ def memberAlign_lemFuel [CerbImplCfg.Impl] (lemFuel : Nat) (enumDefs : EnumDefs)
   match lemFuel with
   | 0 => fuelExhaustedWith "CerbMem.memberAlign: fuel exhausted" 1
   | lemFuel + 1 =>
+    if is_unnamed_bitfield ty then 1 else
     match alignOpt with
     | none => alignofCtype_lemFuel lemFuel enumDefs ambient tagDefs ty
     | some (AlignInteger al_n) => al_n.toNat
@@ -538,7 +576,10 @@ def offsetsofMembers_lemFuel [CerbImplCfg.Impl] (lemFuel : Nat) (enumDefs : Enum
         let align := memberAlign_lemFuel lemFuel enumDefs ambient tagDefs alignOpt ty -- impl_mem.ml:113-119 (alignof ~tagDefs)
         let x := lastOffset % align                   -- impl_mem.ml:123
         let pad := if x == 0 then 0 else align - x    -- impl_mem.ml:124
-        ((ident, ty, lastOffset + pad) :: xs, lastOffset + pad + size)  -- impl_mem.ml:125
+        let off := match bitfield_of_type ty with
+          | some info => info.bitfield_byte_offset
+          | none => lastOffset + pad
+        ((ident, ty, off) :: xs, off + size)
     (xs.reverse, maxoffset)
 
 /-- offsetsof — impl_mem.ml:98-129. Struct: offsetsofMembers over the
@@ -583,16 +624,18 @@ def sizeofCtype_lemFuel [CerbImplCfg.Impl] (lemFuel : Nat) (enumDefs : EnumDefs)
   | 0 => fuelExhaustedWith "CerbMem.sizeofCtype: fuel exhausted" 0
   | lemFuel + 1 =>
     match cty with
-    | Ctype _ ty_ =>
+    | Ctype annots ty_ =>
       match ty_ with
       | .Void0 => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.sizeofVoid "CerbMem.sizeofCtype: Void (impl_mem.ml:134-135 assert false)")))
       | .Array0 _ none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.sizeofIncompleteArray "CerbMem.sizeofCtype: incomplete array (impl_mem.ml:134-135 assert false)")))
       | .Function _ _ _ | .FunctionNoParams _ =>
         failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.sizeofFunction "CerbMem.sizeofCtype: function type (impl_mem.ml:134-135 assert false)")))
       | .Basic (.Integer ity) =>
-        match CerberusImpl.sizeof_ity (CerberusImpl.resolveEnum enumDefs ity) with      -- impl_mem.ml:136-141
-        | some n => n
-        | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.sizeofInteger "CerbMem.sizeofCtype: the concrete memory model requires a complete implementation sizeof INTEGER")))
+        match bitfield_of_annotations annots with
+        | some info => bitfield_span info
+        | none => match CerberusImpl.sizeof_ity (CerberusImpl.resolveEnum enumDefs ity) with      -- impl_mem.ml:136-141
+          | some n => n
+          | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.sizeofInteger "CerbMem.sizeofCtype: the concrete memory model requires a complete implementation sizeof INTEGER")))
       | .Basic (.Floating fty) =>
         match CerberusImpl.sizeof_fty fty with      -- impl_mem.ml:143-148
         | some n => n
@@ -761,7 +804,7 @@ def intToBytes (signed : Bool) (val_ : Int) (size : Nat) : List (Option UInt8) :
     (zero-discrepancy Z-16, Q4); unreachable by construction (every
     integer type has 1 ≤ sizeof ≤ 8, and loads are sizeof-sliced). -/
 def bytesToInt (bytes : List AbsByte) (signed : Bool) : Option Int :=
-  if bytes.any (·.value.isNone) then none
+  if bytes.any (fun b => b.value.isNone || b.knownMask != 255) then none
   else if bytes.isEmpty then failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.bytesToIntEmpty "Concrete.int_of_bytes: [] (impl_mem.ml:742-743 assert false)")))
   else if bytes.length > 16 then failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.bytesToIntOversize "Concrete.int_of_bytes: more than 16 bytes (impl_mem.ml:744-745 assert false)")))
   else
@@ -769,7 +812,7 @@ def bytesToInt (bytes : List AbsByte) (signed : Bool) : Option Int :=
       match bs with
       | [] => acc
       | b :: rest =>
-        let contribution : Int := match b.value with
+        let contribution : Int := match (if b.knownMask == 255 then b.value else none) with
           | some v => (v.toNat : Int) <<< (i * 8)
           | none => 0
         go rest (i + 1) (acc + contribution)
@@ -950,6 +993,45 @@ theorem findOverlapping_lastUsed [CerbGlobal.Switches] (s : MemState) (u : Optio
 def paddingByte : AbsByte :=
   { prov := .Prov_none, copyOffset := none, value := none }
 
+/-- Write only the selected bits. Unknown neighboring bits remain unknown;
+    no auxiliary Core read is invented for this implementation's store. -/
+def mergeBitfieldBytes (info : bitfield_info) (source old : List AbsByte) : List AbsByte :=
+  (List.range (bitfield_span info)).map fun i =>
+    let previous := old[i]?.getD paddingByte
+    let previousMask := if previous.value.isSome then previous.knownMask else 0
+    let first := i * 8
+    let positions := (List.range 8).filter fun k =>
+      info.bitfield_bit_offset ≤ first+k && first+k < info.bitfield_bit_offset+info.bitfield_width
+    let (v, mask) := positions.foldl (init := (previous.value.getD 0, previousMask)) fun (v, mask) k =>
+      let sourceBit := first+k-info.bitfield_bit_offset
+      let b := source[sourceBit / 8]?.getD paddingByte
+      let targetMask : UInt8 := 1 <<< k.toUInt8
+      let known := b.value.isSome && (b.knownMask &&& (1 <<< (sourceBit % 8).toUInt8)) != 0
+      let one := ((b.value.getD 0 >>> (sourceBit % 8).toUInt8) &&& 1) != 0
+      (if one then v ||| targetMask else v &&& ~~~targetMask,
+       if known then mask ||| targetMask else mask &&& ~~~targetMask)
+    { prov := .Prov_none, value := some v, knownMask := mask }
+
+/-- Decode precisely the field's bits, then sign extend from its value width. -/
+def readBitfieldBytes (info : bitfield_info) (signed : Bool) (bytes : List AbsByte) : Option Int := do
+  let n ← (List.range info.bitfield_width).foldlM (init := (0 : Nat)) fun n k => do
+    let bit := info.bitfield_bit_offset + k
+    let b ← bytes[bit / 8]?
+    let v ← b.value
+    if (b.knownMask &&& (1 <<< (bit % 8).toUInt8)) == 0 then none
+    else some (n + ((v.toNat / 2^(bit%8)) % 2) * 2^k)
+  let n : Int := n
+  if signed && info.bitfield_width > 0 && n ≥ (2:Int)^(info.bitfield_width-1) then
+    some (n - (2:Int)^info.bitfield_width)
+  else some n
+
+/-- Overlay one typed member into an existing aggregate representation. -/
+def overlayMemberBytes (ty : ctype) (off : Nat) (bytes image : List AbsByte) : List AbsByte :=
+  let bytes := match bitfield_of_type ty with
+    | some info => if info.bitfield_named then mergeBitfieldBytes info bytes (image.drop off) else []
+    | none => bytes
+  image.take off ++ bytes ++ image.drop (off + bytes.length)
+
 /-- The funptrmap: function-pointer address (= the function symbol's
     nat) ↦ (file digest, name). Field of mem_state — impl_mem.ml:489. -/
 abbrev Funptrmap := List (Int × (String × String))
@@ -1028,35 +1110,50 @@ def memValueToBytes_lemFuel [CerbImplCfg.Impl] (lemFuel : Nat) (enumDefs : EnumD
     -- impl_mem.ml:1202-1214: pad from the previous member's end up to
     -- each member's offsetsof offset (unspecified bytes), then the
     -- member's bytes; then trailing padding out to sizeof(struct).
-    let (offs, lastOff) := offsetsof enumDefs ambient ambient tagSym (ignoreFlexible := true)
-    let finalPad := sizeofCtype enumDefs ambient (mkCtype (.Struct tagSym)) - lastOff  -- impl_mem.ml:1205
-    -- fold2 over layout and members (impl_mem.ml:1207-1212); lengths
-    -- coincide for well-typed values (OCaml fold_left2 would raise
-    -- Invalid_argument otherwise — zip truncates instead).
-    -- DOCUMENTED DIVERGENCE (mem-scale C3, 2026-09-02): the OCaml
-    -- accumulates `acc @ List.init pad padding_byte @ bs` inside the
-    -- left fold (impl_mem.ml:1211) — a List.append of the growing
-    -- accumulator per member, quadratic in members × bytes; we instead
-    -- cons each member's chunk (padding ++ bytes) onto a REVERSED chunk
-    -- list and flatten once at the end (linear). Same result list:
-    -- `memValueToBytes_lemFuel_eq_append` below is the kernel-checked
-    -- equality with the append-accumulating reference form
-    -- (`memValueToBytes_append_lemFuel`, the pre-C3 text).
-    let (fpm, _, revChunks) := (offs.zip members).foldl
-      (init := (funptrmap, (0 : Nat), ([] : List (List AbsByte))))
-      fun (acc : Funptrmap × Nat × List (List AbsByte))
-          (p : (identifier × ctype × Nat) × (identifier × ctype × MemValue)) =>
-        let (fpm, lastOff, revChunks) := acc
-        let ((_, ty, off), (_, _, mval)) := p
-        let pad := off - lastOff
-        let (fpm', bs) := memValueToBytes_lemFuel lemFuel enumDefs ambient fpm mval
-        (fpm', off + sizeofCtype enumDefs ambient ty, (List.replicate pad paddingByte ++ bs) :: revChunks)
-    (fpm, revChunks.reverse.flatten ++ List.replicate finalPad paddingByte)  -- impl_mem.ml:1214
-  | .MVunion tagSym _ mval =>
+    if members.any (fun (_, ty, _) => (bitfield_of_type ty).isSome) then
+      let (offs, _) := offsetsof enumDefs ambient ambient tagSym (ignoreFlexible := true)
+      (offs.zip members).foldl (init := (funptrmap, List.replicate
+        (sizeofCtype enumDefs ambient (mkCtype (.Struct tagSym))) paddingByte))
+        fun (fpm, image) ((_, ty, off), (_, _, mval)) =>
+          let (fpm, bytes) := memValueToBytes_lemFuel lemFuel enumDefs ambient fpm mval
+          (fpm, overlayMemberBytes ty off bytes image)
+    else
+      let (offs, lastOff) := offsetsof enumDefs ambient ambient tagSym (ignoreFlexible := true)
+      let finalPad := sizeofCtype enumDefs ambient (mkCtype (.Struct tagSym)) - lastOff  -- impl_mem.ml:1205
+      -- fold2 over layout and members (impl_mem.ml:1207-1212); lengths
+      -- coincide for well-typed values (OCaml fold_left2 would raise
+      -- Invalid_argument otherwise — zip truncates instead).
+      -- DOCUMENTED DIVERGENCE (mem-scale C3, 2026-09-02): the OCaml
+      -- accumulates `acc @ List.init pad padding_byte @ bs` inside the
+      -- left fold (impl_mem.ml:1211) — a List.append of the growing
+      -- accumulator per member, quadratic in members × bytes; we instead
+      -- cons each member's chunk (padding ++ bytes) onto a REVERSED chunk
+      -- list and flatten once at the end (linear). Same result list:
+      -- `memValueToBytes_lemFuel_eq_append` below is the kernel-checked
+      -- equality with the append-accumulating reference form
+      -- (`memValueToBytes_append_lemFuel`, the pre-C3 text).
+      let (fpm, _, revChunks) := (offs.zip members).foldl
+        (init := (funptrmap, (0 : Nat), ([] : List (List AbsByte))))
+        fun (acc : Funptrmap × Nat × List (List AbsByte))
+            (p : (identifier × ctype × Nat) × (identifier × ctype × MemValue)) =>
+          let (fpm, lastOff, revChunks) := acc
+          let ((_, ty, off), (_, _, mval)) := p
+          let pad := off - lastOff
+          let (fpm', bs) := memValueToBytes_lemFuel lemFuel enumDefs ambient fpm mval
+          (fpm', off + sizeofCtype enumDefs ambient ty, (List.replicate pad paddingByte ++ bs) :: revChunks)
+      (fpm, revChunks.reverse.flatten ++ List.replicate finalPad paddingByte)  -- impl_mem.ml:1214
+  | .MVunion tagSym ident mval =>
     -- impl_mem.ml:1216-1219: the active member's bytes, padded out with
     -- unspecified bytes to sizeof(union).
     let size := sizeofCtype enumDefs ambient (mkCtype (.Union0 tagSym))
     let (fpm, bs) := memValueToBytes_lemFuel lemFuel enumDefs ambient funptrmap mval
+    let ty : Option ctype := match CerbTagsWf.lookupEntry ambient tagSym with
+      | some (_, (_, UnionDef _ members)) =>
+          (members.find? (fun (i, _) => idEqual i ident)).map (fun (_, (_, _, _, ty)) => ty)
+      | _ => none
+    let bs := match ty.bind bitfield_of_type with
+      | some info => mergeBitfieldBytes info bs (List.replicate size paddingByte)
+      | none => bs
     (fpm, bs ++ List.replicate (size - bs.length) paddingByte)
 
 /-- MEASURED wrapper (fuel-parameter arc C2, 2026-09-04): the worker's own
@@ -1133,21 +1230,36 @@ def memValueToBytes_append_lemFuel [CerbImplCfg.Impl] (lemFuel : Nat) (enumDefs 
         (fpm', bs :: bss)
     (fpm, bss.reverse.flatten)
   | .MVstruct tagSym members =>
-    let (offs, lastOff) := offsetsof enumDefs ambient ambient tagSym (ignoreFlexible := true)
-    let finalPad := sizeofCtype enumDefs ambient (mkCtype (.Struct tagSym)) - lastOff
-    let (fpm, _, bs) := (offs.zip members).foldl
-      (init := (funptrmap, (0 : Nat), ([] : List AbsByte)))
-      fun (acc : Funptrmap × Nat × List AbsByte)
-          (p : (identifier × ctype × Nat) × (identifier × ctype × MemValue)) =>
-        let (fpm, lastOff, accBs) := acc
-        let ((_, ty, off), (_, _, mval)) := p
-        let pad := off - lastOff
-        let (fpm', bs) := memValueToBytes_append_lemFuel lemFuel enumDefs ambient fpm mval
-        (fpm', off + sizeofCtype enumDefs ambient ty, accBs ++ List.replicate pad paddingByte ++ bs)
-    (fpm, bs ++ List.replicate finalPad paddingByte)
-  | .MVunion tagSym _ mval =>
+    if members.any (fun (_, ty, _) => (bitfield_of_type ty).isSome) then
+      let (offs, _) := offsetsof enumDefs ambient ambient tagSym (ignoreFlexible := true)
+      (offs.zip members).foldl (init := (funptrmap, List.replicate
+        (sizeofCtype enumDefs ambient (mkCtype (.Struct tagSym))) paddingByte))
+        fun (fpm, image) ((_, ty, off), (_, _, mval)) =>
+          let (fpm, bytes) := memValueToBytes_append_lemFuel lemFuel enumDefs ambient fpm mval
+          (fpm, overlayMemberBytes ty off bytes image)
+    else
+      let (offs, lastOff) := offsetsof enumDefs ambient ambient tagSym (ignoreFlexible := true)
+      let finalPad := sizeofCtype enumDefs ambient (mkCtype (.Struct tagSym)) - lastOff
+      let (fpm, _, bs) := (offs.zip members).foldl
+        (init := (funptrmap, (0 : Nat), ([] : List AbsByte)))
+        fun (acc : Funptrmap × Nat × List AbsByte)
+            (p : (identifier × ctype × Nat) × (identifier × ctype × MemValue)) =>
+          let (fpm, lastOff, accBs) := acc
+          let ((_, ty, off), (_, _, mval)) := p
+          let pad := off - lastOff
+          let (fpm', bs) := memValueToBytes_append_lemFuel lemFuel enumDefs ambient fpm mval
+          (fpm', off + sizeofCtype enumDefs ambient ty, accBs ++ List.replicate pad paddingByte ++ bs)
+      (fpm, bs ++ List.replicate finalPad paddingByte)
+  | .MVunion tagSym ident mval =>
     let size := sizeofCtype enumDefs ambient (mkCtype (.Union0 tagSym))
     let (fpm, bs) := memValueToBytes_append_lemFuel lemFuel enumDefs ambient funptrmap mval
+    let ty : Option ctype := match CerbTagsWf.lookupEntry ambient tagSym with
+      | some (_, (_, UnionDef _ members)) =>
+          (members.find? (fun (i, _) => idEqual i ident)).map (fun (_, (_, _, _, ty)) => ty)
+      | _ => none
+    let bs := match ty.bind bitfield_of_type with
+      | some info => mergeBitfieldBytes info bs (List.replicate size paddingByte)
+      | none => bs
     (fpm, bs ++ List.replicate (size - bs.length) paddingByte)
 
 /-- The list fact behind C3: a left fold that APPENDS each step's chunk to
@@ -1212,18 +1324,21 @@ theorem memValueToBytes_lemFuel_eq_append [CerbImplCfg.Impl] :
     cases val_ with
     | MVstruct tagSym members =>
       dsimp only
-      -- `++` is left-associative: the reference arm is `(accBs ++ pad) ++ bs`;
-      -- re-associate so the step's chunk is `pad ++ bs`, then `step` in
-      -- projection form (the shape `dsimp` leaves the two folds in):
-      -- funptrmap' , next running offset , this member's chunk.
-      simp only [List.append_assoc]
-      rw [foldl_append_eq_flatten_reverse
-        (step := fun (fpm : Funptrmap) (lastOff : Nat)
-            (p : (identifier × ctype × Nat) × (identifier × ctype × MemValue)) =>
-          ((memValueToBytes_append_lemFuel lemFuel enumDefs ambient fpm p.2.2.2).1,
-           p.1.2.2 + sizeofCtype enumDefs ambient p.1.2.1,
-           List.replicate (p.1.2.2 - lastOff) paddingByte ++
-             (memValueToBytes_append_lemFuel lemFuel enumDefs ambient fpm p.2.2.2).2))]
+      split
+      · rfl
+      ·
+        -- `++` is left-associative: the reference arm is `(accBs ++ pad) ++ bs`;
+        -- re-associate so the step's chunk is `pad ++ bs`, then `step` in
+        -- projection form (the shape `dsimp` leaves the two folds in):
+        -- funptrmap' , next running offset , this member's chunk.
+        simp only [List.append_assoc]
+        rw [foldl_append_eq_flatten_reverse
+          (step := fun (fpm : Funptrmap) (lastOff : Nat)
+              (p : (identifier × ctype × Nat) × (identifier × ctype × MemValue)) =>
+            ((memValueToBytes_append_lemFuel lemFuel enumDefs ambient fpm p.2.2.2).1,
+             p.1.2.2 + sizeofCtype enumDefs ambient p.1.2.1,
+             List.replicate (p.1.2.2 - lastOff) paddingByte ++
+               (memValueToBytes_append_lemFuel lemFuel enumDefs ambient fpm p.2.2.2).2))]
     | _ => rfl
 
 theorem memValueToBytes_eq_append [CerbImplCfg.Impl] (enumDefs : EnumDefs) (ambient : TagDefs) (funptrmap : Funptrmap) (val_ : MemValue) :
@@ -1298,7 +1413,9 @@ def reconstructValueAbst_lemFuel [CerbImplCfg.Impl] [CerbGlobal.Switches] (lemFu
     let signed := CerberusImpl.is_signed_ity (CerberusImpl.resolveEnum enumDefs ity)
     let prov := provFromIntegerBytes bytes
     (provsOfBytes bytes,
-      match bytesToInt bytes signed with
+      match (match bitfield_of_type ty with
+        | some info => readBitfieldBytes info signed bytes
+        | none => bytesToInt bytes signed) with
       | some n => .MVinteger ity (mkIval prov n)
       | none => .MVunspecified ty)
   | Ctype _ (.Basic (.Floating fty)) =>
@@ -1444,6 +1561,7 @@ def reconstructValueAbst_lemFuel [CerbImplCfg.Impl] [CerbGlobal.Switches] (lemFu
     -- (:1125-1126). (`is_zap`, :1110-1112, is not ported.)
     match CerbTagsWf.lookupEntry ambient tagSym with
     | some (_, (_, UnionDef layout membrs)) =>
+      let membrs := membrs.filter (fun (_, (_, _, _, ty)) => !is_unnamed_bitfield ty)
       match membrs with
       | [] => (.NoTaint, failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.reconstructEmptyUnion "CerbMem.reconstructValue: empty UnionDef (OCaml: match failure)"))))
       | (firstIdent, (_, _, _, firstTy)) :: _ =>
@@ -2051,10 +2169,19 @@ def intfrombyte (iv : IntegerValue) : IntegerValue :=
 
 /-- overlapping — impl_mem.ml:527-532 -/
 def overlapping (f1 f2 : Footprint) : Bool :=
-  match f1, f2 with
-  | .FP .R _ _, .FP .R _ _ => false  -- two reads never overlap
-  | .FP _ b1 sz1, .FP _ b2 sz2 =>
-    !(b1 + sz1 ≤ b2 || b2 + sz2 ≤ b1)
+  let range : Footprint → FootprintAccess × Int × Int
+    | .FP a b n => (a, b * 8, n * 8)
+    | .FPbits a b o n => (a, b * 8 + o, n)
+  let (a1, b1, n1) := range f1
+  let (a2, b2, n2) := range f2
+  if a1 == .R && a2 == .R then false
+  else !(b1 + n1 ≤ b2 || b2 + n2 ≤ b1)
+
+/-- C-level footprint, separate from the implementation's backing bytes. -/
+def accessFootprint (access : FootprintAccess) (ty : ctype) (addr : Int) (size : Nat) : Footprint :=
+  match bitfield_of_type ty with
+  | some info => .FPbits access addr info.bitfield_bit_offset info.bitfield_width
+  | none => .FP access addr size
 
 /-- The initial memory state at address-space top `addressSpaceTop` — impl_mem.ml:503-516
     `initial_mem_state`, whose `last_address` was the literal `0xFFFFFFFFFFFF` (:508, "a random
@@ -2951,6 +3078,34 @@ theorem exposeOnLoad_lastUsed [CerbGlobal.Switches] (taint : ProvTaint) (st : Me
   unfold exposeOnLoad
   split <;> (try cases taint) <;> rfl
 
+/-- A character read may choose padding bits, but must retain every known
+    representation bit (C11 6.2.6.1p4-6). Enumerate only partially known bytes;
+    entirely indeterminate bytes retain the existing unspecified-value semantics.
+    Choices are pure returns: the one C read, including its volatile receipt,
+    has already happened before choosing a permitted representation value. -/
+def characterLoadAction [CerbImplCfg.Impl] (fp : Footprint) (ty : ctype)
+    (bytes : List AbsByte) (fallback : MemValue) :
+    nd_action (Footprint × MemValue) String mem_error (mem_constraint IntegerValue) MemState :=
+  let ityOpt : Option integerType := match ty with
+    | Ctype _ (.Basic (.Integer .Char0)) => some .Char0
+    | Ctype _ (.Basic (.Integer (.Signed .Ichar))) => some (.Signed .Ichar)
+    | Ctype _ (.Basic (.Integer (.Unsigned .Ichar))) => some (.Unsigned .Ichar)
+    | Ctype _ .Byte => some .Char0
+    | _ => none
+  match ityOpt, bytes, bitfield_of_type ty with
+  | some ity, [b], none =>
+    match b.value with
+    | some v =>
+      if b.knownMask != 255 then
+        let choices := (List.range 256).filter (fun n =>
+          UInt8.ofNat n &&& b.knownMask == v &&& b.knownMask)
+        NDnd "character padding choices" (choices.map fun (n : Nat) =>
+          let value : Int := if (match ty with | Ctype _ .Byte => false | _ => CerberusImpl.is_signed_ity ity) && n ≥ 128 then Int.ofNat n - 256 else Int.ofNat n
+          ("", nd_return (fp, .MVinteger ity (.IV b.prov value))))
+      else NDactive (fp, fallback)
+    | none => NDactive (fp, fallback)
+  | _, _, _ => NDactive (fp, fallback)
+
 def loadM [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (enumDefs : EnumDefs) (tagDefs : TagDefs) (loc : CerbLocation.Loc) (ty : ctype) (pv : PointerValue) : memM (Footprint × MemValue) :=
   ND fun st =>
     let fail_ (err : mem_error) := (NDkilled (failReason err loc), st)
@@ -2965,7 +3120,7 @@ def loadM [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (enumDefs : EnumDef
     let doLoad (st0 : MemState) (allocOpt : Option StorageInstanceId) (addr : Int) :=
       let size := sizeofCtype enumDefs tagDefs ty
       let bytes := readBytesFrom st0 addr size
-      let fp : Footprint := .FP .R addr size
+      let fp := accessFootprint .R ty addr size
       -- abst at the load address with last_used_union_members and
       -- funptrmap — impl_mem.ml:1600 in THIS tree (the `:NNNN` cites of this
       -- function's other comments are the older numbering, see the header):
@@ -2981,7 +3136,8 @@ def loadM [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (enumDefs : EnumDef
       -- `loadM` does not copy it into every field. At the default set
       -- `exposeOnLoad t s = s` (`exposeOnLoad_default`, `rfl`): the pre-S3 state.
       let loadedState := recordAccess loc LoadAccess ty pv allocOpt addr bytes mv none
-        (exposeOnLoad r.1 { st0 with lastUsed := allocOpt })
+        (recordVolatileAccess loc LoadAccess ty pv allocOpt addr bytes mv none
+          (exposeOnLoad r.1 { st0 with lastUsed := allocOpt }))
       -- trap representation for _Bool — impl_mem.ml:1576-1591
       let isBool := match ty with | Ctype _ (.Basic (.Integer .Bool0)) => true | _ => false
       let isTrap := isBool && match mv with
@@ -2997,7 +3153,7 @@ def loadM [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (enumDefs : EnumDef
       -- case is loud (seam-hygiene H2)
       else if CerbGlobal.has_switch .strict_reads then
         (match refuseM (switchRefusal "strict_reads" "loadM: SW_strict_reads is set but the strict-reads arm (impl_mem.ml:1601-1606) is not ported — switches are refused (Z-24)") with | ND f => f st0)
-      else (NDactive (fp, mv), loadedState)
+      else (characterLoadAction fp ty bytes mv, loadedState)
     match pv with
     | .PV _ (.PVnull _) => fail_ (MerrAccess LoadAccess NullPtr)          -- impl_mem.ml:1605-1606
     | .PV _ (.PVfunction _) => fail_ (MerrAccess LoadAccess FunctionPtr)  -- impl_mem.ml:1607-1608
@@ -3042,6 +3198,16 @@ def loadM [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (enumDefs : EnumDef
             fail_ (MerrAccess LoadAccess AtomicMemberof)                  -- impl_mem.ml:1658-1660
           else doLoad st (some allocId) addr
 
+/-- The bytes of one store depend on the function-pointer map and current
+    backing bytes, independently of observation capture and volatile history. -/
+def representationForStore [CerbImplCfg.Impl] (enumDefs : EnumDefs) (tagDefs : TagDefs)
+    (ty : ctype) (addr : Int) (mv : MemValue) (st : MemState) : Funptrmap × List AbsByte :=
+  let (fpm, bytes) := memValueToBytes enumDefs tagDefs st.funptrmap mv
+  let bytes := match bitfield_of_type ty with
+    | some info => mergeBitfieldBytes info bytes (readBytesFrom st addr (bitfield_span info))
+    | none => bytes
+  (fpm, bytes)
+
 def storeM [CerbImplCfg.Impl] [LemFuel] (enumDefs : EnumDefs) (tagDefs : TagDefs) (loc : CerbLocation.Loc) (ty : ctype) (isLocking : Bool) (pv : PointerValue) (mv : MemValue) : memM Footprint :=
   ND fun st =>
     let fail_ (err : mem_error) := (NDkilled (failReason err loc), st)
@@ -3061,7 +3227,7 @@ def storeM [CerbImplCfg.Impl] [LemFuel] (enumDefs : EnumDefs) (tagDefs : TagDefs
     -- the Prov_device and Prov_some arms, the post-`resolve_iota` state on the
     -- Prov_symbolic arm (PNVI arc S3)
     let doStore (st0 : MemState) (allocOpt : Option (Int × Allocation)) (unionMem : Option identifier) (addr : Int) :=
-      let (fpm, bytes) := memValueToBytes enumDefs tagDefs st0.funptrmap mv
+      let (fpm, bytes) := representationForStore enumDefs tagDefs ty addr mv st0
       let st' := writeBytesTo { st0 with funptrmap := fpm } addr bytes
       let st' := match unionMem with
         | some membr => { st' with lastUsedUnionMembers :=
@@ -3078,14 +3244,15 @@ def storeM [CerbImplCfg.Impl] [LemFuel] (enumDefs : EnumDefs) (tagDefs : TagDefs
                 else a }
           else st'
         | none => st'
-      let fp : Footprint := .FP .W addr (sizeofCtype enumDefs tagDefs ty)
+      let fp := accessFootprint .W ty addr (sizeofCtype enumDefs tagDefs ty)
       -- Deliberate placement divergence (skeptical review F6, 2026-09-26): impl_mem.ml records the
       -- store receipt inside its first `update`, BEFORE the union/read-only bookkeeping; here it is
       -- appended AFTER. Same bytes, value, pointer and allocation on both sides; the bookkeeping
       -- touches other fields, so the final states are equal (row 13 compares them).
       (NDactive fp, recordAccess loc StoreAccess ty pv (allocOpt.map Prod.fst)
         addr bytes mv (some isLocking)
-        { st' with lastUsed := allocOpt.map Prod.fst })                 -- :1687 last_used
+        (recordVolatileAccess loc StoreAccess ty pv (allocOpt.map Prod.fst) addr bytes mv (some isLocking)
+          { st' with lastUsed := allocOpt.map Prod.fst }))                 -- :1687 last_used
     -- ill-typed-store guard — impl_mem.ml:1673-1681: checked BEFORE the
     -- provenance/pointer-kind match (so it wins over NullPtr etc.);
     -- OCaml's diagnostic printfs (:1674-1680) are not mirrored, the

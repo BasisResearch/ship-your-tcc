@@ -281,3 +281,17 @@ identical. The Lua inventory/mandatory table was consulted before this work.
 | Unevaluated C11 syntax (`Gen4`, `Gen8`, `GhostCabs`, `unevaluated_*` checks) | Local instrumentation of the existing TinyCC 43c7708 translation. Reuses model `skip_or_save_block`, saved-word occurrence maps, modeled expression/type actions, Cerberus Cabs generic/static-assert types, `Phase7` lexical conversion and the existing independent `Raw.checked` comparator. Lua's inventory and mandatory table were consulted; no external library proof or instruction-identity claim is introduced. The native capture utility is reused without rebuilding its dependency projects. |
 | Local replay erasure (`GhostDriver.erase_syntaxFields`, `associationReplayErasure`) | Reuses the existing single `Ghost.erase` and actual TinyCC-model `genericAssociationSyntax` snapshot wrapper by name. Lua `scripts/abs_inventory.sh` and the `CLAUDE.md` mandatory task table were consulted before proof work; their machine-run generators are outside this state-record proof's shape. No Lua/library proof is copied and no instruction-byte identity claim is made. |
 | C11 assertion messages (`parse_assert_str`, `Gen8`, focused fixtures) | Extends the pinned TinyCC 43c7708 compiler/model locally, reusing `TOK_IS_STR`, `TOK_STR_SIZE`, `parse_string_concat`, the scanner's original spelling/physical origins, typed assertion Cabs and the independent `Raw.checked` comparison. Reuses the existing fast/native complete-arena and execution harness. Lua inventory/mandatory table was read; no external library proof or instruction-byte identity claim is introduced. |
+
+C11 bitfields and compound lvalue evaluation (2026-10-28): local extensions
+of Cerberus's shared Ctype/Cabs/Ail/Core desugaring and initialization sources.
+The RV64 PCC placement policy follows pinned, patched TinyCC `struct_layout`
+(`vendor/tinycc` 43c7708 and the existing LGPL notices), solely as an
+implementation-layout choice. C11 typing, constraints and sequencing remain
+in the shared semantic sources. The compound-assignment repair reuses the
+existing typed binary/assignment translation and Core sequencing constructors.
+Existing CerbMem layout, serialization and observation-erasure proofs are
+adapted by name after consulting the Lua inventory and mandatory task-shape
+table. No machine-library proof is copied or asserted instruction-identical.
+The independent default OCaml regression overlay retains its documented
+unsupported bitfield configuration; target observations use cfgTcc in Lean,
+strict GCC and the pinned full tcc/Sail image.

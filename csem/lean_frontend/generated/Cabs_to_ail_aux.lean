@@ -176,8 +176,14 @@ partial def mk_zeroInit_aux (tagDefs1 : Fmap sym tag_definition0) (c : ctype) : 
      | Union0 tag_sym =>
        (match (fmapLookupBy (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2) tag_sym
             tagDefs1) with
-        | some (Union_definition _ _ _ ((memb_ident, (_, _, _, memb_ty)) :: _)) =>
-          ConstantUnion tag_sym memb_ident (mk_zeroInit_aux tagDefs1 memb_ty)
+        | some (Union_definition _ _ _ members) =>
+          (match List.filter
+               (fun (p : (identifier × (attributes × Option alignment × qualifiers × ctype))) =>
+                 match p with
+                 | (_, (_, _, _, ty1)) => not (is_unnamed_bitfield ty1)) members with
+           | (memb_ident, (_, _, _, memb_ty)) :: _ =>
+             ConstantUnion tag_sym memb_ident (mk_zeroInit_aux tagDefs1 memb_ty)
+           | [] => (failwithI "union has no named member" : constant))
         | _ => (failwithI "[Cabs_to_ail.mk_zeroInit_aux] - internal ERROR: Union" : constant))
      | Byte => ConstantInteger (IConstant ((0 : Int)) Octal none))
 def mk_zeroInit (tagDefs1 : Fmap sym tag_definition0) (ty1 : ctype) : expression Unit :=

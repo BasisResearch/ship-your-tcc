@@ -1,0 +1,13 @@
+--- 
++++ 
+@@ -50,9 +50,7 @@
+ 
+ 
+ def struct fl :=
+-  next: 'struct fl*'
+-  f: 'void (void*)*[32]'
+-  a: 'void*[32]'
++
+ 
+ 
+ 

@@ -898,6 +898,13 @@ MEMSCALE_THMS=(CerbMem.chunksOf_eq_range_map
                CerbMem.resolveIota_ok_of_shape
                CerbMem.loadM_erasure
                CerbMem.storeM_erasure
+               CerbMem.stopObserving_recordVolatileAccess
+               CerbMem.recordVolatileAccess_observations
+               CerbMem.stopObserving_volatileAccesses
+               CerbMem.readBytesFrom_stopObserving
+               CerbMem.representationForStore_stopObserving
+               CerbMem.writeBytesTo_observations
+               CerbMem.stopObserving_writeBytesTo
                CerbMem.stopObserving_recordAccess
                CerbMem.recordAccess_stopObserving
                CerbMem.recordAccess_of_observations_none

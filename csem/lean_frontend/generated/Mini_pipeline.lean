@@ -133,7 +133,8 @@ def evalConstantExpressionAux [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl
        (generic_expr Unit Unit sym × elab_state) :=
        (fun (a_e : expression
          genTypeCategory) => /- STD §6.6#4 -/ /- NOTE: this constraint requires the evaluated constant to be within the range of expression's type -/
-         let stdlib1 := mk_translation_stdlib (ailnames1, stdlib_fun_map);
+         let stdlib1 :=(mk_translation_stdlib _lemReader_enum_definitions _lemReader_tagDefs)
+             (ailnames1, stdlib_fun_map);
          let ty1 :=
            match ty_opt with
            | some ty1 => ty1

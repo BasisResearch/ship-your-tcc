@@ -1,0 +1,1 @@
+Defined {value: "Specified(1)", stdout: "a=-1 b=31 c=-5\nsizes b1=8 b2=4 b3=8 b4=4 b5=16\nraw b2 = 55 55 01 00\n", stderr: "", blocked: "false"}

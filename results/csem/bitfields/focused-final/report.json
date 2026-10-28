@@ -1,0 +1,3973 @@
+{
+  "binary_sha256": "ab341ff0640c3f479212c4e3b00c2c8265341465f11855e710133158bfa8f649",
+  "source_revision": "21018370d2e68a55521b5dea4db451d8858b7d8f",
+  "measured_utc": "2026-10-28T12:01:41Z",
+  "rows": [
+    {
+      "path": "c/tests/bitfields/compound_scalar_index_auto.c",
+      "kind": "defined",
+      "sha256": "e7faaf40156a4aeecc5829a5487b6b65884abf56b93f251fdcc25dddc87212f5",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/compound_scalar_index_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "compound_scalar_index_auto.stdout.xz",
+        "stdout_sha256": "ce2dcc8ec6aa3cdc58c7ce70b9c01ca432caf1293708c10029b92688892fa6c7"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/compound_scalar_index_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.zae7c6zd/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.zae7c6zd/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/compound_scalar_index_static.c",
+      "kind": "defined",
+      "sha256": "6aeb4218353d3d1c6440580b8095c3a6b485b5910dedb65160f06bd9c8053392",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/compound_scalar_index_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "compound_scalar_index_static.stdout.xz",
+        "stdout_sha256": "d3be69dbdcdb357c2e1a2e5f22bcb9eac58ae11426c104111c0993f02ef8ac3a"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/compound_scalar_index_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.qz9l5246/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.qz9l5246/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/compound_field_index_auto.c",
+      "kind": "defined",
+      "sha256": "429f239a358bab37f54c6143936ca18127a54b42a23d53b4d388039b1974d541",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/compound_field_index_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "compound_field_index_auto.stdout.xz",
+        "stdout_sha256": "c6a1b3fb09657ec4384c154aacd62c656855c4e3034a18b6e80fe9864f5c87ca"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/compound_field_index_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.nebiynte/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.nebiynte/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/compound_field_index_static.c",
+      "kind": "defined",
+      "sha256": "53da9d16fe689e649ce2fb3dc34ff360a9b18d2394bb9c8ebbf939cf1f62a181",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/compound_field_index_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "compound_field_index_static.stdout.xz",
+        "stdout_sha256": "5d32b29f68938ce2191cd3afa82c14aabeed7a4d2c0c9d8fca0bec55a1e623d6"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/compound_field_index_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.p6vzuoh7/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.p6vzuoh7/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/compound_scalar_pointer_auto.c",
+      "kind": "defined",
+      "sha256": "e3daeece3f041a75d1d2ac190d2af10a8f067250b878c8ad258d3240b402d2fb",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/compound_scalar_pointer_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "compound_scalar_pointer_auto.stdout.xz",
+        "stdout_sha256": "1b4af1728e621163074c118fb1c8e5899d3ea7f1f4fcb5249d9fb7e892874211"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/compound_scalar_pointer_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.gblopwnl/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.gblopwnl/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/compound_scalar_pointer_static.c",
+      "kind": "defined",
+      "sha256": "afc673ad5feb54e4b739def0c010aeaea766b33ca4463f1509cba781a7589b35",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/compound_scalar_pointer_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "compound_scalar_pointer_static.stdout.xz",
+        "stdout_sha256": "2cd92641da3a1bf7cf42eddb34f2e319e777502f9783bf9b5eb9755f5066bb8c"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/compound_scalar_pointer_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.mmzlp19d/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.mmzlp19d/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/compound_shift_auto.c",
+      "kind": "defined",
+      "sha256": "1232c1f7b8b03aa555b92ddef6199f0acd674266c0efa353d5440dbbff1b209a",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/compound_shift_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "compound_shift_auto.stdout.xz",
+        "stdout_sha256": "86c0fdd10537c3d2b3a579f8a1f26382f3061ea8744a0a5784fb6ad46161d495"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/compound_shift_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.ednm2z2t/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.ednm2z2t/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/compound_shift_static.c",
+      "kind": "defined",
+      "sha256": "99c70d8daa2d9af02a0cb6404821a657387bfaf7432b0439ed37c02957835cd3",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/compound_shift_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "compound_shift_static.stdout.xz",
+        "stdout_sha256": "27fd42339052940d17fe6e73d6c902ca45f0c4672471ec611545423ce35968f3"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/compound_shift_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.r7jvphzv/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.r7jvphzv/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/unsequenced_fields_auto.c",
+      "kind": "defined",
+      "sha256": "2bf9b9043231e9178b22a01985199a0cb80935a923693574b09207cf2e4bf6e2",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/unsequenced_fields_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "unsequenced_fields_auto.stdout.xz",
+        "stdout_sha256": "64ed681c89803e4b68daac69063159ad189897558c3bf81683c9a2329b883698"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/unsequenced_fields_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.ysckzfgf/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.ysckzfgf/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/unsequenced_fields_static.c",
+      "kind": "defined",
+      "sha256": "520a7f94439cbd6530a4d0da95075692e64e61daa95224d3dae8a2b74829e25d",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/unsequenced_fields_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "unsequenced_fields_static.stdout.xz",
+        "stdout_sha256": "36431102c782af7adf4d085e1e7595776f6d0197fc1f3c36f5a2d99108d142d0"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/unsequenced_fields_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.isrrgedh/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.isrrgedh/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/unsequenced_updates_auto.c",
+      "kind": "defined",
+      "sha256": "9545f8e24cfd2f35ec4567a208fde493b19980ebab93c0fa1ed1811b9b462eb3",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/unsequenced_updates_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "unsequenced_updates_auto.stdout.xz",
+        "stdout_sha256": "03a95bd25c16141051cf4d72366256d31bd69dd647743579b56ba0596cbb328b"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/unsequenced_updates_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.f7wqjabi/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.f7wqjabi/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/unsequenced_updates_static.c",
+      "kind": "defined",
+      "sha256": "10fd807e4fbdc124128bf246c8e161b3d57f2f63bb5e62fc82dd12404efa2ea5",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/unsequenced_updates_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "unsequenced_updates_static.stdout.xz",
+        "stdout_sha256": "e294df2b6ed92b849cb75ad6d60ea7bdb244c42d333fb9492af9cdd9112dd2ea"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/unsequenced_updates_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.co11pz84/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.co11pz84/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/trailing_zero_auto.c",
+      "kind": "defined",
+      "sha256": "2d200117ef72f3431d772852e9453f623e20fc9ae074d8605ae61b0c9e405812",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/trailing_zero_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "trailing_zero_auto.stdout.xz",
+        "stdout_sha256": "c2493b197340f027c0298233584014f571d6af19b23720052577f49f6ae8c34b"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/trailing_zero_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.bjxzc2sg/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.bjxzc2sg/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/trailing_zero_static.c",
+      "kind": "defined",
+      "sha256": "13cb83a244ce1cfd5f34d6a34c8a5187212f7293c5eab4c030afd3e4d302b56f",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/trailing_zero_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "trailing_zero_static.stdout.xz",
+        "stdout_sha256": "425233f17c683f33d4a03c20a2789119c99f4cd4f630030f6633d26b8c1c329b"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/trailing_zero_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.wgeolnm0/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.wgeolnm0/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/gnu_packed_straddle_auto.c",
+      "kind": "gnu-defined",
+      "sha256": "ceac662d2669c31c142319ca68c56b3b95c2e5f38e823b08ebccb8f1526a3095",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/gnu_packed_straddle_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "gnu_packed_straddle_auto.stdout.xz",
+        "stdout_sha256": "df3172f9e4e9f8f1a0f2fc0621c5635c4423ce304fef32a22184755e1bca0871"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/gnu_packed_straddle_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.scgp6n0n/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.scgp6n0n/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": false
+    },
+    {
+      "path": "c/tests/bitfields/gnu_packed_straddle_static.c",
+      "kind": "gnu-defined",
+      "sha256": "a647e05cded555d638dce262f9570dcc6ef86c037f4ae470dd123a6f7339e46a",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/gnu_packed_straddle_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "gnu_packed_straddle_static.stdout.xz",
+        "stdout_sha256": "4bcd87e0458703201ad3b945da0fc994ce173b841c5bff5c22e433929aa13912"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/gnu_packed_straddle_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.c2pt0hwz/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.c2pt0hwz/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": false
+    },
+    {
+      "path": "c/tests/bitfields/gnu_packed_zero_auto.c",
+      "kind": "gnu-defined",
+      "sha256": "68a951ebffc5895d21c3e41fb7087f233448348eae9d69b513e11548d9a1c725",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/gnu_packed_zero_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "gnu_packed_zero_auto.stdout.xz",
+        "stdout_sha256": "17245ca0adfc3ec44782d49555ba8a3290c81f7a2a11609420d0bfc551fa91d5"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/gnu_packed_zero_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.dnudbk5_/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.dnudbk5_/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": false
+    },
+    {
+      "path": "c/tests/bitfields/gnu_packed_zero_static.c",
+      "kind": "gnu-defined",
+      "sha256": "80fd630a3ae581c121b27eab4a24ad19bbac8f06d464d0cfdbf1a2287aa2beed",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/gnu_packed_zero_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "gnu_packed_zero_static.stdout.xz",
+        "stdout_sha256": "511d8e971d3ab2b5c49b367ef10cc922d30cf06274206d75d407043569e16dcf"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/gnu_packed_zero_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.hs9jfmif/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.hs9jfmif/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": false
+    },
+    {
+      "path": "c/tests/bitfields/gnu_member_packed_auto.c",
+      "kind": "gnu-defined",
+      "sha256": "a10b47cb4e47a19e0677066abfa7bea493d60905f13034152ca702f340e7465a",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/gnu_member_packed_auto.c"
+        ],
+        "exit": 1,
+        "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/gnu_member_packed_auto.c:1:41: expected ; (at punctuator)\n",
+        "stdout_archive": "gnu_member_packed_auto.stdout.xz",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "semantics": null,
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/gnu_member_packed_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.b1b96w6q/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.b1b96w6q/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": false,
+      "required": false
+    },
+    {
+      "path": "c/tests/bitfields/gnu_member_packed_static.c",
+      "kind": "gnu-defined",
+      "sha256": "d4f0e4ac532f0d090bb8b40dfc206ca68c623222bb55412c0bcf504ad30b2bf1",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/gnu_member_packed_static.c"
+        ],
+        "exit": 1,
+        "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/gnu_member_packed_static.c:1:41: expected ; (at punctuator)\n",
+        "stdout_archive": "gnu_member_packed_static.stdout.xz",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "semantics": null,
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/gnu_member_packed_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.vrnmosj7/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.vrnmosj7/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": false,
+      "required": false
+    },
+    {
+      "path": "c/tests/bitfields/gnu_member_aligned_auto.c",
+      "kind": "gnu-defined",
+      "sha256": "fe750801ac2be60afd191bf9c527653a07f278f284cd5f9f957c8425df245bf5",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/gnu_member_aligned_auto.c"
+        ],
+        "exit": 1,
+        "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/gnu_member_aligned_auto.c:1:33: expected ; (at punctuator)\n",
+        "stdout_archive": "gnu_member_aligned_auto.stdout.xz",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "semantics": null,
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/gnu_member_aligned_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.5bnr42_j/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.5bnr42_j/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": false,
+      "required": false
+    },
+    {
+      "path": "c/tests/bitfields/gnu_member_aligned_static.c",
+      "kind": "gnu-defined",
+      "sha256": "7ac9ad59618b695ab1ebd4e518a2dde119e4686863afe7076031ead03c126e13",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/gnu_member_aligned_static.c"
+        ],
+        "exit": 1,
+        "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/gnu_member_aligned_static.c:1:33: expected ; (at punctuator)\n",
+        "stdout_archive": "gnu_member_aligned_static.stdout.xz",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "semantics": null,
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/gnu_member_aligned_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.na27vope/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.na27vope/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": false,
+      "required": false
+    },
+    {
+      "path": "c/tests/bitfields/promotion_after_updates_auto.c",
+      "kind": "defined",
+      "sha256": "f5c28d2ebe8a492f0f8414e285afce1414515eebe50867486cd69f3ea3db6339",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/promotion_after_updates_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "promotion_after_updates_auto.stdout.xz",
+        "stdout_sha256": "b321f4fb76a00ba794ec783b21a93d0ecf11f612f2c5883b0eda8768779475dc"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/promotion_after_updates_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.4igtfl3s/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.4igtfl3s/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/promotion_after_updates_static.c",
+      "kind": "defined",
+      "sha256": "ed9cc7761a8dbf1ca44f585fd880569bee56f1291b6f5c66542594c8d9366400",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/promotion_after_updates_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "promotion_after_updates_static.stdout.xz",
+        "stdout_sha256": "bb38743fcdf647a2e78b2a4d1c068dc582da25cb01b5a9541f41725a47205189"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/promotion_after_updates_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.mgyr2hk_/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.mgyr2hk_/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/signed_auto.c",
+      "kind": "defined",
+      "sha256": "d4a48294e3be72b1901e114a61bc83e510d05c3846e0e9d81eb638eb99d8857f",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/signed_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "signed_auto.stdout.xz",
+        "stdout_sha256": "14b5267466b188442c4f31e96a8511094582587f690a1236b89eaaef113ce612"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/signed_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.k8olj9so/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.k8olj9so/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/signed_static.c",
+      "kind": "defined",
+      "sha256": "fca9693b4d3feaa5e4f7789faf007db2c7401d1724dc0d676509efbd51cc834e",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/signed_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "signed_static.stdout.xz",
+        "stdout_sha256": "ee40d12a7e51406dd3d2c8f5775055f518b59220e10381b2dfee7b681d960cbc"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/signed_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.a32scixj/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.a32scixj/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/plain_sign_auto.c",
+      "kind": "defined",
+      "sha256": "9435283d54c0a3c7aa78b41582a2b8c877c8a51816177166471b2d07fa2f0fb4",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/plain_sign_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "plain_sign_auto.stdout.xz",
+        "stdout_sha256": "9315383c53f8a9b20020469de17299498ad75b01d93b098f6160f6749dcffbb8"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/plain_sign_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.91bf786m/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.91bf786m/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/plain_sign_static.c",
+      "kind": "defined",
+      "sha256": "b801638c56d7741715b3ddf0825ab0f9aad8a035c0aceb8ee30b07aca6e5f554",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/plain_sign_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "plain_sign_static.stdout.xz",
+        "stdout_sha256": "fc4951b968790dee7c57d1a9c2fe15fe646e468cfe8749007653f275f17a9dd3"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/plain_sign_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.ghfz60ap/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.ghfz60ap/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/padding_auto.c",
+      "kind": "defined",
+      "sha256": "02a0ac61f64f022218a21b1208f094811d05fdb07942f2ac7eb5c5aaea9506d0",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/padding_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "padding_auto.stdout.xz",
+        "stdout_sha256": "2538c6a28c6dda4fe2f9bb0c78173de4bb953a20b1f39258a41c69049101bffd"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/padding_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.e1c8kpkr/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.e1c8kpkr/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/padding_static.c",
+      "kind": "defined",
+      "sha256": "c97dd115ce73cdbe5bb1c6434bad1b3b9c78f5ec726dd3230c9fa44803504a9e",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/padding_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "padding_static.stdout.xz",
+        "stdout_sha256": "c86526d52b6550b232916414d485af95f99e1c4bf9e82de566ec775b96013dc8"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/padding_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.zogj70ti/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.zogj70ti/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/trailing_padding_auto.c",
+      "kind": "defined",
+      "sha256": "1d8713ffa4e52c830415519cae8a74874dcdf95869799579b2b1b0ec7e82c53f",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/trailing_padding_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "trailing_padding_auto.stdout.xz",
+        "stdout_sha256": "69a67b58e094f5259d6b9debe0dd8a7326a507c841d0f849a85ce8b87a4194d1"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/trailing_padding_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.jtheasus/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.jtheasus/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/trailing_padding_static.c",
+      "kind": "defined",
+      "sha256": "00e0bdb00dd9e7f6aa741b5e64eaac8639c72e3be8fd26c297d3cc8c4c600510",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/trailing_padding_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "trailing_padding_static.stdout.xz",
+        "stdout_sha256": "4ca9e00d9eefa8f0147210f3207b8614a499f7a5ded77b0fde77a8279b66261d"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/trailing_padding_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.8ybqw02o/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.8ybqw02o/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/zero_barrier_auto.c",
+      "kind": "defined",
+      "sha256": "059ec0b74a1b52b1d99d14057dfd37b25fa44597170723a3b9a944289e075623",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/zero_barrier_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "zero_barrier_auto.stdout.xz",
+        "stdout_sha256": "3afd8e5a06c7082083ef5c6a41601fc942c80999a0cc89df66b34a2d7dc02af7"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/zero_barrier_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.l76d_azn/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.l76d_azn/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/zero_barrier_static.c",
+      "kind": "defined",
+      "sha256": "e80162a02d3c5f2eb85eaf522438b3719605a66cfc7e82a2dbf760b656fc2dc0",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/zero_barrier_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "zero_barrier_static.stdout.xz",
+        "stdout_sha256": "1d8d20d773b27e6757fe6e676b9451ffa719ef13da022dcc6b40082872dac685"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/zero_barrier_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.et9ijbph/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.et9ijbph/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/leading_padding_auto.c",
+      "kind": "defined",
+      "sha256": "2b9d73562e291ec9ddda8008a558179f2c90e874603d2a121158d1f2c163f85b",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/leading_padding_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "leading_padding_auto.stdout.xz",
+        "stdout_sha256": "94bb30abf71ad92e5a85b8d171da2d55111ac46f2df255de3f40f6fd66b1f72d"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/leading_padding_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.fpko_7mu/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.fpko_7mu/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/leading_padding_static.c",
+      "kind": "defined",
+      "sha256": "b09198cf4253ce278d449b359bb1c8c9092a23af1ad8cf17af26b0eb4a8e0696",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/leading_padding_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "leading_padding_static.stdout.xz",
+        "stdout_sha256": "b2ec2c57f5a9ec69aaa01ffa92f4c1feedad5ccf7c7e975236091ec53446dbce"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/leading_padding_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.kcnn8fiv/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.kcnn8fiv/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/leading_zero_auto.c",
+      "kind": "defined",
+      "sha256": "8944dbf6931ae65d57df703e62cd7a9befb78249693db0bc813bc521685a6a45",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/leading_zero_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "leading_zero_auto.stdout.xz",
+        "stdout_sha256": "b9f179375816275f55d510f6a93dd3e398e4dc4b8e065c893ae14711e0343560"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/leading_zero_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.auhsyxc7/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.auhsyxc7/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/leading_zero_static.c",
+      "kind": "defined",
+      "sha256": "540f44cdce5cf51e9a3c44bb93c51638eaaa69d80fd932f27a4ba8d4734b6073",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/leading_zero_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "leading_zero_static.stdout.xz",
+        "stdout_sha256": "8c705d3b38ffeede63af2868dee049d3558f2ad51c93618571cfda2eeeb1e051"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/leading_zero_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.yea0kxr6/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.yea0kxr6/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/narrow_assignment_auto.c",
+      "kind": "defined",
+      "sha256": "6c107f8854ea0f6cef8bd698ebd2bab95ec2bc16a509d7af1431b75df49c39b8",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/narrow_assignment_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "narrow_assignment_auto.stdout.xz",
+        "stdout_sha256": "0e1547026758f876ace4e6b24236206570e79cb46ecad0280350aa81c12638df"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/narrow_assignment_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.bnvkbklq/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/narrow_assignment_auto.c: In function \u2018main\u2019:\n/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/narrow_assignment_auto.c:2:45: warning: unsigned conversion from \u2018int\u2019 to \u2018unsigned char:3\u2019 changes value from \u201815\u2019 to \u20187\u2019 [-Woverflow]\n    2 | int main(void) { struct S s={0}; int a=(s.a=15); int b=(s.b=7); return a!=7 || b != -1 || s.a!=7 || s.b != -1; }\n      |                                             ^~\n/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/narrow_assignment_auto.c:2:61: warning: overflow in conversion from \u2018int\u2019 to \u2018signed char:3\u2019 changes value from \u20187\u2019 to \u2018-1\u2019 [-Woverflow]\n    2 | int main(void) { struct S s={0}; int a=(s.a=15); int b=(s.b=7); return a!=7 || b != -1 || s.a!=7 || s.b != -1; }\n      |                                                             ^\n"
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.bnvkbklq/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/narrow_assignment_static.c",
+      "kind": "defined",
+      "sha256": "7997030b4603fb16ea99d6d49126ba5cfa425cd232d24cabc1ab427ed89d4e3c",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/narrow_assignment_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "narrow_assignment_static.stdout.xz",
+        "stdout_sha256": "611c339b4bc2edd57c326cd23f54bf59fc3e4296b9fb425a28c0b60d43d96ba2"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/narrow_assignment_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.xk19js9q/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/narrow_assignment_static.c: In function \u2018main\u2019:\n/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/narrow_assignment_static.c:2:52: warning: unsigned conversion from \u2018int\u2019 to \u2018unsigned char:3\u2019 changes value from \u201815\u2019 to \u20187\u2019 [-Woverflow]\n    2 | int main(void) { static struct S s={0}; int a=(s.a=15); int b=(s.b=7); return a!=7 || b != -1 || s.a!=7 || s.b != -1; }\n      |                                                    ^~\n/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/narrow_assignment_static.c:2:68: warning: overflow in conversion from \u2018int\u2019 to \u2018signed char:3\u2019 changes value from \u20187\u2019 to \u2018-1\u2019 [-Woverflow]\n    2 | int main(void) { static struct S s={0}; int a=(s.a=15); int b=(s.b=7); return a!=7 || b != -1 || s.a!=7 || s.b != -1; }\n      |                                                                    ^\n"
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.xk19js9q/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/increment_auto.c",
+      "kind": "defined",
+      "sha256": "3fa0613bc4ad3ded3915a3f0a0b4a41ea7b129e33f447568310c09563344559d",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/increment_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "increment_auto.stdout.xz",
+        "stdout_sha256": "b7a2a1c3458359d2716de8f59e29c0a3c3d6626c0f8d289d453cb3afa6e5e1d3"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/increment_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.6qnxdge6/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.6qnxdge6/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/increment_static.c",
+      "kind": "defined",
+      "sha256": "31316fdfdbc8ec459fe7a002d43b13fd3d91e220abc8fd95275bb7c6ddec758b",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/increment_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "increment_static.stdout.xz",
+        "stdout_sha256": "570ae7129738c977066651619f089fb33b8f61d79da37d7cad226b007db72786"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/increment_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.941r1r2g/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.941r1r2g/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/compound_auto.c",
+      "kind": "defined",
+      "sha256": "1051ed0373c277a50b64df09f355ee404080fbba1bdddd44531b081f4428828f",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/compound_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "compound_auto.stdout.xz",
+        "stdout_sha256": "34ff1ae72db0644b64478d34f854057d2bafc4de5584eba311bf9c82d2a43f10"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/compound_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.v44bjy8q/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.v44bjy8q/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/compound_static.c",
+      "kind": "defined",
+      "sha256": "dcfec3725b495e662c915b3e6d5964b90414aca1d9833017976daf391294e554",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/compound_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "compound_static.stdout.xz",
+        "stdout_sha256": "8ebf5bb2c9a7867873d16285ffae719c7b639aea895bd93f2b8ccd5174c283e7"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/compound_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.779hhhe8/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.779hhhe8/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/promote_auto.c",
+      "kind": "defined",
+      "sha256": "b91339f179ce7bcee5ab94997ab6daaba2c41498cd00409c62ee9aad5078a5f9",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/promote_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "promote_auto.stdout.xz",
+        "stdout_sha256": "6eb9608f6fd6cf1fe9f01e351426e3391e7a2e33e259f8316503eaa54231d686"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/promote_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.ezym651z/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.ezym651z/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/promote_static.c",
+      "kind": "defined",
+      "sha256": "59197335b91a2f4fb3802ff4c0b90e862a33d74820a877bf7d5aecb56ae87f3d",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/promote_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "promote_static.stdout.xz",
+        "stdout_sha256": "b62a276262d9d65764ccbf6c0d551aab75499a091cbc09dffdc80fe91a861a4e"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/promote_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.542ue4xb/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.542ue4xb/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/bool_auto.c",
+      "kind": "defined",
+      "sha256": "d84e9e075b9f7bec3cad9c1454e9e405e5387277d85861c9854958b360343923",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/bool_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "bool_auto.stdout.xz",
+        "stdout_sha256": "b53a5cf3404d027109aadc8000cba6bb5ee9244b57d29e15124edc623ac5c4ca"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/bool_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.5aky7p7_/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.5aky7p7_/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/bool_static.c",
+      "kind": "defined",
+      "sha256": "529b86df3496bd7509ad7151153fe8c2ae4e346fec39731656f1b580c30b4a06",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/bool_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "bool_static.stdout.xz",
+        "stdout_sha256": "4387a09ff1147d5cea2673db6a8a775cbce4cf450c4e37429b35c85d9c7c6cf1"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/bool_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.jb3lx0ob/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.jb3lx0ob/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/automatic_uninitialized_auto.c",
+      "kind": "defined",
+      "sha256": "aba0ec6e8788cc17acd2d86992d4bc1b481757839b5eadcd1c5f7a8e7bdf9b32",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/automatic_uninitialized_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "automatic_uninitialized_auto.stdout.xz",
+        "stdout_sha256": "2d1e89b20bc13a85abd928f03db66d2ebc9b17c7ac41cd918004f63b141cd51e"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/automatic_uninitialized_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.rqutdjlu/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.rqutdjlu/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/automatic_uninitialized_static.c",
+      "kind": "defined",
+      "sha256": "bdb0624f71fb3de4e08160a4c07e70f2547bc646970a9470356f84b489217b1c",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/automatic_uninitialized_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "automatic_uninitialized_static.stdout.xz",
+        "stdout_sha256": "d87a0f9a8dbe4ddea10eb66a97237da2f453d545563bb722cd219ac359c370e8"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/automatic_uninitialized_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.r6r1l003/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.r6r1l003/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/automatic_partial_auto.c",
+      "kind": "defined",
+      "sha256": "c45774c561058e9c3b95a84ca475fb27c5c28d61730d83ade021059d8666796b",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/automatic_partial_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "automatic_partial_auto.stdout.xz",
+        "stdout_sha256": "560d679e7a666897b62925acb2171e6d77f36b5cf542f51f8bb31ddbadfcd63f"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/automatic_partial_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.5mu8rso3/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.5mu8rso3/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/automatic_partial_static.c",
+      "kind": "defined",
+      "sha256": "9c9d03f418b3e48a01160d89bdcd0de1739df4c65b20203d66c7103f92ce7041",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/automatic_partial_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "automatic_partial_static.stdout.xz",
+        "stdout_sha256": "84b4982c99634224464181d3f208d47abd3044cb23e744adb763d44f1bd82462"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/automatic_partial_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.htb4z55l/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.htb4z55l/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/volatile_auto.c",
+      "kind": "defined",
+      "sha256": "528becad07cf1b19943d9b243fa0c6459d41bbdb0a51e0263d192217623dd2e8",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/volatile_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "volatile_auto.stdout.xz",
+        "stdout_sha256": "d97e1bbbeb3e32f8175b161c3da0706cb08771b61846c7bec58f18b171849a2b"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/volatile_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.ybx__v3t/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.ybx__v3t/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/volatile_static.c",
+      "kind": "defined",
+      "sha256": "17fcfbe06259fa49822718757f01747621c52a738d4c7f0f749c183ee3596873",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/volatile_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "volatile_static.stdout.xz",
+        "stdout_sha256": "fdc11cf26a86bad1870c44a2aa45f38a90ec9c50e2067d453adc3ad78e187808"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/volatile_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.ihx0ods5/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.ihx0ods5/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/volatile_member_auto.c",
+      "kind": "defined",
+      "sha256": "2e0a3ec94c109e1478f6839604014f637be513720fcd3ae6e04ebec0df16f3ca",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/volatile_member_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "volatile_member_auto.stdout.xz",
+        "stdout_sha256": "d3d48bfb633ada03fa68a369be742c5c51d7eaf4b26996382207d7724d792cbe"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/volatile_member_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.5xuzlewl/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.5xuzlewl/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/volatile_member_static.c",
+      "kind": "defined",
+      "sha256": "c872855fa1f92c43e24f82a08eb64c19cb38bf04b7b99d39809a69c7e3614432",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/volatile_member_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "volatile_member_static.stdout.xz",
+        "stdout_sha256": "64cfcb1a4e93d1c2e88d3b4e37898b8fef115457b8f6ab43ad56f79a1e286c42"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/volatile_member_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.iuuffels/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.iuuffels/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/union_auto.c",
+      "kind": "defined",
+      "sha256": "a24fce580f7f30d4caf1b1106f628ab885a550893aa4b3f25cc4da103f87faa8",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/union_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "union_auto.stdout.xz",
+        "stdout_sha256": "070c30d82fc989db8ccc9736b54690f4c851293035b9eae6f613be3b76fce6b2"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/union_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.6ka3j5pu/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.6ka3j5pu/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/union_static.c",
+      "kind": "defined",
+      "sha256": "181e568301c0806be4f5a52b9cb4dfbee991e07545ef54319ed9b8af2ada2b45",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/union_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "union_static.stdout.xz",
+        "stdout_sha256": "ab984efb593e39a63d384a64e5351be410851db4a532c42476830c2e6c5e9513"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/union_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.q79b604l/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.q79b604l/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/union_designator_auto.c",
+      "kind": "defined",
+      "sha256": "1ccb44e1a8222d7a09467d037b64c26dc0e7e6500098bcba99b053f1574993a4",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/union_designator_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "union_designator_auto.stdout.xz",
+        "stdout_sha256": "bde1ded586c1fd07879b79ceeae2af104a3d12ec9e18f36cac5a64614cff7155"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/union_designator_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.lfburwvm/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.lfburwvm/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/union_designator_static.c",
+      "kind": "defined",
+      "sha256": "9433ca00bb292eda56442397034a1e7b4803b59d94a81ef3a3484f354e09a25f",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/union_designator_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "union_designator_static.stdout.xz",
+        "stdout_sha256": "e0caa28062fffa0c982fec63b32397e63f44ae921cbd75b16c75d5574f282655"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/union_designator_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc._a1vxckz/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc._a1vxckz/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/anonymous_auto.c",
+      "kind": "defined",
+      "sha256": "c648088a274d511fe6e3c4d334ca3c7378b78cb1a71ac6a6dfeef993fe295891",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/anonymous_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "anonymous_auto.stdout.xz",
+        "stdout_sha256": "41372eba86c699100d286e63607eb17fddb6eb216798048630af1620dab37144"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/anonymous_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.l3wdegky/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.l3wdegky/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/anonymous_static.c",
+      "kind": "defined",
+      "sha256": "289d4e7068ba99a8b7ac8594b18db79b3a642f620362d11a16e481d7968139c3",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/anonymous_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "anonymous_static.stdout.xz",
+        "stdout_sha256": "9882a90ff9da9d5262178d3a5903eefcf21335739f04c036397d0e3ccfd80ae2"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/anonymous_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.mcj3l7th/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.mcj3l7th/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/array_auto.c",
+      "kind": "defined",
+      "sha256": "d34a55230fa720c5be7ba0021f19e22c52485c11ec590778d7796f8aa8705b07",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/array_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "array_auto.stdout.xz",
+        "stdout_sha256": "eff390e618e0eaf865746e18134f45f8623e1f1a4f6f4db702ff74a7de444d12"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/array_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.nu5ziln8/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.nu5ziln8/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/array_static.c",
+      "kind": "defined",
+      "sha256": "a81d0819bd5c3b3ec163b082b6726fee3d1afcfdde209719c43ebf1eb528cce9",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/array_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "array_static.stdout.xz",
+        "stdout_sha256": "0befe14eebf0276b8933db501259a55129596e12eb65a4a93c0022268868190e"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/array_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.xes5me4t/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.xes5me4t/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/designator_continuation_auto.c",
+      "kind": "defined",
+      "sha256": "90e38c99670f79f9a73c7b1a5be2fb7462d8f81ef2a797a6df1967ed5c57969d",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/designator_continuation_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "designator_continuation_auto.stdout.xz",
+        "stdout_sha256": "a8d1c9b140021dd8c2e71f095bca35952d379f55f848bb8f0dbe9d02b5134526"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/designator_continuation_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.bae6kz49/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.bae6kz49/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/designator_continuation_static.c",
+      "kind": "defined",
+      "sha256": "1dc472aa3e32d5cde2b9701eda939474d35ef286938e09456f25cc7ffcfa9062",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/designator_continuation_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "designator_continuation_static.stdout.xz",
+        "stdout_sha256": "938e9f6aadd71795bad09b03eee72e10ed4ab84cbf48e8a10f6a24ab1681f523"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/designator_continuation_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.7pxdqurr/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.7pxdqurr/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/padding_continuation_auto.c",
+      "kind": "defined",
+      "sha256": "992bac55a853b57b72184beaf3ca45c639b81892ea6003bf1db7eb25bc37d4f3",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/padding_continuation_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "padding_continuation_auto.stdout.xz",
+        "stdout_sha256": "7021168163d5f49ad9b57828b9cae8c1f36ddfadbaaab07f70835697d5a428e2"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/padding_continuation_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.6oj1q2v7/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.6oj1q2v7/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/padding_continuation_static.c",
+      "kind": "defined",
+      "sha256": "8720c216915765db4f49389d40ae87d1324aaf6de7bd20d7f09e9d6a13f75a6b",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/padding_continuation_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "padding_continuation_static.stdout.xz",
+        "stdout_sha256": "71d10d939deb8f948e770c4b8ae6f8410190348a4b5787aa63ceca673e1d3a19"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/padding_continuation_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.q6eggwg8/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.q6eggwg8/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/aggregate_copy_auto.c",
+      "kind": "defined",
+      "sha256": "eed5fcd951302ff15e157cbf4b5745f5e7aa924f0cf87324c7715922228d00d4",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/aggregate_copy_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "aggregate_copy_auto.stdout.xz",
+        "stdout_sha256": "b5d18228141aa22a17e08b0ae5d4efde0945e4188f45bd1bc06fa5d0d07ce483"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/aggregate_copy_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.xo_sagg9/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.xo_sagg9/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/aggregate_copy_static.c",
+      "kind": "defined",
+      "sha256": "e6b9142627736cd82335f40a8115e3d0c5f227dfbbebfd8ed958c284210150a3",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/aggregate_copy_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "aggregate_copy_static.stdout.xz",
+        "stdout_sha256": "dedea0119299003c953a2c99d6056f5c9b54f2eddb215e611249a6d7183e8056"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/aggregate_copy_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.eyydkiq4/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.eyydkiq4/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/union_store_auto.c",
+      "kind": "defined",
+      "sha256": "3c6b16972f55b4053ea06f431b5e1f7f7a75c496c4a2bff164a66e18c70e1f78",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/union_store_auto.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "union_store_auto.stdout.xz",
+        "stdout_sha256": "dd76e1d19555875b0d2884ac95e7033ef59f4facbb8f2b3ede50b915e33d51a8"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/union_store_auto.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.2lwq6p3o/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.2lwq6p3o/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/union_store_static.c",
+      "kind": "defined",
+      "sha256": "8b9df5f9656a4118dce112e87fa048eb06581fa6f080fa5a77cc383ac6678a41",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/union_store_static.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "union_store_static.stdout.xz",
+        "stdout_sha256": "1402270850fcdbd9c902fdb5348e7c7ee5b60c90e85fd2ccb9e25c0b0db7127f"
+      },
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/union_store_static.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.x9ws48ww/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "gcc": {
+        "command": [
+          "/Users/kirancodes/tmp/bitfield-gcc.x9ws48ww/prog"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/invalid_negative_width.c",
+      "kind": "constraint",
+      "sha256": "115467b019ee34ed0a767a169f4cbb58f469a91618d721ca7c523f85bf6b1d11",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_negative_width.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "invalid_negative_width.stdout.xz",
+        "stdout_sha256": "14252db0b43587dbea91a35570f2d30cad4bc5ccfaa6753713eee84b3ed474ab"
+      },
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_negative_width.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.xsd6ip1f/prog"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_negative_width.c:1:21: error: negative width in bit-field \u2018a\u2019\n    1 | struct S { unsigned a:-1; };\n      |                     ^\n"
+      },
+      "gcc": null,
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/invalid_excess_width.c",
+      "kind": "constraint",
+      "sha256": "7b9076efb798cecea594250063e1803b2bf6f3078e911e6418ff06ef791a12c5",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_excess_width.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "invalid_excess_width.stdout.xz",
+        "stdout_sha256": "55bf3c3bc951a8aa95283e3b7049a2b07896d8d7121270bc046e31238c0dc477"
+      },
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_excess_width.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.cu4z0pc1/prog"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_excess_width.c:1:21: error: width of \u2018a\u2019 exceeds its type\n    1 | struct S { unsigned a:33; };\n      |                     ^\n"
+      },
+      "gcc": null,
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/invalid_bool_width.c",
+      "kind": "constraint",
+      "sha256": "0f592d89bc9d4e84af4d38e494064d3e87929fc4adf439681caabd4f085df064",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_bool_width.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "invalid_bool_width.stdout.xz",
+        "stdout_sha256": "e9ff5ed8278fc5c441ffb03dfe9062ce67e15d3b248b72f67de90e4ff231fd1e"
+      },
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_bool_width.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.pu2cn1_o/prog"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_bool_width.c:1:18: error: width of \u2018a\u2019 exceeds its type\n    1 | struct S { _Bool a:2; };\n      |                  ^\n"
+      },
+      "gcc": null,
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/invalid_named_zero.c",
+      "kind": "constraint",
+      "sha256": "aaaabff7b53213ee617205b0c4dbcee60b9e2be45ba91389fe6d71c311022874",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_named_zero.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "invalid_named_zero.stdout.xz",
+        "stdout_sha256": "1c5c731ffedad1edd6e3e32ec89bc041ea345a76020b0ac4b691b4d9825396a9"
+      },
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_named_zero.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.pckwlzf0/prog"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_named_zero.c:1:16: error: zero width for bit-field \u2018a\u2019\n    1 | struct S { int a:0; };\n      |                ^\n"
+      },
+      "gcc": null,
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/invalid_floating_type.c",
+      "kind": "constraint",
+      "sha256": "d9c058ef6bdc13d6da923dee241385748d5caffc51ab3098e4832c0a7e193d82",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_floating_type.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "invalid_floating_type.stdout.xz",
+        "stdout_sha256": "f3c87b2c29b3753c7cbb82529937a72404e8f684a14dd8d24f5b1f5aa18ff116"
+      },
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_floating_type.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.4t39thjp/prog"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_floating_type.c:1:19: error: bit-field \u2018a\u2019 has invalid type\n    1 | struct S { double a:3; };\n      |                   ^\n"
+      },
+      "gcc": null,
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/invalid_pointer_type.c",
+      "kind": "constraint",
+      "sha256": "1b1c94176dfdde3dfcb6c75d7d25de11a062eb007d8d4af9a75f94774ba0eb70",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_pointer_type.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "invalid_pointer_type.stdout.xz",
+        "stdout_sha256": "2f92dfbebd0218a7cb4dd20b0922be4ee4a83da1e370a0fd67d4c3b982a95ab1"
+      },
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_pointer_type.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.thzbl1tw/prog"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_pointer_type.c:1:17: error: bit-field \u2018a\u2019 has invalid type\n    1 | struct S { int *a:3; };\n      |                 ^\n"
+      },
+      "gcc": null,
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/invalid_nonconstant_width.c",
+      "kind": "constraint",
+      "sha256": "3e2e0c6500a69b4ead1ce7ffd89fee58f7e368aea9c49d64105b7384c3817aa1",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_nonconstant_width.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "invalid_nonconstant_width.stdout.xz",
+        "stdout_sha256": "97a61a6a3653e4927e2999bbc36b2000c396337ca699b6d97a01b762cf307fa2"
+      },
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_nonconstant_width.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc._wtcq21q/prog"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_nonconstant_width.c:1:28: error: bit-field \u2018a\u2019 width not an integer constant\n    1 | int n; struct S { unsigned a:n; };\n      |                            ^\n"
+      },
+      "gcc": null,
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/invalid_address.c",
+      "kind": "constraint",
+      "sha256": "05f85ee2dc68b49e437f09bba3d1aa6e52dc19edb836562d35914be5998b8520",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_address.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "invalid_address.stdout.xz",
+        "stdout_sha256": "5d6afa00aeaa0b882207d64d50f55bde583275ea69e06b1071834c6229cc245f"
+      },
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_address.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.so4mp3x6/prog"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_address.c: In function \u2018f\u2019:\n/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_address.c:1:62: error: cannot take address of bit-field \u2018a\u2019\n    1 | struct S { unsigned a:3; }; int f(void) { struct S s; return &s.a != 0; }\n      |                                                              ^\n"
+      },
+      "gcc": null,
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/invalid_sizeof.c",
+      "kind": "constraint",
+      "sha256": "b6ffd208cfaaf49ed5cbd24f3ee4801b824cc85a6a1d036fa92256531977244b",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_sizeof.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "invalid_sizeof.stdout.xz",
+        "stdout_sha256": "073102b02e8c3bd8ade37dedb7b0dc414327144333b45fe27aef5df1098fa0fc"
+      },
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_sizeof.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.6yg_4uou/prog"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_sizeof.c: In function \u2018f\u2019:\n/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_sizeof.c:1:68: error: \u2018sizeof\u2019 applied to a bit-field\n    1 | struct S { unsigned a:3; }; int f(void) { struct S s; return sizeof(s.a); }\n      |                                                                    ^\n"
+      },
+      "gcc": null,
+      "ok": true,
+      "required": true
+    },
+    {
+      "path": "c/tests/bitfields/invalid_aligned.c",
+      "kind": "constraint",
+      "sha256": "a43111c5644d9c47bc8a5e57d706577637d77df312b02bb43fa6ff7623833f4e",
+      "raw": {
+        "command": [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+          "--tcc",
+          "--fslist",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+          "--semantic",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_aligned.c"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout_archive": "invalid_aligned.stdout.xz",
+        "stdout_sha256": "2e884fae926a0a9b023a82fd4ffe86d98bfe625afb7a9f8417541ffa4fb410ae"
+      },
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "gcc_compile": {
+        "command": [
+          "gcc",
+          "-std=c11",
+          "-pedantic-errors",
+          "-O0",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_aligned.c",
+          "-o",
+          "/Users/kirancodes/tmp/bitfield-gcc.ldgskh_b/prog"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_aligned.c:1:33: error: alignment specified for bit-field \u2018a\u2019\n    1 | struct S { _Alignas(8) unsigned a:3; };\n      |                                 ^\n"
+      },
+      "gcc": null,
+      "ok": true,
+      "required": true
+    }
+  ]
+}

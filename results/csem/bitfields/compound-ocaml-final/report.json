@@ -1,0 +1,140 @@
+{
+  "oracle_key": "160ecb1fe4cc54d04820db1f0cff834d7f2db9db946d583adf29cf7f8fe2becf",
+  "binary_sha256": "5c757b9ffe68567c5e21a366301af07b0cf3b1456bdf79f22c0a9840ef39407c",
+  "driver_sha256": "9708262db311906d285d99c03d52eed04bec3063781d6aedafb3b4cf8c63cab1",
+  "rows": [
+    {
+      "case": "call-address",
+      "source_sha256": "2f00ae11ca8a9b11a0bfaabc7c9b0e0d6b53e9a428a4684a278f30fb1d0c0b15",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/fork-oracle/160ecb1fe4cc54d04820db1f0cff834d7f2db9db946d583adf29cf7f8fe2becf/_build/default/backend/driver/main.exe",
+        "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/fork-oracle/160ecb1fe4cc54d04820db1f0cff834d7f2db9db946d583adf29cf7f8fe2becf/_build/install/default",
+        "--nolibc",
+        "--exec",
+        "--batch",
+        "--mode=exhaustive",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/bitfields/lead-compound-ocaml/sources/call-address.c"
+      ],
+      "exit": 0,
+      "verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "expected": 0,
+      "ok": true
+    },
+    {
+      "case": "call-member",
+      "source_sha256": "0098c442cc22c33445b3ba5890c49bba7f54ee6aa4495d27309d1725794a58b3",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/fork-oracle/160ecb1fe4cc54d04820db1f0cff834d7f2db9db946d583adf29cf7f8fe2becf/_build/default/backend/driver/main.exe",
+        "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/fork-oracle/160ecb1fe4cc54d04820db1f0cff834d7f2db9db946d583adf29cf7f8fe2becf/_build/install/default",
+        "--nolibc",
+        "--exec",
+        "--batch",
+        "--mode=exhaustive",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/bitfields/lead-compound-ocaml/sources/call-member.c"
+      ],
+      "exit": 0,
+      "verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "expected": 0,
+      "ok": true
+    },
+    {
+      "case": "index-add",
+      "source_sha256": "e469b0684ebf666723b16aedecced7709167ae7cde204ce6d145ec0a4acae567",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/fork-oracle/160ecb1fe4cc54d04820db1f0cff834d7f2db9db946d583adf29cf7f8fe2becf/_build/default/backend/driver/main.exe",
+        "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/fork-oracle/160ecb1fe4cc54d04820db1f0cff834d7f2db9db946d583adf29cf7f8fe2becf/_build/install/default",
+        "--nolibc",
+        "--exec",
+        "--batch",
+        "--mode=exhaustive",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/bitfields/lead-compound-ocaml/sources/index-add.c"
+      ],
+      "exit": 0,
+      "verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "expected": 0,
+      "ok": true
+    },
+    {
+      "case": "index-assign-control",
+      "source_sha256": "636ba8ea235e7912feb7ec4b956836c65bb87bbe35a17d1a68b22f833788279a",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/fork-oracle/160ecb1fe4cc54d04820db1f0cff834d7f2db9db946d583adf29cf7f8fe2becf/_build/default/backend/driver/main.exe",
+        "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/fork-oracle/160ecb1fe4cc54d04820db1f0cff834d7f2db9db946d583adf29cf7f8fe2becf/_build/install/default",
+        "--nolibc",
+        "--exec",
+        "--batch",
+        "--mode=exhaustive",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/bitfields/lead-compound-ocaml/sources/index-assign-control.c"
+      ],
+      "exit": 0,
+      "verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "expected": 0,
+      "ok": true
+    },
+    {
+      "case": "index-multiply",
+      "source_sha256": "574246012375f837e05a16da53ae3145525b22473e26cb9afd0c1d2c937c0818",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/fork-oracle/160ecb1fe4cc54d04820db1f0cff834d7f2db9db946d583adf29cf7f8fe2becf/_build/default/backend/driver/main.exe",
+        "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/fork-oracle/160ecb1fe4cc54d04820db1f0cff834d7f2db9db946d583adf29cf7f8fe2becf/_build/install/default",
+        "--nolibc",
+        "--exec",
+        "--batch",
+        "--mode=exhaustive",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/bitfields/lead-compound-ocaml/sources/index-multiply.c"
+      ],
+      "exit": 0,
+      "verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "expected": 0,
+      "ok": true
+    },
+    {
+      "case": "pointer-postincrement",
+      "source_sha256": "8335e807e894a2bfd77a25635a2586a8ff2a189c7d51c49304ea8c9367851894",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/fork-oracle/160ecb1fe4cc54d04820db1f0cff834d7f2db9db946d583adf29cf7f8fe2becf/_build/default/backend/driver/main.exe",
+        "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/fork-oracle/160ecb1fe4cc54d04820db1f0cff834d7f2db9db946d583adf29cf7f8fe2becf/_build/install/default",
+        "--nolibc",
+        "--exec",
+        "--batch",
+        "--mode=exhaustive",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/bitfields/lead-compound-ocaml/sources/pointer-postincrement.c"
+      ],
+      "exit": 0,
+      "verdicts": [
+        "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "expected": 0,
+      "ok": true
+    },
+    {
+      "case": "minimal-counter",
+      "source_sha256": "4132ab004ce3600d1b8f0db173c48f928088b001f12c70cb36da1a518871cbab",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/fork-oracle/160ecb1fe4cc54d04820db1f0cff834d7f2db9db946d583adf29cf7f8fe2becf/_build/default/backend/driver/main.exe",
+        "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/fork-oracle/160ecb1fe4cc54d04820db1f0cff834d7f2db9db946d583adf29cf7f8fe2becf/_build/install/default",
+        "--nolibc",
+        "--exec",
+        "--batch",
+        "--mode=exhaustive",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/bitfields/lead-compound-ocaml/sources/minimal-counter.c"
+      ],
+      "exit": 0,
+      "verdicts": [
+        "Defined {value: \"Specified(1)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+      ],
+      "expected": 1,
+      "ok": true
+    }
+  ]
+}

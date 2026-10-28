@@ -1,0 +1,18 @@
+{
+  "command": [
+    "gcc",
+    "-std=c11",
+    "-pedantic-errors",
+    "-O0",
+    "c/tests/bitfields/batch.c",
+    "-o",
+    "results/csem/bitfields/native-expanded/gcc.exe"
+  ],
+  "compile_exit": 0,
+  "run_exit": 0,
+  "compiler_sha256": "864711037b900acdb7a449cf48d912cefa935b527fb60c767ccb956779e66136",
+  "source_sha256": "99373718b3c49cf5470ca9819b9b626e0b82008803d953c212c3ac536d781455",
+  "binary_sha256": "a641ebc2551cf5ed3365a96e42d8b84e91f71703351e75909950a2f5bb7f6de8",
+  "archive": "gcc.exe.xz",
+  "archive_sha256": "a4b6517f84f0f997db2d06f229a3cd2e8d4253e054449b800466db6fb6d1b7a0"
+}

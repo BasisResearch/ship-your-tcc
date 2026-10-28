@@ -1704,7 +1704,7 @@ let rec desugar_type_specifiers specs =
             if Ctype.is_anonymous_member attrs then
               List.map fst (List.filter (fun (_, path) -> path.Ctype.member_path_visible)
                 (Ctype.member_paths (1 + List.length (Map_extra.toList nested_tagDefs)) nested_members ty))
-            else [ident]
+            else if Ctype.is_unnamed_bitfield ty then [] else [ident]
           ) all_membDefs) in
           E.foldlM (fun acc ident ->
             if List.elem ident acc then
@@ -1757,14 +1757,44 @@ let rec desugar_type_specifiers specs =
             | Just tag_ident ->
                 Loc.with_cursor_from loc (Loc.locOf tag_ident)
           end in
+          (if not (List.any (fun (_, (_, _, _, ty)) -> isJust (Ctype.bitfield_of_type ty)) all_membDefs) then
+            E.return all_membDefs
+          else
+            desugar_gnu_attributes loc attrs >>= fun effects ->
+            E.get_alignof >>= fun alignof_ty ->
+            E.foldlM (fun (rev, cursor) (ident, (mattrs, align_opt, qs, ty)) ->
+              let base = Ctype.without_bitfield ty in
+              let incomplete_array = match base with Ctype.Ctype _ (Ctype.Array _ Nothing) -> true | _ -> false end in
+              (if incomplete_array then E.return (0:integer) else
+                evaluate_integer_constant_expression loc Nothing
+                  (AnnotatedExpression () [] loc (AilEsizeof Ctype.no_qualifiers base))) >>= fun size ->
+              let natural_align = fromJust "bitfield member alignment" (alignof_ty base) in
+              let info_opt = Ctype.bitfield_of_type ty in
+              let zero = maybe false (fun info -> info.Ctype.bitfield_width = 0) info_opt in
+              let packed = not zero && (effects.gnu_packed || align_opt = Just (Ctype.AlignInteger 1)) in
+              let align = if zero then natural_align else
+                if effects.gnu_packed then 1 else match align_opt with
+                  | Nothing -> natural_align
+                  | Just (Ctype.AlignInteger n) -> natFromInteger n
+                  | Just (Ctype.AlignType ty) -> fromJust "bitfield explicit alignment" (alignof_ty ty)
+                end in
+              let (off, shift, cursor) = Ctype.place_bitfield (struct_or_union = UNION) packed
+                (isJust align_opt && not packed) (natFromInteger size) align
+                (Maybe.map (fun info -> info.Ctype.bitfield_width) info_opt) cursor in
+              let ty = maybe ty (fun info -> Ctype.with_bitfield <| info with
+                Ctype.bitfield_byte_offset= off; Ctype.bitfield_bit_offset= shift |> base) info_opt in
+              E.return ((ident, (mattrs, align_opt, qs, ty)) :: rev, cursor)
+            ) ([], <| Ctype.bitfield_next_byte= 0; Ctype.bitfield_next_bit= 0 |>) all_membDefs >>= fun (rev, _) ->
+            E.return (List.reverse rev)
+          ) >>= fun laid_membDefs ->
           E.register_tag_definition loc tag_sym
             match (struct_or_union, flexible_opt) with
               | (UNION, _) ->
-                  Union_definition loc attrs (isNothing tag_ident_opt) all_membDefs
+                  Union_definition loc attrs (isNothing tag_ident_opt) laid_membDefs
               | (STRUCT, Nothing) ->
-                  Struct_definition loc attrs (isNothing tag_ident_opt) all_membDefs Nothing
+                  Struct_definition loc attrs (isNothing tag_ident_opt) laid_membDefs Nothing
               | (STRUCT, Just (membDefs', flexible)) ->
-                  Struct_definition loc attrs (isNothing tag_ident_opt) membDefs' (Just flexible)
+                  Struct_definition loc attrs (isNothing tag_ident_opt) (List.take (List.length membDefs') laid_membDefs) (Just flexible)
             end >>= fun () ->
           E.return (Ctype.no_qualifiers, type_ctor tag_sym) in
         match specs with
@@ -2601,7 +2631,13 @@ STD_ "§6.5.2.1#2, sentence 2" $
               | Right a_expr ->
                   (* TODO: this is fixing an integer implementation... *)
                   let (qs, ty) = Mini_pipeline.qualified_ctype_of_seeded (Map.fromList sigm.enum_definitions) E.desugar_time_tagDefs a_expr in
-                  E.return (AilEsizeof qs ty)
+                  let member_expression = match a_expr with
+                    | AnnotatedExpression _ _ _ (AilEmemberof _ _) -> true
+                    | AnnotatedExpression _ _ _ (AilEmemberofptr _ _) -> true
+                    | _ -> false
+                  end in
+                  if member_expression && isJust (Ctype.bitfield_of_type ty) then E.constraint_violation loc BitfieldSizeof
+                  else E.return (AilEsizeof qs (Ctype.without_bitfield ty))
             end
     | CabsEsizeof_type tyname ->
         (* TODO: STD check + annot *)
@@ -2953,6 +2989,24 @@ and desugar_struct_declaration struct_decl =
                we need to special case the last member. *)
             let (qs, ty) =
               mk_qs_ctype (Ctype.combine_qualifiers tquals_qs specs_qs) base_ty in
+            (match Ctype.bitfield_of_type ty with
+              | Nothing -> E.return ()
+              | Just info ->
+                  match ty with
+                    | Ctype.Ctype _ (Ctype.Basic (Ctype.Integer ity)) ->
+                        let bits = match ity with
+                          | Ctype.Bool -> Just (1:nat)
+                          | Ctype.Char -> Maybe.map (fun n -> n*8) (Implementation.sizeof_ity ity)
+                          | Ctype.Signed _ -> Maybe.map (fun n -> n*8) (Implementation.sizeof_ity ity)
+                          | Ctype.Unsigned _ -> Maybe.map (fun n -> n*8) (Implementation.sizeof_ity ity)
+                          | _ -> Nothing
+                        end in
+                        if isAtomic || maybe true (fun bits -> info.Ctype.bitfield_width > bits) bits then
+                          E.constraint_violation (Loc.locOf ident) BitfieldInvalidDeclaration
+                        else E.return ()
+                    | _ -> E.constraint_violation (Loc.locOf ident) BitfieldInvalidDeclaration
+                  end
+            end) >>
             check_array_constraints ty >>
             desugar_alignment_specifiers (Loc.locOf ident) ty align_specs >>= fun align_opt ->
             let attrs = Annot.combine_attributes outer_attrs attrs in
@@ -2969,19 +3023,32 @@ and desugar_struct_declarator has_alignment struct_decltor =
   match struct_decltor with
     | SDecl_simple decltor ->
         desugar_declarator NotFunDef decltor
-    | SDecl_bitfield decltor_opt (CabsExpression loc _) ->
+    | SDecl_bitfield decltor_opt width_expr ->
+        let loc = Loc.locOf width_expr in
         if has_alignment then
           E.constraint_violation loc (IllegalAlignas IllegalAlignas_bitfield)
-        else if Global.isIgnoreBitfields () then
-          match decltor_opt with
-            | Nothing ->
-                E.fail loc (Errors.Desugar_NotYetSupported "bit-fields")
-            | Just decltor ->
-                E.warnM (fun () -> "ignoring a bit-field declarator at " ^ Loc.stringFromLocation loc) >>= fun () ->
-                desugar_declarator NotFunDef decltor
-          end
+        else if not (Implementation.bitfields_supported ()) then
+          E.fail loc (Errors.Desugar_NotYetSupported "bit-fields in this implementation configuration")
         else
-          E.fail loc (Errors.Desugar_NotYetSupported "bit-fields")
+          desugar_expression width_expr >>= fun e ->
+          is_integer_constant_expression e >>= fun ice ->
+          if not ice then E.constraint_violation loc BitfieldInvalidDeclaration else
+          evaluate_integer_constant_expression loc Nothing e >>= fun width ->
+          if width < 0 || (width = 0 && isJust decltor_opt) then
+            E.constraint_violation loc BitfieldInvalidDeclaration
+          else
+            (match decltor_opt with
+              | Just decltor -> desugar_declarator NotFunDef decltor
+              | Nothing -> E.return ((Annot.no_attributes, Symbol.Identifier loc "padding"), fun qs ty -> (qs, ty))
+            end) >>= fun (ident, builder) ->
+            E.return (ident, fun qs ty ->
+              let (qs, ty) = builder qs ty in
+              (qs, Ctype.with_bitfield <|
+                Ctype.bitfield_width= natFromInteger width;
+                Ctype.bitfield_named= isJust decltor_opt;
+                Ctype.bitfield_byte_offset= 0;
+                Ctype.bitfield_bit_offset= 0;
+              |> ty))
   end
 
 and desugar_enumerator (ident, e_opt) =

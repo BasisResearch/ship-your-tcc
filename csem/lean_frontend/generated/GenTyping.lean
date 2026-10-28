@@ -1251,25 +1251,20 @@ partial def annotate_expression [CerbImplCfg.Impl]
                        | (AnnotatedExpression _ _ loc1 _) => loc1) loc1),
                       (TError_ConstraintViolation (UnaryAddressNotRvalue gty))))
               | GenLValueType qs ty1 isRegister =>
-                (/- e is an 'lvalue' -/ (lemSeq
-                  (fun _ =>
-                    CerbDebug.warn [DB_ail_typing] (fun (u : Unit) =>
-                      match u with
-                      | () =>
-                        "(TODO) GenTyping.annotate_expression AilEunary Address, not checking for bit-field member"))
-                  (fun _ =>
-                    lem_if isRegister then
-                      ErrorM (fun (_ : List (List String)) =>
-                        Sum.inl
-                          ((CerbLocation.withCursorFrom
-                            (match e with
-                             | (AnnotatedExpression _ _ loc1 _) => loc1) loc1),
-                            (TError_ConstraintViolation UnaryAddressRegisterLvalue)))
-                    else
-                      bind3 (add "§6.5.3.2#3, 2nd sentence") (fun (_ : Unit) =>
-                        ErrorM (fun (ts : List (List String)) =>
-                          Sum.inr
-                            ((AilEunary Address a_e, GenRValueType (GenPointer qs ty1)), ts)))))))
+                (/- e is an 'lvalue' -/ lem_if isJust (bitfield_of_type ty1) then
+                  ErrorM (fun (_ : List (List String)) =>
+                    Sum.inl (loc1, (TError_ConstraintViolation BitfieldAddress)))
+                else lem_if isRegister then
+                  ErrorM (fun (_ : List (List String)) =>
+                    Sum.inl
+                      ((CerbLocation.withCursorFrom
+                        (match e with
+                         | (AnnotatedExpression _ _ loc1 _) => loc1) loc1),
+                        (TError_ConstraintViolation UnaryAddressRegisterLvalue)))
+                else
+                  bind3 (add "§6.5.3.2#3, 2nd sentence") (fun (_ : Unit) =>
+                    ErrorM (fun (ts : List (List String)) =>
+                      Sum.inr ((AilEunary Address a_e, GenRValueType (GenPointer qs ty1)), ts)))))
         | AilEunary Indirection e =>
           bind3 (annotate_rvalue1 e) (fun (p : (expression genTypeCategory × genType)) =>
             match p with
@@ -2805,7 +2800,10 @@ partial def annotate_expression [CerbImplCfg.Impl]
         | AilEsizeof qs ty1 =>
           bind3 (bind3 (wf_lvalue sigm qs ty1) (fun (_ : Unit) => add "§6.5.3.4#1, sentence 1"))
             (fun (_ : Unit) =>
-              lem_if is_function ty1 || is_incomplete sigm ty1 then
+              lem_if isJust (bitfield_of_type ty1) then
+                ErrorM (fun (_ : List (List String)) =>
+                  Sum.inl (loc1, (TError_ConstraintViolation BitfieldSizeof)))
+              else lem_if is_function ty1 || is_incomplete sigm ty1 then
                 ErrorM (fun (_ : List (List String)) =>
                   Sum.inl
                     ((CerbLocation.withCursorFrom
@@ -2818,18 +2816,21 @@ partial def annotate_expression [CerbImplCfg.Impl]
                     Sum.inr
                       ((AilEsizeof qs ty1, GenRValueType (GenBasic (GenInteger SizeT))), ts))))
         | AilEsizeof_expr e =>
-          ((lemSeq
-            (fun _ =>
-              CerbDebug.warn [DB_ail_typing] (fun (u : Unit) =>
-                match u with
-                | () =>
-                  "(TODO) GenTyping.annotate_expression AilEsizeof_expr, not checking for bit-field member"))
-            (fun _ =>
-              bind3
-                (/- because we are dealing with the operand of sizeof(), we do not call
+          bind3
+            (/- because we are dealing with the operand of sizeof(), we do not call
            any of the conversion/decay functions (see §6.3.2.1#2-4) -/
-                annotate_expression1 CTXsizeof e)
-                (fun (a_e : expression genTypeCategory) =>
+            annotate_expression1 CTXsizeof e)
+            (fun (a_e : expression genTypeCategory) =>
+              bind3
+                (match genTypeCategoryOf a_e with
+                 | GenLValueType _ ty1 _ =>
+                   (lem_if isJust (bitfield_of_type ty1) then
+                     ErrorM (fun (_ : List (List String)) =>
+                       Sum.inl (loc1, (TError_ConstraintViolation BitfieldSizeof)))
+                   else
+                     ErrorM (fun (ts : List (List String)) => Sum.inr ((), ts)))
+                 | _ => ErrorM (fun (ts : List (List String)) => Sum.inr ((), ts)))
+                (fun (_ : Unit) =>
                   let gty :=
                     match genTypeCategoryOf a_e with
                     | GenRValueType gty => gty
@@ -2847,7 +2848,7 @@ partial def annotate_expression [CerbImplCfg.Impl]
                         ErrorM (fun (ts : List (List String)) =>
                           Sum.inr
                             ((AilEsizeof_expr a_e, GenRValueType (GenBasic (GenInteger SizeT))),
-                              ts))))))))
+                              ts))))))
         | AilEalignof qs ty1 =>
           bind3 (bind3 (wf_lvalue sigm qs ty1) (fun (_ : Unit) => add "§6.5.3.4#1, sentence 1"))
             (fun (_ : Unit) =>
@@ -3206,19 +3207,22 @@ partial def perform_decays [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fma
                (Lem_List.elem ctx
                  [CTXsizeof, CTXaddr, CTXincr, CTXdecr, CTXmemberof,
                    CTXassign]) then /- STD §6.3.2.1#2 -/ /- performing the lvalue conversion -/
-             let rvalue_ty := Ctype ([] : List annot) (unatomic_ ty1);
-             lem_if is_incomplete sigm ty1 then /- STD §6.3.2.1#2, sentence 3 -/
-               ErrorM (fun (_ : List (List String)) =>
-                 Sum.inl
-                   ((match ty1 with
-                     | (Ctype annots1 _) => get_loc_ annots1),
-                     (TError_UndefinedBehaviour UB020_nonarray_incomplete_lvalue_conversion)))
-             else
-               ErrorM (fun (ts : List (List String)) =>
-                 Sum.inr
-                   ((AnnotatedExpression (GenRValueType (inject_type rvalue_ty)) std_annots
-                     (match a_expr with
-                      | (AnnotatedExpression _ _ loc1 _) => loc1) (AilErvalue a_expr)), ts))
+             match ty1 with
+             | Ctype type_annots _ =>
+               (let rvalue_ty := Ctype type_annots (unatomic_ ty1);
+                lem_if is_incomplete sigm ty1 then /- STD §6.3.2.1#2, sentence 3 -/
+                  ErrorM (fun (_ : List (List String)) =>
+                    Sum.inl
+                      ((match ty1 with
+                        | (Ctype annots1 _) => get_loc_ annots1),
+                        (TError_UndefinedBehaviour UB020_nonarray_incomplete_lvalue_conversion)))
+                else
+                  ErrorM (fun (ts : List (List String)) =>
+                    Sum.inr
+                      ((AnnotatedExpression (GenRValueType (inject_type rvalue_ty))
+                        (std_annots ++ type_annots)
+                        (match a_expr with
+                         | (AnnotatedExpression _ _ loc1 _) => loc1) (AilErvalue a_expr)), ts)))
            else lem_if is_array ty1 &&
                (not (Lem_List.elem ctx [CTXsizeof, CTXaddr]) && not
                  (Lem_List.elem ctx [CTXarray_init] &&

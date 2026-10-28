@@ -1,0 +1,8 @@
+struct B1 size=12 align=4 tail=8 bytes=ff000000fbffff3f5a000000
+struct B2 size=4 align=4 tail=3 bytes=5555015a
+struct B3 size=8 align=4 tail=5 bytes=01000000015a0000
+struct B4 size=4 align=4 tail=2 bytes=330d5a00
+struct B5 size=16 align=8 tail=12 bytes=ffffffffff000000fdffff3f5a000000
+struct B6 size=2 align=1 tail=1 bytes=005a
+struct B7 size=8 align=4 tail=5 bytes=78563412005a0000
+union U size=4 align=4 tail=0 bytes=55550100

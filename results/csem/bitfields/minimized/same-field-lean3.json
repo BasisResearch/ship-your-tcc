@@ -1,0 +1,226 @@
+{
+  "semantics": [
+    {
+      "diagnostic": [
+        "UB035_unsequenced_race"
+      ],
+      "location": {
+        "begin": {
+          "col": 43,
+          "file": "results/csem/bitfields/minimized/same-field-race.c",
+          "lexing_file": "results/csem/bitfields/minimized/same-field-race.c",
+          "lexing_line": 1034,
+          "line": 2,
+          "source_identity": {
+            "compilerInjected": false,
+            "resolved": [
+              [
+                114,
+                101,
+                115,
+                117,
+                108,
+                116,
+                115
+              ],
+              [
+                99,
+                115,
+                101,
+                109
+              ],
+              [
+                98,
+                105,
+                116,
+                102,
+                105,
+                101,
+                108,
+                100,
+                115
+              ],
+              [
+                109,
+                105,
+                110,
+                105,
+                109,
+                105,
+                122,
+                101,
+                100
+              ],
+              [
+                115,
+                97,
+                109,
+                101,
+                45,
+                102,
+                105,
+                101,
+                108,
+                100,
+                45,
+                114,
+                97,
+                99,
+                101,
+                46,
+                99
+              ]
+            ],
+            "runtimeLibrary": false
+          }
+        },
+        "cursor": {
+          "pos": {
+            "col": 49,
+            "file": "results/csem/bitfields/minimized/same-field-race.c",
+            "lexing_file": "results/csem/bitfields/minimized/same-field-race.c",
+            "lexing_line": 1042,
+            "line": 2,
+            "source_identity": {
+              "compilerInjected": false,
+              "resolved": [
+                [
+                  114,
+                  101,
+                  115,
+                  117,
+                  108,
+                  116,
+                  115
+                ],
+                [
+                  99,
+                  115,
+                  101,
+                  109
+                ],
+                [
+                  98,
+                  105,
+                  116,
+                  102,
+                  105,
+                  101,
+                  108,
+                  100,
+                  115
+                ],
+                [
+                  109,
+                  105,
+                  110,
+                  105,
+                  109,
+                  105,
+                  122,
+                  101,
+                  100
+                ],
+                [
+                  115,
+                  97,
+                  109,
+                  101,
+                  45,
+                  102,
+                  105,
+                  101,
+                  108,
+                  100,
+                  45,
+                  114,
+                  97,
+                  99,
+                  101,
+                  46,
+                  99
+                ]
+              ],
+              "runtimeLibrary": false
+            }
+          },
+          "tag": "PointCursor"
+        },
+        "end": {
+          "col": 56,
+          "file": "results/csem/bitfields/minimized/same-field-race.c",
+          "lexing_file": "results/csem/bitfields/minimized/same-field-race.c",
+          "lexing_line": 1050,
+          "line": 2,
+          "source_identity": {
+            "compilerInjected": false,
+            "resolved": [
+              [
+                114,
+                101,
+                115,
+                117,
+                108,
+                116,
+                115
+              ],
+              [
+                99,
+                115,
+                101,
+                109
+              ],
+              [
+                98,
+                105,
+                116,
+                102,
+                105,
+                101,
+                108,
+                100,
+                115
+              ],
+              [
+                109,
+                105,
+                110,
+                105,
+                109,
+                105,
+                122,
+                101,
+                100
+              ],
+              [
+                115,
+                97,
+                109,
+                101,
+                45,
+                102,
+                105,
+                101,
+                108,
+                100,
+                45,
+                114,
+                97,
+                99,
+                101,
+                46,
+                99
+              ]
+            ],
+            "runtimeLibrary": false
+          }
+        },
+        "tag": "Loc_region"
+      },
+      "status": "undefined"
+    }
+  ],
+  "binary_sha256": "c08366f226eb95aebdc2093b8e8fd8bcf985cc873ace5e656e089831e2b2b726",
+  "source_sha256": "976447e7dfb8d3d260fca26261ea88fc57087dc99dee3ac4171e3fa1f4a2d590",
+  "stdout_archive": "same-field-lean3.stdout.xz"
+}

@@ -16,6 +16,7 @@ open Lem_Num Lem_Pervasives Lem_List Lem_Set Lem_Map Lem_Maybe Lem_Function
   Lem_Sorting
 
 inductive genIntegerType : Type where
+  | Bitfield : integerType → Nat → genIntegerType
   | Concrete : integerType → genIntegerType
   | SizeT : genIntegerType
   | PtrdiffT : genIntegerType
@@ -23,7 +24,7 @@ inductive genIntegerType : Type where
   | Unknown : integerConstant → genIntegerType
   | Promote : genIntegerType → genIntegerType
   | Usual : genIntegerType → genIntegerType → genIntegerType
-export genIntegerType (Concrete SizeT PtrdiffT PtraddrT Unknown Promote Usual)
+export genIntegerType (Bitfield Concrete SizeT PtrdiffT PtraddrT Unknown Promote Usual)
 instance : Inhabited genIntegerType where
   default := SizeT
 /- lem: equality and comparison for these types, matching OCaml's
@@ -34,16 +35,18 @@ instance : Inhabited genIntegerType where
    constructors (immediates) sort below non-nullary ones (blocks);
    declaration order within each group. -/
 def genIntegerType.ctor_rank_ocaml : genIntegerType → Nat
-  | .Concrete _ => 3
+  | .Bitfield _ _ => 3
+  | .Concrete _ => 4
   | .SizeT => 0
   | .PtrdiffT => 1
   | .PtraddrT => 2
-  | .Unknown _ => 4
-  | .Promote _ => 5
-  | .Usual _ _ => 6
+  | .Unknown _ => 5
+  | .Promote _ => 6
+  | .Usual _ _ => 7
 mutual
 def genIntegerType.beq_derived (cmpx_ cmpy_ : genIntegerType) : Bool :=
   match cmpx_, cmpy_ with
+  | .Bitfield x1 x2, .Bitfield y1 y2 => x1 == y1 && x2 == y2
   | .Concrete x1, .Concrete y1 => x1 == y1
   | .SizeT, .SizeT => true
   | .PtrdiffT, .PtrdiffT => true
@@ -56,6 +59,11 @@ def genIntegerType.beq_derived (cmpx_ cmpy_ : genIntegerType) : Bool :=
 termination_by structural cmpx_
 def genIntegerType.compare_derived (cmpx_ cmpy_ : genIntegerType) : Ordering :=
   match cmpx_, cmpy_ with
+  | .Bitfield x1 x2, .Bitfield y1 y2 =>
+    (match Ord.compare x1 y1 with
+     | .lt => Ordering.lt
+     | .gt => Ordering.gt
+     | .eq => Ord.compare x2 y2)
   | .Concrete x1, .Concrete y1 => Ord.compare x1 y1
   | .Unknown x1, .Unknown y1 => Ord.compare x1 y1
   | .Promote x1, .Promote y1 => genIntegerType.compare_derived x1 y1
@@ -109,6 +117,7 @@ instance (priority := 500) : Lem_Basic_classes.Ord0 genIntegerType where
    other field counts 0. -/
 def genIntegerType.lemSize (sizex_ : genIntegerType) : Nat :=
   match sizex_ with
+  | .Bitfield _ _ => 1
   | .Concrete _ => 1
   | .SizeT => 1
   | .PtrdiffT => 1
@@ -320,6 +329,7 @@ partial def eq_genIntegerType (gity1 : genIntegerType) (gity2 : genIntegerType) 
   let ord : genIntegerType → Nat :=
     fun (x : genIntegerType) =>
       match x with
+      | Bitfield _ _ => (7 : Nat)
       | Concrete _ => (0 : Nat)
       | SizeT => 1
       | PtrdiffT => 2
@@ -328,6 +338,7 @@ partial def eq_genIntegerType (gity1 : genIntegerType) (gity2 : genIntegerType) 
       | Promote _ => 5
       | Usual _ _ => 6;
   match gity1, gity2 with
+  | Bitfield ity1 w1, Bitfield ity2 w2 => integerTypeEqual ity1 ity2 && (w1 == w2)
   | Concrete ity1, Concrete ity2 => integerTypeEqual ity1 ity2
   | Unknown iCst1, Unknown iCst2 => iCst1 == iCst2
   | Promote gity1, Promote gity2 => eq_genIntegerType gity1 gity2
@@ -450,9 +461,15 @@ def inject_basicType : basicType → genBasicType :=
 
 partial def inject_type (c : ctype) : genType :=
   match c with
-  | (Ctype _ ty1) =>
+  | (Ctype annots1 ty1) =>
     (match ty1 with
      | Void0 => GenVoid
+     | Basic (Integer ity) =>
+       GenBasic
+         (GenInteger
+           (match bitfield_of_annotations annots1 with
+            | some info => Bitfield ity info.bitfield_width
+            | none => Concrete ity))
      | Basic bty => GenBasic (inject_basicType bty)
      | Pointer qs ty1 => GenPointer qs ty1
      | Array0 ty1 n_opt => GenArray ty1 n_opt

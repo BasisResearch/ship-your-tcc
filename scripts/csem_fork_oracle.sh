@@ -20,14 +20,18 @@ shared_sources=(
   csem/frontend/model/cabs_to_ail_effect.lem
   csem/frontend/model/ail/genTyping.lem
   csem/frontend/model/desugaring_init.lem
+  csem/frontend/model/cabs_to_ail_aux.lem
+  csem/frontend/model/ail/genTypes.lem
+  csem/frontend/model/ail/genTypesAux.lem
+  csem/frontend/model/ail/ailTypesAux.lem
 )
 # The shared Mem API already passes the complete layout table. Both
 # handwritten adapters must honor it even before the runtime table is set.
 # Project these exact shared definitions after compatibility patches. Copying
 # unrelated local translation_aux IEEE seams would change the oracle's ABI.
-projected_sources=(csem/frontend/model/translation_aux.lem scripts/project_csem_alignment.py)
+projected_sources=(csem/frontend/model/translation_aux.lem scripts/project_csem_alignment.py csem/frontend/model/implementation.lem scripts/project_csem_bitfield_interface.py csem/frontend/model/translation.lem scripts/project_csem_compound.py scripts/project_shared_arity_patch.py)
 adapter_sources=(csem/lean_frontend/CerbMem.lean csem/lean_frontend/CerberusImpl.lean)
-adapter_patches=(patches/csem/0001-union-layout-tags.patch patches/csem/0002-gnu-typedef-alignment.patch patches/csem/0003-gnu-aggregate-layout.patch patches/csem/0004-tag-layout-arity.patch patches/csem/0005-compiler-opening-witness.patch patches/csem/0006-symbol-proxy-identity.patch patches/csem/0007-injected-syntax-carriers.patch patches/csem/0008-gnu-expression-alignof.patch)
+adapter_patches=(patches/csem/0001-union-layout-tags.patch patches/csem/0002-gnu-typedef-alignment.patch patches/csem/0003-gnu-aggregate-layout.patch patches/csem/0004-tag-layout-arity.patch patches/csem/0005-compiler-opening-witness.patch patches/csem/0006-symbol-proxy-identity.patch patches/csem/0007-injected-syntax-carriers.patch patches/csem/0008-gnu-expression-alignof.patch patches/csem/0009-bitfield-interface.patch)
 # Pin every patched handwritten adapter, including arity-only non-concrete
 # shims. Their inclusion in the manifest does not claim layout support in
 # symbolic/CHERI backends; the differential engine is the concrete backend.
@@ -63,9 +67,16 @@ for source in "${shared_sources[@]}"; do
   cp "$source" "$fork/${source#csem/}"
 done
 for adapter_patch in "${adapter_patches[@]}"; do
-  patch -d "$fork" -p1 --fuzz=0 < "$adapter_patch" >&2
+  if [ "$adapter_patch" = patches/csem/0004-tag-layout-arity.patch ]; then
+    python3 scripts/project_shared_arity_patch.py "$adapter_patch" "$fork" "$fork/.shared-arity.patch" >&2
+    patch -d "$fork" -p1 --fuzz=0 < "$fork/.shared-arity.patch" >&2
+  else
+    patch -d "$fork" -p1 --fuzz=0 < "$adapter_patch" >&2
+  fi
 done
 python3 scripts/project_csem_alignment.py csem/frontend/model/translation_aux.lem "$fork/frontend/model/translation_aux.lem"
+python3 scripts/project_csem_bitfield_interface.py csem/frontend/model/implementation.lem "$fork/frontend/model/implementation.lem"
+python3 scripts/project_csem_compound.py csem/frontend/model/translation.lem "$fork/frontend/model/translation.lem"
 # Grammar error tables are generated from this overlay, never hand edited.
 # Use per-engine files: Makefile.messages uses shared /tmp names.
 (cd "$fork/parsers/c" && csem_opam menhir c_parser.mly --list-errors > c_parser_error.binding.messages
@@ -74,7 +85,7 @@ printf '%s\n' "${shared_sources[@]}" > "$fork/.shared-sources"
 sha256sum "${adapter_sources[@]}" "${adapter_patches[@]}" "${projected_sources[@]}" > "$fork/.adapter-inputs.sha256"
 sha256sum "${shared_sources[@]}" > "$fork/.shared-sources.sha256"
 (cd "$fork" && for source in "${shared_sources[@]}"; do sha256sum "${source#csem/}"; done > .overlay.sha256
- sha256sum "${patched_adapter_paths[@]}" parsers/c/c_parser_error.messages >> .overlay.sha256)
+ sha256sum "${patched_adapter_paths[@]}" frontend/model/implementation.lem frontend/model/translation.lem .shared-arity.patch parsers/c/c_parser_error.messages >> .overlay.sha256)
 [ "$(key)" = "$input_hash" ] || { echo "csem_fork_oracle: inputs changed while copying" >&2; exit 2; }
 csem_opam make -C "$fork" prelude-src >&2
 (cd "$fork" && csem_opam dune build -j 4 backend/driver/main.exe cerberus-lib.install cerberus.install) >&2

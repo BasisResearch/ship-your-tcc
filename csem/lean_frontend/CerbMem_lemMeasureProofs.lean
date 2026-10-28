@@ -116,14 +116,23 @@ theorem memValueToBytes_stable_aux [CerbImplCfg.Impl] (enumDefs : CerberusImpl.E
             dsimp only
             rw [key fpm mval (by have := memValue_mem_lt_list mval _ hm; size_lt)]
         case MVstruct tagSym members =>
-          to_congr
-          all_goals
+          split
+          · apply lfoldl_congr
             intro acc p hp
-            obtain ⟨fpm, lastOff, revChunks⟩ := acc
+            obtain ⟨fpm, image⟩ := acc
             obtain ⟨⟨i1, ty, off⟩, ⟨i2, t2, mval⟩⟩ := p
             have hm := (List.of_mem_zip hp).2
             dsimp only
             rw [key fpm mval (by have := memValue_mem_lt_members i2 t2 mval _ hm; size_lt)]
+          ·
+            to_congr
+            all_goals
+              intro acc p hp
+              obtain ⟨fpm, lastOff, revChunks⟩ := acc
+              obtain ⟨⟨i1, ty, off⟩, ⟨i2, t2, mval⟩⟩ := p
+              have hm := (List.of_mem_zip hp).2
+              dsimp only
+              rw [key fpm mval (by have := memValue_mem_lt_members i2 t2 mval _ hm; size_lt)]
 
 /-- THE OBLIGATION (the seam twin of the generated shape; its `[LemFuel]`
     went at C4 with the layout oracle's — audit F-A5). -/
@@ -637,14 +646,18 @@ theorem layout_stable_aux [CerbImplCfg.Impl]
       cases al with
       | none =>
         simp only [memberAlign_lemFuel, mPot, alignPot, Nat.max_zero] at *
-        exact ihA ty f g (by omega) (by omega) (by omega)
+        split
+        · rfl
+        · exact ihA ty f g (by omega) (by omega) (by omega)
       | some al =>
         cases al with
         | AlignInteger n => simp only [memberAlign_lemFuel]
         | AlignType a =>
           simp only [memberAlign_lemFuel, mPot, alignPot] at *
           have := Nat.le_max_right (pot ambient tagDefs R L ty) (pot ambient tagDefs R L a)
-          exact ihA a f g (by omega) (by omega) (by omega)
+          split
+          · rfl
+          · exact ihA a f g (by omega) (by omega) (by omega)
     · -- offsetsofMembers
       intro members f g hk hf hg
       cases f with
@@ -661,7 +674,10 @@ theorem layout_stable_aux [CerbImplCfg.Impl]
           let align := memberAlign_lemFuel f enumDefs ambient tagDefs alignOpt ty
           let x := lastOffset % align
           let pad := if x == 0 then 0 else align - x
-          ((ident, ty, lastOffset + pad) :: xs, lastOffset + pad + size)) init =
+          let off := match bitfield_of_type ty with
+            | some info => info.bitfield_byte_offset
+            | none => lastOffset + pad
+          ((ident, ty, off) :: xs, off + size)) init =
         members.foldl (fun (acc : List (identifier × ctype × Nat) × Nat) memb =>
           let (xs, lastOffset) := acc
           let (ident, (_, alignOpt, _, ty)) := memb
@@ -669,7 +685,10 @@ theorem layout_stable_aux [CerbImplCfg.Impl]
           let align := memberAlign_lemFuel g enumDefs ambient tagDefs alignOpt ty
           let x := lastOffset % align
           let pad := if x == 0 then 0 else align - x
-          ((ident, ty, lastOffset + pad) :: xs, lastOffset + pad + size)) init := by
+          let off := match bitfield_of_type ty with
+            | some info => info.bitfield_byte_offset
+            | none => lastOffset + pad
+          ((ident, ty, off) :: xs, off + size)) init := by
         apply lfoldl_congr
         intro acc memb hmemb
         obtain ⟨xs, lastOffset⟩ := acc
@@ -679,7 +698,7 @@ theorem layout_stable_aux [CerbImplCfg.Impl]
         simp only at hm
         have hp : pot ambient tagDefs R L ty ≤ mPot ambient tagDefs R L al ty := Nat.le_max_left _ _
         rw [ihZ ty f g (by omega) (by omega) (by omega), ihM al ty f g (by omega) (by omega) (by omega)]
-      rw [hfold]
+      exact congrArg (fun (p : List (identifier × ctype × Nat) × Nat) => (p.1.reverse, p.2)) (hfold ([], 0))
     · -- offsetsof
       intro t flag f g hk hf hg
       have hpos := oPot_pos ambient tagDefs R L t flag
@@ -1044,24 +1063,33 @@ theorem reconstructValueAbst_stable_aux [CerbImplCfg.Impl] [CerbGlobal.Switches]
       · rename_i s l layout membrs heq
         have hl := lookup_of_entry heq
         have h2 := pot_union ambient ambient R (entries ambient) an t _ hl
-        split
-        · rfl
-        · rename_i firstIdent at_ al q firstTy rest
-          have hfirst : firstTy ∈ memberTypes (l, UnionDef layout ((firstIdent, (at_, al, q, firstTy)) :: rest)).2 :=
-            mem_memberTypes_of_union _ ⟨_, List.mem_cons_self .., mem_memberTypes1_ty (firstIdent, (at_, al, q, firstTy))⟩
+        generalize hfiltered : membrs.filter (fun (_, (_, _, _, ty)) => !is_unnamed_bitfield ty) = filtered
+        cases filtered with
+        | nil => rfl
+        | cons first rest =>
+          obtain ⟨firstIdent, at_, al, q, firstTy⟩ := first
+          have hf : (firstIdent, (at_, al, q, firstTy)) ∈ membrs :=
+            (List.mem_filter.mp (show (firstIdent, (at_, al, q, firstTy)) ∈
+                membrs.filter (fun (_, (_, _, _, ty)) => !is_unnamed_bitfield ty) by
+              rw [hfiltered]; exact List.mem_cons_self ..)).1
+          have hfirst : firstTy ∈ memberTypes (l, UnionDef layout membrs).2 :=
+            mem_memberTypes_of_union _ ⟨_, hf, mem_memberTypes1_ty (firstIdent, (at_, al, q, firstTy))⟩
+          simp only
           split
-          · -- no recorded member: the first member
-            have h1 := pot_member ambient ambient R (entries ambient) hR hLS hLS (Or.inl hl) hfirst
+          · have h1 := pot_member ambient ambient R (entries ambient) hR hLS hLS (Or.inl hl) hfirst
             rw [key _ _ _ firstTy _ (by omega)]
           · rename_i a membr heq2
             split
             · rename_i i at2 al2 q2 t2 heq3
-              have hmem : t2 ∈ memberTypes (l, UnionDef layout ((firstIdent, (at_, al, q, firstTy)) :: rest)).2 :=
-                mem_memberTypes_of_union _ ⟨_, List.mem_of_find?_eq_some heq3, mem_memberTypes1_ty (i, (at2, al2, q2, t2))⟩
+              have hv : (i, (at2, al2, q2, t2)) ∈ membrs :=
+                (List.mem_filter.mp (show (i, (at2, al2, q2, t2)) ∈
+                    membrs.filter (fun (_, (_, _, _, ty)) => !is_unnamed_bitfield ty) by
+                  rw [hfiltered]; exact List.mem_of_find?_eq_some heq3)).1
+              have hmem : t2 ∈ memberTypes (l, UnionDef layout membrs).2 :=
+                mem_memberTypes_of_union _ ⟨_, hv, mem_memberTypes1_ty (i, (at2, al2, q2, t2))⟩
               have h1 := pot_member ambient ambient R (entries ambient) hR hLS hLS (Or.inl hl) hmem
               rw [key _ _ _ t2 _ (by omega)]
-            · -- recorded member not in the definition: the whole result is the leaf
-              rfl
+            · rfl
       · rfl
 
 /-- THE OBLIGATION of the full reconstruction (PNVI arc S2; the seam twin of the

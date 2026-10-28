@@ -1,0 +1,162 @@
+{
+  "bitfield-conversion-review/cast-clears-width/raw.stdout": {
+    "archive": "bitfield-conversion-review/cast-clears-width/raw.stdout.xz",
+    "sha256": "87ba7aa21fc54a7b0ab5df0c64e9dedc51b43291c5d2b93e91c07ffa1f8e6df5",
+    "bytes": 4503752
+  },
+  "bitfield-conversion-review/comma-promotion/raw.stdout": {
+    "archive": "bitfield-conversion-review/comma-promotion/raw.stdout.xz",
+    "sha256": "1db9940985a96fdd4d49086390c7d5b2d6b775bd4dc95d7fbda1a459ce0246f3",
+    "bytes": 4474883
+  },
+  "bitfield-conversion-review/conditional-promotion/raw.stdout": {
+    "archive": "bitfield-conversion-review/conditional-promotion/raw.stdout.xz",
+    "sha256": "faab6af8eb0c8a3c0698adf24fda5ce52225e84f77b932e3f89aeffe1b11addd",
+    "bytes": 4533121
+  },
+  "bitfield-conversion-review/float-bool/raw.stdout": {
+    "archive": "bitfield-conversion-review/float-bool/raw.stdout.xz",
+    "sha256": "f71bf870ef84d631cb4e7ab7f9d2c5c47826c6b723f0003971d68f9e60083212",
+    "bytes": 4567859
+  },
+  "bitfield-conversion-review/float-compound/raw.stdout": {
+    "archive": "bitfield-conversion-review/float-compound/raw.stdout.xz",
+    "sha256": "ec45720787f955452fd1e04b8b989e877780b30ce1a0389ac33e04600333da35",
+    "bytes": 4588244
+  },
+  "bitfield-conversion-review/float-signed/raw.stdout": {
+    "archive": "bitfield-conversion-review/float-signed/raw.stdout.xz",
+    "sha256": "844bd102f76f27a9d053c8d9315c3ffaf80af5920645a368d3e1baebcfaad221",
+    "bytes": 4609119
+  },
+  "bitfield-conversion-review/float-unsigned/raw.stdout": {
+    "archive": "bitfield-conversion-review/float-unsigned/raw.stdout.xz",
+    "sha256": "8cfe13da99bf07c9dfa87ce9956dd103f5d1c0382fea5c6c505929716f487c6c",
+    "bytes": 4588728
+  },
+  "bitfield-conversion-review/volatile-compound-callback/raw.stdout": {
+    "archive": "bitfield-conversion-review/volatile-compound-callback/raw.stdout.xz",
+    "sha256": "d0d9cd1096bf38f41cab8b75098dacd7039836ccdfe5ec6cc61b6ace98e5fc8d",
+    "bytes": 4771727
+  },
+  "bitfield-layout-edge-review/00/raw.stdout": {
+    "archive": "bitfield-layout-edge-review/00/raw.stdout.xz",
+    "sha256": "b4dc46fc368cc2486aa95eed2e2d48a66bbc213f667a4071b69fa17deac23a1f",
+    "bytes": 5754456
+  },
+  "bitfield-layout-edge-review/01/raw.stdout": {
+    "archive": "bitfield-layout-edge-review/01/raw.stdout.xz",
+    "sha256": "bdcc06837bf753e6992c79ceb99b06852d0d920bb85fe01e36436aa10e42a985",
+    "bytes": 6080586
+  },
+  "bitfield-layout-edge-review/02/raw.stdout": {
+    "archive": "bitfield-layout-edge-review/02/raw.stdout.xz",
+    "sha256": "2be1663181e7925f5a695103dad6cb9d06d1a6a35d5a3d058a8e4e06d56d6fc7",
+    "bytes": 6005640
+  },
+  "bitfield-layout-edge-review/03/raw.stdout": {
+    "archive": "bitfield-layout-edge-review/03/raw.stdout.xz",
+    "sha256": "c227a8fa074d48eae8a14aeafc7befff7362194b804233fda4f3234b72de2c36",
+    "bytes": 6270771
+  },
+  "bitfield-layout-edge-review/04/raw.stdout": {
+    "archive": "bitfield-layout-edge-review/04/raw.stdout.xz",
+    "sha256": "07c476e28d626e6b6d172476f157a976c39facecbe645b2db32b96e5eea98b98",
+    "bytes": 6980760
+  },
+  "bitfield-layout-edge-review/05/raw.stdout": {
+    "archive": "bitfield-layout-edge-review/05/raw.stdout.xz",
+    "sha256": "457f616617e7e3ef086c0dc9c82449819a3eb1b7c31813852ff28ff645ce75d3",
+    "bytes": 7392876
+  },
+  "bitfield-layout-edge-review/06/raw.stdout": {
+    "archive": "bitfield-layout-edge-review/06/raw.stdout.xz",
+    "sha256": "0050a9d8056f9df50ebf602d24eacd4216f7d348de6139966f575264da06dcd8",
+    "bytes": 5769510
+  },
+  "bitfield-layout-edge-review/07/raw.stdout": {
+    "archive": "bitfield-layout-edge-review/07/raw.stdout.xz",
+    "sha256": "b7be509e4c95842dce2d80c26b412cd473e3e46acb11ee9040e5ad7c34f3927f",
+    "bytes": 5847616
+  },
+  "bitfield-layout-edge-review/08/raw.stdout": {
+    "archive": "bitfield-layout-edge-review/08/raw.stdout.xz",
+    "sha256": "7ed02c8842aff0a7b8c203bace86880febb26252978904202f0b3f75d7b84637",
+    "bytes": 6850168
+  },
+  "bitfield-layout-edge-review/09/raw.stdout": {
+    "archive": "bitfield-layout-edge-review/09/raw.stdout.xz",
+    "sha256": "146cbebef5eb356fe32b54c9bd80b01cb2b2d8305a8a529c4b1f88fb02d58ca0",
+    "bytes": 5873598
+  },
+  "bitfield-layout-edge-review/10/raw.stdout": {
+    "archive": "bitfield-layout-edge-review/10/raw.stdout.xz",
+    "sha256": "0e841963c000156b7f13cc731ca339ff1332b28061d06ae606a674cf3752b2f4",
+    "bytes": 6363872
+  },
+  "bitfield-layout-edge-review/11/raw.stdout": {
+    "archive": "bitfield-layout-edge-review/11/raw.stdout.xz",
+    "sha256": "ac1c59f0ad26104d197adba998eca0794cf46fe43264d963f5af7de02ff7d5b2",
+    "bytes": 6882789
+  },
+  "bitfield-layout-edge-review/12/raw.stdout": {
+    "archive": "bitfield-layout-edge-review/12/raw.stdout.xz",
+    "sha256": "835f98f1f11828ab92bc458f4ff06a8dae3da130bf901b5c1901a0a96b2cc1c9",
+    "bytes": 6022769
+  },
+  "bitfield-layout-edge-review/13/raw.stdout": {
+    "archive": "bitfield-layout-edge-review/13/raw.stdout.xz",
+    "sha256": "d585c4975384ca543ea698c3852b176c3223cdac382c20de840e9eb02f0cfb2f",
+    "bytes": 6933108
+  },
+  "bitfield-layout-edge-review/14/raw.stdout": {
+    "archive": "bitfield-layout-edge-review/14/raw.stdout.xz",
+    "sha256": "f496a6df7a754a695391b9ef5d62b3e526c5d7af644ae82388cc11a65a4ba0b1",
+    "bytes": 7392903
+  },
+  "bitfield-layout-edge-review/15/raw.stdout": {
+    "archive": "bitfield-layout-edge-review/15/raw.stdout.xz",
+    "sha256": "7df5533e8386695642f067ef2908cc29a95ec5af4d1ca385000c7d551ba11fe0",
+    "bytes": 6246940
+  },
+  "bitfield-layout-edge-review/16/raw.stdout": {
+    "archive": "bitfield-layout-edge-review/16/raw.stdout.xz",
+    "sha256": "d42bbde6be959bdb4f52bd368ae9d0771a8edad0cb621e3d1a9e130cc06bb824",
+    "bytes": 5829968
+  },
+  "bitfield-layout-edge-review/17/raw.stdout": {
+    "archive": "bitfield-layout-edge-review/17/raw.stdout.xz",
+    "sha256": "581cfb0122054d6f9ef3b99c8d67efe1e327015178a6a53d4f521ab8a66593e0",
+    "bytes": 5904052
+  },
+  "bitfield-layout-edge-review/18/raw.stdout": {
+    "archive": "bitfield-layout-edge-review/18/raw.stdout.xz",
+    "sha256": "3a762202c9e5a8f8b9692dc3b189b246bbc40ff058aca9470ccc2d46978aa76d",
+    "bytes": 5518868
+  },
+  "bitfield-layout-edge-review/19/raw.stdout": {
+    "archive": "bitfield-layout-edge-review/19/raw.stdout.xz",
+    "sha256": "73a36a258b2181215f77c67e3fd84005cf727e9e01ced69394326a8357146b6f",
+    "bytes": 6882808
+  },
+  "bitfield-layout-edge-review/20/raw.stdout": {
+    "archive": "bitfield-layout-edge-review/20/raw.stdout.xz",
+    "sha256": "02e5a5c903e878a63e60035dc41131240d5b4cce0b5557546fc6ff1cf53d4127",
+    "bytes": 6113294
+  },
+  "bitfield-layout-edge-review/21/raw.stdout": {
+    "archive": "bitfield-layout-edge-review/21/raw.stdout.xz",
+    "sha256": "829f66cce82db54f276b13ac473b0452f256b0b2f4f953bf7eb9f3a56bea8c8f",
+    "bytes": 6697032
+  },
+  "bitfield-layout-edge-review/22/raw.stdout": {
+    "archive": "bitfield-layout-edge-review/22/raw.stdout.xz",
+    "sha256": "0f38c7dd4cc8c025b09e92d1193d578fc2fa70a29b6cd4caacd83699250f1be5",
+    "bytes": 6900443
+  },
+  "bitfield-layout-edge-review/23/raw.stdout": {
+    "archive": "bitfield-layout-edge-review/23/raw.stdout.xz",
+    "sha256": "07cb51cb2b487828fed61062cd09fe5723fde6672c815e289927f5be0eee80db",
+    "bytes": 6372709
+  }
+}

@@ -202,6 +202,16 @@ let exp_type_of a_expr =
 
 
 (* NOTE: it does not depend on the annotation state *)
+(* Value expressions retain a field's value width for integer promotion even
+   after assignment/increment/comma cease to be member-designating lvalues. *)
+let bitfield_value_type gtc ty =
+  match (bitfield_of_type ty, gtc) with
+    | (Nothing, GenTypes.GenRValueType (GenTypes.GenBasic (GenTypes.GenInteger (GenTypes.Bitfield _ width)))) ->
+        with_bitfield <| bitfield_width= width; bitfield_named= true;
+          bitfield_byte_offset= 0; bitfield_bit_offset= 0 |> ty
+    | _ -> ty
+  end
+
 val ctype_of: AilSyntax.expression GenTypes.genTypeCategory -> ctype
 let ctype_of a_expr =
   match ErrorMonad.runErrorMonad
@@ -210,7 +220,9 @@ let ctype_of a_expr =
     | Right (GenTypes.LValueType _ ty _) -> ty
     | Right (GenTypes.RValueType   ty) ->
         let (annots, _) = GenTypes.annotations a_expr in
-        gnu_align_typedef (gnu_typedef_alignment annots) ty
+        let ty = gnu_align_typedef (gnu_typedef_alignment annots) ty in
+        bitfield_value_type (GenTypes.genTypeCategoryOf a_expr)
+          (maybe ty (fun info -> with_bitfield info ty) (bitfield_of_annotations annots))
     | Left (loc, TypingError.TError_MiscError (TypingError.UntypableIntegerConstant n)) ->
         error $ Loc.stringFromLocation loc ^ ": untypable integer constant '" ^ show n ^ "'\n"
     | _ -> error "[Translation_aux.ctype_of] impossible case: TODO move to Exception.t"
@@ -225,7 +237,9 @@ let qualified_ctype_of a_expr =
     | Right (GenTypes.LValueType qs ty _) -> (qs, ty)
     | Right (GenTypes.RValueType   ty) ->
         let (annots, _) = GenTypes.annotations a_expr in
-        (no_qualifiers, gnu_align_typedef (gnu_typedef_alignment annots) ty)
+        let ty = gnu_align_typedef (gnu_typedef_alignment annots) ty in
+        (no_qualifiers, bitfield_value_type (GenTypes.genTypeCategoryOf a_expr)
+          (maybe ty (fun info -> with_bitfield info ty) (bitfield_of_annotations annots)))
     | Left (loc, TypingError.TError_MiscError (TypingError.UntypableIntegerConstant n)) ->
         error $ Loc.stringFromLocation loc ^ ": untypable integer constant '" ^ show n ^ "'\n"
     | _ -> error "[Translation_aux.ctype_of] impossible case: TODO move to Exception.t"
@@ -320,6 +334,28 @@ type translation_stdlib = <|
   mkproc_create_and_store:            C.pexpr -> C.pexpr -> C.expr unit;
 |>
 
+(* Assignment conversion to a bit-field uses its value width. The selected
+   implementation uses two's-complement narrowing for signed fields. The local
+   pattern binds only the generated body; the input remains outside its scope. *)
+let narrow_bitfield local ty loaded pe =
+  match bitfield_of_type ty with
+    | Nothing -> pe
+    | Just info ->
+        let pat = Caux.mk_sym_pat local (C.BTy_object C.OTy_integer) in
+        let n = Caux.mk_sym_pe local in
+        let modulus = Caux.mk_integer_pe ((2:integer) ** info.bitfield_width) in
+        let r = Caux.mk_op_pe C.OpRem_f n modulus in
+        let signed = AilTypesAux.is_signed_integer_type ty in
+        let r = if signed then
+          Caux.mk_if_pe (Caux.mk_op_pe C.OpGe r (Caux.mk_integer_pe ((2:integer) ** (info.bitfield_width-1))))
+            (Caux.mk_op_pe C.OpSub r modulus) r
+          else r in
+        if loaded then Caux.mk_case_pe pe [
+          (Caux.mk_specified_pat pat, Caux.mk_specified_pe r);
+          (Caux.mk_unspecified_pat (Caux.mk_empty_pat C.BTy_ctype), Caux.mk_unspecified_pe ty)]
+        else Caux.mk_let_pe pat pe r
+  end
+
 val mk_translation_stdlib: (map string Symbol.sym) * C.fun_map unit -> translation_stdlib
 let mk_translation_stdlib (ailnames, stdlib_fun_map) =
   let std_syms = Set_extra.toList (Map.domain stdlib_fun_map) in
@@ -333,12 +369,12 @@ let mk_translation_stdlib (ailnames, stdlib_fun_map) =
        if not (AilTypesAux.is_integer ty) then
          error "mkcall_conv_int called on non integer type"
        else
-         mk_call "conv_int" [Caux.mk_ail_ctype_pe ty; pe]
+         narrow_bitfield (fetch_stdlib_symbol std_syms "conv_int") ty false (mk_call "conv_int" [Caux.mk_ail_ctype_pe (without_bitfield ty); pe])
    ; mkcall_conv_loaded_int= fun ty pe ->
        if not (AilTypesAux.is_integer ty) then
          error "mkcall_conv_loaded_int called on non integer type"
        else
-         mk_call "conv_loaded_int" [Caux.mk_ail_ctype_pe ty; pe]
+         narrow_bitfield (fetch_stdlib_symbol std_syms "conv_loaded_int") ty true (mk_call "conv_loaded_int" [Caux.mk_ail_ctype_pe (without_bitfield ty); pe])
    ; mkcall_loaded_fvfromint= fun ty pe ->
        if not (AilTypesAux.is_floating ty) then
          error "mkcall_loaded_fvfromint called on a non floating type"
@@ -408,7 +444,7 @@ let conv_loaded_arith stdlib ty_src ty_dst pe =
 (*      C.Pexpr [] () (C.PEctor C.CfvfromintTyped [Caux.mk_ail_ctype_pe ty_dst; pe]) *)
   else if AilTypesAux.is_floating ty_src then
     if AilTypesAux.is_integer ty_dst then
-      stdlib.mkcall_loaded_ivfromfloat ty_dst pe
+      stdlib.mkcall_conv_loaded_int ty_dst (stdlib.mkcall_loaded_ivfromfloat (without_bitfield ty_dst) pe)
 (*      C.Pexpr [] () (C.PEctor C.Civfromfloat [Caux.mk_ail_ctype_pe ty_dst; pe]) *)
     else if AilTypesAux.is_floating ty_dst then
       C.Pexpr [] () (C.PEctor C.CfvconvertLoaded [Caux.mk_ail_ctype_pe ty_dst; pe])

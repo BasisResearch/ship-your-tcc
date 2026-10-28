@@ -77,7 +77,7 @@ def stateEq (a b : MemState) : Bool :=
   a.iotaMap.toList == b.iotaMap.toList && a.funptrmap == b.funptrmap && a.varargs == b.varargs &&
   a.nextVarargsId == b.nextVarargsId && a.bytemap.toList == b.bytemap.toList &&
   a.lastUsedUnionMembers == b.lastUsedUnionMembers && a.deadAllocations == b.deadAllocations &&
-  a.dynamicAddrs == b.dynamicAddrs && a.lastUsed == b.lastUsed && a.requested == b.requested
+  a.dynamicAddrs == b.dynamicAddrs && a.lastUsed == b.lastUsed && a.requested == b.requested && a.volatileAccesses == b.volatileAccesses
 
 def actionEq [BEq α] : nd_action α String mem_error cs MemState → nd_action α String mem_error cs MemState → Bool
   | .NDactive a, .NDactive b => a == b
@@ -190,12 +190,81 @@ def transport [LemFuel] [CerbGlobal.Switches] (st : MemState) : IO Unit := do
     | _, _ => throw (IO.userError "lift changed node/alternatives/order")
   IO.println "transport active killed nd guard branch step"
 
+/-- Field writes preserve unknown neighboring bits; volatile events survive
+    disabling diagnostic capture. Exercise the actual memory entry points. -/
+def bitfieldChecks [LemFuel] [CerbGlobal.Switches] : IO Unit := do
+  let st ← setup
+  let info : bitfield_info := {
+    bitfield_width := 3
+    bitfield_named := true
+    bitfield_byte_offset := 0
+    bitfield_bit_offset := 0 }
+  require (!overlapping (.FPbits .W base 0 3) (.FPbits .W base 3 5)) "distinct fields falsely conflict"
+  require (overlapping (.FPbits .W base 0 3) (.FPbits .R base 0 3)) "same field race missed"
+  require (overlapping (.FP .W base 1) (.FPbits .R base 3 5)) "byte/field race missed"
+  let field := with_bitfield info unsigned_int
+  let other := with_bitfield { info with bitfield_width := 5, bitfield_bit_offset := 3 } unsigned_int
+  let (.NDactive _, st) := step (store field 0 (intv (.Unsigned .Int_) 5)) st
+    | throw (IO.userError "bitfield partial store")
+  let (.NDactive (_, v), _) := step (load field 0) st
+    | throw (IO.userError "bitfield partial load")
+  require (v == intv (.Unsigned .Int_) 5) "known field lost to unknown padding"
+  let (.NDnd _ choices, copyState) := step (load uc 0) st
+    | throw (IO.userError "partial character read lost its choices")
+  require (choices.length == 32) "character read discarded padding choices"
+  let mut copiedValues : List Int := []
+  for (_, choice) in choices do
+    let (.NDactive (_, value), _) := step choice copyState
+      | throw (IO.userError "character choice did not return a value")
+    let .MVinteger _ (.IV _ n) := value
+      | throw (IO.userError "character choice was unspecified")
+    copiedValues := n :: copiedValues
+    let (.NDactive _, target) := step (store uc 0 value) st
+      | throw (IO.userError "character representation copy store")
+    let (.NDactive (_, copied), _) := step (load field 0) target
+      | throw (IO.userError "copied representation field load")
+    require (copied == intv (.Unsigned .Int_) 5) "character copy lost known field bits"
+  require (copiedValues.eraseDups.length == 32 && copiedValues.contains 5 && copiedValues.contains 253)
+    "character read collapsed allowed representations"
+  let volatileChar := volatile_access_type { no_qualifiers with volatile := true } uc
+  let (.NDnd _ volatileChoices, volatileState) := step (load volatileChar 0) (stopObserving st)
+    | throw (IO.userError "volatile character read choices")
+  require (volatileState.observations.isNone && volatileState.volatileAccesses.length == 1)
+    "abstract volatile read was lost or duplicated"
+  let [event] := volatileState.volatileAccesses
+    | throw (IO.userError "abstract volatile read event")
+  require (event.representation == readBytesFrom st base 1)
+    "abstract volatile read lost its known-bit domain"
+  for (_, choice) in volatileChoices do
+    let (.NDactive _, afterChoice) := step choice volatileState
+      | throw (IO.userError "volatile character choice")
+    require (afterChoice.volatileAccesses == volatileState.volatileAccesses && afterChoice.observations.isNone)
+      "padding choice duplicated or erased volatile access"
+  let (.NDactive (_, unknown), _) := step (load other 0) st
+    | throw (IO.userError "bitfield unknown neighbor load")
+  require (match unknown with | .MVunspecified _ => true | _ => false) "neighbor invented"
+  let (.NDactive _, st) := step (store other 0 (intv (.Unsigned .Int_) 27)) st
+    | throw (IO.userError "bitfield neighbor store")
+  let (.NDactive (_, v), _) := step (load uc 0) st
+    | throw (IO.userError "bitfield shared byte load")
+  require (v == bv 221) "masked store overwrote neighbor"
+  require (readBitfieldBytes info true (readBytesFrom st base 1) == some (-3)) "field sign extension"
+  let volatileField := volatile_access_type { no_qualifiers with volatile := true } field
+  let st := stopObserving st
+  let (.NDactive _, st) := step (store volatileField 0 (intv (.Unsigned .Int_) 2)) st
+    | throw (IO.userError "volatile bitfield store")
+  let (.NDactive (_, v), st) := step (load volatileField 0) st
+    | throw (IO.userError "volatile bitfield load")
+  require (v == intv (.Unsigned .Int_) 2 && st.volatileAccesses.length == 2 && st.observations.isNone)
+    "volatile accesses were lost or duplicated"
+
 end MemoryAccess
 
 def runAll (fuel count : Nat) (enabled : Bool) : IO UInt32 :=
   letI := LemFuel.mk fuel
   letI : CerbGlobal.Switches := ⟨CerbGlobal.defaultSwitches⟩  -- the default switch set (PNVI arc S1)
   do
+    MemoryAccess.bitfieldChecks
     let initial ← MemoryAccess.scenarios (← MemoryAccess.setup)
     let mut st := initial
     MemoryAccess.transport st

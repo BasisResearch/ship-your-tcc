@@ -1,0 +1,118 @@
+{
+  "binary_sha256": "4c2831498553831f6430a19ad1ae8fc0291a215cba0a956c67e3c8a005156489",
+  "driver_sha256": "31bbbf78dfc1586f056c66c2cd21e33b182d853e6d19d3a85c2c15b2fbdccd9e",
+  "rows": [
+    {
+      "name": "float-unsigned",
+      "source_sha256": "ce6031d6c77cc0b42a6098dcdb4798292d7b4e53bd9460c066914950570a6986",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": 0,
+      "gcc_exit": 0
+    },
+    {
+      "name": "float-signed",
+      "source_sha256": "40657217772551ed9371f40f3d42e84674fd808e53b8b992d4907416fb1ad053",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": 0,
+      "gcc_exit": 0
+    },
+    {
+      "name": "float-bool",
+      "source_sha256": "d1ac5099d96f74c347e6a3a1c69bbb55ddffb4a50b0a7a745d39cad9d7970e50",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": 0,
+      "gcc_exit": 0
+    },
+    {
+      "name": "float-compound",
+      "source_sha256": "51c12bc774f2ebf7f18731ea8906807ebc99f10f517aac0ac78efe646267e136",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": 0,
+      "gcc_exit": 0
+    },
+    {
+      "name": "conditional-promotion",
+      "source_sha256": "20b155d4e8d12846f31165d6d5db3e570e585a3edf78cd5339465aca7696c45f",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": 0,
+      "gcc_exit": 0
+    },
+    {
+      "name": "comma-promotion",
+      "source_sha256": "19164697e048242749990aa53fae6421ddb77f849b4241eb97ac270b64fbcb3e",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": 0,
+      "gcc_exit": 0
+    },
+    {
+      "name": "cast-clears-width",
+      "source_sha256": "065627ba280798edf18c2fb9f583963719cd81ef6e4511f4305dcd4dd43c298c",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": 0,
+      "gcc_exit": 0
+    },
+    {
+      "name": "volatile-compound-callback",
+      "source_sha256": "fdfb7093923270663364cbb889afb38a8370954c029e734b884809e096937ff5",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": 0,
+      "gcc_exit": 0
+    }
+  ]
+}

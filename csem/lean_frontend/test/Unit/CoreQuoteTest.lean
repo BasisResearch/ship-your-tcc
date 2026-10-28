@@ -1037,6 +1037,7 @@ partial def view148 (x : List Nat) : Shape :=
 partial def view149 (x : CerbMem.Footprint) : Shape :=
   match x with
   | .FP a0 a1 a2 => .node "CerbMem.Footprint.FP" #[(view150 a0), (view24 a1), (view24 a2)]
+  | .FPbits a0 a1 a2 a3 => .node "CerbMem.Footprint.FPbits" #[(view150 a0), (view24 a1), (view4 a2), (view4 a3)]
 partial def view150 (x : CerbMem.FootprintAccess) : Shape :=
   match x with
   | .W  => .node "CerbMem.FootprintAccess.W" #[]

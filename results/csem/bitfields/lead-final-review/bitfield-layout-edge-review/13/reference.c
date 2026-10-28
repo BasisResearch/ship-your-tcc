@@ -1,0 +1,3 @@
+#include <stdio.h>
+struct S {unsigned long long f0:1; unsigned char :0; unsigned char f1:7; unsigned short :3; unsigned f2:32; unsigned long long f3:63; char z; };
+int main(void){struct S s; unsigned char *p=(unsigned char*)&s; unsigned i; for(i=0;i<sizeof s;i++) p[i]=0; s.f0=0ULL; s.f1=125ULL; s.f2=3081843887ULL; s.f3=5786472081750306308ULL; s.z=90;printf("%u %u %u",(unsigned)sizeof s,(unsigned)_Alignof(struct S),(unsigned)((char*)&s.z-(char*)&s)); for(i=0;i<sizeof s;i++) printf(" %u",(unsigned)p[i]); return 0;}

@@ -9,7 +9,7 @@ import argparse
 from pathlib import Path
 
 def section(s):
-    start=s.index('val ctype_of:')
+    start=s.index('let bitfield_value_type ') if 'let bitfield_value_type ' in s else s.index('val ctype_of:')
     end=s.index('val is_lvalue:',start)
     chunk=s[start:end]
     assert chunk.count('let ctype_of ')==chunk.count('let qualified_ctype_of ')==1

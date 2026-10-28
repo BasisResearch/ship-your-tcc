@@ -1,0 +1,43 @@
+{
+  "command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/run_tcc_sail.sh",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/batch.c"
+  ],
+  "exit": 0,
+  "meta": [
+    "compile_steps=19289281",
+    "program_steps=143952",
+    "steps=19433258"
+  ],
+  "wall_seconds": 473.3203041800298,
+  "elf_sha256": "75c99c9ff58213905d4694a88b82fa468de7cf08c68fd39c2711644891bc3964",
+  "gcc_command": [
+    "gcc",
+    "-std=c11",
+    "-pedantic-errors",
+    "-O0",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/batch.c",
+    "-o",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/bitfields/native-final/gcc.exe"
+  ],
+  "gcc_exit": 0,
+  "gcc_compiler_sha256": "864711037b900acdb7a449cf48d912cefa935b527fb60c767ccb956779e66136",
+  "driver_sha256": "65801e2755b12c4006948a448b0eead593120b95e38aac903cf8009a92a9cc01",
+  "artifacts": {
+    "raw": "d10fc77830186a177e421cd7cc512173c4948040f60cc2d7d958008fe3f3b88a",
+    "stderr": "6b07b4a5dd7e67562247dc7bb4c81a4b59e2cf957c2228276751e68e63537fe4",
+    "prog.elf.xz": "2732a5731cbd8b0ec7df435b2bcec50f519235e3012e507c15f3ca3fb7560921",
+    "meta": "105eecfb932d1eadae1971a3a17a52e2ddf286c44b4c923455c781d2f40e8a15",
+    "embed.S": "fe7bffbb739160b2234d8612046e346c35c48d2444841f24746c7120f4aca5b5",
+    "gcc.stdout": "d10fc77830186a177e421cd7cc512173c4948040f60cc2d7d958008fe3f3b88a",
+    "input-pins.json": "812ae77c702c231127a68b34d1b0782dced34c8dc3f9ce272bc3179246c1e396",
+    "make.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gcc.exe.xz": "2a30ddf09baa76f1ddc33d7d76a60fef81b00d8ba1c32ac6eb60da18c9160c77",
+    "stdout": "d10fc77830186a177e421cd7cc512173c4948040f60cc2d7d958008fe3f3b88a",
+    "gcc.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "pcs": "3f7755ebb3256a6a0526577a93508f5e3a77e9b18434e73adae90e8cbe605da2",
+    "input.c": "5e26c63458bf9e44da4d4e0d938133eda48981f1f998eb87c6d6dc82139ef321",
+    "ld.log": "d6d1c1c3378a4d2237cb63995664a4c60c8fd6ce973e741133e7ce6874007ea0",
+    "trace": "9c4b39a2901e6053933856ea4aece7841418b8e40c36ac94776efbb945d0f1e0"
+  }
+}

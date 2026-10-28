@@ -750,6 +750,191 @@ def add_internal_attribute (name1 : String) (attrs1 : attributes) : attributes :
            attr_args :=
              ([] : List (CerbLocation.Loc × String × List (CerbLocation.Loc × String))) } :
         attribute0))])
+
+def gnu_decimal (str : String) : Option Int :=
+  let cs := String.toList str;
+  lem_if List.isEmpty cs then
+    none
+  else
+    List.foldl
+      (fun (acc : Option Int) (c : Char) =>
+        match acc with
+        | none => none
+        | some n =>
+          (match String.ofList [c] with
+           | "0" => some ((10 : Int) * n)
+           | "1" => some (((10 : Int) * n) + (1 : Int))
+           | "2" => some (((10 : Int) * n) + (2 : Int))
+           | "3" => some (((10 : Int) * n) + (3 : Int))
+           | "4" => some (((10 : Int) * n) + (4 : Int))
+           | "5" => some (((10 : Int) * n) + (5 : Int))
+           | "6" => some (((10 : Int) * n) + (6 : Int))
+           | "7" => some (((10 : Int) * n) + (7 : Int))
+           | "8" => some (((10 : Int) * n) + (8 : Int))
+           | "9" => some (((10 : Int) * n) + (9 : Int))
+           | _ => none)) (some ((0 : Int) : Int)) cs
+
+/- C11 6.7.2.1: bit-fields are members, not addressable scalar objects.
+   The unspellable carrier follows the existing internal physical-member and
+   typedef-alignment carriers. All consumers use this named-field view. -/
+structure bitfield_info where
+  bitfield_width : Nat
+  bitfield_named : Bool
+  bitfield_byte_offset : Nat
+  bitfield_bit_offset : Nat
+  deriving BEq, Ord
+instance : Inhabited bitfield_info where
+  default :=
+    { bitfield_width := default,
+      bitfield_named := default,
+      bitfield_byte_offset := default,
+      bitfield_bit_offset := default }
+instance (priority := 500) : Lem_Basic_classes.SetType bitfield_info where
+  setElemCompare := defaultCompare
+instance (priority := 500) : Lem_Basic_classes.Eq0 bitfield_info where
+  isEqual x y := x == y
+  isInequal x y := !(x == y)
+instance (priority := 500) : Lem_Basic_classes.Ord0 bitfield_info where
+  compare := defaultCompare
+  isLess := defaultLess
+  isLessEqual := defaultLessEq
+  isGreater := defaultGreater
+  isGreaterEqual := defaultGreaterEq
+
+def bitfield_of_annotations (annots1 : List annot) : Option bitfield_info :=
+  List.foldl
+    (fun (acc : Option bitfield_info) (annot1 : annot) =>
+      match annot1 with
+      | Aattrs (Attrs attrs1) =>
+        List.foldl
+          (fun (acc : Option bitfield_info) (attr : attribute0) =>
+            match attr.attr_id with
+            | Identifier _ name1 =>
+              (lem_if (name1 == ":bitfield:") && isNothing attr.attr_ns then
+                match attr.attr_args with
+                | [(_, w, _), (_, n, _), (_, b, _), (_, s, _)] =>
+                  (match gnu_decimal w, gnu_decimal b, gnu_decimal s with
+                   | some w, some b, some s =>
+                     some
+                       (({ bitfield_width := (Int.natAbs (lemIntFromInteger w)),
+                           bitfield_named := (n == "1"),
+                           bitfield_byte_offset := (Int.natAbs (lemIntFromInteger b)),
+                           bitfield_bit_offset := (Int.natAbs (lemIntFromInteger s)) } :
+                         bitfield_info))
+                   | _, _, _ => acc)
+                | _ => acc
+              else
+                acc)) acc attrs1
+      | _ => acc) none annots1
+
+def bitfield_of_type (c : ctype) : Option bitfield_info :=
+  match c with
+  | (Ctype annots1 _) => bitfield_of_annotations annots1
+
+def clear_bitfield_annotations (annots1 : List annot) : List annot :=
+  List.map
+    (fun (annot1 : annot) =>
+      match annot1 with
+      | Aattrs (Attrs attrs1) =>
+        Aattrs
+          (Attrs
+            (List.filter
+              (fun (attr : attribute0) =>
+                match attr.attr_id with
+                | Identifier _ n => not (n == ":bitfield:")) attrs1))
+      | _ => annot1) annots1
+
+def with_bitfield (info : bitfield_info) (c : ctype) : ctype :=
+  match info, c with
+  | info, (Ctype annots1 ty1) =>
+    (let arg : Nat → (CerbLocation.Loc × String × List (CerbLocation.Loc × String)) :=
+       (fun (n : Nat) =>
+         (CerbLocation.unknown, Lem_String_extra.stringFromNat n,
+           ([] : List (CerbLocation.Loc × String))));
+     Ctype
+       (Aattrs
+         (Attrs
+           [(({ attr_ns := none,
+                attr_id := (Identifier CerbLocation.unknown ":bitfield:"),
+                attr_args :=
+                  [arg info.bitfield_width, arg (lem_if info.bitfield_named then (1 : Nat) else 0),
+                    arg info.bitfield_byte_offset, arg info.bitfield_bit_offset] } :
+             attribute0))]) :: clear_bitfield_annotations annots1) ty1)
+
+def without_bitfield (c : ctype) : ctype :=
+  match c with
+  | (Ctype annots1 ty1) => Ctype (clear_bitfield_annotations annots1) ty1
+
+def is_unnamed_bitfield (ty1 : ctype) : Bool :=
+  match bitfield_of_type ty1 with
+  | some info => not info.bitfield_named
+  | none => false
+
+def volatile_access_type (qs : qualifiers) (c : ctype) : ctype :=
+  match qs, c with
+  | qs, cty@(Ctype annots1 ty1) =>
+    (lem_if qs.volatile then
+      Ctype (Aattrs (add_internal_attribute ":volatile-access:" no_attributes) :: annots1) ty1
+    else
+      cty)
+
+def is_volatile_access (c : ctype) : Bool :=
+  match c with
+  | (Ctype annots1 _) =>
+    maybe0 false (has_internal_attribute ":volatile-access:") (get_attrs annots1)
+
+def bitfield_span (info : bitfield_info) : Nat :=
+  lemNatDiv ((info.bitfield_bit_offset + info.bitfield_width) + 7) 8
+
+/- PCC little-endian allocation policy, independently of C expression rules.
+   A packed field may cross its base-type unit. Zero width ignores packing.
+   Byte offsets are relative to this physical container, never its parent. -/
+structure bitfield_cursor where
+  bitfield_next_byte : Nat
+  bitfield_next_bit : Nat
+  deriving BEq, Ord
+instance : Inhabited bitfield_cursor where
+  default := { bitfield_next_byte := default, bitfield_next_bit := default }
+instance (priority := 500) : Lem_Basic_classes.SetType bitfield_cursor where
+  setElemCompare := defaultCompare
+instance (priority := 500) : Lem_Basic_classes.Eq0 bitfield_cursor where
+  isEqual x y := x == y
+  isInequal x y := !(x == y)
+instance (priority := 500) : Lem_Basic_classes.Ord0 bitfield_cursor where
+  compare := defaultCompare
+  isLess := defaultLess
+  isLessEqual := defaultLessEq
+  isGreater := defaultGreater
+  isGreaterEqual := defaultGreaterEq
+def bitfield_round (n : Nat) (a : Nat) : Nat :=
+  lem_if lemNatMod n a == 0 then n else (n + a) - lemNatMod n a
+def place_bitfield (is_union2 : Bool) (packed : Bool) (explicit_alignment : Bool) (size : Nat)
+    (align : Nat) (width_opt : Option Nat) (cursor1 : bitfield_cursor) :
+    (Nat × Nat × bitfield_cursor) :=
+  let c := cursor1.bitfield_next_byte;
+  let p := cursor1.bitfield_next_bit;
+  match width_opt with
+  | none =>
+    (let off := lem_if is_union2 then 0 else bitfield_round (c + lemNatDiv (p + 7) 8) align;
+     (off, 0, (({ bitfield_next_byte := (off + size), bitfield_next_bit := 0 } : bitfield_cursor))))
+  | some width =>
+    (let fresh1 :=
+       (width == 0) ||
+         (explicit_alignment ||
+           (not packed &&
+             (natGtb
+               (lemNatDiv (((lemNatMod ((c * 8) + p) (align * 8) + width) + (align * 8)) - 1)
+                 (align * 8)) (lemNatDiv size align))));
+     let c :=
+       lem_if is_union2 then
+         0
+       else lem_if fresh1 then bitfield_round (c + lemNatDiv (p + 7) 8) align else c;
+     let p := lem_if is_union2 || fresh1 then 0 else p;
+     let off := c + ((lemNatDiv p (align * 8)) * align);
+     let shift := lemNatMod p (align * 8);
+     (off, shift,
+       (({ bitfield_next_byte := off, bitfield_next_bit := (shift + width) } : bitfield_cursor))))
+
 def is_anonymous_member (attrs1 : attributes) : Bool :=
   has_internal_attribute ":anonymous-member:" attrs1
 def anonymous_member_attributes (attrs1 : attributes) : attributes :=
@@ -781,7 +966,9 @@ def name_anonymous_members (reserved : List identifier)
            (match data with
             | (attrs1, _, _, _) =>
               (Identifier loc1
-                (lem_if is_anonymous_member attrs1 then
+                (lem_if is_anonymous_member attrs1 || is_unnamed_bitfield
+                    (match data with
+                     | (_, _, _, ty1) => ty1) then
                   String.append (stringMakeString (width + 1) '_')
                     (String.append "cerb_anon_" (Lem_String_extra.stringFromNat n))
                 else
@@ -827,7 +1014,8 @@ def member_paths (depth : Nat)
                 | (ident, (attrs1, _, qs, child_ty)) =>
                   (let step1 := (ident, qs, child_ty);
                    (ident,
-                     (({ member_path_visible := (not (is_anonymous_member attrs1)),
+                     (({ member_path_visible :=
+                           (not (is_anonymous_member attrs1) && not (is_unnamed_bitfield child_ty)),
                          member_path_steps := [step1] } : member_path))) ::
                      (lem_if is_anonymous_member attrs1 then
                        List.map
@@ -846,28 +1034,6 @@ def member_paths (depth : Nat)
    underlying sizeof, unlike aggregate alignment's trailing padding. The
    unspellable internal attribute is a typed translation artifact, not a
    public field or an additional allocation. Readers consume it explicitly. -/
-def gnu_decimal (str : String) : Option Int :=
-  let cs := String.toList str;
-  lem_if List.isEmpty cs then
-    none
-  else
-    List.foldl
-      (fun (acc : Option Int) (c : Char) =>
-        match acc with
-        | none => none
-        | some n =>
-          (match String.ofList [c] with
-           | "0" => some ((10 : Int) * n)
-           | "1" => some (((10 : Int) * n) + (1 : Int))
-           | "2" => some (((10 : Int) * n) + (2 : Int))
-           | "3" => some (((10 : Int) * n) + (3 : Int))
-           | "4" => some (((10 : Int) * n) + (4 : Int))
-           | "5" => some (((10 : Int) * n) + (5 : Int))
-           | "6" => some (((10 : Int) * n) + (6 : Int))
-           | "7" => some (((10 : Int) * n) + (7 : Int))
-           | "8" => some (((10 : Int) * n) + (8 : Int))
-           | "9" => some (((10 : Int) * n) + (9 : Int))
-           | _ => none)) (some ((0 : Int) : Int)) cs
 
 def gnu_align_typedef { a : Type } [Show a] (alignment1 : Option a) (ty1 : ctype) : ctype :=
   match alignment1, ty1 with

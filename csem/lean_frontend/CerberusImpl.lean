@@ -22,6 +22,10 @@ import CerbImplCfg
 
 namespace CerberusImpl
 
+def bitfields_supported [CerbImplCfg.Impl] (_ : Unit) : Bool :=
+  CerbImplCfg.Impl.params.bitfields == .tcc
+
+
 /-- Builtins.translate_errno: retain the complete upstream name domain, but
 read the pinned newlib 4.5.0 sys/errno.h values for RV64. Unknown names fail
 as they do in builtins.lem. The focused probe checks observable values. -/
@@ -415,7 +419,7 @@ partial def alignof_ty [CerbImplCfg.Impl] (enumDefs : EnumDefs)
     (fmapElements tagDefs).find? (fun (k, _) => k == tag) |>.map Prod.snd
   let foldMembers (layout : aggregate_layout) (members : List (Option alignment × ctype)) : Option Nat :=
     members.foldl (fun acc_opt (align_opt, mty) =>
-      let al_opt := match effective_member_alignment layout.aggregate_packed align_opt with
+      let al_opt := if is_unnamed_bitfield mty then some 1 else match effective_member_alignment layout.aggregate_packed align_opt with
         | none => alignof_ty enumDefs _tagDefs tagDefs mty
         -- ISO-fix register R7 (VALIDATION.md §2; the R3 class): upstream
         -- ocaml_implementation.ml:483/:501 is `Some (Z.to_int al_n)` (Z.Overflow

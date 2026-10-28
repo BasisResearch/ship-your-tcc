@@ -1,0 +1,13 @@
+from pathlib import Path
+import subprocess,json,hashlib
+r=Path(__file__).resolve().parents[1];w=r/'.claude/worktrees/sol-csem-repin';key='db4b4ab592584b518bd42a50ea6fc5cff9e109d6281149f440a95050e463530d';fork=w/'build/fork-oracle'/key
+for n in ['.artifacts.sha256','.overlay.sha256']:
+ with (fork/n).open('rb') as f:subprocess.run(['sha256sum','--quiet','-c','-'],stdin=f,cwd=fork,check=True)
+exe=fork/'_build/default/backend/driver/main.exe';runtime=fork/'_build/install/default';out=r/'build/compound-lvalue-candidate-ocaml';out.mkdir(exist_ok=False);rows=[]
+for src in sorted((r/'build/compound-lvalue-review').glob('*/prog.c'))+[r/'results/repro/csem_compound_lvalue_twice.c']:
+ name=src.parent.name if src.name=='prog.c' else 'minimal-counter';expected=1 if name=='minimal-counter' else 0
+ cmd=[str(exe),'--runtime='+str(runtime),'--nolibc','--exec','--batch','--mode=exhaustive',str(src)]
+ p=subprocess.run(cmd,capture_output=True,timeout=120);(out/(name+'.stdout')).write_bytes(p.stdout);(out/(name+'.stderr')).write_bytes(p.stderr)
+ verdicts=[x for x in p.stdout.decode().splitlines() if x.startswith(('Defined','Undefined'))];good=p.returncode==0 and bool(verdicts) and all(x.startswith('Defined') and f'Specified({expected})' in x for x in verdicts)
+ rows.append(dict(case=name,source=str(src),source_sha256=hashlib.sha256(src.read_bytes()).hexdigest(),expected=expected,command=cmd,exit=p.returncode,verdicts=verdicts,good=good));print(name,good,verdicts,flush=True)
+(out/'report.json').write_text(json.dumps(dict(oracle_key=key,oracle_sha256=hashlib.sha256(exe.read_bytes()).hexdigest(),rows=rows),indent=2)+'\n')

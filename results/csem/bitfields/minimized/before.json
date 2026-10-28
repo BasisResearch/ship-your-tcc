@@ -1,0 +1,114 @@
+[
+  {
+    "source": "results/csem/bitfields/minimized/compound-bitfield.c",
+    "source_sha256": "8140f4bff27871fb102f187646b8e8c080cad800b4bf1c16b8e54a04dea6e8f1",
+    "gcc_compile": {
+      "command": [
+        "gcc",
+        "-std=c11",
+        "-pedantic-errors",
+        "-O0",
+        "results/csem/bitfields/minimized/compound-bitfield.c",
+        "-o",
+        "/tmp/bitfields-minimal"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "gcc": {
+      "command": [
+        "/tmp/bitfields-minimal"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "adopted-default": {
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/fork-oracle/ee06b1562b7a991a3aacb8faac82698828228a6aa3290fa420e7c2276135f0b9/_build/default/backend/driver/main.exe",
+        "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/fork-oracle/ee06b1562b7a991a3aacb8faac82698828228a6aa3290fa420e7c2276135f0b9/_build/install/default",
+        "--nolibc",
+        "--exec",
+        "--batch",
+        "--mode=exhaustive",
+        "results/csem/bitfields/minimized/compound-bitfield.c"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "results/csem/bitfields/minimized/compound-bitfield.c:1:23: error: feature not yet supported: bit-fields\nstruct S { unsigned a:3; };\n                      ^ \nTime spent: 0.027543 seconds\n",
+      "binary_sha256": "8e4f467bb6d4a374290f041cea6b8b3f69273cd796d0050bcb3080f0c4b01766"
+    },
+    "pristine": {
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/default/backend/driver/main.exe",
+        "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/install/default",
+        "--nolibc",
+        "--exec",
+        "--batch",
+        "--mode=exhaustive",
+        "results/csem/bitfields/minimized/compound-bitfield.c"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "results/csem/bitfields/minimized/compound-bitfield.c:1:23: error: feature not yet supported: bit-fields\nstruct S { unsigned a:3; };\n                      ^ \nTime spent: 0.027934 seconds\n",
+      "binary_sha256": "a71dd0968846b72196506a7ce78cd300cb39c6a8a8b10e87945a44c30517d091"
+    }
+  },
+  {
+    "source": "results/csem/bitfields/minimized/compound-scalar.c",
+    "source_sha256": "742203304ee0b2bfb6e316aa2ccc4ae6cdbcc5c46e679ad7fa6e31f9bc2afc88",
+    "gcc_compile": {
+      "command": [
+        "gcc",
+        "-std=c11",
+        "-pedantic-errors",
+        "-O0",
+        "results/csem/bitfields/minimized/compound-scalar.c",
+        "-o",
+        "/tmp/bitfields-minimal"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "gcc": {
+      "command": [
+        "/tmp/bitfields-minimal"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "adopted-default": {
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/fork-oracle/ee06b1562b7a991a3aacb8faac82698828228a6aa3290fa420e7c2276135f0b9/_build/default/backend/driver/main.exe",
+        "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/fork-oracle/ee06b1562b7a991a3aacb8faac82698828228a6aa3290fa420e7c2276135f0b9/_build/install/default",
+        "--nolibc",
+        "--exec",
+        "--batch",
+        "--mode=exhaustive",
+        "results/csem/bitfields/minimized/compound-scalar.c"
+      ],
+      "exit": 1,
+      "stdout": "Undefined {ub: \"UB035_unsequenced_race\", stderr: \"\", loc: \"<3:3--3:14>\"}\n",
+      "stderr": "Time spent: 0.028833 seconds\n",
+      "binary_sha256": "8e4f467bb6d4a374290f041cea6b8b3f69273cd796d0050bcb3080f0c4b01766"
+    },
+    "pristine": {
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/default/backend/driver/main.exe",
+        "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/install/default",
+        "--nolibc",
+        "--exec",
+        "--batch",
+        "--mode=exhaustive",
+        "results/csem/bitfields/minimized/compound-scalar.c"
+      ],
+      "exit": 1,
+      "stdout": "Undefined {ub: \"UB035_unsequenced_race\", stderr: \"\", loc: \"<3:3--3:14>\"}\n",
+      "stderr": "Time spent: 0.029382 seconds\n",
+      "binary_sha256": "a71dd0968846b72196506a7ce78cd300cb39c6a8a8b10e87945a44c30517d091"
+    }
+  }
+]

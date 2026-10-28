@@ -1,0 +1,1 @@
+/prog.c:1: error: negative width in bit-field 'a'

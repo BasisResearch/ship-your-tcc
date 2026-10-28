@@ -46,6 +46,9 @@ type invalid_generic_association =
   | InvalidGenericAssociation_VLA
 
 type violation =
+  | BitfieldInvalidDeclaration (* 6.7.2.1p4-5: type, ICE width and named zero *)
+  | BitfieldAddress (* 6.5.3.2p1 *)
+  | BitfieldSizeof (* 6.5.3.4p1 *)
   (* 6.5 Expressions *)
   (* 6.5.1.1 Generic selection *)
   | GenericSelectionMultipleDefault (* §6.5.1.1#2, sentence 1 *)
@@ -262,6 +265,9 @@ let std_of_atomic_operation_synopsis = function
 end
 
 let std_of_violation = function
+  | BitfieldInvalidDeclaration -> ["§6.7.2.1#4"; "§6.7.2.1#5"]
+  | BitfieldAddress -> ["§6.5.3.2#1"]
+  | BitfieldSizeof -> ["§6.5.3.4#1"]
   | GenericSelectionMultipleDefault ->
       ["§6.5.1.1#2, sentence 1"]
   | GenericSelectionIncorrectType _ _ ->

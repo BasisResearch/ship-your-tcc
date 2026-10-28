@@ -26,7 +26,7 @@ def reuse : Bool := Id.run do
   letI : CerbGlobal.Switches := ⟨CerbGlobal.defaultSwitches⟩
   let st : MemState := { lastAddress := 4096, allocPolicy := .oracle (fun _ => some 128) }
   let action := nd_bind (allocateRegion 0 (PrefOther "") (.IV .Prov_none 8) (.IV .Prov_none 8)) fun p =>
-    nd_bind (ND fun s => (NDactive (), writeBytesTo s 128 [⟨.Prov_none, none, some 42⟩])) fun _ =>
+    nd_bind (ND fun s => (NDactive (), writeBytesTo s 128 [{ value := some 42 }])) fun _ =>
     nd_bind (killM CerbLocation.Loc.unknown true p) fun _ =>
     allocateRegion 0 (PrefOther "") (.IV .Prov_none 8) (.IV .Prov_none 8)
   match CerbND.runND action st with

@@ -1,0 +1,47 @@
+{
+  "binary": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+  "binary_sha256": "ab341ff0640c3f479212c4e3b00c2c8265341465f11855e710133158bfa8f649",
+  "driver_sha256": "6d823ec476ecad5a42cdab102ce3311f3799dde7c195498f70777c984cd511f2",
+  "rows": [
+    {
+      "case": "padding",
+      "source_sha256": "1713301ee81b48a42db86220923e7cf4030bbad70e43a75cbac99a1b2ebb6035",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "status": "non-integer-return"
+        }
+      ],
+      "gcc_compile": 0,
+      "gcc_exit": 0
+    },
+    {
+      "case": "full-byte",
+      "source_sha256": "c3c950a1580ffdbcaf79f3d96238f6197740e41e4fcc69d748d0549fff0e50b0",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": 0,
+      "gcc_exit": 0
+    },
+    {
+      "case": "assignment",
+      "source_sha256": "11cecc5bcf5291d2a9353cd34eb145297e678bab3c8d6742eb24663e710191bc",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": 0,
+      "gcc_exit": 0
+    }
+  ]
+}

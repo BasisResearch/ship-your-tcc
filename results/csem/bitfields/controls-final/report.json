@@ -1,0 +1,893 @@
+{
+  "binary_sha256": "4c2831498553831f6430a19ad1ae8fc0291a215cba0a956c67e3c8a005156489",
+  "driver_sha256": "58b8d0d1f9f06d4bd548827c0d06e7a9a411d7553aa79ef70595dddc913d50eb",
+  "rows": [
+    {
+      "case": "call-address",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/bitfields/lead-compound-ocaml/sources/call-address.c"
+      ],
+      "source_sha256": "2f00ae11ca8a9b11a0bfaabc7c9b0e0d6b53e9a428a4684a278f30fb1d0c0b15",
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "expected": 0,
+      "ok": true
+    },
+    {
+      "case": "call-member",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/bitfields/lead-compound-ocaml/sources/call-member.c"
+      ],
+      "source_sha256": "0098c442cc22c33445b3ba5890c49bba7f54ee6aa4495d27309d1725794a58b3",
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "expected": 0,
+      "ok": true
+    },
+    {
+      "case": "index-add",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/bitfields/lead-compound-ocaml/sources/index-add.c"
+      ],
+      "source_sha256": "e469b0684ebf666723b16aedecced7709167ae7cde204ce6d145ec0a4acae567",
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "expected": 0,
+      "ok": true
+    },
+    {
+      "case": "index-assign-control",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/bitfields/lead-compound-ocaml/sources/index-assign-control.c"
+      ],
+      "source_sha256": "636ba8ea235e7912feb7ec4b956836c65bb87bbe35a17d1a68b22f833788279a",
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "expected": 0,
+      "ok": true
+    },
+    {
+      "case": "index-multiply",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/bitfields/lead-compound-ocaml/sources/index-multiply.c"
+      ],
+      "source_sha256": "574246012375f837e05a16da53ae3145525b22473e26cb9afd0c1d2c937c0818",
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "expected": 0,
+      "ok": true
+    },
+    {
+      "case": "pointer-postincrement",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/bitfields/lead-compound-ocaml/sources/pointer-postincrement.c"
+      ],
+      "source_sha256": "8335e807e894a2bfd77a25635a2586a8ff2a189c7d51c49304ea8c9367851894",
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "expected": 0,
+      "ok": true
+    },
+    {
+      "case": "minimal-counter",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/bitfields/lead-compound-ocaml/sources/minimal-counter.c"
+      ],
+      "source_sha256": "4132ab004ce3600d1b8f0db173c48f928088b001f12c70cb36da1a518871cbab",
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 1,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "expected": 1,
+      "ok": true
+    },
+    {
+      "case": "byte-copy-padding",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/bitfields/lead-byte-copy/before/padding/input.c"
+      ],
+      "source_sha256": "1713301ee81b48a42db86220923e7cf4030bbad70e43a75cbac99a1b2ebb6035",
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "expected": 0,
+      "ok": true
+    },
+    {
+      "case": "byte-copy-full-byte",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/bitfields/lead-byte-copy/before/full-byte/input.c"
+      ],
+      "source_sha256": "c3c950a1580ffdbcaf79f3d96238f6197740e41e4fcc69d748d0549fff0e50b0",
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "expected": 0,
+      "ok": true
+    },
+    {
+      "case": "byte-copy-assignment",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/bitfields/lead-byte-copy/before/assignment/input.c"
+      ],
+      "source_sha256": "11cecc5bcf5291d2a9353cd34eb145297e678bab3c8d6742eb24663e710191bc",
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "expected": 0,
+      "ok": true
+    },
+    {
+      "case": "same-field-race",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/bitfields/minimized/same-field-race.c"
+      ],
+      "source_sha256": "976447e7dfb8d3d260fca26261ea88fc57087dc99dee3ac4171e3fa1f4a2d590",
+      "exit": 0,
+      "semantics": [
+        {
+          "diagnostic": [
+            "UB035_unsequenced_race"
+          ],
+          "location": {
+            "begin": {
+              "col": 43,
+              "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/bitfields/minimized/same-field-race.c",
+              "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/bitfields/minimized/same-field-race.c",
+              "lexing_line": 1034,
+              "line": 2,
+              "source_identity": {
+                "compilerInjected": false,
+                "resolved": [
+                  [
+                    100,
+                    97,
+                    116,
+                    97
+                  ],
+                  [
+                    104,
+                    111,
+                    109,
+                    101
+                  ],
+                  [
+                    107,
+                    105,
+                    114,
+                    97,
+                    110,
+                    99,
+                    111,
+                    100,
+                    101,
+                    115
+                  ],
+                  [
+                    68,
+                    111,
+                    99,
+                    117,
+                    109,
+                    101,
+                    110,
+                    116,
+                    115
+                  ],
+                  [
+                    99,
+                    111,
+                    100,
+                    101
+                  ],
+                  [
+                    115,
+                    104,
+                    105,
+                    112,
+                    45,
+                    121,
+                    111,
+                    117,
+                    114,
+                    45,
+                    116,
+                    99,
+                    99
+                  ],
+                  [
+                    46,
+                    99,
+                    108,
+                    97,
+                    117,
+                    100,
+                    101
+                  ],
+                  [
+                    119,
+                    111,
+                    114,
+                    107,
+                    116,
+                    114,
+                    101,
+                    101,
+                    115
+                  ],
+                  [
+                    115,
+                    111,
+                    108,
+                    45,
+                    99,
+                    115,
+                    101,
+                    109,
+                    45,
+                    114,
+                    101,
+                    112,
+                    105,
+                    110
+                  ],
+                  [
+                    114,
+                    101,
+                    115,
+                    117,
+                    108,
+                    116,
+                    115
+                  ],
+                  [
+                    99,
+                    115,
+                    101,
+                    109
+                  ],
+                  [
+                    98,
+                    105,
+                    116,
+                    102,
+                    105,
+                    101,
+                    108,
+                    100,
+                    115
+                  ],
+                  [
+                    109,
+                    105,
+                    110,
+                    105,
+                    109,
+                    105,
+                    122,
+                    101,
+                    100
+                  ],
+                  [
+                    115,
+                    97,
+                    109,
+                    101,
+                    45,
+                    102,
+                    105,
+                    101,
+                    108,
+                    100,
+                    45,
+                    114,
+                    97,
+                    99,
+                    101,
+                    46,
+                    99
+                  ]
+                ],
+                "runtimeLibrary": false
+              }
+            },
+            "cursor": {
+              "pos": {
+                "col": 49,
+                "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/bitfields/minimized/same-field-race.c",
+                "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/bitfields/minimized/same-field-race.c",
+                "lexing_line": 1042,
+                "line": 2,
+                "source_identity": {
+                  "compilerInjected": false,
+                  "resolved": [
+                    [
+                      100,
+                      97,
+                      116,
+                      97
+                    ],
+                    [
+                      104,
+                      111,
+                      109,
+                      101
+                    ],
+                    [
+                      107,
+                      105,
+                      114,
+                      97,
+                      110,
+                      99,
+                      111,
+                      100,
+                      101,
+                      115
+                    ],
+                    [
+                      68,
+                      111,
+                      99,
+                      117,
+                      109,
+                      101,
+                      110,
+                      116,
+                      115
+                    ],
+                    [
+                      99,
+                      111,
+                      100,
+                      101
+                    ],
+                    [
+                      115,
+                      104,
+                      105,
+                      112,
+                      45,
+                      121,
+                      111,
+                      117,
+                      114,
+                      45,
+                      116,
+                      99,
+                      99
+                    ],
+                    [
+                      46,
+                      99,
+                      108,
+                      97,
+                      117,
+                      100,
+                      101
+                    ],
+                    [
+                      119,
+                      111,
+                      114,
+                      107,
+                      116,
+                      114,
+                      101,
+                      101,
+                      115
+                    ],
+                    [
+                      115,
+                      111,
+                      108,
+                      45,
+                      99,
+                      115,
+                      101,
+                      109,
+                      45,
+                      114,
+                      101,
+                      112,
+                      105,
+                      110
+                    ],
+                    [
+                      114,
+                      101,
+                      115,
+                      117,
+                      108,
+                      116,
+                      115
+                    ],
+                    [
+                      99,
+                      115,
+                      101,
+                      109
+                    ],
+                    [
+                      98,
+                      105,
+                      116,
+                      102,
+                      105,
+                      101,
+                      108,
+                      100,
+                      115
+                    ],
+                    [
+                      109,
+                      105,
+                      110,
+                      105,
+                      109,
+                      105,
+                      122,
+                      101,
+                      100
+                    ],
+                    [
+                      115,
+                      97,
+                      109,
+                      101,
+                      45,
+                      102,
+                      105,
+                      101,
+                      108,
+                      100,
+                      45,
+                      114,
+                      97,
+                      99,
+                      101,
+                      46,
+                      99
+                    ]
+                  ],
+                  "runtimeLibrary": false
+                }
+              },
+              "tag": "PointCursor"
+            },
+            "end": {
+              "col": 56,
+              "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/bitfields/minimized/same-field-race.c",
+              "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/bitfields/minimized/same-field-race.c",
+              "lexing_line": 1050,
+              "line": 2,
+              "source_identity": {
+                "compilerInjected": false,
+                "resolved": [
+                  [
+                    100,
+                    97,
+                    116,
+                    97
+                  ],
+                  [
+                    104,
+                    111,
+                    109,
+                    101
+                  ],
+                  [
+                    107,
+                    105,
+                    114,
+                    97,
+                    110,
+                    99,
+                    111,
+                    100,
+                    101,
+                    115
+                  ],
+                  [
+                    68,
+                    111,
+                    99,
+                    117,
+                    109,
+                    101,
+                    110,
+                    116,
+                    115
+                  ],
+                  [
+                    99,
+                    111,
+                    100,
+                    101
+                  ],
+                  [
+                    115,
+                    104,
+                    105,
+                    112,
+                    45,
+                    121,
+                    111,
+                    117,
+                    114,
+                    45,
+                    116,
+                    99,
+                    99
+                  ],
+                  [
+                    46,
+                    99,
+                    108,
+                    97,
+                    117,
+                    100,
+                    101
+                  ],
+                  [
+                    119,
+                    111,
+                    114,
+                    107,
+                    116,
+                    114,
+                    101,
+                    101,
+                    115
+                  ],
+                  [
+                    115,
+                    111,
+                    108,
+                    45,
+                    99,
+                    115,
+                    101,
+                    109,
+                    45,
+                    114,
+                    101,
+                    112,
+                    105,
+                    110
+                  ],
+                  [
+                    114,
+                    101,
+                    115,
+                    117,
+                    108,
+                    116,
+                    115
+                  ],
+                  [
+                    99,
+                    115,
+                    101,
+                    109
+                  ],
+                  [
+                    98,
+                    105,
+                    116,
+                    102,
+                    105,
+                    101,
+                    108,
+                    100,
+                    115
+                  ],
+                  [
+                    109,
+                    105,
+                    110,
+                    105,
+                    109,
+                    105,
+                    122,
+                    101,
+                    100
+                  ],
+                  [
+                    115,
+                    97,
+                    109,
+                    101,
+                    45,
+                    102,
+                    105,
+                    101,
+                    108,
+                    100,
+                    45,
+                    114,
+                    97,
+                    99,
+                    101,
+                    46,
+                    99
+                  ]
+                ],
+                "runtimeLibrary": false
+              }
+            },
+            "tag": "Loc_region"
+          },
+          "status": "undefined"
+        }
+      ],
+      "expected": null,
+      "ok": true
+    }
+  ]
+}

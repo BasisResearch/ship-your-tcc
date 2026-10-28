@@ -1,0 +1,7 @@
+"""Recheck shared lowering on the final immutable default OCaml artifact."""
+from pathlib import Path
+import hashlib,json,subprocess,shutil
+ROOT=Path.cwd();OUT=ROOT/'results/csem/bitfields/compound-ocaml-final';OUT.mkdir(exist_ok=False);BASE=ROOT/'results/csem/bitfields/lead-compound-ocaml';fork=Path(subprocess.check_output(['scripts/csem_fork_oracle.sh','--path'],text=True).strip());B=fork/'_build/default/backend/driver/main.exe';H=lambda p:hashlib.sha256(p.read_bytes()).hexdigest();pin=H(B);rows=[]
+for old in json.loads((BASE/'report.json').read_text())['rows']:
+ n=old['case'];src=BASE/'sources'/(n+'.c');assert H(src)==old['source_sha256'];d=OUT/n;d.mkdir();shutil.copyfile(src,d/'input.c');cmd=[str(B),'--runtime='+str(fork/'_build/install/default'),'--nolibc','--exec','--batch','--mode=exhaustive',str(src)];p=subprocess.run(cmd,capture_output=True,text=True,timeout=120);(d/'stdout').write_text(p.stdout);(d/'stderr').write_text(p.stderr);verdicts=[x for x in p.stdout.splitlines() if x.startswith(('Defined {','Undefined {','Error {'))];expected=old['expected'];ok=p.returncode==0 and bool(verdicts) and all(x.startswith('Defined {value: "Specified('+str(expected)+')"') for x in verdicts);rows.append(dict(case=n,source_sha256=H(src),command=cmd,exit=p.returncode,verdicts=verdicts,expected=expected,ok=ok));print('PASS' if ok else 'FAIL',n,flush=True)
+assert H(B)==pin;(OUT/'report.json').write_text(json.dumps(dict(oracle_key=fork.name,binary_sha256=pin,driver_sha256=H(Path(__file__)),rows=rows),indent=2)+'\n');assert all(r['ok'] for r in rows)

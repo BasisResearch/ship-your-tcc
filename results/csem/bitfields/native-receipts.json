@@ -1,0 +1,44 @@
+[
+  {
+    "name": "batch",
+    "elf_sha256": "0a59341ce07179e551bb11bc26e8cca204f31d2f8b3821c082c50c50d99032c8",
+    "exit": 0,
+    "meta": [
+      "compile_steps=16816507",
+      "program_steps=83786",
+      "steps=16900318"
+    ],
+    "source_sha256": "5b689fe1be961c7d53bd6d4c76eaa45596c003fb7b5eef215902f3ffd982d6a6",
+    "artifact_pins": {
+      "native-batch/raw": "a7a2c9cfb6c329e55ee90d26739615ca9e65b1fc40ee4e2b79cd9bcb595e568f",
+      "native-batch/prog.elf.xz": "1e964cc002702d0db2a760f82ff25e32bf8aa0f1dcd76ffcadf88d9e2a409baa",
+      "native-batch/embed.S": "fe7bffbb739160b2234d8612046e346c35c48d2444841f24746c7120f4aca5b5",
+      "native-batch/make.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "native-batch/pcs": "3f7755ebb3256a6a0526577a93508f5e3a77e9b18434e73adae90e8cbe605da2",
+      "native-batch/ld.log": "412d978dd010603c050231cc4a42481318ccc0abe26a520637c71c0fe5478f53",
+      "native-batch/trace": "b9ae5ccf82df6d10b9b09c6433e054f93018bcead3a3a46d42208d7ee6d033b6",
+      "native-batch/input.c": "5b689fe1be961c7d53bd6d4c76eaa45596c003fb7b5eef215902f3ffd982d6a6"
+    }
+  },
+  {
+    "name": "layout",
+    "elf_sha256": "535aaf406a507924cb8eaae5115b3042acb11057d1d0bc1f643aba25946c75c1",
+    "exit": 0,
+    "meta": [
+      "compile_steps=14450258",
+      "program_steps=65460",
+      "steps=14515743"
+    ],
+    "source_sha256": "2b604f8c1d5905fc31aa01037307f7e286929a8e502bf47ef23632b1ac8fac40",
+    "artifact_pins": {
+      "native-layout/raw": "e3de9417d39ea77703c17221e5221000359d5787b102134d9e4858bdb83cd45a",
+      "native-layout/prog.elf.xz": "94a90167094096c385c98115ab92467ad95099d9392e9c21adb533c9395c2396",
+      "native-layout/embed.S": "16fd039367ae52f5f8fb25c53866c27a069536bd91026a1d161af3366593b8fb",
+      "native-layout/make.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "native-layout/pcs": "3f7755ebb3256a6a0526577a93508f5e3a77e9b18434e73adae90e8cbe605da2",
+      "native-layout/ld.log": "37bf794749ab51f90a9e5f5007bb15e43098f118784fd6759d114ff9887932f5",
+      "native-layout/trace": "9402deec619ae0b12fa8924c134cf9bd76b9bcfd906906a1e34f988e0f46f039",
+      "native-layout/input.c": "2b604f8c1d5905fc31aa01037307f7e286929a8e502bf47ef23632b1ac8fac40"
+    }
+  }
+]

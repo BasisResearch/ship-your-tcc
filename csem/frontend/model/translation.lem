@@ -673,7 +673,8 @@ let translate_postfix loc translate_expr stdlib result_ty op e =
   let std_sentence_n (n: nat) = "§6.5.2.4" ^ std_para ^ ", sentence " ^ show n in
   (* STD §6.5.2.4 *)
   warn_atomic_elaboration (AilTypesAux.is_atomic (ctype_of e)) >>= fun () ->
-  let ty  = AilTypesAux.rvalue_coercion (snd (from_lvalue_type e)) in
+  let (qs, member_ty) = from_lvalue_type e in
+  let ty = Ctype.volatile_access_type qs (AilTypesAux.rvalue_coercion member_ty) in
   let oTy = force_core_object_type_of_ctype ty    in
   let core_ty_e = Caux.mk_ail_ctype_pe ty in
   E.wrapped_fresh_symbol (C.BTy_object C.OTy_pointer) >>= fun lvalue_wrp ->
@@ -2465,7 +2466,8 @@ end
           E.wrapped_fresh_symbol (C.BTy_loaded oTy2) >>= fun e2_wrp ->
           let object_pe = Caux.mk_std_pe "§6.5.16#3, sentence 1" e1_wrp.E.sym_pe in
           let stored_pe = Caux.mk_std_pe "§6.5.16.1#2, conversion" (mk_stored_pe e2_wrp.E.sym_pe) in
-          let core_ty_pe1 = Caux.mk_ail_ctype_pe (AilTypesAux.rvalue_coercion (snd (from_lvalue_type e1))) in
+          let (qs1, member_ty1) = from_lvalue_type e1 in
+          let core_ty_pe1 = Caux.mk_ail_ctype_pe (Ctype.volatile_access_type qs1 (AilTypesAux.rvalue_coercion member_ty1)) in
           let mo =
             if AilTypesAux.is_atomic ty1 then
               (* STD §6.2.6.1#9 *)
@@ -2504,34 +2506,50 @@ end
           end
       
       | A.AilEcompoundAssign e1 aop e2 ->
-          (* TODO: this elaboration is wrong because it duplicates any side-effect in E1 *)
-          (* TODO: and this is duplicating facts about the typing of Ail arithmetic binary operators *)
-          let (e1_rvalue, arith_gty) = match (e1, e2) with
-            | (A.AnnotatedExpression (GenTypes.GenLValueType _ ty _) std_annots loc _, A.AnnotatedExpression (GenTypes.GenRValueType gty2) _ _ _) ->
-                let gty1 = GenTypes.inject_type (Ctype.unatomic ty) in
-                let gtc1 = GenTypes.GenRValueType gty1 in
-                ( A.AnnotatedExpression gtc1 std_annots loc (A.AilErvalue e1)
-                , match aop with
-                    | A.Add ->
-                        if GenTypesAux.is_pointer gty1 then
-                          gty1
-                        else
-                          GenTypesAux.usual_arithmetic gty1 gty2
-                    | A.Sub ->
-                        if GenTypesAux.is_pointer gty1 then
-                          gty1
-                        else
-                          GenTypesAux.usual_arithmetic gty1 gty2
-                    | _ ->
-                        GenTypesAux.usual_arithmetic gty1 gty2
-                  end )
-            | _ ->
-                illTypedAil loc "AilEcompoundAssign"
+          (* C11 6.5.16.2p3: evaluate the left lvalue once. Its address and
+             load form one dependency chain, unsequenced with the right operand.
+             Bind both actual values before reusing typed arithmetic and store
+             lowering. Synthetic identifiers denote these Core-bound values;
+             they allocate no C temporary object and perform no extra access. *)
+          let (qs, ty, register) = match GenTypes.genTypeCategoryOf e1 with
+            | GenTypes.GenLValueType qs ty register -> (qs, ty, register)
+            | _ -> illTypedAil loc "compound assignment lvalue"
           end in
-          self begin
-            A.AnnotatedExpression annot [] loc (A.AilEassign e1 (A.AnnotatedExpression (GenTypes.GenRValueType arith_gty) [] loc (A.AilEbinary e1_rvalue (A.Arithmetic aop) e2)))
+          let gty1 = GenTypes.inject_type (Ctype.unatomic ty) in
+          let gty2 = match GenTypes.genTypeCategoryOf e2 with
+            | GenTypes.GenRValueType gty -> gty
+            | _ -> illTypedAil loc "compound assignment rvalue"
+          end in
+          E.wrapped_fresh_symbol (C.BTy_object C.OTy_pointer) >>= fun pointer ->
+          E.wrapped_fresh_symbol (C.BTy_loaded (force_core_object_type_of_ctype ty)) >>= fun old ->
+          E.wrapped_fresh_symbol (C.BTy_loaded (force_core_object_type_of_ctype (ctype_of e2))) >>= fun rhs ->
+          self e1 >>= fun core_lvalue ->
+          self e2 >>= fun core_rhs ->
+          let Ctype.Ctype type_annots _ = ty in
+          let (rhs_annots, _) = GenTypes.annotations e2 in
+          let lhs = A.AnnotatedExpression (GenTypes.GenLValueType qs ty register) [] loc (A.AilEident pointer.E.sym_sym) in
+          let old_value = A.AnnotatedExpression (GenTypes.GenRValueType gty1) type_annots loc (A.AilEident old.E.sym_sym) in
+          let rhs_value = A.AnnotatedExpression (GenTypes.GenRValueType gty2) rhs_annots loc (A.AilEident rhs.E.sym_sym) in
+          let arith_gty =
+            if (aop = A.Add || aop = A.Sub) && GenTypesAux.is_pointer gty1 then gty1
+            else if aop = A.Shl || aop = A.Shr then GenTypesAux.integer_promote gty1
+            else GenTypesAux.usual_arithmetic gty1 gty2 in
+          self (A.AnnotatedExpression annot [] loc (A.AilEassign lhs
+            (A.AnnotatedExpression (GenTypes.GenRValueType arith_gty) [] loc
+              (A.AilEbinary old_value (A.Arithmetic aop) rhs_value)))) >>= fun update ->
+          let load_ty = Ctype.volatile_access_type qs ty in
+          let load_mo = if AilTypesAux.is_atomic ty then Cmm.Seq_cst else Cmm.NA in
+          E.return begin
+            Caux.mk_wseq_e
+              (Caux.mk_tuple_pat [Caux.mk_tuple_pat [pointer.E.sym_pat; old.E.sym_pat]; rhs.E.sym_pat])
+              (Caux.mk_unseq_e [
+                Caux.mk_wseq_e pointer.E.sym_pat core_lvalue
+                  (Caux.mk_wseq_e old.E.sym_pat
+                    (Caux.pload loc (Caux.mk_ail_ctype_pe load_ty) pointer.E.sym_pe load_mo)
+                    (Caux.mk_pure_e (Caux.mk_tuple_pe [pointer.E.sym_pe; old.E.sym_pe])));
+                core_rhs]) update
           end
-      
+
       | A.AilEcall (A.AnnotatedExpression _ _ _ (A.AilEbuiltin (A.AilBatomic A.AilBAstore))) es ->
           translate_atomic_explicit loc self AtomicStoreExplicit es
       | A.AilEcall (A.AnnotatedExpression _ _ _ (A.AilEbuiltin (A.AilBatomic A.AilBAload))) es ->
@@ -3154,7 +3172,8 @@ else (* is_pointer *)
           E.wrapped_fresh_symbol (C.BTy_object C.OTy_pointer) >>= fun e_wrp ->
           E.return begin
             Caux.mk_wseq_e e_wrp.E.sym_pat core_e begin
-              Caux.pload loc (Caux.mk_ail_ctype_pe (ctype_of e)) e_wrp.E.sym_pe mo
+              let (qs, ty) = from_lvalue_type e in
+              Caux.pload loc (Caux.mk_ail_ctype_pe (Ctype.volatile_access_type qs ty)) e_wrp.E.sym_pe mo
             end
           end
       | A.AilEarray_decay e ->

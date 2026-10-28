@@ -146,8 +146,11 @@ let rec mk_zeroInit_aux tagDefs (Ctype.Ctype _ ty) =
           end
     | Ctype.Union tag_sym ->
         match Map.lookup tag_sym tagDefs with
-          | Just (Union_definition _ _ _ ((memb_ident, (_, _, _, memb_ty)) :: _)) ->
-              A.ConstantUnion tag_sym memb_ident (mk_zeroInit_aux tagDefs memb_ty)
+          | Just (Union_definition _ _ _ members) ->
+              match List.filter (fun (_, (_, _, _, ty)) -> not (Ctype.is_unnamed_bitfield ty)) members with
+                | (memb_ident, (_, _, _, memb_ty)) :: _ -> A.ConstantUnion tag_sym memb_ident (mk_zeroInit_aux tagDefs memb_ty)
+                | [] -> error "union has no named member"
+              end
           | _ ->
               error "[Cabs_to_ail.mk_zeroInit_aux] - internal ERROR: Union"
         end

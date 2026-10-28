@@ -1,0 +1,3 @@
+work: /Users/kirancodes/tmp/tcc_sail.EeMUHD
+tcc_sail: tcc did not run the program (exit 1):
+/prog.c:1: error: constant expression expected

@@ -566,11 +566,17 @@ def promotion [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integer
   fun (x : ctype) =>
     match x with
     | Ctype annots1 (Basic (Integer ity)) =>
-      some
-        (Ctype annots1
-          (Basic
-            (Integer
-              ((integer_promotion _lemReader_enum_definitions _lemReader_tagDefs) impl2 ity))))
+      (let promoted :=
+         match bitfield_of_annotations annots1 with
+         | some info =>
+           (lem_if natLteb info.bitfield_width (impl2.impl_precision (Signed Int_)) ||
+               ((is_signed_ity0 _lemReader_enum_definitions _lemReader_tagDefs) ity &&
+                 (info.bitfield_width == (1 + impl2.impl_precision (Signed Int_)))) then
+             Signed Int_
+           else
+             (integer_promotion _lemReader_enum_definitions _lemReader_tagDefs) impl2 ity)
+         | none => (integer_promotion _lemReader_enum_definitions _lemReader_tagDefs) impl2 ity;
+       some (Ctype (clear_bitfield_annotations annots1) (Basic (Integer promoted))))
     | _ => none
 
 def usual_arithmetic_integer_CHERI [CerbImplCfg.Impl]

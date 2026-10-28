@@ -143,6 +143,11 @@ declare ocaml target_rep function alignof_ty = `Ocaml_implementation.alignof_pro
 declare lean target_rep function alignof_ty = `CerberusImpl.alignof_ty`
 declare {lean} reader_consumer val alignof_ty
 
+val bitfields_supported: unit -> bool
+(* The independent OCaml baseline has the cerberus-default configuration. *)
+declare ocaml target_rep function bitfields_supported u = `false`
+declare lean target_rep function bitfields_supported u = `CerberusImpl.bitfields_supported ()`
+
 val integerImpl: unit -> IntegerImpl.implementation
 let integerImpl () =
   IntegerImpl.make_implementation
@@ -710,6 +715,7 @@ end
 
 
 (* J.3.9 *)
+
 module Structure_unions_enumerations_bitfields = struct
   (* Whether a ‘‘plain’’ int bit-field is treated as a signed int bit-field or
      as an unsigned int bit-field (6.7.2, 6.7.2.1). *)

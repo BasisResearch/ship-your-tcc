@@ -86,3 +86,5 @@ declare {lean} reader_consumer val Mem.convert_fval = instance impl_params
 declare {lean} reader_consumer val Mem.fvfromint_typed = instance impl_params
 declare {lean} reader_consumer val Mem.floating_value_mval = instance impl_params
 declare {lean} reader_consumer val Mem.str_fval_typed = instance impl_params
+
+declare {lean} reader_consumer val Implementation.bitfields_supported = instance impl_params

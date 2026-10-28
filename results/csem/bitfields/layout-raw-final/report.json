@@ -1,0 +1,23 @@
+{
+  "command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+    "--tcc",
+    "--fslist",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+    "--semantic",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/layout.c"
+  ],
+  "exit": 0,
+  "source_sha256": "2b604f8c1d5905fc31aa01037307f7e286929a8e502bf47ef23632b1ac8fac40",
+  "binary_sha256": "4c2831498553831f6430a19ad1ae8fc0291a215cba0a956c67e3c8a005156489",
+  "driver_sha256": "808ae66afe5eee945ca0e78b13ea364db8b19d27774543703c2e0fffc1731bc1",
+  "semantics": [
+    {
+      "exit": 0,
+      "status": "defined",
+      "stdout": "struct B1 size=12 align=4 tail=8 bytes=ff000000fbffff3f5a000000\nstruct B2 size=4 align=4 tail=3 bytes=5555015a\nstruct B3 size=8 align=4 tail=5 bytes=01000000015a0000\nstruct B4 size=4 align=4 tail=2 bytes=330d5a00\nstruct B5 size=16 align=8 tail=12 bytes=ffffffffff000000fdffff3f5a000000\nstruct B6 size=2 align=1 tail=1 bytes=005a\nstruct B7 size=8 align=4 tail=5 bytes=78563412005a0000\nunion U size=4 align=4 tail=0 bytes=55550100\n"
+    }
+  ],
+  "expected_stdout_sha256": "e3de9417d39ea77703c17221e5221000359d5787b102134d9e4858bdb83cd45a",
+  "ok": true
+}

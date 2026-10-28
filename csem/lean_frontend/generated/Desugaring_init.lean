@@ -114,7 +114,15 @@ def lookup_struct_members { a : Type } [MapKeyType a] (tagDefs1 : Fmap a tag_def
       match p with
       | (ident, (_, _, _, ty1)) => (ident, ty1));
   match (fmapLookupBy (@mapKeyCompare a _) tag_sym tagDefs1) with
-  | some (Struct_definition _ _ _ (x :: xs) flex_opt) => (aux x, List.map aux xs, flex_opt)
+  | some (Struct_definition _ _ _ members flex_opt) =>
+    (match List.filter
+         (fun (p : (identifier × (attributes × Option alignment × qualifiers × ctype))) =>
+           match p with
+           | (_, (_, _, _, ty1)) => not (is_unnamed_bitfield ty1)) members with
+     | x :: xs => (aux x, List.map aux xs, flex_opt)
+     | [] =>
+       (failwithI "initializer has no named member" :
+         ((identifier × ctype) × List (identifier × ctype) × Option flexible_array_member)))
   | _ =>
     (failwithI "Desugaring_init.lookup_struct_members: Nothing or empty Struct definition" :
       ((identifier × ctype) × List (identifier × ctype) × Option flexible_array_member))
@@ -128,7 +136,15 @@ def lookup_union_members { a : Type } [MapKeyType a] (tagDefs1 : Fmap a tag_defi
       match p with
       | (ident, (_, _, _, ty1)) => (ident, ty1));
   match (fmapLookupBy (@mapKeyCompare a _) tag_sym tagDefs1) with
-  | some (Union_definition _ _ _ (x :: xs)) => (aux x, List.map aux xs)
+  | some (Union_definition _ _ _ members) =>
+    (match List.filter
+         (fun (p : (identifier × (attributes × Option alignment × qualifiers × ctype))) =>
+           match p with
+           | (_, (_, _, _, ty1)) => not (is_unnamed_bitfield ty1)) members with
+     | x :: xs => (aux x, List.map aux xs)
+     | [] =>
+       (failwithI "initializer has no named union member" :
+         ((identifier × ctype) × List (identifier × ctype))))
   | _ =>
     (failwithI "Desugaring_init.lookup_union_members: Nothing or empty Union definition" :
       ((identifier × ctype) × List (identifier × ctype)))
@@ -1162,17 +1178,19 @@ partial def constructValue_aux (tagDefs1 : Fmap ail_identifier tag_definition0)
      | Union0 tag_sym =>
        (match (fmapLookupBy (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2) tag_sym
             tagDefs1) with
-        | some (Union_definition _ _ _ ((first_memb_ident, _) :: _)) =>
-          (let memb_ident := selected_union_member path init_map first_memb_ident;
-           match find_union_member tagDefs1 memb_ident tag_sym with
-           | some memb_ty =>
-             wrap_expr
-               (AilEunion tag_sym memb_ident
-                 (some
-                   (constructValue_aux tagDefs1 (path ++ [Elem_union memb_ident]) init_map
-                     memb_ty)))
-           | none =>
-             (failwithI "constructValue_aux: selected union member missing" : expression Unit))
+        | some (Union_definition _ _ _ members) =>
+          (match lookup_union_members tagDefs1 tag_sym with
+           | ((first_memb_ident, _), _) =>
+             (let memb_ident := selected_union_member path init_map first_memb_ident;
+              match find_union_member tagDefs1 memb_ident tag_sym with
+              | some memb_ty =>
+                wrap_expr
+                  (AilEunion tag_sym memb_ident
+                    (some
+                      (constructValue_aux tagDefs1 (path ++ [Elem_union memb_ident]) init_map
+                        memb_ty)))
+              | none =>
+                (failwithI "constructValue_aux: selected union member missing" : expression Unit)))
         | _ => (failwithI "constructValue_aux, Union" : expression Unit))
      | Atomic ty' => /- TODO: check this -/ constructValue_aux tagDefs1 path init_map ty'
      | _ =>

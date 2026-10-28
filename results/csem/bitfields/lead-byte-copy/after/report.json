@@ -1,0 +1,204 @@
+{
+  "binary": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+  "binary_sha256": "4c2831498553831f6430a19ad1ae8fc0291a215cba0a956c67e3c8a005156489",
+  "driver_sha256": "9ddea1f5b242aea900501804eca7fe8ba8c99a14a6f03b589b1c087557b69911",
+  "rows": [
+    {
+      "case": "padding",
+      "source_sha256": "1713301ee81b48a42db86220923e7cf4030bbad70e43a75cbac99a1b2ebb6035",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        },
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": 0,
+      "gcc_exit": 0
+    },
+    {
+      "case": "full-byte",
+      "source_sha256": "c3c950a1580ffdbcaf79f3d96238f6197740e41e4fcc69d748d0549fff0e50b0",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": 0,
+      "gcc_exit": 0
+    },
+    {
+      "case": "assignment",
+      "source_sha256": "11cecc5bcf5291d2a9353cd34eb145297e678bab3c8d6742eb24663e710191bc",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "gcc_compile": 0,
+      "gcc_exit": 0
+    }
+  ]
+}

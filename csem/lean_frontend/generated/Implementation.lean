@@ -129,6 +129,8 @@ def alignof_ity [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integ
    enum registry — so the Lean rep needs the map: a reader consumer too
    (charter erratum, record §0). -/
 
+/- The independent OCaml baseline has the cerberus-default configuration. -/
+
 def integerImpl [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (_ : Unit) :
     implementation :=
@@ -624,6 +626,7 @@ end
 
 
 /- J.3.9 -/
+
 module Structure_unions_enumerations_bitfields = struct
   /- Whether a ‘‘plain’’ int bit-field is treated as a signed int bit-field or
      as an unsigned int bit-field (6.7.2, 6.7.2.1). -/

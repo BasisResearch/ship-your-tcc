@@ -1,0 +1,2 @@
+struct S {unsigned f0:32; unsigned char :0; unsigned f1:31; unsigned short f2:1; unsigned short f3:1; char z; };
+int main(void){struct S s; unsigned char *p=(unsigned char*)&s; unsigned i; for(i=0;i<sizeof s;i++) p[i]=0; s.f0=1116618630ULL; s.f1=117532794ULL; s.f2=1ULL; s.f3=1ULL; s.z=90;return sizeof s!=12 || _Alignof(struct S)!=4 || (char*)&s.z-(char*)&s!=9 || p[0]!=134 || p[1]!=63 || p[2]!=142 || p[3]!=66 || p[4]!=122 || p[5]!=104 || p[6]!=1 || p[7]!=135 || p[8]!=1 || p[9]!=90 || p[10]!=0 || p[11]!=0;}

@@ -1,0 +1,24 @@
+{
+  "case": "invalid_negative_width",
+  "command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/run_tcc_sail.sh",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_negative_width.c"
+  ],
+  "source_sha256": "115467b019ee34ed0a767a169f4cbb58f469a91618d721ca7c523f85bf6b1d11",
+  "elf_sha256": "4ec7145f00692d1b9b00c21414b1efb7cd7f2ee05192fc9333af6f0ac479e010",
+  "exit": 125,
+  "constraint_diagnostic": true,
+  "wall_seconds": 49.03,
+  "artifact_pins": {
+    "raw": "f7127251c242d7e5e835c36013f76f354d5636e8ec6609036fc479d23991dbd7",
+    "stderr": "8f1cf15a3b154d756703084e8c4c3957e64a5328e68bf38c4f962e264c198e32",
+    "prog.elf.xz": "fc220e2eb24813694a2685710a46c8645a12ec2f3825293cec2fe203733d7622",
+    "embed.S": "e5021ffb6285f185116db738fd1671a672fe0b5b59c1c1355f73fd2a7a97a1f5",
+    "make.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "pcs": "3f7755ebb3256a6a0526577a93508f5e3a77e9b18434e73adae90e8cbe605da2",
+    "input.c": "115467b019ee34ed0a767a169f4cbb58f469a91618d721ca7c523f85bf6b1d11",
+    "ld.log": "143cc41db048e7a48facc06d12a1538758f5e16f67422a75916341b24a3a9307",
+    "trace": "cb9817806c8e3ab1a7120b726df97f580f94fc81bf406d4e7fad16d8b2d2206e"
+  }
+}

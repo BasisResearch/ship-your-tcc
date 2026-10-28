@@ -1,0 +1,1 @@
+["gcc", "-std=c11", "-pedantic-errors", "-O0", "/data/home/kirancodes/Documents/code/ship-your-tcc/build/bitfield-byte-copy-review-after/assignment/input.c", "-o", "/data/home/kirancodes/Documents/code/ship-your-tcc/build/bitfield-byte-copy-review-after/assignment/gcc"]

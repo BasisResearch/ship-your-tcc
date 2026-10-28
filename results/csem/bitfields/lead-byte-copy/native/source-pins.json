@@ -1,0 +1,9 @@
+{
+  "build/bitfield-byte-copy-review/padding/input.c": "1713301ee81b48a42db86220923e7cf4030bbad70e43a75cbac99a1b2ebb6035",
+  "scripts/run_tcc_sail.sh": "9a7737b4ac7a3578db6d1597a1c8224800e912cae30592e95c772f7637737ac8",
+  "c/build/base.elf": "e390e3d49640ae5c629f0bd64254edf6c589211c5be6c21986eb3c2ec6fa2026",
+  "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+  "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+  "patches/0003-tcc-c11.patch": "4e734a116c2e500b68f97529a7d4f1bbc5239e4582e234020116769a601eee87",
+  "patches/0004-tcc-binary128-literals.patch": "15d4a95ec667c9ec18ea2be3fc1475c1178668853fea28213c3061afa0f863ff"
+}

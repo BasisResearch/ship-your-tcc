@@ -412,3 +412,15 @@ results/csem/compound-lvalue-2026-10-28.md. The bitfield worker found the shared
 lowering issue; the lead independently established ordinary-scalar upstream
 inheritance. Shared single-evaluation repair is required alongside bitfields;
 no exclusion or external report is introduced. Kiran owns communication.
+
+### CSEM-08 candidate follow-up (2026-10-28, independent worktree)
+
+`results/csem/bitfields.md` records the shared C11 bitfield representation,
+initializer traversal, cfgTcc layout/access implementation and independent
+GCC/native observations. This candidate passes frozen full gate `bitfields-full-2` (3,470 verified
+inputs) and awaits lead adoption; it does not change the adopted coverage ledger. It also repairs the shared
+single-evaluation compound-assignment lowering implicated by CSEM-14; pristine
+failures and candidate OCaml controls remain separately pinned. Default OCaml
+bitfield execution stays unsupported. GNU trailing bitfield attributes, original
+p05 libc/format behavior, and four native constraint-acceptance deviations are
+separate residuals. Do not weaken C11 or Supported/Fits to classify them away.

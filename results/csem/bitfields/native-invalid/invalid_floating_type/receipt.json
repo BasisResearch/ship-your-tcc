@@ -1,0 +1,24 @@
+{
+  "case": "invalid_floating_type",
+  "command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/run_tcc_sail.sh",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_floating_type.c"
+  ],
+  "source_sha256": "d9c058ef6bdc13d6da923dee241385748d5caffc51ab3098e4832c0a7e193d82",
+  "elf_sha256": "bed87662ae804a32b6e12285a8d86dcb7c42c59545eb1d69ca511e48d415b967",
+  "exit": 125,
+  "constraint_diagnostic": true,
+  "wall_seconds": 50.11,
+  "artifact_pins": {
+    "raw": "4d5b0630cef389caed2275b7d14894abae01ad177a7d562728680270050b4820",
+    "stderr": "91753937ea426ec0499b56c4dfba909ef8e46df43f9a55258ffa4867f0af8872",
+    "prog.elf.xz": "42f4ab0bdfdd24ac38775ac47032dd86957c1a1ffd1e098f6b0a3385bca08eb3",
+    "embed.S": "3504060b49cda4b408702d4a7597c6e83f190c612bf4b47058d27a07e9922e01",
+    "make.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "pcs": "3f7755ebb3256a6a0526577a93508f5e3a77e9b18434e73adae90e8cbe605da2",
+    "input.c": "d9c058ef6bdc13d6da923dee241385748d5caffc51ab3098e4832c0a7e193d82",
+    "ld.log": "5507cb745658c871db97678b259f8c38063f80279adc96137c38aba94840e700",
+    "trace": "80584fe918560bf0feaca2fe0f24a132d287d3223f714b32a89e1cf5ddbd5254"
+  }
+}

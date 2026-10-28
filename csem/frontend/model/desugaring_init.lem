@@ -51,8 +51,11 @@ end
 let lookup_struct_members tagDefs tag_sym =
   let aux (ident, (_, _, _, ty)) = (ident, ty) in
   match Map.lookup tag_sym tagDefs with
-    | Just (Struct_definition _ _ _ (x::xs) flex_opt) ->
-        (aux x, List.map aux xs, flex_opt)
+    | Just (Struct_definition _ _ _ members flex_opt) ->
+        match List.filter (fun (_, (_, _, _, ty)) -> not (is_unnamed_bitfield ty)) members with
+          | x::xs -> (aux x, List.map aux xs, flex_opt)
+          | [] -> error "initializer has no named member"
+        end
     | _ ->
         error "Desugaring_init.lookup_struct_members: Nothing or empty Struct definition"
   end
@@ -60,8 +63,11 @@ let lookup_struct_members tagDefs tag_sym =
 let lookup_union_members tagDefs tag_sym =
   let aux (ident, (_, _, _, ty)) = (ident, ty) in
   match Map.lookup tag_sym tagDefs with
-    | Just (Union_definition _ _ _ (x::xs)) ->
-        (aux x, List.map aux xs)
+    | Just (Union_definition _ _ _ members) ->
+        match List.filter (fun (_, (_, _, _, ty)) -> not (is_unnamed_bitfield ty)) members with
+          | x::xs -> (aux x, List.map aux xs)
+          | [] -> error "initializer has no named union member"
+        end
     | _ ->
         error "Desugaring_init.lookup_union_members: Nothing or empty Union definition"
   end
@@ -666,7 +672,8 @@ let rec constructValue_aux tagDefs path init_map (Ctype.Ctype _ ty as cty) =
         end
     | Ctype.Union tag_sym ->
         match Map.lookup tag_sym tagDefs with
-          | Just (Union_definition _ _ _ ((first_memb_ident, _) :: _)) ->
+          | Just (Union_definition _ _ _ members) ->
+              let ((first_memb_ident, _), _) = lookup_union_members tagDefs tag_sym in
               let memb_ident = selected_union_member path init_map first_memb_ident in
               match find_union_member tagDefs memb_ident tag_sym with
                 | Just memb_ty ->

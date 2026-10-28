@@ -185,6 +185,7 @@ private def q_CerbMem_FootprintAccess : (CerbMem.FootprintAccess) → Result
 
 private def q_CerbMem_Footprint : (CerbMem.Footprint) → Result
   | CerbMem.Footprint.FP x0 x1 x2 => return typedNode "(CerbMem.Footprint)" "CerbMem.Footprint.FP" [← q_CerbMem_FootprintAccess x0, ← qInt x1, ← qInt x2]
+  | CerbMem.Footprint.FPbits x0 x1 x2 x3 => return typedNode "(CerbMem.Footprint)" "CerbMem.Footprint.FPbits" [← q_CerbMem_FootprintAccess x0, ← qInt x1, ← qNat x2, ← qNat x3]
 
 private def q_CerbMem_Provenance : (CerbMem.Provenance) → Result
   | CerbMem.Provenance.Prov_none => return typedNode "(CerbMem.Provenance)" "CerbMem.Provenance.Prov_none" []

@@ -1898,7 +1898,17 @@ partial def desugar_expression0 [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Im
                        (/- TODO: this is fixing an integer implementation... -/
                        match qualified_ctype_of_seeded (Lem_Map.fromList sigm.enum_definitions)
                            desugar_time_tagDefs a_expr with
-                       | (qs, ty1) => stExpect_return (AilEsizeof qs ty1))))))
+                       | (qs, ty1) =>
+                         (let member_expression :=
+                            match a_expr with
+                            | AnnotatedExpression _ _ _ (AilEmemberof _ _) => true
+                            | AnnotatedExpression _ _ _ (AilEmemberofptr _ _) => true
+                            | _ => false;
+                          lem_if member_expression && isJust (bitfield_of_type ty1) then
+                            fun (_ : state_with_markers) =>
+                              fail0 (loc1, DESUGAR (Desugar_ConstraintViolation BitfieldSizeof))
+                          else
+                            stExpect_return (AilEsizeof qs (without_bitfield ty1))))))))
          (fun (z : expression_ Unit) =>
            stExpect_return (AnnotatedExpression () ([] : List annot) loc1 z))
      | CabsEsizeof_type tyname =>
@@ -2308,8 +2318,51 @@ partial def desugar_struct_declaration [LemFuel] [CerberusFresh.Digest] [CerbImp
                             | (qs, ty1) =>
                               stExpect_bind
                                 (stExpect_bind
-                                  ((check_array_constraints _lemReader_enum_definitions
-                                    _lemReader_tagDefs) ty1)
+                                  (stExpect_bind
+                                    (match bitfield_of_type ty1 with
+                                     | none => stExpect_return ()
+                                     | some info =>
+                                       (match ty1 with
+                                        | Ctype _ (Basic (Integer ity)) =>
+                                          (let bits :=
+                                             match ity with
+                                             | Bool0 => some (1 : Nat)
+                                             | Char0 =>
+                                               Option.map (fun (n : Nat) => n * 8)
+                                                 ((sizeof_ity _lemReader_enum_definitions
+                                                   _lemReader_tagDefs) ity)
+                                             | Signed _ =>
+                                               Option.map (fun (n : Nat) => n * 8)
+                                                 ((sizeof_ity _lemReader_enum_definitions
+                                                   _lemReader_tagDefs) ity)
+                                             | Unsigned _ =>
+                                               Option.map (fun (n : Nat) => n * 8)
+                                                 ((sizeof_ity _lemReader_enum_definitions
+                                                   _lemReader_tagDefs) ity)
+                                             | _ => none;
+                                           lem_if isAtomic || maybe0 true
+                                               (fun (bits : Nat) => natGtb info.bitfield_width bits)
+                                               bits then
+                                             fun (_ : state_with_markers) =>
+                                               fail0
+                                                 ((match ident with
+                                                   | (Identifier loc1 _) => loc1),
+                                                   DESUGAR
+                                                     (Desugar_ConstraintViolation
+                                                       BitfieldInvalidDeclaration))
+                                           else
+                                             stExpect_return ())
+                                        | _ =>
+                                          (fun (_ : state_with_markers) =>
+                                            fail0
+                                              ((match ident with
+                                                | (Identifier loc1 _) => loc1),
+                                                DESUGAR
+                                                  (Desugar_ConstraintViolation
+                                                    BitfieldInvalidDeclaration)))))
+                                    (fun (_ : Unit) =>
+                                      (check_array_constraints _lemReader_enum_definitions
+                                        _lemReader_tagDefs) ty1))
                                   (fun (_ : Unit) =>
                                     (desugar_alignment_specifiers _lemReader_enum_definitions
                                       _lemReader_tagDefs)
@@ -2346,32 +2399,63 @@ partial def desugar_struct_declarator [LemFuel] [CerberusFresh.Digest] [CerbImpl
     (match struct_decltor with
      | SDecl_simple decltor =>
        (desugar_declarator _lemReader_enum_definitions _lemReader_tagDefs) NotFunDef decltor
-     | SDecl_bitfield decltor_opt (CabsExpression loc1 _) =>
-       (lem_if has_alignment then
-         fun (_ : state_with_markers) =>
-           fail0
-             (loc1, DESUGAR (Desugar_ConstraintViolation (IllegalAlignas IllegalAlignas_bitfield)))
-       else lem_if CerbGlobal.isIgnoreBitfields () then
-         match decltor_opt with
-         | none =>
-           (fun (_ : state_with_markers) =>
-             fail0 (loc1, DESUGAR (Desugar_NotYetSupported "bit-fields")))
-         | some decltor =>
-           stExpect_bind
-             (stExpect_return
-               (CerbDebug.warn [DB_desugaring] (fun (u : Unit) =>
-                 match u with
-                 | () =>
-                   String.append "ignoring a bit-field declarator at "
-                     (CerbLocation.stringFromLocation loc1))))
-             (fun (u : Unit) =>
-               match u with
-               | () =>
-                 (desugar_declarator _lemReader_enum_definitions _lemReader_tagDefs) NotFunDef
-                   decltor)
-       else
-         fun (_ : state_with_markers) =>
-           fail0 (loc1, DESUGAR (Desugar_NotYetSupported "bit-fields"))))
+     | SDecl_bitfield decltor_opt width_expr =>
+       (let loc1 :=
+          match width_expr with
+          | (CabsExpression loc1 _) => loc1;
+        lem_if has_alignment then
+          fun (_ : state_with_markers) =>
+            fail0
+              (loc1, DESUGAR (Desugar_ConstraintViolation (IllegalAlignas IllegalAlignas_bitfield)))
+        else lem_if not (CerberusImpl.bitfields_supported ()) then
+          fun (_ : state_with_markers) =>
+            fail0
+              (loc1,
+                DESUGAR (Desugar_NotYetSupported "bit-fields in this implementation configuration"))
+        else
+          stExpect_bind
+            ((desugar_expression0 _lemReader_enum_definitions _lemReader_tagDefs) width_expr)
+            (fun (e : expression Unit) =>
+              stExpect_bind (is_integer_constant_expression0 e) (fun (ice : Bool) =>
+                lem_if not ice then
+                  fun (_ : state_with_markers) =>
+                    fail0 (loc1, DESUGAR (Desugar_ConstraintViolation BitfieldInvalidDeclaration))
+                else
+                  stExpect_bind (evaluate_integer_constant_expression0 loc1 none e)
+                    (fun (width : Int) =>
+                      lem_if intLtb width ((0 : Int)) ||
+                          ((width == (0 : Int)) && isJust decltor_opt) then
+                        fun (_ : state_with_markers) =>
+                          fail0
+                            (loc1, DESUGAR (Desugar_ConstraintViolation BitfieldInvalidDeclaration))
+                      else
+                        stExpect_bind
+                          (match decltor_opt with
+                           | some decltor =>
+                             (desugar_declarator _lemReader_enum_definitions _lemReader_tagDefs)
+                               NotFunDef decltor
+                           | none =>
+                             stExpect_return
+                               ((no_attributes, Identifier loc1 "padding"),
+                                 (fun (qs : qualifiers) (ty1 : ctype) => (qs, ty1))))
+                          (fun (p :
+                            ((attributes × identifier) ×
+                              (qualifiers → ctype → (qualifiers × ctype)))) =>
+                            match p with
+                            | (ident, builder) =>
+                              stExpect_return
+                                (ident,
+                                  (fun (qs : qualifiers) (ty1 : ctype) =>
+                                    match builder qs ty1 with
+                                    | (qs, ty1) =>
+                                      (qs,
+                                        with_bitfield
+                                          (({ bitfield_width :=
+                                                (Int.natAbs (lemIntFromInteger width)),
+                                              bitfield_named := (isJust decltor_opt),
+                                              bitfield_byte_offset := 0,
+                                              bitfield_bit_offset := 0 } : bitfield_info))
+                                          ty1)))))))))
 partial def desugar_init_declarator_BROKEN [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
     [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (base_qs : qualifiers)
@@ -3493,6 +3577,8 @@ partial def desugar_type_specifiers [LemFuel] [CerberusFresh.Digest] [CerbImplCf
                                                  (member_paths
                                                    (1 + List.length (fmapElements nested_tagDefs))
                                                    nested_members ty1))
+                                           else lem_if is_unnamed_bitfield ty1 then
+                                             ([] : List identifier)
                                            else
                                              [ident])) all_membDefs);
                                  stExpect_bind
@@ -3609,23 +3695,156 @@ partial def desugar_type_specifiers [LemFuel] [CerberusFresh.Digest] [CerbImplCf
                                                (match tag_ident with
                                                 | (Identifier loc1 _) => loc1);
                                          stExpect_bind
-                                           (register_tag_definition loc1 tag_sym
-                                             (match struct_or_union1, flexible_opt with
-                                              | UNION, _ =>
-                                                Union_definition loc1 attrs1
-                                                  (isNothing tag_ident_opt) all_membDefs
-                                              | STRUCT, none =>
-                                                Struct_definition loc1 attrs1
-                                                  (isNothing tag_ident_opt) all_membDefs none
-                                              | STRUCT, some (membDefs', flexible) =>
-                                                Struct_definition loc1 attrs1
-                                                  (isNothing tag_ident_opt) membDefs'
-                                                  (some flexible)))
-                                           (fun (u : Unit) =>
-                                             match u with
-                                             | () =>
-                                               stExpect_return
-                                                 (no_qualifiers, type_ctor tag_sym)))))))));
+                                           (lem_if not
+                                               (List.any all_membDefs
+                                                 (fun (p :
+                                                   (identifier ×
+                                                     (attributes × Option alignment × qualifiers ×
+                                                       ctype))) =>
+                                                   match p with
+                                                   | (_, (_, _, _, ty1)) =>
+                                                     isJust (bitfield_of_type ty1))) then
+                                             stExpect_return all_membDefs
+                                           else
+                                             stExpect_bind (desugar_gnu_attributes loc1 attrs1)
+                                               (fun (effects : gnu_decl_effects) =>
+                                                 stExpect_bind get_alignof
+                                                   (fun (alignof_ty : ctype → Option Nat) =>
+                                                     stExpect_bind
+                                                       (stExcept_foldlM
+                                                         (fun (p :
+                                                           (List
+                                                             (identifier ×
+                                                               (attributes × Option alignment ×
+                                                                 qualifiers × ctype)) ×
+                                                             bitfield_cursor))
+                                                           (p0 :
+                                                             (identifier ×
+                                                               (attributes × Option alignment ×
+                                                                 qualifiers × ctype))) =>
+                                                           match p, p0 with
+                                                           | (rev, cursor1),
+                                                             (ident,
+                                                               (mattrs, align_opt, qs, ty1)) =>
+                                                             (let base := without_bitfield ty1;
+                                                              let incomplete_array :=
+                                                                match base with
+                                                                | Ctype _ (Array0 _ none) => true
+                                                                | _ => false;
+                                                              stExpect_bind
+                                                                (lem_if incomplete_array then
+                                                                  stExpect_return ((0 : Int) : Int)
+                                                                else
+                                                                  evaluate_integer_constant_expression0
+                                                                    loc1 none
+                                                                    (AnnotatedExpression ()
+                                                                      ([] : List annot) loc1
+                                                                      (AilEsizeof no_qualifiers
+                                                                        base)))
+                                                                (fun (size : Int) =>
+                                                                  let natural_align :=(fromJustI
+                                                                      "bitfield member alignment"
+                                                                      (alignof_ty base) : Nat);
+                                                                  let info_opt :=
+                                                                    bitfield_of_type ty1;
+                                                                  let zero :=
+                                                                    maybe0 false
+                                                                      (fun (info : bitfield_info) =>
+                                                                        info.bitfield_width == 0)
+                                                                      info_opt;
+                                                                  let packed :=
+                                                                    not zero &&
+                                                                      (effects.gnu_packed ||
+                                                                        (maybeEqualBy
+                                                                          (fun x y => x == y)
+                                                                          align_opt
+                                                                          (some
+                                                                            (AlignInteger
+                                                                              ((1 : Int))))));
+                                                                  let align :=
+                                                                    lem_if zero then
+                                                                      natural_align
+                                                                    else lem_if effects.gnu_packed then
+                                                                      1
+                                                                    else
+                                                                      match align_opt with
+                                                                      | none => natural_align
+                                                                      | some (AlignInteger n) =>
+                                                                        Int.natAbs
+                                                                          (lemIntFromInteger n)
+                                                                      | some (AlignType ty1) =>
+                                                                        (fromJustI
+                                                                          "bitfield explicit alignment"
+                                                                          (alignof_ty ty1) : Nat);
+                                                                  match place_bitfield
+                                                                      (struct_or_union1 == UNION)
+                                                                      packed
+                                                                      (isJust align_opt && not
+                                                                        packed)
+                                                                      (Int.natAbs
+                                                                        (lemIntFromInteger size))
+                                                                      align
+                                                                      (Option.map
+                                                                        (fun (info :
+                                                                          bitfield_info) =>
+                                                                          info.bitfield_width)
+                                                                        info_opt) cursor1 with
+                                                                  | (off, shift, cursor1) =>
+                                                                    (let ty1 :=
+                                                                       maybe0 ty1
+                                                                         (fun (info :
+                                                                           bitfield_info) =>
+                                                                           with_bitfield
+                                                                             { { info with
+                                                                                 bitfield_bit_offset :=
+                                                                                   shift } with
+                                                                               bitfield_byte_offset :=
+                                                                                 off } base)
+                                                                         info_opt;
+                                                                     stExpect_return
+                                                                       (((ident,
+                                                                         (mattrs, align_opt, qs,
+                                                                           ty1)) :: rev),
+                                                                         cursor1)))))
+                                                         (([] : List
+                                                           (identifier ×
+                                                             (attributes × Option alignment ×
+                                                               qualifiers × ctype))),
+                                                           (({ bitfield_next_byte := 0,
+                                                               bitfield_next_bit := 0 } :
+                                                             bitfield_cursor))) all_membDefs)
+                                                       (fun (p :
+                                                         (List
+                                                           (identifier ×
+                                                             (attributes × Option alignment ×
+                                                               qualifiers × ctype)) ×
+                                                           bitfield_cursor)) =>
+                                                         match p with
+                                                         | (rev, _) =>
+                                                           stExpect_return (List.reverse rev)))))
+                                           (fun (laid_membDefs : List
+                                             (identifier ×
+                                               (attributes × Option alignment × qualifiers ×
+                                                 ctype))) =>
+                                             stExpect_bind
+                                               (register_tag_definition loc1 tag_sym
+                                                 (match struct_or_union1, flexible_opt with
+                                                  | UNION, _ =>
+                                                    Union_definition loc1 attrs1
+                                                      (isNothing tag_ident_opt) laid_membDefs
+                                                  | STRUCT, none =>
+                                                    Struct_definition loc1 attrs1
+                                                      (isNothing tag_ident_opt) laid_membDefs none
+                                                  | STRUCT, some (membDefs', flexible) =>
+                                                    Struct_definition loc1 attrs1
+                                                      (isNothing tag_ident_opt)
+                                                      (List.take (List.length membDefs')
+                                                        laid_membDefs) (some flexible)))
+                                               (fun (u : Unit) =>
+                                                 match u with
+                                                 | () =>
+                                                   stExpect_return
+                                                     (no_qualifiers, type_ctor tag_sym))))))))));
            match specs with /- NOTE: The parser does not generate a declaration without a type specifier -/
            | [] =>
              CerbUtils.STD_ "§6.7.2#2, sentence 1"

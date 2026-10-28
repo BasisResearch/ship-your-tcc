@@ -61,6 +61,23 @@ set_option autoImplicit true
 
 /-! ## `recordAccess` and erasure -/
 
+theorem recordVolatileAccess_observations (l k t p a addr bs v locking s) :
+    (recordVolatileAccess l k t p a addr bs v locking s).observations = s.observations := by
+  simp only [recordVolatileAccess]
+  split <;> rfl
+
+theorem stopObserving_volatileAccesses (s : MemState) :
+    (stopObserving s).volatileAccesses = s.volatileAccesses := rfl
+
+theorem readBytesFrom_stopObserving (s : MemState) (addr : Int) (size : Nat) :
+    readBytesFrom (stopObserving s) addr size = readBytesFrom s addr size := rfl
+
+theorem stopObserving_recordVolatileAccess (l k t p a addr bs v locking s) :
+    stopObserving (recordVolatileAccess l k t p a addr bs v locking s) =
+      recordVolatileAccess l k t p a addr bs v locking (stopObserving s) := by
+  simp only [recordVolatileAccess]
+  split <;> rfl
+
 theorem stopObserving_recordAccess (l k t p a addr bs v locking s) :
     stopObserving (recordAccess l k t p a addr bs v locking s) = stopObserving s := by
   cases h : s.observations <;> simp [recordAccess, h, stopObserving]
@@ -110,6 +127,15 @@ theorem resolveIota_stopObserving (p : IotaPrecondFn) (hp : ∀ z s, p z (stopOb
   simp only [resolveIota, lookupIota, hp, hi]
   split <;> simp_all <;> rfl
 
+theorem representationForStore_stopObserving [CerbImplCfg.Impl] (es ts t addr v s) :
+    representationForStore es ts t addr v (stopObserving s) = representationForStore es ts t addr v s := rfl
+
+theorem writeBytesTo_observations (s : MemState) (addr : Int) (bs : List AbsByte) :
+    (writeBytesTo s addr bs).observations = s.observations := rfl
+
+theorem stopObserving_writeBytesTo (s : MemState) (addr : Int) (bs : List AbsByte) :
+    stopObserving (writeBytesTo s addr bs) = writeBytesTo (stopObserving s) addr bs := rfl
+
 /-! ## The primitives
 
 For arbitrary memory, pointers, type tables, values, caller-selected fuel and (for the
@@ -129,7 +155,7 @@ theorem loadM_erasure [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (es ts 
     rw [resolveIota_stopObserving _ (by intros; rfl)]
     split <;> (try simp only [readBytesFrom])
     all_goals (repeat' first
-      | simp_all only [not_true_eq_false, Bool.false_eq_true, stopObserving_recordAccess, stopObserving_exposeOnLoad, stopObserving_lastUsed,
+      | simp_all only [not_true_eq_false, Bool.false_eq_true, stopObserving_recordAccess, stopObserving_recordVolatileAccess, recordVolatileAccess_observations, stopObserving_volatileAccesses, readBytesFrom_stopObserving, stopObserving_exposeOnLoad, stopObserving_lastUsed,
           stopObserving_observations, exposeOnLoad_observations, recordAccess_of_observations_none,
           stopObserving_deadAllocations, stopObserving_allocations, stopObserving_bytemap,
           stopObserving_lastUsedUnionMembers, stopObserving_funptrmap, findOverlapping_stopObserving,
@@ -139,7 +165,7 @@ theorem loadM_erasure [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (es ts 
   all_goals (simp only [stopObserving_deadAllocations, stopObserving_allocations, stopObserving_bytemap,
     stopObserving_lastUsedUnionMembers, stopObserving_funptrmap, findOverlapping_stopObserving, readBytesFrom])
   all_goals (repeat' first
-    | simp_all only [not_true_eq_false, Bool.false_eq_true, stopObserving_recordAccess, stopObserving_exposeOnLoad, stopObserving_lastUsed,
+    | simp_all only [not_true_eq_false, Bool.false_eq_true, stopObserving_recordAccess, stopObserving_recordVolatileAccess, recordVolatileAccess_observations, stopObserving_volatileAccesses, readBytesFrom_stopObserving, stopObserving_exposeOnLoad, stopObserving_lastUsed,
         stopObserving_observations, exposeOnLoad_observations, recordAccess_of_observations_none,
         stopObserving_deadAllocations, stopObserving_allocations, stopObserving_bytemap,
         stopObserving_lastUsedUnionMembers, stopObserving_funptrmap, not_true_eq_false, Bool.false_eq_true]
@@ -160,12 +186,12 @@ theorem storeM_erasure [CerbImplCfg.Impl] [LemFuel] (es ts l t locking p v s) :
       rw [resolveIota_stopObserving _ (by intros; rfl)]
       split
       all_goals (repeat' first
-        | simp_all only [stopObserving_recordAccess, stopObserving_observations,
+        | simp_all only [stopObserving_recordAccess, representationForStore_stopObserving, stopObserving_writeBytesTo, writeBytesTo_observations, recordAccess_of_observations_none, stopObserving_recordVolatileAccess, recordVolatileAccess_observations, stopObserving_volatileAccesses, readBytesFrom_stopObserving, stopObserving_observations,
             stopObserving_allocations, stopObserving_funptrmap]
         | split
         | rfl)
     all_goals (repeat' first
-      | simp_all only [stopObserving_recordAccess, stopObserving_observations,
+      | simp_all only [stopObserving_recordAccess, representationForStore_stopObserving, stopObserving_writeBytesTo, writeBytesTo_observations, recordAccess_of_observations_none, stopObserving_recordVolatileAccess, recordVolatileAccess_observations, stopObserving_volatileAccesses, readBytesFrom_stopObserving, stopObserving_observations,
           stopObserving_allocations, stopObserving_funptrmap]
       | split
       | rfl)

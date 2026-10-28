@@ -1,0 +1,1224 @@
+{
+  "rows": [
+    {
+      "name": "designator_anonymous_auto.c",
+      "source_sha256": "f24439c09d67bc564caed6b43e78d4d1c3fd091d26218dc5d0d7a6c6618c4230",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_anonymous_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_anonymous_static.c",
+      "source_sha256": "caf4f77406265d21e62052ff4d19464380944fb5ba2e69b1be226c24ced1c485",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_anonymous_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_array_designator_auto.c",
+      "source_sha256": "9478385693e02b299a9c77304913517ab3018a9162c9a9799820f9f40a1dfef3",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_array_designator_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_array_designator_static.c",
+      "source_sha256": "b93b51e20a958dd2a16bf79e1702dc5160b76d6b5f54257e4103b5e74ae3f97d",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_array_designator_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_braced_reset_auto.c",
+      "source_sha256": "564b4cd6e364f1c3273f3574e34e378beac9b52924dfcd95244f56246a9d381c",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_braced_reset_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_braced_reset_static.c",
+      "source_sha256": "ae200e9af1de2e3ae49e67cd80d48a8de8a2a1680201041df822b79bef62f9f9",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_braced_reset_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_braced_union_auto.c",
+      "source_sha256": "986552b248661957c9886ebc4cf5b3e0bc01fe2e3f5cb70d93be4b718771fccb",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_braced_union_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_braced_union_static.c",
+      "source_sha256": "1f5881a782f1b5eb1031e38193c1a57ebe62d8385f9a7ea87976f8256f9f64ef",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_braced_union_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_deep_auto.c",
+      "source_sha256": "e62492d17c8f672819d274241940800cd287d3e4a62e8d68cdfe341637da6b26",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_deep_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_deep_static.c",
+      "source_sha256": "68edcb0e432842ac762d9795eccbd0aba5767eaedb7b9e19f369cbf0e7854abd",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_deep_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_elided_auto.c",
+      "source_sha256": "e21581068d91916ac0e41e951b4cd47030117fef37531280abed16125f6db7bd",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_elided_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_elided_static.c",
+      "source_sha256": "85a9a03d3fcc728769623a425291aa8d83d6e52bdbefdb71c4d8174c14d2588a",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_elided_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_explicit_auto.c",
+      "source_sha256": "e082aa945567c671c384ce3ece438d29dc41bda440055d29cf5e16f08f336630",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_explicit_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_explicit_static.c",
+      "source_sha256": "d3189bc5c53b0e221ee3c88bcae01b13d2c4d0df4e09b6e85d3d26b31e0ac89e",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_explicit_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_incomplete_auto.c",
+      "source_sha256": "3bef1baa2fce2002b73a71aa9d4c97d61f23016f3c46a859a94dcb253a725341",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_incomplete_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_incomplete_matrix_auto.c",
+      "source_sha256": "ac46be101318078fc4ff3aee99459c2efb8c45236681c44a0a8d9d953698b6ae",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_incomplete_matrix_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_incomplete_matrix_static.c",
+      "source_sha256": "2e5e3b31eb1bfa14b25eca80c6fac22d1433b6b8739c4694b71455fedcbf88e2",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_incomplete_matrix_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_incomplete_static.c",
+      "source_sha256": "b86b064875b37d410c5206aac6e0a807fdf24ce8f19208692a018dfc5b67158f",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_incomplete_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_matrix_auto.c",
+      "source_sha256": "da62b29335e2a6471242e479507cfc524c4d9dd01f2587f983cd25831206b157",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_matrix_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_matrix_static.c",
+      "source_sha256": "5e0ffaabdb4b33677a645f3f8c28faf9ecbcf6320ab3bb28d2d402560e96fa98",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_matrix_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_minimal_auto.c",
+      "source_sha256": "261c8eb217959f69ebe8b9dacddd56287d43eec499e95f9d8e31fc2ab5fb3b4c",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_minimal_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_minimal_static.c",
+      "source_sha256": "34be83053aed737c41001908cfca07e1575a2b8948a6d024a30ab6c8ce8beb77",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_minimal_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_nested_union_auto.c",
+      "source_sha256": "18f84cbd050e544132eb8a5a11dbeca7c9c242b157573b8d631a9b154fbfe1b6",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_nested_union_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_nested_union_static.c",
+      "source_sha256": "4fd2fed172f4c8ac88cc8480288585695e1aeb55a6100386b651624c8b976c95",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_nested_union_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_outer_brace_boundary_auto.c",
+      "source_sha256": "1ab169a57d7c46ed536fe6ab19fbcc27ea0f73e2a97e38eb10eaf0760259046b",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_outer_brace_boundary_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_outer_brace_boundary_static.c",
+      "source_sha256": "cf7cf385e710f5c07411d581d4ea291743f51d2eca333f509ab149905d3c9fe5",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_outer_brace_boundary_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_outer_designator_auto.c",
+      "source_sha256": "c5f7c4fe77e8bbe9b546e98edc522beedbaa5600c9c623ec9f919168871bc0ff",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_outer_designator_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_outer_designator_static.c",
+      "source_sha256": "931d002063f666035c7beb5613a1c7f6074f85dfaf95be7b538b769dcb992b24",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_outer_designator_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_padding_auto.c",
+      "source_sha256": "a88c683d2dcff140b1e52b04a743264ffa8c3c4a895548d26d40e55d3ba5c521",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_padding_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_padding_static.c",
+      "source_sha256": "eae041320d303aac351a13f4dd5dda3cf5f8ddd3b387a27d7498baa029c3a0f7",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_padding_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_partial_braces_auto.c",
+      "source_sha256": "b8a3f762eaa381d3a66595efdd372bc61441ae600dc5bc751ab3e4ff4be633e7",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_partial_braces_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_partial_braces_static.c",
+      "source_sha256": "0cfcfd7b1db2bbdf1de5f9d79dff126361f8dd2a451dd16f46c66da8fb8b1458",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_partial_braces_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_pointer_auto.c",
+      "source_sha256": "96ea7d684862487b9e0c983120d8164275ea57ef982102a60f33225c2a297f88",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_pointer_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_pointer_static.c",
+      "source_sha256": "3b11216a819a96d4931504d31612013900ed5bb65f4e5f70360aba72019609d4",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_pointer_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_redesignate_auto.c",
+      "source_sha256": "262aa4165b0b01364d062783639d60ddd530bd1032bc1a3a9909aef3aee46c42",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_redesignate_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_redesignate_static.c",
+      "source_sha256": "57cc3b02c07e4607b37e52a769bddf92f6b067d553e2f76294905d2c410af69c",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_redesignate_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_reverse_auto.c",
+      "source_sha256": "dfa861b2558ca9168fb6343e94c22550ae64e169bb406a4e941110cb1d32d0e2",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_reverse_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_reverse_static.c",
+      "source_sha256": "11739551ec68595f87e9db95a425459f7cebfcb4fb9daaa6a0bea47512e0d6d6",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_reverse_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_scalar_braces_auto.c",
+      "source_sha256": "4569c372163a6efe5b781f91bafbada543872e03ea91403e8b7b23d10827c519",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_scalar_braces_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_scalar_braces_static.c",
+      "source_sha256": "06d5299d996fbfc4fa8026e53fe9bcc19f971ad485e7f44ca6b6210a766daa90",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_scalar_braces_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_string_auto.c",
+      "source_sha256": "628bd96f8adcc57e4d98da0d2734cc294477f09aabbfd5535e064a2ca2ce7443",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_string_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_string_scalar_auto.c",
+      "source_sha256": "324efcb27a7dceb1fbc00399c9f5d5f734ee1598fc240b5ef7d2d065d0bba1f4",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_string_scalar_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_string_scalar_static.c",
+      "source_sha256": "3821353a251cc9794dbe8c7882164c427087067ad631cb89cf69aefb3a56a2be",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_string_scalar_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_string_static.c",
+      "source_sha256": "ccd341428c4b8933668048554d7f0ec1a904d5543702331c1a43d8dbcc117e0a",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_string_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_struct_path_auto.c",
+      "source_sha256": "387462943d23285e7709e87a782ede27d272f5527cfb5932e6dea54dfd04bc47",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_struct_path_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_struct_path_static.c",
+      "source_sha256": "205bdd6348ff54a905cfd31d578a4c144add8c1802c51e4bde6879f383dd93ee",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_struct_path_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_trailing_padding_auto.c",
+      "source_sha256": "a1ff4713091712821ae2be41beff2e437bc8c1736ef48527370be8ec6fd5e52a",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_trailing_padding_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_trailing_padding_static.c",
+      "source_sha256": "30b777b4f141eff2a26adb4a5af6b9d5727fd84acab4536f89502580bbacd011",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_trailing_padding_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_union_array_auto.c",
+      "source_sha256": "da745d81f0688c0cd7b65ab321fe01c53bbb440200c3135638d3ca5d0ba94618",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_union_array_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_union_array_static.c",
+      "source_sha256": "359362ad8e98fd01d1392dc1c9dc57af325179d466b26309b877a15d0c1bce51",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_union_array_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_union_reset_string_auto.c",
+      "source_sha256": "28ccae285d2bb237111e2740f35ef6e8fbbd902e928f4ee702e62337052668fd",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_union_reset_string_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_union_reset_string_static.c",
+      "source_sha256": "f0ea9f2e5fc311bba31f62563ede84c552327776c5ec132bf2bfa77440bfef1e",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_union_reset_string_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_union_same_auto.c",
+      "source_sha256": "c3a4d071c4ee32652e8de5320588b2839d8d013356a233b3aa5d7d39d6b8f8c7",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_union_same_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_union_same_static.c",
+      "source_sha256": "c7ec87aa46f462cfcb9d46ec27253f9fdce81a0183f3e1a56ce9945d50e3d828",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_union_same_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_union_siblings_auto.c",
+      "source_sha256": "e98743a244cdda066de602364f915185c2681814feda403eda9f9fdf53982eea",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_union_siblings_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_union_siblings_static.c",
+      "source_sha256": "49141c464982e089af085052b526fbb4e53893b554e3a31945263b412680a3c9",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_union_siblings_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_union_switch_auto.c",
+      "source_sha256": "acb8ac9055f033a8bd9aa972eda573c24eea9e898947ef0a3e989171ecf2cd72",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_union_switch_auto.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "designator_union_switch_static.c",
+      "source_sha256": "9c1f7234438be7fcbb422b9c0ae39203d84923ab471b99472b4af5bf2460cd62",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/build/fs.list",
+        "--semantic",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/bitfields-continuation-fixtures/designator_union_switch_static.c"
+      ],
+      "exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "ok": true
+    }
+  ],
+  "binary_sha256": "ab341ff0640c3f479212c4e3b00c2c8265341465f11855e710133158bfa8f649",
+  "driver_sha256": "07d9fc9505a824e1394a86068ce75e7b59b191023f93f8eaaf016be3cd2a7338"
+}

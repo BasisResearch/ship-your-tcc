@@ -1,0 +1,3 @@
+/data/home/kirancodes/Documents/code/ship-your-tcc/build/bitfield-layout-edge-review/21/reference.c:2:32: note: offset of packed bit-field ‘f1’ has changed in GCC 4.4
+    2 | struct __attribute__((packed)) S {unsigned short f0:15; unsigned char f1:7; unsigned char :0; unsigned long long f2:63; unsigned long long f3:64; char z; };
+      |                                ^

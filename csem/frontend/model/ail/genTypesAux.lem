@@ -276,6 +276,8 @@ let usual_arithmetic gty1 gty2 =
 
 let rec interpret_genIntegerType loc impl git : errorM integerType =
   match git with
+  | Bitfield ity _ ->
+      return ity
   | Concrete ity ->
       return ity
   | SizeT ->
@@ -286,6 +288,10 @@ let rec interpret_genIntegerType loc impl git : errorM integerType =
       return Ptraddr_t
   | Unknown ic ->
       AilTyping.type_of_constant loc impl ic
+  | Promote (Bitfield ity width) ->
+      return (if width <= impl.IntegerImpl.impl_precision (Signed Int_) ||
+        (width = 1 + impl.IntegerImpl.impl_precision (Signed Int_) && AilTypesAux.is_signed_ity ity)
+        then Signed Int_ else AilTypesAux.integer_promotion impl ity)
   | Promote git ->
       interpret_genIntegerType loc impl git >>= fun ity ->
       return (AilTypesAux.integer_promotion impl ity)

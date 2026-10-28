@@ -482,6 +482,8 @@ theorem storeM_errno_active (k : Nat) (top : Int) :
   unfold CerbMem.storeM
   simp only [runOne, errnoPtr, hcompat, hget]
   simp only [hsz, hbounds, hro, hatomic, Bool.not_true, Bool.false_eq_true, ite_false]
+  change NDactive (CerbMem.Footprint.FP .W (errnoAddr top) (CerbMem.sizeofCtype fmapEmpty fmapEmpty signed_int)) = _
+  rw [hsz]
 
 /-- The memory state after drive's whole errno action at top `top`. -/
 def σstore [LemFuel] (top : Int) : CerbMem.MemState :=

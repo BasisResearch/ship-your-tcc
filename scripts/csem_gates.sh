@@ -84,6 +84,11 @@ echo "== csem (3c) C11 anonymous members"
 python3 scripts/gen_anonymous_fixtures.py --check || fail "anonymous fixture drift"
 python3 scripts/test_anonymous_csem.py --report build/anonymous-gate.json || fail "anonymous member semantics"
 
+echo "== csem (3d) C11 bitfield semantics; GNU nonsuccesses retained separately"
+python3 scripts/gen_bitfield_fixtures.py --check || fail "bitfield fixture drift"
+bitfield_out=$(mktemp -d "$_repo/build/bitfields-gate.XXXXXX")
+python3 scripts/test_bitfields.py --out "$bitfield_out" || fail "C11 bitfield semantics/constraints"
+
 echo "== csem (4) purity, totality, axiom census, sorry token"
 csem/scripts/check_exec_purity.sh --selftest | tail -1 || fail "exec purity selftest"
 csem/scripts/check_exec_purity.sh || fail "exec purity"

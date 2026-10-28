@@ -1,0 +1,18 @@
+{
+  "base": "21018370d2e68a55521b5dea4db451d8858b7d8f",
+  "path": "csem/lean_frontend/test/Unit/ReconstructLegacyTest.lean",
+  "rows": [
+    {
+      "name": "reconstructValueFrozen_lemFuel",
+      "exact": true,
+      "before_sha256": "ab9d6cdb7ee0d1fcc356e253923921c07280afb6080e18be752163ddb0a7447e",
+      "after_sha256": "ab9d6cdb7ee0d1fcc356e253923921c07280afb6080e18be752163ddb0a7447e"
+    },
+    {
+      "name": "reconstructValueFrozen_indexed_lemFuel",
+      "exact": true,
+      "before_sha256": "5129ab90ed8e89e614bbf25345f6857c8baf5f68d4c8988f08707e1e8211dc73",
+      "after_sha256": "5129ab90ed8e89e614bbf25345f6857c8baf5f68d4c8988f08707e1e8211dc73"
+    }
+  ]
+}

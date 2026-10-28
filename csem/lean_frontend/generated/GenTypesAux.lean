@@ -247,11 +247,21 @@ partial def interpret_genIntegerType [CerbImplCfg.Impl]
     (impl2 : implementation) (git : genIntegerType) :
     errorM integerType :=
   match git with
+  | Bitfield ity _ => ErrorM (fun (ts : List (List String)) => Sum.inr (ity, ts))
   | Concrete ity => ErrorM (fun (ts : List (List String)) => Sum.inr (ity, ts))
   | SizeT => ErrorM (fun (ts : List (List String)) => Sum.inr (Size_t, ts))
   | PtrdiffT => ErrorM (fun (ts : List (List String)) => Sum.inr (Ptrdiff_t, ts))
   | PtraddrT => ErrorM (fun (ts : List (List String)) => Sum.inr (Ptraddr_t, ts))
   | Unknown ic => type_of_constant loc1 impl2 ic
+  | Promote (Bitfield ity width) =>
+    ErrorM (fun (ts : List (List String)) =>
+      Sum.inr
+        ((lem_if natLteb width (impl2.impl_precision (Signed Int_)) ||
+            ((width == (1 + impl2.impl_precision (Signed Int_))) &&
+              (is_signed_ity0 _lemReader_enum_definitions _lemReader_tagDefs) ity) then
+          Signed Int_
+        else
+          (integer_promotion _lemReader_enum_definitions _lemReader_tagDefs) impl2 ity), ts))
   | Promote git =>
     bind3 ((interpret_genIntegerType _lemReader_enum_definitions _lemReader_tagDefs) loc1 impl2 git)
       (fun (ity : integerType) =>

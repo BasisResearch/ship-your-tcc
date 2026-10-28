@@ -790,9 +790,9 @@ let rec annotate_expression annotate_block sigm gamm ctx (AnnotatedExpression ()
               E.constraint_violation (with_cursor_from (locOf e) loc) (UnaryAddressNotRvalue gty)
           | GenLValueType qs ty isRegister ->
               (* e is an 'lvalue' *)
-              let () = Debug.warn [Debug.DB_ail_typing]
-                 (fun () -> "(TODO) GenTyping.annotate_expression AilEunary Address, not checking for bit-field member") in
-              if isRegister then
+              if isJust (Cty.bitfield_of_type ty) then
+                E.constraint_violation loc BitfieldAddress
+              else if isRegister then
                 E.constraint_violation (with_cursor_from (locOf e) loc) UnaryAddressRegisterLvalue
               else
                 E.add "§6.5.3.2#3, 2nd sentence" >>
@@ -1536,18 +1536,21 @@ let rec annotate_expression annotate_block sigm gamm ctx (AnnotatedExpression ()
     | AilEsizeof qs ty ->
         wf_lvalue sigm qs ty >>
         E.add "§6.5.3.4#1, sentence 1" >>
-        if AAux.is_function ty || AAux.is_incomplete sigm ty then
+        if isJust (Cty.bitfield_of_type ty) then E.constraint_violation loc BitfieldSizeof
+        else if AAux.is_function ty || AAux.is_incomplete sigm ty then
           E.constraint_violation (with_cursor_from (locOf ty) loc) (SizeofInvalidApplication (inject_type ty))
         else
           E.add "§6.5.3.4#5" >>
           E.return (AilEsizeof qs ty, GenRValueType (GenBasic (GenInteger SizeT)))
     
     | AilEsizeof_expr e ->
-        let () = Debug.warn [Debug.DB_ail_typing]
-          (fun () -> "(TODO) GenTyping.annotate_expression AilEsizeof_expr, not checking for bit-field member") in
         (* because we are dealing with the operand of sizeof(), we do not call
            any of the conversion/decay functions (see §6.3.2.1#2-4) *)
         annotate_expression CTXsizeof e >>= fun a_e ->
+        (match GenTypes.genTypeCategoryOf a_e with
+          | GenLValueType _ ty _ -> if isJust (Cty.bitfield_of_type ty) then E.constraint_violation loc BitfieldSizeof else E.return ()
+          | _ -> E.return ()
+        end) >>
         let gty = match GenTypes.genTypeCategoryOf a_e with
           | GenRValueType gty ->
               gty
@@ -1845,14 +1848,15 @@ and perform_decays sigm ctx a_expr =
            && not (List.elem ctx [CTXsizeof; CTXaddr; CTXincr; CTXdecr; CTXmemberof; CTXassign]) then
           (* STD §6.3.2.1#2 *)
           (* performing the lvalue conversion *)
-          let rvalue_ty = Ctype [] (unatomic_ ty) in
+          let Ctype type_annots _ = ty in
+          let rvalue_ty = Ctype type_annots (unatomic_ ty) in
           if AAux.is_incomplete sigm ty then
             (* STD §6.3.2.1#2, sentence 3 *)
             E.undef (Loc.locOf ty) Undefined.UB020_nonarray_incomplete_lvalue_conversion
           else
             E.return (
               AnnotatedExpression (GenRValueType (inject_type rvalue_ty))
-                std_annots (Loc.locOf a_expr) (AilErvalue a_expr)
+                (std_annots ++ type_annots) (Loc.locOf a_expr) (AilErvalue a_expr)
             )
         else if    AAux.is_array ty
                 && not (List.elem ctx [CTXsizeof; CTXaddr])

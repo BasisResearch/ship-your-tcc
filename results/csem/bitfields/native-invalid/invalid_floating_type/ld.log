@@ -1,0 +1,1 @@
+/data/home/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/../../../../riscv-none-elf/bin/ld: warning: /Users/kirancodes/tmp/tcc_sail.jujndb/prog.elf has a LOAD segment with RWX permissions

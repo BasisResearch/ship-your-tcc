@@ -1,0 +1,64 @@
+{
+  "base_revision": "21018370d2e68a55521b5dea4db451d8858b7d8f",
+  "gate": {
+    "request_id": "bitfields-full-2",
+    "exit": 0,
+    "frozen_source_count": 3470,
+    "source_hashes_verified": true
+  },
+  "lean_build": "bitfields-lean-13",
+  "oracle_build": "bitfields-oracle-5",
+  "oracle_key": "160ecb1fe4cc54d04820db1f0cff834d7f2db9db946d583adf29cf7f8fe2becf",
+  "binaries": {
+    "csem_raw": "4c2831498553831f6430a19ad1ae8fc0291a215cba0a956c67e3c8a005156489",
+    "csem_run": "5d1da226767d8d2e83e3013c9aa0c528a6409e97846ac375e9da2f2153de0b3a",
+    "memory-access-test": "8b60f78bf5f0083f7206ff3ab0f6c24f55b5ecae32afea511dc2288c748a7256",
+    "reconstruct-legacy-test": "23b07ac626ac2fcaf4cf62558d50515b3ef48ee3eb2a7f3a3b6751b7ff6acfc1",
+    "core-quote-test": "c32317baea3e3f6d7d5951839963728d87dae64bec60acc54b644a2dbef0a182"
+  },
+  "focused": {
+    "c11_defined": 72,
+    "constraints_rejected": 10,
+    "required_pass": 82,
+    "required_total": 82,
+    "gnu_successes": 4,
+    "gnu_total": 8
+  },
+  "raw_layout_rows": 8,
+  "continuation_defined": 58,
+  "native_batches": [
+    {
+      "name": "native-final",
+      "zero_checks": 78,
+      "c11": 70,
+      "gnu": 8
+    },
+    {
+      "name": "native-signed-char",
+      "zero_checks": 2,
+      "c11": 2
+    }
+  ],
+  "native_constraints": {
+    "rejected": 6,
+    "accepted": 4,
+    "total": 10
+  },
+  "remaining": [
+    "GNU per-declarator trailing bitfield attributes: four parse failures",
+    "Enum and additional implementation-defined base-type coverage",
+    "Original p05 reported format/runtime boundaries",
+    "Four target compiler constraint deviations",
+    "F1 and whole compiler/memory refinement; abstract volatile domain to concrete machine observations"
+  ],
+  "additional_lead_checks": {
+    "layout_cases": 24,
+    "conversion_cases": 8,
+    "native_claim": false
+  },
+  "p05_consistent_candidate": {
+    "original": "reported UB153b",
+    "explicit_unsigned_variant": "defined value1; stdout/exit match GCC; separately counted; no native claim",
+    "runtime": "matching pristine textual Core/metadata and runtime directories; candidate fork parser"
+  }
+}

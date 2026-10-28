@@ -11,7 +11,7 @@ local instance : CerbImplCfg.Impl := ⟨CerbImplCfg.cerberusDefault⟩
 /-! # Reconstruction compatibility at an explicit diagnostic contract
 
 [USER 2026-10-20] Both reference algorithms are parameterised over their six
-direct failure messages. `historicalDiagnostics` recovers the old strings;
+direct failure messages and an explicit reconstruction representation profile. `historicalDiagnostics` recovers the old strings;
 `productionDiagnostics` renders the outcome protocol. The production equations
 below use the latter, retaining every fuel, environment, address, byte-list and
 closure quantifier. They no longer claim equality to the old diagnostic text.
@@ -19,7 +19,7 @@ closure quantifier. They no longer claim equality to the old diagnostic text.
 The reference-to-reference equations hold for EVERY diagnostic parameter. The
 historical instance freezes the six direct messages, not transitive layout or
 decoding helpers called by the references. The IEEE recovery changes the shared floating leaf decoder to configured
-interchange bits; traversal, diagnostics and fuel leaves stay pinned. The indexed reference retains its pre-C1 array slicing; the
+interchange bits; the current bitfield profile selects field decoding and named union members; traversal, diagnostics and fuel leaves stay pinned. The indexed reference retains its pre-C1 array slicing; the
 linear reference retains its pre-S2 recursion. Neither is a driver implementation.
 
 The axiom census retains the seven existing theorem entries. Kernel replay checks
@@ -39,8 +39,16 @@ abbrev TagDefs := CerbTags.TagDefsMap
 
 /-! ## The pre-S2 algorithms with explicit direct diagnostics -/
 
-/-- Only direct diagnostics vary; the algorithms, inputs and fuel remain fixed. -/
+/-- The literal historical reference has ordinary integer-byte decoding and
+    first-declared union selection. Current bitfields adapt these semantic leaves,
+    separately from the six direct diagnostics and from array traversal. -/
+inductive ReconstructionRepresentation where
+  | historical
+  | bitfields
+
+/-- Diagnostic and semantic profiles are explicit, independent inputs. -/
 structure ReconstructionDiagnostics where
+  representation : ReconstructionRepresentation
   unknownFunction : Int → String
   unknownStruct : String
   emptyUnion : String
@@ -50,6 +58,7 @@ structure ReconstructionDiagnostics where
 
 /-- The six direct pre-protocol messages, including their historical wording. -/
 def historicalDiagnostics : ReconstructionDiagnostics where
+  representation := .historical
   unknownFunction := fun ptrAddr => s!"CerbMem.reconstructValue: unknown function pointer: {ptrAddr}"
   unknownStruct := "CerbMem.reconstructValue: unknown struct tag (OCaml: Pmap.find Not_found in sizeof/offsetsof, impl_mem.ml:1067/1073)"
   emptyUnion := "CerbMem.reconstructValue: empty UnionDef (OCaml: match failure)"
@@ -59,12 +68,29 @@ def historicalDiagnostics : ReconstructionDiagnostics where
 
 /-- The current production renderer at the same six failure sites. -/
 def productionDiagnostics : ReconstructionDiagnostics where
+  representation := .bitfields
   unknownFunction := fun ptrAddr => (CerbStop.render (.upstreamCrash (CerbStopSites.reconstructUnknownFunction s!"CerbMem.reconstructValue: unknown function pointer: {ptrAddr}")))
   unknownStruct := (CerbStop.render (.upstreamCrash (CerbStopSites.reconstructUnknownStruct "CerbMem.reconstructValue: unknown struct tag (OCaml: Pmap.find Not_found in sizeof/offsetsof, impl_mem.ml:1067/1073)")))
   emptyUnion := (CerbStop.render (.upstreamCrash (CerbStopSites.reconstructEmptyUnion "CerbMem.reconstructValue: empty UnionDef (OCaml: match failure)")))
   missingMember := (CerbStop.render (.upstreamCrash (CerbStopSites.reconstructMissingMember "CerbMem.reconstructValue: recorded union member not in UnionDef (OCaml: assert false)")))
   wrongUnion := (CerbStop.render (.upstreamCrash (CerbStopSites.reconstructWrongUnion "CerbMem.reconstructValue: Union tag not a UnionDef (OCaml: assert false)")))
   unsized := (CerbStop.render (.upstreamCrash (CerbStopSites.reconstructUnsized "CerbMem.reconstructValue: type without a known size (OCaml: assert false, impl_mem.ml:978-983)")))
+
+/-- Current integer leaf; the historical profile remains literal byte decoding. -/
+def integerRepresentation (profile : ReconstructionRepresentation) (ty : ctype)
+    (signed : Bool) (bytes : List AbsByte) : Option Int :=
+  match profile with
+  | .historical => bytesToInt bytes signed
+  | .bitfields => match bitfield_of_type ty with
+    | some info => readBitfieldBytes info signed bytes
+    | none => bytesToInt bytes signed
+
+/-- Current union selection excludes padding; historical selection is unchanged. -/
+def representationMembers (profile : ReconstructionRepresentation)
+    (members : List (identifier × attributes × Option alignment × qualifiers × ctype)) :=
+  match profile with
+  | .historical => members
+  | .bitfields => members.filter (fun (_, (_, _, _, ty)) => !is_unnamed_bitfield ty)
 
 /-- Reconstruct a MemValue from bytes — abst, impl_mem.ml:916-1095.
     INVARIANT (differs from OCaml's consume-and-return-rest shape at the
@@ -92,7 +118,7 @@ def reconstructValueLegacy_lemFuel (diagnostics : ReconstructionDiagnostics) (le
     -- :455-460). mk_ival (impl_mem.ml:637-644) is the non-PNVI branch:
     -- IV (prov, n) as-is.
     let signed := CerberusImpl.is_signed_ity (CerberusImpl.resolveEnum enumDefs ity)
-    match bytesToInt bytes signed with
+    match integerRepresentation diagnostics.representation ty signed bytes with
     | some n => .MVinteger ity (.IV (provFromIntegerBytes bytes) n)
     | none => .MVunspecified ty
   | Ctype _ (.Basic (.Floating fty)) =>
@@ -212,6 +238,7 @@ def reconstructValueLegacy_lemFuel (diagnostics : ReconstructionDiagnostics) (le
     -- declared member when absent (:1084-1086).
     match CerbTagsWf.lookupEntry ambient tagSym with
     | some (_, (_, UnionDef layout membrs)) =>
+      let membrs := representationMembers diagnostics.representation membrs
       match membrs with
       | [] => failwithI (diagnostics.emptyUnion)
       | (firstIdent, (_, _, _, firstTy)) :: _ =>
@@ -276,7 +303,7 @@ def reconstructValueLegacy_indexed_lemFuel (diagnostics : ReconstructionDiagnost
   match ty with
   | Ctype _ (.Basic (.Integer ity)) =>
     let signed := CerberusImpl.is_signed_ity (CerberusImpl.resolveEnum enumDefs ity)
-    match bytesToInt bytes signed with
+    match integerRepresentation diagnostics.representation ty signed bytes with
     | some n => .MVinteger ity (.IV (provFromIntegerBytes bytes) n)
     | none => .MVunspecified ty
   | Ctype _ (.Basic (.Floating fty)) =>
@@ -337,6 +364,7 @@ def reconstructValueLegacy_indexed_lemFuel (diagnostics : ReconstructionDiagnost
   | Ctype _ (.Union0 tagSym) =>
     match CerbTagsWf.lookupEntry ambient tagSym with
     | some (_, (_, UnionDef layout membrs)) =>
+      let membrs := representationMembers diagnostics.representation membrs
       match membrs with
       | [] => failwithI (diagnostics.emptyUnion)
       | (firstIdent, (_, _, _, firstTy)) :: _ =>
@@ -669,7 +697,8 @@ theorem reconstructValueAbst_default_snd_eq_legacy (fo : Address → OverlapResu
           obtain ⟨i, mt, off⟩ := a
           simp only [ih]
     | Union0 t =>
-      simp only [reconstructValueAbst_lemFuel, reconstructValueLegacy_lemFuel]
+      have hprofile : productionDiagnostics.representation = .bitfields := rfl
+      simp only [reconstructValueAbst_lemFuel, reconstructValueLegacy_lemFuel, representationMembers, hprofile]
       cases CerbTagsWf.lookupEntry ambient t with
       | none => rfl
       | some e =>
@@ -677,11 +706,11 @@ theorem reconstructValueAbst_default_snd_eq_legacy (fo : Address → OverlapResu
         cases d with
         | StructDef layout _ _ => rfl
         | UnionDef layout membrs =>
-          cases membrs with
-          | nil => rfl
+          cases hmembers : membrs.filter (fun (_, (_, _, _, ty)) => !is_unnamed_bitfield ty) with
+          | nil => simp only [hmembers]; rfl
           | cons m rest =>
             obtain ⟨firstIdent, at_, al, q, firstTy⟩ := m
-            simp only []
+            simp only [hmembers]
             cases List.find? (fun (a, _) => a == addr) unionmap with
             | none => simp only [ih]
             | some am =>

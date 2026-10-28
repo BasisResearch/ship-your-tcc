@@ -1,6 +1,7 @@
 open import Pervasives AilSyntax Ctype
 
 type genIntegerType [name="git*"] =
+ | Bitfield of integerType * nat
  | Concrete of integerType
  | SizeT
  | PtrdiffT
@@ -57,6 +58,8 @@ type genTypeCategory =
 (* Equality functions *)
 let rec eq_genIntegerType gity1 gity2 =
   let ord = function
+    | Bitfield _ _ ->
+        (7 : nat)
     | Concrete _ ->
         (0 : nat)
     | SizeT ->
@@ -73,6 +76,7 @@ let rec eq_genIntegerType gity1 gity2 =
         6
   end in
   match (gity1, gity2) with
+    | (Bitfield ity1 w1, Bitfield ity2 w2) -> ity1 = ity2 && w1 = w2
     | (Concrete ity1, Concrete ity2) ->
         ity1 = ity2
     | (Unknown iCst1, Unknown iCst2) ->
@@ -193,9 +197,14 @@ let inject_basicType = function
 end
 
 val     inject_type: ctype -> genType
-let rec inject_type (Ctype _ ty) =
+let rec inject_type (Ctype annots ty) =
 match ty with
   | Void -> GenVoid
+  | Basic (Integer ity) ->
+      GenBasic (GenInteger (match bitfield_of_annotations annots with
+        | Just info -> Bitfield ity info.bitfield_width
+        | Nothing -> Concrete ity
+      end))
   | Basic bty ->
       GenBasic (inject_basicType bty)
   | Pointer qs ty ->

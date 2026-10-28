@@ -985,3 +985,101 @@ an explicit follow-up, not established by arena equality.
   Preserve the exact stderr beside the evidence package and use the existing
   frozen scoped lead commit handoff. No alternate index/object store, push,
   main merge or repetition of semantic work addresses this infrastructure limit.
+
+- Bitfields (2026-10-28): the requested p05 filename is singular
+  `c/tests/cfg/p05_bitfield.c`. A reader flag or ignore-bitfields switch is
+  not execution support. Retain physical unnamed padding but skip it in
+  source lookup and initializer cursor siblings; concatenating base-type
+  representations overwrites adjacent fields. Track partially known bits
+  rather than zeroing an uninitialized container or poisoning a written field.
+- Bitfields build1: Lean needed an explicit `Option ctype` result for union
+  member-type lookup; its failed matching receipt verifies 3,433 inputs. Build2
+  failed the observation erasure adaptation, with all 3,436 inputs verified.
+  Persistent volatile events must stay separate from optional diagnostic
+  capture and preserve its state-erasure laws. Do not erase volatile effects
+  just to restore the old proof. Build3 exposes the remaining layout fold,
+  filtered-union membership and store erasure proof adaptations at normal
+  budgets; its 3,462 frozen inputs verify. All failed receipts remain failures.
+- Bitfield default oracle1 duplicated patch0004 arity hunks already supplied
+  by newly shared ailTypesAux/genTypesAux. Preserve that failed key. Oracle2
+  verifies the exact shared hunk post-images and omits only those duplicate
+  sections, without reverse/force/fuzz or changing completed caches. It passes
+  at the pinned toolchain; this is the default unsupported-bitfield oracle,
+  never a target-bitfield execution success.
+- Compound assignment is an inherited ordinary-scalar bug too: pristine704c4e69
+  reports UB035 for valid `a[i++] += 2`, while strict GCC returns zero. The
+  shared lowering must bind the actual lvalue address/load once, unsequenced
+  with the RHS, then reuse typed arithmetic/store lowering. Index, pointer and
+  function-returned-lvalue controls are needed; merely repairing new bitfields
+  leaves CSEM-14. The lead independently retains the minimal function-call
+  counter1-versus2 reproducer; no external report is sent by this worker.
+- Distinct bitfields in one byte are distinct scalar objects for C11's
+  unsequenced-side-effect rule. Byte-only footprints falsely report UB035 on
+  `(s.a=1)+(s.b=2)`. Preserve bit-level semantic footprints independently of
+  backing-byte merging. Same-field and ordinary-byte/field conflicts remain.
+- `sizeof(expr)` is folded during Cabs desugaring before the Ail sizeof-expr
+  case. A constraint added only to that later case misses `sizeof(s.a)`.
+  Check the member-designating expression before folding, and retain value
+  widths for promotions after assignment/increment/comma without making every
+  such value expression designate the original bitfield object.
+- First raw bitfield diagnostic omitted `--fslist c/build/fs.list`, so every
+  case stopped at missing injected headers. Retain it as a harness failure;
+  never remove the actual header to count success. Subsequent raw captures
+  retain all compiler aliases and the complete positioned Cabs in compressed
+  stdout archives. GNU trailing attributes on bitfield widths remain four
+  separately recorded parser nonsuccesses; they are not C11 agreements.
+- Original p05 now exposes separate runtime/format boundaries: without libc,
+  its memset body is absent; with the existing libc preparation, the raw-byte
+  printf is classified UB153b by the inherited formatter. Keep both raw
+  observations; the independent cast-correct layout fixture is a distinct
+  source and cannot be renamed as successful execution of original p05.
+
+### Bitfield follow-up: character representation and complete test targets
+
+- A passing narrow target build did not compile every CSem test. The first full
+  gate found a positional AbsByte constructor and reconstruction/fuel-exemplar
+  proof adaptations. Update reference leaves and named-member selection while
+  retaining all quantifiers; use concrete footprint reduction, not weakened
+  theorem statements or larger budgets. Keep every failed receipt.
+- New partial-known bytes must survive character copying (C11 6.2.6.1p4-6).
+  Merely returning MVunspecified for a partially known unsigned-char load loses
+  live field bits when that value is stored. Lead's minimized three-bit copy
+  returns zero with GCC and fresh full Sail, but the initial candidate returned
+  non-integer-return. Preserve before/after and full-byte/aggregate controls.
+  Enumerate every concrete character representation consistent with known bits;
+  do not zero unknown padding or invent the neighboring field. Entirely unknown
+  bytes retain the existing unspecified behavior. Keep this regression focused.
+- After editing a handwritten adapter, regenerate its generated copy BEFORE
+  freezing a build request. The first character-copy build requests still had
+  the previous generated adapter; they do not validate the repair. Do not hand
+  copy a recovery output or claim a stale executable tests new semantics.
+- Do not update literal `reconstructValueFrozen{,_indexed}_lemFuel` bodies and
+  then cite `historical_*_recovers` as unchanged history. The corrected lane
+  restores both bodies byte for byte from the base and gives the current
+  reference an explicit historical/bitfield representation profile, independent
+  of its six diagnostic messages. Both recovery theorems and current all-input
+  indexed/linear equivalence compile normally. Reduce only the profile projection
+  in proofs; unfolding the entire diagnostic record needlessly obscures the
+  induction hypothesis.
+- The general worker-build service does not execute the custom isolated OCaml
+  command (oracle-4 failed before execution). Keep that actual failure and a
+  separate local verification of its frozen hashes; do not fabricate an oracle
+  success or reuse a mismatching content key. Manual lead service of the exact
+  capped/locked worker-toolchain request is required, as for oracle-1/2/3.
+- Keep the pristine-libc preparation on its intended pinned pristine runtime.
+  Forcing the repaired shared OCaml engine into that wrapper changes the dumped
+  libc Core hash and correctly fails its pristine pin check. Preserve the
+  diagnostic capture rather than bypassing the gate or rewriting its pin. The
+  ordinary final wrapper repeats p05's unknown-memset (without libc) and reported
+  UB153b at the raw-byte %x call (with libc). This is a classified format/runtime
+  boundary, not a proved formatter defect or successful p05 run.
+- For final candidate p05, keep candidate CSEM_ORACLE for user Cabs but the
+  pristine CSEM_RUNTIME that produced the textual libc metadata. Mixing those
+  metadata locations with fork runtime directories correctly triggers exact
+  library-location admission; do not relax membership or rewrite labels. The
+  consistent original still reports UB153b; the separately named unsigned-print
+  variant is defined with value1 and exactly matches GCC output. These are
+  separate captures, not a source edit or new native claim.
+- Patch 0009's five single-space blank context lines are required unified-diff
+  markers. The lead reviewed their cached whitespace warnings as acceptable;
+  do not strip those markers and corrupt the compatibility patch.

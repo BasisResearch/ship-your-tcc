@@ -1,0 +1,37 @@
+{
+  "binary_sha256": "5d1da226767d8d2e83e3013c9aa0c528a6409e97846ac375e9da2f2153de0b3a",
+  "source_sha256": "beaa308ca110be810c782bb7d7ec117226adeb818f623dba4e036849b6f0fbbd",
+  "frontend_and_libc": "pinned pristine runtime via ordinary wrapper defaults; separate from raw cfgTcc lane",
+  "driver_sha256": "be58700a4ad4b5309b4fad7178e8b812d36a429a48d3348146ec0b03ac98d23b",
+  "rows": [
+    {
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+        "--impl",
+        "tcc-rv64",
+        "--address-space-top",
+        "18446744073709551615",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p05_bitfield.c"
+      ],
+      "exit": 1,
+      "libc": false,
+      "stdout": "Error {msg: \"ill-formed program: `calling an unknown procedure: Symbol(229, SD_Id(\"memset\"))'\"}\n",
+      "stderr": "cerberus-lean switches: []\n"
+    },
+    {
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/csem_run.sh",
+        "--libc",
+        "--impl",
+        "tcc-rv64",
+        "--address-space-top",
+        "18446744073709551615",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/cfg/p05_bitfield.c"
+      ],
+      "exit": 1,
+      "libc": true,
+      "stdout": "Undefined {ub: \"UB153b_illtyped_argument_for_format\", stderr: \"\", loc: \"<28:5--28:77>\"}\n",
+      "stderr": "cerberus-lean switches: []\n"
+    }
+  ]
+}

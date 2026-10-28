@@ -1,0 +1,62 @@
+[
+  {
+    "name": "invalid_bool_width",
+    "source_sha256": "0f592d89bc9d4e84af4d38e494064d3e87929fc4adf439681caabd4f085df064",
+    "compiler_sha256": "650f7f84a4795072fde0d0781a14389d9e00ec0a00348e3c505d6cb21ed0de69",
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/test-c11/host/tcc",
+      "-std=c11",
+      "-c",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_bool_width.c",
+      "-o",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/build/bitfield-constraint-no-warning-suppression/invalid_bool_width.o"
+    ],
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "name": "invalid_address",
+    "source_sha256": "05f85ee2dc68b49e437f09bba3d1aa6e52dc19edb836562d35914be5998b8520",
+    "compiler_sha256": "650f7f84a4795072fde0d0781a14389d9e00ec0a00348e3c505d6cb21ed0de69",
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/test-c11/host/tcc",
+      "-std=c11",
+      "-c",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_address.c",
+      "-o",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/build/bitfield-constraint-no-warning-suppression/invalid_address.o"
+    ],
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "name": "invalid_sizeof",
+    "source_sha256": "b6ffd208cfaaf49ed5cbd24f3ee4801b824cc85a6a1d036fa92256531977244b",
+    "compiler_sha256": "650f7f84a4795072fde0d0781a14389d9e00ec0a00348e3c505d6cb21ed0de69",
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/test-c11/host/tcc",
+      "-std=c11",
+      "-c",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_sizeof.c",
+      "-o",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/build/bitfield-constraint-no-warning-suppression/invalid_sizeof.o"
+    ],
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "name": "invalid_aligned",
+    "source_sha256": "a43111c5644d9c47bc8a5e57d706577637d77df312b02bb43fa6ff7623833f4e",
+    "compiler_sha256": "650f7f84a4795072fde0d0781a14389d9e00ec0a00348e3c505d6cb21ed0de69",
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/test-c11/host/tcc",
+      "-std=c11",
+      "-c",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_aligned.c",
+      "-o",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/build/bitfield-constraint-no-warning-suppression/invalid_aligned.o"
+    ],
+    "exit": 0,
+    "stderr": ""
+  }
+]

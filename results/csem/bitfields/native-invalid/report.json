@@ -1,0 +1,249 @@
+{
+  "rows": [
+    {
+      "case": "invalid_negative_width",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/run_tcc_sail.sh",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_negative_width.c"
+      ],
+      "source_sha256": "115467b019ee34ed0a767a169f4cbb58f469a91618d721ca7c523f85bf6b1d11",
+      "elf_sha256": "4ec7145f00692d1b9b00c21414b1efb7cd7f2ee05192fc9333af6f0ac479e010",
+      "exit": 125,
+      "constraint_diagnostic": true,
+      "wall_seconds": 49.03,
+      "artifact_pins": {
+        "raw": "f7127251c242d7e5e835c36013f76f354d5636e8ec6609036fc479d23991dbd7",
+        "stderr": "8f1cf15a3b154d756703084e8c4c3957e64a5328e68bf38c4f962e264c198e32",
+        "prog.elf.xz": "fc220e2eb24813694a2685710a46c8645a12ec2f3825293cec2fe203733d7622",
+        "embed.S": "e5021ffb6285f185116db738fd1671a672fe0b5b59c1c1355f73fd2a7a97a1f5",
+        "make.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "pcs": "3f7755ebb3256a6a0526577a93508f5e3a77e9b18434e73adae90e8cbe605da2",
+        "input.c": "115467b019ee34ed0a767a169f4cbb58f469a91618d721ca7c523f85bf6b1d11",
+        "ld.log": "143cc41db048e7a48facc06d12a1538758f5e16f67422a75916341b24a3a9307",
+        "trace": "cb9817806c8e3ab1a7120b726df97f580f94fc81bf406d4e7fad16d8b2d2206e"
+      }
+    },
+    {
+      "case": "invalid_excess_width",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/run_tcc_sail.sh",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_excess_width.c"
+      ],
+      "source_sha256": "7b9076efb798cecea594250063e1803b2bf6f3078e911e6418ff06ef791a12c5",
+      "elf_sha256": "f5a36253ae6c86d8ce4e98be2004e38ec0aca8c5e4f469799bb544d1e5192ce0",
+      "exit": 125,
+      "constraint_diagnostic": true,
+      "wall_seconds": 49.08,
+      "artifact_pins": {
+        "raw": "20c22f688f0fb6dcdb782acf9c50e8021764c66cffcd87a441d704cc13485efe",
+        "stderr": "c75bb6913a35ea7875ccf6fbd8ef13a5ea6550bab494af3348bc2c8e196a4570",
+        "prog.elf.xz": "fdfa140c9f9cabae4a0d8d26f799a82b4da248518057698bf73411879cc195e4",
+        "embed.S": "12c82aad2c67960d12843fb27557ec7ea2f1c678c0967a68fa8c3100fed50a60",
+        "make.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "pcs": "3f7755ebb3256a6a0526577a93508f5e3a77e9b18434e73adae90e8cbe605da2",
+        "input.c": "7b9076efb798cecea594250063e1803b2bf6f3078e911e6418ff06ef791a12c5",
+        "ld.log": "c2c31de79a52bd53a7d37c2dcd9e18dc8f5e03bb1d9a940e0cf134b3abc4c871",
+        "trace": "76e2f4e4ae4317b486f4a3195086354cd6521345ccf632e2b15222fee4139ae7"
+      }
+    },
+    {
+      "case": "invalid_bool_width",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/run_tcc_sail.sh",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_bool_width.c"
+      ],
+      "source_sha256": "0f592d89bc9d4e84af4d38e494064d3e87929fc4adf439681caabd4f085df064",
+      "elf_sha256": "7f9d6bfa7d8ab1ace5fb8b319500a2c9e6f143a63fd517d1e515af35e962c706",
+      "exit": 0,
+      "constraint_diagnostic": false,
+      "wall_seconds": 81.76,
+      "artifact_pins": {
+        "raw": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr": "b6b1f0b7aadb43b8484af1ed72bcc90919978eccbbc9f93f28126bb2dfec8816",
+        "prog.elf.xz": "81c4f8b525058c0a6415f695e5f7abdf48b2b26ae34944e64eb6da515acdc0d4",
+        "meta": "1e1713ba3ca03e08de800ccd3393d217ad2ae12e5f46cb3532d0f2bd40cf3d24",
+        "embed.S": "52bf95b1b93753661f713126c7318a46af9fb407ebe93dd9d18907369aa0d452",
+        "make.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "pcs": "3f7755ebb3256a6a0526577a93508f5e3a77e9b18434e73adae90e8cbe605da2",
+        "input.c": "0f592d89bc9d4e84af4d38e494064d3e87929fc4adf439681caabd4f085df064",
+        "ld.log": "e96ac347c0b7e044bd7da77867d74e263234bcff4be6f00096c5832dc261edc6",
+        "trace": "27d78b3ba7d8ef402859a8df94e019c9ccc58af7be4d0e5bf42325e35d21c171"
+      }
+    },
+    {
+      "case": "invalid_named_zero",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/run_tcc_sail.sh",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_named_zero.c"
+      ],
+      "source_sha256": "aaaabff7b53213ee617205b0c4dbcee60b9e2be45ba91389fe6d71c311022874",
+      "elf_sha256": "2999583a878b08154a3c25bf36fb8936cc0a798c8ee2831b3d7b9e073b0ca9b9",
+      "exit": 125,
+      "constraint_diagnostic": true,
+      "wall_seconds": 49.39,
+      "artifact_pins": {
+        "raw": "dac729029c94c2a77715d5d541d5c66f891ae74ae000448dc0123215acd2c413",
+        "stderr": "33cb91468847a54b63597147502998b6506b6c3374ca657b491f52bc26093c3a",
+        "prog.elf.xz": "5a1a1b4d5aeb4ed52f87b9397cc94247c1963774062e38dc5ee9d8914a92d052",
+        "embed.S": "0835a094bbbf5f3de87bc38e0b59f62b1ed9f9ea43c4329ff21edbd1a0d0ee36",
+        "make.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "pcs": "3f7755ebb3256a6a0526577a93508f5e3a77e9b18434e73adae90e8cbe605da2",
+        "input.c": "aaaabff7b53213ee617205b0c4dbcee60b9e2be45ba91389fe6d71c311022874",
+        "ld.log": "0cc8254fc44e6e07ccccd34813915280720d2e9aaf4fcbfa6dbe49648e02cec4",
+        "trace": "8f640817aae5e92015166f91003b3b447829b224f9fda6517e1dfd05d433dbeb"
+      }
+    },
+    {
+      "case": "invalid_floating_type",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/run_tcc_sail.sh",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_floating_type.c"
+      ],
+      "source_sha256": "d9c058ef6bdc13d6da923dee241385748d5caffc51ab3098e4832c0a7e193d82",
+      "elf_sha256": "bed87662ae804a32b6e12285a8d86dcb7c42c59545eb1d69ca511e48d415b967",
+      "exit": 125,
+      "constraint_diagnostic": true,
+      "wall_seconds": 50.11,
+      "artifact_pins": {
+        "raw": "4d5b0630cef389caed2275b7d14894abae01ad177a7d562728680270050b4820",
+        "stderr": "91753937ea426ec0499b56c4dfba909ef8e46df43f9a55258ffa4867f0af8872",
+        "prog.elf.xz": "42f4ab0bdfdd24ac38775ac47032dd86957c1a1ffd1e098f6b0a3385bca08eb3",
+        "embed.S": "3504060b49cda4b408702d4a7597c6e83f190c612bf4b47058d27a07e9922e01",
+        "make.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "pcs": "3f7755ebb3256a6a0526577a93508f5e3a77e9b18434e73adae90e8cbe605da2",
+        "input.c": "d9c058ef6bdc13d6da923dee241385748d5caffc51ab3098e4832c0a7e193d82",
+        "ld.log": "5507cb745658c871db97678b259f8c38063f80279adc96137c38aba94840e700",
+        "trace": "80584fe918560bf0feaca2fe0f24a132d287d3223f714b32a89e1cf5ddbd5254"
+      }
+    },
+    {
+      "case": "invalid_pointer_type",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/run_tcc_sail.sh",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_pointer_type.c"
+      ],
+      "source_sha256": "1b1c94176dfdde3dfcb6c75d7d25de11a062eb007d8d4af9a75f94774ba0eb70",
+      "elf_sha256": "92825d6f4c469b5363709d80e71d8ea4311f305e2ece3c1060f1069180664bfc",
+      "exit": 125,
+      "constraint_diagnostic": true,
+      "wall_seconds": 50.14,
+      "artifact_pins": {
+        "raw": "4d5b0630cef389caed2275b7d14894abae01ad177a7d562728680270050b4820",
+        "stderr": "1af84ff63313b3752725ab67826387bce887cef102fb6ae6e3397d7669da32ce",
+        "prog.elf.xz": "9cff20a0b38691337a7991aa0467127257607165d6f5afb8bc1f2d6620caa769",
+        "embed.S": "5ee4f08b28f2a26b60147c76b43f8cb0e79608e8e0fd7895685d6c61fb8156ec",
+        "make.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "pcs": "3f7755ebb3256a6a0526577a93508f5e3a77e9b18434e73adae90e8cbe605da2",
+        "input.c": "1b1c94176dfdde3dfcb6c75d7d25de11a062eb007d8d4af9a75f94774ba0eb70",
+        "ld.log": "39f5779c99da9cd8f4d36261fed53fab1d17f7fb596333b1ab9e7841c43ad324",
+        "trace": "7f9a2bf9456972e2daba151475b965c7b544cd5c5bfeadc111c8cef61a9160b1"
+      }
+    },
+    {
+      "case": "invalid_nonconstant_width",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/run_tcc_sail.sh",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_nonconstant_width.c"
+      ],
+      "source_sha256": "3e2e0c6500a69b4ead1ce7ffd89fee58f7e368aea9c49d64105b7384c3817aa1",
+      "elf_sha256": "4f4b350e93531b43a3a40c4e181066d33d18a4023eacbbd6e73db42cddb6f01c",
+      "exit": 125,
+      "constraint_diagnostic": true,
+      "wall_seconds": 50.19,
+      "artifact_pins": {
+        "raw": "772c88cea248acba2f0467a11b624916cc6f9fcd882c89252d5b90b797ae8a2b",
+        "stderr": "56a6266d39063cb044ca7812dc735d7b83821b68abdce78de972d84fa15dc16d",
+        "prog.elf.xz": "78babbc039be8909891b10d20bb227dbd687f07a0aacf64dac864cdf5fdf5e2c",
+        "embed.S": "68081e195b4b74041dbfa3b4a6a9c0a78c22fb749a9a4c0c5adf52a2990b5d47",
+        "make.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "pcs": "3f7755ebb3256a6a0526577a93508f5e3a77e9b18434e73adae90e8cbe605da2",
+        "input.c": "3e2e0c6500a69b4ead1ce7ffd89fee58f7e368aea9c49d64105b7384c3817aa1",
+        "ld.log": "df8832f759c1bab5c044d327c8a171accc1bf3b5fae428ee62cc99f229abafbf",
+        "trace": "c83375d5021202c40ae69df0fcec4fe5381a6a7ff4542b636c817c29822745e8"
+      }
+    },
+    {
+      "case": "invalid_address",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/run_tcc_sail.sh",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_address.c"
+      ],
+      "source_sha256": "05f85ee2dc68b49e437f09bba3d1aa6e52dc19edb836562d35914be5998b8520",
+      "elf_sha256": "df4ac8600a3f6227bc0fc78f57d63b83259197b162fa74a791a70adbb55fa3b0",
+      "exit": 0,
+      "constraint_diagnostic": false,
+      "wall_seconds": 81.55,
+      "artifact_pins": {
+        "raw": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr": "ba8fb170cd63325285b3bc74ceddcae7964781b8d74dd21b9a6d02dc47b428fe",
+        "prog.elf.xz": "d050f2ba59cae13454a4f6ef5db1de09046772e1b88aa3dba69e10981404dff2",
+        "meta": "f1fb18b053d46e48d6bd8cbf90842a0250a68d7a017d62f4e0321ad11385c575",
+        "embed.S": "621c201611f5f00c2c2b4752b9683f30321bd4718e1190e2e48ded7d6f185ccc",
+        "make.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "pcs": "3f7755ebb3256a6a0526577a93508f5e3a77e9b18434e73adae90e8cbe605da2",
+        "input.c": "05f85ee2dc68b49e437f09bba3d1aa6e52dc19edb836562d35914be5998b8520",
+        "ld.log": "1d3ad347569e9cf9eb1ae1949a7b4eff3de38e3b064bf3dbd2d29acb5a78b7b5",
+        "trace": "70041ffb044f363204708b09bd03ed797de631d4e21eaf7c716ed3539909fdb0"
+      }
+    },
+    {
+      "case": "invalid_sizeof",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/run_tcc_sail.sh",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_sizeof.c"
+      ],
+      "source_sha256": "b6ffd208cfaaf49ed5cbd24f3ee4801b824cc85a6a1d036fa92256531977244b",
+      "elf_sha256": "315b32bf9d802a62492b4eee0fc55235a58e98f6f2730a3e898571052a4ed3d3",
+      "exit": 0,
+      "constraint_diagnostic": false,
+      "wall_seconds": 81.45,
+      "artifact_pins": {
+        "raw": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr": "cb3f32722c0d5c5522a9be7403e4e1689741ababc5efbf4123512c72be292635",
+        "prog.elf.xz": "fbc208a3e917afabcfcc41b4d5a3c8785b84be74f119d887213789ca8a3cd32c",
+        "meta": "80ed781b9a9d31567094f205c8dfa6f5c9282f8921611be63bb3fa2e9c9158d6",
+        "embed.S": "9c8140330236a3d0cfca1f50cdaa3346be9e2e7725b07a25cd464848ec1cd201",
+        "make.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "pcs": "3f7755ebb3256a6a0526577a93508f5e3a77e9b18434e73adae90e8cbe605da2",
+        "input.c": "b6ffd208cfaaf49ed5cbd24f3ee4801b824cc85a6a1d036fa92256531977244b",
+        "ld.log": "5bca2614e1e2dd104b303de2532bd278efeb424f66bfdfa6708ad4aa6d0bd4d4",
+        "trace": "f167c39707f2235a0b6385d26f4d9eea0c4431af6b3062f10de24f952c9a7f81"
+      }
+    },
+    {
+      "case": "invalid_aligned",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/run_tcc_sail.sh",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_aligned.c"
+      ],
+      "source_sha256": "a43111c5644d9c47bc8a5e57d706577637d77df312b02bb43fa6ff7623833f4e",
+      "elf_sha256": "160a0cfa754523cc57811d8e7043ab36fa122a4afb2b54cbc89aad726a267d7c",
+      "exit": 0,
+      "constraint_diagnostic": false,
+      "wall_seconds": 80.93,
+      "artifact_pins": {
+        "raw": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr": "66d82f809c892dcede3b6879137f38fb3ef1735c120f78c1774064811b5a8041",
+        "prog.elf.xz": "464e3c9a82da292630e359961fc55fc3ff4405c697c3dba19159397c009e8e0f",
+        "meta": "ebc60f52d8f4b2927a48ced852d6b1f1f805094960882db34be54b04c41f709c",
+        "embed.S": "c309eb282987c50962b77970aaf0490c1296b70dc684df02cc61ba1a6535acdc",
+        "make.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "pcs": "3f7755ebb3256a6a0526577a93508f5e3a77e9b18434e73adae90e8cbe605da2",
+        "input.c": "a43111c5644d9c47bc8a5e57d706577637d77df312b02bb43fa6ff7623833f4e",
+        "ld.log": "68e43ce554dc4cd5240addc886204811afa61fdb38b614b40dd3991227006673",
+        "trace": "f29f8b17516ab0b6e5a704253dcb38472c3a408cac851b30e4283248b12b3602"
+      }
+    }
+  ],
+  "driver_sha256": "f74d53af8269a4e6f9ef1c7fd4f861a7585a8bba33809a79f8be9bee2cf5efe4"
+}

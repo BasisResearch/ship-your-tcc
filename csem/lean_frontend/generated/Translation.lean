@@ -775,114 +775,121 @@ def translate_postfix [CerberusFresh.Digest] [CerbImplCfg.Impl]
        (fun (u : Unit) =>
          match u with
          | () =>
-           (let ty1 := rvalue_coercion (Prod.snd (from_lvalue_type e));
-            let oTy := force_core_object_type_of_ctype ty1;
-            let core_ty_e := mk_ail_ctype_pe ty1;
-            bind1 (wrapped_fresh_symbol (BTy_object OTy_pointer))
-              (fun (lvalue_wrp : wrapped_symbol) =>
-                bind1 (wrapped_fresh_symbol (BTy_loaded oTy)) (fun (load_wrp : wrapped_symbol) =>
-                  bind1 (wrapped_fresh_symbol (BTy_object oTy)) (fun (obj_wrp : wrapped_symbol) =>
-                    bind1 (translate_expr e) (fun (core_e : generic_expr Unit Unit sym) =>
-                      let mk_common : Unit → elab_state →
-                        (generic_expr Unit Unit sym × elab_state) :=
-                        (fun (u : Unit) =>
-                          match u with
-                          | () =>
-                            return0
-                              (add_stds ["§6.5.2.4", std_sentence_n 1, std_sentence_n 3]
-                                (mk_wseq_e lvalue_wrp.sym_pat core_e
-                                  (seq_rmw loc1 false /- return the value of the load -/ core_ty_e
-                                    oTy lvalue_wrp.sym_pe load_wrp.sym_sym
-                                    (mk_case_pe load_wrp.sym_pe
-                                      [(mk_specified_pat obj_wrp.sym_pat,
-                                        mk_specified_pe
-                                          (mk_std_pe (std_sentence_n 2)
-                                            (match unatomic_ ty1 with
-                                             | Basic (Integer _) =>
-                                               (/- TODO: check again -/
-                                               let mk_cheri : generic_pexpr Unit sym → generic_pexpr
-                                                 Unit sym :=
-                                                 (fun (pe : generic_pexpr Unit sym) =>
-                                                   let is_signed :=(is_signed_integer_type
-                                                       _lemReader_enum_definitions
-                                                       _lemReader_tagDefs) result_ty;
-                                                   lem_if CerbGlobal.is_CHERI () && is_ptr_t
-                                                       result_ty then
-                                                     mk_cheri_derive_and_assign_cap is_signed
-                                                       (DCunary op)
-                                                       (obj_wrp.sym_pe, mk_nullcap_pe is_signed) pe
-                                                   else
-                                                     pe);
-                                               let core_postfix :=
-                                                 mk_op_pe core_op obj_wrp.sym_pe
-                                                   (mk_integer_pe ((1 : Int)));
-                                               let promoted_ty :=(fromJustI
-                                                   "Translation.translate_postfix promotion"
-                                                   ((promotion _lemReader_enum_definitions
-                                                     _lemReader_tagDefs)
-                                                     ((integerImpl _lemReader_enum_definitions
-                                                       _lemReader_tagDefs) ())
-                                                     ((ctype_of _lemReader_enum_definitions
-                                                       _lemReader_tagDefs) e)) : ctype);
-                                               let promoted_e :=
-                                                 stdlib1.mkcall_conv_int promoted_ty obj_wrp.sym_pe;
-                                               stdlib1.mkcall_conv_int result_ty
-                                                 (mk_cheri
-                                                   ((with_wrapI_or_catch_exceptional_condition
-                                                     _lemReader_enum_definitions _lemReader_tagDefs)
-                                                     promoted_ty int_op promoted_e
-                                                     (maybe_annotate_integer_type_pexpr promoted_ty
-                                                       (mk_integer_pe ((1 : Int))))
-                                                     (some core_postfix))))
-                                             | Basic
-                                               (Floating
-                                                 (RealFloating
-                                                   _)) => /- NOTE: we are not modelling floating UBs -/
-                                               mk_op_pe core_op obj_wrp.sym_pe
-                                                 (Pexpr ([] : List annot) ()
-                                                   (PEctor Cfvconvert
-                                                     [mk_ail_ctype_pe result_ty,
-                                                       mk_floating_value_pe CerbMem.oneFval]))
-                                             | Pointer _ ref_ty =>
-                                               mk_array_shift obj_wrp.sym_pe ref_ty
-                                                 (mk_integer_pe ptr_shift_const)
-                                             | /- BISECT-IGNORE -/ _ =>
-                                               illTypedAil loc1
-                                                 "AilEunary PostfixIncr|PostfixDecr"))),
-                                        (mk_unspecified_pat (mk_empty_pat BTy_ctype),
-                                          mk_unspecified_pe ty1)])))));
-                      lem_if CerbGlobal.is_CHERI () then
-                        match unatomic_ ty1 with
-                        | Pointer _ ref_ty =>
-                          bind1
-                            (/- for CHERI we use the effectful array_shift operator -/ /- TODO: the load + store are NOT atomic ==> need a new operator in the memory interface ... -/ wrapped_fresh_symbol
-                              (BTy_object OTy_pointer))
-                            (fun (shift_wrp : wrapped_symbol) =>
-                              return0
-                                (add_stds ["§6.5.2.4", std_sentence_n 1, std_sentence_n 3]
-                                  (mk_wseq_e lvalue_wrp.sym_pat core_e
-                                    (mk_wseq_e load_wrp.sym_pat
-                                      (pload loc1 core_ty_e lvalue_wrp.sym_pe NA)
-                                      (mk_case_e load_wrp.sym_pe
-                                        [(mk_specified_pat obj_wrp.sym_pat,
-                                          mk_wseq_e shift_wrp.sym_pat
-                                            (mk_memop_e PtrArrayShift
-                                              [obj_wrp.sym_pe, mk_ail_ctype_pe ref_ty,
-                                                mk_integer_pe ptr_shift_const])
-                                            (mk_wseq_e (mk_empty_pat BTy_unit)
-                                              (Expr [Astd (std_sentence_n 4)]
-                                                (Eaction
-                                                  (Paction Neg0
-                                                    (Action loc1 ()
-                                                      (Store0 false /- not locking -/ core_ty_e
-                                                        lvalue_wrp.sym_pe
-                                                        (mk_specified_pe shift_wrp.sym_pe) NA)))))
-                                              (mk_pure_e load_wrp.sym_pe))),
-                                          (mk_unspecified_pat (mk_empty_pat BTy_ctype),
-                                            mk_pure_e (mk_unspecified_pe ty1))])))))
-                        | _ => mk_common ()
-                      else
-                        mk_common ())))))))
+           (match from_lvalue_type e with
+            | (qs, member_ty) =>
+              (let ty1 := volatile_access_type qs (rvalue_coercion member_ty);
+               let oTy := force_core_object_type_of_ctype ty1;
+               let core_ty_e := mk_ail_ctype_pe ty1;
+               bind1 (wrapped_fresh_symbol (BTy_object OTy_pointer))
+                 (fun (lvalue_wrp : wrapped_symbol) =>
+                   bind1 (wrapped_fresh_symbol (BTy_loaded oTy)) (fun (load_wrp : wrapped_symbol) =>
+                     bind1 (wrapped_fresh_symbol (BTy_object oTy))
+                       (fun (obj_wrp : wrapped_symbol) =>
+                         bind1 (translate_expr e) (fun (core_e : generic_expr Unit Unit sym) =>
+                           let mk_common : Unit → elab_state →
+                             (generic_expr Unit Unit sym × elab_state) :=
+                             (fun (u : Unit) =>
+                               match u with
+                               | () =>
+                                 return0
+                                   (add_stds ["§6.5.2.4", std_sentence_n 1, std_sentence_n 3]
+                                     (mk_wseq_e lvalue_wrp.sym_pat core_e
+                                       (seq_rmw loc1 false
+                                         /- return the value of the load -/ core_ty_e oTy
+                                         lvalue_wrp.sym_pe load_wrp.sym_sym
+                                         (mk_case_pe load_wrp.sym_pe
+                                           [(mk_specified_pat obj_wrp.sym_pat,
+                                             mk_specified_pe
+                                               (mk_std_pe (std_sentence_n 2)
+                                                 (match unatomic_ ty1 with
+                                                  | Basic (Integer _) =>
+                                                    (/- TODO: check again -/
+                                                    let mk_cheri : generic_pexpr Unit sym →
+                                                      generic_pexpr Unit sym :=
+                                                      (fun (pe : generic_pexpr Unit sym) =>
+                                                        let is_signed :=(is_signed_integer_type
+                                                            _lemReader_enum_definitions
+                                                            _lemReader_tagDefs) result_ty;
+                                                        lem_if CerbGlobal.is_CHERI () && is_ptr_t
+                                                            result_ty then
+                                                          mk_cheri_derive_and_assign_cap is_signed
+                                                            (DCunary op)
+                                                            (obj_wrp.sym_pe,
+                                                              mk_nullcap_pe is_signed) pe
+                                                        else
+                                                          pe);
+                                                    let core_postfix :=
+                                                      mk_op_pe core_op obj_wrp.sym_pe
+                                                        (mk_integer_pe ((1 : Int)));
+                                                    let promoted_ty :=(fromJustI
+                                                        "Translation.translate_postfix promotion"
+                                                        ((promotion _lemReader_enum_definitions
+                                                          _lemReader_tagDefs)
+                                                          ((integerImpl _lemReader_enum_definitions
+                                                            _lemReader_tagDefs) ())
+                                                          ((ctype_of _lemReader_enum_definitions
+                                                            _lemReader_tagDefs) e)) : ctype);
+                                                    let promoted_e :=
+                                                      stdlib1.mkcall_conv_int promoted_ty
+                                                        obj_wrp.sym_pe;
+                                                    stdlib1.mkcall_conv_int result_ty
+                                                      (mk_cheri
+                                                        ((with_wrapI_or_catch_exceptional_condition
+                                                          _lemReader_enum_definitions
+                                                          _lemReader_tagDefs) promoted_ty int_op
+                                                          promoted_e
+                                                          (maybe_annotate_integer_type_pexpr
+                                                            promoted_ty (mk_integer_pe ((1 : Int))))
+                                                          (some core_postfix))))
+                                                  | Basic
+                                                    (Floating
+                                                      (RealFloating
+                                                        _)) => /- NOTE: we are not modelling floating UBs -/
+                                                    mk_op_pe core_op obj_wrp.sym_pe
+                                                      (Pexpr ([] : List annot) ()
+                                                        (PEctor Cfvconvert
+                                                          [mk_ail_ctype_pe result_ty,
+                                                            mk_floating_value_pe CerbMem.oneFval]))
+                                                  | Pointer _ ref_ty =>
+                                                    mk_array_shift obj_wrp.sym_pe ref_ty
+                                                      (mk_integer_pe ptr_shift_const)
+                                                  | /- BISECT-IGNORE -/ _ =>
+                                                    illTypedAil loc1
+                                                      "AilEunary PostfixIncr|PostfixDecr"))),
+                                             (mk_unspecified_pat (mk_empty_pat BTy_ctype),
+                                               mk_unspecified_pe ty1)])))));
+                           lem_if CerbGlobal.is_CHERI () then
+                             match unatomic_ ty1 with
+                             | Pointer _ ref_ty =>
+                               bind1
+                                 (/- for CHERI we use the effectful array_shift operator -/ /- TODO: the load + store are NOT atomic ==> need a new operator in the memory interface ... -/ wrapped_fresh_symbol
+                                   (BTy_object OTy_pointer))
+                                 (fun (shift_wrp : wrapped_symbol) =>
+                                   return0
+                                     (add_stds ["§6.5.2.4", std_sentence_n 1, std_sentence_n 3]
+                                       (mk_wseq_e lvalue_wrp.sym_pat core_e
+                                         (mk_wseq_e load_wrp.sym_pat
+                                           (pload loc1 core_ty_e lvalue_wrp.sym_pe NA)
+                                           (mk_case_e load_wrp.sym_pe
+                                             [(mk_specified_pat obj_wrp.sym_pat,
+                                               mk_wseq_e shift_wrp.sym_pat
+                                                 (mk_memop_e PtrArrayShift
+                                                   [obj_wrp.sym_pe, mk_ail_ctype_pe ref_ty,
+                                                     mk_integer_pe ptr_shift_const])
+                                                 (mk_wseq_e (mk_empty_pat BTy_unit)
+                                                   (Expr [Astd (std_sentence_n 4)]
+                                                     (Eaction
+                                                       (Paction Neg0
+                                                         (Action loc1 ()
+                                                           (Store0 false /- not locking -/ core_ty_e
+                                                             lvalue_wrp.sym_pe
+                                                             (mk_specified_pe shift_wrp.sym_pe)
+                                                             NA))))) (mk_pure_e load_wrp.sym_pe))),
+                                               (mk_unspecified_pat (mk_empty_pat BTy_ctype),
+                                                 mk_pure_e (mk_unspecified_pe ty1))])))))
+                             | _ => mk_common ()
+                           else
+                             mk_common ()))))))))
 def translate_assignment_conversion [CerberusFresh.Digest] [CerbImplCfg.Impl]
     (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
@@ -3564,27 +3571,31 @@ def translate_expression_lemFuel [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.I
                                       let stored_pe :=
                                         mk_std_pe "§6.5.16.1#2, conversion"
                                           (mk_stored_pe e2_wrp.sym_pe);
-                                      let core_ty_pe1 :=
-                                        mk_ail_ctype_pe
-                                          (rvalue_coercion (Prod.snd (from_lvalue_type e1)));
-                                      let mo1 :=
-                                        lem_if is_atomic ty1 then /- STD §6.2.6.1#9 -/
-                                          Seq_cst
-                                        else
-                                          NA;
-                                      return0
-                                        (add_std "§6.5.16#3, sentence 4"
-                                          (mk_wseq_e (mk_tuple_pat [e1_wrp.sym_pat, e2_wrp.sym_pat])
-                                            (add_std "§6.5.16#3, sentence 5"
-                                              (mk_unseq_e [core_e1, core_e2]))
-                                            (mk_wseq_e (mk_empty_pat BTy_unit)
-                                              (Expr [Astd "§6.5.16.1#2, store"]
-                                                (Eaction
-                                                  (Paction Neg0
-                                                    (Action loc1 ()
-                                                      (Store0 false /- not locking -/ core_ty_pe1
-                                                        object_pe stored_pe mo1)))))
-                                              (mk_pure_e stored_pe)))))))))))
+                                      match from_lvalue_type e1 with
+                                      | (qs1, member_ty1) =>
+                                        (let core_ty_pe1 :=
+                                           mk_ail_ctype_pe
+                                             (volatile_access_type qs1
+                                               (rvalue_coercion member_ty1));
+                                         let mo1 :=
+                                           lem_if is_atomic ty1 then /- STD §6.2.6.1#9 -/
+                                             Seq_cst
+                                           else
+                                             NA;
+                                         return0
+                                           (add_std "§6.5.16#3, sentence 4"
+                                             (mk_wseq_e
+                                               (mk_tuple_pat [e1_wrp.sym_pat, e2_wrp.sym_pat])
+                                               (add_std "§6.5.16#3, sentence 5"
+                                                 (mk_unseq_e [core_e1, core_e2]))
+                                               (mk_wseq_e (mk_empty_pat BTy_unit)
+                                                 (Expr [Astd "§6.5.16.1#2, store"]
+                                                   (Eaction
+                                                     (Paction Neg0
+                                                       (Action loc1 ()
+                                                         (Store0 false /- not locking -/ core_ty_pe1
+                                                           object_pe stored_pe mo1)))))
+                                                 (mk_pure_e stored_pe))))))))))))
                 | AilEbinary e1 Comma e2 =>
                   bind1 (/- STD §6.5.17 -/ self e1) (fun (core_e1 : generic_expr Unit Unit sym) =>
                     bind1 (self e2) (fun (core_e2 : generic_expr Unit Unit sym) =>
@@ -3600,27 +3611,81 @@ def translate_expression_lemFuel [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.I
                         (add_std "§6.5.17#2, sentence 2"
                           (mk_sseq_e (mk_empty_pat bTy) core_e1 core_e2))))
                 | AilEcompoundAssign e1 aop e2 =>
-                  (/- TODO: this elaboration is wrong because it duplicates any side-effect in E1 -/
-                  /- TODO: and this is duplicating facts about the typing of Ail arithmetic binary operators -/
-                  match match e1, e2 with
-                        | AnnotatedExpression (GenLValueType _ ty1 _) std_annots loc1 _,
-                          AnnotatedExpression (GenRValueType gty2) _ _ _ =>
-                          (let gty1 := inject_type (unatomic ty1);
-                           let gtc1 := GenRValueType gty1;
-                           (AnnotatedExpression gtc1 std_annots loc1 (AilErvalue e1),
-                             match aop with
-                             | Add0 =>
-                               (lem_if is_pointer0 gty1 then gty1 else usual_arithmetic gty1 gty2)
-                             | Sub0 =>
-                               (lem_if is_pointer0 gty1 then gty1 else usual_arithmetic gty1 gty2)
-                             | _ => usual_arithmetic gty1 gty2))
-                        | _, _ => illTypedAil loc1 "AilEcompoundAssign" with
-                  | (e1_rvalue, arith_gty) =>
-                    self
-                      (AnnotatedExpression annot1 ([] : List annot) loc1
-                        (AilEassign e1
-                          (AnnotatedExpression (GenRValueType arith_gty) ([] : List annot) loc1
-                            (AilEbinary e1_rvalue (Arithmetic aop) e2)))))
+                  (/- C11 6.5.16.2p3: evaluate the left lvalue once. Its address and
+             load form one dependency chain, unsequenced with the right operand.
+             Bind both actual values before reusing typed arithmetic and store
+             lowering. Synthetic identifiers denote these Core-bound values;
+             they allocate no C temporary object and perform no extra access. -/
+                  match match genTypeCategoryOf e1 with
+                        | GenLValueType qs ty1 register1 => (qs, ty1, register1)
+                        | _ => illTypedAil loc1 "compound assignment lvalue" with
+                  | (qs, ty1, register1) =>
+                    (let gty1 := inject_type (unatomic ty1);
+                     let gty2 :=
+                       match genTypeCategoryOf e2 with
+                       | GenRValueType gty => gty
+                       | _ => illTypedAil loc1 "compound assignment rvalue";
+                     bind1 (wrapped_fresh_symbol (BTy_object OTy_pointer))
+                       (fun (pointer : wrapped_symbol) =>
+                         bind1
+                           (wrapped_fresh_symbol (BTy_loaded (force_core_object_type_of_ctype ty1)))
+                           (fun (old : wrapped_symbol) =>
+                             bind1
+                               (wrapped_fresh_symbol
+                                 (BTy_loaded
+                                   (force_core_object_type_of_ctype
+                                     ((ctype_of _lemReader_enum_definitions _lemReader_tagDefs)
+                                       e2))))
+                               (fun (rhs : wrapped_symbol) =>
+                                 bind1 (self e1) (fun (core_lvalue : generic_expr Unit Unit sym) =>
+                                   bind1 (self e2) (fun (core_rhs : generic_expr Unit Unit sym) =>
+                                     match ty1 with
+                                     | Ctype type_annots _ =>
+                                       (match annotations e2 with
+                                        | (rhs_annots, _) =>
+                                          (let lhs :=
+                                             AnnotatedExpression (GenLValueType qs ty1 register1)
+                                               ([] : List annot) loc1 (AilEident pointer.sym_sym);
+                                           let old_value :=
+                                             AnnotatedExpression (GenRValueType gty1) type_annots
+                                               loc1 (AilEident old.sym_sym);
+                                           let rhs_value :=
+                                             AnnotatedExpression (GenRValueType gty2) rhs_annots
+                                               loc1 (AilEident rhs.sym_sym);
+                                           let arith_gty :=
+                                             lem_if ((aop == Add0) || (aop == Sub0)) && is_pointer0
+                                                 gty1 then
+                                               gty1
+                                             else lem_if (aop == Shl) || (aop == Shr) then
+                                               integer_promote gty1
+                                             else
+                                               usual_arithmetic gty1 gty2;
+                                           bind1
+                                             (self
+                                               (AnnotatedExpression annot1 ([] : List annot) loc1
+                                                 (AilEassign lhs
+                                                   (AnnotatedExpression (GenRValueType arith_gty)
+                                                     ([] : List annot) loc1
+                                                     (AilEbinary old_value (Arithmetic aop)
+                                                       rhs_value)))))
+                                             (fun (update1 : generic_expr Unit Unit sym) =>
+                                               let load_ty := volatile_access_type qs ty1;
+                                               let load_mo :=
+                                                 lem_if is_atomic ty1 then Seq_cst else NA;
+                                               return0
+                                                 (mk_wseq_e
+                                                   (mk_tuple_pat
+                                                     [mk_tuple_pat [pointer.sym_pat, old.sym_pat],
+                                                       rhs.sym_pat])
+                                                   (mk_unseq_e
+                                                     [mk_wseq_e pointer.sym_pat core_lvalue
+                                                       (mk_wseq_e old.sym_pat
+                                                         (pload loc1 (mk_ail_ctype_pe load_ty)
+                                                           pointer.sym_pe load_mo)
+                                                         (mk_pure_e
+                                                           (mk_tuple_pe
+                                                             [pointer.sym_pe, old.sym_pe]))),
+                                                       core_rhs]) update1)))))))))))
                 | AilEcall (AnnotatedExpression _ _ _ (AilEbuiltin (AilBatomic AilBAstore))) es =>
                   (translate_atomic_explicit _lemReader_enum_definitions _lemReader_tagDefs) loc1
                     self AtomicStoreExplicit es
@@ -4390,10 +4455,10 @@ def translate_expression_lemFuel [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.I
                        (fun (e_wrp : wrapped_symbol) =>
                          return0
                            (mk_wseq_e e_wrp.sym_pat core_e
-                             (pload loc1
-                               (mk_ail_ctype_pe
-                                 ((ctype_of _lemReader_enum_definitions _lemReader_tagDefs) e))
-                               e_wrp.sym_pe mo1)))))
+                             (match from_lvalue_type e with
+                              | (qs, ty1) =>
+                                pload loc1 (mk_ail_ctype_pe (volatile_access_type qs ty1))
+                                  e_wrp.sym_pe mo1)))))
                 | AilEarray_decay e =>
                   bind1 (self e) (fun (core_e : generic_expr Unit Unit sym) =>
                     match genTypeCategoryOf e with
@@ -6421,7 +6486,8 @@ def translate [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl] [CerbGlobal.Sw
   match sup, p, callconv, impl2, prog with
   | sup, (ailnames1, stdlib_fun_map), callconv, impl2, prog =>
     (let translation_stdlib1 :=
-       { (mk_translation_stdlib (ailnames1, stdlib_fun_map)) with
+       { ((mk_translation_stdlib _lemReader_enum_definitions _lemReader_tagDefs)
+           (ailnames1, stdlib_fun_map)) with
          defined_functions := List.map Prod.fst (Prod.snd prog).function_definitions };
      match runStateM_errors
          ((translate_program _lemReader_enum_definitions _lemReader_tagDefs) translation_stdlib1

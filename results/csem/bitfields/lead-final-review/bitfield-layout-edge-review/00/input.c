@@ -1,0 +1,2 @@
+struct __attribute__((packed)) S {unsigned f0:1; unsigned short f1:1; unsigned f2:1; unsigned char :0; unsigned char f3:1; unsigned :0; char z; };
+int main(void){struct S s; unsigned char *p=(unsigned char*)&s; unsigned i; for(i=0;i<sizeof s;i++) p[i]=0; s.f0=1ULL; s.f1=1ULL; s.f2=0ULL; s.f3=1ULL; s.z=90;return sizeof s!=5 || _Alignof(struct S)!=1 || (char*)&s.z-(char*)&s!=4 || p[0]!=3 || p[1]!=1 || p[2]!=0 || p[3]!=0 || p[4]!=90;}

@@ -1,0 +1,24 @@
+{
+  "case": "invalid_nonconstant_width",
+  "command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/run_tcc_sail.sh",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_nonconstant_width.c"
+  ],
+  "source_sha256": "3e2e0c6500a69b4ead1ce7ffd89fee58f7e368aea9c49d64105b7384c3817aa1",
+  "elf_sha256": "4f4b350e93531b43a3a40c4e181066d33d18a4023eacbbd6e73db42cddb6f01c",
+  "exit": 125,
+  "constraint_diagnostic": true,
+  "wall_seconds": 50.19,
+  "artifact_pins": {
+    "raw": "772c88cea248acba2f0467a11b624916cc6f9fcd882c89252d5b90b797ae8a2b",
+    "stderr": "56a6266d39063cb044ca7812dc735d7b83821b68abdce78de972d84fa15dc16d",
+    "prog.elf.xz": "78babbc039be8909891b10d20bb227dbd687f07a0aacf64dac864cdf5fdf5e2c",
+    "embed.S": "68081e195b4b74041dbfa3b4a6a9c0a78c22fb749a9a4c0c5adf52a2990b5d47",
+    "make.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "pcs": "3f7755ebb3256a6a0526577a93508f5e3a77e9b18434e73adae90e8cbe605da2",
+    "input.c": "3e2e0c6500a69b4ead1ce7ffd89fee58f7e368aea9c49d64105b7384c3817aa1",
+    "ld.log": "df8832f759c1bab5c044d327c8a171accc1bf3b5fae428ee62cc99f229abafbf",
+    "trace": "c83375d5021202c40ae69df0fcec4fe5381a6a7ff4542b636c817c29822745e8"
+  }
+}

@@ -1,0 +1,3 @@
+work: /Users/kirancodes/tmp/tcc_sail.rB1fVx
+tcc_sail: tcc did not run the program (exit 1):
+/prog.c:1: error: bitfields must have scalar type

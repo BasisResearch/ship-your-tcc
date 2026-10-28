@@ -458,6 +458,116 @@ let add_internal_attribute name attrs =
     Annot.attr_args= [];
   |>])
 
+let gnu_decimal str =
+  let cs = String.toCharList str in
+  if List.null cs then Nothing else
+  List.foldl (fun acc c ->
+    match acc with
+      | Nothing -> Nothing
+      | Just n ->
+          match String.toString [c] with
+            | "0" -> Just (10*n) | "1" -> Just (10*n+1)
+            | "2" -> Just (10*n+2) | "3" -> Just (10*n+3)
+            | "4" -> Just (10*n+4) | "5" -> Just (10*n+5)
+            | "6" -> Just (10*n+6) | "7" -> Just (10*n+7)
+            | "8" -> Just (10*n+8) | "9" -> Just (10*n+9)
+            | _ -> Nothing
+          end
+    end
+  ) (Just (0:integer)) cs
+
+
+(* C11 6.7.2.1: bit-fields are members, not addressable scalar objects.
+   The unspellable carrier follows the existing internal physical-member and
+   typedef-alignment carriers. All consumers use this named-field view. *)
+type bitfield_info = <|
+  bitfield_width: nat;
+  bitfield_named: bool;
+  bitfield_byte_offset: nat;
+  bitfield_bit_offset: nat;
+|>
+
+let bitfield_of_annotations annots =
+  List.foldl (fun acc annot -> match annot with
+    | Annot.Aattrs (Annot.Attrs attrs) ->
+        List.foldl (fun acc attr ->
+          let Identifier _ name = attr.Annot.attr_id in
+          if name = ":bitfield:" && isNothing attr.Annot.attr_ns then
+            match attr.Annot.attr_args with
+              | [(_, w, _); (_, n, _); (_, b, _); (_, s, _)] ->
+                  match (gnu_decimal w, gnu_decimal b, gnu_decimal s) with
+                    | (Just w, Just b, Just s) -> Just <|
+                        bitfield_width= natFromInteger w;
+                        bitfield_named= n = "1";
+                        bitfield_byte_offset= natFromInteger b;
+                        bitfield_bit_offset= natFromInteger s;
+                      |>
+                    | _ -> acc
+                  end
+              | _ -> acc
+            end
+          else acc
+        ) acc attrs
+    | _ -> acc
+  end) Nothing annots
+
+let bitfield_of_type (Ctype annots _) = bitfield_of_annotations annots
+
+let clear_bitfield_annotations annots = List.map (fun annot -> match annot with
+  | Annot.Aattrs (Annot.Attrs attrs) -> Annot.Aattrs (Annot.Attrs
+      (List.filter (fun attr -> let Identifier _ n = attr.Annot.attr_id in n <> ":bitfield:") attrs))
+  | _ -> annot
+end) annots
+
+let with_bitfield info (Ctype annots ty) =
+  let arg n = (Loc.unknown, show n, []) in
+  Ctype (Annot.Aattrs (Annot.Attrs [<|
+    Annot.attr_ns= Nothing;
+    Annot.attr_id= Identifier unknown ":bitfield:";
+    Annot.attr_args= [arg info.bitfield_width; arg (if info.bitfield_named then (1:nat) else 0);
+      arg info.bitfield_byte_offset; arg info.bitfield_bit_offset];
+  |>]) :: clear_bitfield_annotations annots) ty
+
+let without_bitfield (Ctype annots ty) = Ctype (clear_bitfield_annotations annots) ty
+
+let is_unnamed_bitfield ty = match bitfield_of_type ty with
+  | Just info -> not info.bitfield_named
+  | Nothing -> false
+end
+
+let volatile_access_type qs (Ctype annots ty as cty) =
+  if qs.volatile then Ctype (Annot.Aattrs (add_internal_attribute ":volatile-access:" Annot.no_attributes) :: annots) ty else cty
+
+let is_volatile_access (Ctype annots _) =
+  maybe false (has_internal_attribute ":volatile-access:") (Annot.get_attrs annots)
+
+let bitfield_span info = (info.bitfield_bit_offset + info.bitfield_width + 7) / 8
+
+(* PCC little-endian allocation policy, independently of C expression rules.
+   A packed field may cross its base-type unit. Zero width ignores packing.
+   Byte offsets are relative to this physical container, never its parent. *)
+type bitfield_cursor = <| bitfield_next_byte: nat; bitfield_next_bit: nat |>
+val bitfield_round: nat -> nat -> nat
+let bitfield_round n a = if n mod a = 0 then n else n + a - n mod a
+val place_bitfield: bool -> bool -> bool -> nat -> nat -> maybe nat -> bitfield_cursor -> (nat * nat * bitfield_cursor)
+let place_bitfield is_union packed explicit_alignment size align width_opt cursor =
+  let c = cursor.bitfield_next_byte in
+  let p = cursor.bitfield_next_bit in
+  match width_opt with
+    | Nothing ->
+        let off = if is_union then 0 else bitfield_round (c + (p+7) / 8) align in
+        (off, 0, <| bitfield_next_byte= off+size; bitfield_next_bit= 0 |> )
+    | Just width ->
+        let fresh = width = 0 || explicit_alignment ||
+          (not packed && (((c*8+p) mod (align*8) + width + align*8-1) / (align*8) > size / align)) in
+        let c = if is_union then 0 else if fresh then bitfield_round (c+(p+7) / 8) align else c in
+        let p = if is_union || fresh then 0 else p in
+        let off = c + (p / (align*8))*align in
+        let shift = p mod (align*8) in
+        (off, shift, <| bitfield_next_byte= off; bitfield_next_bit= shift+width |> )
+  end
+
+
 val is_anonymous_member: Annot.attributes -> bool
 let is_anonymous_member attrs = has_internal_attribute ":anonymous-member:" attrs
 
@@ -485,7 +595,7 @@ let name_anonymous_members reserved members =
   List.map (fun (n, (ident, data)) ->
     let Identifier loc name = ident in
     let (attrs, _, _, _) = data in
-    (Identifier loc (if is_anonymous_member attrs then
+    (Identifier loc (if is_anonymous_member attrs || is_unnamed_bitfield (let (_, _, _, ty) = data in ty) then
        String.makeString (width+1) #'_' ^ "cerb_anon_" ^ show n else name), data)
   ) (numerote members)
 
@@ -507,7 +617,7 @@ let member_paths depth members ty =
     end in
     List.concat (List.map (fun (ident, (attrs, _, qs, child_ty)) ->
       let step = (ident, qs, child_ty) in
-      (ident, <| member_path_visible= not (is_anonymous_member attrs); member_path_steps= [step] |>) ::
+      (ident, <| member_path_visible= not (is_anonymous_member attrs) && not (is_unnamed_bitfield child_ty); member_path_steps= [step] |>) ::
         (if is_anonymous_member attrs then
            List.map (fun (name, path) ->
              (name, <| path with member_path_steps= step :: path.member_path_steps |>)) (paths child_ty)
@@ -520,23 +630,8 @@ let member_paths depth members ty =
    underlying sizeof, unlike aggregate alignment's trailing padding. The
    unspellable internal attribute is a typed translation artifact, not a
    public field or an additional allocation. Readers consume it explicitly. *)
-let gnu_decimal str =
-  let cs = String.toCharList str in
-  if List.null cs then Nothing else
-  List.foldl (fun acc c ->
-    match acc with
-      | Nothing -> Nothing
-      | Just n ->
-          match String.toString [c] with
-            | "0" -> Just (10*n) | "1" -> Just (10*n+1)
-            | "2" -> Just (10*n+2) | "3" -> Just (10*n+3)
-            | "4" -> Just (10*n+4) | "5" -> Just (10*n+5)
-            | "6" -> Just (10*n+6) | "7" -> Just (10*n+7)
-            | "8" -> Just (10*n+8) | "9" -> Just (10*n+9)
-            | _ -> Nothing
-          end
-    end
-  ) (Just (0:integer)) cs
+
+
 
 
 let gnu_align_typedef alignment ty =

@@ -217,7 +217,19 @@ let exp_type_of a_expr =
     | _ -> error "[Translation_aux.exp_type_of] impossible case: TODO move to Exception.t"
   end
 -/
+
 /- NOTE: it does not depend on the annotation state -/
+/- Value expressions retain a field's value width for integer promotion even
+   after assignment/increment/comma cease to be member-designating lvalues. -/
+def bitfield_value_type (gtc : genTypeCategory) (ty1 : ctype) : ctype :=
+  match bitfield_of_type ty1, gtc with
+  | none, GenRValueType (GenBasic (GenInteger (Bitfield _ width))) =>
+    with_bitfield
+      (({ bitfield_width := width,
+          bitfield_named := true,
+          bitfield_byte_offset := 0,
+          bitfield_bit_offset := 0 } : bitfield_info)) ty1
+  | _, _ => ty1
 
 def ctype_of [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
@@ -232,7 +244,11 @@ def ctype_of [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerT
   | Sum.inr (LValueType _ ty1 _) => ty1
   | Sum.inr (RValueType ty1) =>
     (match annotations a_expr with
-     | (annots1, _) => gnu_align_typedef (gnu_typedef_alignment annots1) ty1)
+     | (annots1, _) =>
+       (let ty1 := gnu_align_typedef (gnu_typedef_alignment annots1) ty1;
+        bitfield_value_type (genTypeCategoryOf a_expr)
+          (maybe0 ty1 (fun (info : bitfield_info) => with_bitfield info ty1)
+            (bitfield_of_annotations annots1))))
   | Sum.inl (loc1, TError_MiscError (UntypableIntegerConstant n)) =>
     (failwithI
       (String.append (CerbLocation.stringFromLocation loc1)
@@ -255,7 +271,12 @@ def qualified_ctype_of [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sy
   | Sum.inr (LValueType qs ty1 _) => (qs, ty1)
   | Sum.inr (RValueType ty1) =>
     (match annotations a_expr with
-     | (annots1, _) => (no_qualifiers, gnu_align_typedef (gnu_typedef_alignment annots1) ty1))
+     | (annots1, _) =>
+       (let ty1 := gnu_align_typedef (gnu_typedef_alignment annots1) ty1;
+        (no_qualifiers,
+          bitfield_value_type (genTypeCategoryOf a_expr)
+            (maybe0 ty1 (fun (info : bitfield_info) => with_bitfield info ty1)
+              (bitfield_of_annotations annots1)))))
   | Sum.inl (loc1, TError_MiscError (UntypableIntegerConstant n)) =>
     (failwithI
       (String.append (CerbLocation.stringFromLocation loc1)
@@ -527,7 +548,38 @@ instance (priority := 500) : Lem_Basic_classes.Ord0 translation_stdlib where
     match translation_stdlib.compare_derived x y with
     | .lt => false
     | _ => true
-def mk_translation_stdlib (p : (Fmap String sym × Fmap sym (generic_fun_map_decl Unit Unit))) :
+
+/- Assignment conversion to a bit-field uses its value width. The selected
+   implementation uses two's-complement narrowing for signed fields. The local
+   pattern binds only the generated body; the input remains outside its scope. -/
+def narrow_bitfield [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
+    (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (local1 : sym) (ty1 : ctype)
+    (loaded : Bool) (pe : generic_pexpr Unit sym) :
+    generic_pexpr Unit sym :=
+  match bitfield_of_type ty1 with
+  | none => pe
+  | some info =>
+    (let pat := mk_sym_pat local1 (BTy_object OTy_integer);
+     let n := mk_sym_pe local1;
+     let modulus := mk_integer_pe (((2 : Int) : Int) ^ info.bitfield_width);
+     let r := mk_op_pe OpRem_f n modulus;
+     let signed :=(is_signed_integer_type _lemReader_enum_definitions _lemReader_tagDefs) ty1;
+     let r :=
+       lem_if signed then
+         mk_if_pe (mk_op_pe OpGe r (mk_integer_pe (((2 : Int) : Int) ^ (info.bitfield_width - 1))))
+           (mk_op_pe OpSub r modulus) r
+       else
+         r;
+     lem_if loaded then
+       mk_case_pe pe
+         [(mk_specified_pat pat, mk_specified_pe r),
+           (mk_unspecified_pat (mk_empty_pat BTy_ctype), mk_unspecified_pe ty1)]
+     else
+       mk_let_pe pat pe r)
+
+def mk_translation_stdlib [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
+    (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
+    (p : (Fmap String sym × Fmap sym (generic_fun_map_decl Unit Unit))) :
     translation_stdlib :=
   match p with
   | (ailnames1, stdlib_fun_map) =>
@@ -555,13 +607,17 @@ def mk_translation_stdlib (p : (Fmap String sym × Fmap sym (generic_fun_map_dec
            lem_if not (is_integer ty1) then
              (failwithI "mkcall_conv_int called on non integer type" : generic_pexpr Unit sym)
            else
-             mk_call "conv_int" [mk_ail_ctype_pe ty1, pe]),
+             (narrow_bitfield _lemReader_enum_definitions _lemReader_tagDefs)
+               (fetch_stdlib_symbol std_syms "conv_int") ty1 false
+               (mk_call "conv_int" [mk_ail_ctype_pe (without_bitfield ty1), pe])),
          mkcall_conv_loaded_int := (fun (ty1 : ctype) (pe : generic_pexpr Unit sym) =>
            lem_if not (is_integer ty1) then
              (failwithI "mkcall_conv_loaded_int called on non integer type" : generic_pexpr Unit
                sym)
            else
-             mk_call "conv_loaded_int" [mk_ail_ctype_pe ty1, pe]),
+             (narrow_bitfield _lemReader_enum_definitions _lemReader_tagDefs)
+               (fetch_stdlib_symbol std_syms "conv_loaded_int") ty1 true
+               (mk_call "conv_loaded_int" [mk_ail_ctype_pe (without_bitfield ty1), pe])),
          mkcall_loaded_fvfromint := (fun (ty1 : ctype) (pe : generic_pexpr Unit sym) =>
            lem_if not (is_floating ty1) then
              (failwithI "mkcall_loaded_fvfromint called on a non floating type" : generic_pexpr Unit
@@ -637,8 +693,8 @@ def conv_loaded_arith (stdlib1 : translation_stdlib) (ty_src : ctype) (ty_dst : 
       /-      C.Pexpr [] () (C.PEctor C.CfvfromintTyped [Caux.mk_ail_ctype_pe ty_dst; pe]) -/
   else lem_if is_floating ty_src then
     lem_if is_integer ty_dst then
-      stdlib1.mkcall_loaded_ivfromfloat ty_dst
-        pe
+      stdlib1.mkcall_conv_loaded_int ty_dst
+        (stdlib1.mkcall_loaded_ivfromfloat (without_bitfield ty_dst) pe)
         /-      C.Pexpr [] () (C.PEctor C.Civfromfloat [Caux.mk_ail_ctype_pe ty_dst; pe]) -/
     else lem_if is_floating ty_dst then
       Pexpr ([] : List annot) () (PEctor CfvconvertLoaded [mk_ail_ctype_pe ty_dst, pe])

@@ -615,7 +615,14 @@ let integer_promotion impl = function
 val promotion: IntegerImpl.implementation -> ctype -> maybe ctype
 let promotion impl = function
   | Ctype annots (Basic (Integer ity)) ->
-      Just (Ctype annots (Basic (Integer (integer_promotion impl ity))))
+      let promoted = match bitfield_of_annotations annots with
+        | Just info ->
+            if info.bitfield_width <= impl.IntegerImpl.impl_precision (Signed Int_) ||
+              (is_signed_ity ity && info.bitfield_width = 1 + impl.IntegerImpl.impl_precision (Signed Int_))
+            then Signed Int_ else integer_promotion impl ity
+        | Nothing -> integer_promotion impl ity
+      end in
+      Just (Ctype (clear_bitfield_annotations annots) (Basic (Integer promoted)))
   | _ ->
       Nothing
 end

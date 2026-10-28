@@ -204,6 +204,9 @@ instance (priority := 500) : Lem_Basic_classes.Ord0 invalid_generic_association 
   isGreaterEqual := defaultGreaterEq
 
 inductive violation : Type where
+  | BitfieldInvalidDeclaration : violation /- 6.7.2.1p4-5: type, ICE width and named zero -/
+  | BitfieldAddress : violation /- 6.5.3.2p1 -/
+  | BitfieldSizeof : violation /- 6.5.3.4p1 -/
   /- 6.5 Expressions -/
   /- 6.5.1.1 Generic selection -/
   | GenericSelectionMultipleDefault : violation /- §6.5.1.1#2, sentence 1 -/
@@ -388,23 +391,23 @@ inductive violation : Type where
   /- Byte -/
   | TypedefBytesAreUnsignedCharsOnly : violation
   | CastToFromByte : violation
-export violation (GenericSelectionMultipleDefault GenericSelectionIncorrectType
-    GenericSelectionOverlapping GenericSelectionMultipleMatch GenericSelectionNoMatch
-    FunctionCallIncompleteReturnType FunctionCallArrayReturnType FunctionCallIncorrectType
-    FunctionCallTooManyArguments FunctionCallTooFewArguments MemberofReferenceBaseTypeLvalue
-    MemberofReferenceBaseTypeRvalue MemberofNoMemberLvalue MemberofNoMemberRvalue
-    MemberofIncompleteLvalue MemberofIncompleteRvalue MemberofptrReferenceBaseType
-    MemberofptrReferenceTypeNotPointer MemberofptrNoMember MemberofptrIncomplete
-    InvalidTypeCompoundLiteral UnaryExpressionNotLvalue InvalidArgumentTypeUnaryIncrement
-    InvalidArgumentTypeUnaryDecrement UnaryAddressNotRvalue UnaryAddressRegisterLvalue
-    IndirectionNotPointer InvalidArgumentTypeUnaryExpression SizeofInvalidApplication
-    AlignofInvalidApplication CastInvalidType CastPointerToFloat CastFloatToPointer
-    ArithBinopOperandsType RelationalInvalidOperandsType EqualityInvalidOperandsType
-    AndInvalidOperandsType OrInvalidOperandsType ConditionalOperatorControlType
-    ConditionalOperatorInvalidOperandTypes AssignmentModifiableLvalue SimpleAssignmentViolation
-    CompoundAssignmentAddSubOperandTypes CompoundAssignmentOthersOperandTypes
-    IntegerConstantOutRange NoLinkageMultipleDeclaration TypedefRedefinition
-    TypedefRedefinitionVariablyModifiedType SameScopeIncompatibleDeclarations
+export violation (BitfieldInvalidDeclaration BitfieldAddress BitfieldSizeof
+    GenericSelectionMultipleDefault GenericSelectionIncorrectType GenericSelectionOverlapping
+    GenericSelectionMultipleMatch GenericSelectionNoMatch FunctionCallIncompleteReturnType
+    FunctionCallArrayReturnType FunctionCallIncorrectType FunctionCallTooManyArguments
+    FunctionCallTooFewArguments MemberofReferenceBaseTypeLvalue MemberofReferenceBaseTypeRvalue
+    MemberofNoMemberLvalue MemberofNoMemberRvalue MemberofIncompleteLvalue MemberofIncompleteRvalue
+    MemberofptrReferenceBaseType MemberofptrReferenceTypeNotPointer MemberofptrNoMember
+    MemberofptrIncomplete InvalidTypeCompoundLiteral UnaryExpressionNotLvalue
+    InvalidArgumentTypeUnaryIncrement InvalidArgumentTypeUnaryDecrement UnaryAddressNotRvalue
+    UnaryAddressRegisterLvalue IndirectionNotPointer InvalidArgumentTypeUnaryExpression
+    SizeofInvalidApplication AlignofInvalidApplication CastInvalidType CastPointerToFloat
+    CastFloatToPointer ArithBinopOperandsType RelationalInvalidOperandsType
+    EqualityInvalidOperandsType AndInvalidOperandsType OrInvalidOperandsType
+    ConditionalOperatorControlType ConditionalOperatorInvalidOperandTypes AssignmentModifiableLvalue
+    SimpleAssignmentViolation CompoundAssignmentAddSubOperandTypes
+    CompoundAssignmentOthersOperandTypes IntegerConstantOutRange NoLinkageMultipleDeclaration
+    TypedefRedefinition TypedefRedefinitionVariablyModifiedType SameScopeIncompatibleDeclarations
     IllegalMultipleStorageClasses IllegalMultipleStorageClassesThreadLocal
     ThreadLocalShouldAppearInEveryDeclaration ThreadLocalFunctionDeclaration
     NoTypeSpecifierInDeclaration IllegalTypeSpecifierInDeclaration
@@ -434,7 +437,7 @@ export violation (GenericSelectionMultipleDefault GenericSelectionIncorrectType
     GNUConditionalOperatorInvalidOperandType GNUBuiltinChooseExprNotIntegerConstant
     TypedefBytesAreUnsignedCharsOnly CastToFromByte)
 instance : Inhabited violation where
-  default := GenericSelectionMultipleDefault
+  default := BitfieldInvalidDeclaration
 /- lem: equality and comparison for these types, matching OCaml's
    polymorphic (=) and compare: structural equality; nullary constructors
    before non-nullary ones, declaration order within each group; fields
@@ -443,130 +446,136 @@ instance : Inhabited violation where
    constructors (immediates) sort below non-nullary ones (blocks);
    declaration order within each group. -/
 def violation.ctor_rank_ocaml : violation → Nat
-  | .GenericSelectionMultipleDefault => 0
-  | .GenericSelectionIncorrectType _ _ => 61
-  | .GenericSelectionOverlapping _ _ => 62
-  | .GenericSelectionMultipleMatch _ => 63
-  | .GenericSelectionNoMatch _ => 64
-  | .FunctionCallIncompleteReturnType _ => 65
-  | .FunctionCallArrayReturnType _ => 66
-  | .FunctionCallIncorrectType => 1
-  | .FunctionCallTooManyArguments _ _ => 67
-  | .FunctionCallTooFewArguments _ _ => 68
-  | .MemberofReferenceBaseTypeLvalue _ _ => 69
-  | .MemberofReferenceBaseTypeRvalue _ => 70
-  | .MemberofNoMemberLvalue _ _ _ => 71
-  | .MemberofNoMemberRvalue _ _ => 72
-  | .MemberofIncompleteLvalue _ _ => 73
-  | .MemberofIncompleteRvalue _ => 74
-  | .MemberofptrReferenceBaseType _ _ => 75
-  | .MemberofptrReferenceTypeNotPointer _ => 76
-  | .MemberofptrNoMember _ _ _ => 77
-  | .MemberofptrIncomplete _ _ => 78
-  | .InvalidTypeCompoundLiteral => 2
-  | .UnaryExpressionNotLvalue => 3
-  | .InvalidArgumentTypeUnaryIncrement _ => 79
-  | .InvalidArgumentTypeUnaryDecrement _ => 80
-  | .UnaryAddressNotRvalue _ => 81
-  | .UnaryAddressRegisterLvalue => 4
-  | .IndirectionNotPointer => 5
-  | .InvalidArgumentTypeUnaryExpression _ => 82
-  | .SizeofInvalidApplication _ => 83
-  | .AlignofInvalidApplication _ _ => 84
-  | .CastInvalidType _ _ => 85
-  | .CastPointerToFloat => 6
-  | .CastFloatToPointer => 7
-  | .ArithBinopOperandsType _ _ _ => 86
-  | .RelationalInvalidOperandsType _ _ => 87
-  | .EqualityInvalidOperandsType _ _ => 88
-  | .AndInvalidOperandsType _ _ => 89
-  | .OrInvalidOperandsType _ _ => 90
-  | .ConditionalOperatorControlType _ => 91
-  | .ConditionalOperatorInvalidOperandTypes _ _ => 92
-  | .AssignmentModifiableLvalue => 8
-  | .SimpleAssignmentViolation _ _ _ => 93
-  | .CompoundAssignmentAddSubOperandTypes _ _ => 94
-  | .CompoundAssignmentOthersOperandTypes _ _ _ => 95
-  | .IntegerConstantOutRange => 9
-  | .NoLinkageMultipleDeclaration _ => 96
-  | .TypedefRedefinition => 10
-  | .TypedefRedefinitionVariablyModifiedType => 11
-  | .SameScopeIncompatibleDeclarations => 12
-  | .IllegalMultipleStorageClasses => 13
-  | .IllegalMultipleStorageClassesThreadLocal => 14
-  | .ThreadLocalShouldAppearInEveryDeclaration => 15
-  | .ThreadLocalFunctionDeclaration => 16
-  | .NoTypeSpecifierInDeclaration => 17
-  | .IllegalTypeSpecifierInDeclaration => 18
-  | .StructDeclarationLacksDeclaratorList => 19
-  | .StructMemberIncompleteType _ _ => 97
-  | .StructMemberFunctionType _ => 98
-  | .StructMemberFlexibleArray => 20
-  | .StructMemberFlexibleArrayInArray => 21
-  | .IllegalFlexibleArrayMember _ => 99
-  | .WrongTypeEnumConstant => 22
-  | .TagRedefinition _ => 100
-  | .TagRedeclaration _ => 101
-  | .EnumTagIncomplete => 23
-  | .AtomicTypeConstraint => 24
-  | .RestrictQualifiedTypeConstraint => 25
-  | .RestrictQualifiedPointedTypeConstraint _ => 102
-  | .IllegalAlignas _ => 103
-  | .AlignasNotIntegerConstant => 26
-  | .AlignasInvalidIntegerConstant => 27
-  | .AlignasLessThanRequired _ => 104
-  | .ArrayDeclarationNegativeSize => 28
-  | .ArrayDeclarationIncompleteType => 29
-  | .ArrayElementSizeAlignment => 30
-  | .ArrayDeclarationFunctionType => 31
-  | .ArrayDeclarationQsAndStaticOnlyOutmost => 32
-  | .ArrayDeclarationQsAndStaticOutsideFunctionProto => 33
-  | .IllegalReturnTypeFunctionDeclarator => 34
-  | .IllegalStorageClassFunctionDeclarator => 35
-  | .IncompleteParameterTypeFunctionDeclarator => 36
-  | .IllegalInitialisation _ => 105
-  | .IllegalStorageClassStaticOrThreadInitializer => 37
-  | .IllegalLinkageAndInitialization => 38
-  | .IllegalArrayDesignatorUsage => 39
-  | .IllegalTypeArrayDesignator => 40
-  | .IllegalSizeArrayDesignator => 41
-  | .IllegalMemberDesignatorUsage => 42
-  | .IllegalMemberDesignatorFlexibleArrayMember _ => 106
-  | .IllegalMemberDesignator _ _ => 107
-  | .InitializationAsSimpleAssignment _ _ _ => 108
-  | .StaticAssertFailed _ => 109
-  | .LabelStatementOutsideSwitch => 43
-  | .LabelRedefinition _ => 110
-  | .IfStatementControllingExpressionNotScalar => 44
-  | .SwitchStatementControllingExpressionNotInteger => 45
-  | .CaseStatementOverlap _ => 111
-  | .MutipleDefaultStatement _ => 112
-  | .IterationStatementControllingExpressionNotScalar => 46
-  | .IllegalStorageClassIterationStatement => 47
-  | .UndeclaredLabel _ => 113
-  | .ContinueOutsideLoop => 48
-  | .BreakOutsideSwitchOrLoop => 49
-  | .NonVoidReturnVoidFunction => 50
-  | .VoidReturnNonVoidFunction => 51
-  | .ReturnAsSimpleAssignment _ _ _ => 114
-  | .IllegalStorageClassFileScoped => 52
-  | .ExternalRedefinition _ => 115
-  | .WrongTypeFunctionIdentifier => 53
-  | .IllegalStorageClassFunctionDefinition => 54
-  | .IllegalIdentifierTypeVoidInFunctionDefinition => 55
-  | .UniqueVoidParameterInFunctionDefinition => 56
-  | .FunctionParameterAsSimpleAssignment _ _ _ => 116
-  | .TentativeNotCompleted _ => 117
-  | .AssertMacroExpressionScalarType => 57
-  | .AtomicAddressArgumentMustBeAtomic _ _ => 118
-  | .AtomicAddressArgumentMustBePointer _ _ => 119
-  | .GNUConditionalOperatorInvalidOperandType _ => 120
-  | .GNUBuiltinChooseExprNotIntegerConstant => 58
-  | .TypedefBytesAreUnsignedCharsOnly => 59
-  | .CastToFromByte => 60
+  | .BitfieldInvalidDeclaration => 0
+  | .BitfieldAddress => 1
+  | .BitfieldSizeof => 2
+  | .GenericSelectionMultipleDefault => 3
+  | .GenericSelectionIncorrectType _ _ => 64
+  | .GenericSelectionOverlapping _ _ => 65
+  | .GenericSelectionMultipleMatch _ => 66
+  | .GenericSelectionNoMatch _ => 67
+  | .FunctionCallIncompleteReturnType _ => 68
+  | .FunctionCallArrayReturnType _ => 69
+  | .FunctionCallIncorrectType => 4
+  | .FunctionCallTooManyArguments _ _ => 70
+  | .FunctionCallTooFewArguments _ _ => 71
+  | .MemberofReferenceBaseTypeLvalue _ _ => 72
+  | .MemberofReferenceBaseTypeRvalue _ => 73
+  | .MemberofNoMemberLvalue _ _ _ => 74
+  | .MemberofNoMemberRvalue _ _ => 75
+  | .MemberofIncompleteLvalue _ _ => 76
+  | .MemberofIncompleteRvalue _ => 77
+  | .MemberofptrReferenceBaseType _ _ => 78
+  | .MemberofptrReferenceTypeNotPointer _ => 79
+  | .MemberofptrNoMember _ _ _ => 80
+  | .MemberofptrIncomplete _ _ => 81
+  | .InvalidTypeCompoundLiteral => 5
+  | .UnaryExpressionNotLvalue => 6
+  | .InvalidArgumentTypeUnaryIncrement _ => 82
+  | .InvalidArgumentTypeUnaryDecrement _ => 83
+  | .UnaryAddressNotRvalue _ => 84
+  | .UnaryAddressRegisterLvalue => 7
+  | .IndirectionNotPointer => 8
+  | .InvalidArgumentTypeUnaryExpression _ => 85
+  | .SizeofInvalidApplication _ => 86
+  | .AlignofInvalidApplication _ _ => 87
+  | .CastInvalidType _ _ => 88
+  | .CastPointerToFloat => 9
+  | .CastFloatToPointer => 10
+  | .ArithBinopOperandsType _ _ _ => 89
+  | .RelationalInvalidOperandsType _ _ => 90
+  | .EqualityInvalidOperandsType _ _ => 91
+  | .AndInvalidOperandsType _ _ => 92
+  | .OrInvalidOperandsType _ _ => 93
+  | .ConditionalOperatorControlType _ => 94
+  | .ConditionalOperatorInvalidOperandTypes _ _ => 95
+  | .AssignmentModifiableLvalue => 11
+  | .SimpleAssignmentViolation _ _ _ => 96
+  | .CompoundAssignmentAddSubOperandTypes _ _ => 97
+  | .CompoundAssignmentOthersOperandTypes _ _ _ => 98
+  | .IntegerConstantOutRange => 12
+  | .NoLinkageMultipleDeclaration _ => 99
+  | .TypedefRedefinition => 13
+  | .TypedefRedefinitionVariablyModifiedType => 14
+  | .SameScopeIncompatibleDeclarations => 15
+  | .IllegalMultipleStorageClasses => 16
+  | .IllegalMultipleStorageClassesThreadLocal => 17
+  | .ThreadLocalShouldAppearInEveryDeclaration => 18
+  | .ThreadLocalFunctionDeclaration => 19
+  | .NoTypeSpecifierInDeclaration => 20
+  | .IllegalTypeSpecifierInDeclaration => 21
+  | .StructDeclarationLacksDeclaratorList => 22
+  | .StructMemberIncompleteType _ _ => 100
+  | .StructMemberFunctionType _ => 101
+  | .StructMemberFlexibleArray => 23
+  | .StructMemberFlexibleArrayInArray => 24
+  | .IllegalFlexibleArrayMember _ => 102
+  | .WrongTypeEnumConstant => 25
+  | .TagRedefinition _ => 103
+  | .TagRedeclaration _ => 104
+  | .EnumTagIncomplete => 26
+  | .AtomicTypeConstraint => 27
+  | .RestrictQualifiedTypeConstraint => 28
+  | .RestrictQualifiedPointedTypeConstraint _ => 105
+  | .IllegalAlignas _ => 106
+  | .AlignasNotIntegerConstant => 29
+  | .AlignasInvalidIntegerConstant => 30
+  | .AlignasLessThanRequired _ => 107
+  | .ArrayDeclarationNegativeSize => 31
+  | .ArrayDeclarationIncompleteType => 32
+  | .ArrayElementSizeAlignment => 33
+  | .ArrayDeclarationFunctionType => 34
+  | .ArrayDeclarationQsAndStaticOnlyOutmost => 35
+  | .ArrayDeclarationQsAndStaticOutsideFunctionProto => 36
+  | .IllegalReturnTypeFunctionDeclarator => 37
+  | .IllegalStorageClassFunctionDeclarator => 38
+  | .IncompleteParameterTypeFunctionDeclarator => 39
+  | .IllegalInitialisation _ => 108
+  | .IllegalStorageClassStaticOrThreadInitializer => 40
+  | .IllegalLinkageAndInitialization => 41
+  | .IllegalArrayDesignatorUsage => 42
+  | .IllegalTypeArrayDesignator => 43
+  | .IllegalSizeArrayDesignator => 44
+  | .IllegalMemberDesignatorUsage => 45
+  | .IllegalMemberDesignatorFlexibleArrayMember _ => 109
+  | .IllegalMemberDesignator _ _ => 110
+  | .InitializationAsSimpleAssignment _ _ _ => 111
+  | .StaticAssertFailed _ => 112
+  | .LabelStatementOutsideSwitch => 46
+  | .LabelRedefinition _ => 113
+  | .IfStatementControllingExpressionNotScalar => 47
+  | .SwitchStatementControllingExpressionNotInteger => 48
+  | .CaseStatementOverlap _ => 114
+  | .MutipleDefaultStatement _ => 115
+  | .IterationStatementControllingExpressionNotScalar => 49
+  | .IllegalStorageClassIterationStatement => 50
+  | .UndeclaredLabel _ => 116
+  | .ContinueOutsideLoop => 51
+  | .BreakOutsideSwitchOrLoop => 52
+  | .NonVoidReturnVoidFunction => 53
+  | .VoidReturnNonVoidFunction => 54
+  | .ReturnAsSimpleAssignment _ _ _ => 117
+  | .IllegalStorageClassFileScoped => 55
+  | .ExternalRedefinition _ => 118
+  | .WrongTypeFunctionIdentifier => 56
+  | .IllegalStorageClassFunctionDefinition => 57
+  | .IllegalIdentifierTypeVoidInFunctionDefinition => 58
+  | .UniqueVoidParameterInFunctionDefinition => 59
+  | .FunctionParameterAsSimpleAssignment _ _ _ => 119
+  | .TentativeNotCompleted _ => 120
+  | .AssertMacroExpressionScalarType => 60
+  | .AtomicAddressArgumentMustBeAtomic _ _ => 121
+  | .AtomicAddressArgumentMustBePointer _ _ => 122
+  | .GNUConditionalOperatorInvalidOperandType _ => 123
+  | .GNUBuiltinChooseExprNotIntegerConstant => 61
+  | .TypedefBytesAreUnsignedCharsOnly => 62
+  | .CastToFromByte => 63
 mutual
 def violation.beq_derived (cmpx_ cmpy_ : violation) : Bool :=
   match cmpx_, cmpy_ with
+  | .BitfieldInvalidDeclaration, .BitfieldInvalidDeclaration => true
+  | .BitfieldAddress, .BitfieldAddress => true
+  | .BitfieldSizeof, .BitfieldSizeof => true
   | .GenericSelectionMultipleDefault, .GenericSelectionMultipleDefault => true
   | .GenericSelectionIncorrectType x1 x2, .GenericSelectionIncorrectType y1 y2 =>
     x1 == y1 && x2 == y2
@@ -1010,6 +1019,9 @@ def std_of_atomic_operation_synopsis : atomic_operations_synopsys → List Strin
 def std_of_violation : violation → List String :=
   fun (x : violation) =>
     match x with
+    | BitfieldInvalidDeclaration => ["§6.7.2.1#4", "§6.7.2.1#5"]
+    | BitfieldAddress => ["§6.5.3.2#1"]
+    | BitfieldSizeof => ["§6.5.3.4#1"]
     | GenericSelectionMultipleDefault => ["§6.5.1.1#2, sentence 1"]
     | GenericSelectionIncorrectType _ _ => ["§6.5.1.1#2, sentence 2"]
     | GenericSelectionOverlapping _ _ => ["§6.5.1.1#2, sentence 3"]

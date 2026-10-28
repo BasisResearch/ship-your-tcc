@@ -1,0 +1,14 @@
+c/tests/bitfields/batch.c: In function ‘probe_narrow_assignment_auto’:
+c/tests/bitfields/batch.c:41:120: warning: unsigned conversion from ‘int’ to ‘unsigned char:3’ changes value from ‘15’ to ‘7’ [-Woverflow]
+   41 | static int probe_narrow_assignment_auto(void) { struct S { unsigned a:3; signed int b:3; }; struct S s={0}; int a=(s.a=15); int b=(s.b=7); return a!=7 || b != -1 || s.a!=7 || s.b != -1; }
+      |                                                                                                                        ^~
+c/tests/bitfields/batch.c:41:136: warning: overflow in conversion from ‘int’ to ‘signed char:3’ changes value from ‘7’ to ‘-1’ [-Woverflow]
+   41 | static int probe_narrow_assignment_auto(void) { struct S { unsigned a:3; signed int b:3; }; struct S s={0}; int a=(s.a=15); int b=(s.b=7); return a!=7 || b != -1 || s.a!=7 || s.b != -1; }
+      |                                                                                                                                        ^
+c/tests/bitfields/batch.c: In function ‘probe_narrow_assignment_static’:
+c/tests/bitfields/batch.c:42:129: warning: unsigned conversion from ‘int’ to ‘unsigned char:3’ changes value from ‘15’ to ‘7’ [-Woverflow]
+   42 | static int probe_narrow_assignment_static(void) { struct S { unsigned a:3; signed int b:3; }; static struct S s={0}; int a=(s.a=15); int b=(s.b=7); return a!=7 || b != -1 || s.a!=7 || s.b != -1; }
+      |                                                                                                                                 ^~
+c/tests/bitfields/batch.c:42:145: warning: overflow in conversion from ‘int’ to ‘signed char:3’ changes value from ‘7’ to ‘-1’ [-Woverflow]
+   42 | static int probe_narrow_assignment_static(void) { struct S { unsigned a:3; signed int b:3; }; static struct S s={0}; int a=(s.a=15); int b=(s.b=7); return a!=7 || b != -1 || s.a!=7 || s.b != -1; }
+      |                                                                                                                                                 ^

@@ -1,0 +1,25 @@
+{
+  "case": "invalid_aligned",
+  "command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/run_tcc_sail.sh",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/tests/bitfields/invalid_aligned.c"
+  ],
+  "source_sha256": "a43111c5644d9c47bc8a5e57d706577637d77df312b02bb43fa6ff7623833f4e",
+  "elf_sha256": "160a0cfa754523cc57811d8e7043ab36fa122a4afb2b54cbc89aad726a267d7c",
+  "exit": 0,
+  "constraint_diagnostic": false,
+  "wall_seconds": 80.93,
+  "artifact_pins": {
+    "raw": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr": "66d82f809c892dcede3b6879137f38fb3ef1735c120f78c1774064811b5a8041",
+    "prog.elf.xz": "464e3c9a82da292630e359961fc55fc3ff4405c697c3dba19159397c009e8e0f",
+    "meta": "ebc60f52d8f4b2927a48ced852d6b1f1f805094960882db34be54b04c41f709c",
+    "embed.S": "c309eb282987c50962b77970aaf0490c1296b70dc684df02cc61ba1a6535acdc",
+    "make.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "pcs": "3f7755ebb3256a6a0526577a93508f5e3a77e9b18434e73adae90e8cbe605da2",
+    "input.c": "a43111c5644d9c47bc8a5e57d706577637d77df312b02bb43fa6ff7623833f4e",
+    "ld.log": "68e43ce554dc4cd5240addc886204811afa61fdb38b614b40dd3991227006673",
+    "trace": "f29f8b17516ab0b6e5a704253dcb38472c3a408cac851b30e4283248b12b3602"
+  }
+}
