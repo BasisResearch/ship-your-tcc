@@ -41,7 +41,7 @@ to this project's two-worker limit and shared Lean build lock.
 Current assignments, 2026-10-28: slot 1 runs tasks/f1-enum-bitfields.md in
 sol-csem-repin. Slot 2 has completed physical-proof checkpoint b42f766 in
 sol-f2-tokens; it and multi-TU checkpoint 96c520e await combined main integration.
-Next slot-2 assignment: tasks/f1-gnu-conditional-semantics.md.
+Slot 2 now runs tasks/f1-gnu-conditional-semantics.md from combined base 75a2df8.
 Bitfields and GNU expression syntax are adopted after their combined gates.
 Member attributes are adopted after rebuilt-image integration.
 The local replay-erasure theorem is adopted after its combined gate; eleven

@@ -700,3 +700,10 @@ Statements and the pure block erasure/shape laws. Focused and full gates pass;
 archive members, 3,374 primary and 399 immutable-base supplementary source pins.
 Combined main adoption with multi-TU checkpoint 96c520e is pending. Read/refill,
 host, splice transport and whole-run/compiler obligations remain open.
+
+Current combination, 2026-10-28: main's patched member-attribute image/symbols
+and seven executables rebuild with verified unchanged source hashes. Candidate
+75a2df8 combines reviewed multi-TU and pure physical proofs; full gate on 4,162
+inputs, independent syntax/physical checks and fresh native two-file 104 are
+pending. Slot 2 now handles shared GNU conditional semantics; slot 1's newer
+full-width enum policy needs its new gate, not the historical full4 receipt.
