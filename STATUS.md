@@ -40,7 +40,7 @@ public libc `strtold` still needs correction in the library lane. Matching refus
 
 The lead runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most two
 at a time, following MANAGER.md. Slot 1 now handles C11 bitfield semantics;
-slot 2 repairs C11 assertion-message encodings. Local replay erasure is proved
+slot 2 constructs general GNU expression syntax. Assertion-message encodings are adopted. Local replay erasure is proved
 and adopted. Array-to-pointer alignment decay is adopted after the combined image/gate validation. Complete _Generic/_Static_assert syntax is adopted after its combined gate
 and independent raw/native checks. Binding meaning and actual model-owned compiler-injected
 opening authority are adopted after their combined gate and independent raw
@@ -472,6 +472,23 @@ frozen sum cuts are unchanged. Slot 1 continues bitfields/shared CSEM-14;
 slot 2 repairs wide assertion messages. A separate queued task,
 tasks/f3-bitfield-constraints.md, covers four silently accepted invalid C11
 bitfield forms; their native discrepancy captures await F1 review/adoption.
+
+Assertion-message adoption (2026-10-28): all five C11 literal encodings and
+compatible adjacent strings now pass in the patched compiler/model. There are
+65 complete Cabs controls in each of three comparison scopes,
+64 new successful fast arenas and 61 separate diagnostic refusals. The reviewed
+worker full CSem gate passes 3,379 inputs, all identical in the combined tree;
+269 prior-main inputs are unchanged. The fresh combined default gate passes
+3,648 pins. One additional complete native 4 MiB assertion arena and separate
+full program run pass on the rebuilt integration image; the worker's five
+native observations remain separately pinned. See
+results/model/assertion-messages-integration-2026-10-28.md. The valid wide-message
+residual is retired; original refusal evidence is retained. The generic suite
+now has 22 valid controls, 11 invalid controls and one no-message extension.
+Eleven ghost proof contracts and F1–F3 completion remain open; sum cuts stay
+frozen. Slot 2 handles GNU expression syntax. Slot 1 continues bitfields/shared
+compound lowering, including the review-discovered character-copy defect;
+GNU trailing bitfield attributes are queued in tasks/f1-bitfield-attributes.md.
 
 ## Needs user
 

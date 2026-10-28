@@ -52,11 +52,15 @@ and adopted after the combined gate; eleven ghost contracts and the four new com
 contracts remain open
 ([binding integration](results/model/binding-integration-2026-10-28.md),
 [local replay proof](results/model/replay-integration-2026-10-28.md)).
-Generic/static-assert compiler actions now retain all selected and unselected
-syntax: 21 focused controls agree in all three comparison scopes. A fresh
-native Sail batch matches all 4 MiB and a separate complete program run returns
-zero. Twelve invalid diagnostics and the valid wide-message compiler refusal
-remain separate ([generic integration](results/model/unevaluated-integration-2026-10-28.md)).
+Generic/static-assert compiler actions retain selected and unselected syntax.
+Assertion messages now accept all five C11 literal encodings: 65 complete Cabs
+controls agree in all three scopes, 64 new fast arenas match, and 61 diagnostic
+refusals remain separate. The worker full CSem gate and fresh combined default
+gate pass on identical semantic inputs. A fresh complete 4 MiB native assertion
+arena and separate successful full program run validate the rebuilt image
+([assertion integration](results/model/assertion-messages-integration-2026-10-28.md)).
+The original generic suite now has 22 valid controls, 11 invalid controls and
+one separate no-message extension; its historical wide-message refusal is retained.
 GNU declaration syntax/layout has 23 semantic controls and six actual-header
 parses. Compiler typedef alignment is now
 repaired: three full compiler Sail probes succeed and two new complete native

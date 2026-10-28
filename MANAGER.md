@@ -39,7 +39,7 @@ The launcher follows 4ct-digest's MANAGER.md/codexwork.sh workflow, adapted
 to this project's two-worker limit and shared Lean build lock.
 
 Current assignments, 2026-10-28: slot 1 runs tasks/f1-bitfields.md in
-sol-csem-repin. Slot 2 runs tasks/f3-static-assert-messages.md in sol-f2-tokens.
+sol-csem-repin. Slot 2 runs tasks/f3-gnu-expression-syntax.md in sol-f2-tokens.
 The local replay-erasure theorem is adopted after its combined gate; eleven
 ghost contracts remain open. Both workers use reviewed integration bases,
 and the lead independently gates each final combination before adoption.
@@ -61,8 +61,11 @@ requested corrections must be resolved or returned as an explicit obstruction.
 Keep build receipts compact: inspect ID/status/lead notes, and verify large
 hash manifests with scripts. Do not repeatedly print whole manifests or logs.
 
-Next integration duty: review assertion-message parsing against actual C11
-string encodings, independent complete Cabs and native arenas; review bitfield
-semantics together with the inherited compound-lvalue repair. Keep GNU parser
-and layout failures explicit. The local replay theorem changes no runtime
+Next integration duty: review GNU expression syntax and bitfield semantics
+with the inherited compound-lvalue repair. Assertion-message adoption has a
+fresh combined default gate, source-identical worker full gate and fresh native
+image observation. Bitfield review must preserve known bits through character
+copies and distinguish historical frozen references from current representation
+profiles. Keep GNU trailing-attribute parser failures and compiler constraint
+diagnostic gaps explicit; their follow-up tasks remain queued. The local replay theorem changes no runtime
 behavior and proves no whole-run construction or binary refinement duty.
