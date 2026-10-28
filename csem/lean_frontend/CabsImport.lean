@@ -370,6 +370,7 @@ partial def jsonToExpression_ (j : Json) : Except String cabs_expression_ := do
       (← jsonToExpression (← getField j "expr")))
   | "CabsEsizeof_expr" => .ok (.CabsEsizeof_expr (← jsonToExpression (← getField j "expr")))
   | "CabsEsizeof_type" => .ok (.CabsEsizeof_type (← jsonToTypeName (← getField j "type")))
+  | "CabsEalignof_expr" => .ok (.CabsEalignof_expr (← jsonToExpression (← getField j "expr")))
   | "CabsEalignof" => .ok (.CabsEalignof (← jsonToTypeName (← getField j "type")))
   | "CabsEcast" => .ok (.CabsEcast
       (← jsonToTypeName (← getField j "type"))

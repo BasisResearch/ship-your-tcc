@@ -256,9 +256,16 @@ def pUnary : Nat → P cabs_expression
     | .ALIGNOF =>
       let _ ← advance
       let _ ← expectT .LPAREN
-      let ty ← pTypeName n
-      let _ ← expectT .RPAREN
-      return CabsExpression (rgc t.sp (← prevEnd) t.sp) (CabsEalignof ty)
+      if ← startsTypeName (← peekN 0) then
+        let ty ← pTypeName n
+        let _ ← expectT .RPAREN
+        return CabsExpression (rgc t.sp (← prevEnd) t.sp) (CabsEalignof ty)
+      else
+        if !(← gnu) || t.spelling == "_Alignof" then
+          failAt "C11 _Alignof requires a type name"
+        let e ← pExpr n
+        let _ ← expectT .RPAREN
+        return CabsExpression (rgc t.sp (← prevEnd) t.sp) (CabsEalignof_expr e)
     | tk =>
       match unaryOp tk with
       | some op =>
@@ -483,7 +490,7 @@ def pTypeof : Nat → P cabs_type_specifier
   | n+1 => do
     let kw ← advance
     let _ ← expectT .LPAREN
-    let s ← if ← startsTypeName (← peek) then pure (.TSpec_typeof_type (← pTypeName n))
+    let s ← if ← startsTypeName (← peekN 0) then pure (.TSpec_typeof_type (← pTypeName n))
       else pure (.TSpec_typeof_expr (← pExpr n))
     let _ ← expectT .RPAREN
     return TSpec (rg kw.sp (← prevEnd)) s
@@ -494,7 +501,7 @@ def pAlignas : Nat → P alignment_specifier
   | n+1 => do
     let _ ← advance
     let _ ← expectT .LPAREN
-    let a ← if ← startsTypeName (← peek) then pure (.AS_type (← pTypeName n))
+    let a ← if ← startsTypeName (← peekN 0) then pure (.AS_type (← pTypeName n))
       else pure (.AS_expr (← pConstExpr n))
     let _ ← expectT .RPAREN
     return a

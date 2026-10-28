@@ -3993,8 +3993,8 @@ def get_sigma_sofar [CerbImplCfg.Impl] :
               (Bool × CerbLocation.Loc × attributes × storageDuration × Bool × Option alignment ×
                 qualifiers × ctype)) =>
               match p with
-              | (_, loc1, attrs1, dur, isRegister, _, qs, ty1) =>
-                (loc1, attrs1, Decl_object ((dur, isRegister)) none qs ty1))
+              | (_, loc1, attrs1, dur, isRegister, align_opt, qs, ty1) =>
+                (loc1, attrs1, Decl_object ((dur, isRegister)) align_opt qs ty1))
             st.external_object_declarations));
     (({ declarations := /- remove_unused_identifiers st startup_sym -/ decls1,
         object_definitions :=

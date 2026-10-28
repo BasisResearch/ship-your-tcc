@@ -258,3 +258,13 @@ runtime meanings remain the existing Cerberus Core/memory operations. No Lua
 or newlib machine proof is copied or asserted byte-identical by this work.
 The actual TinyCC header/image inputs remain at the existing licensed pin;
 results/csem/injected-bindings.md records their provenance and open duties.
+
+GNU expression/type alignment and array constraints (2026-10-28): local
+extensions of the imported Cerberus Cabs, shared GenTyping and Cabs-to-Ail
+code, preserving the existing CType annotation contract. GNU expression
+queries have a distinct AST constructor in the independent Lean grammar;
+patch0008 extends the independently generated OCaml grammar/JSON/LF adapters.
+The two type-query definitions are projected verbatim from shared
+translation_aux into the isolated OCaml overlay after the adopted symbol
+proxy patch0006; unrelated IEEE routines stay at their pristine pin. No Lua or library machine proof is copied or asserted byte
+identical. The Lua inventory/mandatory table was consulted before this work.

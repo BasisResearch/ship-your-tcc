@@ -342,3 +342,39 @@ See results/csem/array-constraints-2026-10-28.md for minimal sources, executable
 pins, clean upstream status, retained initial harness error and 173 verified
 captures. Repair is queued in tasks/f1-gnu-alignment-semantics.md. This is a bug
 list for Kiran; no external contact or changed Supported premise is implied.
+
+**CSEM-12/13 local alignment/array repair checkpoint (2026-10-28).**
+The shared Lem fork now carries alias alignment through typed expressions,
+represents GNU expression-alignof distinctly from C11 type queries, preserves
+stored declaration alignment in the provisional global table, and checks array
+elements before completeness queries/typedef erasure. Generated Lean repairs
+the three original defined-one inputs and accepts/executes the five original
+expression-query inputs as defined zero. It diagnoses the seven invalid rows
+of CSEM-13's ten-case matrix, retaining its three defined-zero controls; the
+old matrix and 173 pristine/historical captures remain unchanged. New nested
+constraint and type-transport controls are retained separately. These are
+finite local observations, not a representation/transport or compiler theorem.
+
+The original two function-query elaboration errors remain required GNU
+meaning/target-policy obstructions: C11's Ail rule rejects function types,
+while native GCC/tcc and RV64 GCC have different function alignment policies.
+The explicitly aligned-member GNU question also remains separate. No new
+Supported/Fits exclusion or refusal disjunct is added. Historical Menhir GNU
+placement failures are frontend limitations. The extended isolated parser
+retains every tested attribute; placements without an attachment carrier
+refuse explicitly instead of being erased for an agreement count.
+
+An extra valid GNU array-typedef decay query exposes a separate patched-tcc
+compiler discrepancy: an array typedef of size8/alignment32 becomes a pointer
+with queried alignment32 after `a+0`, versus GCC's8. Independent full compiler
+Sail and cross-GCC Sail reproduce 32 and 8 respectively. CSem does not copy that
+leak. This is compiler/model follow-up, not an inherited Cerberus bug. Exact
+current pins, independent observations, remaining obligations and failed
+approaches are in results/csem/gnu-alignment-semantics.md. The final local full repository/CSem
+gate passes with 3,367 frozen source pins;
+the independent oracle's artifact/overlay manifests verify. The 71-case
+comparison keeps 53 defined-zero agreements, 12 constraint diagnostics,
+two function-policy obstructions, three Menhir placement limitations and one additional
+compiler discrepancy separate; all 71 raw/text and 68 Menhir-accepted full Cabs
+checks agree. These do not close any universal Statement.
+Kiran still owns external communication; none has been sent.

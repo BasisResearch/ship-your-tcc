@@ -208,7 +208,9 @@ let ctype_of a_expr =
       (GenTypesAux.interpret_genTypeCategory (Loc.locOf a_expr) (Implementation.integerImpl ())
         (GenTypes.genTypeCategoryOf a_expr)) with
     | Right (GenTypes.LValueType _ ty _) -> ty
-    | Right (GenTypes.RValueType   ty) -> ty
+    | Right (GenTypes.RValueType   ty) ->
+        let (annots, _) = GenTypes.annotations a_expr in
+        gnu_align_typedef (gnu_typedef_alignment annots) ty
     | Left (loc, TypingError.TError_MiscError (TypingError.UntypableIntegerConstant n)) ->
         error $ Loc.stringFromLocation loc ^ ": untypable integer constant '" ^ show n ^ "'\n"
     | _ -> error "[Translation_aux.ctype_of] impossible case: TODO move to Exception.t"
@@ -221,7 +223,9 @@ let qualified_ctype_of a_expr =
       (GenTypesAux.interpret_genTypeCategory (Loc.locOf a_expr) (Implementation.integerImpl ())
         (GenTypes.genTypeCategoryOf a_expr)) with
     | Right (GenTypes.LValueType qs ty _) -> (qs, ty)
-    | Right (GenTypes.RValueType   ty) -> (no_qualifiers, ty)
+    | Right (GenTypes.RValueType   ty) ->
+        let (annots, _) = GenTypes.annotations a_expr in
+        (no_qualifiers, gnu_align_typedef (gnu_typedef_alignment annots) ty)
     | Left (loc, TypingError.TError_MiscError (TypingError.UntypableIntegerConstant n)) ->
         error $ Loc.stringFromLocation loc ^ ": untypable integer constant '" ^ show n ^ "'\n"
     | _ -> error "[Translation_aux.ctype_of] impossible case: TODO move to Exception.t"

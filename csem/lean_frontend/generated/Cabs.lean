@@ -151,6 +151,8 @@ inductive cabs_expression_ : Type where
   | CabsEsizeof_expr : cabs_expression → cabs_expression_
   | CabsEsizeof_type : type_name → cabs_expression_
   | CabsEalignof : type_name → cabs_expression_
+  /- GNU unevaluated expression query, distinct from the C11 type query. -/
+  | CabsEalignof_expr : cabs_expression → cabs_expression_
   /- §6.5.4 Cast operators, Syntax -/
   | CabsEcast : type_name → cabs_expression → cabs_expression_
   /- §6.5.5-14 Multiplicative/... operators, Syntax -/
@@ -406,10 +408,10 @@ inductive for_clause : Type where
 end
 export cabs_expression_ (CabsEident CabsEconst CabsEstring CabsEgeneric CabsEsubscript CabsEcall
     CabsEmemberof CabsEmemberofptr CabsEpostincr CabsEpostdecr CabsEcompound CabsEpreincr
-    CabsEpredecr CabsEunary CabsEsizeof_expr CabsEsizeof_type CabsEalignof CabsEcast CabsEbinary
-    CabsEcond CabsEassign CabsEcomma CabsEassert CabsEoffsetof CabsEva_start CabsEva_copy
-    CabsEva_arg CabsEva_end CabsEprint_type CabsEbmc_assume CabsEgcc_statement CabsEcondGNU
-    CabsEbuiltinGNU)
+    CabsEpredecr CabsEunary CabsEsizeof_expr CabsEsizeof_type CabsEalignof CabsEalignof_expr
+    CabsEcast CabsEbinary CabsEcond CabsEassign CabsEcomma CabsEassert CabsEoffsetof CabsEva_start
+    CabsEva_copy CabsEva_arg CabsEva_end CabsEprint_type CabsEbmc_assume CabsEgcc_statement
+    CabsEcondGNU CabsEbuiltinGNU)
 export gnu_builtin_function (GNUbuiltin_types_compatible_p GNUbuiltin_choose_expr)
 export cabs_expression (CabsExpression)
 export cabs_generic_association (GA_type GA_default)
@@ -595,22 +597,23 @@ def cabs_expression_.ctor_rank_ocaml : cabs_expression_ → Nat
   | .CabsEsizeof_expr _ => 14
   | .CabsEsizeof_type _ => 15
   | .CabsEalignof _ => 16
-  | .CabsEcast _ _ => 17
-  | .CabsEbinary _ _ _ => 18
-  | .CabsEcond _ _ _ => 19
-  | .CabsEassign _ _ _ => 20
-  | .CabsEcomma _ _ => 21
-  | .CabsEassert _ => 22
-  | .CabsEoffsetof _ _ => 23
-  | .CabsEva_start _ _ => 24
-  | .CabsEva_copy _ _ => 25
-  | .CabsEva_arg _ _ => 26
-  | .CabsEva_end _ => 27
-  | .CabsEprint_type _ => 28
-  | .CabsEbmc_assume _ => 29
-  | .CabsEgcc_statement _ => 30
-  | .CabsEcondGNU _ _ => 31
-  | .CabsEbuiltinGNU _ => 32
+  | .CabsEalignof_expr _ => 17
+  | .CabsEcast _ _ => 18
+  | .CabsEbinary _ _ _ => 19
+  | .CabsEcond _ _ _ => 20
+  | .CabsEassign _ _ _ => 21
+  | .CabsEcomma _ _ => 22
+  | .CabsEassert _ => 23
+  | .CabsEoffsetof _ _ => 24
+  | .CabsEva_start _ _ => 25
+  | .CabsEva_copy _ _ => 26
+  | .CabsEva_arg _ _ => 27
+  | .CabsEva_end _ => 28
+  | .CabsEprint_type _ => 29
+  | .CabsEbmc_assume _ => 30
+  | .CabsEgcc_statement _ => 31
+  | .CabsEcondGNU _ _ => 32
+  | .CabsEbuiltinGNU _ => 33
 /- lem: constructor rank for OCaml's polymorphic compare: nullary
    constructors (immediates) sort below non-nullary ones (blocks);
    declaration order within each group. -/
@@ -769,6 +772,7 @@ def cabs_expression_.beq_derived (cmpx_ cmpy_ : cabs_expression_) : Bool :=
   | .CabsEsizeof_expr x1, .CabsEsizeof_expr y1 => cabs_expression.beq_derived x1 y1
   | .CabsEsizeof_type x1, .CabsEsizeof_type y1 => type_name.beq_derived x1 y1
   | .CabsEalignof x1, .CabsEalignof y1 => type_name.beq_derived x1 y1
+  | .CabsEalignof_expr x1, .CabsEalignof_expr y1 => cabs_expression.beq_derived x1 y1
   | .CabsEcast x1 x2, .CabsEcast y1 y2 =>
     type_name.beq_derived x1 y1 && cabs_expression.beq_derived x2 y2
   | .CabsEbinary x1 x2 x3, .CabsEbinary y1 y2 y3 =>
@@ -847,6 +851,7 @@ def cabs_expression_.compare_derived (cmpx_ cmpy_ : cabs_expression_) : Ordering
   | .CabsEsizeof_expr x1, .CabsEsizeof_expr y1 => cabs_expression.compare_derived x1 y1
   | .CabsEsizeof_type x1, .CabsEsizeof_type y1 => type_name.compare_derived x1 y1
   | .CabsEalignof x1, .CabsEalignof y1 => type_name.compare_derived x1 y1
+  | .CabsEalignof_expr x1, .CabsEalignof_expr y1 => cabs_expression.compare_derived x1 y1
   | .CabsEcast x1 x2, .CabsEcast y1 y2 =>
     (match type_name.compare_derived x1 y1 with
      | .lt => Ordering.lt
@@ -3017,6 +3022,7 @@ def cabs_expression_.lemSize (sizex_ : cabs_expression_) : Nat :=
   | .CabsEsizeof_expr x1 => 1 + cabs_expression.lemSize x1
   | .CabsEsizeof_type x1 => 1 + type_name.lemSize x1
   | .CabsEalignof x1 => 1 + type_name.lemSize x1
+  | .CabsEalignof_expr x1 => 1 + cabs_expression.lemSize x1
   | .CabsEcast x1 x2 => 1 + type_name.lemSize x1 + cabs_expression.lemSize x2
   | .CabsEbinary x1 x2 x3 =>
     1 + cabs_binary_operator.lemSize x1 + cabs_expression.lemSize x2 + cabs_expression.lemSize x3

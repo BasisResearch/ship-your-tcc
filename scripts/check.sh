@@ -178,6 +178,8 @@ if [ -f lakefile.toml ] || [ -f lakefile.lean ]; then
       || fail "GNU declaration attributes (artifacts: $gnu_checks/semantics)"
     python3 scripts/check_gnu_raw_headers.py --out "$gnu_checks/headers" \
       || fail "actual injected-header syntax (artifacts: $gnu_checks/headers)"
+    python3 scripts/check_gnu_alignment_semantics.py --out "$gnu_checks/alignment" \
+      || fail "GNU expression alignment / C11 array constraints (artifacts: $gnu_checks/alignment)"
     echo "GNU declaration/header artifacts: $gnu_checks"
     binding_checks=$(mktemp -d build/injected-binding-gate.XXXXXX)
     fork=$(scripts/csem_fork_oracle.sh --path) || fail "matching binding oracle"

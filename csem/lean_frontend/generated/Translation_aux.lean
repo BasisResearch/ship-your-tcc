@@ -230,7 +230,9 @@ def ctype_of [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerT
         ((integerImpl _lemReader_enum_definitions _lemReader_tagDefs) ())
         (genTypeCategoryOf a_expr)) with
   | Sum.inr (LValueType _ ty1 _) => ty1
-  | Sum.inr (RValueType ty1) => ty1
+  | Sum.inr (RValueType ty1) =>
+    (match annotations a_expr with
+     | (annots1, _) => gnu_align_typedef (gnu_typedef_alignment annots1) ty1)
   | Sum.inl (loc1, TError_MiscError (UntypableIntegerConstant n)) =>
     (failwithI
       (String.append (CerbLocation.stringFromLocation loc1)
@@ -251,7 +253,9 @@ def qualified_ctype_of [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sy
         ((integerImpl _lemReader_enum_definitions _lemReader_tagDefs) ())
         (genTypeCategoryOf a_expr)) with
   | Sum.inr (LValueType qs ty1 _) => (qs, ty1)
-  | Sum.inr (RValueType ty1) => (no_qualifiers, ty1)
+  | Sum.inr (RValueType ty1) =>
+    (match annotations a_expr with
+     | (annots1, _) => (no_qualifiers, gnu_align_typedef (gnu_typedef_alignment annots1) ty1))
   | Sum.inl (loc1, TError_MiscError (UntypableIntegerConstant n)) =>
     (failwithI
       (String.append (CerbLocation.stringFromLocation loc1)

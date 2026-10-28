@@ -1,0 +1,204 @@
+--- a/parsers/c/c_parser.mly
++++ b/parsers/c/c_parser.mly
+@@ -636,6 +636,12 @@
+ | ALIGNOF LPAREN ty= type_name RPAREN
+     { CabsExpression ( region ($startpos, $endpos) (pointCursor $startpos($1))
+                      , CabsEalignof ty ) }
++| GNU_ALIGNOF LPAREN ty= type_name RPAREN
++    { CabsExpression ( region ($startpos, $endpos) (pointCursor $startpos($1))
++                     , CabsEalignof ty ) }
++| GNU_ALIGNOF LPAREN expr= expression RPAREN
++    { CabsExpression ( region ($startpos, $endpos) (pointCursor $startpos($1))
++                     , CabsEalignof_expr expr ) }
+ ;
+ 
+ unary_operator:
+--- a/backend/lean_export/cabs_json.ml
++++ b/backend/lean_export/cabs_json.ml
+@@ -216,6 +216,7 @@
+   | CabsEsizeof_expr e -> tag "CabsEsizeof_expr" [("expr", json_of_cabs_expression e)]
+   | CabsEsizeof_type tn -> tag "CabsEsizeof_type" [("type", json_of_type_name tn)]
+   | CabsEalignof tn -> tag "CabsEalignof" [("type", json_of_type_name tn)]
++  | CabsEalignof_expr e -> tag "CabsEalignof_expr" [("expr", json_of_cabs_expression e)]
+   | CabsEcast (tn, e) ->
+     tag "CabsEcast" [("type", json_of_type_name tn); ("expr", json_of_cabs_expression e)]
+   | CabsEbinary (op, e1, e2) ->
+--- a/ocaml_frontend/pprinters/pp_cabs.ml
++++ b/ocaml_frontend/pprinters/pp_cabs.ml
+@@ -34,6 +34,7 @@
+   | CabsEunary _
+   | CabsEsizeof_expr _
+   | CabsEsizeof_type _
++  | CabsEalignof_expr _
+   | CabsEalignof _
+   | CabsEcast _ -> Some 2
+   | CabsEbinary (CabsMul, _, _)
+@@ -228,6 +229,8 @@
+         Dnode (pp_stmt_ctor "CabsEsizeof_expr" ^^^ d_loc, [dtree_of_cabs_expression e])
+     | CabsEsizeof_type tyname ->
+         Dnode (pp_stmt_ctor "CabsEsizeof_type" ^^^ d_loc, [dtree_of_type_name tyname])
++    | CabsEalignof_expr e ->
++        Dnode (pp_stmt_ctor "CabsEalignof_expr" ^^^ d_loc, [dtree_of_cabs_expression e])
+     | CabsEalignof tyname ->
+         Dnode (pp_stmt_ctor "CabsEalignof" ^^^ d_loc, [dtree_of_type_name tyname])
+     | CabsEcast (tyname, e) ->
+--- a/parsers/c/tokens.ml
++++ b/parsers/c/tokens.ml
+@@ -42,6 +42,7 @@
+   | WHILE
+   | ALIGNAS
+   | ALIGNOF
++  | GNU_ALIGNOF
+   | ATOMIC
+   | BOOL
+   | COMPLEX
+@@ -228,6 +229,7 @@
+   | VOLATILE -> "VOLATILE"
+   | WHILE -> "WHILE"
+   | ALIGNAS -> "ALIGNAS"
++  | GNU_ALIGNOF -> "__alignof__"
+   | ALIGNOF -> "ALIGNOF"
+   | ATOMIC -> "ATOMIC"
+   | BOOL -> "BOOL"
+--- a/parsers/c/c_lexer.mll
++++ b/parsers/c/c_lexer.mll
+@@ -89,6 +89,8 @@
+     "switch"         , SWITCH;
+     "typedef"        , TYPEDEF;
+     "typeof"         , TYPEOF;
++    "__typeof__"     , TYPEOF;
++    "__typeof"       , TYPEOF;
+     "union"          , UNION;
+     "unsigned"       , UNSIGNED;
+     "void"           , VOID;
+@@ -96,6 +98,8 @@
+     "while"          , WHILE;
+     "_Alignas"       , ALIGNAS;
+     "_Alignof"       , ALIGNOF;
++    "__alignof__"    , GNU_ALIGNOF;
++    "__alignof"      , GNU_ALIGNOF;
+     "_Atomic"        , ATOMIC;
+     "_Bool"          , BOOL;
+     "_Complex"       , COMPLEX;
+--- a/parsers/c/c_parser.mly
++++ b/parsers/c/c_parser.mly
+@@ -121,7 +121,7 @@
+ %token AUTO (*BREAK CASE*) CHAR CONST (*CONTINUE DEFAULT DO*) DOUBLE ELSE ENUM EXTERN
+   FLOAT (*FOR GOTO IF*) INLINE INT LONG REGISTER RESTRICT (*RETURN*) SHORT SIGNED SIZEOF
+   STATIC STRUCT (*SWITCH*) TYPEDEF UNION UNSIGNED VOID VOLATILE (*WHILE*) ALIGNAS
+-  ALIGNOF ATOMIC BOOL COMPLEX GENERIC (* IMAGINARY *) NORETURN STATIC_ASSERT
++  ALIGNOF GNU_ALIGNOF ATOMIC BOOL COMPLEX GENERIC (* IMAGINARY *) NORETURN STATIC_ASSERT
+   THREAD_LOCAL
+ %token BREAK CASE CONTINUE DEFAULT DO FOR GOTO IF RETURN SWITCH WHILE
+ 
+--- a/parsers/c/c_parser.mly
++++ b/parsers/c/c_parser.mly
+@@ -76,6 +76,14 @@
+           ; attr_args= match args_opt with None -> [] | Some z -> z }
+         ) (List.concat (List.rev z))
+       end
++
++let check_unattached_attributes attr_opt =
++  let Annot.Attrs attrs = to_attrs attr_opt in
++  if List.exists (fun a -> match a.Annot.attr_ns with
++    | Some (Symbol.Identifier (_, name)) -> name = "__attribute__" || name = "__attribute"
++    | _ -> false) attrs then
++    raise (C_lexer.Error (Errors.Cparser_unimplemented_keyword
++      "GNU attribute placement requires a declaration attachment carrier"))
+ 
+ let inject_attr attr_opt (CabsStatement (loc, Annot.Attrs xs, stmt_)) =
+   let Annot.Attrs xs' = to_attrs attr_opt in
+@@ -866,14 +874,14 @@
+ ;
+ 
+ declaration_specifier:
+-| sc= storage_class_specifier ioption(attribute_specifier_sequence)
+-    { { empty_specs with storage_classes=      [sc]; } }
+-| tq= type_qualifier ioption(attribute_specifier_sequence)
+-    { { empty_specs with type_qualifiers=      [tq]; } }
+-| fs= function_specifier ioption(attribute_specifier_sequence)
+-    { { empty_specs with function_specifiers=  [fs]; } }
+-| als= alignment_specifier ioption(attribute_specifier_sequence)
+-    { { empty_specs with alignment_specifiers= [als]; } }
++| sc= storage_class_specifier attrs=ioption(attribute_specifier_sequence)
++    { check_unattached_attributes attrs; { empty_specs with storage_classes=      [sc]; } }
++| tq= type_qualifier attrs=ioption(attribute_specifier_sequence)
++    { check_unattached_attributes attrs; { empty_specs with type_qualifiers=      [tq]; } }
++| fs= function_specifier attrs=ioption(attribute_specifier_sequence)
++    { check_unattached_attributes attrs; { empty_specs with function_specifiers=  [fs]; } }
++| als= alignment_specifier attrs=ioption(attribute_specifier_sequence)
++    { check_unattached_attributes attrs; { empty_specs with alignment_specifiers= [als]; } }
+ ;
+ 
+ declaration_specifiers:
+@@ -949,8 +957,8 @@
+ ;
+ 
+ attribute_type_specifier_nonunique:
+-| ty= type_specifier_nonunique ioption(attribute_specifier_sequence)
+-    { ty }
++| ty= type_specifier_nonunique attrs=ioption(attribute_specifier_sequence)
++    { check_unattached_attributes attrs; ty }
+ ;
+ 
+ type_specifier_unique:
+@@ -973,8 +981,8 @@
+ ;
+ 
+ attribute_type_specifier_unique:
+-| ty= type_specifier_unique ioption(attribute_specifier_sequence)
+-    { ty }
++| ty= type_specifier_unique attrs=ioption(attribute_specifier_sequence)
++    { check_unattached_attributes attrs; ty }
+ ;
+ 
+ (* §6.7.2.1 Structure and union specifiers *)
+@@ -1128,9 +1136,9 @@
+     { LF.identifier_decl (to_attrs attr_opt) i }
+ | LPAREN save_context decltor= declarator RPAREN
+     { LF.declarator_decl decltor }
+-| decl= array_declarator ioption(attribute_specifier_sequence)
+-| decl= function_declarator ioption(attribute_specifier_sequence)
+-    { decl }
++| decl= array_declarator attrs=ioption(attribute_specifier_sequence)
++| decl= function_declarator attrs=ioption(attribute_specifier_sequence)
++    { LF.add_attributes (to_attrs attrs) decl }
+ | ddecltor= direct_declarator LPAREN ctxt=save_context RPAREN
+     { LF.fun_decl (Params ([], false)) ctxt ddecltor }
+ | ddecltor= direct_declarator LPAREN ctxt=save_context
+--- a/parsers/c/lexer_feedback.ml
++++ b/parsers/c/lexer_feedback.ml
+@@ -166,3 +166,14 @@
+   | _, _ ->
+     Cabs.FunDef (loc, attrs, specifs, cabs_of_declarator d, stmt)
+ 
++
++(* Attributes after an array/function declarator attach to its declared name;
++   retain the existing sort and saved typedef context. *)
++let add_attributes attrs d =
++  let rec direct = function
++    | Cabs.DDecl_identifier (old, id) -> Cabs.DDecl_identifier (Annot.combine_attributes old attrs, id)
++    | Cabs.DDecl_declarator (Cabs.Declarator (p, dd)) ->
++        Cabs.DDecl_declarator (Cabs.Declarator (p, direct dd))
++    | Cabs.DDecl_array (dd, a) -> Cabs.DDecl_array (direct dd, a)
++    | Cabs.DDecl_function (dd, ps) -> Cabs.DDecl_function (direct dd, ps) in
++  { d with direct=direct d.direct }
+--- a/parsers/c/lexer_feedback.mli
++++ b/parsers/c/lexer_feedback.mli
+@@ -33,3 +33,5 @@
+   ((((Symbol.identifier option * Symbol.identifier) * (((Cerb_location.t * string * (Cerb_location.t * string) list) list) option)) list) list) option ->
+   Annot.attributes option ->
+   Cabs.specifiers -> declarator -> Cabs.cabs_statement -> Cabs.cabs_declaration list option -> Cabs.function_definition
++
++val add_attributes: Annot.attributes -> declarator -> declarator
+--- a/ocaml_frontend/pprinters/pp_errors.ml
++++ b/ocaml_frontend/pprinters/pp_errors.ml
+@@ -276,6 +276,8 @@
+       "array declared with a negative or zero size"
+   | ArrayDeclarationIncompleteType ->
+       "array has incomplete type"
++  | ArrayElementSizeAlignment ->
++      "array element size is not a multiple of its declared alignment"
+   | ArrayDeclarationFunctionType ->
+       "element of the array has function type"
+   | ArrayDeclarationQsAndStaticOnlyOutmost ->
