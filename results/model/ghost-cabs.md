@@ -133,3 +133,29 @@ The first ghost-9 56/56 nonsuccess result was diagnostic only. ghost-11 had
 final model includes that clause's semicolon and passes all 44 controls.
 The overall task continues after this coherent checkpoint; ordinary complete
 Cabs and macro provenance are not declared complete.
+
+## Combined integration, 2026-10-28
+
+The checkpoint is combined with adopted allocation, library identity and corpus
+fixtures. The full CSem gate passes with all 2,302 captured source hashes
+unchanged. All 44 required fixture Cabs comparisons still agree; 12 diagnostic
+fixtures stay outside that count. All three ordinary-source strict controls
+still fail on the documented provenance/header gaps. Seven fresh ghost-on/off
+arena/console/diagnostic comparisons agree. No state-erasure theorem follows.
+
+The complete 1,815-input fast-reference run retains 1,345 successful equal
+arenas, 463 matching refusals and seven explicit assembly gaps, with no other
+differences or errors. Its exit remains 1 for assembly. Fresh executions of
+this ghost-instrumented model also match all three complete native Sail arenas
+retained from the corpus-fixture review. This reuses unchanged native captures;
+Sail was not rerun. Source/runtime/model pins, complete comparison artifacts
+and both gate snapshots are in ghost-cabs-integration-2026-10-28/.
+
+The first combined build exposed the positional Pos constructor's new identity
+field. Named-field construction preserves the checkpoint's incomplete raw
+origin information without inventing membership. A first erasure invocation
+lacked generated build/image.syms; normal harness image/symbol preparation
+followed by the same check passes. Both failed attempts remain diagnostics.
+The ongoing Sol continuation owns macro origins/replay and typed header syntax;
+independent F1 GNU attribute meanings remain queued. This adopts a useful
+instrumentation checkpoint, not ordinary whole-C parser completion.

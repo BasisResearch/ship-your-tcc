@@ -1,0 +1,23 @@
+{
+  "revision": "66d59cb3978335a729f16ae5b9c500c7acee4fc1",
+  "source_hashes_verified": 2302,
+  "full_gate": 0,
+  "fixtures": {
+    "exact": 44,
+    "explicit-nonsuccess": 12
+  },
+  "raw": {
+    "explicit-nonsuccess": 3
+  },
+  "broad": {
+    "same": 1345,
+    "same-refusal": 463,
+    "unsupported-asm": 7
+  },
+  "broad_exit": 1,
+  "finite_erasure": 7,
+  "retained_complete_sail_arenas_recompared": 3,
+  "new_native_sail_runs": 0,
+  "model_sha256": "b35401b33b75d2f5663027829328d5b182dc835a609075ca48621215b39fb6e0",
+  "ghost_sha256": "ad8776907c8168401a69dfa4055092767fa8fbd47cd7e48f9a2ad7c6b94e3e2c"
+}

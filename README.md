@@ -41,6 +41,10 @@ adopted after the combined gate: arbitrary checked placements enter CSem's
 outcome set, with generic placement contracts and 21 focused checks. The
 machine-memory simulation remains open (results/csem/allocation-oracle.md).
 
+Typed compiler-action Cabs now has 44 exact shared-token controls; ordinary
+source construction still has explicit macro-origin and injected-header gaps
+(results/model/ghost-cabs.md). Its erasure/agreement proofs remain open.
+
 The latest preprocessing corpus has 618 exact model/reference and 616 exact
 spec/reference agreements across 622 inputs. The image's opened-path once
 cache and include fixtures now agree; residuals and full gate/Sail evidence

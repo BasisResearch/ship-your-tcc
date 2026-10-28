@@ -516,3 +516,9 @@ requested corrections until the lead surfaced them explicitly.
   artifact/overlay manifests verify. Link that immutable engine into the local
   ignored build cache; do not repin or mutate the shared toolchain or rebuild
   a different oracle. The subsequent frozen gate retains this same source pin.
+
+- Combined ghost integration: library identity adds an optional Pos field;
+  use named fields, preserving missing origins as explicit gaps. Do not invent
+  runtime membership to satisfy constructor arity. An erasure-only invocation
+  in a fresh integration worktree also needs normal generated image symbols;
+  retain its missing-file failure, then prepare them through the harness.

@@ -176,7 +176,8 @@ their source changes are preserved. Both slots restarted successfully on Oct 28:
 slot 1 handles library identity and slot 2 resumes ghost Cabs. Allocation
 checkpoint ccc00ed and its combined raw/anonymous/once integration pass;
 the reviewed implementation is adopted with native placement evidence.
-Ghost Cabs remains work in progress; ordinary source mapping is required.
+Typed ghost Cabs is adopted as an incomplete instrumentation checkpoint;
+ordinary source mapping and complete construction remain required.
 No unfinished checkpoint is claimed as an adopted implementation.
 The next independent CSem coverage task is tasks/f1-bitfields.md (CSEM-08):
 representation, target layout and semantic accesses, including unnamed padding.
@@ -219,6 +220,15 @@ one worktree and rejects duplicated selected paths. Two overlapping real
 comparisons, protocol tests and the maintained static gate pass. The prior
 stopped overlap remains a diagnostic, not accepted evidence. See
 results/review/model-comparison-isolation-2026-10-28.md.
+F3 typed ghost checkpoint (2026-10-28): modeled compiler actions now retain
+typed Cabs fragments and explicit gaps. Combined full gate, 44 required exact
+shared-token controls and seven finite ghost-on/off checks pass. The broad
+run retains 1,345/1,815 successes and its stated residuals. Fresh model runs
+match three retained complete Sail arenas; these are not new Sail executions.
+Three ordinary strict controls still fail on model macro provenance and actual
+injected-header syntax. Slot 2 continues those model constructions. All five
+erasure/agreement/total-construction Statements remain unproved; no refusal
+escape or Supported restriction is added. See results/model/ghost-cabs.md.
 
 ## Needs user
 

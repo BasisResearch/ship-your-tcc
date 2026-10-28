@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/model/ghost-cabs/validate_erasure.py", line 40, in <module>
+    if __name__=='__main__':raise SystemExit(main())
+                                             ~~~~^^
+  File "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/model/ghost-cabs/validate_erasure.py", line 25, in main
+    assert p.returncode==0 and p.stdout.strip()=='ran',(name,p.returncode,p.stdout,p.stderr)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('ghost-control', 1, '', 'uncaught exception: no such file or directory (error code: 2)\n  file: build/image.syms\n')
