@@ -1,0 +1,164 @@
+--- a/parsers/c/tokens.ml
++++ b/parsers/c/tokens.ml
+@@ -126,7 +126,8 @@
+   | VA_END
+   | BMC_ASSUME
+   | PRINT_TYPE
+-  | ASM
++  | ASM of string
++  | GNU_ATTRIBUTE of string
+   | ASM_VOLATILE
+   | QUESTION_COLON
+   | BUILTIN_TYPES_COMPATIBLE_P
+@@ -302,7 +303,8 @@
+   | VA_END -> "__cerbvar_va_end"
+   | BMC_ASSUME -> "__bmc_assume"
+   | PRINT_TYPE -> "__cerb_printtype"
+-  | ASM -> "ASM"
++  | ASM s -> s
++  | GNU_ATTRIBUTE s -> s
+   | ASM_VOLATILE -> "ASM_VOLATILE"
+   | QUESTION_COLON -> "QUESTION_COLON"
+   | BUILTIN_TYPES_COMPATIBLE_P -> "BUILTIN_TYPES_COMPATIBLE_P"
+--- a/parsers/c/c_lexer.mll
++++ b/parsers/c/c_lexer.mll
+@@ -117,8 +117,11 @@
+     "__BMC_ASSUME", BMC_ASSUME;
+ 
+     (* some GCC extensions *)
+-    "asm", ASM;
+-    "__asm__", ASM;
++    "asm", ASM "asm";
++    "__asm__", ASM "__asm__";
++    "__asm", ASM "__asm";
++    "__attribute", GNU_ATTRIBUTE "__attribute";
++    "__attribute__", GNU_ATTRIBUTE "__attribute__";
+     "__volatile__", ASM_VOLATILE;
+     "__builtin_types_compatible_p", BUILTIN_TYPES_COMPATIBLE_P;
+     "__builtin_choose_expr", BUILTIN_CHOOSE_EXPR;
+--- a/parsers/c/c_parser.mly
++++ b/parsers/c/c_parser.mly
+@@ -49,6 +49,18 @@
+   | [] -> empty_specs
+   | [spec] -> spec
+   | s::ss -> append_specs s (concat_specs ss)
++
++let rec add_binding_attr attr (Cabs.Declarator (p, d)) =
++  let rec direct = function
++    | Cabs.DDecl_identifier (Annot.Attrs xs, i) -> Cabs.DDecl_identifier (Annot.Attrs (xs @ [attr]), i)
++    | Cabs.DDecl_declarator d -> Cabs.DDecl_declarator (add_binding_attr attr d)
++    | Cabs.DDecl_array (d, a) -> Cabs.DDecl_array (direct d, a)
++    | Cabs.DDecl_function (d, ps) -> Cabs.DDecl_function (direct d, ps) in
++  Cabs.Declarator (p, direct d)
++
++let with_binding_attr decl = function
++  | None -> decl
++  | Some attr -> add_binding_attr attr decl
+ 
+ let string_of_cabs_id (Symbol.Identifier(_, n)) = n
+ 
+@@ -140,7 +152,8 @@
+ (* NON-STD cppmem syntax *)
+   LBRACES PIPES RBRACES
+ 
+-%token VA_START VA_COPY VA_ARG VA_END PRINT_TYPE ASM ASM_VOLATILE
++%token VA_START VA_COPY VA_ARG VA_END PRINT_TYPE ASM_VOLATILE
++%token<string> ASM GNU_ATTRIBUTE
+ 
+ (* BMC syntax *)
+ %token BMC_ASSUME
+@@ -890,12 +903,12 @@
+ ;
+ 
+ init_declarator(declarator):
+-| decl= declarator ioption(asm_register)
++| decl= declarator binding= ioption(asm_register)
+     { InitDecl (region ($startpos, $endpos) noCursor,
+-                LF.cabs_of_declarator decl, None) }
+-| decl= declarator ioption(asm_register) EQ init= initializer_
++                with_binding_attr (LF.cabs_of_declarator decl) binding, None) }
++| decl= declarator binding= ioption(asm_register) EQ init= initializer_
+     { InitDecl (region ($startpos, $endpos) noCursor,
+-                LF.cabs_of_declarator decl, Some init) }
++                with_binding_attr (LF.cabs_of_declarator decl) binding, Some init) }
+ ;
+ 
+ (* §6.7.1 Storage-class specifiers *)
+@@ -967,17 +980,17 @@
+ (* §6.7.2.1 Structure and union specifiers *)
+ struct_or_union_specifier:
+ | ctor= struct_or_union attr_opt= attribute_specifier_sequence?
+-    iopt= general_identifier? LBRACE has_extra= boption(SEMICOLON+) rev_decls= struct_declaration_list RBRACE
++    iopt= general_identifier? LBRACE has_extra= boption(SEMICOLON+) rev_decls= struct_declaration_list RBRACE trailing=gnu_attribute_specifier?
+     { if has_extra then warn_extra_semicolon $startpos(has_extra) INSIDE_STRUCT;
+-      ctor (to_attrs attr_opt) iopt (Some (List.rev rev_decls)) $endpos }
++      ctor (Annot.combine_attributes (to_attrs attr_opt) (to_attrs (Option.map (fun x -> [x]) trailing))) iopt (Some (List.rev rev_decls)) $endpos }
+ | ctor= struct_or_union attr_opt= attribute_specifier_sequence?
+     i= general_identifier
+     { ctor (to_attrs attr_opt) (Some i) None $endpos }
+ | ctor= struct_or_union attr_opt= attribute_specifier_sequence?
+-    iopt= general_identifier? LBRACE RBRACE
++    iopt= general_identifier? LBRACE RBRACE trailing=gnu_attribute_specifier?
+     (* GCC extension *)
+     (* TODO: forbid union *)
+-    { ctor (to_attrs attr_opt) iopt (Some []) $endpos }
++    { ctor (Annot.combine_attributes (to_attrs attr_opt) (to_attrs (Option.map (fun x -> [x]) trailing))) iopt (Some []) $endpos }
+ ;
+ 
+ struct_or_union:
+@@ -1467,15 +1480,15 @@
+ 
+ (* GCC inline assembly extension *)
+ asm_register:
+-| ASM LPAREN string_literal RPAREN
+-    (* FORK (asm refusal, 2026-10-05; [USER 2026-10-05] ruled that inline asm is
+-       a loud refusal): upstream DROPS an asm label on a declarator
+-       (`int x asm("r1");`, `int f(void) asm("g");`) here, before Cabs, so it
+-       never reaches desugaring and no engine can see it. Refused at the only
+-       place it exists, the shared parser (the Lean engine reads the Cabs this
+-       parser produces). Record: lean_frontend/docs/2026-10-05_asm-refusal-record.md *)
+-    { (raise (C_lexer.Error (Errors.Cparser_unimplemented_keyword
+-        "asm (inline assembly label on a declarator is unsupported)")) : unit) }
++| kw=ASM LPAREN label=STRING_LITERAL RPAREN
++    { let loc = region ($startpos(kw), $endpos(kw)) noCursor in
++      let text = match label with
++        | None, pieces -> "\"" ^ String.concat "" pieces ^ "\""
++        | _ -> raise (C_lexer.Error (Errors.Cparser_unimplemented_keyword "encoded asm label")) in
++      let argloc = region ($startpos(label), $endpos(label)) noCursor in
++      Annot.{attr_ns=Some (Symbol.Identifier (loc, kw));
++             attr_id=Symbol.Identifier (loc, "asm_label");
++             attr_args=[argloc, text, [argloc, text]]} }
+ 
+ asm_qualifier:
+ | VOLATILE
+@@ -1615,7 +1628,30 @@
+     { attrs :: attr_seq }
+ ;
+ 
++gnu_attribute_specifier:
++| kw=GNU_ATTRIBUTE LPAREN LPAREN attrs=separated_list(COMMA,gnu_attribute) RPAREN RPAREN
++    { let ns=Some (Symbol.Identifier (region ($startpos(kw), $endpos(kw)) noCursor, kw)) in
++      List.map (fun (id,args) -> ((ns,id),args)) attrs }
++;
++
++gnu_attribute:
++| name=general_identifier arg=gnu_integer_argument?
++    { let Symbol.Identifier (_,str)=name in
++      (Symbol.Identifier (region ($startpos(name), $endpos(name)) noCursor, str),arg) }
++;
++
++gnu_integer_argument:
++| LPAREN n=CONSTANT RPAREN
++    { let spelling=match n with
++        | Cabs.CabsInteger_const (digits,None) -> digits
++        | _ -> raise (C_lexer.Error (Errors.Cparser_unimplemented_keyword "GNU attribute argument")) in
++      let loc=region ($startpos(n), $endpos(n)) noCursor in
++      [loc,spelling,[loc,spelling]] }
++;
++
+ attribute_specifier:
++| attrs=gnu_attribute_specifier
++    { attrs }
+ | LBRACK_LBRACK attrs= attribute_list RBRACK RBRACK
+     { List.rev attrs }
+ ;

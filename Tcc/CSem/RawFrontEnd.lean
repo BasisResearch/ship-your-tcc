@@ -189,6 +189,16 @@ structure CompilerEnvironmentImage_Statement (cfg : Config) (image : FileSys) : 
   root : FileSys.normComponents cfg.pre.predefsName = tccEnvironment.root
   header : FileSys.lookup image (bs "/lib/tcc/include/tccdefs.h") = some tccEnvironment.headerContents
 
+/-- OPEN F3: independently captured model openings must supply this new
+compiler-environment authority. The earlier ghost driver compares parser
+construction on model-produced positioned tokens; it does not call independent
+`Raw.checked cfgTcc`. Add that independent raw comparison as well as this
+opening connection. Full records include bytes and include edges, including
+empty and repeated openings. -/
+def CompilerOpeningConnection_Statement (cfg : Config)
+    (modelOpenings : Bytes → Except String (List SourceFile)) : Prop :=
+  ∀ src r, run cfg src = .ok r → modelOpenings src = .ok r.preprocessing.sources
+
 /-- A Core external binding retains the C spellings, but all declarations of
 one linker function must name exactly the same canonical symbols. Consequently
 function-pointer creation, storage and equality use the existing single
@@ -214,7 +224,49 @@ def BindingResolution_Statement (raw : Config) (base : Tcc.CSem.Config)
     letI : CerbGlobal.Switches := ⟨CerbGlobal.defaultSwitches⟩
     letI : CerberusFresh.Digest := ⟨r.digest⟩
     ∀ std core supply, stdlib cfg = .ok std → elaborate cfg std r.cabs = .ok (core, supply) →
-      ∀ binding ∈ r.bindings, Nonempty (BindingResolution binding core)
+      ∀ binding ∈ r.bindings, binding.identity.binding_kind = .Runtime_alias →
+        Nonempty (BindingResolution binding core)
+
+/-- A runtime alias needs an actual Core implementation under its target
+name. Merely declaring the external function does not supply this record.
+The full parsed C signature remains in `InjectedBinding.declaration`. -/
+structure RuntimeBindingEntry (binding : compiler_binding)
+    (names : Fmap String sym) (functions : fun_map Unit) where
+  symbol : sym
+  implementation : fun_map_decl Unit
+  target : fmapLookupBy (fun (a b : String) => Lem_Basic_classes.ordCompare a b)
+    binding.binding_linker_name names = some symbol
+  body : fmapLookupBy (fun (a b : sym) => Lem_Basic_classes.ordCompare a b)
+    symbol functions = some implementation
+
+/-- OPEN F1/F7 runtime coverage: the current Core runtime has entries for
+memcpy, memcmp, malloc, realloc and free. The other runtime aliases still need
+their library bodies and image-pinned machine refinements. Function-lifetime
+allocation is a separate intrinsic obligation, never a malloc synonym. -/
+def RuntimeBindingCoverage_Statement (cfg : Tcc.CSem.Config) : Prop :=
+  letI : CerbImplCfg.Impl := ⟨cfg.implementation⟩
+  ∀ std, stdlib cfg = .ok std → ∀ binding ∈ compiler_bindings,
+    binding.binding_kind = .Runtime_alias →
+      Nonempty (RuntimeBindingEntry binding std.1.1 std.1.2)
+
+/-- Executable inventory of the actual loaded Core table. `none` identifies
+the separate intrinsic duty; `some false` is a missing runtime body. -/
+structure RuntimeBindingStatus where
+  identity : compiler_binding
+  coreBody : Option Bool
+
+def runtimeBindingInventory (cfg : Tcc.CSem.Config) : Except String (List RuntimeBindingStatus) :=
+  letI : CerbImplCfg.Impl := ⟨cfg.implementation⟩
+  do
+    let std ← stdlib cfg
+    pure (compiler_bindings.map fun binding =>
+      match binding.binding_kind with
+      | .Function_allocation_intrinsic => ⟨binding, none⟩
+      | .Runtime_alias =>
+          let symbol := fmapLookupBy (fun (a b : String) => Lem_Basic_classes.ordCompare a b)
+            binding.binding_linker_name std.1.1
+          ⟨binding, some (symbol.any fun s =>
+            (fmapLookupBy (fun (a b : sym) => Lem_Basic_classes.ordCompare a b) s std.1.2).isSome)⟩)
 
 /-- Phase-7 language-token agreement is checked on shared fully positioned
 inputs, not on ASTs with their locations erased. A future proof of the

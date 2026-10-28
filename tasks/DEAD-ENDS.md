@@ -734,3 +734,21 @@ requested corrections until the lead surfaced them explicitly.
   Tcc/CSem/RawFrontEnd.lean, including unresolved BindingResolution. Preserve
   the generated/source edits and receipts, then complete the typed interface
   before testing. No oracle, semantic, whole-C or gate success is claimed.
+
+- Injected-binding continuation: the historical OCaml parser still rejected
+  the actual stripped image header's `__attribute` and declarator asm labels.
+  Preserve both the wrong-runtime-prefix harness error and the corrected GNU
+  rejection. An isolated, pinned carrier overlay now parses the full stream;
+  never remove these declarations to manufacture raw-source agreement.
+- Injected runtime coverage: memmove/strlen/alloca missing-body errors in both
+  engines are not execution agreement. Inventory all loaded targets; 15
+  ordinary alias bodies and function-lifetime alloca remain F1/F7 duties.
+  Alloca must not join the ordinary external-symbol alias map.
+- Consumer JSON tests must expect the new explicit compilerInjected false
+  field. Mixing current Lean's symbol-aware proxies with pristine OCaml's old
+  spelling proxy also creates an honest difference; select the exact shared
+  overlay in the gate, preserving the failed mixed-engine observation.
+- Binding inventory build bindings-next-lean-4 failed on `letI` before a
+  monadic bind: establish the instance outside the `do` block. Its failed
+  matching receipt and exact sources are retained. bindings-next-lean-5
+  passes at ordinary budgets; no old executable substitutes for that build.

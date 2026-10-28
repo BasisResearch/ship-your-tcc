@@ -14,3 +14,8 @@ import scripts.csem_cone
 #print axioms Tcc.CSem.Raw.LibraryClassifier_Statement
 #print axioms Tcc.CSem.Raw.LibraryConnection_Statement
 #print axioms Tcc.CSem.Raw.PragmaConnection_Statement
+#print axioms Tcc.CSem.Raw.CompilerOpeningConnection_Statement
+#print axioms Tcc.CSem.Raw.BindingResolution_Statement
+#print axioms Tcc.CSem.Raw.RuntimeBindingCoverage_Statement
+#print axioms Tcc.CSem.Raw.CompilerEnvironmentImage_Statement
+#print axioms Tcc.CSem.Raw.runtimeBindingInventory

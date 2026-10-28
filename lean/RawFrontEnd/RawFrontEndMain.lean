@@ -124,12 +124,27 @@ def layout (cfg : ParseCfg) (pp : PreprocessingResult) : Except String String :=
 
 /-- Diagnostic execution of the actual raw -> Cabs -> Ail -> Core -> driver
 path. Finite executions are tests, not frontend/compiler correctness proofs. -/
-def semanticJson (raw : Tcc.CSem.Raw.Config) (src : Bytes) : Json :=
+def semanticContext (raw : Tcc.CSem.Raw.Config) : Tcc.CSem.Raw.Config × Tcc.CSem.Config :=
   let base := { (Tcc.cfgTcc (Tcc.CSem.Raw.frontEnd raw) []) with runtime := "/neutral-core-labels" }
   let std := FileSys.normComponents (bs "/csem/runtime/libcore/std.core")
   let imp := FileSys.normComponents (bs ("/csem/runtime/libcore/impls/" ++ base.implFileName))
   let raw := { raw with libraryFiles := std :: imp :: raw.libraryFiles }
   let cfg := Tcc.CSem.Raw.semanticConfig raw base ⟨std, imp⟩
+  (raw, cfg)
+
+def runtimeInventoryJson (raw : Tcc.CSem.Raw.Config) : Json :=
+  match Tcc.CSem.Raw.runtimeBindingInventory (semanticContext raw).2 with
+  | .error message => obj [("error", toJson message)]
+  | .ok entries => .arr (entries.toArray.map fun entry => obj [
+      ("name", toJson entry.identity.binding_name),
+      ("target", toJson entry.identity.binding_linker_name),
+      ("status", toJson (match entry.coreBody with
+        | none => "intrinsic-pending"
+        | some true => "loaded"
+        | some false => "missing-body"))])
+
+def semanticJson (raw : Tcc.CSem.Raw.Config) (src : Bytes) : Json :=
+  let (raw, cfg) := semanticContext raw
   letI : CerbImplCfg.Impl := ⟨cfg.implementation⟩
   letI : LemFuel := ⟨50000⟩
   letI : CerbGlobal.Switches := ⟨CerbGlobal.defaultSwitches⟩
@@ -236,7 +251,8 @@ def main (args : List String) : IO UInt32 := do
       | .ok text => IO.FS.writeFile path text
     let result := RawRunner.resultJson r opts.semantic
     let result := if opts.semantic then
-      Json.mkObj [("parse", result), ("semantics", RawRunner.semanticJson cfg src.toList)]
+      Json.mkObj [("parse", result), ("semantics", RawRunner.semanticJson cfg src.toList),
+        ("runtimeBindings", RawRunner.runtimeInventoryJson cfg)]
       else result
     IO.println result.compress
     return 0

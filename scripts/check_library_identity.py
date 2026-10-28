@@ -97,7 +97,7 @@ def main():
     source=consumer['input'];library=source['source_identity']['runtimeLibrary']
     expected_location={'tag':'Loc_point','pos':source}
     if library:
-     expected_location={'tag':'Loc_point','pos':{'file':'caller.c','line':123,'col':4,'lexing_file':'caller.c','lexing_line':123,'source_identity':{'resolved':[[ord(c) for c in 'caller.c']],'runtimeLibrary':False}}}
+     expected_location={'tag':'Loc_point','pos':{'file':'caller.c','line':123,'col':4,'lexing_file':'caller.c','lexing_line':123,'source_identity':{'resolved':[[ord(c) for c in 'caller.c']],'runtimeLibrary':False,'compilerInjected':False}}}
     if any(loc!=expected_location for loc in consumer['locations'].values()):
      row['status']='CONSUMER_DIFF';row.setdefault('consumer_differences',[]).append(consumer)
    row['semantic_consumer_checks']=4*len(r['consumers'])

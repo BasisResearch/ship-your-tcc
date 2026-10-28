@@ -47,17 +47,23 @@ def excludedAttrName (name : String) : Bool :=
 /-- Only authenticated compiler-opening carriers have runtime bindings.
 No presumed path, source spelling prefix or ordinary library membership grants
 this exception. Full declarations remain in the frontend's binding records. -/
-def suppliedAsmBinding (a : attribute0) : Bool :=
+def suppliedAsmBinding (ident : identifier) (a : attribute0) : Bool :=
   match a.attr_id, a.attr_ns, a.attr_args with
   | .Identifier loc "asm_label", some (.Identifier _ ns), [(_, spelling, _)] =>
       CerbLocation.isCompilerInjected loc && ["asm", "__asm", "__asm__"].contains ns &&
-        compiler_bindings.any (fun b => spelling == "\"" ++ b.binding_linker_name ++ "\"")
+        (compiler_binding_for ident).any (fun b => spelling == "\"" ++ b.binding_linker_name ++ "\"")
   | _, _, _ => false
 
 def exclAttrs : attributes → List Excluded
   | .Attrs as => as.filterMap fun a => match a.attr_id with
-    | .Identifier _ n => if n == "asm_label" then (if suppliedAsmBinding a then none else some .asm)
+    | .Identifier _ n => if n == "asm_label" then some .asm
       else if excludedAttrName n then some (.attribute n) else none
+
+/-- The exception belongs only to a declarator's authenticated name/target
+pair. A similarly located generic attribute has no binding authority. -/
+def exclBindingAttrs (ident : identifier) : attributes → List Excluded
+  | .Attrs as => as.flatMap fun a =>
+      if suppliedAsmBinding ident a then [] else exclAttrs (.Attrs [a])
 
 def exclOptAttrs : Option attributes → List Excluded
   | none => []
@@ -147,7 +153,7 @@ def exclAspec : alignment_specifier → List Excluded
 def exclDeclr : declarator → List Excluded
   | .Declarator p dd => exclOptPdecl p ++ exclDdeclr dd
 def exclDdeclr : direct_declarator → List Excluded
-  | .DDecl_identifier a _ => exclAttrs a
+  | .DDecl_identifier a ident => exclBindingAttrs ident a
   | .DDecl_declarator d => exclDeclr d
   | .DDecl_array dd ad => exclDdeclr dd ++ exclAdecl ad
   | .DDecl_function dd ps => exclDdeclr dd ++ exclPtl ps

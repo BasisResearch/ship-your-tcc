@@ -1212,7 +1212,10 @@ def internal_register_identifier [CerberusFresh.Digest]
                        | Kind_ordinary OK_function, some Linkage_external =>
                          (let linker_name :=
                             match compiler_binding_for ident with
-                            | some binding => binding.binding_linker_name
+                            | some binding =>
+                              (match binding.binding_kind with
+                               | Runtime_alias => binding.binding_linker_name
+                               | Function_allocation_intrinsic => str)
                             | none => str;
                           stExpect_bind
                             (read_inner (fun (st : state) =>

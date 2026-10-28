@@ -165,6 +165,9 @@ if [ -f lakefile.toml ] || [ -f lakefile.lean ]; then
     echo "resolved library identity artifacts: $identity_checks/run"
     redecl_checks=$(mktemp -d build/function-redeclaration-gate.XXXXXX)
     ( source scripts/csem_env.sh
+      fork=$(scripts/csem_fork_oracle.sh --path) || exit 1
+      export CSEM_ORACLE="$fork/_build/default/backend/driver/main.exe"
+      export CSEM_RUNTIME="$fork/_build/install/default"
       python3 scripts/check_function_redeclaration.py --out "$redecl_checks/run"
     ) || fail "function redeclaration identity (artifacts: $redecl_checks/run)"
     echo "function redeclaration artifacts: $redecl_checks/run"
@@ -176,6 +179,14 @@ if [ -f lakefile.toml ] || [ -f lakefile.lean ]; then
     python3 scripts/check_gnu_raw_headers.py --out "$gnu_checks/headers" \
       || fail "actual injected-header syntax (artifacts: $gnu_checks/headers)"
     echo "GNU declaration/header artifacts: $gnu_checks"
+    binding_checks=$(mktemp -d build/injected-binding-gate.XXXXXX)
+    fork=$(scripts/csem_fork_oracle.sh --path) || fail "matching binding oracle"
+    python3 scripts/check_injected_bindings.py --out "$binding_checks/semantics" \
+      --oracle "$fork/_build/default/backend/driver/main.exe" --runtime "$fork/_build/install/default" \
+      || fail "injected runtime bindings (artifacts: $binding_checks/semantics)"
+    python3 scripts/check_injected_openings.py --out "$binding_checks/openings" \
+      || fail "compiler opening authority (artifacts: $binding_checks/openings)"
+    echo "injected binding artifacts: $binding_checks"
   fi
   if [ "${1:-}" = "--compile-cut" ]; then
     # opt-in: the evaluator run of tcc's compile phase (TccCompileCut, ~2.5 CPU-hours

@@ -28,7 +28,7 @@ def main():
     if note.exists():print("Lead note read: " + sha(note))
     paths=subprocess.check_output(['git','ls-files','--cached','--others','--exclude-standard'],cwd=ROOT,text=True).splitlines()
     pins={p:sha(ROOT/p) for p in sorted(set(paths)) if (ROOT/p).is_file() and
-          (p.endswith(('.lean','.lem','.py','.sh','.patch','.tsv','.sha256','.manifest')) or p in ['lakefile.toml','lake-manifest.json','lean-toolchain']) and not p.startswith(('results/','tasks/'))}
+          (p.endswith(('.lean','.lem','.py','.sh','.patch','.tsv','.sha256','.manifest','.c','.h','.ml','.mli','.mly','.mll','.core','.impl')) or p in ['lakefile.toml','lake-manifest.json','lean-toolchain']) and not p.startswith(('results/','tasks/'))}
     req=dict(request_id=a.request_id,cwd=str(ROOT),source_revision=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
              targets=[] if a.gate else (a.targets or ['csem_cparse','csem_raw']),sha256=pins,
              note='Compiler-injected runtime bindings and user asm exclusions. Sources frozen until matching completed receipt; preserve all failed receipts/logs. No cut regeneration or semantic source changes.')

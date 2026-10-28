@@ -807,7 +807,11 @@ let internal_register_identifier if_found ident namespace kind link_opt =
     (match (kind, link_opt) with
       | (Kind_ordinary OK_function, Just Linkage_external) ->
           let linker_name = match Symbol.compiler_binding_for ident with
-            | Just binding -> binding.Symbol.binding_linker_name
+            | Just binding ->
+                (match binding.Symbol.binding_kind with
+                  | Symbol.Runtime_alias -> binding.Symbol.binding_linker_name
+                  | Symbol.Function_allocation_intrinsic -> str
+                end)
             | Nothing -> str
           end in
           read_inner (fun st -> Map.lookup linker_name st.linker_function_symbols) >>= function
