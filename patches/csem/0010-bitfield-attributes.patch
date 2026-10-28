@@ -1,0 +1,41 @@
+--- a/parsers/c/c_parser.mly
++++ b/parsers/c/c_parser.mly
+@@ -1028,7 +1028,7 @@
+ | decltor= declarator
+     { SDecl_simple (LF.cabs_of_declarator decltor) }
+-| decltor_opt= declarator? COLON expr= constant_expression
++| decltor_opt= declarator? COLON expr= constant_expression attrs_opt= ioption(attribute_specifier_sequence)
+-    { SDecl_bitfield (Option.map LF.cabs_of_declarator decltor_opt, expr) }
++    { SDecl_bitfield (to_attrs attrs_opt, Option.map LF.cabs_of_declarator decltor_opt, expr) }
+ ;
+ 
+ (* §6.7.2.2 Enumeration specifiers *)
+--- a/backend/lean_export/cabs_json.ml
++++ b/backend/lean_export/cabs_json.ml
+@@ -433,8 +433,9 @@
+ and json_of_struct_declarator = function
+   | SDecl_simple decl ->
+     tag "SDecl_simple" [("declarator", json_of_declarator decl)]
+-  | SDecl_bitfield (decl_opt, e) ->
++  | SDecl_bitfield (attrs, decl_opt, e) ->
+     tag "SDecl_bitfield" [
++      ("attrs", json_of_attributes attrs);
+       ("declarator", json_of_option json_of_declarator decl_opt);
+       ("width", json_of_cabs_expression e)
+     ]
+--- a/ocaml_frontend/pprinters/pp_cabs.ml
++++ b/ocaml_frontend/pprinters/pp_cabs.ml
+@@ -486,10 +486,10 @@
+ and dtree_of_struct_declarator = function
+   | SDecl_simple decltor ->
+       Dnode (pp_ctor "SDecl_simple", [dtree_of_declarator decltor])
+-  | SDecl_bitfield (decltor_opt, e) ->
+-      Dnode (pp_ctor "SDecl_bitfield", filter_opt_list [
++  | SDecl_bitfield (attrs, decltor_opt, e) ->
++      Dnode (pp_ctor "SDecl_bitfield", add_dtree_of_attributes attrs (filter_opt_list [
+           map_option dtree_of_declarator decltor_opt;
+-          Some (dtree_of_cabs_expression e) ])
++          Some (dtree_of_cabs_expression e) ]))
+ 
+ and dtree_of_static_assert_declaration = function
+   | Static_assert (e, s) ->

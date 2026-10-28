@@ -147,7 +147,7 @@ def exclSdecl : struct_declaration → List Excluded
   | .Struct_assert sa => exclSassert sa
 def exclSdeclr : struct_declarator → List Excluded
   | .SDecl_simple d => exclDeclr d
-  | .SDecl_bitfield d e => exclOptDeclr d ++ exclExpr e
+  | .SDecl_bitfield a d e => exclAttrs a ++ exclOptDeclr d ++ exclExpr e
 def exclAspec : alignment_specifier → List Excluded
   | .AS_type t => exclTname t
   | .AS_expr e => exclExpr e

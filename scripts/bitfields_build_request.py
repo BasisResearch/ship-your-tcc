@@ -6,7 +6,7 @@ ROOT=Path(__file__).resolve().parents[1]
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('request_id');ap.add_argument('--gate',action='store_true');ap.add_argument('--verify',action='store_true');ap.add_argument('targets',nargs='*');a=ap.parse_args()
-    assert a.request_id.startswith('bitfields-')
+    assert a.request_id.startswith(('bitfields-', 'bitattr-'))
     reqpath=ROOT/'build'/f'worker-build.{a.request_id}.request'
     if a.verify:
         req=json.loads(reqpath.read_text())

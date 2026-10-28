@@ -1,0 +1,3 @@
+#include <stddef.h>
+struct S { __attribute__((aligned(8))) unsigned :3, a:3, b:5, c:2; unsigned char tail; };
+int main(void) { struct S s; unsigned char *p=(unsigned char *)&s; unsigned i; for(i=0;i<sizeof s;++i) p[i]=0; s.a=5; s.b=19; s.c=2;s.tail=71; return s.a!=(5) || s.b!=(19) || s.c!=(2) || s.tail!=71; }

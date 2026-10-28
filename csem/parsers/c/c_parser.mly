@@ -1027,8 +1027,8 @@ struct_declarator_list: (* NOTE: the list is in reverse *)
 struct_declarator:
 | decltor= declarator
     { SDecl_simple (LF.cabs_of_declarator decltor) }
-| decltor_opt= declarator? COLON expr= constant_expression
-    { SDecl_bitfield (Option.map LF.cabs_of_declarator decltor_opt, expr) }
+| decltor_opt= declarator? COLON expr= constant_expression attrs_opt= ioption(attribute_specifier_sequence)
+    { SDecl_bitfield (to_attrs attrs_opt, Option.map LF.cabs_of_declarator decltor_opt, expr) }
 ;
 
 (* §6.7.2.2 Enumeration specifiers *)

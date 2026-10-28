@@ -213,7 +213,7 @@ and struct_declaration =
 
 and struct_declarator =
   | SDecl_simple   of declarator
-  | SDecl_bitfield of maybe declarator * cabs_expression
+  | SDecl_bitfield of Annot.attributes * maybe declarator * cabs_expression
 
 (* §6.7.3 Type qualifiers, Syntax *)
 and cabs_type_qualifier =

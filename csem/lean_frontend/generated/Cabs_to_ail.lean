@@ -2399,7 +2399,7 @@ partial def desugar_struct_declarator [LemFuel] [CerberusFresh.Digest] [CerbImpl
     (match struct_decltor with
      | SDecl_simple decltor =>
        (desugar_declarator _lemReader_enum_definitions _lemReader_tagDefs) NotFunDef decltor
-     | SDecl_bitfield decltor_opt width_expr =>
+     | SDecl_bitfield field_attrs decltor_opt width_expr =>
        (let loc1 :=
           match width_expr with
           | (CabsExpression loc1 _) => loc1;
@@ -2442,9 +2442,9 @@ partial def desugar_struct_declarator [LemFuel] [CerberusFresh.Digest] [CerbImpl
                             ((attributes × identifier) ×
                               (qualifiers → ctype → (qualifiers × ctype)))) =>
                             match p with
-                            | (ident, builder) =>
+                            | ((attrs1, ident), builder) =>
                               stExpect_return
-                                (ident,
+                                ((combine_attributes field_attrs attrs1, ident),
                                   (fun (qs : qualifiers) (ty1 : ctype) =>
                                     match builder qs ty1 with
                                     | (qs, ty1) =>
@@ -3752,60 +3752,79 @@ partial def desugar_type_specifiers [LemFuel] [CerberusFresh.Digest] [CerbImplCf
                                                                       (fun (info : bitfield_info) =>
                                                                         info.bitfield_width == 0)
                                                                       info_opt;
-                                                                  let packed :=
-                                                                    not zero &&
-                                                                      (effects.gnu_packed ||
-                                                                        (maybeEqualBy
-                                                                          (fun x y => x == y)
-                                                                          align_opt
-                                                                          (some
-                                                                            (AlignInteger
-                                                                              ((1 : Int))))));
-                                                                  let align :=
-                                                                    lem_if zero then
-                                                                      natural_align
-                                                                    else lem_if effects.gnu_packed then
-                                                                      1
-                                                                    else
-                                                                      match align_opt with
-                                                                      | none => natural_align
-                                                                      | some (AlignInteger n) =>
-                                                                        Int.natAbs
-                                                                          (lemIntFromInteger n)
-                                                                      | some (AlignType ty1) =>
-                                                                        (fromJustI
-                                                                          "bitfield explicit alignment"
-                                                                          (alignof_ty ty1) : Nat);
-                                                                  match place_bitfield
-                                                                      (struct_or_union1 == UNION)
-                                                                      packed
-                                                                      (isJust align_opt && not
-                                                                        packed)
-                                                                      (Int.natAbs
-                                                                        (lemIntFromInteger size))
-                                                                      align
-                                                                      (Option.map
-                                                                        (fun (info :
-                                                                          bitfield_info) =>
-                                                                          info.bitfield_width)
-                                                                        info_opt) cursor1 with
-                                                                  | (off, shift, cursor1) =>
-                                                                    (let ty1 :=
-                                                                       maybe0 ty1
-                                                                         (fun (info :
-                                                                           bitfield_info) =>
-                                                                           with_bitfield
-                                                                             { { info with
-                                                                                 bitfield_bit_offset :=
-                                                                                   shift } with
-                                                                               bitfield_byte_offset :=
-                                                                                 off } base)
-                                                                         info_opt;
-                                                                     stExpect_return
-                                                                       (((ident,
-                                                                         (mattrs, align_opt, qs,
-                                                                           ty1)) :: rev),
-                                                                         cursor1)))))
+                                                                  stExpect_bind
+                                                                    (desugar_gnu_attributes
+                                                                      (match ident with
+                                                                       | (Identifier loc1 _) =>
+                                                                         loc1) mattrs)
+                                                                    (fun (member_effects :
+                                                                      gnu_decl_effects) =>
+                                                                      let packed :=
+                                                                        not zero &&
+                                                                          (effects.gnu_packed ||
+                                                                            (member_effects.gnu_packed ||
+                                                                              (maybeEqualBy
+                                                                                (fun x y => x == y)
+                                                                                align_opt
+                                                                                (some
+                                                                                  (AlignInteger
+                                                                                    ((1 :
+                                                                                      Int)))))));
+                                                                      /- Zero-width ignores packing, but an explicit GNU aligned still
+                 controls its barrier. Member alignment overrides aggregate packing. -/
+                                                                      let align :=
+                                                                        lem_if zero && isNothing
+                                                                            member_effects.gnu_aligned then
+                                                                          natural_align
+                                                                        else
+                                                                          match align_opt with
+                                                                          | none =>
+                                                                            (lem_if effects.gnu_packed then
+                                                                              1
+                                                                            else
+                                                                              natural_align)
+                                                                          | some (AlignInteger n) =>
+                                                                            Int.natAbs
+                                                                              (lemIntFromInteger n)
+                                                                          | some (AlignType ty1) =>
+                                                                            (fromJustI
+                                                                              "bitfield explicit alignment"
+                                                                              (alignof_ty ty1) :
+                                                                              Nat);
+                                                                      let explicit_alignment :=
+                                                                        isJust
+                                                                          member_effects.gnu_aligned ||
+                                                                          (isJust align_opt && not
+                                                                            packed);
+                                                                      match place_bitfield
+                                                                          (struct_or_union1 ==
+                                                                            UNION) packed
+                                                                          explicit_alignment
+                                                                          (Int.natAbs
+                                                                            (lemIntFromInteger
+                                                                              size)) align
+                                                                          (Option.map
+                                                                            (fun (info :
+                                                                              bitfield_info) =>
+                                                                              info.bitfield_width)
+                                                                            info_opt) cursor1 with
+                                                                      | (off, shift, cursor1) =>
+                                                                        (let ty1 :=
+                                                                           maybe0 ty1
+                                                                             (fun (info :
+                                                                               bitfield_info) =>
+                                                                               with_bitfield
+                                                                                 { { info with
+                                                                                     bitfield_bit_offset :=
+                                                                                       shift } with
+                                                                                   bitfield_byte_offset :=
+                                                                                     off } base)
+                                                                             info_opt;
+                                                                         stExpect_return
+                                                                           (((ident,
+                                                                             (mattrs, align_opt, qs,
+                                                                               ty1)) :: rev),
+                                                                             cursor1))))))
                                                          (([] : List
                                                            (identifier ×
                                                              (attributes × Option alignment ×

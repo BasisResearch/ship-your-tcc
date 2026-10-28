@@ -31,7 +31,7 @@ shared_sources=(
 # unrelated local translation_aux IEEE seams would change the oracle's ABI.
 projected_sources=(csem/frontend/model/translation_aux.lem scripts/project_csem_alignment.py csem/frontend/model/implementation.lem scripts/project_csem_bitfield_interface.py csem/frontend/model/translation.lem scripts/project_csem_compound.py scripts/project_shared_arity_patch.py)
 adapter_sources=(csem/lean_frontend/CerbMem.lean csem/lean_frontend/CerberusImpl.lean)
-adapter_patches=(patches/csem/0001-union-layout-tags.patch patches/csem/0002-gnu-typedef-alignment.patch patches/csem/0003-gnu-aggregate-layout.patch patches/csem/0004-tag-layout-arity.patch patches/csem/0005-compiler-opening-witness.patch patches/csem/0006-symbol-proxy-identity.patch patches/csem/0007-injected-syntax-carriers.patch patches/csem/0008-gnu-expression-alignof.patch patches/csem/0009-bitfield-interface.patch)
+adapter_patches=(patches/csem/0001-union-layout-tags.patch patches/csem/0002-gnu-typedef-alignment.patch patches/csem/0003-gnu-aggregate-layout.patch patches/csem/0004-tag-layout-arity.patch patches/csem/0005-compiler-opening-witness.patch patches/csem/0006-symbol-proxy-identity.patch patches/csem/0007-injected-syntax-carriers.patch patches/csem/0008-gnu-expression-alignof.patch patches/csem/0009-bitfield-interface.patch patches/csem/0010-bitfield-attributes.patch)
 # Pin every patched handwritten adapter, including arity-only non-concrete
 # shims. Their inclusion in the manifest does not claim layout support in
 # symbolic/CHERI backends; the differential engine is the concrete backend.

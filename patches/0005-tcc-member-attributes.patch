@@ -1,0 +1,22 @@
+--- a/tccgen.c
++++ b/tccgen.c
+@@ -4523,7 +4523,7 @@
+     int v, c, size, align, flexible;
+     int bit_size, bsize, bt, ut;
+     Sym *s, *ss, **ps;
+-    AttributeDef ad, ad1;
++    AttributeDef ad, ad1, member_ad;
+     CType type1 = {0}, btype = {0};
+ 
+     memset(&ad, 0, sizeof ad);
+@@ -4662,7 +4662,10 @@
+ 		    skip(';');
+ 		    continue;
+ 		}
++                member_ad = ad1;
+                 while (1) {
++                    /* Each declarator starts with only shared specifier attributes. */
++                    ad1 = member_ad;
+ 		    if (flexible)
+ 		        tcc_error("flexible array member '%s' not at the end of struct",
+                               get_tok_str(v, NULL));

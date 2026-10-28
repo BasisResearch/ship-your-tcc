@@ -299,7 +299,7 @@ inductive struct_declaration : Type where
   | Struct_assert : static_assert_declaration → struct_declaration
 inductive struct_declarator : Type where
   | SDecl_simple : declarator → struct_declarator
-  | SDecl_bitfield : Option declarator → cabs_expression → struct_declarator
+  | SDecl_bitfield : attributes → Option declarator → cabs_expression → struct_declarator
 /- §6.7.3 Type qualifiers, Syntax -/
 inductive cabs_type_qualifier : Type where
   | Q_const : cabs_type_qualifier
@@ -665,7 +665,7 @@ def struct_declaration.ctor_rank_ocaml : struct_declaration → Nat
    declaration order within each group. -/
 def struct_declarator.ctor_rank_ocaml : struct_declarator → Nat
   | .SDecl_simple _ => 0
-  | .SDecl_bitfield _ _ => 1
+  | .SDecl_bitfield _ _ _ => 1
 /- lem: constructor rank for OCaml's polymorphic compare: nullary
    constructors (immediates) sort below non-nullary ones (blocks);
    declaration order within each group. -/
@@ -1151,18 +1151,22 @@ termination_by structural cmpx_
 def struct_declarator.beq_derived (cmpx_ cmpy_ : struct_declarator) : Bool :=
   match cmpx_, cmpy_ with
   | .SDecl_simple x1, .SDecl_simple y1 => declarator.beq_derived x1 y1
-  | .SDecl_bitfield x1 x2, .SDecl_bitfield y1 y2 =>
-    cabs_expression_.beq_deriv_aux34 x1 y1 && cabs_expression.beq_derived x2 y2
+  | .SDecl_bitfield x1 x2 x3, .SDecl_bitfield y1 y2 y3 =>
+    x1 == y1 && cabs_expression_.beq_deriv_aux34 x2 y2 && cabs_expression.beq_derived x3 y3
   | _, _ => false
 termination_by structural cmpx_
 def struct_declarator.compare_derived (cmpx_ cmpy_ : struct_declarator) : Ordering :=
   match cmpx_, cmpy_ with
   | .SDecl_simple x1, .SDecl_simple y1 => declarator.compare_derived x1 y1
-  | .SDecl_bitfield x1 x2, .SDecl_bitfield y1 y2 =>
-    (match cabs_expression_.cmp_deriv_aux33 x1 y1 with
+  | .SDecl_bitfield x1 x2 x3, .SDecl_bitfield y1 y2 y3 =>
+    (match Ord.compare x1 y1 with
      | .lt => Ordering.lt
      | .gt => Ordering.gt
-     | .eq => cabs_expression.compare_derived x2 y2)
+     | .eq =>
+       (match cabs_expression_.cmp_deriv_aux33 x2 y2 with
+        | .lt => Ordering.lt
+        | .gt => Ordering.gt
+        | .eq => cabs_expression.compare_derived x3 y3))
   | xg, yg =>
     Ord.compare (struct_declarator.ctor_rank_ocaml xg) (struct_declarator.ctor_rank_ocaml yg)
 termination_by structural cmpx_
@@ -3159,7 +3163,7 @@ termination_by structural sizex_
 def struct_declarator.lemSize (sizex_ : struct_declarator) : Nat :=
   match sizex_ with
   | .SDecl_simple x1 => 1 + declarator.lemSize x1
-  | .SDecl_bitfield x1 x2 => 1 + cabs_expression_.lemSize_aux20 x1 + cabs_expression.lemSize x2
+  | .SDecl_bitfield _ x1 x2 => 1 + cabs_expression_.lemSize_aux20 x1 + cabs_expression.lemSize x2
 termination_by structural sizex_
 def cabs_type_qualifier.lemSize (sizex_ : cabs_type_qualifier) : Nat :=
   match sizex_ with

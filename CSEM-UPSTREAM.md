@@ -462,3 +462,17 @@ Exact sources, bounded raw/GCC/host captures, current binary pins and pristine
 source-level checks are in the GNU integration archive's semantic-probes.
 See results/model/gnu-expression-integration-2026-10-28.md. Kiran owns external
 reporting; no external message or issue was sent.
+
+### GNU bitfield attribute follow-up (2026-10-28)
+
+`results/csem/bitfield-attributes.md` records the per-declarator
+`Annot.attributes` carrier in Cabs and its parser/import/export/semantic
+consumers, including unnamed padding. The original four width-suffix parser
+failures now execute as defined-zero on raw cfgTcc and fresh full tcc/Sail.
+Independent initialized-byte controls expose and repair a separate TinyCC
+comma-sibling attribute leak; that compiler/model reset is not a C11 semantic
+rule. The shared layout retains explicit GNU zero-width alignment and member
+alignment inside packed aggregates. Menhir's remaining placement diagnostics,
+general compiler-action leading-specifier construction, enum policy and prior
+C11 constraint-acceptance deviations remain explicit whole-compiler duties.
+No supported-source restriction or external upstream contact is introduced.

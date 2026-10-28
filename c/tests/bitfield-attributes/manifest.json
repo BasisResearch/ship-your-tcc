@@ -1,0 +1,386 @@
+[
+  {
+    "name": "leading-declaration-auto",
+    "path": "c/tests/bitfield-attributes/leading-declaration-auto.c",
+    "sha256": "57267c25a9ead80ebb633ad7ad52a430849b6111e407e16136b7bebb93a1c90f",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-leading-declaration-auto.c",
+    "layout_sha256": "2bf518cf545ffddf81e355b564a931facc0e6c8c542ce1eb559cd6d73450070a"
+  },
+  {
+    "name": "leading-declaration-static",
+    "path": "c/tests/bitfield-attributes/leading-declaration-static.c",
+    "sha256": "21c27fda260a7e76d8c0c1738602adbd66be8703bd2f70a3e16d9828781811bd",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-leading-declaration-static.c",
+    "layout_sha256": "4a1192b56463385aea7eefffb099b38bf00b41374b2b966b2f3094d0f469a592"
+  },
+  {
+    "name": "leading-specifier-auto",
+    "path": "c/tests/bitfield-attributes/leading-specifier-auto.c",
+    "sha256": "6e5cb0b602f4a0908a7fb6c7f22b94d1ca9aff708a908b50b40fc6ee03fc3adc",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-leading-specifier-auto.c",
+    "layout_sha256": "899ee258d555970710caf08bd92a01dd480c60bc5e794e63649d36a072a1ac27"
+  },
+  {
+    "name": "leading-specifier-static",
+    "path": "c/tests/bitfield-attributes/leading-specifier-static.c",
+    "sha256": "4f50087fea57bab0b32c3fdec2cf96d20c8f1ac3fa15324c16d6697a2cfaf6f1",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-leading-specifier-static.c",
+    "layout_sha256": "252d97f2724bb0ea89449165e93c81b549557c09728de0e707a2145568662f30"
+  },
+  {
+    "name": "leading-unnamed-auto",
+    "path": "c/tests/bitfield-attributes/leading-unnamed-auto.c",
+    "sha256": "d64d3b3dbcc075f9ca16e523bf7d71ed99d47840c327c749423c4661d19c54bc",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-leading-unnamed-auto.c",
+    "layout_sha256": "e2ca2c3739b3bb918624b3613b5ab899b528195cacdf3a24c98d573fdc798e8e"
+  },
+  {
+    "name": "leading-unnamed-static",
+    "path": "c/tests/bitfield-attributes/leading-unnamed-static.c",
+    "sha256": "94817ca0c4c7a01f8b942a620015b61206c56767417675ef80708c8fbc680d2b",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-leading-unnamed-static.c",
+    "layout_sha256": "85a5b408a5f17410a60b0a7e65b228d15aafd303d44b4e23124dd852de3a6d39"
+  },
+  {
+    "name": "trailing-packed-auto",
+    "path": "c/tests/bitfield-attributes/trailing-packed-auto.c",
+    "sha256": "4972ee6a01f239e7c8e5a98dbb94c0a81948cff035721c15f8005a6e5f3c8d10",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-trailing-packed-auto.c",
+    "layout_sha256": "51cab9644a110a1c033140b2aa4832f3f02f0c5a91a05defbfdd8c6db512938c"
+  },
+  {
+    "name": "trailing-packed-static",
+    "path": "c/tests/bitfield-attributes/trailing-packed-static.c",
+    "sha256": "3c7a2957ea97e49bd1b67fba901de073cc1075e56ac07e9c5b135358e5715996",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-trailing-packed-static.c",
+    "layout_sha256": "a4d8554fe595fd5101d3f1e9c5eaa19d3fcacc4e447e901e177668feb6255eb7"
+  },
+  {
+    "name": "trailing-aligned-auto",
+    "path": "c/tests/bitfield-attributes/trailing-aligned-auto.c",
+    "sha256": "b9366754fc00fb1450a4e386735394cc2b8b54478d5ef473c0663337c61b22eb",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-trailing-aligned-auto.c",
+    "layout_sha256": "67e7a126de9927b98c75fc3eb191e702c7d01a382782f05613e5b3d566b7fb25"
+  },
+  {
+    "name": "trailing-aligned-static",
+    "path": "c/tests/bitfield-attributes/trailing-aligned-static.c",
+    "sha256": "97e9558bd6663a093c20031a81b75f7bc52a7bf5361018d691ee1033c94fc247",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-trailing-aligned-static.c",
+    "layout_sha256": "46a8123c9a7b71880d999a2b1eda325096f2cf5fb276bdd1b95e19acdb85ed49"
+  },
+  {
+    "name": "middle-aligned-auto",
+    "path": "c/tests/bitfield-attributes/middle-aligned-auto.c",
+    "sha256": "fdcf45640e7f5357faf81e5691a216de185384b3319d2dd8aff144d55654dea4",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-middle-aligned-auto.c",
+    "layout_sha256": "e9eb12569a6a52f0ab326659084eb9a13f8c69d2afd50acdd3cce4f8ed110d1a"
+  },
+  {
+    "name": "middle-aligned-static",
+    "path": "c/tests/bitfield-attributes/middle-aligned-static.c",
+    "sha256": "cb0fc5fd118a0bc5ebf834310553b02e3f4088f82f06b967471b5461a7f53658",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-middle-aligned-static.c",
+    "layout_sha256": "2da50d88279d41cafa5677e99557259a8c2c4a389f8f3283b769ee10a4bdbeac"
+  },
+  {
+    "name": "last-aligned-auto",
+    "path": "c/tests/bitfield-attributes/last-aligned-auto.c",
+    "sha256": "edfa2f1c42d46973b1cf7d2bbc40cd788bbea5750a32fa841f4167995f3cc3e1",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-last-aligned-auto.c",
+    "layout_sha256": "a04ab5e3b83c19e572c8e4af75c02a348072168193e377aa07fbc8fd44231d7b"
+  },
+  {
+    "name": "last-aligned-static",
+    "path": "c/tests/bitfield-attributes/last-aligned-static.c",
+    "sha256": "74909a2dd3b700d6a4849fc01545a6a2a7ba12effbc6100a5fbbba468e073215",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-last-aligned-static.c",
+    "layout_sha256": "4dafe6a0d1bed9b2cbbdf36e14903df93996acb581a362d49ab8ae75af921d85"
+  },
+  {
+    "name": "prewidth-aligned-auto",
+    "path": "c/tests/bitfield-attributes/prewidth-aligned-auto.c",
+    "sha256": "79111c23854dc5ae2f57cbc0d6b10fdd283abe5ea258482926eb8c5c52683bcc",
+    "kind": "placement-diagnostic"
+  },
+  {
+    "name": "prewidth-aligned-static",
+    "path": "c/tests/bitfield-attributes/prewidth-aligned-static.c",
+    "sha256": "522fdfe332eebc0072614f85b963e328a851c4dc77cd5578ed031bdb5c04c38b",
+    "kind": "placement-diagnostic"
+  },
+  {
+    "name": "comma-leading-auto",
+    "path": "c/tests/bitfield-attributes/comma-leading-auto.c",
+    "sha256": "9444b0b0e2a3f5a2894d314591715c662408e5b9dd730a41577ca74b1f63f0a1",
+    "kind": "placement-diagnostic"
+  },
+  {
+    "name": "comma-leading-static",
+    "path": "c/tests/bitfield-attributes/comma-leading-static.c",
+    "sha256": "4940c637de09163c54b4919e84a5ec0394077bf2b1bc12af1b66786f70665db3",
+    "kind": "placement-diagnostic"
+  },
+  {
+    "name": "unnamed-trailing-auto",
+    "path": "c/tests/bitfield-attributes/unnamed-trailing-auto.c",
+    "sha256": "d1de2c016d55b909c822fe278bfbea058dc55d69b1d7d7aa72f03ab00fbff268",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-unnamed-trailing-auto.c",
+    "layout_sha256": "9b6c07808e1adb916b414aba5b2640f6e990dcb2ad2feaaeb4f7304770e31ab3"
+  },
+  {
+    "name": "unnamed-trailing-static",
+    "path": "c/tests/bitfield-attributes/unnamed-trailing-static.c",
+    "sha256": "14a9d4debc1b20faed5eb5c8c2984a636104eff18996d9947968f6f2993aeb16",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-unnamed-trailing-static.c",
+    "layout_sha256": "2b2bb3bb97ffd9185d13d0c7815387bb9bb70a45875631ca7dc29dd3141bb8dd"
+  },
+  {
+    "name": "unnamed-packed-auto",
+    "path": "c/tests/bitfield-attributes/unnamed-packed-auto.c",
+    "sha256": "ec010c0b64012b48112453644ae79f6a5ee1915772b7a1c3a2d5bdf99e081383",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-unnamed-packed-auto.c",
+    "layout_sha256": "a8a364d24c6c8931629c25cf895b4f24dc1620d4c03a0779889b852e23c427e5"
+  },
+  {
+    "name": "unnamed-packed-static",
+    "path": "c/tests/bitfield-attributes/unnamed-packed-static.c",
+    "sha256": "7bd28993fee0129fe27f8d692289f07e02e2235a31ed940bc51406572aff5719",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-unnamed-packed-static.c",
+    "layout_sha256": "b0fb20f85db0e573b1fff89ca445f238352209347b204c32ed975b6fddce9edd"
+  },
+  {
+    "name": "unnamed-leading-auto",
+    "path": "c/tests/bitfield-attributes/unnamed-leading-auto.c",
+    "sha256": "94edcee87d7771ed099df97539ce979530b073f269a4c87e3d0ea6c76bbb213a",
+    "kind": "placement-diagnostic"
+  },
+  {
+    "name": "unnamed-leading-static",
+    "path": "c/tests/bitfield-attributes/unnamed-leading-static.c",
+    "sha256": "11f6f2b4d258d31a8339fd864de986ddbcb0d98e98bbb069b29b9b4f75641e92",
+    "kind": "placement-diagnostic"
+  },
+  {
+    "name": "zero-aligned-auto",
+    "path": "c/tests/bitfield-attributes/zero-aligned-auto.c",
+    "sha256": "828c8fc641d94e4ebd5a937e74c64b0d20f4a6bf0def62f62a2ea6c969fbd15e",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-zero-aligned-auto.c",
+    "layout_sha256": "8b1e57a0ade86dcce95489c74f96ddd7deecd727d16b8a95629750655bad484d"
+  },
+  {
+    "name": "zero-aligned-static",
+    "path": "c/tests/bitfield-attributes/zero-aligned-static.c",
+    "sha256": "86c097268ca14cc9351e29e24b34e8b4eda0c84ce44f62252267a1ac279cf939",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-zero-aligned-static.c",
+    "layout_sha256": "8ebbc99eb6f3f8676a8f8726d91c323900cca349dbbcaa4991ff27bbafc0cf46"
+  },
+  {
+    "name": "zero-packed-auto",
+    "path": "c/tests/bitfield-attributes/zero-packed-auto.c",
+    "sha256": "8830d03455d3275aab16fe5879d7443d6efa0546d7e3994d4fc99a45a6269ecb",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-zero-packed-auto.c",
+    "layout_sha256": "80b450ede8cb12b5e4fd23774a8643c14d997b627ac18c3d1a0c9442b1c3aa2b"
+  },
+  {
+    "name": "zero-packed-static",
+    "path": "c/tests/bitfield-attributes/zero-packed-static.c",
+    "sha256": "830e0f9bcd9a86eb5594a0fdd8dc990ab0f9aa9a1274a63182903b9da938d53e",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-zero-packed-static.c",
+    "layout_sha256": "fb47285dc216f6add49f25485eaf6623fb105c80d054260e128d81132dceb1c8"
+  },
+  {
+    "name": "mixed-ordinary-auto",
+    "path": "c/tests/bitfield-attributes/mixed-ordinary-auto.c",
+    "sha256": "b340cf16ecaf03591df4e4f8800680baf90dbb63904ae4a101fc6ef95d0499f5",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-mixed-ordinary-auto.c",
+    "layout_sha256": "b0e60ef7ce7021c745b63aa9e09f6e26429bfe221e3598a5b16c171c1b979e56"
+  },
+  {
+    "name": "mixed-ordinary-static",
+    "path": "c/tests/bitfield-attributes/mixed-ordinary-static.c",
+    "sha256": "859f6c4113ea8139f2738e57fce6e63a3d5f1c65497ed4804b35cecbe5654a12",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-mixed-ordinary-static.c",
+    "layout_sha256": "b675adbe9174f92a604ee78cb3dede3aa0dbbfabfe95d26f57e0ad4039d7d525"
+  },
+  {
+    "name": "mixed-comma-leading-auto",
+    "path": "c/tests/bitfield-attributes/mixed-comma-leading-auto.c",
+    "sha256": "ce213d11e34c624d0146f689a33ff7a4b3214ed4e80a6f8efe62902868568407",
+    "kind": "placement-diagnostic"
+  },
+  {
+    "name": "mixed-comma-leading-static",
+    "path": "c/tests/bitfield-attributes/mixed-comma-leading-static.c",
+    "sha256": "b6a213e3b54c7edc90bd06faab315cc71a122f3afa1dd9811a64c7219bccbaed",
+    "kind": "placement-diagnostic"
+  },
+  {
+    "name": "packed-aligned-auto",
+    "path": "c/tests/bitfield-attributes/packed-aligned-auto.c",
+    "sha256": "eff36e22630a4093593966d8a1b9f534c3ba5d03380dd11199cec74fd65b6f0f",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-packed-aligned-auto.c",
+    "layout_sha256": "b44759017e2619bc12ea50d66a90efd6ec0d1218ae7b92a9ab57be2bb4d17c2a"
+  },
+  {
+    "name": "packed-aligned-static",
+    "path": "c/tests/bitfield-attributes/packed-aligned-static.c",
+    "sha256": "8951eee0a5ef1931fe487e37058a5e55cd5956094b4a4069df9f5b0858e22ace",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-packed-aligned-static.c",
+    "layout_sha256": "a01e42aace9caec8a8699aa96dbb572aa4cc8ea89e551fb9c0260d6e1f1a042a"
+  },
+  {
+    "name": "repeat-attributes-auto",
+    "path": "c/tests/bitfield-attributes/repeat-attributes-auto.c",
+    "sha256": "367f301a0f40c5547abb8f3adae1574de4bd339054cf59f4d10bea8ff85db247",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-repeat-attributes-auto.c",
+    "layout_sha256": "44e70a27efcf2759ac718ff8e916ac4d6dbf92329024af95685143b8ba871389"
+  },
+  {
+    "name": "repeat-attributes-static",
+    "path": "c/tests/bitfield-attributes/repeat-attributes-static.c",
+    "sha256": "4a040074ae8d87bf58da51ce20e21810b88b40d86f837353502edd024c08fbdb",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-repeat-attributes-static.c",
+    "layout_sha256": "7fec14dda2d57bd7b2393d64a0dcb2cc0e9a32650f1dfdb666f7ec505214509d"
+  },
+  {
+    "name": "volatile-auto",
+    "path": "c/tests/bitfield-attributes/volatile-auto.c",
+    "sha256": "ae8b580e9b3d51ce61f08c17fe0011fa013b7a8eb042a69e39518d5797b5540b",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-volatile-auto.c",
+    "layout_sha256": "7ad6aa7f18456f2be753d52a8242926a56f1a725a70599d905329b975c008d83"
+  },
+  {
+    "name": "volatile-static",
+    "path": "c/tests/bitfield-attributes/volatile-static.c",
+    "sha256": "f42f18bbebcad93d7c8ac7cacbf611d69defe5f259ae7288c46a7beecfd3ac87",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-volatile-static.c",
+    "layout_sha256": "a2ec99617460ec81a8ace43794e0e57bbbf50cdfc96af02985872d9cc7bf602c"
+  },
+  {
+    "name": "signed-auto",
+    "path": "c/tests/bitfield-attributes/signed-auto.c",
+    "sha256": "27ae0168dfcaad321bfb0bf74b598e67e2cb61221aebd3dc753e0b08e0df43a1",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-signed-auto.c",
+    "layout_sha256": "afd008ade55beebde7994afeab5d9cac2f0e79f093bb15879cf541e984e3e231"
+  },
+  {
+    "name": "signed-static",
+    "path": "c/tests/bitfield-attributes/signed-static.c",
+    "sha256": "54a2212522102869a9629c9d10491d7ff2df9bc59db433bf4f44fa53d793735c",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-signed-static.c",
+    "layout_sha256": "21d306e6fee5dd3c555b562da1e04695f84fd0ea92ee056cbfb4451e6a427eb7"
+  },
+  {
+    "name": "nested-auto",
+    "path": "c/tests/bitfield-attributes/nested-auto.c",
+    "sha256": "9df9cf120e8ac5bc8f91f6269be92bec6d4e885d97473d2a59984521b6cdd22c",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-nested-auto.c",
+    "layout_sha256": "5f1ec5cebc9826065814b32705bb803d03fd9517d28ec21cb848c590303395df"
+  },
+  {
+    "name": "nested-static",
+    "path": "c/tests/bitfield-attributes/nested-static.c",
+    "sha256": "bd797a70485b47627f3b41b794adb7e88033d115e46d5c1b9765c7ee841f41c6",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-nested-static.c",
+    "layout_sha256": "78dea9ee28b727ce95167452e7d86f9513f32c943ca147320686653bda859148"
+  },
+  {
+    "name": "anonymous-auto",
+    "path": "c/tests/bitfield-attributes/anonymous-auto.c",
+    "sha256": "c37c7aeb4ab02885db14b22a544931f6195d37c51b0ddb811c352e9e8a26f87b",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-anonymous-auto.c",
+    "layout_sha256": "b60ff3d082bb988a9e01a0f08208870af4ab6f888d11034d829d9f59fe978a02"
+  },
+  {
+    "name": "anonymous-static",
+    "path": "c/tests/bitfield-attributes/anonymous-static.c",
+    "sha256": "1fe955b7fad6d83454ee2f7193a20d7225a0cee82d54b635a279524b39282ac4",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-anonymous-static.c",
+    "layout_sha256": "8a4696bb610e1faa0f48a49c04463701eeb911d190ab420e10ef0b0ff57c2e21"
+  },
+  {
+    "name": "union-auto",
+    "path": "c/tests/bitfield-attributes/union-auto.c",
+    "sha256": "84deae6b179f395dc4b4f00deebc4579978817e2c45fa30f9bdc21c3f96e99d7",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-union-auto.c",
+    "layout_sha256": "058d159abd285fe98e4e69950584a202860628a70a26888bc679d23a35dd0025"
+  },
+  {
+    "name": "union-static",
+    "path": "c/tests/bitfield-attributes/union-static.c",
+    "sha256": "3a7cf8ac0d982ed073f34c093206a896d34148d80d7ccb2f83a5322396628939",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-union-static.c",
+    "layout_sha256": "d41e85dd34c6d78bda764f242db1f713bfee0161ecc4f07b579684e45dc48ee3"
+  },
+  {
+    "name": "aggregate-packed-auto",
+    "path": "c/tests/bitfield-attributes/aggregate-packed-auto.c",
+    "sha256": "88948ac67759edfcb37c44b9ba372547de96e982f3a618d7840d600f9a3daedd",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-aggregate-packed-auto.c",
+    "layout_sha256": "4d58f12dda5b33d17cecd582904c9dccdf73f3f660961fa81e7ea9f327fe3ed2"
+  },
+  {
+    "name": "aggregate-packed-static",
+    "path": "c/tests/bitfield-attributes/aggregate-packed-static.c",
+    "sha256": "cfb553745577d63850826bc727641f3cac74f33da8dbb28ad9ba6d91e44ca31f",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-aggregate-packed-static.c",
+    "layout_sha256": "5a19ed6cc6c2a0e9b579981849f02a6c7378d3bb7ad70ea61d2754824abc6b8c"
+  },
+  {
+    "name": "aggregate-aligned-auto",
+    "path": "c/tests/bitfield-attributes/aggregate-aligned-auto.c",
+    "sha256": "eba18ed30966baff32d54f6d0990209aab96bb5839c00f2ebf56bcbe2c08e908",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-aggregate-aligned-auto.c",
+    "layout_sha256": "4204f2f293dcdd7c4dd982f4e198413ceebda7cc7387319508ea526a31835887"
+  },
+  {
+    "name": "aggregate-aligned-static",
+    "path": "c/tests/bitfield-attributes/aggregate-aligned-static.c",
+    "sha256": "ff0021e41f26063421e3cf92cc9f293406e1f8a5fb454c8931a201cca6e7a8e3",
+    "kind": "defined",
+    "layout_path": "c/tests/bitfield-attributes/layout-aggregate-aligned-static.c",
+    "layout_sha256": "01414302370ef2a8b1ba72ccf3f549c11f3712cb97cda079439461c1db7d73fc"
+  }
+]

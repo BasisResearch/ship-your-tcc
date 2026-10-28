@@ -500,6 +500,7 @@ partial def jsonToStructDeclarator (j : Json) : Except String struct_declarator 
   match ← getTag j with
   | "SDecl_simple" => .ok (.SDecl_simple (← jsonToDeclarator (← getField j "declarator")))
   | "SDecl_bitfield" => .ok (.SDecl_bitfield
+      (← match j.getObjVal? "attrs" with | .ok a => jsonToAttributes a | .error _ => pure (Attrs []))
       (← getOption jsonToDeclarator (← getField j "declarator"))
       (← jsonToExpression (← getField j "width")))
   | t => err "jsonToStructDeclarator" s!"unknown tag '{t}' in {j}"

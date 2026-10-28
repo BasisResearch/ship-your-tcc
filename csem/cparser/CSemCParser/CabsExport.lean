@@ -239,8 +239,8 @@ def structDecls : List struct_declaration → List Json
 def structDeclarators : List struct_declarator → List Json
   | [] => []
   | .SDecl_simple d :: rest => tag "SDecl_simple" [("declarator", declarator d)] :: structDeclarators rest
-  | .SDecl_bitfield d w :: rest => tag "SDecl_bitfield"
-      [("declarator", match d with | none => .null | some d => declarator d), ("width", expr w)] :: structDeclarators rest
+  | .SDecl_bitfield a d w :: rest => tag "SDecl_bitfield"
+      [("attrs", attributes a), ("declarator", match d with | none => .null | some d => declarator d), ("width", expr w)] :: structDeclarators rest
 
 def pointerDecl : pointer_declarator → Json
   | PDecl l tq p => tag "PDecl" [("loc", loc l), ("type_qualifiers", list typeQualifier tq),

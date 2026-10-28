@@ -1771,15 +1771,20 @@ let rec desugar_type_specifiers specs =
               let natural_align = fromJust "bitfield member alignment" (alignof_ty base) in
               let info_opt = Ctype.bitfield_of_type ty in
               let zero = maybe false (fun info -> info.Ctype.bitfield_width = 0) info_opt in
-              let packed = not zero && (effects.gnu_packed || align_opt = Just (Ctype.AlignInteger 1)) in
-              let align = if zero then natural_align else
-                if effects.gnu_packed then 1 else match align_opt with
-                  | Nothing -> natural_align
+              desugar_gnu_attributes (Loc.locOf ident) mattrs >>= fun member_effects ->
+              let packed = not zero && (effects.gnu_packed || member_effects.gnu_packed ||
+                align_opt = Just (Ctype.AlignInteger 1)) in
+              (* Zero-width ignores packing, but an explicit GNU aligned still
+                 controls its barrier. Member alignment overrides aggregate packing. *)
+              let align = if zero && isNothing member_effects.gnu_aligned then natural_align else
+                match align_opt with
+                  | Nothing -> if effects.gnu_packed then 1 else natural_align
                   | Just (Ctype.AlignInteger n) -> natFromInteger n
                   | Just (Ctype.AlignType ty) -> fromJust "bitfield explicit alignment" (alignof_ty ty)
                 end in
+              let explicit_alignment = isJust member_effects.gnu_aligned || (isJust align_opt && not packed) in
               let (off, shift, cursor) = Ctype.place_bitfield (struct_or_union = UNION) packed
-                (isJust align_opt && not packed) (natFromInteger size) align
+                explicit_alignment (natFromInteger size) align
                 (Maybe.map (fun info -> info.Ctype.bitfield_width) info_opt) cursor in
               let ty = maybe ty (fun info -> Ctype.with_bitfield <| info with
                 Ctype.bitfield_byte_offset= off; Ctype.bitfield_bit_offset= shift |> base) info_opt in
@@ -3023,7 +3028,7 @@ and desugar_struct_declarator has_alignment struct_decltor =
   match struct_decltor with
     | SDecl_simple decltor ->
         desugar_declarator NotFunDef decltor
-    | SDecl_bitfield decltor_opt width_expr ->
+    | SDecl_bitfield field_attrs decltor_opt width_expr ->
         let loc = Loc.locOf width_expr in
         if has_alignment then
           E.constraint_violation loc (IllegalAlignas IllegalAlignas_bitfield)
@@ -3040,8 +3045,8 @@ and desugar_struct_declarator has_alignment struct_decltor =
             (match decltor_opt with
               | Just decltor -> desugar_declarator NotFunDef decltor
               | Nothing -> E.return ((Annot.no_attributes, Symbol.Identifier loc "padding"), fun qs ty -> (qs, ty))
-            end) >>= fun (ident, builder) ->
-            E.return (ident, fun qs ty ->
+            end) >>= fun ((attrs, ident), builder) ->
+            E.return ((Annot.combine_attributes field_attrs attrs, ident), fun qs ty ->
               let (qs, ty) = builder qs ty in
               (qs, Ctype.with_bitfield <|
                 Ctype.bitfield_width= natFromInteger width;

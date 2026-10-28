@@ -1136,3 +1136,43 @@ an explicit follow-up, not established by arena equality.
   records TODO/returns skip; array elaboration refuses nonconstant bounds.
   Keep these as F1 tasks CSEM-15/16, not syntax successes, source exclusions,
   claims of fresh native execution or confirmed pristine wrong answers.
+
+
+## GNU bitfield declarator attributes, 2026-10-28
+
+- The original four GNU member cases stop parsing at width-suffix attributes.
+  They supply no layout result. Cabs's old optional declarator cannot carry
+  attributes for unnamed padding; add an explicit existing Annot.attributes
+  carrier instead of inventing a source-visible name or lifting to siblings.
+- bitattr-lean-1 fails in build-service setup before a verified completion;
+  its invalid tcc_model_ghost target is not tcc_ghost. bitattr-lean-2 verifies
+  3,531 inputs and fails on shadowing the mutable aggregate attrs variable in
+  GhostCabs. Rename the field-local binding; no budget adjustment. lean3 passes.
+- GCC rejects the four exploratory pre-width/comma-leading placements. Keep
+  their eight storage variants as syntax diagnostics, outside the GCC-defined
+  layout batch; do not call them layout disagreements or narrow Supported.
+  Named GNU attributes after widths and leading declaration/specifier forms
+  have separate valid controls. Menhir placement failures stay separate too.
+- A whole 42-function CSem printf-layout batch was interrupted after several
+  minutes with no result. Retain the empty captures and exit130; use generated
+  individual layout programs and compare every initialized byte. The unchanged
+  full batch remains the native compiler/GCC observation, not a CSem success.
+- Fresh full-compiler Sail reveals inherited ad1 leakage across comma siblings:
+  the middle-aligned guard has tail17 versus GCC9. Reset each compiler/model
+  member from the shared specifier attributes, preserving legitimate leading
+  attributes on all declarators. Retain the complete before-image and console.
+- Zero-width fields ignore packing but still honor explicit GNU aligned
+  barriers. A member's explicit alignment also overrides aggregate packing;
+  do not infer either property only from the merged numeric alignment.
+- Ctrl-C on the combined diagnostic returned wrapper exit 130 while its child
+  survived outside the worker PID namespace. The lead verified the exact host
+  PID/cwd/command/source and sent SIGTERM after 1,542.695 seconds since capture
+  creation. Preserve that stop receipt; bounded direct semantic subprocesses
+  in the maintained checker avoid this wrapper/orphan ambiguity.
+- The lead's exact early raw-executable gate fix is commit 79e1454. Reuse that
+  committed hunk; attempting to apply it again after the lead installed it
+  correctly fails without changing source. The final gate has its own new
+  frozen manifest rather than relabelling the historical lean4/oracle1 pins.
+- Final bitattr staging also cannot create this worktree's read-only index.lock.
+  Retain commit-stage.stderr and use the existing frozen scoped lead commit
+  handoff; no alternate index/object store or semantic rerun is needed.

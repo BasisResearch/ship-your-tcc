@@ -217,7 +217,8 @@ def buildStructuredSpecifier (c : Context) (i : Nat) : Build (cabs_type_specifie
             j := df.range.last
           if (c.token j).tok == .COLON then
             let (e,k) ← c.expressionAt (j+1)
-            ds := ds ++ [.SDecl_bitfield de e]; j := k
+            let (fieldAttrs, endAttrs) ← c.attributesAt k
+            ds := ds ++ [.SDecl_bitfield (Attrs fieldAttrs) de e]; j := endAttrs
           else if let some d := de then ds := ds ++ [.SDecl_simple d]
           else return ← c.fail "missing member syntax"
           if (c.token j).tok == .COMMA then j := j+1

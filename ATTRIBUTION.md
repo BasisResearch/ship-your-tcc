@@ -296,3 +296,14 @@ table. No machine-library proof is copied or asserted instruction-identical.
 The independent default OCaml regression overlay retains its documented
 unsupported bitfield configuration; target observations use cfgTcc in Lean,
 strict GCC and the pinned full tcc/Sail image.
+
+GNU per-declarator bitfield attributes (2026-10-28): reuses Cerberus's
+`Annot.attributes`, declarator carriers, Cabs import/export, shared GNU effect
+elaboration and the adopted bitfield representation/access machinery. The
+explicit bitfield attribute slot also preserves unnamed padding without a
+source-visible identifier. The per-member base-attribute reset in TinyCC and
+its model is a local repair of the pinned `struct_decl`; placement follows
+`struct_layout`, keeping explicit alignment separate from packing. Lua's
+inventory and mandatory task table were consulted again; no new library proof
+or instruction-byte identity claim is made. Existing full-compiler Sail,
+positioned-Cabs and independent fast-arena harnesses supply the observations.

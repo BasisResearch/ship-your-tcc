@@ -567,13 +567,23 @@ def pStructDeclaration : Nat → P struct_declaration
 def pStructDeclarators : Nat → P (List struct_declarator)
   | 0 => fuelOut
   | n+1 => do
+    -- A comma starts a new owner. Width-suffix attributes belong to this
+    -- field even when there is no declarator (physical unnamed padding).
+    let leading ← pAttrSeqOpt n
     let sd ← if ← at? .COLON then
         let _ ← advance
-        pure (.SDecl_bitfield none (← pConstExpr n))
+        let width ← pConstExpr n
+        let trailing ← pAttrSeqOpt n
+        pure (.SDecl_bitfield (combineAttrs (toAttrs leading) (toAttrs trailing)) none width)
       else
         let d ← pDeclConcrete n
-        if ← accept .COLON then pure (.SDecl_bitfield (some d.cabs) (← pConstExpr n))
-        else pure (.SDecl_simple d.cabs)
+        if ← accept .COLON then
+          let width ← pConstExpr n
+          let trailing ← pAttrSeqOpt n
+          pure (.SDecl_bitfield (combineAttrs (toAttrs leading) (toAttrs trailing)) (some d.cabs) width)
+        else
+          let direct ← addDirectAttrs n (toAttrs leading) d.direct
+          pure (.SDecl_simple { d with direct := direct }.cabs)
     if ← accept .COMMA then return sd :: (← pStructDeclarators n) else return [sd]
 
 /-- `enum_specifier`. -/

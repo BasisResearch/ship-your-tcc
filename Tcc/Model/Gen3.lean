@@ -471,7 +471,9 @@ def struct_decl (R : Rec) (u : Int32) : M CType := do
             continue
           skip R 59
           continue
+        let memberBaseAd := ad1
         for _ in [0:fuel] do
+          ad1 := memberBaseAd
           if flexible then
             tcc_error R (cfmt "flexible array member '%s' not at the end of struct" [.s (← get_tok_str v none)])
           let mut bit_size : Int32 := -1
