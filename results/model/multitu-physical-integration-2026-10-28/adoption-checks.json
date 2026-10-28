@@ -1,0 +1,15 @@
+{
+  "full_gate": "multitu-physical-integrated-1",
+  "primary_inputs": 4162,
+  "post_gate_changes": {
+    "codexwork.sh": {
+      "gate_sha256": "eec2ba54bf440d79ce4eb98b3d7a97fd010af975ae6e6b31969daff934b26724",
+      "adopted_sha256": "9e090995a21a6ea3b5f52cbede1f4e4d1bff819e0b529d738cc46f5a87816808",
+      "retained_path": "post-gate/codexwork.sh",
+      "reason": "After the gate, preserve reviewed merge history when main is already an ancestor. Launcher is not a compiler/semantic/generator input. Original gate bytes remain archived; adopted script is syntax checked and static gate runs."
+    }
+  },
+  "verification": "Running as unit: run-p2157297-i483867687.scope; invocation ID: af4214df39324d35b258e8bccf9adb70\nVerified 10842 members;4162inputs;40physical theorem audits;15TU records/4checked bundles/6fast arenas;42defined attribute cases;7complete native captures and fresh104 execution\n",
+  "static": "check: static stages OK",
+  "source_revision": "db74d07ff6a0a0c9363dba6554905aad668c632a"
+}

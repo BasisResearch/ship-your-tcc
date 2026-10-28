@@ -49,16 +49,26 @@ outcome set, with generic placement contracts and 21 focused checks. The
 machine-memory simulation remains open (results/csem/allocation-oracle.md).
 
 Compiler-action Cabs now agrees with independent raw preprocessing/parsing on
-50/56 fixtures. All 18 compiler-injected opening controls and 58 physical-origin
+51/56 fixtures (52/56 for the model-token parser component). All 18 compiler-injected opening controls and 58 physical-origin
 controls pass, with complete header aliases and user asm exclusions preserved.
 The combined gate, fifteen erasure pairs and eighteen independent fast arenas
 pass; a new complete native Sail arena matches the static/builtin memcpy
 shadowing control. Runtime coverage is still five bodies, fifteen missing targets and
 one alloca intrinsic duty. The local universal replay-erasure theorem is proved
-and adopted after the combined gate; eleven ghost contracts and the four new compiler-environment/binding
-contracts remain open
+and adopted after the combined gate. Pure physical-origin map and read-view
+contracts are now proved for arbitrary bytes, along with block erasure/shape;
+whole-run, read/refill/host and compiler-environment/binding contracts remain open
 ([binding integration](results/model/binding-integration-2026-10-28.md),
 [local replay proof](results/model/replay-integration-2026-10-28.md)).
+Ordered multi-TU records and deferred replay are now adopted after a full
+4,162-input gate. Eight commands retain 15 records, four completely checked
+bundles and six independent fast arenas; pack-layout and guarded-opening
+residuals remain explicit. A fresh two-file native Sail run matches the entire
+4 MiB arena and then executes the same ELF with expected output and exit zero
+(11,461,362 compiler + 64,583 program steps). The 40 physical theorem audits and
+10,842-member portable integration archive verify independently
+([multi-TU and physical integration](results/model/multitu-physical-integration-2026-10-28.md)).
+Whole-command construction/erasure and compiler correctness remain open.
 Generic/static-assert compiler actions retain selected and unselected syntax.
 Assertion messages now accept all five C11 literal encodings: 65 complete Cabs
 controls agree in all three scopes, 64 new fast arenas match, and 61 diagnostic

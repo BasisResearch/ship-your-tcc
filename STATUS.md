@@ -39,7 +39,7 @@ removed. Patch 0004 fixes compiler literals using exact integer rounding;
 public libc `strtold` still needs correction in the library lane. Matching refusals likewise do not satisfy the F3 success criterion.
 
 The lead runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most two
-at a time, following MANAGER.md. Slot 1 now handles implementation-defined enum bitfields;
+at a time, following MANAGER.md. Slot 1 now repairs valid enum-colon compiler forms after reviewed enum semantics;
 slot 2 has submitted reviewed physical-proof checkpoint b42f766 after
 reviewed multi-translation-unit checkpoint 96c520e. Their combined adoption is next;
 slot 2 now runs tasks/f1-gnu-conditional-semantics.md. C11 bitfields and GNU expression syntax are adopted after their combined full
@@ -600,6 +600,29 @@ results/review/gnu-conditional-promotion-2026-10-28: GNU omitted-middle ?: loses
 narrow-field promotion, unlike ordinary ?: and unary/arithmetic controls.
 The queued repair is tasks/f3-gnu-conditional-bitfield-promotion.md; no new
 cfgTcc policy or Supported exclusion is introduced. Sum cuts stay frozen.
+
+Multi-TU and physical-proof adoption (2026-10-28): reviewed96c520e/b42f766 are
+combined with member attributes. Full gate passes4,162 frozen inputs; the
+independent verifier checks10,842 archive members, all pinned source bytes,
+40 physical theorem audits,15 TU records/four checked bundles/six fast arenas,
+42 defined attribute cases and seven complete native captures. Original56
+syntax counts are51shared/52component/51independent;58physical+fourguards and
+15ghost on/off observations pass. The fresh native104 run matches4MiB and
+executes the exact same retained ELF with exit0/expectedoutput:
+11,461,362compiler+64,583program=11,525,970steps.
+`Ghost.PhysicalOriginMap_Statement` and `Ghost.PhysicalReadView_Statement`
+are now discharged for arbitrary bytes, as are pure block erasure/shape and
+local deferred replay erasure. This supersedes their earlier open status.
+Splice/refill and the full PhysicalTransformObligations instance remain open;
+so do raw/whole-run construction/erasure, host/binary/fuel/semantic connections
+and `MultiTUConstruction_Statement`/`MultiTUErasure_Statement`. Pack-layout and
+cached-opening residuals remain explicit, with no source restriction.
+Evidence: results/model/multitu-physical-integration-2026-10-28.md.
+Enum checkpoint7907c3a is independently reviewed but not adopted in this gate;
+slot1 now repairs valid enum-colon compiler/model refusals. Slot2 retains GNU
+conditional shared semantics, with its separate native bitfield-promotion bug
+queued for compiler/model repair. F1–F3 and tcc_run_correct stay open; sum cuts
+remain frozen. Main executable artifact refresh follows this adoption.
 
 ## Needs user
 

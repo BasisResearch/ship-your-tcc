@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+# One external Sol worker per slot; the lead reviews and integrates commits.
+# Parse the complete body before waiting in codex, so later edits cannot
+# change the shell's resume position inside a running launch.
+main() {
+set -euo pipefail
+repo=$(cd "$(dirname "$0")" && pwd)
+slot=${1:?usage: codexwork.sh 1|2 tasks/file.md}
+case "$slot" in 1|2) ;; *) echo 'slot must be 1 or 2' >&2; exit 2;; esac
+task=$(realpath "${2:?task file required}")
+[[ -f "$task" && $(wc -l < "$task") -lt 40 ]] || {
+  echo 'task must exist and contain fewer than 40 lines' >&2; exit 2;
+}
+mkdir -p "$repo/logs" "$repo/build/workers"
+exec 9>"$repo/build/workers/slot-$slot.lock"
+flock -n 9 || { echo "slot $slot is already running" >&2; exit 2; }
+log="$repo/logs/sol-$slot-$(date -u +%Y%m%d-%H%M%S)-$$.log"
+exec > >(tee -a "$log") 2>&1
+echo "Task: $task"
+echo "Log: $log"
+free -g
+available=$(awk '/MemAvailable:/ {print int($2/1024/1024)}' /proc/meminfo)
+if (( available < 25 )); then
+  echo "RESULT: stuck launch: only $available GiB available (need 25)"
+  exit 1
+fi
+wt=${WORKTREE:-$repo/.claude/worktrees/sol-$slot}
+if [[ ! -e "$wt" ]]; then
+  git -C "$repo" worktree add -b "sol/slot-$slot" "$wt" main
+fi
+if [[ -n $(git -C "$wt" status --porcelain) ]]; then
+  echo "RESULT: stuck launch: dirty worktree $wt; preserve and review first"
+  exit 1
+fi
+# A reviewed merge may already contain main. Flattening it would replay
+# adopted/cherry-picked checkpoints and discard the reviewed merge resolution.
+if git -C "$wt" merge-base --is-ancestor main HEAD; then
+  echo "Worktree already contains main; preserving reviewed merge history"
+elif ! git -C "$wt" rebase --rebase-merges main; then
+  echo "RESULT: stuck launch: rebase conflict in $wt; changes preserved"
+  exit 1
+fi
+# A fresh worktree has no artifacts to detach and can start reading/editing
+# while another lane builds. Existing caches still require the common lock.
+if [[ -d "$wt/.lake" || -d "$wt/riscv-lean/lean_emulator/.lake" ||
+      -d "$wt/riscv-lean/lean-sail/.lake" || -d "$wt/riscv-lean/Lean_RV64D_executable/.lake" ]]; then
+  flock "$repo/build/lake.lock" python3 "$repo/scripts/isolate_lake_cache.py" "$wt"
+else
+  echo "Fresh worktree: no Lake artifacts to isolate"
+fi
+codex=${CODEX:-$HOME/.local/share/codex-0.162.0/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex}
+export SYT_LAKE_LOCK="$repo/build/lake.lock"
+echo "$$ $wt" > "$repo/build/workers/slot-$slot.pid"
+trap 'rm -f "$repo/build/workers/slot-$slot.pid"' EXIT
+set +e
+"$codex" exec -m gpt-6.1-sol -c model_reasoning_effort=high \
+  -s workspace-write --add-dir "$repo" -C "$wt" \
+  "$(cat "$task")
+Work only in this worktree. Do not push or merge main; commit for lead review.
+No built-in subagents. Builds: free -g, then flock \"\$SYT_LAKE_LOCK\" systemd-run --user --scope -p MemoryMax=12G lake build TARGET.
+Record dead ends in your result so the lead does not resend them.
+Read build/lead-note.txt if present before each build request and before finalizing; lead review arrives there and in build receipts. Resolve requested corrections before claiming done.
+Inspect receipt IDs, exit status and lead notes without printing entire hash manifests; verify those with a script. Poll builds at sensible intervals and keep logs concise.
+Finish with RESULT: landed <commit> or RESULT: stuck <where> (landed means ready for lead review)." \
+  >> "$log" 2>&1
+rc=$?
+set -e
+if ! grep -E '^RESULT: (landed|stuck) ' "$log" | tail -1; then
+  echo "RESULT: stuck worker exited $rc without a result; inspect $log"
+fi
+exit "$rc"
+}
+main "$@"
