@@ -19,5 +19,18 @@
   "retained_complete_sail_arenas_recompared": 3,
   "new_native_sail_runs": 0,
   "model_sha256": "b35401b33b75d2f5663027829328d5b182dc835a609075ca48621215b39fb6e0",
-  "ghost_sha256": "ad8776907c8168401a69dfa4055092767fa8fbd47cd7e48f9a2ad7c6b94e3e2c"
+  "ghost_sha256": "ad8776907c8168401a69dfa4055092767fa8fbd47cd7e48f9a2ad7c6b94e3e2c",
+  "rebase": {
+    "revision": "d40607c1faa73ac4f76f966b61f907bf49e0db53",
+    "changed_gate_inputs": [
+      "scripts/check.sh",
+      "scripts/model_diff.py"
+    ],
+    "all_semantic_and_compiler_sources_identical": true,
+    "old_script_snapshots": {
+      "scripts/check.sh": "gated-check.sh.txt",
+      "scripts/model_diff.py": "gated-model_diff.py.txt"
+    },
+    "static_gate": 0
+  }
 }

@@ -159,3 +159,10 @@ followed by the same check passes. Both failed attempts remain diagnostics.
 The ongoing Sol continuation owns macro origins/replay and typed header syntax;
 independent F1 GNU attribute meanings remain queued. This adopts a useful
 instrumentation checkpoint, not ordinary whole-C parser completion.
+
+The final rebase adds the independently validated comparison-isolation change.
+All 2,300 other gate inputs, including every semantic/compiler source, are
+byte-identical; only check.sh/model_diff.py differ. The prior two scripts are
+retained exactly beside their hashes so the gated source snapshot remains
+reconstructible. The rebased static gate, including concurrency controls,
+passes. Historical fixture/raw receipt pins refer to their original run.
