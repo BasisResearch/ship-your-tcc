@@ -61,8 +61,9 @@ requested corrections must be resolved or returned as an explicit obstruction.
 Keep build receipts compact: inspect ID/status/lead notes, and verify large
 hash manifests with scripts. Do not repeatedly print whole manifests or logs.
 
-Next integration duty: combine the reviewed generic/static-assert compiler
-actions with the newly adopted Cabs expression-alignment constructor. Keep
-shared-token, model-token parser and independent Raw.checked comparisons
-separately labeled. The array-decay worker must turn its precise compiler
-failure into a positive regression without changing CSem to match the bug.
+Next integration duty: review the array-decay compiler/model repair against
+adopted alignment and generic syntax. Keep shared-token, model-token parser
+and independent Raw.checked comparisons separately labeled. Turn the precise
+decay failure into a positive regression without changing CSem to match the
+bug. The local universal replay-erasure proof is queued after that repair in
+tasks/f3-ghost-replay-erasure.md; wide assertion messages remain a separate task.

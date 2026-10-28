@@ -1,0 +1,88 @@
+{
+  "input_pins": {
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/unevaluated-syntax-gate.QOEmNy/syntax/batch.c": "c09279538ea6254f691e86e15762de2f7ee975636022a3ebb65da27a4a6064e8",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/tcc_model": "fe79965b33c2ac281d74b5968ce970d929178aba42b26dd8c8048e699e533840",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/unevaluated-native-tool/capture_cut": "2fe637d6e77e2741606bb67e5f7f07751a1a90dd1d5467f75aca3288cf5663bf",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/unevaluated-native-tool/build.json": "6f829539787d74997a6fa542d9d4cd04b9a62dca3950f50b237458694bf571e6",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/scripts/unevaluated_native_check.py": "90f78a3a022db3cc579f02e54c2e6ad256c3040c087c194228ffb37f342a266e"
+  },
+  "erasure": true,
+  "model_runs": [
+    {
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/tcc_model",
+        "--prog",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/unevaluated-syntax-gate.QOEmNy/syntax/batch.c",
+        "--arg",
+        "-w",
+        "--arg",
+        "-std=c11",
+        "--arena-out",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/unevaluated-syntax-gate.QOEmNy/native/off.arena",
+        "--console-out",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/unevaluated-syntax-gate.QOEmNy/native/off.console"
+      ],
+      "exit": 0,
+      "stdout_sha256": "f4472a14b6160e58b35bfeb710d23d240ab59402cc84bc7b5a579c7373849295",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "arena": "d908276c184b24a7274482998891c1fb17df03911129d91abb226e1a13f81b76",
+      "console": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/tcc_model",
+        "--prog",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/unevaluated-syntax-gate.QOEmNy/syntax/batch.c",
+        "--arg",
+        "-w",
+        "--arg",
+        "-std=c11",
+        "--arena-out",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/unevaluated-syntax-gate.QOEmNy/native/on.arena",
+        "--console-out",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/unevaluated-syntax-gate.QOEmNy/native/on.console",
+        "--ghost-out",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/unevaluated-syntax-gate.QOEmNy/native/on.ghost.json"
+      ],
+      "exit": 0,
+      "stdout_sha256": "f4472a14b6160e58b35bfeb710d23d240ab59402cc84bc7b5a579c7373849295",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "arena": "d908276c184b24a7274482998891c1fb17df03911129d91abb226e1a13f81b76",
+      "console": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "native_arena": {
+    "command": [
+      "python3",
+      "scripts/model_diff.py",
+      "--no-report",
+      "--require-success",
+      "1",
+      "--json-out",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/unevaluated-syntax-gate.QOEmNy/native/arenas.json",
+      "--sail-capture",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/unevaluated-native-tool/capture_cut",
+      "-j",
+      "1",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/unevaluated-syntax-gate.QOEmNy/syntax/batch.c"
+    ],
+    "exit": 0,
+    "stdout_sha256": "39844b9c1952d6ad8be9c82633b6bfe581fedbf9074265e79dc15b93099bab37",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "execution": {
+    "command": [
+      "systemd-run",
+      "--user",
+      "--scope",
+      "-p",
+      "MemoryMax=12G",
+      "bash",
+      "scripts/run_tcc_sail.sh",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/unevaluated-syntax-gate.QOEmNy/syntax/batch.c"
+    ],
+    "exit": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "a0f233329712eff205be2b8898e22c64601e09b0ce7975ea6d6df72250397688"
+  }
+}

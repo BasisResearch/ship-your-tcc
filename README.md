@@ -42,14 +42,19 @@ outcome set, with generic placement contracts and 21 focused checks. The
 machine-memory simulation remains open (results/csem/allocation-oracle.md).
 
 Compiler-action Cabs now agrees with independent raw preprocessing/parsing on
-45/56 fixtures. All 18 compiler-injected opening controls and 58 physical-origin
+47/56 fixtures. All 18 compiler-injected opening controls and 58 physical-origin
 controls pass, with complete header aliases and user asm exclusions preserved.
 The combined gate, fifteen erasure pairs and eighteen independent fast arenas
 pass; a new complete native Sail arena matches the static/builtin memcpy
 shadowing control. Runtime coverage is still five bodies, fifteen missing targets and
-one alloca intrinsic duty. All eleven ghost contracts and the four new
+one alloca intrinsic duty. All twelve ghost contracts and the four new
 compiler-environment/binding contracts remain open
 ([binding integration](results/model/binding-integration-2026-10-28.md)).
+Generic/static-assert compiler actions now retain all selected and unselected
+syntax: 21 focused controls agree in all three comparison scopes. A fresh
+native Sail batch matches all 4 MiB and a separate complete program run returns
+zero. Twelve invalid diagnostics and the valid wide-message compiler refusal
+remain separate ([generic integration](results/model/unevaluated-integration-2026-10-28.md)).
 GNU declaration syntax/layout has 23 semantic controls and six actual-header
 parses. Compiler typedef alignment is now
 repaired: three full compiler Sail probes succeed and two new complete native

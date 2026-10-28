@@ -40,8 +40,8 @@ public libc `strtold` still needs correction in the library lane. Matching refus
 
 The lead runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most two
 at a time, following MANAGER.md. Slot 1 now handles C11 bitfield semantics;
-slot 2 repairs compiler/model array-to-pointer alignment decay. The reviewed
-_Generic/_Static_assert syntax checkpoint awaits its combined main gate. Binding meaning and actual model-owned compiler-injected
+slot 2 repairs compiler/model array-to-pointer alignment decay. Complete _Generic/_Static_assert syntax is adopted after its combined gate
+and independent raw/native checks. Binding meaning and actual model-owned compiler-injected
 opening authority are adopted after their combined gate and independent raw
 comparison below. Physical-origin maps remain adopted with separate evidence.
 The earlier anonymous-member, IEEE, GNU syntax/layout, allocation and typedef
@@ -72,8 +72,9 @@ one 156-vector binary128 stress arena; zero mismatches/model errors. The 548
 compiler refusals, 17 unsupported-assembly cases and 250 harness failures
 remain separate. Most harness failures execute the generated program after
 handoff, which the new collector addresses. See results/model/c11-model.md.
-Ghost GNode is not yet Cabs; fuel adequacy, compiler/model proofs and full
-Sail arena equality remain open. Older pre-C11 counts used a defective cache
+At that earlier checkpoint, ghost GNode was not yet typed Cabs. Current
+compiler-action Cabs coverage is recorded in the later integrations below;
+fuel adequacy, compiler/model proofs and all-corpus Sail equality remain open. Older pre-C11 counts used a defective cache
 key and remain historical diagnostics. The inherited assembler drafts are
 preserved in build/recovery/assembler/. The extra macro-operand compiler repair
 passes host/cross tests and full Sail (results/review/c11/pragma-macro-operand/).
@@ -415,6 +416,22 @@ Slot1 now works on bitfields. Slot2 repairs the compiler/model array decay in
 tasks/f3-array-alignment-decay.md; generic/static-assert syntax is reviewed
 and awaits the next combined gate. Wide assertion messages are queued in
 tasks/f3-static-assert-messages.md. No scope restriction or user decision.
+
+C11 generic/static-assert adoption (2026-10-28): the combined full gate passes
+with 3,643 frozen inputs, including the new GNU expression-alignment Cabs
+interface. All 21 focused valid controls are exact in three distinct scopes;
+12 invalid diagnostics and one valid wide-message refusal remain separate.
+Original 56 counts advance to 47 shared, 48 model-token component and 47 genuinely
+independent Raw.checked agreements. All 18 authority/six guards, 58 physical/
+four guards, 15 erasure pairs, 18 fast arenas and the inline pair pass. A fresh
+complete native Sail batch matches all 4 MiB at 3,487,048 steps; a separate full
+compiler/program run returns zero (126 program steps). See
+results/model/unevaluated-integration-2026-10-28.md. The new
+Ghost.AssociationReplayErasure_Statement brings open ghost contracts to 12;
+finite observations prove none of them. Its proof task is queued separately.
+Slot 1 continues bitfields; slot 2 repairs array decay. Wide assertion messages,
+remaining grammar, pack layout, runtime bodies, multi-TU, fuel and binary
+refinement remain open. Historical broad counts and frozen sum cuts are unchanged.
 
 ## Needs user
 
