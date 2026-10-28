@@ -1,0 +1,707 @@
+{
+  "acceptance": {
+    "mode": "strict",
+    "accepted": true,
+    "minimum_exact": 44,
+    "required_exact": [
+      "abstract-params",
+      "all-binary",
+      "all-qualifiers",
+      "array-designators",
+      "array-subscript",
+      "assignment-comma",
+      "case-range",
+      "cast-sizeof",
+      "char-spelling",
+      "conditional",
+      "definition",
+      "do-while",
+      "float-spelling",
+      "folded-expression",
+      "for-decl",
+      "for-empty",
+      "for-expr",
+      "function-call",
+      "function-pointer",
+      "function-prototype",
+      "if-else",
+      "incomplete-array",
+      "increments",
+      "labels",
+      "line-provenance",
+      "logical-chain",
+      "macro-provenance",
+      "multi-declaration",
+      "nested-array-init",
+      "nested-declarator",
+      "nested-designators",
+      "pointer-qualifiers",
+      "scalar-declarations",
+      "spelling",
+      "statement-expression",
+      "string-boundaries",
+      "struct-members",
+      "switch",
+      "typedef-scope",
+      "typedef-shadow",
+      "ucn",
+      "unary",
+      "void-prototype",
+      "while-break"
+    ],
+    "failed_controls": []
+  },
+  "source_hashes": {
+    "Spec/ImageFiles.lean": "799f69aca3a56dbed62d3d7551650a20408bf851b80bf35c94235e0e773cb126",
+    "Spec/Pre/Compare.lean": "f8d837e1bf0f15887c98c8f830103b8c676884eda3a3313f755b555770f16a13",
+    "Spec/Pre/Expand.lean": "977c9193e601ae64aa9e5bc59693a62378d86789a6dec71a25dd63fb5afbe91f",
+    "Spec/Pre/IfExpr.lean": "9b6353eec39024afb4eab3e69c8562fd37375e6ee5ab8063f419beeac630cb66",
+    "Spec/Pre/Iso.lean": "f9c8710039d04011254be204eb230c8aca3da1081a6725e3ba4f9e1445af707a",
+    "Spec/Pre/Lex.lean": "524e1884a6b1b6292b4a341a703714ffeac8ab3d882dec47d559df8592ff4bc0",
+    "Spec/Pre/Main.lean": "51c43417fcde26934c7f5bce6ee84e4b0ef93e29e3491a8818f0fc7ccb52233d",
+    "Spec/Pre/Phase12.lean": "e85688e37903411209a9e3c3035de24d58e1fd9c4892110e187dbf2a641f62e7",
+    "Spec/Pre/Phase4.lean": "e9f5eae8bb209c4db58739d16fbfc5819c40c6bf222fe6037c58bfbb39580390",
+    "Spec/Pre/Provenance.lean": "274f156fe1b0c749b1b5648b0c1edf7daa2342c912b1a0c9e1eb857d72741d33",
+    "Spec/Pre/Tcc/Cfg.lean": "c71bef864dca7e60e35b3aa7af4d53f2cb7e73fcbe3e10c51a410f204ef72e4f",
+    "Spec/Pre/Tcc/ImageFS.lean": "543e8939bfd9d13e0588356d03d9a354f7b118bf623f456d2cde98d2611e69f2",
+    "Spec/Pre/Test.lean": "a57839c30e317f697b4fe4b0af212f38e380886ff3682eae9ee276a7bc4bccac",
+    "Spec/Pre/Types.lean": "e4030d9f57bf2014b93cc1558a7a2059b3eed513b3f8a0baabccf64d4ec1f97d",
+    "Tcc/CSem/RawFrontEnd.lean": "a6649e111d5cce417f607c5c770f9db82e029101a374bdf7cb8de70e8bcf0d47",
+    "Tcc/Model/Alignment.lean": "1125a569c0fbf9acd6116867c749c0e5afeef74eb7afe7e030309b85fa24f137",
+    "Tcc/Model/AlignmentAudit.lean": "7b3ea89f061b1bee5390568bc33c547aa58506ed8218b1e249b23c3951297f4b",
+    "Tcc/Model/Base.lean": "fe70936ded2b273f274b50cc70e82906c642f60d29409d05ca26603e203372ce",
+    "Tcc/Model/CompilerOpening.lean": "e4347e5246cc97bbf1c4fde6ad0da4e99a8471879f4b8e94ed35108bc5c778e5",
+    "Tcc/Model/Elf.lean": "86e9c5b1f4f3b857abecfeb5165626f412077499535638f687e6f91a96265ecf",
+    "Tcc/Model/Gen1.lean": "83f8860796036b0558552954d55aa06a5daa635b63bdab63a3305adea9d07f3c",
+    "Tcc/Model/Gen2.lean": "158766920c5c4c7543e7caaa8a4ca3dbceb15c9317b73a83c773271a9011b3d7",
+    "Tcc/Model/Gen3.lean": "fcfdd7d8854c6fbfc41a9eef43f4c96d5f52759bb8feab7e40012214f2d694e6",
+    "Tcc/Model/Gen4.lean": "ffe458298bb3ebd23fb3c10756de0fb1251c947d56fae7ac9a656be12cd8ee7a",
+    "Tcc/Model/Gen5.lean": "2248add134dc139f22cd707e854150983b77dc2f802e924e3c1b905fc71027aa",
+    "Tcc/Model/Gen6.lean": "004a9bbb88c77cd6992f175577b03d39261a8a83ba5dfbf862a11ae4d0214542",
+    "Tcc/Model/Gen7.lean": "586e377089d45c5e98df738cc6b0ffb736d000b3f7baf20a46d0b2508f00aa69",
+    "Tcc/Model/Gen8.lean": "1723f06b1a5a3a733ae2bd0dc89447f7c4f849de994a9b0b786e9a7b5a437ee0",
+    "Tcc/Model/Ghost.lean": "5dfc525326d241e1cdc9426f10b7b556572733c8bc4cdc68916b59fd3e751a95",
+    "Tcc/Model/GhostAudit.lean": "63edc4fbbdf2424250d168cfcd8199f97a5ce4b8e589668a8b124c5a49a98db7",
+    "Tcc/Model/GhostCabs.lean": "14f193146a3eb93df589a69d5ae0e25e383441a651e7d9cfb5db7cf2ee2e1ec2",
+    "Tcc/Model/GhostDriver.lean": "6d10017f181c6660b45fbdcca01cfe027eec82cb757edb0e4da49c2a5129c457",
+    "Tcc/Model/GhostExport.lean": "f3c94477e53a4b06b8f26eaef2968b164f9d62e8e14e25618ba3bc1e76c5a749",
+    "Tcc/Model/Host.lean": "41701a28f27035908b16eb1a17e3e6df265d3162ab65d8f3a4864a80ffeceb3c",
+    "Tcc/Model/Libtcc.lean": "86f0372e96309fcadb1c4f174ea0b52bc4c20e43b8c3a2444180796172657bec",
+    "Tcc/Model/Link.lean": "bca83501267db6fd81769c9ffb74f26b97882058c0e39cf824d22405d2066ac4",
+    "Tcc/Model/Main.lean": "0091fb505add143679df0cc4a70140e1ce4c0eb027987dff43e30562b61f8dac",
+    "Tcc/Model/PpDir.lean": "12945dd24af3f215ab53ab6b44e1f770a0f306bc09384fcee3685fab98b6a418",
+    "Tcc/Model/PpLex.lean": "a30fd2ba5e462bf21a07c1c50701aed03ddc1c55a358f468a10517384b2a2a04",
+    "Tcc/Model/PpMacro.lean": "3ad3f848ff85a4bf7a84b7c31256ea78fede16089d4ec509ef75fd25aa79a291",
+    "Tcc/Model/PreAudit.lean": "398bb956fe40bdce9a2e01949543f1fd16b93318e9c8dbb30dc33485b4d5946c",
+    "Tcc/Model/Preprocess.lean": "697cf9e28126d716f43b765749e370ac87d759d3ec006a7e88afb4efe0fc0bfc",
+    "Tcc/Model/Rec.lean": "e9c4370fbeb05e3acef60466e932106ea7b0c66ce0e8f550182f37ea4add9be4",
+    "Tcc/Model/Riscv.lean": "4302cc9e2a5fe66fd70c4821a9f6a926c2d93e95282cf699dca00bc91a41d5ac",
+    "Tcc/Model/Run.lean": "69aa48d19fb81f4e0414eb1877b7ae55d352f35b0bcfe863d4b4243257c2dd31",
+    "Tcc/Model/SoftFloat.lean": "349adb389fc260bfbc3cd9a3a1e2a308ac8e23cc69abd21a5d89af68cb0ecdee",
+    "Tcc/Model/State.lean": "a87d180dff1c5fa8a053a88196cd072bbfde31e62ac5709e84d0dc39d7c5eafe",
+    "Tcc/Model/Syms.lean": "5b873ab99b01ff805677f5f7df1d75911d7ad9fec965b1ee9d269286d30b6a41",
+    "Tcc/Model/Tie.lean": "bfcd00f452c2ba31fa4da21be386ec3056d5d5bfce8956c50601f2da296bc89a",
+    "Tcc/Model/TieStub.lean": "48f9c8f5b757507be9ad93a568134d81edb878da6dfd6a672b6ef77b6a48bc6a",
+    "Tcc/Model/Tok.lean": "ae7185ec4929199e063a2920ac88c19963e6baf1d3ab72b9b65ed050afebb91c",
+    "Tcc/Model/Types.lean": "6ec528e5367ca7cf279be5901532be922bbbb31aadea3260a8e032d233076886",
+    "Tcc/ModelMain.lean": "20ba50b346cb9ec25518220b194cab9f6a636090fa7bfddc02edaa83db3f66ce",
+    "csem/cparser/CSemCParser/CabsExport.lean": "14b29e0884a0c480e3d1fe3a95627f0b78547debf96e4e8c5b8b3d3b370ded90",
+    "csem/cparser/CSemCParser/Front.lean": "66c2f6f6d6203f2de31ee1527fb2ac82f9ba859cd353e3d0d00620c1814dfd09",
+    "csem/cparser/CSemCParser/Grammar.lean": "7949756a534727dd6826c1c3aa90dfcfef9f443d17fe076c07ac0da70059b9a0",
+    "csem/cparser/CSemCParser/Identifier.lean": "aad0d04f63fa5345a2eb3e62003df6eb6f2593a9c912466a2df7511f5b2c428a",
+    "csem/cparser/CSemCParser/Lexer.lean": "2d571b6a31d9a30074c3146fbcf32b50515a96a8dbaf1b11f45c353669a4c3e1",
+    "csem/cparser/CSemCParser/Main.lean": "3c4d761121d65a855f28a19b8fe516470fb9271e5d36c1b827dbea83ca643bae",
+    "csem/cparser/CSemCParser/Parser.lean": "dae778b8067cefe15a763bf7c842d8ab00ce80f0181449e86cfae8b28520b35e",
+    "csem/cparser/CSemCParser/Phase7.lean": "e0559cb956896448417b526199fab024e9eb0a5ae44fa8f5ac582aa9810c567a",
+    "csem/cparser/CSemCParser/Token.lean": "b5b1b2fd88618c759da651474cdce53c258841da15e0f03fe4bee8a35292624b",
+    "lake-manifest.json": "b018c14800c66b6f28bd51ed167f416ee544d9dd08d610c55aecdd74fab6968b",
+    "lakefile.toml": "40c10f47cacf8c1cff1c5a4891844d7cfb22000e3fbad989add1972afa25d2fd",
+    "lean/Ghost/GhostMain.lean": "c4a51caf8c76d53dd4cc4db97160bfebcb1a66b7d39d7067c715d99cf7662096",
+    "lean-toolchain": "8733782dc070a99b312039cda424f601b80f3be6f6f512627da5ba25adc27632",
+    "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+    "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+    "patches/0003-tcc-c11.patch": "6bd9e9b2c3035a70d0fdecc524c24dfbc4f3937217a87df7c3e58faa9f160ca4",
+    "patches/0004-tcc-binary128-literals.patch": "15d4a95ec667c9ec18ea2be3fc1475c1178668853fea28213c3061afa0f863ff",
+    "scripts/binding_origin_build_request.py": "2513a795a7e7591dd48ec1205dae8ada379d3efc413e49ef50eac287cb3c3a45",
+    "scripts/ghost_build_request.py": "b3b673bb35adfb4f9339be0b0f5818bb24c8549dc5f39c4ffea674ab86260f41",
+    "scripts/ghost_cabs_cmp.py": "d74be6922a164921107b0116f6dff5eb85208eecc28e5d2a7f2aab1595678932",
+    "scripts/ghost_origins_cmp.py": "49ff70cbc3336d40412f6fc5567b5bb05518af9527aa7a476bbabc1983c85925",
+    "scripts/injected_origins_cmp.py": "69d5a0967d7a9578547850352397d116cefd749ead49ad89c50fe65dc9a577cd",
+    "scripts/physical_build_request.py": "0dac54afda712bc9b2899e606c02fe8c7a0cb156359c509dac25176d198ddbb4",
+    "scripts/physical_onoff_cmp.py": "1b2f44f0595900614c8887816ef2d9773b83cdd3217f6dc84789d16ff92c533c",
+    "vendor/CSEM_REV": "f4728490acefb712e9ea36f3c89ee387c98b31f8bb297f639ed71f520b92dfd6",
+    "vendor/TINYCC_REV": "76ca376f1f96cf1b316713d8f94d91c8629445929d1e7474792fd76610bce1c0"
+  },
+  "build": {
+    "request_id": "binding-integrated-1",
+    "request_sha256": "bb36458ea13f3d1754807591befcd9729b1cac2cd06d06077dabb887c4206533",
+    "receipt_sha256": "0a3ad5d179b2b9ee5f1417dddff7356606c68ff7044304c1219747deda9ceec5"
+  },
+  "input_mode": "shared-tokens-without-predefined-text",
+  "binary_sha256": "bfc645b0645a90ab36e31237566fea54350894cc4ce66d2f22c3402aa3d99e08",
+  "source_revision": "ca2221ee5d895e814da3717205c1fbed9056aecf",
+  "driver_sha256": "d74be6922a164921107b0116f6dff5eb85208eecc28e5d2a7f2aab1595678932",
+  "summary": {
+    "exact": 45,
+    "explicit-nonsuccess": 11
+  },
+  "rows": [
+    {
+      "case": "scalar-declarations",
+      "group": "declarations",
+      "source_sha256": "5a377623a5492333a755d5d9a5bddf44b98771304d93456d7224f55227129068",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "multi-declaration",
+      "group": "declarations",
+      "source_sha256": "6c8c09db5ba3e3b8ebc54228e9c6dab5d1e3445200e0fda6e8d1efefd3bdd8e0",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "all-qualifiers",
+      "group": "declarations",
+      "source_sha256": "11b50c593a2231969a006ea89efb058c3535adb6df5a79902c49052e2d3c1c63",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "pointer-qualifiers",
+      "group": "declarators",
+      "source_sha256": "9949fd6a9242e4d1ae845a83a35165657df9484804dfefd682913f740eb02dae",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "nested-declarator",
+      "group": "declarators",
+      "source_sha256": "4930d0bf8a84f82f712c3396efe7f4ed590e4574d1f00de1312a11ded9efba23",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "function-prototype",
+      "group": "function-types",
+      "source_sha256": "efe47187b9e8ebe3dbc2addc101dcf4e6eb20e397b6bcaf288bd60e14e7bf2f9",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "abstract-params",
+      "group": "function-types",
+      "source_sha256": "1a37eb74bd232305b38fd4d450b420d0fd5ace2f6c3eba1c8359fc287749ef2e",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "void-prototype",
+      "group": "function-types",
+      "source_sha256": "9662a2012ca1ee98720b2d9f3cf2fc263f13d38c9cca864e3a9a6af3dd708bda",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "function-pointer",
+      "group": "function-types",
+      "source_sha256": "1d5a7ec5146968a83cdac9c5282129dd28df9cc49eb7a5bfbfcc0d61591ae26f",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "definition",
+      "group": "control-flow",
+      "source_sha256": "a00fc39788b6f04b14ba430f590704f5b3e3e3797dc824d1cb42267383865b83",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "typedef-scope",
+      "group": "typedefs",
+      "source_sha256": "95650fac63513aaf131b693827bbc86c0405ea92ba71b94cdba1cca2e9eeb35a",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "typedef-shadow",
+      "group": "typedefs",
+      "source_sha256": "0d1fb0d5395ffc70c1f76742660ab62ec6a515d09831a97641160f37271ea6c4",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "folded-expression",
+      "group": "expressions",
+      "source_sha256": "cb2ab3157cf31760d3df24a4557edda7b93894d6f166c1c60a9e5f1bb5accda6",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "spelling",
+      "group": "expressions",
+      "source_sha256": "6f2793ed8ec33a62b4400982a5260ba7dce280a9dd48e05a911e44a6c3518689",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "float-spelling",
+      "group": "expressions",
+      "source_sha256": "594428c7bd7d2e9d2d46abf7f2fcea864f08b4d7e111cab5eb1fcfe0767d524a",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "char-spelling",
+      "group": "expressions",
+      "source_sha256": "61dd52f1eb15ae9342f098405e5db5a993d84c9375d434f4b2f03941202dff73",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "string-boundaries",
+      "group": "expressions",
+      "source_sha256": "70db1efe52a616b266e6e11881fd60d4fa0634d6f521e3c11acbcb025b61a436",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "assignment-comma",
+      "group": "expressions",
+      "source_sha256": "e6637038d21b93f0f848f5127d002c405380b88ecb19758a2e9555e695769e83",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "all-binary",
+      "group": "expressions",
+      "source_sha256": "1177027679b56fc701615f2b6b12e5b60a78fe37e414458fa36a1f6930bf024a",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "logical-chain",
+      "group": "expressions",
+      "source_sha256": "7aea2d5446df061568026dfcbd124b7dd64c102f10b4a2bcc387119c5e157640",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "unary",
+      "group": "expressions",
+      "source_sha256": "8f29471ee2c37c30625f859246c4ea052c4edad77129a7669275263b99ebccd7",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "increments",
+      "group": "expressions",
+      "source_sha256": "3ab6eec38fbc05ee6cf8d366a6120024f0e5eaa4dc4398cd15d7ee0271ef2871",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "conditional",
+      "group": "expressions",
+      "source_sha256": "6e8370e9fa2f98af63bddbb541038cbdb0c44de397dbe43c4434556fc68c8f4e",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "gnu-conditional",
+      "group": "gnu",
+      "source_sha256": "ba4a10515c29853bc6b435482d320bd0bef325dea89cbc07924d5c937f80fb53",
+      "model": "ok",
+      "spec": "spec-rejected",
+      "status": "explicit-nonsuccess",
+      "spec_error": "expected an expression (at :)"
+    },
+    {
+      "case": "cast-sizeof",
+      "group": "expressions",
+      "source_sha256": "21885e2eaa2d1c0930b6b3674bae884d0b41722f8a3e4473e5211a910c88edfe",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "array-subscript",
+      "group": "expressions",
+      "source_sha256": "3dcd6ff78e8f6a19439e4f90a636c72d21183262559395e3c2d4dd0ee1c4f0ae",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "function-call",
+      "group": "expressions",
+      "source_sha256": "5482b3bb54b98a6c94af32fbfbd41b3526ab0a3b12cfd03e2dd4194a88f1eeba",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "nested-array-init",
+      "group": "initializers",
+      "source_sha256": "c35299375b4c54cbe88725fb2a67fb541f1af935cd08cac4675c62f392b8ec2b",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "array-designators",
+      "group": "initializers",
+      "source_sha256": "1b1fd6d9c6a2e9ffb723aff04344c2e5d63e5b6ae4f2ad310bb6a6a5f9062ffc",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "incomplete-array",
+      "group": "initializers",
+      "source_sha256": "2ed66c283a21a7b21568ea033d253052ec04097c7ea6addfa1a6db6437e74f5e",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "struct-members",
+      "group": "declarations",
+      "source_sha256": "aefa2d65fe36d790a2b32b1724c8d1dd1b51613ba515e2fb8847134a8f674fc4",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "nested-designators",
+      "group": "initializers",
+      "source_sha256": "8fc5ce7339417698117b2474b59552e60346b54f8c25becaf35a6c8cbae2d941",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "if-else",
+      "group": "control-flow",
+      "source_sha256": "9fa841c28a52057912064d89e52db07b0f43c7aad522b012722ac2eff714a447",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "while-break",
+      "group": "control-flow",
+      "source_sha256": "aba18f3fcd11eadc8a8ee9e0fa74697a0be7f4f2db3f82367f2fa93a7c5f2867",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "do-while",
+      "group": "control-flow",
+      "source_sha256": "923a5d55ac4b141e178e8cabe28f8be4b4a4ea65de282b58096f0140d5dec938",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "for-expr",
+      "group": "control-flow",
+      "source_sha256": "287635e88384f1f6b153a9cbb5603ad6969472c195c2004cffe03cbb814351bf",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "for-decl",
+      "group": "control-flow",
+      "source_sha256": "12bf340163e57435805015c8aeae9f40189ea9cd09be01fbd62a361b33872d82",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "for-empty",
+      "group": "control-flow",
+      "source_sha256": "5515e3358035506d1aa0387104301fab29271d809c161b8e83f7eac3512eba33",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "labels",
+      "group": "control-flow",
+      "source_sha256": "9ee064e05417222586213531b2c49d48632d6e147b8a2b17209929d186b2a781",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "switch",
+      "group": "control-flow",
+      "source_sha256": "f6fea441d913e67d15c5cc13c2027b92497d8371aedb7383d7008581455d7159",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "case-range",
+      "group": "gnu",
+      "source_sha256": "612936bf7896aa5001dad98ed36d05628c4ccceaebd17dc6fb55edb54286534f",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "statement-expression",
+      "group": "gnu",
+      "source_sha256": "12591be41b4dd9a11df120a3343e2d4fbe930e521ff38f7619c296d25edcb682",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "typeof",
+      "group": "gnu",
+      "source_sha256": "6b5d3dd1ab80ac82d668074e2d27f0076e5524c09728948a2f8325d9af3bc151",
+      "model": "unimplemented",
+      "spec": "ok",
+      "status": "explicit-nonsuccess",
+      "gap": {
+        "production": "Tcc.Model.Ghost.Production.specifiers",
+        "range": [
+          3,
+          7
+        ],
+        "reason": "specifier action needs construction for token 3"
+      }
+    },
+    {
+      "case": "generic",
+      "group": "expressions",
+      "source_sha256": "6f88e085c40871e452b9e12a6784a635191636eb173822b46435760dba67dcf0",
+      "model": "unimplemented",
+      "spec": "ok",
+      "status": "explicit-nonsuccess",
+      "gap": {
+        "production": "Tcc.Model.Ghost.Production.generic",
+        "range": [
+          8,
+          22
+        ],
+        "reason": "expression action has a non-expression child"
+      }
+    },
+    {
+      "case": "choose",
+      "group": "gnu",
+      "source_sha256": "11c67da98fe76a17855ba430bc36a5c60f290d7ba0e33c2b2a21160abb5fa11b",
+      "model": "unimplemented",
+      "spec": "ok",
+      "status": "explicit-nonsuccess",
+      "gap": {
+        "production": "Tcc.Model.Ghost.Production.initializer",
+        "range": [
+          3,
+          11
+        ],
+        "reason": "missing expression action at token 3"
+      }
+    },
+    {
+      "case": "attribute",
+      "group": "gnu",
+      "source_sha256": "545879fc967005e311a9fbe80606c1f6d2d35d82014f5ac0ea42c507f2da4431",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "static-assert",
+      "group": "declarations",
+      "source_sha256": "6fd5097319fb43baf8951db035e6728ad541c7d9ef466020518344f7b1676a03",
+      "model": "unimplemented",
+      "spec": "ok",
+      "status": "explicit-nonsuccess",
+      "gap": {
+        "production": "Tcc.Model.Ghost.Production.tu",
+        "range": [
+          0,
+          15
+        ],
+        "reason": "translation unit has non-external action"
+      }
+    },
+    {
+      "case": "ucn",
+      "group": "identities",
+      "source_sha256": "86dd01d1a3e40021c135e923063ec316ca040aaadd3136e79ba12fa4fe9a80fb",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "macro-provenance",
+      "group": "provenance",
+      "source_sha256": "808e1146dffb30e3385c9ba048dc9b70eb85e7cebe6b49e40d462c886d3d1b33",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "line-provenance",
+      "group": "provenance",
+      "source_sha256": "d690a514fb9fb672b64d594889bc3718665a27f2204636447a191b0b26d84b8d",
+      "model": "ok",
+      "spec": "ok",
+      "first_difference": null,
+      "status": "exact"
+    },
+    {
+      "case": "invalid-initializer",
+      "group": "invalid",
+      "source_sha256": "5d1e54c9d696a5a38180d32911b927382b8fa55db804174f3102001e3fca2104",
+      "model": "model-rejected",
+      "spec": "spec-rejected",
+      "status": "explicit-nonsuccess",
+      "model_error": "compiler rejection",
+      "spec_error": "expected an expression (at ;)"
+    },
+    {
+      "case": "invalid-declarator",
+      "group": "invalid",
+      "source_sha256": "d2ba0e5d56a26fd0693d21c9c71433be5b2fa220070e6da1806877a1245098e1",
+      "model": "model-rejected",
+      "spec": "spec-rejected",
+      "status": "explicit-nonsuccess",
+      "model_error": "compiler rejection",
+      "spec_error": "expected ) (at ;)"
+    },
+    {
+      "case": "kr-definition",
+      "group": "gnu",
+      "source_sha256": "d84e6e4f678eb62a60c7ac061eb3f06e12f2aed0dbcfd197a077a19a66f10143",
+      "model": "unimplemented",
+      "spec": "spec-rejected",
+      "status": "explicit-nonsuccess",
+      "gap": {
+        "production": "Tcc.Model.Ghost.Production.declarator",
+        "range": [
+          1,
+          5
+        ],
+        "reason": "K&R parameter or missing parameter specifier action"
+      },
+      "spec_error": "found K&R-style declaration (unsupported)"
+    },
+    {
+      "case": "inline-unused",
+      "group": "gnu",
+      "source_sha256": "d283f0ab9b28f73d53b9589886e1a3a5cd6a130db06b9442acc4a73c2d200b3d",
+      "model": "unimplemented",
+      "spec": "ok",
+      "status": "explicit-nonsuccess",
+      "gap": {
+        "production": "Tcc.Model.Ghost.Production.deferredFunction",
+        "range": [
+          7,
+          12
+        ],
+        "reason": "deferred inline function syntax awaits parser replay attachment"
+      }
+    },
+    {
+      "case": "local-labels",
+      "group": "gnu",
+      "source_sha256": "cd901d73f5cc8fb7e518d7797bba3fcb5fc1bdc51cb7dd1725aa5ca2ff2196ad",
+      "model": "unimplemented",
+      "spec": "spec-rejected",
+      "status": "explicit-nonsuccess",
+      "gap": {
+        "production": "Tcc.Model.Ghost.Production.localLabels",
+        "range": [
+          6,
+          9
+        ],
+        "reason": "GNU local-label declaration requires a Cabs extension"
+      },
+      "spec_error": "expected an expression (at punctuator)"
+    },
+    {
+      "case": "pack",
+      "group": "provenance",
+      "source_sha256": "e5fd7e6f19c18b1b07c87be95573d11f20b780de9744fe2e47c311a7d92654d7",
+      "model": "unimplemented",
+      "spec": "ok",
+      "status": "explicit-nonsuccess",
+      "model_error": "pragma effects need direct model stream connection"
+    }
+  ]
+}

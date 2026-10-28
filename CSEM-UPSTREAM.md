@@ -342,3 +342,24 @@ See results/csem/array-constraints-2026-10-28.md for minimal sources, executable
 pins, clean upstream status, retained initial harness error and 173 verified
 captures. Repair is queued in tasks/f1-gnu-alignment-semantics.md. This is a bug
 list for Kiran; no external contact or changed Supported premise is implied.
+
+**PATCH-12 — compiler-injected binding provenance and canonical aliases.**
+The local fork now carries the actual implicit tccdefs opening authority through
+located syntax into named runtime-alias records, while ordinary user asm labels
+remain distinct. Shared Lem translation preserves canonical function identity
+and symbol-aware proxies; both direct calls and function-pointer aliases are
+checked. The model connection compares all authentic header declarations
+against independent raw preprocessing/parsing and tests same-header user opens,
+changed bytes, presumed-name spoofs and macro redefinition. See
+results/csem/injected-bindings.md and results/model/injected-binding-origins.md.
+These are integration patches for Kiran to assess, not a newly established
+upstream defect or a universal compiler proof. No external report is sent.
+
+The pinned local runtime inventory has bodies for memcpy, memcmp, malloc,
+realloc and free. Fifteen ordinary alias targets remain missing, plus the
+separate function-lifetime alloca intrinsic. This is current configured-runtime
+coverage, not proof that every upstream configuration lacks those bodies.
+The missing targets are memmove, memset, strlen, strcpy, strncpy, strcmp,
+strncmp, strcat, strncat, strchr, strrchr, strdup, calloc, memalign and abort.
+Neither declaration parsing nor alias resolution supplies those implementations;
+F1/F7 runtime coverage and image-pinned machine refinements remain open.

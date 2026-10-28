@@ -1,0 +1,142 @@
+[
+  {
+    "kind": "arenas",
+    "name": "build/ghost-byte-inputs/ghost-control.c",
+    "archive_prefix": "arenas/arenas/ghost-control",
+    "cache_key": "b3eec6cf63f6e921e5fdf434",
+    "arena_sha256": "172a4923277ccba789ddfcc2e8d3100967cded8a983c75ed49563e3c092a9901"
+  },
+  {
+    "kind": "arenas",
+    "name": "build/ghost-byte-inputs/ghost-declarations.c",
+    "archive_prefix": "arenas/arenas/ghost-declarations",
+    "cache_key": "7eee0f26ae1b37adb88b78b1",
+    "arena_sha256": "4b604b835ca3ce16a4465293cc8235fcb028c90a67ed40bc969a4b26dca1f568"
+  },
+  {
+    "kind": "arenas",
+    "name": "build/ghost-byte-inputs/ghost-gnu.c",
+    "archive_prefix": "arenas/arenas/ghost-gnu",
+    "cache_key": "661fac1855571c9da8132d69",
+    "arena_sha256": "8076c520305cebc2f767f17dc93221eb68aaa90981840fe32c337f5fc7d20095"
+  },
+  {
+    "kind": "arenas",
+    "name": "build/ghost-byte-inputs/ghost-designators.c",
+    "archive_prefix": "arenas/arenas/ghost-designators",
+    "cache_key": "9f04aee3e0f8abc5ec9a13f3",
+    "arena_sha256": "533edd3489dbfa982fda5c5292aa74641e58cc54159362e385e2a14ca0180f8b"
+  },
+  {
+    "kind": "arenas",
+    "name": "build/ghost-byte-inputs/ghost-pragmas.c",
+    "archive_prefix": "arenas/arenas/ghost-pragmas",
+    "cache_key": "e5d7a71dc50af3429611d953",
+    "arena_sha256": "4dad7371d893ca042641152aebd4f8f4ae69e15f90cc56ab43a469ecd481e6c9"
+  },
+  {
+    "kind": "arenas",
+    "name": "build/ghost-byte-inputs/ghost-spellings.c",
+    "archive_prefix": "arenas/arenas/ghost-spellings",
+    "cache_key": "4569f3510ab8b559aacad6ea",
+    "arena_sha256": "eadd75b07a32567af8b8c7c9dd1e4099e067de0f269037da1581dd03d6de9bd4"
+  },
+  {
+    "kind": "arenas",
+    "name": "build/ghost-byte-inputs/ghost-typedef.c",
+    "archive_prefix": "arenas/arenas/ghost-typedef",
+    "cache_key": "5f68726662cbade911db7452",
+    "arena_sha256": "0bbaed2138660047e624f4dc279437e427b657f725e8f64bc05581ba24efc7f1"
+  },
+  {
+    "kind": "arenas",
+    "name": "build/binding-integrated/onoff/physical-lf.c",
+    "archive_prefix": "arenas/arenas/physical-lf",
+    "cache_key": "915602e770a9e49adadd51bc",
+    "arena_sha256": "a755e3aeeb69feb49ad27acac35ed8c6548bffece07595bf7cf4332346c6f558"
+  },
+  {
+    "kind": "arenas",
+    "name": "build/binding-integrated/onoff/physical-crlf.c",
+    "archive_prefix": "arenas/arenas/physical-crlf",
+    "cache_key": "e0263177846a0337ee670ab1",
+    "arena_sha256": "7d317760fe9d7532551c31cc2860bbf761a9e431f80283ee304257c0955738fb"
+  },
+  {
+    "kind": "arenas",
+    "name": "build/binding-integrated/onoff/physical-literal.c",
+    "archive_prefix": "arenas/arenas/physical-literal",
+    "cache_key": "9ef712a80e157ca35abe0247",
+    "arena_sha256": "99aec3b8ce4277c2acc5d86c719d18caf5acd41ce26fed029edffec3022e447a"
+  },
+  {
+    "kind": "arenas",
+    "name": "build/binding-integrated/onoff/physical-trigraphs.c",
+    "archive_prefix": "arenas/arenas/physical-trigraphs",
+    "cache_key": "6e647bc7e0e953ba1e88b416",
+    "arena_sha256": "6cf81c17bd3923089a5115821b90e24766814273010ee4e8fe6ea8401aa24efd"
+  },
+  {
+    "kind": "arenas",
+    "name": "build/binding-integrated/onoff/physical-trisplice.c",
+    "archive_prefix": "arenas/arenas/physical-trisplice",
+    "cache_key": "ae41690320dd4819843296f0",
+    "arena_sha256": "7d317760fe9d7532551c31cc2860bbf761a9e431f80283ee304257c0955738fb"
+  },
+  {
+    "kind": "arenas",
+    "name": "build/binding-integrated/onoff/physical-boundary-lf.c",
+    "archive_prefix": "arenas/arenas/physical-boundary-lf",
+    "cache_key": "a1d9f28ab04aa30928c477b2",
+    "arena_sha256": "7d317760fe9d7532551c31cc2860bbf761a9e431f80283ee304257c0955738fb"
+  },
+  {
+    "kind": "arenas",
+    "name": "build/binding-integrated/onoff/physical-boundary-crlf.c",
+    "archive_prefix": "arenas/arenas/physical-boundary-crlf",
+    "cache_key": "d6cdd5f9866d690db295423b",
+    "arena_sha256": "7d317760fe9d7532551c31cc2860bbf761a9e431f80283ee304257c0955738fb"
+  },
+  {
+    "kind": "arenas",
+    "name": "build/binding-integrated/onoff/physical-tail.c",
+    "archive_prefix": "arenas/arenas/physical-tail",
+    "cache_key": "5ed223fc046d7db609e395cf",
+    "arena_sha256": "4dad7371d893ca042641152aebd4f8f4ae69e15f90cc56ab43a469ecd481e6c9"
+  },
+  {
+    "kind": "arenas",
+    "name": "build/binding-integrated/arena-inputs/pointer-malloc.c",
+    "archive_prefix": "arenas/arenas/pointer-malloc",
+    "cache_key": "ec0e5f26810a97a549393c5c",
+    "arena_sha256": "4a2f8d8eb8459e79bc3c46ea93ae4f01f986f24bcf0602c59b2f7aa30eddae79"
+  },
+  {
+    "kind": "arenas",
+    "name": "build/binding-integrated/arena-inputs/pointer-memcpy.c",
+    "archive_prefix": "arenas/arenas/pointer-memcpy",
+    "cache_key": "274ac1240d5945494bdaac8f",
+    "arena_sha256": "f2a64fbe64d97264adb4fe72b08432dcf10fec45103dd9035c87cdad1793fcbe"
+  },
+  {
+    "kind": "arenas",
+    "name": "build/binding-integrated/arena-inputs/static-pointers.c",
+    "archive_prefix": "arenas/arenas/static-pointers",
+    "cache_key": "bee5e97286c9a1e4e6c725f1",
+    "arena_sha256": "694022d606947da2757d2d79e24907512b8abf377e93039ffd725f85f56bf28d"
+  },
+  {
+    "kind": "native",
+    "name": "build/binding-integrated/arena-inputs/static-pointers.c",
+    "archive_prefix": "arenas/native/static-pointers",
+    "cache_key": "f78c8248c25f137b3f06f4f6",
+    "arena_sha256": "694022d606947da2757d2d79e24907512b8abf377e93039ffd725f85f56bf28d"
+  },
+  {
+    "kind": "invocation",
+    "name": "c/invocations/tinycc-104-inline.json",
+    "archive_prefix": "arenas/invocation/104_inline",
+    "cache_key": "917c247be229e7a20f01d85a",
+    "arena_sha256": "ec0a470a98e0d1102965ff3bd18dcf7bce66760a6356a16abe47b7940ec91f78"
+  }
+]

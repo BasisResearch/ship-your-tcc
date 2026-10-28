@@ -40,10 +40,10 @@ public libc `strtold` still needs correction in the library lane. Matching refus
 
 The lead runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most two
 at a time, following MANAGER.md. Slot 1 now handles CSem GNU alignment and
-array constraints; slot 2 handles actual model-owned compiler-injected opening
-authority and an independent Raw.checked comparison. Both start from the
-reviewed binding/physical combination; binding adoption still requires that
-connection and its combined gate. Physical-origin maps are adopted below.
+array constraints; slot 2 handles complete C11 _Generic/_Static_assert syntax
+from compiler actions. Binding meaning and actual model-owned compiler-injected
+opening authority are adopted after their combined gate and independent raw
+comparison below. Physical-origin maps remain adopted with separate evidence.
 The earlier anonymous-member, IEEE, GNU syntax/layout, allocation and typedef
 alignment checkpoints remain adopted with their separately pinned evidence.
 The pure IEEE implementation is integrated after the combined gate; the compiler/model
@@ -382,6 +382,22 @@ Complete per-unit ghost construction/opening provenance remains open; the
 manifest does not establish that connection. Other upstream executable-link,
 TLS, pthread and snippet-driver invocations remain classified duties. Evidence:
 results/model/corpus-invocations.md. No sum cuts are regenerated.
+
+Binding/authority adoption (2026-10-28): the combined full gate passes with
+3,597 frozen inputs. Eighteen focused controls compare complete model Cabs,
+origins and opening graphs with independent Raw.checked, with all 21 authentic
+aliases retained and six perturbation guards. Independent raw coverage is
+45/56, with eleven explicit nonsuccesses; shared/model-token components remain
+45/56 and 46/56 exact. All 58 physical controls, fifteen erasure pairs and eighteen fast
+arenas pass. One new native Sail arena for static/builtin memcpy shadowing
+matches all 4 MiB after 3,455,952 compiler steps. The existing two-file inline
+manifest still passes. See results/model/binding-integration-2026-10-28.md.
+Four F1 environment/binding/runtime contracts and two F3 authority contracts
+remain unproved. Five ordinary runtime bodies exist; fifteen targets and the
+alloca intrinsic remain missing. Whole-C grammar, pack layout, multi-TU ghost
+construction, fuel and binary refinement remain work. Kiran's patch/bug list
+is updated without external contact. Slot 1 owns alignment/array constraints;
+slot 2 owns C11 generic/static-assert syntax. Sum cuts remain frozen.
 
 ## Needs user
 

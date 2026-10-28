@@ -39,15 +39,14 @@ The launcher follows 4ct-digest's MANAGER.md/codexwork.sh workflow, adapted
 to this project's two-worker limit and shared Lean build lock.
 
 Current assignments, 2026-10-28: slot 1 runs tasks/f1-gnu-alignment-semantics.md
-in sol-csem-repin, including CSEM-13 array constraints. Slot 2 runs
-tasks/f3-injected-binding-origins.md in sol-f2-tokens: actual model opening
-authority and an additional independent Raw.checked cfgTcc comparison. Their
-base combines reviewed binding/physical checkpoints with main's alignment and
-generator repairs. Physical maps are adopted after combined validation;
-binding adoption still awaits its model connection and fresh combined gate.
-General declaration constraints (CSEM-11), bitfields and intended multi-file
-corpus invocations remain queued. Runtime coverage gaps remain separate from
-user asm exclusions. No third worker runs.
+in sol-csem-repin, including CSEM-13 array constraints. Slot 2 now runs
+tasks/f3-unevaluated-syntax.md in sol-f2-tokens: complete C11 generic-selection
+and static-assert syntax from compiler actions. Its base is the reviewed binding
+and model-opening combination plus main's invocation harness; binding/authority adoption
+passed the fresh combined gate and comparisons. Original worker branches and
+all evidence remain preserved. No third worker runs. Bitfields, general
+declaration constraints, other upstream invocation modes and complete multi-TU
+ghost construction remain queued. Runtime coverage remains a separate duty.
 
 Frozen build requests use the shared 12 GB lock. Changed inputs invalidate
 a request; freeze a new hash manifest before retrying. Infrastructure limits

@@ -1,0 +1,9 @@
+{
+  "source": ".claude/worktrees/agent-a4ab6bbd8c0be5325/.lake/build",
+  "archive": "build/recovery/inactive-abi-lake-build-2026-10-28/captures.tar.gz",
+  "archive_sha256": "6209ed089ea6501d9eb91eeeffabc00b9fda20cdcac0ac4716ff72d9d7155dd4",
+  "member_count": 12709,
+  "uncompressed_bytes": 2662546646,
+  "archive_bytes": 736224754,
+  "reason": "Inactive inherited ABI Lean build cache; every member verified before removing loose duplicates. No active process uses this checkout. Source checkout, evidence and other hard-linked paths remain unchanged."
+}

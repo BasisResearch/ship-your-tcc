@@ -41,15 +41,17 @@ adopted after the combined gate: arbitrary checked placements enter CSem's
 outcome set, with generic placement contracts and 21 focused checks. The
 machine-memory simulation remains open (results/csem/allocation-oracle.md).
 
-Typed compiler-action Cabs has 45 exact shared-token controls; model-owned
-macro/include/physical provenance has 58 exact origin checks and four omission
-guards. The combined full gate and fifteen fresh erasure/independent arena
-checks pass. Ordinary whole-unit agreement and the six existing ghost proof
-Statements plus three physical-transform/view obligations remain open
-([physical-origin integration](results/model/physical-integration-2026-10-28.md)). GNU declaration syntax/layout now passes its combined gate: 23 semantic
-controls, six actual-header parses and three exact ordinary Cabs comparisons.
-Injected runtime alias meaning remains work
-(results/csem/gnu-integration-2026-10-28.md). Compiler typedef alignment is now
+Compiler-action Cabs now agrees with independent raw preprocessing/parsing on
+45/56 fixtures. All 18 compiler-injected opening controls and 58 physical-origin
+controls pass, with complete header aliases and user asm exclusions preserved.
+The combined gate, fifteen erasure pairs and eighteen independent fast arenas
+pass; a new complete native Sail arena matches the static/builtin memcpy
+shadowing control. Runtime coverage is still five bodies, fifteen missing targets and
+one alloca intrinsic duty. All eleven ghost contracts and the four new
+compiler-environment/binding contracts remain open
+([binding integration](results/model/binding-integration-2026-10-28.md)).
+GNU declaration syntax/layout has 23 semantic controls and six actual-header
+parses. Compiler typedef alignment is now
 repaired: three full compiler Sail probes succeed and two new complete native
 arenas match the model. The combined gate passes, with 46/56 exact raw Cabs
 controls on model-produced positioned tokens; the representation proof and remaining gaps stay open
