@@ -714,3 +714,13 @@ with exit0 and expected output. Compile11,461,362/program64,583/total11,525,970
 steps. Actual primary/companion bytes, invocation, registers and ELF are retained.
 The combined full gate and independent postchecks are still pending; this is
 finite execution evidence, not main adoption or a compiler/refinement theorem.
+
+Combined multi-TU/physical candidate75a2df8 now passes its full 4,162-input
+gate. Independent postchecks and portable integration evidence are finishing;
+main adoption is pending. Enum checkpoint review independently verifies
+12,334 observations,17 actual ELFs,3,686 primary and608 supplementary paths.
+The GNU semantic lane exposes a compiler promotion defect, minimized in
+results/review/gnu-conditional-promotion-2026-10-28: GNU omitted-middle ?: loses
+narrow-field promotion, unlike ordinary ?: and unary/arithmetic controls.
+The queued repair is tasks/f3-gnu-conditional-bitfield-promotion.md; no new
+cfgTcc policy or Supported exclusion is introduced. Sum cuts stay frozen.
