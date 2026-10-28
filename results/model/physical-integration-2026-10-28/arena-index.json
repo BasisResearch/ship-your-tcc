@@ -1,0 +1,92 @@
+[
+  {
+    "source": "build/ghost-byte-inputs/ghost-declarations.c",
+    "source_sha256": "3eb8902e4d689330669d5ea677aa5884573960190a2a95a181ad0661ebad3fcf",
+    "arena_sha256": "4b604b835ca3ce16a4465293cc8235fcb028c90a67ed40bc969a4b26dca1f568",
+    "cache_key": "6a4df5bc57d009e62e85123d"
+  },
+  {
+    "source": "build/ghost-byte-inputs/ghost-gnu.c",
+    "source_sha256": "4de0d95045aedad4a0774cc1ffa84705b8d4825461c8b089f9e6723fc2267873",
+    "arena_sha256": "8076c520305cebc2f767f17dc93221eb68aaa90981840fe32c337f5fc7d20095",
+    "cache_key": "2684feff4cb5e9a6d8ff8719"
+  },
+  {
+    "source": "build/ghost-byte-inputs/ghost-designators.c",
+    "source_sha256": "d073adcac1874e726dfc4b2ef60ea7a361d5eebdb01d3b58e82355689eb5d5ad",
+    "arena_sha256": "533edd3489dbfa982fda5c5292aa74641e58cc54159362e385e2a14ca0180f8b",
+    "cache_key": "54478b5c82332fb5dea99eb2"
+  },
+  {
+    "source": "build/ghost-byte-inputs/ghost-control.c",
+    "source_sha256": "597e3c364acd27cdef4e8010910e0fd9b2f02ba0aa5138672f9bac2d49ff28e5",
+    "arena_sha256": "172a4923277ccba789ddfcc2e8d3100967cded8a983c75ed49563e3c092a9901",
+    "cache_key": "f2c7f91799508cf05cca1e52"
+  },
+  {
+    "source": "build/ghost-byte-inputs/ghost-spellings.c",
+    "source_sha256": "b6204cbdd9dc454b1200731113ff7bdd22f576888a3ac235b48a3afa82036028",
+    "arena_sha256": "eadd75b07a32567af8b8c7c9dd1e4099e067de0f269037da1581dd03d6de9bd4",
+    "cache_key": "fa9cde7c55866c425931ed26"
+  },
+  {
+    "source": "build/ghost-byte-inputs/ghost-pragmas.c",
+    "source_sha256": "98b63abddb45b414bc0fc8dbcc10beae095b2b17860d008f9e094998c47d0ca7",
+    "arena_sha256": "4dad7371d893ca042641152aebd4f8f4ae69e15f90cc56ab43a469ecd481e6c9",
+    "cache_key": "1e2895b1f562c275dad7e953"
+  },
+  {
+    "source": "build/ghost-byte-inputs/ghost-typedef.c",
+    "source_sha256": "ea706af04b67ff2d04b8c48864d152fc5535dba47f4b07b7730df2725937423e",
+    "arena_sha256": "0bbaed2138660047e624f4dc279437e427b657f725e8f64bc05581ba24efc7f1",
+    "cache_key": "231784df7950d72a83313ad8"
+  },
+  {
+    "source": "build/physical-integrated/onoff/physical-lf.c",
+    "source_sha256": "c2ef0d56e626795741e8ca69bd1c4294df432cf68bd29b8bf40e3ab69b365ef5",
+    "arena_sha256": "a755e3aeeb69feb49ad27acac35ed8c6548bffece07595bf7cf4332346c6f558",
+    "cache_key": "072abd8a85cab7db9d21985d"
+  },
+  {
+    "source": "build/physical-integrated/onoff/physical-literal.c",
+    "source_sha256": "0fb5925857efb16892b68bea156c829084dedcafe814a16fd1517d0a5332865e",
+    "arena_sha256": "99aec3b8ce4277c2acc5d86c719d18caf5acd41ce26fed029edffec3022e447a",
+    "cache_key": "94498d40705183eb69b1a455"
+  },
+  {
+    "source": "build/physical-integrated/onoff/physical-trigraphs.c",
+    "source_sha256": "4af8aea772fdb8dc16fa95e1e3f45735bbd11de014d3251a3efe03725d91f2ff",
+    "arena_sha256": "6cf81c17bd3923089a5115821b90e24766814273010ee4e8fe6ea8401aa24efd",
+    "cache_key": "d5a2a48378b864f9c23e886e"
+  },
+  {
+    "source": "build/physical-integrated/onoff/physical-crlf.c",
+    "source_sha256": "2cba2491e7cac266f7ffedb58c37abcba505398a7596a0facd4571c5169272d6",
+    "arena_sha256": "7d317760fe9d7532551c31cc2860bbf761a9e431f80283ee304257c0955738fb",
+    "cache_key": "41065c28dba0cd4c1ebf7db3"
+  },
+  {
+    "source": "build/physical-integrated/onoff/physical-trisplice.c",
+    "source_sha256": "81d3d87090146dacf4fd003fec888e3c4556a03057dde02e0fb059ae2fb643c8",
+    "arena_sha256": "7d317760fe9d7532551c31cc2860bbf761a9e431f80283ee304257c0955738fb",
+    "cache_key": "006cfbbd91c2525a14d80f00"
+  },
+  {
+    "source": "build/physical-integrated/onoff/physical-boundary-lf.c",
+    "source_sha256": "537561d589c8d5f5a3bcd442fcae2998ff48b7e81ee65839211e9cd05b9840f1",
+    "arena_sha256": "7d317760fe9d7532551c31cc2860bbf761a9e431f80283ee304257c0955738fb",
+    "cache_key": "e313ed22e5e2295bca49bfdc"
+  },
+  {
+    "source": "build/physical-integrated/onoff/physical-boundary-crlf.c",
+    "source_sha256": "9940a9aa3a427325adf4e45c9350a5cd299531ede0ac810ce34cfd8d082cddfc",
+    "arena_sha256": "7d317760fe9d7532551c31cc2860bbf761a9e431f80283ee304257c0955738fb",
+    "cache_key": "6d2e518b33fe16690da89618"
+  },
+  {
+    "source": "build/physical-integrated/onoff/physical-tail.c",
+    "source_sha256": "a2e53a2e7809b8942e940b11ebd9c4df44993348c8768111a2fa0762e4883fba",
+    "arena_sha256": "4dad7371d893ca042641152aebd4f8f4ae69e15f90cc56ab43a469ecd481e6c9",
+    "cache_key": "4d5d5bf74dd48e49979f2a1f"
+  }
+]

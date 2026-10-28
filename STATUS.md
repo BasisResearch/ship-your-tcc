@@ -38,13 +38,14 @@ Such runs cannot establish independent byte equality. That input is now
 removed. Patch 0004 fixes compiler literals using exact integer rounding;
 public libc `strtold` still needs correction in the library lane. Matching refusals likewise do not satisfy the F3 success criterion.
 
-The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
-two at a time, following MANAGER.md. Slot 1 now handles injected runtime bindings in sol-csem-repin; the GNU
-syntax/layout checkpoint is adopted after combined validation;
-CSEM-10, library identity and bounded allocation are adopted. Slot 2
-runs physical-origin maps after adopting GNU typedef alignment; the model-origin
-continuation is adopted after combined validation. Both resumed after
-the interruption; the latest continuation status is below. The anonymous-member repair is adopted with IEEE after its combined gate.
+The lead runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most two
+at a time, following MANAGER.md. Slot 1 now handles CSem GNU alignment and
+array constraints; slot 2 handles actual model-owned compiler-injected opening
+authority and an independent Raw.checked comparison. Both start from the
+reviewed binding/physical combination; binding adoption still requires that
+connection and its combined gate. Physical-origin maps are adopted below.
+The earlier anonymous-member, IEEE, GNU syntax/layout, allocation and typedef
+alignment checkpoints remain adopted with their separately pinned evidence.
 The pure IEEE implementation is integrated after the combined gate; the compiler/model
 anonymous-container qualifier repair is also adopted. Exact-token/pragma integration is now
 validated with the nested-designator repair: strengthened full gate, 147
@@ -359,6 +360,18 @@ tokens; it does not establish independent raw preprocessing. The queued
 binding-origin task requires an additional independent Raw.checked cfgTcc
 comparison. Intended multi-file corpus invocations are also queued. Both
 workers remain active; their next combined reviews are still required.
+
+Physical-origin adoption (2026-10-28): the combined full gate passes with
+3,580 unchanged source pins. All 58 independent origins and four omission
+guards pass; the two finite physical-map regressions are retired. Shared Cabs
+remains 45/56 and the model-token parser component 46/56, with gaps explicit.
+Fifteen ghost on/off pairs and fifteen independent fast reference arenas pass.
+Three new typed physical-transform/view obligations remain unproved alongside
+the six existing ghost obligations. Evidence:
+results/model/physical-integration-2026-10-28.md. No new native Sail or broad
+coverage is claimed, and sum cuts stay frozen. Slot 1 now owns CSem alignment/
+array constraints; slot 2 owns injected-opening authority and independent raw
+frontend comparison. The reviewed binding checkpoint is not yet adopted.
 
 ## Needs user
 

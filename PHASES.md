@@ -470,3 +470,17 @@ opening authority remain separately open. tasks/f3-injected-binding-origins.md
 requires the actual independent raw frontend comparison after the reviewed
 binding/physical checkpoints. tasks/f3-corpus-invocations.md retains intended
 multi-file invocations without removing historical standalone refusals.
+
+F3 physical-origin adoption (2026-10-28): the combined full gate passes with
+3,580 frozen inputs; 58 independent origin/opening/logical-view controls and
+four omission guards pass. The two finite physical-transformation origin gaps
+are retired. Fifteen on/off and independent fast-arena pairs pass; existing
+Cabs counts remain 45/56 shared and 46/56 model-token parser construction.
+New open typed duties: `Ghost.PhysicalTransformObligations`,
+`Ghost.PhysicalOriginMap_Statement`, `Ghost.PhysicalReadView_Statement`.
+These supplement, not discharge, the six existing ghost obligations. Whole-C
+construction, injected authority, runtime meaning, independent raw frontend
+agreement, fuel and binary refinement remain open. Evidence:
+results/model/physical-integration-2026-10-28.md. Binding checkpoint adoption
+awaits its model connection and combined gate; CSem alignment/array constraints
+are the other active lane. No new native Sail or sum regeneration is included.

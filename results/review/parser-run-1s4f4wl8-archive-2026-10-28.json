@@ -1,0 +1,9 @@
+{
+  "source": ".claude/worktrees/agent-a31b97b8f1c090141/build/f1a/run-1s4f4wl8",
+  "archive": "build/recovery/parser-run-1s4f4wl8-2026-10-28/captures.tar.gz",
+  "archive_sha256": "d38355521944b6af31be86cc479fc009fc15b230fba6d775f25d326f4de55b86",
+  "member_count": 4612,
+  "uncompressed_bytes": 1156380753,
+  "archive_bytes": 52652104,
+  "reason": "Inactive inherited parser captures; every member verified before removing loose duplicates. Source checkout and original observations unchanged."
+}

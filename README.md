@@ -42,10 +42,11 @@ outcome set, with generic placement contracts and 21 focused checks. The
 machine-memory simulation remains open (results/csem/allocation-oracle.md).
 
 Typed compiler-action Cabs has 45 exact shared-token controls; model-owned
-macro/include provenance adds 17 exact origin checks and three omission guards.
-The combined full gate, seven finite erasure checks and broad arena regression
-pass. Ordinary whole-unit agreement and all six typed proof Statements remain
-open. GNU declaration syntax/layout now passes its combined gate: 23 semantic
+macro/include/physical provenance has 58 exact origin checks and four omission
+guards. The combined full gate and fifteen fresh erasure/independent arena
+checks pass. Ordinary whole-unit agreement and the six existing ghost proof
+Statements plus three physical-transform/view obligations remain open
+([physical-origin integration](results/model/physical-integration-2026-10-28.md)). GNU declaration syntax/layout now passes its combined gate: 23 semantic
 controls, six actual-header parses and three exact ordinary Cabs comparisons.
 Injected runtime alias meaning remains work
 (results/csem/gnu-integration-2026-10-28.md). Compiler typedef alignment is now

@@ -38,17 +38,16 @@ pushes main without force. Record unsuccessful approaches in
 The launcher follows 4ct-digest's MANAGER.md/codexwork.sh workflow, adapted
 to this project's two-worker limit and shared Lean build lock.
 
-Current assignments, 2026-10-28: slot 1 runs tasks/f1-injected-bindings.md in
-sol-csem-repin from the reviewed GNU/origin combination. GNU syntax/layout
-is adopted after the full combined gate in sol-c11-line; its original
-checkpoint 44dc780 and all source-pinned observations remain preserved. Slot 2
-next runs tasks/f3-physical-origin-maps.md in sol-f2-tokens. The compiler/model
-typedef repair is adopted after its combined gate and native arena review. The model-origin continuation
-is adopted after its combined gate. General declaration constraints
-(tasks/f1-declaration-constraints.md, CSEM-11), concrete bitfields
-(tasks/f1-bitfields.md), and GNU alignment semantics
-(tasks/f1-gnu-alignment-semantics.md) remain queued. Actual tccdefs alias meaning is slot 1's active target. Pack/layout
-consumption remains required. Keep these separate from user asm exclusions.
+Current assignments, 2026-10-28: slot 1 runs tasks/f1-gnu-alignment-semantics.md
+in sol-csem-repin, including CSEM-13 array constraints. Slot 2 runs
+tasks/f3-injected-binding-origins.md in sol-f2-tokens: actual model opening
+authority and an additional independent Raw.checked cfgTcc comparison. Their
+base combines reviewed binding/physical checkpoints with main's alignment and
+generator repairs. Physical maps are adopted after combined validation;
+binding adoption still awaits its model connection and fresh combined gate.
+General declaration constraints (CSEM-11), bitfields and intended multi-file
+corpus invocations remain queued. Runtime coverage gaps remain separate from
+user asm exclusions. No third worker runs.
 
 Frozen build requests use the shared 12 GB lock. Changed inputs invalidate
 a request; freeze a new hash manifest before retrying. Infrastructure limits
