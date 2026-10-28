@@ -754,3 +754,17 @@ post-gate launcher-only change separately pinned. Slot1 now runs enum-colon
 compiler/model repair; slot2 GNU conditional semantics. The include-guard
 opening mismatch is queued as tasks/f2-include-guard-openings.md. No new user
 decision or universal theorem is claimed.
+
+Lead include-guard candidate (not adopted): independent target preprocessing
+now tracks completed-header guards;31/32 initial focused controls agree and
+original cached multiTU records become checked-exact without changing sources.
+The remaining EOF-header control exposed a model slow-identifier bug: rereading
+CH_EOB after PEEKC returned CH_EOF. Preserving that returned character repairs
+the original and three boundary variants;35/35 focused controls now agree.
+Full guard-openings-full-1 is running on4,163 pinned inputs, with complete native
+arena/same-ELF execution observations pending. Broad before/after uses identical
+846 source inputs:838exact tcc/833exact GCC, unchanged diagnostic classifications
+and token counts; five temporary paths and one clock context differ explicitly.
+Enum-colon work has14/14 complete native arenas; its corrected ghost observer
+and full gate are still pending. GNU conditional full gate is still running.
+All three candidates remain separate from main adoption; no user decision.

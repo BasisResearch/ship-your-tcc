@@ -48,8 +48,10 @@ postchecks, portable verification and fresh same-ELF native104 execution.
 Both physical-origin/read-view Statements are proved for arbitrary bytes;
 read/refill/host, raw and whole-command construction/erasure remain open.
 Original checkpoints and failed evidence remain preserved. No third worker runs.
-Bitfield/general declaration constraints, VLA semantics, include-guard opening
-schedules, pack-layout transport and runtime body coverage remain work items.
+The lead now implements tasks/f2-include-guard-openings.md with a related
+model EOF identifier repair; its full gate/native evidence are pending.
+Bitfield/general declaration constraints, VLA semantics, pack-layout transport
+and runtime body coverage remain work items.
 
 Frozen build requests use the shared 12 GB lock. Changed inputs invalidate
 a request; freeze a new hash manifest before retrying. Infrastructure limits
