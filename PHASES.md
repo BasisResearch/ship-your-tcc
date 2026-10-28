@@ -384,3 +384,13 @@ The typedef query discrepancy also reproduces in the full compiler on Sail
 (13,481,097 compile steps, 5,788 program steps); independent cross-program
 observations and the passing static gate are pinned in
 results/review/gnu-typedef-alignment-2026-10-28.md. No repair is adopted yet.
+
+F2 macro redefinition provenance (2026-10-28): `doDefine` retains the latest
+permitted definition's identity/ancestry even when its tokens match the prior
+body. Independent before/after tests repair library-to-user and user-to-library
+classification; argument identity and invocation diagnostics remain separate.
+The full gate passes with 2,297 unchanged hashes, 12 raw and 21 token methods,
+24 library checks and 5,580 consumer probes. No compiler image changes or new
+Sail runs are claimed. The model-origin checkpoint's combined gate and all
+preprocessing/provenance proofs remain open. Evidence:
+results/pre/macro-redefinition-2026-10-28.md.

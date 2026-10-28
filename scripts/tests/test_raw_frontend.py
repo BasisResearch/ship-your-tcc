@@ -143,6 +143,29 @@ class RawFrontend(unittest.TestCase):
         r = self.observe('library-line-alias', '--library', alias)
         self.assertTrue(any(o['actualLibrary'] and not o['presumedLibrary'] for o in r['libraryOrigins']))
 
+    def test_redefinition_keeps_latest_definition_identity(self):
+        member = '/runtime/libc/include/redefine.h'
+        for name, library in [('redefine-library-to-user', False),
+                              ('redefine-user-to-library', True),
+                              ('redefine-after-undef', False)]:
+            with self.subTest(name=name):
+                r = self.observe(name, '--library', member)
+                self.assertTrue(r['libraryOrigins'])
+                self.assertEqual({o['actualLibrary'] for o in r['libraryOrigins']}, {library})
+                # Replacement tokens retain the invocation as their diagnostic
+                # site, independently of their definition's library identity.
+                self.assertTrue(all(o['site']['physical']['openedAs'] == str(self.root/(name+'.c'))
+                                    for o in r['libraryOrigins']))
+        repeated = self.observe('redefine-repeat-header', '--library', member)
+        for origin in repeated['libraryOrigins']:
+            self.assertEqual(origin['identitySite']['includes'][0]['start']['line'], 2)
+        function = self.observe('redefine-function')
+        # The replacement's first token comes from the later definition;
+        # the substituted name still comes from the invocation operand.
+        self.assertEqual(function['libraryOrigins'][0]['identitySite']['physical']['start']['line'], 2)
+        name = function['libraryOrigins'][2]
+        self.assertEqual(name['identitySite']['physical']['start']['line'], 3)
+
     def test_pragma_schedule_is_retained(self):
         r = self.observe('pack', '--tcc')
         self.assertEqual(r['finalPack'], [0])

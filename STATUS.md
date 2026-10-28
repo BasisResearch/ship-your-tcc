@@ -264,6 +264,15 @@ reproduces the query error after 13,481,097 compile steps; the two cross-program
 runs and this full-image run are separately pinned in
 results/review/gnu-typedef-alignment-2026-10-28.md. Static gate passes.
 
+Macro redefinition provenance (2026-10-28): the spec now installs the latest
+permitted definition even when replacement tokens match. Independent probes
+repair stale runtime-library membership in both directions and repeated-include
+ancestry. The full gate passes with 2,297 unchanged input hashes, 12 raw methods,
+21 token methods and 24 library checks/5,580 consumer probes. Before/after
+captures and the failed initial build command are retained in
+results/pre/macro-redefinition-2026-10-28.md. The model-origin checkpoint
+291bbb2 is committed for combined review; its main adoption is still pending.
+
 ## Needs user
 
 None currently. Implementation defects and unfinished obligations are work

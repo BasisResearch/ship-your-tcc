@@ -241,8 +241,10 @@ def doDefine (cfg : PreCfg) (fc : FileCtx) (line : Nat) (st : PState) (ts : List
     let d : MacroDef := ⟨params, variadic, body, items, none⟩
     match st.macros.get? n.key with
     | some old =>
-      if sameDef old d then pure st
-      else if cfg.ext.redefine then pure { st with macros := st.macros.insert n.key d }
+      -- Equality decides whether redefinition is permitted, not which source
+      -- occurrence supplies the replacement. Retain the latest definition's
+      -- physical identity and include ancestry even when its tokens match.
+      if sameDef old d || cfg.ext.redefine then pure { st with macros := st.macros.insert n.key d }
       else throw (err "macro redefined differently (§6.10.3p2)")
     | none => pure { st with macros := st.macros.insert n.key d }
 

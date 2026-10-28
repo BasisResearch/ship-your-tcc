@@ -23,6 +23,11 @@ CASES = {
     'library': '#include "/runtime/libc/include/h.h"\nint user;\n',
     'line-library-plant': '#line 3 "/runtime/libc/include/plant.h"\nint user;\n',
     'library-line-alias': '#include "/runtime/libc/include/alias.h"\nint user;\n',
+    'redefine-library-to-user': '#include "/runtime/libc/include/redefine.h"\n#define DECL extern int chosen(void);\nDECL\n',
+    'redefine-user-to-library': '#define DECL extern int chosen(void);\n#include "/runtime/libc/include/redefine.h"\nDECL\n',
+    'redefine-repeat-header': '#include "/runtime/libc/include/redefine.h"\n#include "/runtime/libc/include/redefine.h"\nDECL\n',
+    'redefine-function': '#define DECL(n) extern int n(void);\n#define DECL(n) extern int n(void);\nDECL(chosen)\n',
+    'redefine-after-undef': '#include "/runtime/libc/include/redefine.h"\n#undef DECL\n#define DECL extern int chosen(void);\nDECL\n',
 }
 INVALID = {
     'number-octal': 'int x=08;\n',
@@ -43,6 +48,7 @@ HEADERS = {
     '/include/b.h': 'int nested;\n',
     '/runtime/libc/include/h.h': 'int library;\n',
     '/runtime/libc/include/alias.h': '#line 33 "ordinary-label.h"\nint aliased;\n',
+    '/runtime/libc/include/redefine.h': '#define DECL extern int chosen(void);\n',
     '/lib/tcc/include/tccdefs.h': '\n',
 }
 
