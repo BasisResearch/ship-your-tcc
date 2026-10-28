@@ -794,3 +794,23 @@ Slot2 now runs tasks/f1-vla-semantics.md on34c8cc2 (reviewed GNU checkpoint plus
 main938fa20); slot1 continues enum-colon full validation. Guard native evidence
 now includes three fresh complete captures and same-ELF zero-exit executions;
 its full gate and independent postchecks remain pending. No user decision.
+
+Completed-header opening and EOF repair adopted (2026-10-28): the full
+CSem gate passes on 4,163 unchanged frozen inputs. Independent portable
+verification checks 12,092 members and five original source epochs. All 35
+maintained opening/token/origin controls and six separate path-identity probes
+pass. The identical 846-input broad corpus retains its prior classifications
+and token counts; path/clock-dependent text differences remain qualified.
+All three fresh focused native captures match 4 MiB and execute the same
+retained ELF to exit zero; six inherited gate captures also pass. Original
+multi-TU inputs now yield five checked bundles (formerly four), 15 records and
+six fast arenas. Independent syntax, physical and erasure checks pass unchanged.
+See results/pre/include-guard-integration-2026-10-28.md. This closes the cached
+opening residual; pack-layout consumption remains open. Whole preprocessing,
+compiler and transport obligations remain open, and sum cuts stay frozen.
+Enum-colon full gate and independent portable review also pass, with six
+inherited native runs separately validated because they were absent from that
+full gate invocation. Its checkpoint is being committed before combination
+with reviewed GNU conditional semantics and the queued bitfield-promotion fix.
+Slot 2 continues general VLA semantics; its focused Lean build passes, while
+broader runtime/type/constraint checks continue. No user decision is needed.

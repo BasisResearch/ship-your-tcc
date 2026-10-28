@@ -62,12 +62,18 @@ whole-run, read/refill/host and compiler-environment/binding contracts remain op
 [local replay proof](results/model/replay-integration-2026-10-28.md)).
 Ordered multi-TU records and deferred replay are now adopted after a full
 4,162-input gate. Eight commands retain 15 records, four completely checked
-bundles and six independent fast arenas; pack-layout and guarded-opening
-residuals remain explicit. A fresh two-file native Sail run matches the entire
+bundles and six independent fast arenas at that checkpoint; the subsequent
+guard repair raises the checked-bundle count to five. Pack-layout consumption
+remains open. A fresh two-file native Sail run matches the entire
 4 MiB arena and then executes the same ELF with expected output and exit zero
 (11,461,362 compiler + 64,583 program steps). The 40 physical theorem audits and
 10,842-member portable integration archive verify independently
 ([multi-TU and physical integration](results/model/multitu-physical-integration-2026-10-28.md)).
+Completed-header opening and EOF-identifier repairs now pass the full
+4,163-input gate, 35 maintained comparisons and three fresh same-ELF native
+executions. The independent 12,092-member evidence archive verifies; broad
+846-input classifications and token counts are unchanged
+([guard integration](results/pre/include-guard-integration-2026-10-28.md)).
 Whole-command construction/erasure and compiler correctness remain open.
 Generic/static-assert compiler actions retain selected and unselected syntax.
 Assertion messages now accept all five C11 literal encodings: 65 complete Cabs
