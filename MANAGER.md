@@ -38,8 +38,9 @@ pushes main without force. Record unsuccessful approaches in
 The launcher follows 4ct-digest's MANAGER.md/codexwork.sh workflow, adapted
 to this project's two-worker limit and shared Lean build lock.
 
-Current assignments, 2026-10-28: slot 1 runs tasks/f1-bitfields.md in
-sol-csem-repin. Slot 2 runs tasks/f3-gnu-expression-syntax.md in sol-f2-tokens.
+Current assignments, 2026-10-28: slot 1 runs tasks/f1-bitfield-attributes.md in
+sol-csem-repin. Slot 2 runs tasks/f3-multitu-ghost.md in sol-f2-tokens.
+Reviewed bitfield and GNU expression checkpoints await combined lead adoption.
 The local replay-erasure theorem is adopted after its combined gate; eleven
 ghost contracts remain open. Both workers use reviewed integration bases,
 and the lead independently gates each final combination before adoption.
