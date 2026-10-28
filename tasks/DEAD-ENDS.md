@@ -1183,3 +1183,13 @@ The strict member/hash verification rejected it. Use dereference=True for
 portable captures and verify all regular bytes; the retry passes 13,141 members.
 The initial cause label guessed inode deduplication; retained type-2 entries
 identify symbolic links. The failed archive remains in build/bitattr-package-failed-1.
+
+Worker relaunch after enum review: plain `git rebase main` flattened reviewed
+merge history even though main was already an ancestor, replaying the adopted
+attribute checkpoint and producing redundant documentation conflicts. The
+attempt was aborted; exact prior history is restored. The launcher now checks
+ancestry first and preserves existing reviewed merges; an actual update uses
+`--rebase-merges`. The enum-base documentation conflict helper also initially
+used a multiline-greedy marker pattern; restore both append-only sides from
+the original merge parents with newline-bounded markers. All enum, upstream,
+physical-proof and earlier dead-end sections are retained after that correction.

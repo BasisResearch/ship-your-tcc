@@ -32,7 +32,11 @@ if [[ -n $(git -C "$wt" status --porcelain) ]]; then
   echo "RESULT: stuck launch: dirty worktree $wt; preserve and review first"
   exit 1
 fi
-if ! git -C "$wt" rebase main; then
+# A reviewed merge may already contain main. Flattening it would replay
+# adopted/cherry-picked checkpoints and discard the reviewed merge resolution.
+if git -C "$wt" merge-base --is-ancestor main HEAD; then
+  echo "Worktree already contains main; preserving reviewed merge history"
+elif ! git -C "$wt" rebase --rebase-merges main; then
   echo "RESULT: stuck launch: rebase conflict in $wt; changes preserved"
   exit 1
 fi
