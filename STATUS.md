@@ -286,7 +286,9 @@ is not yet adopted. Trigraph/splice physical maps and all six typed proof
 Statements remain open. Failed setup runs and final exact captures are in
 results/model/ghost-origins-integration-2026-10-28.md. Slot 1 finishes GNU
 attributes/layout; slot 2 repairs compiler/model typedef alignment. Sum cuts
-remain frozen. The old parser captures were archived only after every member
+remain frozen. The physical shadow-map follow-up is queued as
+tasks/f3-physical-origin-maps.md; no third worker is running. The old parser
+captures were archived only after every member
 was hash-verified; the storage record is results/review/parser-ghost-capture-archive-2026-10-28.json.
 
 ## Needs user

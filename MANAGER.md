@@ -44,7 +44,7 @@ runs tasks/f3-typedef-alignment.md in sol-f2-tokens, repairing the observed
 compiler query mismatch and its executable model. The model-origin continuation
 is adopted after its combined gate. General declaration constraints
 (tasks/f1-declaration-constraints.md, CSEM-11), concrete bitfields
-(tasks/f1-bitfields.md), physical transformation provenance and actual tccdefs
+(tasks/f1-bitfields.md), physical transformation provenance (tasks/f3-physical-origin-maps.md) and actual tccdefs
 alias meaning (tasks/f1-injected-bindings.md) remain queued. Pack/layout
 consumption remains required. Keep these separate from user asm exclusions.
 
