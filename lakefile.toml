@@ -432,3 +432,8 @@ root = "Unit.IEEEIntegrationTest"
 name = "csem_raw"
 srcDir = "lean/RawFrontEnd"
 root = "RawFrontEndMain"
+
+[[lean_exe]]
+name = "allocation-oracle-test"
+srcDir = "csem/lean_frontend/test"
+root = "Unit.AllocationOracleTest"

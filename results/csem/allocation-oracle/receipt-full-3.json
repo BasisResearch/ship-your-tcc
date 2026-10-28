@@ -1,0 +1,12 @@
+{
+  "request": "allocation-oracle-full-3",
+  "request_id": "allocation-oracle-full-3",
+  "exit": 0,
+  "log": "build/worker-build-allocation-oracle-full-3.log",
+  "command": [
+    "scripts/check.sh",
+    "--csem"
+  ],
+  "source_hashes_verified": true,
+  "lead_review_required": "Allocation recovery task only. Main includes adopted IEEE and direct literal repair; preserve them. Shared pin-addressed opam/pristine/OCaml toolchain under this worktree build is READ ONLY. Do not repin, delete or modify it. Use csem_regen against the existing pinned generator. Slot 2 anonymous containers/layout is frozen separately; lead combines shared sources and regenerates.\nRead task review JSON before importing any old draft. Frozen build/worker-build.request requires unique ID, exact targets and source SHA256; use kind full-gate-validation for full gate. Freeze until completed matching result (a logged target error alone is not completion). Do not print entire manifests repeatedly; verify by script, show ID/status/lead notes. Lead service handles denied systemd bus/Git metadata.\nFor isolated OCaml build/generator requests, freeze exact command and inputs in worker-toolchain.request; lead reviews manually. Do not execute uncapped builds. Full gate is required before commit request; no other project writes.\nLead interim review: checked oracle bounds/overlap, rejection leaf, fixed-policy outcome quantification and byte clearing on freed heap reuse are coherent; preserve the explicit BumpPlacementPre and the frontend mini-run limitation. Verify all new proof constants with ordinary axioms (not only three selected prints). Historical Sail pointer evidence must remain labeled historical, as in current report. No new user decision needed. Main raw frontend is now adopted at 86236ed; lead will combine your candidate with raw+anonymous sources after frozen gate, so do not rebase dirty/frozen inputs.\n"
+}

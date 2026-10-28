@@ -1,0 +1,15 @@
+{
+  "request_id": "allocation-oracle-sail-1",
+  "kind": "allocation-oracle-native-validation",
+  "command": [
+    "bash",
+    "-c",
+    "ORACLE_META=results/csem/allocation-oracle/global-address.sail.meta KEEP_WORK=1 MAX_STEPS=100000000 TCC_ARGS='\"-w\",\"-std=c11\",' timeout 900 scripts/run_tcc_sail.sh csem/tests/allocation/global-address.c > results/csem/allocation-oracle/global-address.sail.stdout 2> results/csem/allocation-oracle/global-address.sail.stderr; rc=$?; echo \"$rc\" > results/csem/allocation-oracle/global-address.sail.exit; exit \"$rc\""
+  ],
+  "sha256": {
+    "csem/tests/allocation/global-address.c": "8bc9af244c24940eb79caff31781721b493be59572067ce92e855941b3c346d2",
+    "scripts/run_tcc_sail.sh": "9a7737b4ac7a3578db6d1597a1c8224800e912cae30592e95c772f7637737ac8",
+    "scripts/sail_console.py": "7ed4fceae118690184500b7cfa133387905c33ea2ae0e40a61283806f095dbd5"
+  },
+  "constraints": "Run capped under shared lock; no sum compile-cut regeneration, no other-tree changes; keep stdout/stderr/trace work metadata."
+}

@@ -1,0 +1,7 @@
+{
+  "base_revision": "148603aba93ee6aa22534037df770838e3b9dccd",
+  "same_bump_body_ignoring_comments_and_whitespace": true,
+  "base_body_sha256": "0a78ac27d71b17eacefce984b8389759bc5989aa3ba1a11d00c0094f89d38eab",
+  "current_body_sha256": "0a78ac27d71b17eacefce984b8389759bc5989aa3ba1a11d00c0094f89d38eab",
+  "scope": "Original allocator body vs bumpAllocator, name normalized; actual dispatcher preservation separately kernel checked."
+}

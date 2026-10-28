@@ -40,8 +40,8 @@ What is provisional (F0Params, each a later phase's deliverable):
 Known F0 gaps of the definitions themselves (PHASES.md, F0):
 * `cfgTcc` supplies the patched RV64I/lp64 implementation reader (F1).
   Binary32/128 execution and bit-field lowering remain concrete residual
-  obligations (results/csem/f1-config.md); allocation remains upstream's
-  deterministic allocator pending its separate recovery.
+  obligations (results/csem/f1-config.md). Runtime allocation resolutions
+  include checked finite RV64 placements as well as the unchanged bump baseline.
 * Native float operations and partial frontend/Core parsers remain inherited
   seams. The pure per-TU Digest reader is retained.
 * divergence: `outcomes` admits `.diverges o` when, for all large fuel, some
@@ -123,6 +123,8 @@ inductive Verdict where
   /-- the model gives no meaning: an elaboration error, a link error, a
   Cerberus error, a non-integer exit value -/
   | refused
+  /-- An invalid allocation resolution, distinct from C UB or model refusal. -/
+  | invalidAllocation
   /-- this fuel bound was reached on this branch, having printed `stdout` -/
   | outOfFuel (stdout : String)
 
@@ -182,6 +184,7 @@ def leafVerdict : nd_status driver_result driver_error driver_state × List Stri
       | none => .refused
     | _ => .refused
   | (.Killed st reason, _, _) =>
+    if st.layout_state.allocationRejected then .invalidAllocation else
     match reason with
     | .Undef0 _ _ => .undef
     | .Error0 loc _ => if loc == CerbFuel.fuelExhaustedLoc then .outOfFuel (stdoutOf st) else .refused
@@ -190,7 +193,8 @@ def leafVerdict : nd_status driver_result driver_error driver_state × List Stri
 /-- **The executions of `src` at fuel `n`**: front end, elaboration, link,
 and the exhaustive ND run of `main` (the fork's `runPipeline` for one TU,
 `--nolibc`, the default switch set). -/
-def verdicts (cfg : Config) (src : List UInt8) (n : Nat) : List Verdict :=
+def verdictsWithAllocation (policy : CerbMem.AllocPolicy)
+    (cfg : Config) (src : List UInt8) (n : Nat) : List Verdict :=
   letI : CerbImplCfg.Impl := ⟨cfg.implementation⟩
   letI : LemFuel := ⟨n⟩
   letI : CerbGlobal.Switches := ⟨CerbGlobal.defaultSwitches⟩
@@ -208,25 +212,64 @@ def verdicts (cfg : Config) (src : List UInt8) (n : Nat) : List Verdict :=
         let runFile := convert_file linked
         let (drSt, _) := initial_driver_state supply cfg.addressSpaceTop digest runFile
           (CerbFS.fs_initial_state_of (("/prog.c", src) :: cfg.fsFiles))
-        (CerbND.runND (drive runFile.enumDefs runFile.tagDefs false runFile cfg.argv) drSt).map
+        (CerbND.runND (drive runFile.enumDefs runFile.tagDefs false runFile cfg.argv)
+          (withAllocationPolicy policy drSt)).map
           leafVerdict
 
-/-- **`CSem.outcomes cfg src`**: the observations CSem allows for `src`: a
-halting execution's output and exit status, or a diverging one's output, for
-every large enough fuel. -/
+/-- Historical executable baseline: exactly one allocation resolution. -/
+def verdicts (cfg : Config) (src : List UInt8) (n : Nat) : List Verdict :=
+  verdictsWithAllocation .bump cfg src n
+
+/-- The default-policy specialization preserves the baseline definition. -/
+theorem verdicts_default (cfg : Config) (src : List UInt8) (n : Nat) :
+    verdictsWithAllocation .bump cfg src n = verdicts cfg src n := rfl
+
+/-- A single allocation resolution witnessing a stable halting observation. Data
+fields expose the resolution and bound without an anonymous existential tower. -/
+structure HaltingResolution (cfg : Config) (src : List UInt8) (out : String) (e : Nat) where
+  policy : CerbMem.AllocPolicy
+  exitValue : Int
+  exit_status : cfg.exitStatus exitValue = e
+  fuelBound : Nat
+  computed : ∀ n, fuelBound ≤ n →
+    .defined out exitValue ∈ verdictsWithAllocation policy cfg src n
+
+/-- F0's provisional divergence witness, holding allocation policy fixed. Its
+single-branch/output-limit adequacy remains F4's existing obligation. -/
+structure DivergingResolution (cfg : Config) (src : List UInt8) (o : Nat → Option Char) where
+  policy : CerbMem.AllocPolicy
+  fuelBound : Nat
+  prefixes : ∀ n, fuelBound ≤ n → ∃ out,
+    .outOfFuel out ∈ verdictsWithAllocation policy cfg src n ∧
+    ∀ k ch, out.toList[k]? = some ch → o k = some ch
+
+/-- **`CSem.outcomes cfg src`**: arbitrary allocation functions range over all
+placements, held fixed across fuel bounds. Core's exhaustive evaluation-order
+ND remains independent. No sampled placement list defines this set. -/
 def outcomes (cfg : Config) (src : List UInt8) : OutcomeSet where
   mem
-    | .halts out e => ∃ v, cfg.exitStatus v = e ∧
-        ∃ N, ∀ n, N ≤ n → .defined out v ∈ verdicts cfg src n
-    | .diverges o => ∃ N, ∀ n, N ≤ n → ∃ out, .outOfFuel out ∈ verdicts cfg src n ∧
-        ∀ k ch, out.toList[k]? = some ch → o k = some ch
+    | .halts out e => Nonempty (HaltingResolution cfg src out e)
+    | .diverges o => Nonempty (DivergingResolution cfg src o)
+
+/-- A halting observation computed under any one resolution is admitted by the
+actual outcome set, including the historical bump resolution. -/
+theorem halts_of_allocation_resolution (cfg : Config) (src : List UInt8)
+    (policy : CerbMem.AllocPolicy) (out : String) (v : Int)
+    (h : ∃ N, ∀ n, N ≤ n → .defined out v ∈ verdictsWithAllocation policy cfg src n) :
+    Observation.halts out (cfg.exitStatus v) ∈ outcomes cfg src := by
+  obtain ⟨N, hn⟩ := h
+  exact ⟨{ policy := policy, exitValue := v, exit_status := rfl, fuelBound := N, computed := hn }⟩
 
 /-- **`CSem.NoUB cfg src`**: the front end accepts `src` and, for every large
 enough fuel, no execution has undefined behaviour and none is refused by the
 model (a refusal has no C meaning to compare against). -/
 structure NoUB (cfg : Config) (src : List UInt8) : Prop where
   accepted : (cfg.frontEnd src).isSome
-  eventually : ∃ N, ∀ n, N ≤ n → ∀ v ∈ verdicts cfg src n, v ≠ .undef ∧ v ≠ .refused
+  /-- Rejected allocation resolutions have no C meaning and are neither UB nor
+  refusal. A UB reached on any valid prefix still counts, even when that policy
+  would reject a later request. Each policy has its own eventual fuel bound. -/
+  eventually : ∀ policy : CerbMem.AllocPolicy, ∃ N, ∀ n, N ≤ n →
+    ∀ v ∈ verdictsWithAllocation policy cfg src n, v ≠ .undef ∧ v ≠ .refused
 
 end CSem
 

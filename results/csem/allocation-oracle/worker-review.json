@@ -1,0 +1,10 @@
+{
+  "base_revision": "148603aba93ee6aa22534037df770838e3b9dccd",
+  "request": "allocation-oracle-full-3",
+  "verified_source_count": 1615,
+  "full_gate_exit": 0,
+  "focused_checks": 21,
+  "default_checks": 6,
+  "csem_binary_sha256": "f53728bc6211530b13551f956b7ba133393f53eb2c7ab61621b33432faa6307f",
+  "status": "Reviewed worker checkpoint; combined integration pending"
+}

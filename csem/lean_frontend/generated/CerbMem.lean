@@ -188,8 +188,27 @@ structure Allocation where
 /-- A passive concrete load/store receipt; shared shape from mem_common.lem. -/
 abbrev AccessReceipt := access_receipt PointerValue MemValue
 
+/-- One allocation choice, independent of Core evaluation-order choices. Live ranges
+are half-open byte intervals; zero-sized ranges occupy no bytes. -/
+structure AllocRequest where
+  allocId : StorageInstanceId
+  size : Int
+  align : Int
+  live : List (Address × Int)
+
+/-- `.bump` preserves the upstream executable exactly. An oracle is held fixed
+for a run; `none` rejects that resolution, never fabricates allocation failure. -/
+inductive AllocPolicy where
+  | bump
+  | oracle (choose : AllocRequest → Option Address)
+
+instance : Inhabited AllocPolicy := ⟨.bump⟩
+
 /-- mem_state — memory/concrete/impl_mem.ml:484–504 (15 fields, including the fork's opt-in, drainable receipt buffer). -/
 structure MemState where
+  allocPolicy : AllocPolicy := .bump
+  /-- Invalid allocation resolutions are distinct from C UB and model refusal. -/
+  allocationRejected : Bool := false
   nextAllocId : StorageInstanceId := 0
   nextIota : SymbolicStorageInstanceId := 0
   -- last_address — the allocator's cursor (impl_mem.ml:1252-1263). NO default since the
@@ -2549,7 +2568,7 @@ def alignmentRefusal (align sz : Int) : String :=
     (:1264-1270). The VIP twin (memory/vip/impl_mem.ml:202-225) carries the
     same text.
     CONTRACT — kernel theorem `CerbMem.allocator_active_sound`
-    (CerbMemAllocatorProofs.lean): an ACTIVE result `a` has `align ∣ a`,
+    (CerbMemAllocatorProofs.lean): under the bump policy an ACTIVE result `a` has `align ∣ a`,
     `0 < a`, `a + sz ≤ st.lastAddress` (its end at or below the cursor —
     disjoint from everything at or above it, for `sz ≥ 0`), and the new
     cursor is `a`; the
@@ -2563,7 +2582,7 @@ def alignmentRefusal (align sz : Int) : String :=
     that is not a positive power of two is REFUSED after the `z < 0` kill and
     before the remainder, where the oracle's `failwith` now sits
     (impl_mem.ml:1292-1308 in this tree). -/
-def allocator (sz align : Int) : memM (StorageInstanceId × Address) :=
+def bumpAllocator (sz align : Int) : memM (StorageInstanceId × Address) :=
   ND fun st =>
     let allocId := st.nextAllocId
     let z := st.lastAddress - sz                                                 -- :1252
@@ -2576,7 +2595,7 @@ def allocator (sz align : Int) : memM (StorageInstanceId × Address) :=
       -- LEAN_ABORT_ON_PANIC the process aborts with the text, as the oracle's
       -- uncaught `Failure` does). It is carried as the MESSAGE of a kill, not as
       -- the arm's value, so that the KERNEL sees a kill here exactly as in the
-      -- arm above: `allocator_active_sound` keeps its hypothesis-free statement
+      -- arm above: `allocator_active_sound` keeps its size/alignment-unconditional statement
       -- ("a refusal arm is never active"), where a `failwithI` at the pair type
       -- would be an opaque value the theorem could say nothing about. Without
       -- the abort the arm is still a kill (an empty message), never an answer.
@@ -2589,6 +2608,49 @@ def allocator (sz align : Int) : memM (StorageInstanceId × Address) :=
       else                                                                       -- :1263-1270
         (NDactive (allocId, z'),
          { st with nextAllocId := allocId + 1, lastUsed := some allocId, lastAddress := z' })
+
+/-- Live storage only. Freed objects retain provenance records but impose no
+placement constraint; the next allocation still receives a fresh storage ID. -/
+def liveRanges (st : MemState) : List (Address × Int) :=
+  st.allocations.toList.filterMap fun (id, a) =>
+    if st.deadAllocations.contains id then none else some (a.base, a.size)
+
+/-- RV64/lp64 pointer width. The end is representable too (one-past pointers). -/
+def pointerLimit : Int := 2 ^ 64
+
+def disjointFrom (a sz : Int) (live : List (Address × Int)) : Bool :=
+  live.all fun (b, s) => sz == 0 || s == 0 || a + sz ≤ b || b + s ≤ a
+
+/-- Reject malformed sizes/alignments before interval arithmetic. No wrapping
+Int address is accepted as a finite RV64 pointer. Empty ranges may share bases. -/
+def oracleAnswerOk (r : AllocRequest) (a : Address) : Bool :=
+  decide (0 ≤ r.size) && decide (0 < r.align) && !alignmentRefused r.align &&
+  decide (0 < a) && decide (a + r.size < pointerLimit) &&
+  a % r.align == 0 && disjointFrom a r.size r.live
+
+/-- Rejection is an invalid ND resolution, not C UB, refusal, or malloc failure.
+The driver reports it explicitly; the semantic outcome set cannot observe it. -/
+def invalidAllocationKill : kill_reason mem_error :=
+  Other (MerrOther "CSem: invalid allocation oracle resolution")
+
+def oracleAllocate (choose : AllocRequest → Option Address) (sz align : Int) (st : MemState) :
+    nd_action (StorageInstanceId × Address) String mem_error
+      (mem_constraint IntegerValue) MemState × MemState :=
+  let r : AllocRequest := ⟨st.nextAllocId, sz, align, liveRanges st⟩
+  match choose r with
+  | some a =>
+    if oracleAnswerOk r a then
+      (NDactive (st.nextAllocId, a),
+       { st with nextAllocId := st.nextAllocId + 1, lastUsed := some st.nextAllocId })
+    else (NDkilled invalidAllocationKill, { st with allocationRejected := true })
+  | none => (NDkilled invalidAllocationKill, { st with allocationRejected := true })
+
+/-- One allocation resolution. Default execution is definitionally the old bump
+allocator; oracles introduce no additional Core evaluation-order branches. -/
+def allocator (sz align : Int) : memM (StorageInstanceId × Address) :=
+  ND fun st => match st.allocPolicy with
+    | .bump => match bumpAllocator sz align with | ND f => f st
+    | .oracle choose => oracleAllocate choose sz align st
 
 /-- allocate_object — impl_mem.ml:1288-1347. `size = sizeof ty` (:1289, no
     clamp); `req_addr_opt = Some _` → `failwith "TODO: cerb::with_address()
@@ -2662,6 +2724,9 @@ def allocateRegion [LemFuel] (_ : Nat) (_pref : prefix0) (alignIv sizeIv : Integ
                                 isReadonly := .IsWritable, prefix_ := PrefMalloc }  -- :1429
     (NDactive (.PV (.Prov_some allocId) (.PVconcrete none addr)),
      { st with allocations := st.allocations.insert allocId alloc,
+               bytemap := match st.allocPolicy with
+                 | .bump => st.bytemap
+                 | .oracle _ => st.bytemap.filter fun a _ => !(addr ≤ a && a < addr + sizeN),
                dynamicAddrs := addr :: st.dynamicAddrs })                            -- :1430-1434
 
 /-! ### Kill — impl_mem.ml:1464-1550 (zero-discrepancy Z-07/Z-08/Z-10, noodle
@@ -3659,7 +3724,7 @@ def effMemberShiftPtrval [CerbImplCfg.Impl] [LemFuel] (enumDefs : EnumDefs) (tag
     refusal fires at application, before ANY access check: an overlapping copy that is also
     out of bounds, or whose object is dead, is refused rather than reported as that UB
     [AGENT 2026-10-20]. `memcpy(p, p, n)` overlaps (the same object). Different allocations
-    never overlap (the allocator never reuses an address); `realloc`'s copy is new ← old,
+    never overlap while live (oracle placement can reuse dead addresses); `realloc`'s copy is new ← old,
     two allocations. Returns the region's description for the message and the two bases. -/
 def memcpyOverlap (dst src : PointerValue) (n : Int) : Option (String × Address × Address) :=
   let intersects (a1 a2 : Address) : Bool := n > 0 && a1 < a2 + n && a2 < a1 + n

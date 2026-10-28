@@ -1,0 +1,19 @@
+PASS placement 64
+PASS placement 256
+PASS overlap rejected
+PASS unaligned rejected
+PASS zero address rejected
+PASS negative address rejected
+PASS width rejected
+PASS end overflow rejected
+PASS negative size rejected
+PASS zero alignment rejected
+PASS negative alignment rejected
+PASS non-power-two alignment rejected
+PASS missing answer rejected, not OOM
+PASS zero size is empty
+PASS zero live range is empty
+PASS touching boundary allowed
+PASS largest representable one-past
+PASS released range available
+PASS free/reallocation resets bytes and provenance

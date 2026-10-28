@@ -29,7 +29,7 @@ fail() { echo "csem_gates: FAIL: $*"; exit 1; }
 export LC_ALL=C CERB_MEM_MAX=12G CSEM_LEMLEAN
 
 UNIT=(core-parser-test effects-proof-test totality-proof-test fresh-int-test pp-test
-      fuel-exemplar-test monadic-failstop-test allocator-soundness-test float-literal-test
+      fuel-exemplar-test monadic-failstop-test allocator-soundness-test allocation-oracle-test float-literal-test
       are-compatible-test many-restatement-test opaque-failure-test enum-data-test
       run-digest-test cabs-import-test match-pattern-arity-test memory-access-test
       reconstruct-legacy-test pnvi-arms-test stop-test core-quote-test ieee-test ieee-integration-test)
@@ -70,6 +70,10 @@ python3 csem/scripts/test_stops.py --lean-bin "$_repo/.lake/build/bin/stop-test"
 fork=$(scripts/csem_fork_oracle.sh --path) || fail "matching shared-source OCaml engine required"
 export CSEM_ORACLE="$fork/_build/default/backend/driver/main.exe"
 export CSEM_RUNTIME="$fork/_build/install/default"
+
+echo "== csem (3a) allocation policies, default equivalence and independent choices"
+python3 scripts/allocation_oracle_check.py || fail "allocation replay evidence"
+python3 scripts/allocation_default_check.py || fail "default allocation equivalence"
 
 echo "== csem (3b) C11 union initializer specified outcomes"
 python3 scripts/gen_union_c11_observation.py --check || fail "C11 union observation fixture drift"

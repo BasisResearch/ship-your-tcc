@@ -196,3 +196,15 @@ for explicit internal projections, and the existing initializer cursor for
 physical path traversal. The unchanged external fuel-sufficiency interfaces
 are proved with CerbMem.layout_stable_aux (in CerbMem_lemMeasureProofs.lean) after aligning its
 union potential with the explicit table; no new machine proof is imported.
+
+Allocation oracle (2026-10-27): the `AllocRequest` / `AllocPolicy` / `liveRanges`
+interface and checked-oracle dispatch adapt the read-only draft in
+`.claude/worktrees/agent-a4ab6bbd8c0be5325`, HEAD
+`81b16e3420fdfafc409d0ad21427c66c5c7cc0aa`, CerbMem SHA256
+`b583a3d57b4d77eaa4ea33203a3d9f72f5337bd7d4a3053cc9ea532fe550f9c0`,
+reviewed in `results/csem/allocation-recovery-review.json`. The current upstream
+bump body (including adopted alignment refusal) is retained verbatim. Finite
+RV64 acceptance, explicit rejection, reuse byte reset, outcome quantification,
+proofs and focused tests are new. Lua `scripts/abs_inventory.sh` and its mandatory
+tool table were consulted; no machine library routine proof is reused, so no
+instruction-identity claim is made. No generated recovery files were imported.

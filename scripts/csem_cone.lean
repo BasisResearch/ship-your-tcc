@@ -134,4 +134,5 @@ def run (roots : List Name) : CoreM Unit := do
 
 end CSemCone
 
-#eval CSemCone.run [``Tcc.CSem.verdicts]
+#eval CSemCone.run [``Tcc.CSem.verdicts, ``Tcc.CSem.verdictsWithAllocation,
+  ``Tcc.CSem.outcomes, ``Tcc.CSem.NoUB]

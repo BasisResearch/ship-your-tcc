@@ -448,7 +448,7 @@ theorem allocator_errno (top : Int) (h : 8 ≤ top) :
       (NDactive ((0 : Int), errnoAddr top),
        { CerbMem.initialMemState top with nextAllocId := 1, lastUsed := some 0, lastAddress := errnoAddr top }) := by
   have h1 : ¬ ((top - 4 : Int) < 0) := by omega
-  simp only [runOne, CerbMem.allocator, CerbMem.initialMemState, errnoAddr]
+  simp only [runOne, CerbMem.allocator, CerbMem.initialMemState, CerbMem.bumpAllocator, errnoAddr]
   -- `CerbMem.alignmentRefused 4` (the fork's item-G2 arm, 2026-10-20) reduces to
   -- `false` once unfolded (a literal); the two kills are excluded as before
   simp [h1, CerbMem.alignmentRefused]

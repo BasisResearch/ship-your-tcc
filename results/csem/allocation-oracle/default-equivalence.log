@@ -1,0 +1,6 @@
+MATCH csem/tests/allocation/evaluation-order.c
+MATCH csem/tests/allocation/global-address.c
+MATCH csem/tests/allocation/order.c
+MATCH csem/tests/allocation/reuse.c
+MATCH csem/tests/allocation/undefined.c
+MATCH historical Sail pointer observation

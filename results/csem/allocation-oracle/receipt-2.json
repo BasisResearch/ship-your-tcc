@@ -1,0 +1,23 @@
+{
+  "request": "allocation-oracle-2",
+  "request_id": "allocation-oracle-2",
+  "exit": 1,
+  "log": "build/worker-build-allocation-oracle-2.log",
+  "command": [
+    "flock",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/lake.lock",
+    "systemd-run",
+    "--user",
+    "--scope",
+    "-p",
+    "MemoryMax=12G",
+    "lake",
+    "build",
+    "allocation-oracle-test",
+    "allocator-soundness-test",
+    "csem_run",
+    "TccCSem"
+  ],
+  "source_hashes_verified": true,
+  "lead_review_required": "Allocation recovery task only. Main includes adopted IEEE and direct literal repair; preserve them. Shared pin-addressed opam/pristine/OCaml toolchain under this worktree build is READ ONLY. Do not repin, delete or modify it. Use csem_regen against the existing pinned generator. Slot 2 anonymous containers/layout is frozen separately; lead combines shared sources and regenerates.\nRead task review JSON before importing any old draft. Frozen build/worker-build.request requires unique ID, exact targets and source SHA256; use kind full-gate-validation for full gate. Freeze until completed matching result (a logged target error alone is not completion). Do not print entire manifests repeatedly; verify by script, show ID/status/lead notes. Lead service handles denied systemd bus/Git metadata.\nFor isolated OCaml build/generator requests, freeze exact command and inputs in worker-toolchain.request; lead reviews manually. Do not execute uncapped builds. Full gate is required before commit request; no other project writes.\n"
+}

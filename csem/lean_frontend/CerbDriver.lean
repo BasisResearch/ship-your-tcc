@@ -20,6 +20,17 @@ import CerbEscape
 -- entry over the generated driver (see CerbCall.lean's header)
 import CerbCall
 
+/-- Install one allocation resolution before any runtime allocation. The ordinary
+runner uses `.bump`. Const-expression elaboration retains its existing execution;
+runtime placements are independent of frontend translation choices. -/
+def withAllocationPolicy (policy : CerbMem.AllocPolicy) (st : driver_state) : driver_state :=
+  { st with layout_state := { st.layout_state with allocPolicy := policy } }
+
+/-- Finite diagnostic replay, never the semantic definition of allowed placements.
+Exhaustion rejects the replay; it does not return NULL or invent out-of-memory. -/
+def allocationReplay (addresses : List Int) : CerbMem.AllocPolicy :=
+  .oracle fun r => if r.allocId < 0 then none else addresses[r.allocId.toNat]?
+
 set_option autoImplicit true
 
 /-! The driver accepts Normal (the default), PNVI_ae_udi alone, or
@@ -1180,7 +1191,8 @@ def runPipeline [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (runtime : St
     -- the initial file system (ship-your-tcc F1b: `loadImageFs`, the fork's
     -- `CerbFS.fs_initial_state` without --image-fs)
     (fsState : CerbFS.FsState)
-    (tunits : List (String × translation_unit)) : IO UInt8 := do
+    (tunits : List (String × translation_unit))
+    (allocPolicy : CerbMem.AllocPolicy := .bump) : IO UInt8 := do
   -- Quotation stops at the prepared execution value, with machine-shaped errors.
   let quoting := quoteCore.isSome || quoteLibc.isSome
   let quiet := batch || ppCore || quoting
@@ -1377,6 +1389,7 @@ def runPipeline [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (runtime : St
     -- The address-space top is the run's parameter (the same value the
     -- desugarer was seeded with above).
     let (drSt, _supplyFinal) := initial_driver_state supply addressSpaceTop (runDigest tunits) runFile fsState
+    let drSt := withAllocationPolicy allocPolicy drSt
     say s!"  executing Core..."
     -- Reader seed: execution-slice entry — the linked table, passed as
     -- the value in hand (the load→seed loop is closed).
@@ -1783,6 +1796,7 @@ def cerbMain (args : List String) : IO Unit := do
   let mut argv0Arg : Option String := none
   -- --image-fs FILE / --image-fs-file SPEC (ship-your-tcc F1b): the tcc -run image's
   -- file system as the initial state (loadImageFs)
+  let mut allocationAddresses : Option (List Int) := none
   let mut imageFsList : Option String := none
   let mut imageFsSpecs : List String := []
   let mut restArgs : List String := []
@@ -1819,6 +1833,19 @@ def cerbMain (args : List String) : IO Unit := do
           "cerberus-lean: option --args cannot be repeated (as the oracle's command line)"
           ⟨"a single command-line occurrence matching upstream admission", by decide⟩)
       progArgsStr := some v; pending := rest
+    | "--alloc-addresses" :: v :: rest =>
+      if allocationAddresses.isSome then
+        IO.eprintln "cerberus-lean: repeated --alloc-addresses"
+        IO.Process.exit 2
+      let mut addresses := []
+      for word in v.splitOn "," do
+        match word.toInt? with
+        | some a => addresses := addresses ++ [a]
+        | none =>
+          IO.eprintln "cerberus-lean: --alloc-addresses requires comma-separated integer addresses"
+          IO.Process.exit 2
+      allocationAddresses := some addresses
+      pending := rest
     | "--trace-nodes" :: rest => traceNodes := true; pending := rest
     | "--impl" :: v :: rest => implArg := some v; pending := rest
     | "--argv0" :: v :: rest => argv0Arg := some v; pending := rest
@@ -1841,7 +1868,7 @@ def cerbMain (args : List String) : IO Unit := do
       switchesArg := some (s!"--switches {v}", v); pending := rest
     | ["--libc"] | ["--libc-tu"] | ["--call"] | ["--call-args"]
     | ["--impl"] | ["--argv0"] | ["--args"] | ["--fuel"] | ["--address-space-top"] | ["--runtime"] | ["--switches"]
-    | ["--image-fs"] | ["--image-fs-file"] =>
+    | ["--image-fs"] | ["--image-fs-file"] | ["--alloc-addresses"] =>
       IO.eprintln "cerberus-lean: --libc/--libc-tu/--call/--call-args/\
         --args/--fuel/--address-space-top/--runtime/--switches/--image-fs/--image-fs-file require an argument"
       IO.Process.exit 1
@@ -2069,7 +2096,7 @@ def cerbMain (args : List String) : IO Unit := do
   let fsState ← loadImageFs imageFsSpecs imageFsList
   let argv0 := argv0Arg.getD implParams.argv0
   let code ← (letI : CerbImplCfg.Impl := ⟨implParams⟩; letI : LemFuel := ⟨fuel⟩; letI : CerbGlobal.Switches := ⟨switchSet⟩; runPipeline runtimeDir batchMode ppCoreMode firstTrace
-    addressSpaceTop callFn traceNodes libc quoteCore quoteLibc argv0 progArgs fsState tunits)
+    addressSpaceTop callFn traceNodes libc quoteCore quoteLibc argv0 progArgs fsState tunits (allocationAddresses.map allocationReplay |>.getD .bump))
   -- Report completed runs on stderr: batch stdout contains only verdict tokens.
   -- Emit after execution so a panic's diagnostic envelope remains intact. Quotation
   -- stays silent and carries the same report in its module header instead.
