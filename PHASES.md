@@ -700,3 +700,27 @@ Statements and the pure block erasure/shape laws. Focused and full gates pass;
 archive members, 3,374 primary and 399 immutable-base supplementary source pins.
 Combined main adoption with multi-TU checkpoint 96c520e is pending. Read/refill,
 host, splice transport and whole-run/compiler obligations remain open.
+
+Current combination, 2026-10-28: main's patched member-attribute image/symbols
+and seven executables rebuild with verified unchanged source hashes. Candidate
+75a2df8 combines reviewed multi-TU and pure physical proofs; full gate on 4,162
+inputs, independent syntax/physical checks and fresh native two-file 104 are
+pending. Slot 2 now handles shared GNU conditional semantics; slot 1's newer
+full-width enum policy needs its new gate, not the historical full4 receipt.
+
+Fresh two-file native104 observation (2026-10-28): candidate75a2df8 matches the
+entire 4 MiB Sail arena and handoff registers, then executes the exact same ELF
+with exit0 and expected output. Compile11,461,362/program64,583/total11,525,970
+steps. Actual primary/companion bytes, invocation, registers and ELF are retained.
+The combined full gate and independent postchecks are still pending; this is
+finite execution evidence, not main adoption or a compiler/refinement theorem.
+
+Combined multi-TU/physical candidate75a2df8 now passes its full 4,162-input
+gate. Independent postchecks and portable integration evidence are finishing;
+main adoption is pending. Enum checkpoint review independently verifies
+12,334 observations,17 actual ELFs,3,686 primary and608 supplementary paths.
+The GNU semantic lane exposes a compiler promotion defect, minimized in
+results/review/gnu-conditional-promotion-2026-10-28: GNU omitted-middle ?: loses
+narrow-field promotion, unlike ordinary ?: and unary/arithmetic controls.
+The queued repair is tasks/f3-gnu-conditional-bitfield-promotion.md; no new
+cfgTcc policy or Supported exclusion is introduced. Sum cuts stay frozen.

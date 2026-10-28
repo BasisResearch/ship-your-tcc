@@ -1,0 +1,194 @@
+{
+  "note": "Host-only minimization of the separate native GNU conditional batch mismatch. No new Sail or proof claim. Ordinary C11 ternary controls are retained independently of GNU syntax.",
+  "tcc_binary_sha256": "53d1e7ed77f4369d94c14752ffdf69960a33716142e0200d248662ad3774f0e4",
+  "tccgen_sha256": "9f6f5ce6417267140429fa8e6949ad6ce5183c808ccd1fc15d5734abcbe10d1b",
+  "driver_sha256": "2cb2a8bd5e74a73dc884c9e14933fe794c84cbeb8778248f3db3aeb336355ef4",
+  "rows": [
+    {
+      "name": "gnu-type",
+      "source_sha256": "c7c543dcfd491d52f8cc1220fa41d828e5ab116a5ec465c8b1b81a037808f038",
+      "runs": [
+        {
+          "engine": "gcc",
+          "command": [
+            "gcc",
+            "-std=c11",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/conditional-bitfield-promotion-review-corrected/gnu-type.c",
+            "-o",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/conditional-bitfield-promotion-review-corrected/gnu-type-gcc"
+          ],
+          "compile_exit": 0,
+          "exit": 0
+        },
+        {
+          "engine": "patched-host-tcc",
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/test-c11/host/tcc",
+            "-std=c11",
+            "-B/data/home/kirancodes/Documents/code/ship-your-tcc/build/test-c11/host",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/conditional-bitfield-promotion-review-corrected/gnu-type.c",
+            "-o",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/conditional-bitfield-promotion-review-corrected/gnu-type-patched-host-tcc"
+          ],
+          "compile_exit": 0,
+          "exit": 1
+        }
+      ]
+    },
+    {
+      "name": "ordinary-type",
+      "source_sha256": "4147d7f1d61a9de47450f13397be470e3c851b4229bb58b06fed01b3c7e9837e",
+      "runs": [
+        {
+          "engine": "gcc",
+          "command": [
+            "gcc",
+            "-std=c11",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/conditional-bitfield-promotion-review-corrected/ordinary-type.c",
+            "-o",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/conditional-bitfield-promotion-review-corrected/ordinary-type-gcc"
+          ],
+          "compile_exit": 0,
+          "exit": 0
+        },
+        {
+          "engine": "patched-host-tcc",
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/test-c11/host/tcc",
+            "-std=c11",
+            "-B/data/home/kirancodes/Documents/code/ship-your-tcc/build/test-c11/host",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/conditional-bitfield-promotion-review-corrected/ordinary-type.c",
+            "-o",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/conditional-bitfield-promotion-review-corrected/ordinary-type-patched-host-tcc"
+          ],
+          "compile_exit": 0,
+          "exit": 0
+        }
+      ]
+    },
+    {
+      "name": "arithmetic-type",
+      "source_sha256": "d4a18a1778f051324ffac9b033f960c2c9448c4206ce2c667304c16cfc519c6a",
+      "runs": [
+        {
+          "engine": "gcc",
+          "command": [
+            "gcc",
+            "-std=c11",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/conditional-bitfield-promotion-review-corrected/arithmetic-type.c",
+            "-o",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/conditional-bitfield-promotion-review-corrected/arithmetic-type-gcc"
+          ],
+          "compile_exit": 0,
+          "exit": 0
+        },
+        {
+          "engine": "patched-host-tcc",
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/test-c11/host/tcc",
+            "-std=c11",
+            "-B/data/home/kirancodes/Documents/code/ship-your-tcc/build/test-c11/host",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/conditional-bitfield-promotion-review-corrected/arithmetic-type.c",
+            "-o",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/conditional-bitfield-promotion-review-corrected/arithmetic-type-patched-host-tcc"
+          ],
+          "compile_exit": 0,
+          "exit": 0
+        }
+      ]
+    },
+    {
+      "name": "unary-type",
+      "source_sha256": "f8974a362364b81da2326225e90e4779dbc87156f01f0a05f85183a51d441c0d",
+      "runs": [
+        {
+          "engine": "gcc",
+          "command": [
+            "gcc",
+            "-std=c11",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/conditional-bitfield-promotion-review-corrected/unary-type.c",
+            "-o",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/conditional-bitfield-promotion-review-corrected/unary-type-gcc"
+          ],
+          "compile_exit": 0,
+          "exit": 0
+        },
+        {
+          "engine": "patched-host-tcc",
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/test-c11/host/tcc",
+            "-std=c11",
+            "-B/data/home/kirancodes/Documents/code/ship-your-tcc/build/test-c11/host",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/conditional-bitfield-promotion-review-corrected/unary-type.c",
+            "-o",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/conditional-bitfield-promotion-review-corrected/unary-type-patched-host-tcc"
+          ],
+          "compile_exit": 0,
+          "exit": 0
+        }
+      ]
+    },
+    {
+      "name": "gnu-negative",
+      "source_sha256": "94573bffd096d38c5171541ae0f19f8e241ae198ab1cd97012f9595882f18d1f",
+      "runs": [
+        {
+          "engine": "gcc",
+          "command": [
+            "gcc",
+            "-std=c11",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/conditional-bitfield-promotion-review-corrected/gnu-negative.c",
+            "-o",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/conditional-bitfield-promotion-review-corrected/gnu-negative-gcc"
+          ],
+          "compile_exit": 0,
+          "exit": 0
+        },
+        {
+          "engine": "patched-host-tcc",
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/test-c11/host/tcc",
+            "-std=c11",
+            "-B/data/home/kirancodes/Documents/code/ship-your-tcc/build/test-c11/host",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/conditional-bitfield-promotion-review-corrected/gnu-negative.c",
+            "-o",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/conditional-bitfield-promotion-review-corrected/gnu-negative-patched-host-tcc"
+          ],
+          "compile_exit": 0,
+          "exit": 1
+        }
+      ]
+    },
+    {
+      "name": "ordinary-negative",
+      "source_sha256": "a7b85605ff4d3a8c7ebbede9ae1607c044e60bd0e1a5a04a2fe32af99b0245eb",
+      "runs": [
+        {
+          "engine": "gcc",
+          "command": [
+            "gcc",
+            "-std=c11",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/conditional-bitfield-promotion-review-corrected/ordinary-negative.c",
+            "-o",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/conditional-bitfield-promotion-review-corrected/ordinary-negative-gcc"
+          ],
+          "compile_exit": 0,
+          "exit": 0
+        },
+        {
+          "engine": "patched-host-tcc",
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/test-c11/host/tcc",
+            "-std=c11",
+            "-B/data/home/kirancodes/Documents/code/ship-your-tcc/build/test-c11/host",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/conditional-bitfield-promotion-review-corrected/ordinary-negative.c",
+            "-o",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/conditional-bitfield-promotion-review-corrected/ordinary-negative-patched-host-tcc"
+          ],
+          "compile_exit": 0,
+          "exit": 0
+        }
+      ]
+    }
+  ]
+}

@@ -42,7 +42,7 @@ The lead runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most two
 at a time, following MANAGER.md. Slot 1 now handles implementation-defined enum bitfields;
 slot 2 has submitted reviewed physical-proof checkpoint b42f766 after
 reviewed multi-translation-unit checkpoint 96c520e. Their combined adoption is next;
-slot 2 then takes tasks/f1-gnu-conditional-semantics.md. C11 bitfields and GNU expression syntax are adopted after their combined full
+slot 2 now runs tasks/f1-gnu-conditional-semantics.md. C11 bitfields and GNU expression syntax are adopted after their combined full
 gates; member attributes are now adopted after rebuilt-image integration. Assertion-message encodings are adopted. Local replay erasure is proved
 and adopted. Array-to-pointer alignment decay is adopted after the combined image/gate validation. Complete _Generic/_Static_assert syntax is adopted after its combined gate
 and independent raw/native checks. Binding meaning and actual model-owned compiler-injected
@@ -573,6 +573,33 @@ complete 4 MiB native comparisons plus their full program runs pass. See
 results/csem/bitfield-attributes-integration-2026-10-28.md. Enum policy/valid
 compiler refusals, whole frontend/compiler proofs and memory/volatile transport
 remain open. Reviewed multi-TU checkpoint 96c520e is next for combination. Sum cuts stay frozen.
+
+Main artifacts refreshed after member-attribute adoption: image, symbols and
+seven executables rebuild successfully on the same 3,577 source inputs. The
+lead combined reviewed multi-TU and physical proofs at 75a2df8; its new full
+gate freezes 4,162 tracked inputs including configuration/assembly/expected
+outputs and established runtime fixtures. Fresh native two-file 104 execution passes;
+independent comparisons and the combined gate are pending. Slot 2 works on GNU conditional
+semantics; slot 1 refines full-width enum type policy and reruns its gate.
+No new whole-compiler or transport theorem is claimed.
+
+
+Fresh two-file native104 observation (2026-10-28): candidate75a2df8 matches the
+entire 4 MiB Sail arena and handoff registers, then executes the exact same ELF
+with exit0 and expected output. Compile11,461,362/program64,583/total11,525,970
+steps. Actual primary/companion bytes, invocation, registers and ELF are retained.
+The combined full gate and independent postchecks are still pending; this is
+finite execution evidence, not main adoption or a compiler/refinement theorem.
+
+Combined multi-TU/physical candidate75a2df8 now passes its full 4,162-input
+gate. Independent postchecks and portable integration evidence are finishing;
+main adoption is pending. Enum checkpoint review independently verifies
+12,334 observations,17 actual ELFs,3,686 primary and608 supplementary paths.
+The GNU semantic lane exposes a compiler promotion defect, minimized in
+results/review/gnu-conditional-promotion-2026-10-28: GNU omitted-middle ?: loses
+narrow-field promotion, unlike ordinary ?: and unary/arithmetic controls.
+The queued repair is tasks/f3-gnu-conditional-bitfield-promotion.md; no new
+cfgTcc policy or Supported exclusion is introduced. Sum cuts stay frozen.
 
 ## Needs user
 
