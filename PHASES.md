@@ -449,3 +449,11 @@ byte representation. Tests do not instantiate its premise. All existing ghost
 and compiler refinement obligations remain open. GNU CSem expression/array
 constraint gaps are queued in tasks/f1-gnu-alignment-semantics.md; physical
 origin maps are next for slot 2. Whole-C Supported/Fits and frozen sum stay fixed.
+
+F1 constraint follow-up (2026-10-28): minimized CSEM-13 is inherited from
+pristine pinned Cerberus: function/void array typedef acceptance and direct
+function-array internal errors. The ten-case classification and 173 verified
+captures are in results/csem/array-constraints-2026-10-28.md. Repair is queued
+with CSem array/alignment semantics; the invalid programs add no success
+coverage and do not change Supported/Fits. Both active workers keep their
+independent binding and physical-origin tasks.

@@ -689,3 +689,11 @@ requested corrections until the lead surfaced them explicitly.
   three invalid array constraints. Its OCaml parser rejects the GNU spellings.
   These are separate required spec/constraint follow-ups, not permission to
   narrow Supported/Fits, strip attributes or count refusals as successes.
+
+- Array-constraint review (2026-10-28): an old host tcc in an integration
+  worktree's build/test-c11 directory accepted an overaligned array. Do not
+  infer compiler regression from that unrefreshed executable. The final probe
+  uses the exact adopted typedef-worker binary (c5b5ae1a...) and rejects it.
+  Both initial and corrected records are retained in the array-constraint
+  review. Plain invalid typedefs still expose genuine inherited Cerberus
+  constraints; direct function arrays crash, rather than diagnose cleanly.

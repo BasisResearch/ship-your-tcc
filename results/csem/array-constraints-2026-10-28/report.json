@@ -1,0 +1,652 @@
+{
+  "pins": {
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/default/backend/driver/main.exe": "a71dd0968846b72196506a7ce78cd300cb39c6a8a8b10e87945a44c30517d091",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_raw": "41102dc9ce02594549e5be2470c630e4f4f3b57cc778938f7e6a2f839eacfee3",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-tcc": "c5b5ae1a042b4c1cda024a9712580590005fa608036e9295ee39e8dab99bc45b",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/review_array_constraints_final.py": "cac6c954bb74cac2077bf8aaf57c08f3c9ca4104085f00a6fbcb87649d352dcf",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/vendor/CSEM_REV": "f4728490acefb712e9ea36f3c89ee387c98b31f8bb297f639ed71f520b92dfd6",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/function-array.c": "d7d21719f543ff8fa4ab9710d1b64ef19b05169e7630ea0da9b0d5f7d76ffd4f",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/void-array.c": "40fe8357e7c2a7970211a6e7ded5a3a20e68548e4e372b394d08d1f6d86e81b0",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/function-array-local.c": "ba3679a88588d3fb4afd31af677b126f191b1497df8eb2eda5aced8117b47566",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/void-array-local.c": "9564ed002d11928769b1c96d0a2e3e0a772c2300ca0a959cd647cd8a3d41be52",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/function-pointer-array.c": "e40f567d068792383af66c962fafb8f488eb4cfa533fc488c25131aabb645b57",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/int-array.c": "91a0a377e9e6ad4dcf9d7297eb367601084e3a1cc46ccf4a4084c8d3b7d0b647",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/incomplete-extern.c": "3e5a6ce0dccfcb0f790fb1ce4c5afa8ca9310cf0278f0352cdb19650809b8124",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/overaligned-array.c": "ee039179d545f07f64105b8e8c0ef36c22a0fc4c82bd0f96ef4b4a002ed7fb0c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/function-array-typedef.c": "53be836765e549ab4a283d9408d6d2dd68535694d5382f39ec548114ad8452fe",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/void-array-typedef.c": "4aa8354e4fec426ffc31f14582205b4d873866ceeca657a7620888defc84a997"
+  },
+  "rows": [
+    {
+      "case": "function-array",
+      "source": "build/array-constraint-review-final/function-array.c",
+      "engines": {
+        "raw": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_raw",
+            "--checked",
+            "--semantic",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/function-array.c"
+          ],
+          "exit": -6,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "108c87e2b70ef80f52149c5f39e2537218e83f33bba80fbd80a7eb127c5805df"
+        },
+        "pristine-ocaml": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/default/backend/driver/main.exe",
+            "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/install/default",
+            "--nolibc",
+            "--exec",
+            "--batch",
+            "--mode=exhaustive",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/function-array.c"
+          ],
+          "exit": 125,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "0bbaa156d5b16205a72538320bd8abc87c159314c307ef64e4fc132d323e995e",
+          "verdicts": []
+        },
+        "gcc": {
+          "command": [
+            "gcc",
+            "-std=c11",
+            "-pedantic-errors",
+            "-fsyntax-only",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/function-array.c"
+          ],
+          "exit": 1,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "f5f2a8ac2f9c3fd97a06529d3853ddad4e973cc32e3263c17d805ba90ada5838"
+        },
+        "tcc": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-tcc",
+            "-std=c11",
+            "-c",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/function-array.c",
+            "-o",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/function-array.o"
+          ],
+          "exit": 1,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "8cb63dd633af953a7c9f84787503c1a62c239b492557f7a9a10f269af7bf2477"
+        }
+      }
+    },
+    {
+      "case": "void-array",
+      "source": "build/array-constraint-review-final/void-array.c",
+      "engines": {
+        "raw": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_raw",
+            "--checked",
+            "--semantic",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/void-array.c"
+          ],
+          "exit": 0,
+          "stdout_sha256": "bff10da252d98524dd5068d6477ca113abb76fe9a593cbdb0f1af3ff133ab497",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "semantics": {
+            "status": "elaboration-error"
+          }
+        },
+        "pristine-ocaml": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/default/backend/driver/main.exe",
+            "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/install/default",
+            "--nolibc",
+            "--exec",
+            "--batch",
+            "--mode=exhaustive",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/void-array.c"
+          ],
+          "exit": 1,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "8aae1d70e36dcbf18732b9017ac2b3b3b8e9f9250d96129d7216959445bb6d30",
+          "verdicts": []
+        },
+        "gcc": {
+          "command": [
+            "gcc",
+            "-std=c11",
+            "-pedantic-errors",
+            "-fsyntax-only",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/void-array.c"
+          ],
+          "exit": 1,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "04e2ac1a58d1e138ca9d2d9a9243fd1c7e29a07f07841064bf23d5604e370aad"
+        },
+        "tcc": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-tcc",
+            "-std=c11",
+            "-c",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/void-array.c",
+            "-o",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/void-array.o"
+          ],
+          "exit": 1,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "b369a63b9774107c102c7fb0e0707caf6e31e10336d1a8fb7a11870bbf3404fd"
+        }
+      }
+    },
+    {
+      "case": "function-array-local",
+      "source": "build/array-constraint-review-final/function-array-local.c",
+      "engines": {
+        "raw": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_raw",
+            "--checked",
+            "--semantic",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/function-array-local.c"
+          ],
+          "exit": -6,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e4a239d8899ca7c0380905c0ac307dc5b0f2d5ed346c4f95b448ff19f19c788f"
+        },
+        "pristine-ocaml": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/default/backend/driver/main.exe",
+            "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/install/default",
+            "--nolibc",
+            "--exec",
+            "--batch",
+            "--mode=exhaustive",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/function-array-local.c"
+          ],
+          "exit": 125,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "0498c8cb6ffc5cfd7edd8a8dc7c6a51f4bffabb4a131c68aa5ff689242832e04",
+          "verdicts": []
+        },
+        "gcc": {
+          "command": [
+            "gcc",
+            "-std=c11",
+            "-pedantic-errors",
+            "-fsyntax-only",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/function-array-local.c"
+          ],
+          "exit": 1,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "79d3e2d7b5d56a285bf2221cbfd546d3ea84114346ccf272407d8f1cf4c6d94e"
+        },
+        "tcc": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-tcc",
+            "-std=c11",
+            "-c",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/function-array-local.c",
+            "-o",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/function-array-local.o"
+          ],
+          "exit": 1,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "a4b322dff2357727d22f7b73db9adfb21b89ed648a24cca64a290a001fe4cbcb"
+        }
+      }
+    },
+    {
+      "case": "void-array-local",
+      "source": "build/array-constraint-review-final/void-array-local.c",
+      "engines": {
+        "raw": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_raw",
+            "--checked",
+            "--semantic",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/void-array-local.c"
+          ],
+          "exit": 0,
+          "stdout_sha256": "1b292dc0d79c83cbf43ea7c9829d32a9e65edf265333a05ffae5583298661ac5",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "semantics": {
+            "status": "elaboration-error"
+          }
+        },
+        "pristine-ocaml": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/default/backend/driver/main.exe",
+            "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/install/default",
+            "--nolibc",
+            "--exec",
+            "--batch",
+            "--mode=exhaustive",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/void-array-local.c"
+          ],
+          "exit": 1,
+          "stdout_sha256": "fe5cfb23afebfafc59f2716644be40e7fab192fd2e7fbe9fe3c8a8d9a186c54c",
+          "stderr_sha256": "d212f7911849ad98bdd0307f296f36d679c518881f34d8a1810cd21095368210",
+          "verdicts": [
+            "Undefined {ub: \"UB059_incomplete_no_linkage_identifier\", stderr: \"\", loc: \"<1:21--1:22>\"}"
+          ]
+        },
+        "gcc": {
+          "command": [
+            "gcc",
+            "-std=c11",
+            "-pedantic-errors",
+            "-fsyntax-only",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/void-array-local.c"
+          ],
+          "exit": 1,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "6fc8c80a7142431f033f0a43730c66e4b8af88c7aa03662438137788902391cb"
+        },
+        "tcc": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-tcc",
+            "-std=c11",
+            "-c",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/void-array-local.c",
+            "-o",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/void-array-local.o"
+          ],
+          "exit": 1,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "67e633f2a17ecf433da2fff9148babb0e015e316974b231c1b927a4b3c37deef"
+        }
+      }
+    },
+    {
+      "case": "function-pointer-array",
+      "source": "build/array-constraint-review-final/function-pointer-array.c",
+      "engines": {
+        "raw": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_raw",
+            "--checked",
+            "--semantic",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/function-pointer-array.c"
+          ],
+          "exit": 0,
+          "stdout_sha256": "9ba1a99dda4a99c9a166e34a3b6c8f87c34efb2fa7b0f4c6551cb29a1ff12141",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "semantics": [
+            {
+              "exit": 0,
+              "status": "defined",
+              "stdout": ""
+            }
+          ]
+        },
+        "pristine-ocaml": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/default/backend/driver/main.exe",
+            "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/install/default",
+            "--nolibc",
+            "--exec",
+            "--batch",
+            "--mode=exhaustive",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/function-pointer-array.c"
+          ],
+          "exit": 0,
+          "stdout_sha256": "7545e238796d4104f178965d612abdf2dcfe2f580513fbde5b41b6800308522f",
+          "stderr_sha256": "51e0e54f07166f6001d7ac23025e0c88e26bf83ae241620c3d2d057f961bed9e",
+          "verdicts": [
+            "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+          ]
+        },
+        "gcc": {
+          "command": [
+            "gcc",
+            "-std=c11",
+            "-pedantic-errors",
+            "-fsyntax-only",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/function-pointer-array.c"
+          ],
+          "exit": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "tcc": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-tcc",
+            "-std=c11",
+            "-c",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/function-pointer-array.c",
+            "-o",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/function-pointer-array.o"
+          ],
+          "exit": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "case": "int-array",
+      "source": "build/array-constraint-review-final/int-array.c",
+      "engines": {
+        "raw": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_raw",
+            "--checked",
+            "--semantic",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/int-array.c"
+          ],
+          "exit": 0,
+          "stdout_sha256": "d454c4c2a2f6ac75adacffed62a1523ad2b9cc84c31e8af6408eb0c26f4adb74",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "semantics": [
+            {
+              "exit": 0,
+              "status": "defined",
+              "stdout": ""
+            }
+          ]
+        },
+        "pristine-ocaml": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/default/backend/driver/main.exe",
+            "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/install/default",
+            "--nolibc",
+            "--exec",
+            "--batch",
+            "--mode=exhaustive",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/int-array.c"
+          ],
+          "exit": 0,
+          "stdout_sha256": "7545e238796d4104f178965d612abdf2dcfe2f580513fbde5b41b6800308522f",
+          "stderr_sha256": "4a18fdad4f15abc1ed83d7388b0ae3af39b79c61cc13cb748df3d124c9c5417f",
+          "verdicts": [
+            "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+          ]
+        },
+        "gcc": {
+          "command": [
+            "gcc",
+            "-std=c11",
+            "-pedantic-errors",
+            "-fsyntax-only",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/int-array.c"
+          ],
+          "exit": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "tcc": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-tcc",
+            "-std=c11",
+            "-c",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/int-array.c",
+            "-o",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/int-array.o"
+          ],
+          "exit": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "case": "incomplete-extern",
+      "source": "build/array-constraint-review-final/incomplete-extern.c",
+      "engines": {
+        "raw": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_raw",
+            "--checked",
+            "--semantic",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/incomplete-extern.c"
+          ],
+          "exit": 0,
+          "stdout_sha256": "00133d357269ec7caf586bfc3658ee49533937987aead3acf97e6409054e6d8b",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "semantics": [
+            {
+              "exit": 0,
+              "status": "defined",
+              "stdout": ""
+            }
+          ]
+        },
+        "pristine-ocaml": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/default/backend/driver/main.exe",
+            "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/install/default",
+            "--nolibc",
+            "--exec",
+            "--batch",
+            "--mode=exhaustive",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/incomplete-extern.c"
+          ],
+          "exit": 0,
+          "stdout_sha256": "7545e238796d4104f178965d612abdf2dcfe2f580513fbde5b41b6800308522f",
+          "stderr_sha256": "0727c6b08cc7793a4b711e00b528bc9714144737c9f8e0896c42b6c57e375786",
+          "verdicts": [
+            "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+          ]
+        },
+        "gcc": {
+          "command": [
+            "gcc",
+            "-std=c11",
+            "-pedantic-errors",
+            "-fsyntax-only",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/incomplete-extern.c"
+          ],
+          "exit": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "tcc": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-tcc",
+            "-std=c11",
+            "-c",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/incomplete-extern.c",
+            "-o",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/incomplete-extern.o"
+          ],
+          "exit": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "case": "overaligned-array",
+      "source": "build/array-constraint-review-final/overaligned-array.c",
+      "engines": {
+        "raw": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_raw",
+            "--gnu",
+            "--checked",
+            "--semantic",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/overaligned-array.c"
+          ],
+          "exit": 0,
+          "stdout_sha256": "c6efda4d592ac4a3148f91023b9fa380e0929c85fe1ee6583d7588801150bf7c",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "semantics": [
+            {
+              "exit": 0,
+              "status": "defined",
+              "stdout": ""
+            }
+          ]
+        },
+        "pristine-ocaml": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/default/backend/driver/main.exe",
+            "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/install/default",
+            "--nolibc",
+            "--exec",
+            "--batch",
+            "--mode=exhaustive",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/overaligned-array.c"
+          ],
+          "exit": 1,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "42d6aa6b6280064deb41478a1873e2b77421ac79af275c6304ed5f91a5584dcc",
+          "verdicts": []
+        },
+        "gcc": {
+          "command": [
+            "gcc",
+            "-std=c11",
+            "-pedantic-errors",
+            "-fsyntax-only",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/overaligned-array.c"
+          ],
+          "exit": 1,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "a937e3bc40088d8cff9c1cba1c3195296e8fa25bb445492c288f0cd5735ea850"
+        },
+        "tcc": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-tcc",
+            "-std=c11",
+            "-c",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/overaligned-array.c",
+            "-o",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/overaligned-array.o"
+          ],
+          "exit": 1,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "fb34bbe04428d2fa76a0071c9ab2a0fd740a1ea16058a878874c2d1e19be7770"
+        }
+      }
+    },
+    {
+      "case": "function-array-typedef",
+      "source": "build/array-constraint-review-final/function-array-typedef.c",
+      "engines": {
+        "raw": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_raw",
+            "--checked",
+            "--semantic",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/function-array-typedef.c"
+          ],
+          "exit": 0,
+          "stdout_sha256": "27e713f9e321070bf4b55d4c87e89eec927af605b0082280a67de689ac00887c",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "semantics": [
+            {
+              "exit": 0,
+              "status": "defined",
+              "stdout": ""
+            }
+          ]
+        },
+        "pristine-ocaml": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/default/backend/driver/main.exe",
+            "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/install/default",
+            "--nolibc",
+            "--exec",
+            "--batch",
+            "--mode=exhaustive",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/function-array-typedef.c"
+          ],
+          "exit": 0,
+          "stdout_sha256": "7545e238796d4104f178965d612abdf2dcfe2f580513fbde5b41b6800308522f",
+          "stderr_sha256": "4681aa8dd4fd10d3963e8b0bad3aa10ac14487e4591d4f5dd426406e90ac1d8c",
+          "verdicts": [
+            "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+          ]
+        },
+        "gcc": {
+          "command": [
+            "gcc",
+            "-std=c11",
+            "-pedantic-errors",
+            "-fsyntax-only",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/function-array-typedef.c"
+          ],
+          "exit": 1,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "a673bf4f35a0151e43ed97dc60ec4bd09074a9206b73404d61f77287f191fa88"
+        },
+        "tcc": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-tcc",
+            "-std=c11",
+            "-c",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/function-array-typedef.c",
+            "-o",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/function-array-typedef.o"
+          ],
+          "exit": 1,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "e387f20719197367f6bf076a0e21f323a0a5f99f937322ea00e02310d226ff17"
+        }
+      }
+    },
+    {
+      "case": "void-array-typedef",
+      "source": "build/array-constraint-review-final/void-array-typedef.c",
+      "engines": {
+        "raw": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_raw",
+            "--checked",
+            "--semantic",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/void-array-typedef.c"
+          ],
+          "exit": 0,
+          "stdout_sha256": "e06e7a9d0459d2e7cd27d8ff24d5580cb435359526721baa83c63d71f7f0e826",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "semantics": [
+            {
+              "exit": 0,
+              "status": "defined",
+              "stdout": ""
+            }
+          ]
+        },
+        "pristine-ocaml": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/default/backend/driver/main.exe",
+            "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/install/default",
+            "--nolibc",
+            "--exec",
+            "--batch",
+            "--mode=exhaustive",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/void-array-typedef.c"
+          ],
+          "exit": 0,
+          "stdout_sha256": "7545e238796d4104f178965d612abdf2dcfe2f580513fbde5b41b6800308522f",
+          "stderr_sha256": "d8c86f789d204f89f3e6f74cc8fd58fe73a83eb52d4f9912916a8bdae8bc1c52",
+          "verdicts": [
+            "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}"
+          ]
+        },
+        "gcc": {
+          "command": [
+            "gcc",
+            "-std=c11",
+            "-pedantic-errors",
+            "-fsyntax-only",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/void-array-typedef.c"
+          ],
+          "exit": 1,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "746ca60f0674fbbd6109b66843d2f6cebe0298cdd973f37f5ac6369b9be8b5ce"
+        },
+        "tcc": {
+          "command": [
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-tcc",
+            "-std=c11",
+            "-c",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/void-array-typedef.c",
+            "-o",
+            "/data/home/kirancodes/Documents/code/ship-your-tcc/build/array-constraint-review-final/void-array-typedef.o"
+          ],
+          "exit": 1,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_sha256": "257533eb68014ea8c1842d5e7e97222bc13fc983c9e763b96d99853ddd27dcaf"
+        }
+      }
+    }
+  ]
+}

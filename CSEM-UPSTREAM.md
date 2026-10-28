@@ -326,3 +326,19 @@ results/model/typedef-alignment/observations.tar.gz (`semantic-inputs/`,
 Task: tasks/f1-gnu-alignment-semantics.md. The separate explicit-member/function
 GNU target-policy differences are not asserted to be C11 bugs. Kiran owns any
 external report; none has been sent.
+
+**CSEM-13 — inherited invalid array typedef acceptance and function-array crash.**
+The CSEM-12 follow-up now independently minimizes two plain C11 inputs:
+`typedef int F(void); typedef F Bad[1]; int main(void){return 0;}` and
+`typedef void V; typedef V Bad[1]; int main(void){return 0;}`. Pristine pinned
+Cerberus 704c4e69 and current checked Lean both report defined zero; GCC and
+adopted patched tcc reject both. Direct function-array declarations at file
+or block scope instead crash both semantics in `AilTypesAux.is_complete`.
+These results establish upstream inheritance for these constraints/internal
+errors, separately from CSEM-12's local GNU alignment propagation defects.
+The ten-case matrix includes three successful ordinary controls and distinguishes
+void-array diagnostics from pristine local-array UB classification.
+See results/csem/array-constraints-2026-10-28.md for minimal sources, executable
+pins, clean upstream status, retained initial harness error and 173 verified
+captures. Repair is queued in tasks/f1-gnu-alignment-semantics.md. This is a bug
+list for Kiran; no external contact or changed Supported premise is implied.

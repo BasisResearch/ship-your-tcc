@@ -10,7 +10,8 @@ Retain the three defined-one controls: semantic-inputs/{deref,unary-types,common
 Retain the two function query errors and five expression-alignof parser failures separately.
 Keep all tested GNU attributes; do not erase syntax to manufacture semantic agreement.
 Minimize checked acceptance of arrays of functions, void and overaligned-size elements.
-Compare ordinary C11 constraints against pinned pristine OCaml before claiming upstream bugs.
+CSEM-13 now establishes inherited C11 array typedef acceptance and direct function-array crashes.
+Read results/csem/array-constraints-2026-10-28.md; preserve its ten-case matrix and precise categories.
 GNU placement failures in historical Menhir are frontend limitations, not semantic agreements.
 Use current rebuilt executables with exact source receipts, not the old root pre-GNU binary.
 Files: independent parser/AST, shared Lem expression typing, type alignment and array constraints.

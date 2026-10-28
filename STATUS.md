@@ -42,7 +42,7 @@ The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
 two at a time, following MANAGER.md. Slot 1 now handles injected runtime bindings in sol-csem-repin; the GNU
 syntax/layout checkpoint is adopted after combined validation;
 CSEM-10, library identity and bounded allocation are adopted. Slot 2
-repairs GNU typedef alignment in the compiler/model; the model-origin
+runs physical-origin maps after adopting GNU typedef alignment; the model-origin
 continuation is adopted after combined validation. Both resumed after
 the interruption; the latest continuation status is below. The anonymous-member repair is adopted with IEEE after its combined gate.
 The pure IEEE implementation is integrated after the combined gate; the compiler/model
@@ -338,6 +338,13 @@ Both workers had capacity interruptions, with source and failed receipts
 preserved. Slot 1 resumed injected bindings after its passing Lean build and
 isolated oracle build; it remains unadopted. Slot 2 next takes physical-origin
 maps. Sum cuts remain frozen and no user decision is pending.
+
+Array-constraint triage (2026-10-28): two minimal plain C11 array typedefs
+are accepted by pristine pinned Cerberus and current checked Lean; direct
+function arrays crash both. GCC/patched tcc reject the invalid inputs. CSEM-13
+records this inherited defect with ten cases and 173 verified captures;
+CSEM-12's GNU propagation issues remain separate. Both Sol slots are active:
+injected bindings and physical-origin maps. No third worker or external report.
 
 ## Needs user
 
