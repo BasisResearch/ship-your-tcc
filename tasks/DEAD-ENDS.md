@@ -1248,3 +1248,44 @@ identify symbolic links. The failed archive remains in build/bitattr-package-fai
   by the postchecks but omitted by that service inventory. Retain verifier1,
   its log and the previous package manifest/generator; archive supplemental
   pin bytes and require all shared pins to agree, without a semantic rerun.
+
+## Pure physical-transform proofs, 2026-10-28
+
+- The local capped build attempt cannot access the sandbox systemd user bus;
+  retain its log and use the frozen lead service directly thereafter.
+- `physical-proof-1` is a failed diagnostic build, with all 3,374 frozen pins
+  verified. Lean 4.34 puts legacy range lemmas in `Std.Legacy.Range`, not
+  `Std.Range`; there is no `List.forIn_range'_succ`. Reuse `List.range'_succ`
+  and `List.forIn_cons`. The printed executable loop carries `(out,mapped,i)`.
+- `physical-proof-2` through `physical-proof-10` are retained failed attempts,
+  never validation. Reduce record projections before arithmetic and `Id` bind /
+  pure before rewriting loops. Do not put `List.toArray_cons` or push-to-append
+  laws into a looping simp set. Expose one equation at the exact source list,
+  rather than accidentally expanding a common suffix on the left.
+- ByteArray.toList is its own executable loop in Lean 4.34; it is not
+  definitionally data.toList. Prove its accumulator law once. The suffix
+  transport measure is `buf.size-i`; a context-wide list-length substitution
+  unnecessarily expands dependent termination contexts.
+- The two equal numeric table matchers are separately generated Lean constants.
+  Direct rewriting across them fails even though pretty-printing is identical.
+  Unfolding both inside the whole loop proof and simplifying their nested
+  conditionals hit the ordinary heartbeat limit in physical-proof-10.
+  Prove `table_matcher_eq` once in isolation and rewrite by name; the loop then
+  checks at the ordinary budget. No runtime refactor or budget increase is needed.
+- `physical-proof-11` is the first passing focused receipt: all 3,374 inputs
+  verified, both unchanged public Statements proved, all 40 new theorem audits
+  within the standard axiom set. Earlier synthesized error terms in failed
+  logs are compiler diagnostics, never accepted proof terms or source admissions.
+- The lane's inherited suffix inventory omits shared Lem/OCaml/Core/config,
+  metadata and result-hosted runtime fixtures. Do not describe its 3,374 pins
+  as the canonical expanded inventory. Lead captured 399 supplementary blobs,
+  independently equal to the immutable base, and retained the superseded
+  134-entry draft. Both manifests, the pinning helper and every source byte are
+  portable evidence; all 399 current/base hashes were checked again after the
+  passing gate. Subsequent helpers must reuse the canonical broader inventory.
+- `physical-proof-full-1` passes the full frozen CSem gate, including its existing
+  optional native controls. Primary sources exactly match physical-proof-11;
+  the 399 supplementary sources retain their separate immutable-base evidence.
+- Final staging cannot create this worktree's read-only index.lock. The exact
+  stderr is retained. Use the existing scoped frozen lead commit handoff;
+  no alternate index/object store, approval escalation, push or main merge.

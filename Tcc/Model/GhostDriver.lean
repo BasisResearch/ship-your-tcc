@@ -1,5 +1,6 @@
 import Tcc.Model.Tie
 import Tcc.Model.Preprocess
+import Tcc.Model.PhysicalProof
 
 /-! Focused shared-token driver. Phase-four spelling and provenance are the
 only external syntax inputs. The compiler lexer/parser/codegen run on a
@@ -108,7 +109,7 @@ structure PhysicalTransformObligations : Prop where
     | .error a after, .error b plain => a = b ∧ erase after = erase plain
     | _, _ => False
 
-/-- Open physical interval law for the actual trigraph transform. The F3/F6
+/-- Pure physical interval law for the actual trigraph transform. The F3/F6
 read/refill invariant must supply contiguous input intervals, carry held bytes,
 and transport this local law through successful LF/CRLF splices and ungets.
 This states the transform's meaning without importing spec output into it. -/
@@ -122,7 +123,7 @@ def PhysicalOriginMap_Statement : Prop :=
       c.start < c.stop ∧ c.stop ≤ bytes.size ∧
       (trigraphBlock (bytes.extract c.start c.stop) #[]).1 = ⟨#[c.byte]⟩
 
-/-- Open CRLF correspondence for the actual trigraph-block shadow, with no
+/-- Pure CRLF correspondence for the actual trigraph-block shadow, with no
 restriction on CRLF, lone CR, CR at EOF or absent terminal newline. This is
 an obligation about a view, not a construction from spec preprocessing. -/
 def PhysicalReadView_Statement : Prop :=
@@ -133,6 +134,28 @@ def PhysicalReadView_Statement : Prop :=
     (normalizePhysical mapped.toList).map (fun c => (c.byte,c.start,c.stop)) =
       (CSem.Pre.locatedPhase1 true bytes.toList ⟨0,1,1⟩ []).map
         (fun c => (c.c,(c.physical.getD default).1.offset,(c.physical.getD default).2.offset))
+
+/-- Pure block erasure; no host, refill or arbitrary-parser premise. -/
+theorem physicalBlockErasure (bytes : ByteArray) (origins : Array PhysicalChar) :
+    (trigraphBlock bytes origins).1 = tcc_trigraphs bytes :=
+  PhysicalProof.block_erasure bytes origins
+
+/-- The same-length map premise is exactly the existing block-shape duty. -/
+theorem physicalBlockShape (bytes : ByteArray) (origins : Array PhysicalChar)
+    (h : origins.size = bytes.size) :
+    (trigraphBlock bytes origins).2.size = (trigraphBlock bytes origins).1.size :=
+  PhysicalProof.block_shape bytes origins h
+
+/-- Exact original physical ranges, ordering and one-byte slice meaning. -/
+theorem physicalOriginMap : PhysicalOriginMap_Statement := by
+  intro bytes
+  exact PhysicalProof.origin_map bytes
+
+/-- Pure phase-one view correspondence for all byte arrays. Actual reads,
+refills, splices, host behavior and whole-run erasure remain separate duties. -/
+theorem physicalReadView : PhysicalReadView_Statement := by
+  intro bytes
+  exact PhysicalProof.read_view bytes
 
 def action (R : Rec) (src : ByteArray) : M Unit := do
   tccpp_new R
