@@ -178,6 +178,10 @@ checkpoint ccc00ed has a passing frozen worker gate and native placement
 observation; the lead is combining it with raw/anonymous/once semantics.
 Ghost Cabs remains work in progress; ordinary source mapping is required.
 No unfinished checkpoint is claimed as an adopted implementation.
+The next independent CSem coverage task is tasks/f1-bitfields.md (CSEM-08):
+representation, target layout and semantic accesses, including unnamed padding.
+It is queued, not a third active worker. Fresh p04/p09/p10 configuration
+checks now execute defined in CSem; fresh target confirmations are running.
 
 ## Needs user
 

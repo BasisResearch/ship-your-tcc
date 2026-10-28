@@ -285,3 +285,6 @@ All three F2 Statements remain open. Allocation's worker gate passes but its
 combined integration is pending; ghost Cabs is unfinished. Both Sol workers
 stopped at usage limit; their changes were preserved and both restarted on
 Oct 28 (library identity and ghost Cabs). The lead handles allocation integration.
+The concrete CSEM-08 bitfield follow-up is queued as tasks/f1-bitfields.md,
+covering representation, RV64 layout, lvalues, initialization and constraints.
+The two-worker limit remains in force; this task has not started.
