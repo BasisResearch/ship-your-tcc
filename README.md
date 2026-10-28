@@ -48,7 +48,11 @@ pass. Ordinary whole-unit agreement and all six typed proof Statements remain
 open. GNU declaration syntax/layout now passes its combined gate: 23 semantic
 controls, six actual-header parses and three exact ordinary Cabs comparisons.
 Injected runtime alias meaning remains work
-(results/csem/gnu-integration-2026-10-28.md).
+(results/csem/gnu-integration-2026-10-28.md). Compiler typedef alignment is now
+repaired: three full compiler Sail probes succeed and two new complete native
+arenas match the model. The combined gate passes, with 46/56 exact raw Cabs
+controls; the representation proof and remaining gaps stay open
+(results/model/typedef-integration-2026-10-28.md).
 
 The latest preprocessing corpus has 618 exact model/reference and 616 exact
 spec/reference agreements across 622 inputs. The image's opened-path once

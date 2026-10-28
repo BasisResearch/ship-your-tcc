@@ -124,7 +124,7 @@ if [ -f lakefile.toml ] || [ -f lakefile.lean ]; then
   # used by the F2/F3 differential harnesses.
   echo "== (5b) compiler model and phase-4 observers"
   flock "$lock" systemd-run --user --scope -q -p MemoryMax=12G \
-    lake build tcc_model tcc_pre_tokens pre_spec tcc_ghost Tcc.Model.PreAudit Tcc.Model.GhostAudit \
+    lake build tcc_model tcc_pre_tokens pre_spec tcc_ghost Tcc.Model.PreAudit Tcc.Model.GhostAudit Tcc.Model.AlignmentAudit \
     || fail "compiler model/observer build"
   # audit <file> <allowed-axiom-regex>: every #print axioms row within the set
   audit() {
@@ -145,6 +145,7 @@ if [ -f lakefile.toml ] || [ -f lakefile.lean ]; then
   audit scripts/axioms.lean "$std"
   audit Tcc/Model/GhostAudit.lean "$std"
   audit Tcc/Model/PreAudit.lean "$std"
+  audit Tcc/Model/AlignmentAudit.lean "$std"
   echo "== (6b) axioms of the patch-0002 audit"
   audit scripts/axioms_certora.lean "$std|CC.externalFunctionsSem|CC.inlineAssemblySem|CC.externalFunctionsSemDeterm|CC.inlineAssemblySemDeterm"
   if [ "${1:-}" = "--csem" ]; then

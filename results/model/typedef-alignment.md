@@ -128,8 +128,9 @@ worker's sources have since changed for injected bindings; the report does
 not certify its current workspace from the old receipt. The separately pinned
 OCaml engine at key `3a9bc451ab1fd535523882e559223dab323f5c3a2dfd33cf15fc0fc564b13c16`
 has verified artifact/overlay manifests but rejects the GNU typedef spellings,
-including three attribute-placement probes. Main's current raw frontend also
-rejects the GNU input. On the identical ordinary C11 control, main's checked
+including three attribute-placement probes. The separately pinned root raw executable predates GNU adoption and also
+rejects the GNU input; that observation does not describe current main source.
+On the identical ordinary C11 control, that historical checked
 CSem, the GNU checkpoint, pinned OCaml, GCC and patched tcc agree on defined
 zero; the model produces the same tcc arena. No attributes are stripped to create an agreement.
 

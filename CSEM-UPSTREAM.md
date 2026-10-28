@@ -309,3 +309,20 @@ other GNU effects and injected binding/runtime meaning remain open. The old
 Supported visitor needs an identity-aware asm-label connection. See
 results/csem/gnu-attributes.md and patches/csem/0002 through 0004 for Kiran's
 review. No external report has been sent.
+
+**CSEM-12 — local GNU alignment propagation and array constraints (2026-10-28).**
+The GNU checkpoint's checked semantics returns one instead of zero for retained
+`deref`, `unary-types` and `common-types` probes where GCC/patched tcc return
+zero. Two function queries fail elaboration and five expression-alignof cases
+fail parsing. It also accepts invalid arrays of functions, void and elements
+whose size is not a multiple of declared alignment. Four other negative cases
+diagnose. These are local fork observations; upstream inheritance has not been
+established. The pinned concrete OCaml engine rejects the GNU typedef spelling,
+so that rejection supplies no semantic comparison. Ordinary C11 minimization
+and pristine upstream checks are required before reporting inherited defects.
+Exact checked commands and unstripped inputs are in
+results/model/typedef-alignment/observations.tar.gz (`semantic-inputs/`,
+`negative-csem.json`); hashes and classification are in typedef-alignment.md.
+Task: tasks/f1-gnu-alignment-semantics.md. The separate explicit-member/function
+GNU target-policy differences are not asserted to be C11 bugs. Kiran owns any
+external report; none has been sent.

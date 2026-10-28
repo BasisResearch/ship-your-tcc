@@ -434,3 +434,18 @@ identity-aware asm exclusion repair is slot 1's active task; no change to the
 whole-C target is approved or implied. Evidence and remaining semantic GNU
 residuals: results/csem/gnu-integration-2026-10-28.md. No new Sail execution,
 broad-corpus claim or sum regeneration is included in this adoption.
+
+F3 typedef alignment adoption (2026-10-28): separate CType alias alignment
+and live expression metadata now mirror the patched compiler. Combined full
+gate passes (3,473 source pins plus 104 unchanged supplementary Lem inputs),
+45 shared-token/46 raw Cabs controls and seven erasure/arena pairs pass.
+Two new complete native arenas match both worker and combined models; the
+worker historical corpus remains 1,345/1,815 successes with 463 refusals and
+seven assembly gaps. Three full compiler Sail successes are separate from
+76 cross-program pairs. Evidence: results/model/typedef-integration-2026-10-28.md.
+New open F6 obligation: `Tcc.Model.TypeAlignmentRepr_Statement imageBoundary`
+requires actual pinned-image reachability/synchronization and the CType/SValue
+byte representation. Tests do not instantiate its premise. All existing ghost
+and compiler refinement obligations remain open. GNU CSem expression/array
+constraint gaps are queued in tasks/f1-gnu-alignment-semantics.md; physical
+origin maps are next for slot 2. Whole-C Supported/Fits and frozen sum stay fixed.

@@ -1,0 +1,118 @@
+{
+  "pins": {
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/tcc_model": "b9d39edb2f9ba2fc9e92f4cc619edad81513c1525b57d60d8055cd7740fd03e6",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/image.syms": "526fe19ebc1923b05a8741b7c7e033d4e64fe7495d661d78fdfd29ceeea0bacd",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/c/build/fs.list": "37138fe2b431752aaf5c42dc793c506164accb643e5e6411d67063dbc417fc0b",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/recompare_typedef_native.py": "b58a347dfc74b12da420b418a3c263ad9076d03f8edc75f32da1c474f0bc00cb",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/patches/0003-tcc-c11.patch": "6bd9e9b2c3035a70d0fdecc524c24dfbc4f3937217a87df7c3e58faa9f160ca4",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/patches/0004-tcc-binary128-literals.patch": "15d4a95ec667c9ec18ea2be3fc1475c1178668853fea28213c3061afa0f863ff",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/results/repro/tcc_gnu_typedef_alignment.c": "a3a35644c2829f4700d42b16b2ace29bf54268d8fdaa8405347c76f274c110c1",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/results/repro/tcc_image_duplicate_first.h": "c289ff5d0b1a5bcd4adcd4cb60eaf2bb7bfcfc554c63323bf083e52d1cb21734",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/results/repro/tcc_image_duplicate_last.h": "e87ddd64a7b7e1f1c3023fdcae2b825139a546ccd59958507fbb6d845b83fdb2",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/results/repro/tcc_pp_trigraphs~.h": "b27b3ce3b0b9d99f8534328485736318299fe582da7cb85b3ef6edc616ab42d0",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/typedef-fixtures-final4/expression-address.c": "7879f2ba58f6c66ee3154fb009aa641a2ee121c100b5fd439e4762fe1a8c054b"
+  },
+  "rows": [
+    {
+      "source": "results/repro/tcc_gnu_typedef_alignment.c",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/tcc_model",
+        "--fs",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/c/build/fs.list",
+        "--syms",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/image.syms",
+        "--prog",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/results/repro/tcc_gnu_typedef_alignment.c",
+        "--arena-out",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/typedef-integrated/native/tcc_gnu_typedef_alignment.arena",
+        "--console-out",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/typedef-integrated/native/tcc_gnu_typedef_alignment.console",
+        "--arg",
+        "-w",
+        "--extra",
+        "/tcc_gnu_typedef_alignment.c=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/results/repro/tcc_gnu_typedef_alignment.c",
+        "--extra",
+        "/repro/tcc_gnu_typedef_alignment.c=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/results/repro/tcc_gnu_typedef_alignment.c",
+        "--extra",
+        "/tcc_image_duplicate_first.h=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/results/repro/tcc_image_duplicate_first.h",
+        "--extra",
+        "/repro/tcc_image_duplicate_first.h=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/results/repro/tcc_image_duplicate_first.h",
+        "--extra",
+        "/tcc_image_duplicate_last.h=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/results/repro/tcc_image_duplicate_last.h",
+        "--extra",
+        "/repro/tcc_image_duplicate_last.h=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/results/repro/tcc_image_duplicate_last.h",
+        "--extra",
+        "/tcc_pp_trigraphs~.h=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/results/repro/tcc_pp_trigraphs~.h",
+        "--extra",
+        "/repro/tcc_pp_trigraphs~.h=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/results/repro/tcc_pp_trigraphs~.h"
+      ],
+      "exit": 0,
+      "capture": "build/model_diff/cache/574f5892d88cec33d2e1dca9.sail",
+      "comparison": {
+        "status": "equal",
+        "evidence": "native Sail observation; not a theorem",
+        "compared_bytes": 4194304,
+        "model_payload_bytes": 79804,
+        "arena_sha256": "ebb1bd2ea6523332f55bcc42efc8dbd683b863c5201546d48ad2344652eed3ad",
+        "model_arena_sha256": "17b98a22118294f3007c0ab5d87a1dd1467c05c48591c5f9ba3c4f1c7c93c135",
+        "trace_sha256": null,
+        "capture_manifest_sha256": "86fb2db00b933affdaa62d042f7b92dfbd574a727e68c11d2958c369a86aa608",
+        "elf_sha256": "9c0e4fe1061ac2efd16815b92e37ba796a97fdab8283e009f874a7a3f577ede2",
+        "source_sha256": "a3a35644c2829f4700d42b16b2ace29bf54268d8fdaa8405347c76f274c110c1",
+        "steps": 13584356,
+        "pc": 2147490632,
+        "handoff": {
+          "x10": 2252341948,
+          "x14": 2252341248,
+          "x15": 700
+        }
+      }
+    },
+    {
+      "source": "build/typedef-fixtures-final4/expression-address.c",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/tcc_model",
+        "--fs",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/c/build/fs.list",
+        "--syms",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/image.syms",
+        "--prog",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/typedef-fixtures-final4/expression-address.c",
+        "--arena-out",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/typedef-integrated/native/expression-address.arena",
+        "--console-out",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/typedef-integrated/native/expression-address.console",
+        "--arg",
+        "-w",
+        "--extra",
+        "/expression-address.c=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/typedef-fixtures-final4/expression-address.c",
+        "--extra",
+        "/typedef-fixtures-final4/expression-address.c=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-f2-tokens/build/typedef-fixtures-final4/expression-address.c"
+      ],
+      "exit": 0,
+      "capture": "build/model_diff/cache/7ae48c8bcb77995a09f43f8e.sail",
+      "comparison": {
+        "status": "equal",
+        "evidence": "native Sail observation; not a theorem",
+        "compared_bytes": 4194304,
+        "model_payload_bytes": 79796,
+        "arena_sha256": "95cf11a510abbd02c03d9e4665e5f60030f8604f39c069dfa724bf0587f216e0",
+        "model_arena_sha256": "5b04136b65b9b649036ab5c039533cf78785ad8f457a5a7c980c2d51962697a9",
+        "trace_sha256": null,
+        "capture_manifest_sha256": "f336c9f995aaa284c26b86d0bea1fc7a1aeba33bf95c1d995bc9f9ad851be9ae",
+        "elf_sha256": "cc3399724e4292351c0fe7c004b0243c4939051ba49700f9e4e5b1ebf31fbeda",
+        "source_sha256": "7879f2ba58f6c66ee3154fb009aa641a2ee121c100b5fd439e4762fe1a8c054b",
+        "steps": 13513412,
+        "pc": 2147490632,
+        "handoff": {
+          "x10": 2252341900,
+          "x14": 2252341248,
+          "x15": 652
+        }
+      }
+    }
+  ],
+  "note": "Fresh combined-model executions against the two new alignment native captures, using their pinned runtime filesystem and symbols. No additional Sail execution in this recomparison."
+}

@@ -324,6 +324,21 @@ required; slot 2 continues compiler/model typedef alignment. This adoption
 closes neither whole-C coverage nor any of the six ghost proof Statements.
 No new native/broad observation or sum regeneration is claimed.
 
+Typedef alignment adoption (2026-10-28): the combined full gate passes with
+3,473 frozen source hashes and 104 unchanged supplementary shared Lem inputs.
+Three full compiler Sail probes now succeed; two new complete 4 MiB native
+arenas match both worker and combined models. The frozen historical corpus
+retains 1,345/1,815 successes, 463 refusals and seven assembly gaps. Fresh
+combined controls give 45/56 shared-token and 46/56 raw Cabs agreements,
+17 exact origins, seven erasure and seven independent arena passes. The new
+TypeAlignmentRepr_Statement remains open under F6. See
+results/model/typedef-integration-2026-10-28.md. GNU CSem propagation/constraints
+are queued in tasks/f1-gnu-alignment-semantics.md; no scope restriction is added.
+Both workers had capacity interruptions, with source and failed receipts
+preserved. Slot 1 resumed injected bindings after its passing Lean build and
+isolated oracle build; it remains unadopted. Slot 2 next takes physical-origin
+maps. Sum cuts remain frozen and no user decision is pending.
+
 ## Needs user
 
 None currently. Implementation defects and unfinished obligations are work
