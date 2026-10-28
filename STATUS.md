@@ -552,7 +552,9 @@ residuals remain explicit. No fresh native multi-TU observation is claimed.
 Its combined main integration follows member attributes. Slot 2 now tackles
 the unchanged pure physical-transform Statements; slot 1 continues enum fields.
 The lead has rebuilt patch0005 and passed its host/cross C11 controls; the
-3,577-input combined gate and a fresh 42-row native layout batch are running.
+3,577-input combined gate is running. The fresh 42-row native layout batch
+has passed: every output row matches GCC, with21,589,947 compiler steps and
+679,065 program steps. Its actual ELF/source capture awaits integration archival.
 No new user decision or change to Supported/Fits.
 
 Next enum follow-up: repair valid unnamed enum fields and direct enum

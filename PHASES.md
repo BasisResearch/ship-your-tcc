@@ -672,7 +672,9 @@ MultiTUConstruction/MultiTUErasure and the existing eleven ghost contracts stay
 open; cached-opening/pack-layout residuals and absence of new native multi-TU
 evidence are explicit. Slot2 now attempts the unchanged PhysicalOriginMap and
 PhysicalReadView Statements with generic proofs or a checked counterexample.
-Member-attribute integration3577 and fresh native42-layout checks are in progress.
+Member-attribute integration3577 is in progress; the fresh42-row native layout
+run has passed (21,589,947 compiler steps/679,065 program steps), with all output
+rows equal to GCC. Full gate and portable integration archive remain pending.
 
 Enum follow-up queued: tasks/f3-enum-colon-forms.md targets valid unnamed
 enum fields and direct enum generic associations rejected by tcc. These are
