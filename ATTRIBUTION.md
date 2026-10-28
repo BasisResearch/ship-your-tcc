@@ -310,3 +310,17 @@ positioned-Cabs and independent fast-arena harnesses supply the observations.
 
 | Multi-TU ghost bundle (`UnitRecord`, `MultiTU`, `multitu_ghost_cmp`) | Reuses the pinned TinyCC model's actual `tcc_main` / `tcc_compile` dispatch and reset actions, scanner-owned `SavedTokens`, function parser actions, immutable physical origins, `CompilerEvent.authority`, `openingFiles`, `Ghost.erase`, independent `Raw.checked` and complete arena harness. Association and deferred-inline replay share `isolatedGhostSyntax`; both local erasure laws reuse `erase_syntaxFields` without new premises. Whole-command construction/transport/erasure remain explicit duties. Lua inventory and mandatory table were consulted; no external machine/library proof is copied or instruction identity asserted. |
 | Pure physical-transform proofs (`Tcc/Model/PhysicalProof.lean`) | Reuses the unchanged model's `trigraphBlock`, `normalizePhysical` and exact interval map, and compares against the independent `CSem.Pre.locatedPhase1`. Lean 4.34 standard-library laws reused by name: `Std.Legacy.Range.forIn_eq_forIn_range'`, `List.forIn_cons`, `List.range'_succ`, `ByteArray.extract_add_one` / `extract_add_three`, `Array.getElem?_mapIdx`, `List.map_congr_left` and the list/array append laws. Lua inventory at 0bb1880 and its mandatory task-shape table were consulted; no matching pure trigraph abstraction was present. The shared-loop and named-field discipline is reused; no machine-library proof or instruction-identity claim is imported. |
+
+### Include-guard opening policy and EOF identifier boundary (2026-10-28)
+
+The independent policy reuses CSem.Pre's existing phase-4 state machine,
+canonical macro keys, defined-name predicate and physical source records.
+Guard discovery follows the pinned patched tccpp.c's first-ifndef/final-endif
+policy, kept separately from pragma-once normalization. Existing complete
+origin comparators and multi-TU fixtures provide independent observations;
+no model opening graph is supplied to the specification. The EOF repair
+preserves the actual PEEKC character through both maintained model slow-path
+entries, matching C's local-character flow. Lua's abstraction inventory and
+mandatory table were consulted; no machine-library proof or byte-identity
+claim is added. Existing arbitrary-byte physical-transform proofs are reused
+unchanged; raw/whole-command refinement still requires its named obligations.

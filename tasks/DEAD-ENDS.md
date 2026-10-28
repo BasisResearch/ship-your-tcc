@@ -1298,3 +1298,30 @@ ancestry first and preserves existing reviewed merges; an actual update uses
 used a multiline-greedy marker pattern; restore both append-only sides from
 the original merge parents with newline-bounded markers. All enum, upstream,
 physical-proof and earlier dead-end sections are retained after that correction.
+
+Include-guard opening repair: focused guard-openings-lean-1 fails parsing a
+multiline named FileCtx record with fields indented relative to the surrounding
+let rather than the first field. Use a newline after the opening brace and
+aligned named fields, as the earlier multi-TU dead end already established.
+The failed source snapshot and receipt stay retained; no limit was raised.
+
+Guard-openings-lean-2 passes Spec.Pre.Test but fails the PackLayout module's
+remaining positional FileCtx constructor after adding named guard state.
+Convert that caller to named fields with default non-include guard state;
+pack semantics and its open connection are unchanged. Search the whole repo
+for construction sites when extending a shared structure, not only Spec/Pre.
+
+Guard opening focused1:31/32 exact and original cached multiTU now checked-exact.
+The retained no-final-newline header has correct opening counts after the spec
+repair but model rejection: invalid universal-character-name at final endif.
+C host succeeds. Actual PEEKC returns CH_EOF with p pointing to the CH_EOB
+sentinel; parse_ident_slow incorrectly rereads that sentinel as a backslash.
+Pass the already-read character through both slow-path entry points, exactly
+as C does. Do not alter header bytes, fabricate an LF or discard this case.
+Additional final-identifier CRLF/splice/trigraph controls cover the same path.
+
+Broad preprocessing review initially found ignored corpus fixtures absent from
+the integration worktree before any after-run execution. Retain setup failure;
+copy the exact root bytes and siblings (145files/305348bytes), hash all846
+inputs and rerun. These supplemental test inputs are separately pinned and
+must be archived; they are not retroactively part of earlier build manifests.

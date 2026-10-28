@@ -48,7 +48,13 @@ def aggregateLayout (cap : Nat) (isUnion : Bool) (fields : List LayoutField) : A
 stack policy (the same explicit check used by phase 4). Malformed commands
 remain diagnostics, even if a permissive preprocessing cfg retained them. -/
 def packAt (cfg : PreCfg) (input : Phase7.Input) (boundary : Nat) : Except String Nat := do
-  let fc : FileCtx := ⟨cfg.mainName, cfg.mainName, 0, none, 1, true, []⟩
+  let fc : FileCtx := {
+    path := cfg.mainName
+    presumed := cfg.mainName
+    lineDelta := 0
+    foundAt := none
+    level := 1
+    isMain := true }
   let cfg := { cfg with ext := { cfg.ext with pragmaPack := true } }
   let mut stack := [0]
   for event in input.pragmas do

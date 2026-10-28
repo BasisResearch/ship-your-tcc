@@ -1,0 +1,12 @@
+Running as unit: run-p3597743-i485368173.scope; invocation ID: edf36294b67b40eb82165fba608fd9b9
+Traceback (most recent call last):
+  File "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/pre/include-guard-integration-2026-10-28/verify.py", line 136, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/pre/include-guard-integration-2026-10-28/verify.py", line 76, in main
+    gp='gates/'+Path(gate_roots[0]).name;focus(gp,J(gp+'/report.json'))
+                                                  ~^^^^^^^^^^^^^^^^^^^
+  File "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/pre/include-guard-integration-2026-10-28/verify.py", line 14, in <lambda>
+    J=lambda n:json.loads(data[n]);Z=lambda n:json.loads(lzma.decompress(data[n]))
+                          ~~~~^^^
+KeyError: 'gates/include-guard-gate.onh3bI/report.json'

@@ -160,6 +160,10 @@ if [ -f lakefile.toml ] || [ -f lakefile.lean ]; then
     flock "$lock" systemd-run --user --scope -q -p MemoryMax=12G lake build csem_raw csem_cparse CSemConeReport \
       || fail "raw frontend build"
     audit scripts/raw_frontend_audit.lean "$std"
+    guard_checks=$(mktemp -d build/include-guard-gate.XXXXXX)
+    python3 scripts/check_include_guard_openings.py --host build/cross/riscv64-tcc --out "$guard_checks/comparison" \
+      || fail "include-guard openings and EOF identifier boundary (artifacts: $guard_checks/comparison)"
+    echo "include guard artifacts: $guard_checks"
     identity_checks=$(mktemp -d build/library-identity-gate.XXXXXX)
     python3 scripts/check_library_identity.py --artifacts "$identity_checks/run" \
       || fail "resolved library identity (artifacts: $identity_checks/run)"

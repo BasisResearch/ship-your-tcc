@@ -81,6 +81,7 @@ def cfgTcc : PreCfg where
   pragmaExpand := fun n => n = bs "pack" ∨ n = bs "comment" ∨ n = bs "push_macro" ∨ n = bs "pop_macro"
   pragmaEventsRightToLeft := true
   pragmaOnceUsesOpenedPath := true
+  cacheIncludeGuards := true
   ext := extTcc
 
 /-- The cross tcc's `tcc -E`, with the same file-system layout (the

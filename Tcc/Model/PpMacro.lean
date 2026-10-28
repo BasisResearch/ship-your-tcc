@@ -29,10 +29,12 @@ def ucn_identifier (u : UInt32) (initial : Bool) : Bool :=
 
 /-- The slow identifier path retains raw UCN spelling and allocates the
 canonical UTF-8 spelling first, exactly as patched next_nomacro. -/
-def parse_ident_slow (R : Rec) (p0 : Nat) (cs0 : ByteArray) : M Nat := do
+def parse_ident_slow (R : Rec) (p0 : Nat) (c0 : Int32) (cs0 : ByteArray) : M Nat := do
   let fuel ← fuelM
   let mut p := p0
-  let mut c ← rd p
+  -- PEEKC may have returned CH_EOF while p still addresses CH_EOB. Preserve
+  -- the returned character, as the C slow path does, instead of rereading it.
+  let mut c := c0
   let mut cs := cs0
   let mut spelling := cs0
   for _ in [0:fuel] do
@@ -380,7 +382,7 @@ def next_nomacro (R : Rec) : M Unit := do
         else
           setTok 35; lbl := .done
     | .identSlow =>
-      p ← parse_ident_slow R p ByteArray.empty
+      p ← parse_ident_slow R p c ByteArray.empty
       lbl := .done
     | .maybeSpace =>
       if (← get).parse_flags &&& PARSE_FLAG_SPACES != 0 then
@@ -412,7 +414,7 @@ def next_nomacro (R : Rec) : M Unit := do
         let cs := (← curFile).buf.extract p1 p
         let (c', p') ← peekc R (p - 1)
         c := c'; p := p'
-        p ← parse_ident_slow R p cs
+        p ← parse_ident_slow R p c cs
       lbl := .done
     | .parseNum =>
       let mut cs := ByteArray.empty

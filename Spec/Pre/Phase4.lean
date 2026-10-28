@@ -24,6 +24,13 @@ import Spec.Pre.IfExpr
 
 namespace CSem.Pre
 
+/-- Recognition state for the target's completed-header guard cache.
+The candidate survives inner conditionals, but not an outer alternative.
+After its outer endif, only whitespace/comments/null directives preserve it. -/
+structure IncludeGuard where
+  candidate : Option Bytes := none
+  closed : Option Bytes := none
+
 /-- A file being processed. `path`: the path it was opened with (its
 directory is searched first for `#include "…"`, §6.10.2p3, and it keys
 `#pragma once`, under the configured cache identity); `presumed`/`lineDelta`: `#line` state (§6.10.4: presumed
@@ -38,6 +45,8 @@ structure FileCtx where
   level : Nat
   isMain : Bool
   includes : List SourceSpan := []
+  guard : IncludeGuard := {}
+  cacheGuardAtEOF : Bool := false
 
 /-- One level of conditional inclusion (§6.10.1). `active`: the current group
 is processed; `taken`: some group of this `#if` has been processed;
@@ -54,6 +63,9 @@ structure PState where
   counter : Nat
   /-- Files that had `#pragma once`, by the configured cache identity. -/
   once : List OnceKey
+  /-- Recognized guards from completed physical includes, keyed by opened
+  spelling. The macro is tested again at each subsequent include. -/
+  includeGuards : List (Bytes × Bytes) := []
   pushed : List (Bytes × Option MacroDef)
   /-- the output so far, reversed -/
   out : List PPToken
@@ -396,7 +408,13 @@ def procFile (cfg : PreCfg) (fs : FileSys) : Nat → PState → FileCtx → List
   | fuel + 1, st, fc, items, bof, conds =>
     match items with
     | [] =>
-      if conds.isEmpty then .ok st
+      if conds.isEmpty then
+        match fc.guard.closed with
+        | some name =>
+          if cfg.cacheIncludeGuards && fc.cacheGuardAtEOF then
+            .ok { st with includeGuards := (fc.path, name) :: st.includeGuards }
+          else .ok st
+        | none => .ok st
       else .error (fileErr fc .directive 0 "unterminated conditional (#if without #endif)")
     | .nl _ :: rest => procFile cfg fs fuel st fc rest bof conds
     | .tok h :: rest =>
@@ -408,11 +426,21 @@ def procFile (cfg : PreCfg) (fs : FileSys) : Nat → PState → FileCtx → List
         let err (k : ErrKind) (m : String) := fileErr fc k line m
         let active := isActive conds
         match ln with
-        | [] => procFile cfg fs fuel st fc rest' false conds        -- null directive (§6.10.7)
+        | [] => procFile cfg fs fuel st fc rest' bof conds        -- null directive (§6.10.7)
         | d :: args =>
           let name := if d.kind = .ident then d.spell else []
+          -- Reading a real directive clears the end-of-guard marker. A null
+          -- directive above reads only the newline and preserves that marker.
+          let fc := { fc with guard := { fc.guard with closed := none } }
+          let fc := if (name == bs "else" || name == bs "elif") && conds.length == 1 then
+              { fc with guard := { fc.guard with candidate := none } }
+            else fc
           -- conditional directives are examined even in skipped groups (§6.10.1p6)
           if name = bs "if" ∨ name = bs "ifdef" ∨ name = bs "ifndef" then
+            let fc := if cfg.cacheIncludeGuards && bof && name == bs "ifndef" then
+                { fc with guard := { candidate := args.head?.bind fun x =>
+                    if x.kind == .ident then some x.key else none } }
+              else fc
             if conds.length ≥ cfg.maxIfDepth then .error (err .limit "#if nesting too deep")
             else if ¬active then
               procFile cfg fs fuel st fc rest' false (⟨false, true, false, false⟩ :: conds)
@@ -456,7 +484,11 @@ def procFile (cfg : PreCfg) (fs : FileSys) : Nat → PState → FileCtx → List
           else if name = bs "endif" then
             match conds with
             | [] => .error (err .directive "#endif without #if")
-            | _ :: fs' => procFile cfg fs fuel st fc rest' false fs'
+            | _ :: fs' =>
+              let fc := if fs'.isEmpty then
+                  { fc with guard := { closed := fc.guard.candidate } }
+                else fc
+              procFile cfg fs fuel st fc rest' false fs'
           else if ¬active then procFile cfg fs fuel st fc rest' false conds
           else if name = bs "define" then do
             let st ← doDefine cfg fc line st args
@@ -496,7 +528,9 @@ def procFile (cfg : PreCfg) (fs : FileSys) : Nat → PState → FileCtx → List
               match searchHeader cfg fs fc quote next nm with
               | none => throw (err .include s!"header not found (§6.10.2p2)")
               | some (path, foundAt, contents) =>
-                if st.once.contains (cfg.onceKey path) then procFile cfg fs fuel st fc rest' false conds
+                let guarded := cfg.cacheIncludeGuards && st.includeGuards.any (fun (opened, macroName) =>
+                  opened == path && isDefinedName (ExpCtx.ofState cfg fs fc st false) macroName)
+                if st.once.contains (cfg.onceKey path) || guarded then procFile cfg fs fuel st fc rest' false conds
                 else if fc.level + 1 > cfg.maxIncludeDepth then
                   throw (err .limit "#include nested too deeply (§5.2.4.1)")
                 else do
@@ -504,7 +538,15 @@ def procFile (cfg : PreCfg) (fs : FileSys) : Nat → PState → FileCtx → List
                   let stack := match h.origin.site with
                     | some site => site.physical :: fc.includes
                     | none => fc.includes
-                  let fc' : FileCtx := ⟨path, path, 0, foundAt, fc.level + 1, false, stack⟩
+                  let fc' : FileCtx := {
+                    path := path
+                    presumed := path
+                    lineDelta := 0
+                    foundAt := foundAt
+                    level := fc.level + 1
+                    isMain := false
+                    includes := stack
+                    cacheGuardAtEOF := true }
                   let visit : SourceFile := ⟨path, FileSys.normComponents path, contents,
                     h.origin.site.map (·.physical)⟩
                   let st := { st with sources := visit :: st.sources }
@@ -571,8 +613,10 @@ def procFile (cfg : PreCfg) (fs : FileSys) : Nat → PState → FileCtx → List
             -- `# non-directive`: ignored
             procFile cfg fs fuel st fc rest' false conds
       else if ¬isActive conds then
-        procFile cfg fs fuel st fc (skipText rest false) false conds
+        procFile cfg fs fuel st { fc with guard := { fc.guard with closed := none } }
+          (skipText rest false) false conds
       else do
+        let fc := { fc with guard := { fc.guard with closed := none } }
         let (txt, rest') := takeText (.tok h :: rest) true []
         let ctx := ExpCtx.ofState cfg fs fc st false
         let ex ← expand ctx fuel st.counter (txt.map fc.locate) []

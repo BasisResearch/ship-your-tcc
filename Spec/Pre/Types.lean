@@ -216,6 +216,11 @@ structure PreCfg where
   /-- The image's identity realpath stub caches the exact opened spelling.
   Host tcc instead resolves dot components before comparing once entries. -/
   pragmaOnceUsesOpenedPath : Bool := false
+  /-- Cache completed headers whose first significant directive is `#ifndef`
+  and whose matching outer `#endif` is the final significant token. This is
+  an implementation opening policy, not an ISO source restriction. Guard
+  entries use the exact opened spelling, independently of pragma-once keys. -/
+  cacheIncludeGuards : Bool := false
   ext : Ext
 
 /-- Both directive and operator pragmas use the same configured cache key.

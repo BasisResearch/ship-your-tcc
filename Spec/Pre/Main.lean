@@ -36,11 +36,22 @@ def phases14WithOrigins (cfg : PreCfg) (fs : FileSys) (src : Bytes) : Except Pre
   let initial := { (initState cfg) with sources :=
     [⟨cfg.predefsName, FileSys.normComponents cfg.predefsName, cfg.predefs, none⟩] }
   let st ← procFile cfg fs fuel initial
-    ⟨cfg.predefsName, cfg.predefsName, 0, none, 2, false, []⟩ pre true []
+    { path := cfg.predefsName
+      presumed := cfg.predefsName
+      lineDelta := 0
+      foundAt := none
+      level := 2
+      isMain := false } pre true []
   let main ← phases123 cfg cfg.mainName src
   let st := { st with sources :=
     ⟨cfg.mainName, FileSys.normComponents cfg.mainName, src, none⟩ :: st.sources }
-  let st ← procFile cfg fs fuel st ⟨cfg.mainName, cfg.mainName, 0, none, 1, true, []⟩ main true []
+  let st ← procFile cfg fs fuel st
+    { path := cfg.mainName
+      presumed := cfg.mainName
+      lineDelta := 0
+      foundAt := none
+      level := 1
+      isMain := true } main true []
   pure ⟨st.locatedOut.reverse, st.sources.reverse, st.pack⟩
 
 /-- The strict F2 stream is the erasure of the provenance-carrying run.

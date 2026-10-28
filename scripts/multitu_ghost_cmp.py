@@ -90,7 +90,7 @@ int main(void){return companion()+local()-7;}
   ('resets',last,'success'),
   ('definition-snapshot',last,'success'),
   ('pack-layout-residual',last,'raw-layout-gap'),
-  ('include-cache-residual',last,'raw-opening-gap'),
+  ('include-cache-residual',last,'guarded-success'),
   ('user-same-header','#define __uint128__ user_uint128\n#include <tccdefs.h>\n'+last,'user-asm-construction'),
   ('later-error','int main(void){return ; +;}\n','diagnostic'),
   ('earlier-error',last,'diagnostic')]:
@@ -102,7 +102,7 @@ int main(void){return companion()+local()-7;}
   directory=fixtures/name;directory.mkdir()
   p=directory/'main.c';p.write_text(src)
   q=directory/'unit.c';q.write_text(prefix)
-  header=common if category=='raw-opening-gap' else common.replace('#ifndef COMMON_H\n#define COMMON_H\n','').removesuffix('#endif\n')
+  header=common if category=='guarded-success' else common.replace('#ifndef COMMON_H\n#define COMMON_H\n','').removesuffix('#endif\n')
   h=directory/'one.h';h.write_text(header)
   j=directory/'two.h';j.write_text(header+'/* distinct physical header */\n')
   cases.append((name,[('/one/unit.c',q),('/prog.c',p)],[('/one/unit.c',str(q)),('/one/same.h',str(h)),('/two/same.h',str(j))],category))
