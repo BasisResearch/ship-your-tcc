@@ -324,3 +324,8 @@ entries, matching C's local-character flow. Lua's abstraction inventory and
 mandatory table were consulted; no machine-library proof or byte-identity
 claim is added. Existing arbitrary-byte physical-transform proofs are reused
 unchanged; raw/whole-command refinement still requires its named obligations.
+
+Runtime zero-count review (2026-10-28): exact excerpts of Cerberus's imported
+`runtime/libc/src/string.c` at 704c4e69, retaining its existing third-party
+licensing and full source. Local host harness and observations are separate
+from Lean-port execution or any copied machine proof; see CSEM-18.

@@ -1,0 +1,174 @@
+{
+  "source": "csem/runtime/libc/src/string.c",
+  "source_sha256": "5b3bbae54b5a755bd9ff38d01692ff72ca7ad80aa8fe151bab634e21015fe831",
+  "upstream_revision": "704c4e697845127bced66c93fa0763eb51527ca4",
+  "upstream_source_identical": true,
+  "scope": "Exact extracted C source bodies compiled with GCC; not Lean/Core/runtime-loader execution or fresh upstream binary rebuild.",
+  "compiler": "gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0",
+  "runs": [
+    {
+      "mode": "subject",
+      "case": 1,
+      "command": [
+        "gcc",
+        "-std=c11",
+        "-O0",
+        "-fno-builtin",
+        "-funsigned-char",
+        "-DCASE=1",
+        "-DSUBJECT",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/build/runtime-source-review/probe.c",
+        "-o",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/build/runtime-source-review/subject-1"
+      ],
+      "compile_exit": 0,
+      "exit": 1,
+      "stdout": "",
+      "stderr": "",
+      "binary_sha256": "fc35bff80a97982e64f832f35906040d59bc3dc670254e8d04092336c5a744e8"
+    },
+    {
+      "mode": "subject",
+      "case": 2,
+      "command": [
+        "gcc",
+        "-std=c11",
+        "-O0",
+        "-fno-builtin",
+        "-funsigned-char",
+        "-DCASE=2",
+        "-DSUBJECT",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/build/runtime-source-review/probe.c",
+        "-o",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/build/runtime-source-review/subject-2"
+      ],
+      "compile_exit": 0,
+      "exit": 1,
+      "stdout": "",
+      "stderr": "",
+      "binary_sha256": "a3d012d8ef97faa1cca9152765ce9ef88cbecbc1beb082fc06259de6aa5e74ca"
+    },
+    {
+      "mode": "subject",
+      "case": 3,
+      "command": [
+        "gcc",
+        "-std=c11",
+        "-O0",
+        "-fno-builtin",
+        "-funsigned-char",
+        "-DCASE=3",
+        "-DSUBJECT",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/build/runtime-source-review/probe.c",
+        "-o",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/build/runtime-source-review/subject-3"
+      ],
+      "compile_exit": 0,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "binary_sha256": "80933293455d6b0e739f38b3f8ad74e762044ce0e07db0e3432a3a0a294df54d"
+    },
+    {
+      "mode": "subject",
+      "case": 4,
+      "command": [
+        "gcc",
+        "-std=c11",
+        "-O0",
+        "-fno-builtin",
+        "-funsigned-char",
+        "-DCASE=4",
+        "-DSUBJECT",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/build/runtime-source-review/probe.c",
+        "-o",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/build/runtime-source-review/subject-4"
+      ],
+      "compile_exit": 0,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "binary_sha256": "bb67e8dade9c4cb4a8f549a033ddc7a4d66c5c6a047f55840caab512bdf9d140"
+    },
+    {
+      "mode": "libc",
+      "case": 1,
+      "command": [
+        "gcc",
+        "-std=c11",
+        "-O0",
+        "-fno-builtin",
+        "-funsigned-char",
+        "-DCASE=1",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/build/runtime-source-review/probe.c",
+        "-o",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/build/runtime-source-review/libc-1"
+      ],
+      "compile_exit": 0,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "binary_sha256": "5ee70a3a2a986cf1b7aa541ce9a4773d767e00e9fd28d735f00c499c6356a6d1"
+    },
+    {
+      "mode": "libc",
+      "case": 2,
+      "command": [
+        "gcc",
+        "-std=c11",
+        "-O0",
+        "-fno-builtin",
+        "-funsigned-char",
+        "-DCASE=2",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/build/runtime-source-review/probe.c",
+        "-o",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/build/runtime-source-review/libc-2"
+      ],
+      "compile_exit": 0,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "binary_sha256": "7ed486b51014087926042968b34b6f13e3b66e5545bde12970440312426bccce"
+    },
+    {
+      "mode": "libc",
+      "case": 3,
+      "command": [
+        "gcc",
+        "-std=c11",
+        "-O0",
+        "-fno-builtin",
+        "-funsigned-char",
+        "-DCASE=3",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/build/runtime-source-review/probe.c",
+        "-o",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/build/runtime-source-review/libc-3"
+      ],
+      "compile_exit": 0,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "binary_sha256": "4f1a5ff1744c3bfe008ec96856b829f44127037bff6920f550a2e9ad82b335da"
+    },
+    {
+      "mode": "libc",
+      "case": 4,
+      "command": [
+        "gcc",
+        "-std=c11",
+        "-O0",
+        "-fno-builtin",
+        "-funsigned-char",
+        "-DCASE=4",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/build/runtime-source-review/probe.c",
+        "-o",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/build/runtime-source-review/libc-4"
+      ],
+      "compile_exit": 0,
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "binary_sha256": "668a835bbeebf68f6d9b6166e01ad3590ea070e7d7a9c406eb4505c915372970"
+    }
+  ]
+}

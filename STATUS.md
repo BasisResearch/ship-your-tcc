@@ -702,6 +702,20 @@ bitfield-promotion repair. These enum/GNU changes are not yet adopted on main;
 the new combination requires its own frozen gate. Main artifact refresh for
 the adopted guards is running under the shared lock and 12 GB cap.
 
+
+Main guard artifact refresh passes with all 4,163 source hashes unchanged;
+its later receipt/log are separately retained with the guard integration report.
+Slot 1 now runs GNU bitfield promotion on combined d145296 (enum c9d69fb, GNU
+2904c35 and adopted main guards); slot 2 continues VLA semantics. Next tasks
+are general pragma-pack consumption, K&R function construction and actual
+runtime-body coverage, respecting dependencies and the two-worker limit.
+The 56-case independent syntax suite has three valid construction/transport
+gaps (K&R, local labels, pack) and two deliberately invalid controls; these
+are not five successful-source failures. The new runtime review reproduces
+CSEM-18's imported strncpy/strncmp n=0 errors using exact C bodies, with
+provenance and host/Lean distinction in CSEM-UPSTREAM.md. No source repair or
+runtime-body coverage is claimed by that review. No user decision is needed.
+
 ## Needs user
 
 None currently. Implementation defects and unfinished obligations are work

@@ -505,3 +505,17 @@ Kiran owns reporting. No external contact has been made.
 
 CSEM-16 is now assigned to the second external Sol worker as the general VLA
 semantics task; no VLA implementation or completed connection is yet claimed.
+
+### CSEM-18: imported string runtime zero-count handling (2026-10-28)
+
+Exact imported `strncpy` and `strncmp` C bodies fail defined n=0 controls:
+strncpy writes the first destination byte; strncmp compares different strings
+instead of returning zero. Two n=1 controls pass. GCC host libc passes all
+four controls. The imported full string.c is byte-identical to adopted pristine
+704c4e69; exact excerpts, source, binaries, commands and hashes are retained in
+results/review/runtime-zero-count-2026-10-28. These are C runtime source
+observations using GCC C11/no-builtins/unsigned-char, not Lean/Core observations
+or a fresh upstream-executable rebuild. The current checked raw configuration
+has neither body loaded; the runtime-body task must repair and validate them
+before claiming coverage. Distinguish inherited Cerberus runtime source from
+Lean-port implementation. Kiran owns reporting; no external contact was made.

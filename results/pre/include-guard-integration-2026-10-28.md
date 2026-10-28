@@ -102,3 +102,9 @@ hash-pinned. No observation was rerun or substituted to correct this lookup.
 Its source epochs, raw observations, complete captures and recorded failures
 remain separately identifiable. Runtime filesystem bytes and image objects
 are separate evidence, not retroactive additions to the gate input manifest.
+
+After adoption, main refreshes the image/symbols and seven executable targets
+plus GhostAudit under the shared lock and 12 GB cap. All 4,163 frozen input
+hashes still match. The completed request, log and successful receipt are
+retained separately under `main-refresh/`; this later refresh is not presented
+as part of the original integration archive.
