@@ -555,3 +555,12 @@ finite observations prove none of them. Its proof task is queued separately.
 Slot 1 continues bitfields; slot 2 repairs array decay. Wide assertion messages,
 remaining grammar, pack layout, runtime bodies, multi-TU, fuel and binary
 refinement remain open. Historical broad counts and frozen sum cuts are unchanged.
+
+Compound-assignment triage (2026-10-28): CSEM-14 is independently inherited
+from pristine 704c4e69. A minimal lvalue-callback counter returns 2 in both
+semantic engines versus 1 in GCC/patched tcc; three related defined C inputs
+are spuriously UB035, two value checks give wrong defined results, and simple
+assignment is a successful control. The 140-file evidence is
+results/csem/compound-lvalue-2026-10-28.md. Slot 1's bitfield work must repair
+shared lvalue single-evaluation, not only new bitfield cases. No source-scope
+restriction, native observation, changed pin or external contact is claimed.

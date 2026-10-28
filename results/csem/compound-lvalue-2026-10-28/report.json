@@ -1,0 +1,1351 @@
+{
+  "pins": {
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/default/backend/driver/main.exe": "a71dd0968846b72196506a7ce78cd300cb39c6a8a8b10e87945a44c30517d091",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.lake/build/bin/csem_raw": "d8cba33334e56007aef4bd2814fd5e295a4d61c51211b8b3613825b91e5514ea",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/test-c11/host/tcc": "463435f5a686d8ce196c33ff177c7ef89478f9632cd3087465b7b8a67fa9287a",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/review_compound_lvalue.py": "b83d4a85dc4492d4848bc422bb10dc7307722d5b1f5ff6b7d14621a6ba2494a3",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/compound-lvalue-review/index-add/prog.c": "e469b0684ebf666723b16aedecced7709167ae7cde204ce6d145ec0a4acae567",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/compound-lvalue-review/index-multiply/prog.c": "574246012375f837e05a16da53ae3145525b22473e26cb9afd0c1d2c937c0818",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/compound-lvalue-review/index-assign-control/prog.c": "636ba8ea235e7912feb7ec4b956836c65bb87bbe35a17d1a68b22f833788279a",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/compound-lvalue-review/pointer-postincrement/prog.c": "8335e807e894a2bfd77a25635a2586a8ff2a189c7d51c49304ea8c9367851894",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/compound-lvalue-review/call-member/prog.c": "0098c442cc22c33445b3ba5890c49bba7f54ee6aa4495d27309d1725794a58b3",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/compound-lvalue-review/call-address/prog.c": "2f00ae11ca8a9b11a0bfaabc7c9b0e0d6b53e9a428a4684a278f30fb1d0c0b15"
+  },
+  "rows": [
+    {
+      "case": "index-add",
+      "engines": {
+        "raw": {
+          "exit": 0,
+          "semantics": [
+            {
+              "diagnostic": [
+                "UB035_unsequenced_race"
+              ],
+              "location": {
+                "begin": {
+                  "col": 39,
+                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/compound-lvalue-review/index-add/prog.c",
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/compound-lvalue-review/index-add/prog.c",
+                  "lexing_line": 48,
+                  "line": 1,
+                  "source_identity": {
+                    "compilerInjected": false,
+                    "resolved": [
+                      [
+                        100,
+                        97,
+                        116,
+                        97
+                      ],
+                      [
+                        104,
+                        111,
+                        109,
+                        101
+                      ],
+                      [
+                        107,
+                        105,
+                        114,
+                        97,
+                        110,
+                        99,
+                        111,
+                        100,
+                        101,
+                        115
+                      ],
+                      [
+                        68,
+                        111,
+                        99,
+                        117,
+                        109,
+                        101,
+                        110,
+                        116,
+                        115
+                      ],
+                      [
+                        99,
+                        111,
+                        100,
+                        101
+                      ],
+                      [
+                        115,
+                        104,
+                        105,
+                        112,
+                        45,
+                        121,
+                        111,
+                        117,
+                        114,
+                        45,
+                        116,
+                        99,
+                        99
+                      ],
+                      [
+                        98,
+                        117,
+                        105,
+                        108,
+                        100
+                      ],
+                      [
+                        99,
+                        111,
+                        109,
+                        112,
+                        111,
+                        117,
+                        110,
+                        100,
+                        45,
+                        108,
+                        118,
+                        97,
+                        108,
+                        117,
+                        101,
+                        45,
+                        114,
+                        101,
+                        118,
+                        105,
+                        101,
+                        119
+                      ],
+                      [
+                        105,
+                        110,
+                        100,
+                        101,
+                        120,
+                        45,
+                        97,
+                        100,
+                        100
+                      ],
+                      [
+                        112,
+                        114,
+                        111,
+                        103,
+                        46,
+                        99
+                      ]
+                    ],
+                    "runtimeLibrary": false
+                  }
+                },
+                "cursor": {
+                  "pos": {
+                    "col": 46,
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/compound-lvalue-review/index-add/prog.c",
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/compound-lvalue-review/index-add/prog.c",
+                    "lexing_line": 58,
+                    "line": 1,
+                    "source_identity": {
+                      "compilerInjected": false,
+                      "resolved": [
+                        [
+                          100,
+                          97,
+                          116,
+                          97
+                        ],
+                        [
+                          104,
+                          111,
+                          109,
+                          101
+                        ],
+                        [
+                          107,
+                          105,
+                          114,
+                          97,
+                          110,
+                          99,
+                          111,
+                          100,
+                          101,
+                          115
+                        ],
+                        [
+                          68,
+                          111,
+                          99,
+                          117,
+                          109,
+                          101,
+                          110,
+                          116,
+                          115
+                        ],
+                        [
+                          99,
+                          111,
+                          100,
+                          101
+                        ],
+                        [
+                          115,
+                          104,
+                          105,
+                          112,
+                          45,
+                          121,
+                          111,
+                          117,
+                          114,
+                          45,
+                          116,
+                          99,
+                          99
+                        ],
+                        [
+                          98,
+                          117,
+                          105,
+                          108,
+                          100
+                        ],
+                        [
+                          99,
+                          111,
+                          109,
+                          112,
+                          111,
+                          117,
+                          110,
+                          100,
+                          45,
+                          108,
+                          118,
+                          97,
+                          108,
+                          117,
+                          101,
+                          45,
+                          114,
+                          101,
+                          118,
+                          105,
+                          101,
+                          119
+                        ],
+                        [
+                          105,
+                          110,
+                          100,
+                          101,
+                          120,
+                          45,
+                          97,
+                          100,
+                          100
+                        ],
+                        [
+                          112,
+                          114,
+                          111,
+                          103,
+                          46,
+                          99
+                        ]
+                      ],
+                      "runtimeLibrary": false
+                    }
+                  },
+                  "tag": "PointCursor"
+                },
+                "end": {
+                  "col": 49,
+                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/compound-lvalue-review/index-add/prog.c",
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/compound-lvalue-review/index-add/prog.c",
+                  "lexing_line": 60,
+                  "line": 1,
+                  "source_identity": {
+                    "compilerInjected": false,
+                    "resolved": [
+                      [
+                        100,
+                        97,
+                        116,
+                        97
+                      ],
+                      [
+                        104,
+                        111,
+                        109,
+                        101
+                      ],
+                      [
+                        107,
+                        105,
+                        114,
+                        97,
+                        110,
+                        99,
+                        111,
+                        100,
+                        101,
+                        115
+                      ],
+                      [
+                        68,
+                        111,
+                        99,
+                        117,
+                        109,
+                        101,
+                        110,
+                        116,
+                        115
+                      ],
+                      [
+                        99,
+                        111,
+                        100,
+                        101
+                      ],
+                      [
+                        115,
+                        104,
+                        105,
+                        112,
+                        45,
+                        121,
+                        111,
+                        117,
+                        114,
+                        45,
+                        116,
+                        99,
+                        99
+                      ],
+                      [
+                        98,
+                        117,
+                        105,
+                        108,
+                        100
+                      ],
+                      [
+                        99,
+                        111,
+                        109,
+                        112,
+                        111,
+                        117,
+                        110,
+                        100,
+                        45,
+                        108,
+                        118,
+                        97,
+                        108,
+                        117,
+                        101,
+                        45,
+                        114,
+                        101,
+                        118,
+                        105,
+                        101,
+                        119
+                      ],
+                      [
+                        105,
+                        110,
+                        100,
+                        101,
+                        120,
+                        45,
+                        97,
+                        100,
+                        100
+                      ],
+                      [
+                        112,
+                        114,
+                        111,
+                        103,
+                        46,
+                        99
+                      ]
+                    ],
+                    "runtimeLibrary": false
+                  }
+                },
+                "tag": "Loc_region"
+              },
+              "status": "undefined"
+            }
+          ]
+        },
+        "pristine": {
+          "exit": 1,
+          "verdicts": "Undefined {ub: \"UB035_unsequenced_race\", stderr: \"\", loc: \"<1:39--1:49>\"}\n"
+        },
+        "gcc": {
+          "exit": 0,
+          "run_exit": 0
+        },
+        "tcc": {
+          "exit": 0,
+          "run_exit": 0
+        }
+      }
+    },
+    {
+      "case": "index-multiply",
+      "engines": {
+        "raw": {
+          "exit": 0,
+          "semantics": [
+            {
+              "diagnostic": [
+                "UB035_unsequenced_race"
+              ],
+              "location": {
+                "begin": {
+                  "col": 39,
+                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/compound-lvalue-review/index-multiply/prog.c",
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/compound-lvalue-review/index-multiply/prog.c",
+                  "lexing_line": 48,
+                  "line": 1,
+                  "source_identity": {
+                    "compilerInjected": false,
+                    "resolved": [
+                      [
+                        100,
+                        97,
+                        116,
+                        97
+                      ],
+                      [
+                        104,
+                        111,
+                        109,
+                        101
+                      ],
+                      [
+                        107,
+                        105,
+                        114,
+                        97,
+                        110,
+                        99,
+                        111,
+                        100,
+                        101,
+                        115
+                      ],
+                      [
+                        68,
+                        111,
+                        99,
+                        117,
+                        109,
+                        101,
+                        110,
+                        116,
+                        115
+                      ],
+                      [
+                        99,
+                        111,
+                        100,
+                        101
+                      ],
+                      [
+                        115,
+                        104,
+                        105,
+                        112,
+                        45,
+                        121,
+                        111,
+                        117,
+                        114,
+                        45,
+                        116,
+                        99,
+                        99
+                      ],
+                      [
+                        98,
+                        117,
+                        105,
+                        108,
+                        100
+                      ],
+                      [
+                        99,
+                        111,
+                        109,
+                        112,
+                        111,
+                        117,
+                        110,
+                        100,
+                        45,
+                        108,
+                        118,
+                        97,
+                        108,
+                        117,
+                        101,
+                        45,
+                        114,
+                        101,
+                        118,
+                        105,
+                        101,
+                        119
+                      ],
+                      [
+                        105,
+                        110,
+                        100,
+                        101,
+                        120,
+                        45,
+                        109,
+                        117,
+                        108,
+                        116,
+                        105,
+                        112,
+                        108,
+                        121
+                      ],
+                      [
+                        112,
+                        114,
+                        111,
+                        103,
+                        46,
+                        99
+                      ]
+                    ],
+                    "runtimeLibrary": false
+                  }
+                },
+                "cursor": {
+                  "pos": {
+                    "col": 46,
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/compound-lvalue-review/index-multiply/prog.c",
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/compound-lvalue-review/index-multiply/prog.c",
+                    "lexing_line": 58,
+                    "line": 1,
+                    "source_identity": {
+                      "compilerInjected": false,
+                      "resolved": [
+                        [
+                          100,
+                          97,
+                          116,
+                          97
+                        ],
+                        [
+                          104,
+                          111,
+                          109,
+                          101
+                        ],
+                        [
+                          107,
+                          105,
+                          114,
+                          97,
+                          110,
+                          99,
+                          111,
+                          100,
+                          101,
+                          115
+                        ],
+                        [
+                          68,
+                          111,
+                          99,
+                          117,
+                          109,
+                          101,
+                          110,
+                          116,
+                          115
+                        ],
+                        [
+                          99,
+                          111,
+                          100,
+                          101
+                        ],
+                        [
+                          115,
+                          104,
+                          105,
+                          112,
+                          45,
+                          121,
+                          111,
+                          117,
+                          114,
+                          45,
+                          116,
+                          99,
+                          99
+                        ],
+                        [
+                          98,
+                          117,
+                          105,
+                          108,
+                          100
+                        ],
+                        [
+                          99,
+                          111,
+                          109,
+                          112,
+                          111,
+                          117,
+                          110,
+                          100,
+                          45,
+                          108,
+                          118,
+                          97,
+                          108,
+                          117,
+                          101,
+                          45,
+                          114,
+                          101,
+                          118,
+                          105,
+                          101,
+                          119
+                        ],
+                        [
+                          105,
+                          110,
+                          100,
+                          101,
+                          120,
+                          45,
+                          109,
+                          117,
+                          108,
+                          116,
+                          105,
+                          112,
+                          108,
+                          121
+                        ],
+                        [
+                          112,
+                          114,
+                          111,
+                          103,
+                          46,
+                          99
+                        ]
+                      ],
+                      "runtimeLibrary": false
+                    }
+                  },
+                  "tag": "PointCursor"
+                },
+                "end": {
+                  "col": 49,
+                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/compound-lvalue-review/index-multiply/prog.c",
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/compound-lvalue-review/index-multiply/prog.c",
+                  "lexing_line": 60,
+                  "line": 1,
+                  "source_identity": {
+                    "compilerInjected": false,
+                    "resolved": [
+                      [
+                        100,
+                        97,
+                        116,
+                        97
+                      ],
+                      [
+                        104,
+                        111,
+                        109,
+                        101
+                      ],
+                      [
+                        107,
+                        105,
+                        114,
+                        97,
+                        110,
+                        99,
+                        111,
+                        100,
+                        101,
+                        115
+                      ],
+                      [
+                        68,
+                        111,
+                        99,
+                        117,
+                        109,
+                        101,
+                        110,
+                        116,
+                        115
+                      ],
+                      [
+                        99,
+                        111,
+                        100,
+                        101
+                      ],
+                      [
+                        115,
+                        104,
+                        105,
+                        112,
+                        45,
+                        121,
+                        111,
+                        117,
+                        114,
+                        45,
+                        116,
+                        99,
+                        99
+                      ],
+                      [
+                        98,
+                        117,
+                        105,
+                        108,
+                        100
+                      ],
+                      [
+                        99,
+                        111,
+                        109,
+                        112,
+                        111,
+                        117,
+                        110,
+                        100,
+                        45,
+                        108,
+                        118,
+                        97,
+                        108,
+                        117,
+                        101,
+                        45,
+                        114,
+                        101,
+                        118,
+                        105,
+                        101,
+                        119
+                      ],
+                      [
+                        105,
+                        110,
+                        100,
+                        101,
+                        120,
+                        45,
+                        109,
+                        117,
+                        108,
+                        116,
+                        105,
+                        112,
+                        108,
+                        121
+                      ],
+                      [
+                        112,
+                        114,
+                        111,
+                        103,
+                        46,
+                        99
+                      ]
+                    ],
+                    "runtimeLibrary": false
+                  }
+                },
+                "tag": "Loc_region"
+              },
+              "status": "undefined"
+            }
+          ]
+        },
+        "pristine": {
+          "exit": 1,
+          "verdicts": "Undefined {ub: \"UB035_unsequenced_race\", stderr: \"\", loc: \"<1:39--1:49>\"}\n"
+        },
+        "gcc": {
+          "exit": 0,
+          "run_exit": 0
+        },
+        "tcc": {
+          "exit": 0,
+          "run_exit": 0
+        }
+      }
+    },
+    {
+      "case": "index-assign-control",
+      "engines": {
+        "raw": {
+          "exit": 0,
+          "semantics": [
+            {
+              "exit": 0,
+              "status": "defined",
+              "stdout": ""
+            }
+          ]
+        },
+        "pristine": {
+          "exit": 0,
+          "verdicts": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n"
+        },
+        "gcc": {
+          "exit": 0,
+          "run_exit": 0
+        },
+        "tcc": {
+          "exit": 0,
+          "run_exit": 0
+        }
+      }
+    },
+    {
+      "case": "pointer-postincrement",
+      "engines": {
+        "raw": {
+          "exit": 0,
+          "semantics": [
+            {
+              "diagnostic": [
+                "UB035_unsequenced_race"
+              ],
+              "location": {
+                "begin": {
+                  "col": 40,
+                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/compound-lvalue-review/pointer-postincrement/prog.c",
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/compound-lvalue-review/pointer-postincrement/prog.c",
+                  "lexing_line": 50,
+                  "line": 1,
+                  "source_identity": {
+                    "compilerInjected": false,
+                    "resolved": [
+                      [
+                        100,
+                        97,
+                        116,
+                        97
+                      ],
+                      [
+                        104,
+                        111,
+                        109,
+                        101
+                      ],
+                      [
+                        107,
+                        105,
+                        114,
+                        97,
+                        110,
+                        99,
+                        111,
+                        100,
+                        101,
+                        115
+                      ],
+                      [
+                        68,
+                        111,
+                        99,
+                        117,
+                        109,
+                        101,
+                        110,
+                        116,
+                        115
+                      ],
+                      [
+                        99,
+                        111,
+                        100,
+                        101
+                      ],
+                      [
+                        115,
+                        104,
+                        105,
+                        112,
+                        45,
+                        121,
+                        111,
+                        117,
+                        114,
+                        45,
+                        116,
+                        99,
+                        99
+                      ],
+                      [
+                        98,
+                        117,
+                        105,
+                        108,
+                        100
+                      ],
+                      [
+                        99,
+                        111,
+                        109,
+                        112,
+                        111,
+                        117,
+                        110,
+                        100,
+                        45,
+                        108,
+                        118,
+                        97,
+                        108,
+                        117,
+                        101,
+                        45,
+                        114,
+                        101,
+                        118,
+                        105,
+                        101,
+                        119
+                      ],
+                      [
+                        112,
+                        111,
+                        105,
+                        110,
+                        116,
+                        101,
+                        114,
+                        45,
+                        112,
+                        111,
+                        115,
+                        116,
+                        105,
+                        110,
+                        99,
+                        114,
+                        101,
+                        109,
+                        101,
+                        110,
+                        116
+                      ],
+                      [
+                        112,
+                        114,
+                        111,
+                        103,
+                        46,
+                        99
+                      ]
+                    ],
+                    "runtimeLibrary": false
+                  }
+                },
+                "cursor": {
+                  "pos": {
+                    "col": 45,
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/compound-lvalue-review/pointer-postincrement/prog.c",
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/compound-lvalue-review/pointer-postincrement/prog.c",
+                    "lexing_line": 56,
+                    "line": 1,
+                    "source_identity": {
+                      "compilerInjected": false,
+                      "resolved": [
+                        [
+                          100,
+                          97,
+                          116,
+                          97
+                        ],
+                        [
+                          104,
+                          111,
+                          109,
+                          101
+                        ],
+                        [
+                          107,
+                          105,
+                          114,
+                          97,
+                          110,
+                          99,
+                          111,
+                          100,
+                          101,
+                          115
+                        ],
+                        [
+                          68,
+                          111,
+                          99,
+                          117,
+                          109,
+                          101,
+                          110,
+                          116,
+                          115
+                        ],
+                        [
+                          99,
+                          111,
+                          100,
+                          101
+                        ],
+                        [
+                          115,
+                          104,
+                          105,
+                          112,
+                          45,
+                          121,
+                          111,
+                          117,
+                          114,
+                          45,
+                          116,
+                          99,
+                          99
+                        ],
+                        [
+                          98,
+                          117,
+                          105,
+                          108,
+                          100
+                        ],
+                        [
+                          99,
+                          111,
+                          109,
+                          112,
+                          111,
+                          117,
+                          110,
+                          100,
+                          45,
+                          108,
+                          118,
+                          97,
+                          108,
+                          117,
+                          101,
+                          45,
+                          114,
+                          101,
+                          118,
+                          105,
+                          101,
+                          119
+                        ],
+                        [
+                          112,
+                          111,
+                          105,
+                          110,
+                          116,
+                          101,
+                          114,
+                          45,
+                          112,
+                          111,
+                          115,
+                          116,
+                          105,
+                          110,
+                          99,
+                          114,
+                          101,
+                          109,
+                          101,
+                          110,
+                          116
+                        ],
+                        [
+                          112,
+                          114,
+                          111,
+                          103,
+                          46,
+                          99
+                        ]
+                      ],
+                      "runtimeLibrary": false
+                    }
+                  },
+                  "tag": "PointCursor"
+                },
+                "end": {
+                  "col": 48,
+                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/compound-lvalue-review/pointer-postincrement/prog.c",
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/build/compound-lvalue-review/pointer-postincrement/prog.c",
+                  "lexing_line": 58,
+                  "line": 1,
+                  "source_identity": {
+                    "compilerInjected": false,
+                    "resolved": [
+                      [
+                        100,
+                        97,
+                        116,
+                        97
+                      ],
+                      [
+                        104,
+                        111,
+                        109,
+                        101
+                      ],
+                      [
+                        107,
+                        105,
+                        114,
+                        97,
+                        110,
+                        99,
+                        111,
+                        100,
+                        101,
+                        115
+                      ],
+                      [
+                        68,
+                        111,
+                        99,
+                        117,
+                        109,
+                        101,
+                        110,
+                        116,
+                        115
+                      ],
+                      [
+                        99,
+                        111,
+                        100,
+                        101
+                      ],
+                      [
+                        115,
+                        104,
+                        105,
+                        112,
+                        45,
+                        121,
+                        111,
+                        117,
+                        114,
+                        45,
+                        116,
+                        99,
+                        99
+                      ],
+                      [
+                        98,
+                        117,
+                        105,
+                        108,
+                        100
+                      ],
+                      [
+                        99,
+                        111,
+                        109,
+                        112,
+                        111,
+                        117,
+                        110,
+                        100,
+                        45,
+                        108,
+                        118,
+                        97,
+                        108,
+                        117,
+                        101,
+                        45,
+                        114,
+                        101,
+                        118,
+                        105,
+                        101,
+                        119
+                      ],
+                      [
+                        112,
+                        111,
+                        105,
+                        110,
+                        116,
+                        101,
+                        114,
+                        45,
+                        112,
+                        111,
+                        115,
+                        116,
+                        105,
+                        110,
+                        99,
+                        114,
+                        101,
+                        109,
+                        101,
+                        110,
+                        116
+                      ],
+                      [
+                        112,
+                        114,
+                        111,
+                        103,
+                        46,
+                        99
+                      ]
+                    ],
+                    "runtimeLibrary": false
+                  }
+                },
+                "tag": "Loc_region"
+              },
+              "status": "undefined"
+            }
+          ]
+        },
+        "pristine": {
+          "exit": 1,
+          "verdicts": "Undefined {ub: \"UB035_unsequenced_race\", stderr: \"\", loc: \"<1:40--1:48>\"}\n"
+        },
+        "gcc": {
+          "exit": 0,
+          "run_exit": 0
+        },
+        "tcc": {
+          "exit": 0,
+          "run_exit": 0
+        }
+      }
+    },
+    {
+      "case": "call-member",
+      "engines": {
+        "raw": {
+          "exit": 0,
+          "semantics": [
+            {
+              "exit": 1,
+              "status": "defined",
+              "stdout": ""
+            },
+            {
+              "exit": 1,
+              "status": "defined",
+              "stdout": ""
+            },
+            {
+              "exit": 1,
+              "status": "defined",
+              "stdout": ""
+            }
+          ]
+        },
+        "pristine": {
+          "exit": 0,
+          "verdicts": "EXECUTION 0:\nDefined {value: \"Specified(1)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\nEXECUTION 1:\nDefined {value: \"Specified(1)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\nEXECUTION 2:\nDefined {value: \"Specified(1)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n"
+        },
+        "gcc": {
+          "exit": 0,
+          "run_exit": 0
+        },
+        "tcc": {
+          "exit": 0,
+          "run_exit": 0
+        }
+      }
+    },
+    {
+      "case": "call-address",
+      "engines": {
+        "raw": {
+          "exit": 0,
+          "semantics": [
+            {
+              "exit": 1,
+              "status": "defined",
+              "stdout": ""
+            },
+            {
+              "exit": 1,
+              "status": "defined",
+              "stdout": ""
+            },
+            {
+              "exit": 1,
+              "status": "defined",
+              "stdout": ""
+            },
+            {
+              "exit": 1,
+              "status": "defined",
+              "stdout": ""
+            },
+            {
+              "exit": 1,
+              "status": "defined",
+              "stdout": ""
+            }
+          ]
+        },
+        "pristine": {
+          "exit": 0,
+          "verdicts": "EXECUTION 0:\nDefined {value: \"Specified(1)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\nEXECUTION 1:\nDefined {value: \"Specified(1)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\nEXECUTION 2:\nDefined {value: \"Specified(1)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\nEXECUTION 3:\nDefined {value: \"Specified(1)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\nEXECUTION 4:\nDefined {value: \"Specified(1)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n"
+        },
+        "gcc": {
+          "exit": 0,
+          "run_exit": 0
+        },
+        "tcc": {
+          "exit": 0,
+          "run_exit": 0
+        }
+      }
+    }
+  ]
+}

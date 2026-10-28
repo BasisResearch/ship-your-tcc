@@ -399,3 +399,16 @@ two function-policy obstructions, three Menhir placement limitations and one add
 compiler discrepancy separate; all 71 raw/text and 68 Menhir-accepted full Cabs
 checks agree. These do not close any universal Statement.
 Kiran still owns external communication; none has been sent.
+
+**CSEM-14 — inherited compound-assignment lvalue evaluated twice.**
+Pristine 704c4e69 and checked raw Lean at local main f993eaf return 2 for the
+callback counter in results/repro/csem_compound_lvalue_twice.c; strict-C11 GCC
+and patched tcc return 1. The C11 single-evaluation rule is explicit in
+N1570 §6.5.16.2p3. Three related index/pointer increment inputs spuriously
+produce UB035, and two callback-based value checks give only wrong defined
+results; ordinary assignment is a successful control. The clean upstream
+checkout, executable/source pins and 140 verified captures are retained in
+results/csem/compound-lvalue-2026-10-28.md. The bitfield worker found the shared
+lowering issue; the lead independently established ordinary-scalar upstream
+inheritance. Shared single-evaluation repair is required alongside bitfields;
+no exclusion or external report is introduced. Kiran owns communication.

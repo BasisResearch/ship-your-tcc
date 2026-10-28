@@ -1,0 +1,58 @@
+{
+  "pins": {
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/default/backend/driver/main.exe": "a71dd0968846b72196506a7ce78cd300cb39c6a8a8b10e87945a44c30517d091",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.lake/build/bin/csem_raw": "d8cba33334e56007aef4bd2814fd5e295a4d61c51211b8b3613825b91e5514ea",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/test-c11/host/tcc": "463435f5a686d8ce196c33ff177c7ef89478f9632cd3087465b7b8a67fa9287a",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/review_compound_lvalue_minimal.py": "00c12f262ab3dafa2a423eb086f68b47aeed787c0c650c726fb5913e7b1e4ff8",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/compound-lvalue-minimal/counter/prog.c": "4132ab004ce3600d1b8f0db173c48f928088b001f12c70cb36da1a518871cbab"
+  },
+  "rows": [
+    {
+      "case": "counter",
+      "engines": {
+        "raw": {
+          "exit": 0,
+          "semantics": [
+            {
+              "exit": 2,
+              "status": "defined",
+              "stdout": ""
+            },
+            {
+              "exit": 2,
+              "status": "defined",
+              "stdout": ""
+            },
+            {
+              "exit": 2,
+              "status": "defined",
+              "stdout": ""
+            },
+            {
+              "exit": 2,
+              "status": "defined",
+              "stdout": ""
+            },
+            {
+              "exit": 2,
+              "status": "defined",
+              "stdout": ""
+            }
+          ]
+        },
+        "pristine": {
+          "exit": 0,
+          "verdicts": "EXECUTION 0:\nDefined {value: \"Specified(2)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\nEXECUTION 1:\nDefined {value: \"Specified(2)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\nEXECUTION 2:\nDefined {value: \"Specified(2)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\nEXECUTION 3:\nDefined {value: \"Specified(2)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\nEXECUTION 4:\nDefined {value: \"Specified(2)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n"
+        },
+        "gcc": {
+          "exit": 0,
+          "run_exit": 1
+        },
+        "tcc": {
+          "exit": 0,
+          "run_exit": 1
+        }
+      }
+    }
+  ]
+}
