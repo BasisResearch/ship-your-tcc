@@ -1,0 +1,25 @@
+{
+  "archive": ".claude/worktrees/sol-f2-tokens/results/model/physical-origin-maps/captures.tar.gz",
+  "archive_sha256": "655d1d0ce648830b72efca8047e2128368c967cf489855b62c41a222e15c3d2f",
+  "reason": "Completed physical origin observations only; all files verified against committed archive before unlink. Current assertion-message work, shared inputs and native caches untouched.",
+  "entries": [
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/physical-final",
+      "member_prefix": "build/physical-final",
+      "files": 1135,
+      "bytes": 613428337
+    },
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/physical-origins-3",
+      "member_prefix": "build/physical-origins-3",
+      "files": 307,
+      "bytes": 164506684
+    },
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/physical-origins-4",
+      "member_prefix": "build/physical-origins-4",
+      "files": 349,
+      "bytes": 200321597
+    }
+  ]
+}

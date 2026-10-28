@@ -1,0 +1,49 @@
+{
+  "archive": ".claude/worktrees/sol-f2-tokens/results/model/unevaluated-syntax/evidence.tar.xz",
+  "archive_sha256": "515c4052b0ad7a95dd21ea72c2939f8c7fd14ae8bee51a587f2f5a504e2c3b73",
+  "reason": "Completed generic syntax observations only; all files verified against committed archive before unlink. Current assertion-message work, shared inputs and native caches untouched.",
+  "entries": [
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/unevaluated-physical-5",
+      "member_prefix": "build/unevaluated-physical-5",
+      "files": 349,
+      "bytes": 260626947
+    },
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/unevaluated-component-5",
+      "member_prefix": "build/unevaluated-component-5",
+      "files": 281,
+      "bytes": 478677324
+    },
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/unevaluated-independent-5",
+      "member_prefix": "build/unevaluated-independent-5",
+      "files": 281,
+      "bytes": 374825927
+    },
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/unevaluated-independent-3",
+      "member_prefix": "build/unevaluated-independent-3",
+      "files": 281,
+      "bytes": 374825816
+    },
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/unevaluated-shared-3",
+      "member_prefix": "build/unevaluated-shared-3",
+      "files": 281,
+      "bytes": 2479660
+    },
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/unevaluated-shared-5",
+      "member_prefix": "build/unevaluated-shared-5",
+      "files": 281,
+      "bytes": 2479771
+    },
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/unevaluated-authority-5",
+      "member_prefix": "build/unevaluated-authority-5",
+      "files": 145,
+      "bytes": 3365619
+    }
+  ]
+}

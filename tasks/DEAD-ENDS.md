@@ -951,3 +951,5 @@ an explicit follow-up, not established by arena equality.
   `.git/worktrees/sol-f2-tokens/index.lock`. The existing scoped lead commit
   handoff supplies the commit; do not resend semantic/proof work or create an
   alternate index/object store to address this environment limitation.
+
+- Completed physical-capture storage verification initially selected the XZ decoder for a gzip archive and stopped before unlinking anything. Rerun with gzip verified all 1,791 files before removing only duplicate loose captures; the committed archive is unchanged.

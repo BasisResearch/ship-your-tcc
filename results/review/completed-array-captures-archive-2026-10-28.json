@@ -1,0 +1,53 @@
+{
+  "reason": "Completed lead array captures already retained in committed archives. Every loose file verified before unlink; current proof/bitfield work and native captures/source checkouts untouched.",
+  "entries": [
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/array-integrated/authority",
+      "archive": ".claude/worktrees/sol-c11-line/results/model/array-integration-2026-10-28/captures.tar.xz",
+      "archive_sha256": "a0da92a1dc314bc9cc0c78ffa1fbe8266dd04806efb1f7ba660cc35af5e0c888",
+      "member_prefix": "combined/authority",
+      "files": 145,
+      "bytes": 3365799
+    },
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/array-integrated/physical",
+      "archive": ".claude/worktrees/sol-c11-line/results/model/array-integration-2026-10-28/captures.tar.xz",
+      "archive_sha256": "a0da92a1dc314bc9cc0c78ffa1fbe8266dd04806efb1f7ba660cc35af5e0c888",
+      "member_prefix": "combined/physical",
+      "files": 349,
+      "bytes": 260626947
+    },
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/array-integrated/shared",
+      "archive": ".claude/worktrees/sol-c11-line/results/model/array-integration-2026-10-28/captures.tar.xz",
+      "archive_sha256": "a0da92a1dc314bc9cc0c78ffa1fbe8266dd04806efb1f7ba660cc35af5e0c888",
+      "member_prefix": "combined/shared",
+      "files": 281,
+      "bytes": 2479771
+    },
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/array-integrated/raw-component",
+      "archive": ".claude/worktrees/sol-c11-line/results/model/array-integration-2026-10-28/captures.tar.xz",
+      "archive_sha256": "a0da92a1dc314bc9cc0c78ffa1fbe8266dd04806efb1f7ba660cc35af5e0c888",
+      "member_prefix": "combined/raw-component",
+      "files": 281,
+      "bytes": 478677324
+    },
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/array-integrated/independent",
+      "archive": ".claude/worktrees/sol-c11-line/results/model/array-integration-2026-10-28/captures.tar.xz",
+      "archive_sha256": "a0da92a1dc314bc9cc0c78ffa1fbe8266dd04806efb1f7ba660cc35af5e0c888",
+      "member_prefix": "combined/independent",
+      "files": 281,
+      "bytes": 374825927
+    },
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/array-integrated/focused",
+      "archive": ".claude/worktrees/sol-c11-line/results/model/array-integration-2026-10-28/captures.tar.xz",
+      "archive_sha256": "a0da92a1dc314bc9cc0c78ffa1fbe8266dd04806efb1f7ba660cc35af5e0c888",
+      "member_prefix": "combined/focused",
+      "files": 580,
+      "bytes": 9593130
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "archive_sha256": "8bd86c2366dfe10a2c0f79f5f305ff27833e3a5ec7e66f94f651d860c2060998",
+  "members": {
+    "gate/request.json": "980d7dbbae8ed1c92065f14e3d09a2cfce33e01633bcd9279f361e1e8721c4de",
+    "gate/result.json": "f14a692ea9498323461842a6eafa9355799b62323a8732503d5d0940d95dfffe",
+    "gate/full.log": "ae1447437692537738b394a5fe6d1e9aa3d3156b8d3cfddbb1c58574f167c8e8",
+    "array/request.json": "ca03403043470e03fb56706f79e4e7ffdccfd42ea20a57b7427fdd9abacd37e9",
+    "source/Tcc/Model/GhostAudit.lean": "8a1ab5eaa339f36c75a8e7db8502e7c7b0295647ad3516fc833c32e6682f4ff8",
+    "source/Tcc/Model/GhostDriver.lean": "e9b40752316115416b14981cf2c686a1f4873fb4839a3f915045311da8463b26",
+    "main-array-refresh/request.json": "607bdd6c85747b9d306ffdd6e49d1ae738dacf96f98508e1df4c70bab1c2671d",
+    "main-array-refresh/result.json": "0da8eca651b69fcb3419bb28f6d7e91f9118af9acf0df4070fbd003879517b6e",
+    "main-array-refresh/build.log": "30037f78d7511922050ab6817a9ed7edbd83bcd2e538a0d01c2fbe4de9405398",
+    "main-array-refresh/image-build.log": "84203a85abd980192c46ee4481d3c844512cca36bdac95910afe9bcefac0cc10",
+    "worker/report.md": "4619d4c4a88c27febba14ba4f702a89d9c368a867acf6a71f1fa552e3ac2a552"
+  },
+  "source_inputs": 3646,
+  "changed_source_inputs": [
+    "Tcc/Model/GhostAudit.lean",
+    "Tcc/Model/GhostDriver.lean"
+  ]
+}

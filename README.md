@@ -47,9 +47,11 @@ controls pass, with complete header aliases and user asm exclusions preserved.
 The combined gate, fifteen erasure pairs and eighteen independent fast arenas
 pass; a new complete native Sail arena matches the static/builtin memcpy
 shadowing control. Runtime coverage is still five bodies, fifteen missing targets and
-one alloca intrinsic duty. All twelve ghost contracts and the four new
-compiler-environment/binding contracts remain open
-([binding integration](results/model/binding-integration-2026-10-28.md)).
+one alloca intrinsic duty. The local universal replay-erasure theorem is proved
+and adopted after the combined gate; eleven ghost contracts and the four new compiler-environment/binding
+contracts remain open
+([binding integration](results/model/binding-integration-2026-10-28.md),
+[local replay proof](results/model/replay-integration-2026-10-28.md)).
 Generic/static-assert compiler actions now retain all selected and unselected
 syntax: 21 focused controls agree in all three comparison scopes. A fresh
 native Sail batch matches all 4 MiB and a separate complete program run returns

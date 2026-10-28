@@ -39,14 +39,14 @@ The launcher follows 4ct-digest's MANAGER.md/codexwork.sh workflow, adapted
 to this project's two-worker limit and shared Lean build lock.
 
 Current assignments, 2026-10-28: slot 1 runs tasks/f1-bitfields.md in
-sol-csem-repin. Slot 2 runs tasks/f3-ghost-replay-erasure.md in sol-f2-tokens,
-proving the local universal snapshot-erasure law. Both use
-reviewed alignment/binding bases; slot 2 also includes the reviewed generic/
-static-assert checkpoint. The lead independently gates each combination before
-main adoption. Original worker branches and all evidence remain preserved.
-No third worker runs. Wide static-assert messages, general declaration
-constraints, other upstream invocation modes, complete multi-TU ghost
-construction and runtime body coverage remain queued.
+sol-csem-repin. Slot 2 runs tasks/f3-static-assert-messages.md in sol-f2-tokens.
+The local replay-erasure theorem is adopted after its combined gate; eleven
+ghost contracts remain open. Both workers use reviewed integration bases,
+and the lead independently gates each final combination before adoption.
+Original branches and evidence remain preserved. No third worker runs.
+Bitfield compiler constraints, general declaration constraints, other upstream
+invocation modes, complete multi-TU ghost construction and runtime body coverage
+remain queued. The bitfield diagnostic task depends on the F1 native review.
 
 Frozen build requests use the shared 12 GB lock. Changed inputs invalidate
 a request; freeze a new hash manifest before retrying. Infrastructure limits
@@ -61,9 +61,8 @@ requested corrections must be resolved or returned as an explicit obstruction.
 Keep build receipts compact: inspect ID/status/lead notes, and verify large
 hash manifests with scripts. Do not repeatedly print whole manifests or logs.
 
-Next integration duty: review the replay-erasure theorem against the adopted
-array/alignment/generic combination. Its proof must inhabit the unchanged
-statement, include success and diagnostic branches, and introduce no premises.
-Keep full construction/whole-run erasure and binary refinement obligations
-separate. Slot 1 must also repair shared compound-lvalue single evaluation
-(CSEM-14) alongside bitfields. Wide assertion messages remain a later task.
+Next integration duty: review assertion-message parsing against actual C11
+string encodings, independent complete Cabs and native arenas; review bitfield
+semantics together with the inherited compound-lvalue repair. Keep GNU parser
+and layout failures explicit. The local replay theorem changes no runtime
+behavior and proves no whole-run construction or binary refinement duty.
