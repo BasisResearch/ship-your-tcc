@@ -82,8 +82,8 @@ run_cmd liftTermElabM do
           let .str _ shortName := ctor | throwError "unexpected constructor name {ctor}"
           IO.println s!"  | .{shortName} {String.intercalate " " vars.toList} => .node \"{ctor}\" #[{String.intercalate ", " args.toList}]"
   IO.println "end\n-- END DATATYPE VISITOR"
-  unless ctors == 644 && heads.size == 82 do
+  unless ctors == 645 && heads.size == 83 do
     throwError "inventory drift: {ctors} model constructors, {heads.size} container/model heads"
-  IO.println s!"-- {ctors} model constructors; {types.size} instantiated types; 76 model + 6 container heads."
+  IO.println s!"-- {ctors} model constructors; {types.size} instantiated types; 77 model + 6 container heads."
 
 end CoreQuoteVisitor

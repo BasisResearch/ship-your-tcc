@@ -11,6 +11,7 @@ import CerbLocation
 import CerbUtils
 import CerbPP
 import Cn
+import CerberusImpl
 import CerbDecode
 import Desugaring_init
 import Mini_pipeline
@@ -26,6 +27,7 @@ import Decode
 import IntegerImpl
 import Range
 import Ctype
+import Implementation
 import Cabs_to_ail_effect
 import Cabs_to_ail_aux
 import LemLib.Pervasives
@@ -1325,6 +1327,226 @@ instance (priority := 500) : Lem_Basic_classes.Ord0 stmt_context where
   isLessEqual := defaultLessEq
   isGreater := defaultGreater
   isGreaterEqual := defaultGreaterEq
+
+/- GNU declaration attributes remain syntax in Cabs and annotations in Ail.
+   Aggregate layout is an explicit Ctype.aggregate_layout field, separate
+   from declared member alignments. The memory adapters compute effective
+   packed alignment only while laying out the aggregate. Explicit member
+   alignment and GNU expression-alignof therefore remain distinguishable. -/
+structure gnu_decl_effects where
+  gnu_packed : Bool
+  gnu_aligned : Option Int
+  gnu_noreturn : Bool
+  deriving BEq, Ord
+instance : Inhabited gnu_decl_effects where
+  default := { gnu_packed := default, gnu_aligned := default, gnu_noreturn := default }
+instance (priority := 500) : Lem_Basic_classes.SetType gnu_decl_effects where
+  setElemCompare := defaultCompare
+instance (priority := 500) : Lem_Basic_classes.Eq0 gnu_decl_effects where
+  isEqual x y := x == y
+  isInequal x y := !(x == y)
+instance (priority := 500) : Lem_Basic_classes.Ord0 gnu_decl_effects where
+  compare := defaultCompare
+  isLess := defaultLess
+  isLessEqual := defaultLessEq
+  isGreater := defaultGreater
+  isGreaterEqual := defaultGreaterEq
+
+def gnu_no_effects : gnu_decl_effects :=
+  (({ gnu_packed := false, gnu_aligned := none, gnu_noreturn := false } : gnu_decl_effects))
+
+def gnu_attribute_name (attr : attribute0) : Option String :=
+  match attr.attr_ns with
+  | some (Identifier _ ns) =>
+    (lem_if (ns == "__attribute") ||
+        ((ns == "__attribute__") ||
+          ((ns == "gnu") ||
+            ((ns == "asm") ||
+              ((ns == "__asm") || ((ns == "__asm__") || (ns == "__extension__")))))) then
+      match attr.attr_id with
+      | Identifier _ name1 => some name1
+    else
+      none)
+  | none => none
+
+def has_gnu_attributes (a : attributes) : Bool :=
+  match a with
+  | (Attrs attrs1) => List.any attrs1 (fun (attr : attribute0) => isJust (gnu_attribute_name attr))
+
+def gnu_name_is (name1 : String) (base : String) : Bool :=
+  (name1 == base) || (name1 == String.append "__" (String.append base "__"))
+
+/- The current literal adapter is deliberately checked. In particular it does
+   not feed identifiers, arbitrary expressions or malformed strings into the
+   unchecked implementation decoder. Nonliteral ICEs remain a diagnostic. -/
+def desugar_gnu_attributes { a : Type } [CerbImplCfg.Impl] (loc1 : a) (a1 : attributes) :
+    state_with_markers → exceptM (gnu_decl_effects × state_with_markers)
+        (CerbLocation.Loc × cause) :=
+  match loc1, a1 with
+  | loc1, (Attrs attrs1) =>
+    stExcept_foldlM
+      (fun (effects : gnu_decl_effects) (attr : attribute0) =>
+        match gnu_attribute_name attr with
+        | none => stExpect_return effects
+        | some name1 =>
+          (let args := attr.attr_args;
+           let attr_loc :=
+             match attr.attr_id with
+             | (Identifier loc1 _) => loc1;
+           lem_if gnu_name_is name1 "aligned" then
+             stExpect_bind
+               (match args with
+                | [] => stExpect_return (some (Int.ofNat CerberusImpl.max_alignment))
+                | [(_, str, _)] =>
+                  (match gnu_decimal str with
+                   | some n => stExpect_return (some n)
+                   | none =>
+                     (fun (_ : state_with_markers) =>
+                       fail0
+                         (attr_loc,
+                           DESUGAR
+                             (Desugar_NotYetSupported
+                               "GNU aligned argument needs constant-expression elaboration; retained in Cabs"))))
+                | _ =>
+                  (fun (_ : state_with_markers) =>
+                    fail0
+                      (attr_loc,
+                        DESUGAR
+                          (Desugar_NotYetSupported "invalid GNU aligned expects one argument"))))
+               (fun (n_opt : Option Int) =>
+                 match n_opt with
+                 | some n =>
+                   (lem_if intLteb n ((0 : Int)) || not (CerbUtils.is_power_of_two n) then
+                     fun (_ : state_with_markers) =>
+                       fail0
+                         (attr_loc,
+                           DESUGAR
+                             (Desugar_NotYetSupported
+                               "invalid GNU alignment must be a positive power of two"))
+                   else
+                     stExpect_return
+                       { effects with
+                         gnu_aligned := some
+                           (maybe0 n (fun (old : Int) => max old n) effects.gnu_aligned) })
+                 | none => stExpect_return effects)
+           else lem_if gnu_name_is name1 "packed" then
+             lem_if not
+                 ((listEqualBy
+                   (@tripleEqual CerbLocation.Loc String (List (CerbLocation.Loc × String)) _ _ _)
+                   args
+                   ([] : List (CerbLocation.Loc × String × List (CerbLocation.Loc × String))))) then
+               fun (_ : state_with_markers) =>
+                 fail0
+                   (attr_loc,
+                     DESUGAR (Desugar_NotYetSupported "invalid GNU packed takes no arguments"))
+             else
+               stExpect_return { effects with gnu_packed := true }
+           else lem_if gnu_name_is name1 "noreturn" then
+             lem_if not
+                 ((listEqualBy
+                   (@tripleEqual CerbLocation.Loc String (List (CerbLocation.Loc × String)) _ _ _)
+                   args
+                   ([] : List (CerbLocation.Loc × String × List (CerbLocation.Loc × String))))) then
+               fun (_ : state_with_markers) =>
+                 fail0
+                   (attr_loc,
+                     DESUGAR (Desugar_NotYetSupported "invalid GNU noreturn takes no arguments"))
+             else
+               stExpect_return { effects with gnu_noreturn := true }
+           else lem_if List.any
+               ["diagnostic_mode", "unused", "used", "const", "pure", "noinline", "always_inline",
+                 "gnu_inline", "malloc", "nothrow", "leaf", "warn_unused_result", "returns_twice"]
+               (gnu_name_is name1) then
+             lem_if not
+                 ((listEqualBy
+                   (@tripleEqual CerbLocation.Loc String (List (CerbLocation.Loc × String)) _ _ _)
+                   args
+                   ([] : List (CerbLocation.Loc × String × List (CerbLocation.Loc × String))))) then
+               fun (_ : state_with_markers) =>
+                 fail0
+                   (attr_loc,
+                     DESUGAR
+                       (Desugar_NotYetSupported "invalid GNU declaration hint takes no arguments"))
+             else
+               stExpect_return effects
+           else lem_if gnu_name_is name1 "format" then
+             lem_if not ((List.length args) == 3) then
+               fun (_ : state_with_markers) =>
+                 fail0
+                   (attr_loc,
+                     DESUGAR (Desugar_NotYetSupported "invalid GNU format expects three arguments"))
+             else
+               stExpect_return effects
+           else lem_if List.any ["section", "visibility", "weak", "alias", "asm_label"]
+               (gnu_name_is name1) then
+             fun (_ : state_with_markers) =>
+               fail0
+                 (attr_loc,
+                   DESUGAR
+                     (Desugar_NotYetSupported
+                       "GNU linker/binding effect (DESIGN section 5); retained separately from declaration layout"))
+           else
+             fun (_ : state_with_markers) =>
+               fail0
+                 (attr_loc,
+                   DESUGAR
+                     (Desugar_NotYetSupported
+                       (String.append "GNU attribute effect retained but not implemented: "
+                         name1))))) gnu_no_effects attrs1
+
+def gnu_annotate_type (attrs1 : attributes) (c : ctype) : ctype :=
+  match attrs1, c with
+  | attrs1, cty@(Ctype annots1 ty1) =>
+    (lem_if attrs1 == no_attributes then cty else Ctype (Aattrs attrs1 :: annots1) ty1)
+
+def desugar_gnu_alignment [CerbImplCfg.Impl] (loc1 : CerbLocation.Loc) (attrs1 : attributes)
+    (ty1 : ctype) (old_alignment : Option alignment) (allow_packed : Bool) :
+    state_with_markers → exceptM (Option alignment × state_with_markers) error :=
+  stExpect_bind (desugar_gnu_attributes loc1 attrs1) (fun (effects : gnu_decl_effects) =>
+    lem_if effects.gnu_noreturn then
+      fun (_ : state_with_markers) =>
+        fail0
+          (loc1,
+            DESUGAR
+              (Desugar_NotYetSupported "invalid GNU noreturn requires a function declaration"))
+    else lem_if effects.gnu_packed && not allow_packed then
+      fun (_ : state_with_markers) =>
+        fail0
+          (loc1,
+            DESUGAR
+              (Desugar_NotYetSupported "GNU packed requires an aggregate or aggregate member"))
+    else lem_if not effects.gnu_packed && isNothing effects.gnu_aligned then
+      stExpect_return old_alignment
+    else
+      stExpect_bind get_alignof (fun (alignof_ty : ctype → Option Nat) =>
+        let alignment_value : Option alignment → Option Nat :=
+          (fun (al : Option alignment) =>
+            match al with
+            | none => (lem_if effects.gnu_packed then some (1 : Nat) else alignof_ty ty1)
+            | some (AlignInteger n) => some (Int.natAbs (lemIntFromInteger n))
+            | some (AlignType ty1) => alignof_ty ty1);
+        match alignment_value old_alignment with
+        | none =>
+          (fun (_ : state_with_markers) =>
+            fail0
+              (loc1,
+                DESUGAR
+                  (Desugar_NotYetSupported
+                    "GNU layout requires a complete concrete member alignment")))
+        | some old =>
+          (let n :=
+             maybe0 (Int.ofNat old) (fun (n : Int) => max n (Int.ofNat old)) effects.gnu_aligned;
+           stExpect_return (some (AlignInteger n)))))
+
+def desugar_gnu_aggregate_layout { a : Type } [CerbImplCfg.Impl] (loc1 : CerbLocation.Loc)
+    (attrs1 : attributes) (members : a) :
+    state_with_markers → exceptM (a × state_with_markers) error :=
+  stExpect_bind (desugar_gnu_attributes loc1 attrs1) (fun (effects : gnu_decl_effects) =>
+    lem_if effects.gnu_noreturn then
+      fun (_ : state_with_markers) =>
+        fail0 (loc1, DESUGAR (Desugar_NotYetSupported "GNU noreturn requires a function"))
+    else
+      stExpect_return members)
 mutual
 partial def desugar_expression0 [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
     [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
@@ -1989,10 +2211,16 @@ partial def desugar_struct_declaration [LemFuel] [CerberusFresh.Digest] [CerbImp
                                   (match ident with
                                    | (Identifier loc1 _) => loc1) ty1 align_specs)
                                 (fun (align_opt : Option alignment) =>
-                                  stExpect_return
-                                    (ident,
-                                      (combine_attributes outer_attrs attrs1, align_opt, qs,
-                                        (lem_if isAtomic then wrap_atomic ty1 else ty1)))))))
+                                  let attrs1 := combine_attributes outer_attrs attrs1;
+                                  stExpect_bind
+                                    (desugar_gnu_alignment
+                                      (match ident with
+                                       | (Identifier loc1 _) => loc1) attrs1 ty1 align_opt true)
+                                    (fun (align_opt : Option alignment) =>
+                                      stExpect_return
+                                        (ident,
+                                          (attrs1, align_opt, qs,
+                                            (lem_if isAtomic then wrap_atomic ty1 else ty1))))))))
                     sdecltors)))
      | Struct_assert sa_decl =>
        stExpect_bind
@@ -2044,7 +2272,7 @@ partial def desugar_init_declarator_BROKEN [LemFuel] [CerberusFresh.Digest] [Cer
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (base_qs : qualifiers)
     (base_ty : ctype) (l : List storage_class_specifier) (idecltor : init_declarator) :
     state_with_markers → exceptM
-        ((identifier × Bool × (qualifiers × ctype) ×
+        ((attributes × identifier × Bool × (qualifiers × ctype) ×
           (Unit → state_with_markers → exceptM
             (Option (ctype × expression Unit) × state_with_markers) error)) × state_with_markers)
         error :=
@@ -2069,7 +2297,7 @@ partial def desugar_init_declarator_BROKEN [LemFuel] [CerberusFresh.Digest] [Cer
                   (fun (p :
                     ((attributes × identifier) × (qualifiers → ctype → (qualifiers × ctype)))) =>
                     match p with
-                    | ((_, ident), mk_qs_ctype) =>
+                    | ((ident_attrs, ident), mk_qs_ctype) =>
                       (match mk_qs_ctype base_qs base_ty with
                        | (qs, ty1) =>
                          (let mk_desug_init : Unit → state_with_markers → exceptM
@@ -2086,7 +2314,8 @@ partial def desugar_init_declarator_BROKEN [LemFuel] [CerberusFresh.Digest] [Cer
                                   (listEqualBy (fun x y => x == y) scs
                                     ([] : List storage_class_specifier)))
                             | _ => false;
-                          stExpect_return (ident, is_tentative, (qs, ty1), mk_desug_init))))
+                          stExpect_return
+                            (ident_attrs, ident, is_tentative, (qs, ty1), mk_desug_init))))
               | InitDecl loc1 decltor (some init) =>
                 stExpect_bind
                   ((desugar_declarator _lemReader_enum_definitions _lemReader_tagDefs) NotFunDef
@@ -2094,7 +2323,7 @@ partial def desugar_init_declarator_BROKEN [LemFuel] [CerberusFresh.Digest] [Cer
                   (fun (p :
                     ((attributes × identifier) × (qualifiers → ctype → (qualifiers × ctype)))) =>
                     match p with
-                    | ((_, ident), mk_qs_ctype) =>
+                    | ((ident_attrs, ident), mk_qs_ctype) =>
                       (match mk_qs_ctype base_qs base_ty with
                        | (qs, ty1) =>
                          (/- TODO: check that we really never have parameter objects here -/
@@ -2135,7 +2364,7 @@ partial def desugar_init_declarator_BROKEN [LemFuel] [CerberusFresh.Digest] [Cer
                                              (fun (z : (ctype × expression Unit)) =>
                                                stExpect_return (some z)));
                                      stExpect_return
-                                       (ident, false, (qs, ty1), mk_desug_init)))))))))
+                                       (ident_attrs, ident, false, (qs, ty1), mk_desug_init)))))))))
 partial def desugar_init_declarator [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
     [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (attrs1 : attributes)
@@ -2158,54 +2387,74 @@ partial def desugar_init_declarator [LemFuel] [CerberusFresh.Digest] [CerbImplCf
           (fun (p : ((attributes × identifier) × (qualifiers → ctype → (qualifiers × ctype)))) =>
             match p with
             | ((ident_attrs, ident), mk_qs_ctype) =>
-              (match mk_qs_ctype base_qs base_ty with
-               | (qs, _ty) =>
-                 (let ty1 := lem_if isAtomic then wrap_atomic _ty else _ty;
-                  let mk_desug_init : Unit → state_with_markers → exceptM
-                    (Option (ctype × expression Unit) × state_with_markers) error :=
-                    fun (u : Unit) =>
-                      match u with
-                      | () => stExpect_return none;
-                  /- STD §6.9.2#2, sentence 1 -/
-                  let is_tentative :=
-                    match scope1 with
-                    | Scope_file =>
-                      is_object ty1 &&
-                        (Lem_List.elem SC_static scs ||
-                          (listEqualBy (fun x y => x == y) scs ([] : List storage_class_specifier)))
-                    | _ => false;
-                  lem_if (listEqualBy (fun x y => x == y) scs [SC_typedef]) then
-                    lem_if has_alignment then
-                      fun (_ : state_with_markers) =>
-                        fail0
-                          (loc1,
-                            DESUGAR
-                              (Desugar_ConstraintViolation (IllegalAlignas IllegalAlignas_typedef)))
-                    else
-                      stExpect_bind (register_typedef ident (attrs1, qs, ty1)) (fun (u : Unit) =>
+              (let all_attrs := combine_attributes attrs1 ident_attrs;
+               stExpect_bind (desugar_gnu_attributes loc1 all_attrs) (fun (_ : gnu_decl_effects) =>
+                 match mk_qs_ctype base_qs base_ty with
+                 | (qs, _ty) =>
+                   (let ty1 := lem_if isAtomic then wrap_atomic _ty else _ty;
+                    let mk_desug_init : Unit → state_with_markers → exceptM
+                      (Option (ctype × expression Unit) × state_with_markers) error :=
+                      fun (u : Unit) =>
                         match u with
-                        | () => stExpect_return none)
-                  else
-                    match lem_if is_function ty1 then
-                        (Function_decl_context, OK_function)
+                        | () => stExpect_return none;
+                    /- STD §6.9.2#2, sentence 1 -/
+                    let is_tentative :=
+                      match scope1 with
+                      | Scope_file =>
+                        is_object ty1 &&
+                          (Lem_List.elem SC_static scs ||
+                            (listEqualBy (fun x y => x == y) scs
+                              ([] : List storage_class_specifier)))
+                      | _ => false;
+                    lem_if (listEqualBy (fun x y => x == y) scs [SC_typedef]) then
+                      lem_if has_alignment then
+                        fun (_ : state_with_markers) =>
+                          fail0
+                            (loc1,
+                              DESUGAR
+                                (Desugar_ConstraintViolation
+                                  (IllegalAlignas IllegalAlignas_typedef)))
                       else
-                        (Object_decl_context, OK_object false) with
-                    | (ctx, ok) =>
-                      stExpect_bind
-                        ((check_storage_class_specifiers _lemReader_enum_definitions
-                          _lemReader_tagDefs) loc1 ctx scs)
-                        (fun (u : Unit) =>
-                          match u with
-                          | () =>
-                            stExpect_bind (register_ordinary_identifier ident ok scs)
-                              (fun (p : (linkage × sym)) =>
-                                match p with
-                                | (link1, sym1) =>
-                                  stExpect_return
-                                    (some
-                                      (match ident with
-                                       | (Identifier loc1 _) => loc1, ident_attrs, link1, sym1,
-                                        is_tentative, (qs, ty1), mk_desug_init)))))))
+                        let attrs1 := combine_attributes attrs1 ident_attrs;
+                        stExpect_bind (desugar_gnu_attributes loc1 attrs1)
+                          (fun (effects : gnu_decl_effects) =>
+                            lem_if effects.gnu_packed || effects.gnu_noreturn then
+                              fun (_ : state_with_markers) =>
+                                fail0
+                                  (loc1,
+                                    DESUGAR
+                                      (Desugar_NotYetSupported
+                                        "GNU packed/noreturn is not a typedef effect"))
+                            else
+                              stExpect_bind
+                                (register_typedef ident
+                                  (attrs1, qs,
+                                    gnu_align_typedef effects.gnu_aligned
+                                      (gnu_annotate_type attrs1 ty1)))
+                                (fun (u : Unit) =>
+                                  match u with
+                                  | () => stExpect_return none))
+                    else
+                      match lem_if is_function ty1 then
+                          (Function_decl_context, OK_function)
+                        else
+                          (Object_decl_context, OK_object false) with
+                      | (ctx, ok) =>
+                        stExpect_bind
+                          ((check_storage_class_specifiers _lemReader_enum_definitions
+                            _lemReader_tagDefs) loc1 ctx scs)
+                          (fun (u : Unit) =>
+                            match u with
+                            | () =>
+                              stExpect_bind (register_ordinary_identifier ident ok scs)
+                                (fun (p : (linkage × sym)) =>
+                                  match p with
+                                  | (link1, sym1) =>
+                                    stExpect_return
+                                      (some
+                                        (match ident with
+                                         | (Identifier loc1 _) => loc1, ident_attrs, link1, sym1,
+                                          is_tentative, (qs, ty1), mk_desug_init))))))))
       | InitDecl loc1 decltor (some init) =>
         (lem_if (listEqualBy (fun x y => x == y) scs [SC_typedef]) then
           fun (_ : state_with_markers) =>
@@ -3059,185 +3308,196 @@ partial def desugar_type_specifiers [LemFuel] [CerberusFresh.Digest] [CerbImplCf
                                z)))
                        (fun (raw_membDefs : List
                          (identifier × (attributes × Option alignment × qualifiers × ctype))) =>
-                         stExpect_bind get_tag_definitions
-                           (fun (nested_tagDefs : Fmap sym tag_definition0) =>
-                             let nested_members : sym → List
-                               (identifier ×
-                                 (attributes × Option alignment × qualifiers × ctype)) :=
-                               (fun (tag : sym) =>
-                                 match (fmapLookupBy
-                                     (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2) tag
-                                     nested_tagDefs) with
-                                 | some (Struct_definition _ _ _ xs _) => xs
-                                 | some (Union_definition _ _ _ xs) => xs
-                                 | _ =>
-                                   ([] : List
-                                     (identifier ×
-                                       (attributes × Option alignment × qualifiers × ctype))));
-                             /- Include descendants' real names when allocating physical names:
+                         stExpect_bind (desugar_gnu_aggregate_layout loc1 attrs1 raw_membDefs)
+                           (fun (raw_membDefs : List
+                             (identifier × (attributes × Option alignment × qualifiers × ctype))) =>
+                             stExpect_bind get_tag_definitions
+                               (fun (nested_tagDefs : Fmap sym tag_definition0) =>
+                                 let nested_members : sym → List
+                                   (identifier ×
+                                     (attributes × Option alignment × qualifiers × ctype)) :=
+                                   (fun (tag : sym) =>
+                                     match (fmapLookupBy
+                                         (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2) tag
+                                         nested_tagDefs) with
+                                     | some (Struct_definition _ _ _ xs _) => xs
+                                     | some (Union_definition _ _ _ xs) => xs
+                                     | _ =>
+                                       ([] : List
+                                         (identifier ×
+                                           (attributes × Option alignment × qualifiers × ctype))));
+                                 /- Include descendants' real names when allocating physical names:
              a promoted source member must not capture its own container. -/
-                             let reserved_names :=
-                               List.flatten
-                                 (List.map
-                                   (fun (p : (sym × tag_definition0)) =>
-                                     match p with
-                                     | (tag, _) =>
-                                       List.map Prod.fst
-                                         (List.filter
-                                           (fun (p :
-                                             (identifier ×
-                                               (attributes × Option alignment × qualifiers ×
-                                                 ctype))) =>
-                                             match p with
-                                             | (_, (attrs1, _, _, _)) =>
-                                               not (is_anonymous_member attrs1))
-                                           (nested_members tag))) (fmapElements nested_tagDefs));
-                             let all_membDefs := name_anonymous_members reserved_names raw_membDefs;
-                             /- Check direct and promoted names in the enclosing namespace. -/
-                             let visible_names :=
-                               List.flatten
-                                 (List.map
-                                   (fun (p :
-                                     (identifier ×
-                                       (attributes × Option alignment × qualifiers × ctype))) =>
-                                     match p with
-                                     | (ident, (attrs1, _, _, ty1)) =>
-                                       (lem_if is_anonymous_member attrs1 then
-                                         List.map Prod.fst
-                                           (List.filter
-                                             (fun (p : (identifier × member_path)) =>
-                                               match p with
-                                               | (_, path) => path.member_path_visible)
-                                             (member_paths
-                                               (1 + List.length (fmapElements nested_tagDefs))
-                                               nested_members ty1))
-                                       else
-                                         [ident])) all_membDefs);
-                             stExpect_bind
-                               (stExcept_foldlM
-                                 (fun (acc : List identifier) (ident : identifier) =>
-                                   lem_if Lem_List.elem ident acc then
-                                     fun (_ : state_with_markers) =>
-                                       fail0
-                                         ((match ident with
-                                           | (Identifier loc1 _) => loc1),
-                                           DESUGAR
-                                             (Desugar_TODO
-                                               (String.append "duplicate member: "
-                                                 (match ident with
-                                                  | Identifier _ str => str))))
-                                   else
-                                     stExpect_return (ident :: acc)) ([] : List identifier)
-                                 visible_names)
-                               (fun (_ : List identifier) =>
-                                 stExpect_bind
-                                   (lem_if (List.length all_membDefs == 0) &&
-                                       (struct_or_union1 ==
-                                         UNION) then /- STD §6.7.2.1#8, sentence 3 -/
-                                     fun (_ : state_with_markers) =>
-                                       fail0
-                                         (loc1,
-                                           DESUGAR
-                                             (Desugar_UndefinedBehaviour UB061_no_named_members))
-                                   else lem_if (List.length all_membDefs == 1) ||
-                                       (struct_or_union1 == UNION) then
-                                     stExpect_bind (check_members all_membDefs) (fun (_ : Unit) =>
-                                       stExpect_return none)
-                                   else
-                                     match last all_membDefs with
-                                     | none =>
-                                       (/- xs was an empty list -/ /- STD §6.7.2.1#8, sentence 3 -/ fun (_ :
-                                         state_with_markers) =>
-                                         fail0
-                                           (loc1,
-                                             DESUGAR
-                                               (Desugar_UndefinedBehaviour UB061_no_named_members)))
-                                     | some
-                                       ((last_ident, (lastMemb_attrs, _, lastMemb_qs, lastMemb_ty)),
-                                         membDefs) =>
-                                       stExpect_bind (/- STD §6.7.2.1#3 -/ check_members membDefs)
-                                         (fun (_ : Unit) =>
-                                           lem_if is_function lastMemb_ty then
-                                             fun (_ : state_with_markers) =>
-                                               fail0
-                                                 ((match last_ident with
-                                                   | (Identifier loc1 _) => loc1),
-                                                   DESUGAR
-                                                     (Desugar_ConstraintViolation
-                                                       (StructMemberFunctionType last_ident)))
+                                 let reserved_names :=
+                                   List.flatten
+                                     (List.map
+                                       (fun (p : (sym × tag_definition0)) =>
+                                         match p with
+                                         | (tag, _) =>
+                                           List.map Prod.fst
+                                             (List.filter
+                                               (fun (p :
+                                                 (identifier ×
+                                                   (attributes × Option alignment × qualifiers ×
+                                                     ctype))) =>
+                                                 match p with
+                                                 | (_, (attrs1, _, _, _)) =>
+                                                   not (is_anonymous_member attrs1))
+                                               (nested_members tag)))
+                                       (fmapElements nested_tagDefs));
+                                 let all_membDefs :=
+                                   name_anonymous_members reserved_names raw_membDefs;
+                                 /- Check direct and promoted names in the enclosing namespace. -/
+                                 let visible_names :=
+                                   List.flatten
+                                     (List.map
+                                       (fun (p :
+                                         (identifier ×
+                                           (attributes × Option alignment × qualifiers × ctype))) =>
+                                         match p with
+                                         | (ident, (attrs1, _, _, ty1)) =>
+                                           (lem_if is_anonymous_member attrs1 then
+                                             List.map Prod.fst
+                                               (List.filter
+                                                 (fun (p : (identifier × member_path)) =>
+                                                   match p with
+                                                   | (_, path) => path.member_path_visible)
+                                                 (member_paths
+                                                   (1 + List.length (fmapElements nested_tagDefs))
+                                                   nested_members ty1))
                                            else
-                                             stExpect_bind
-                                               (cabs_to_ail_effect_is_incomplete lastMemb_ty)
-                                               (fun (x : Bool) =>
-                                                 match x with
-                                                 | true =>
-                                                   (lem_if struct_or_union1 == STRUCT then
-                                                     match lastMemb_ty with
-                                                     | Ctype _ (Array0 elem_ty none) =>
-                                                       (/- if we have an array with unknown size -/ lem_if List.length
-                                                           all_membDefs == 1 then
+                                             [ident])) all_membDefs);
+                                 stExpect_bind
+                                   (stExcept_foldlM
+                                     (fun (acc : List identifier) (ident : identifier) =>
+                                       lem_if Lem_List.elem ident acc then
+                                         fun (_ : state_with_markers) =>
+                                           fail0
+                                             ((match ident with
+                                               | (Identifier loc1 _) => loc1),
+                                               DESUGAR
+                                                 (Desugar_TODO
+                                                   (String.append "duplicate member: "
+                                                     (match ident with
+                                                      | Identifier _ str => str))))
+                                       else
+                                         stExpect_return (ident :: acc)) ([] : List identifier)
+                                     visible_names)
+                                   (fun (_ : List identifier) =>
+                                     stExpect_bind
+                                       (lem_if (List.length all_membDefs == 0) &&
+                                           (struct_or_union1 ==
+                                             UNION) then /- STD §6.7.2.1#8, sentence 3 -/
+                                         fun (_ : state_with_markers) =>
+                                           fail0
+                                             (loc1,
+                                               DESUGAR
+                                                 (Desugar_UndefinedBehaviour
+                                                   UB061_no_named_members))
+                                       else lem_if (List.length all_membDefs == 1) ||
+                                           (struct_or_union1 == UNION) then
+                                         stExpect_bind (check_members all_membDefs)
+                                           (fun (_ : Unit) => stExpect_return none)
+                                       else
+                                         match last all_membDefs with
+                                         | none =>
+                                           (/- xs was an empty list -/ /- STD §6.7.2.1#8, sentence 3 -/ fun (_ :
+                                             state_with_markers) =>
+                                             fail0
+                                               (loc1,
+                                                 DESUGAR
+                                                   (Desugar_UndefinedBehaviour
+                                                     UB061_no_named_members)))
+                                         | some
+                                           ((last_ident,
+                                             (lastMemb_attrs, _, lastMemb_qs, lastMemb_ty)),
+                                             membDefs) =>
+                                           stExpect_bind
+                                             (/- STD §6.7.2.1#3 -/ check_members membDefs)
+                                             (fun (_ : Unit) =>
+                                               lem_if is_function lastMemb_ty then
+                                                 fun (_ : state_with_markers) =>
+                                                   fail0
+                                                     ((match last_ident with
+                                                       | (Identifier loc1 _) => loc1),
+                                                       DESUGAR
+                                                         (Desugar_ConstraintViolation
+                                                           (StructMemberFunctionType last_ident)))
+                                               else
+                                                 stExpect_bind
+                                                   (cabs_to_ail_effect_is_incomplete lastMemb_ty)
+                                                   (fun (x : Bool) =>
+                                                     match x with
+                                                     | true =>
+                                                       (lem_if struct_or_union1 == STRUCT then
+                                                         match lastMemb_ty with
+                                                         | Ctype _ (Array0 elem_ty none) =>
+                                                           (/- if we have an array with unknown size -/ lem_if List.length
+                                                               all_membDefs == 1 then
+                                                             fun (_ : state_with_markers) =>
+                                                               fail0
+                                                                 ((match last_ident with
+                                                                   | (Identifier loc1 _) => loc1),
+                                                                   DESUGAR
+                                                                     (Desugar_ConstraintViolation
+                                                                       (IllegalFlexibleArrayMember
+                                                                         last_ident)))
+                                                           else
+                                                             stExpect_return
+                                                               (some
+                                                                 (membDefs,
+                                                                   FlexibleArrayMember
+                                                                     lastMemb_attrs last_ident
+                                                                     lastMemb_qs elem_ty)))
+                                                         | _ =>
+                                                           (fun (_ : state_with_markers) =>
+                                                             fail0
+                                                               ((match last_ident with
+                                                                 | (Identifier loc1 _) => loc1),
+                                                                 DESUGAR
+                                                                   (Desugar_ConstraintViolation
+                                                                     (StructMemberIncompleteType
+                                                                       lastMemb_qs lastMemb_ty))))
+                                                       else
                                                          fun (_ : state_with_markers) =>
                                                            fail0
                                                              ((match last_ident with
                                                                | (Identifier loc1 _) => loc1),
                                                                DESUGAR
                                                                  (Desugar_ConstraintViolation
-                                                                   (IllegalFlexibleArrayMember
-                                                                     last_ident)))
-                                                       else
-                                                         stExpect_return
-                                                           (some
-                                                             (membDefs,
-                                                               FlexibleArrayMember lastMemb_attrs
-                                                                 last_ident lastMemb_qs elem_ty)))
-                                                     | _ =>
-                                                       (fun (_ : state_with_markers) =>
-                                                         fail0
-                                                           ((match last_ident with
-                                                             | (Identifier loc1 _) => loc1),
-                                                             DESUGAR
-                                                               (Desugar_ConstraintViolation
-                                                                 (StructMemberIncompleteType
-                                                                   lastMemb_qs lastMemb_ty))))
-                                                   else
-                                                     fun (_ : state_with_markers) =>
-                                                       fail0
-                                                         ((match last_ident with
-                                                           | (Identifier loc1 _) => loc1),
-                                                           DESUGAR
-                                                             (Desugar_ConstraintViolation
-                                                               (StructMemberIncompleteType
-                                                                 lastMemb_qs lastMemb_ty))))
-                                                 | false => stExpect_return none)))
-                                   (fun (flexible_opt : Option
-                                     (List
-                                       (identifier ×
-                                         (attributes × Option alignment × qualifiers × ctype)) ×
-                                       flexible_array_member)) =>
-                                     let loc1 :=
-                                       match tag_ident_opt with
-                                       | none => loc1
-                                       | some tag_ident =>
-                                         CerbLocation.withCursorFrom loc1
-                                           (match tag_ident with
-                                            | (Identifier loc1 _) => loc1);
-                                     stExpect_bind
-                                       (register_tag_definition loc1 tag_sym
-                                         (match struct_or_union1, flexible_opt with
-                                          | UNION, _ =>
-                                            Union_definition loc1 attrs1 (isNothing tag_ident_opt)
-                                              all_membDefs
-                                          | STRUCT, none =>
-                                            Struct_definition loc1 attrs1 (isNothing tag_ident_opt)
-                                              all_membDefs none
-                                          | STRUCT, some (membDefs', flexible) =>
-                                            Struct_definition loc1 attrs1 (isNothing tag_ident_opt)
-                                              membDefs' (some flexible)))
-                                       (fun (u : Unit) =>
-                                         match u with
-                                         | () =>
-                                           stExpect_return
-                                             (no_qualifiers, type_ctor tag_sym))))))));
+                                                                   (StructMemberIncompleteType
+                                                                     lastMemb_qs lastMemb_ty))))
+                                                     | false => stExpect_return none)))
+                                       (fun (flexible_opt : Option
+                                         (List
+                                           (identifier ×
+                                             (attributes × Option alignment × qualifiers × ctype)) ×
+                                           flexible_array_member)) =>
+                                         let loc1 :=
+                                           match tag_ident_opt with
+                                           | none => loc1
+                                           | some tag_ident =>
+                                             CerbLocation.withCursorFrom loc1
+                                               (match tag_ident with
+                                                | (Identifier loc1 _) => loc1);
+                                         stExpect_bind
+                                           (register_tag_definition loc1 tag_sym
+                                             (match struct_or_union1, flexible_opt with
+                                              | UNION, _ =>
+                                                Union_definition loc1 attrs1
+                                                  (isNothing tag_ident_opt) all_membDefs
+                                              | STRUCT, none =>
+                                                Struct_definition loc1 attrs1
+                                                  (isNothing tag_ident_opt) all_membDefs none
+                                              | STRUCT, some (membDefs', flexible) =>
+                                                Struct_definition loc1 attrs1
+                                                  (isNothing tag_ident_opt) membDefs'
+                                                  (some flexible)))
+                                           (fun (u : Unit) =>
+                                             match u with
+                                             | () =>
+                                               stExpect_return
+                                                 (no_qualifiers, type_ctor tag_sym)))))))));
            match specs with /- NOTE: The parser does not generate a declaration without a type specifier -/
            | [] =>
              CerbUtils.STD_ "§6.7.2#2, sentence 1"
@@ -3374,8 +3634,9 @@ partial def desugar_type_specifiers [LemFuel] [CerberusFresh.Digest] [CerbImplCf
                          stExpect_bind (resolve_typedef sym1)
                            (fun (p : (attributes × qualifiers × ctype)) =>
                              match p with
-                             | (attrs1, qs, Ctype _ ty1) =>
-                               stExpect_return (qs, Ctype [Aloc cid_loc, Atypedef sym1] ty1))
+                             | (attrs1, qs, Ctype annots1 ty1) =>
+                               stExpect_return
+                                 (qs, Ctype ([Aloc cid_loc, Atypedef sym1] ++ annots1) ty1))
                        | some _ =>
                          (fun (_ : state_with_markers) =>
                            fail0
@@ -3594,85 +3855,97 @@ partial def desugar_parameter_declaration [LemFuel] [CerberusFresh.Digest] [Cerb
                   (fun (p :
                     ((attributes × identifier) × (qualifiers → ctype → (qualifiers × ctype)))) =>
                     match p with
-                    | ((_, ident), mk_qs_ctype) =>
-                      (match translate_type_qualifiers specifs.type_qualifiers with
-                       | (isAtomic, tquals_qs) =>
-                         (/- STD §6.9.1#7, sentence 4 -/
-                         match mk_qs_ctype (combine_qualifiers specs_qs tquals_qs) base_ty with
-                         | (_qs, _ty) =>
-                           (lem_if is_void _ty then
-                             match fundef1 with
-                             | IsFunDef =>
-                               (fun (_ : state_with_markers) =>
-                                 fail0
-                                   (decltor_loc,
-                                     DESUGAR
-                                       (Desugar_ConstraintViolation
-                                         IllegalIdentifierTypeVoidInFunctionDefinition)))
-                             | NotFunDef =>
-                               (/- STD §6.7#7 -/ /- NOTE: this paragraph applies here because identifiers declared to
+                    | ((param_attrs, ident), mk_qs_ctype) =>
+                      stExpect_bind (desugar_gnu_attributes decltor_loc param_attrs)
+                        (fun (effects : gnu_decl_effects) =>
+                          lem_if effects.gnu_packed ||
+                              (effects.gnu_noreturn || not (isNothing effects.gnu_aligned)) then
+                            fun (_ : state_with_markers) =>
+                              fail0
+                                (decltor_loc,
+                                  DESUGAR
+                                    (Desugar_NotYetSupported
+                                      "GNU parameter layout/effect retained but not represented"))
+                          else
+                            match translate_type_qualifiers specifs.type_qualifiers with
+                            | (isAtomic, tquals_qs) =>
+                              (/- STD §6.9.1#7, sentence 4 -/
+                              match mk_qs_ctype (combine_qualifiers specs_qs tquals_qs) base_ty with
+                              | (_qs, _ty) =>
+                                (lem_if is_void _ty then
+                                  match fundef1 with
+                                  | IsFunDef =>
+                                    (fun (_ : state_with_markers) =>
+                                      fail0
+                                        (decltor_loc,
+                                          DESUGAR
+                                            (Desugar_ConstraintViolation
+                                              IllegalIdentifierTypeVoidInFunctionDefinition)))
+                                  | NotFunDef =>
+                                    (/- STD §6.7#7 -/ /- NOTE: this paragraph applies here because identifiers declared to
                      be a function parameter have no linkage -/
-                               fun (_ : state_with_markers) =>
-                                 fail0
-                                   (decltor_loc,
-                                     DESUGAR
-                                       (Desugar_UndefinedBehaviour
-                                         UB059_incomplete_no_linkage_identifier)))
-                           else
-                             match adjust _qs _ty with
-                             | (qs, ty1) =>
-                               stExpect_bind (cabs_to_ail_effect_is_incomplete ty1)
-                                 (fun (x : Bool) =>
-                                   match x with
-                                   | true =>
-                                     (match fundef1 with
-                                      | IsFunDef =>
-                                        (/- STD §6.9.1#7, sentence 4 -/ /- NOTE(TODO): at the same time, §6.7.6.3#4 seems to
+                                    fun (_ : state_with_markers) =>
+                                      fail0
+                                        (decltor_loc,
+                                          DESUGAR
+                                            (Desugar_UndefinedBehaviour
+                                              UB059_incomplete_no_linkage_identifier)))
+                                else
+                                  match adjust _qs _ty with
+                                  | (qs, ty1) =>
+                                    stExpect_bind (cabs_to_ail_effect_is_incomplete ty1)
+                                      (fun (x : Bool) =>
+                                        match x with
+                                        | true =>
+                                          (match fundef1 with
+                                           | IsFunDef =>
+                                             (/- STD §6.9.1#7, sentence 4 -/ /- NOTE(TODO): at the same time, §6.7.6.3#4 seems to
                            make this a constraint violation, but then there is
                            also §6.7#7 that should apply here (making it UB
                            afterall) ... -/
-                                        fun (_ : state_with_markers) =>
-                                          fail0
-                                            (decltor_loc,
-                                              DESUGAR
-                                                (Desugar_UndefinedBehaviour
-                                                  UB086_incomplete_adjusted_parameter)))
-                                      | NotFunDef =>
-                                        (/- NOTE: §6.7.6.3#12, explicitly says non-fundef can have
+                                             fun (_ : state_with_markers) =>
+                                               fail0
+                                                 (decltor_loc,
+                                                   DESUGAR
+                                                     (Desugar_UndefinedBehaviour
+                                                       UB086_incomplete_adjusted_parameter)))
+                                           | NotFunDef =>
+                                             (/- NOTE: §6.7.6.3#12, explicitly says non-fundef can have
                            incomplete (adjusted) parameter types, but I assume they
                            only mean this so unammed ones?? -/
-                                        /- STD §6.7#7 -/ /- NOTE: this paragraph applies here because identifiers declared to
+                                             /- STD §6.7#7 -/ /- NOTE: this paragraph applies here because identifiers declared to
                            be a function parameter have no linkage -/
-                                        fun (_ : state_with_markers) =>
-                                          fail0
-                                            (decltor_loc,
-                                              DESUGAR
-                                                (Desugar_UndefinedBehaviour
-                                                  UB059_incomplete_no_linkage_identifier))))
-                                   | false =>
-                                     (let isRegister :=
-                                        Lem_List.elem SC_register specifs.storage_classes;
-                                      let scs := specifs.storage_classes;
-                                      stExpect_bind
-                                        (register_ordinary_identifier ident (OK_object true) scs)
-                                        (fun (p : (linkage × sym)) =>
-                                          match p with
-                                          | (link1, sym1) =>
-                                            (/- TODO: check this registration -/
-                                            let dur := determinate_storage_duration link1 scs;
-                                            stExpect_bind
-                                              (register_internal_object_declaration sym1
-                                                (match ident with
-                                                 | (Identifier loc1 _) => loc1, dur, isRegister,
-                                                  none, qs, ty1))
-                                              (fun (_ : Unit) =>
-                                                stExpect_return
-                                                  (some ident,
-                                                    (qs,
-                                                      (lem_if isAtomic then
-                                                        mk_ctype_atomic ty1
-                                                      else
-                                                        ty1), isRegister)))))))))))))
+                                             fun (_ : state_with_markers) =>
+                                               fail0
+                                                 (decltor_loc,
+                                                   DESUGAR
+                                                     (Desugar_UndefinedBehaviour
+                                                       UB059_incomplete_no_linkage_identifier))))
+                                        | false =>
+                                          (let isRegister :=
+                                             Lem_List.elem SC_register specifs.storage_classes;
+                                           let scs := specifs.storage_classes;
+                                           stExpect_bind
+                                             (register_ordinary_identifier ident (OK_object true)
+                                               scs)
+                                             (fun (p : (linkage × sym)) =>
+                                               match p with
+                                               | (link1, sym1) =>
+                                                 (/- TODO: check this registration -/
+                                                 let dur := determinate_storage_duration link1 scs;
+                                                 stExpect_bind
+                                                   (register_internal_object_declaration sym1
+                                                     (match ident with
+                                                      | (Identifier loc1 _) => loc1, dur,
+                                                       isRegister, none, qs, ty1))
+                                                   (fun (_ : Unit) =>
+                                                     stExpect_return
+                                                       (some ident,
+                                                         (qs,
+                                                           (lem_if isAtomic then
+                                                             mk_ctype_atomic ty1
+                                                           else
+                                                             ty1), isRegister)))))))))))))
      | PDeclaration_abs_decl specifs abs_decltor_opt =>
        (/- TODO: Should position of storage classes be tracked? -/
        let loc1 :=
@@ -4401,187 +4674,215 @@ partial def desugar_declaration_base [LemFuel] [CerberusFresh.Digest] [CerbImplC
         error :=
   match attrs1, specifs, idecltors with
   | attrs1, specifs, idecltors =>
-    stExpect_bind
-      (stExpect_return
-        (CerbDebug.print_debug_pure 2 [DB_desugaring] (fun (u : Unit) =>
+    (lem_if List.isEmpty idecltors && has_gnu_attributes attrs1 then
+      fun (_ : state_with_markers) =>
+        fail0
+          (CerbLocation.unknown,
+            DESUGAR
+              (Desugar_NotYetSupported
+                "GNU attributes on a declaration without an entity require an attachment rule"))
+    else
+      stExpect_bind
+        (stExpect_return
+          (CerbDebug.print_debug_pure 2 [DB_desugaring] (fun (u : Unit) =>
+            match u with
+            | () => "BROKEN: desugar_declaration_base")))
+        (fun (u : Unit) =>
           match u with
-          | () => "BROKEN: desugar_declaration_base")))
-      (fun (u : Unit) =>
-        match u with
-        | () =>
-          stExpect_bind
-            ((desugar_type_specifiers _lemReader_enum_definitions _lemReader_tagDefs)
-              specifs.type_specifiers)
-            (fun (p : (qualifiers × ctype)) =>
-              match p with
-              | (specs_qs, base_ty) =>
-                stExpect_bind
-                  (/- for each [init_declarator] -/ stExcept_foldlM
-                    (fun (acc : List (sym × Option (expression Unit))) (i : init_declarator) =>
-                      match acc, i with
-                      | acc, init@(InitDecl loc1 _ _) =>
-                        (/- NOTE: the wf of the storage classes is checked later (see the
+          | () =>
+            stExpect_bind
+              ((desugar_type_specifiers _lemReader_enum_definitions _lemReader_tagDefs)
+                specifs.type_specifiers)
+              (fun (p : (qualifiers × ctype)) =>
+                match p with
+                | (specs_qs, base_ty) =>
+                  stExpect_bind
+                    (/- for each [init_declarator] -/ stExcept_foldlM
+                      (fun (acc : List (sym × Option (expression Unit))) (i : init_declarator) =>
+                        match acc, i with
+                        | acc, init@(InitDecl loc1 _ _) =>
+                          (/- NOTE: the wf of the storage classes is checked later (see the
                pattern match on [ty]) -/
-                        match translate_type_qualifiers specifs.type_qualifiers with
-                        | (isAtomic, tquals_qs) =>
-                          (let base_qs := combine_qualifiers specs_qs tquals_qs;
-                           stExpect_bind
-                             ((desugar_init_declarator_BROKEN _lemReader_enum_definitions
-                               _lemReader_tagDefs) base_qs base_ty specifs.storage_classes init)
-                             (fun (p :
-                               (identifier × Bool × (qualifiers × ctype) ×
-                                 (Unit → state_with_markers → exceptM
-                                   (Option (ctype × expression Unit) × state_with_markers)
-                                   error))) =>
-                               match p with
-                               | (ident, is_tentative, (qs, _ty), mk_desug_init) =>
-                                 (let ident_loc :=
-                                    match ident with
-                                    | (Identifier loc1 _) => loc1;
-                                  match lem_if isAtomic then mk_ctype_atomic _ty else _ty with
-                                  | cty@(Ctype _ ty1) =>
-                                    (lem_if is_tentative then /- NOTE: this shouldn't be possible since tentative definition are file scoped -/
-                                      (failwithI
-                                        "Cabs_to_ail.desugar_declaration_base found a positive is_tentative" :
-                                        state_with_markers → exceptM
-                                        (List (sym × Option (expression Unit)) × state_with_markers)
-                                        error)
-                                    else lem_if (listEqualBy (fun x y => x == y)
-                                        specifs.storage_classes [SC_typedef]) then
-                                      stExpect_bind
-                                        (/- Case of a typedef -/ register_typedef ident
-                                          (attrs1, qs, cty)) (fun (_ : Unit) => stExpect_return acc)
-                                    else
-                                      let do_function : (qualifiers × ctype) → Option
-                                        (List (qualifiers × ctype × Bool)) → Bool →
-                                        state_with_markers → exceptM
-                                        (List (sym × Option (expression Unit)) × state_with_markers)
-                                        error :=
-                                        (fun (return_qs_ty : (qualifiers × ctype))
-                                          (params_opt : Option (List (qualifiers × ctype × Bool)))
-                                          (is_variadic : Bool) =>
-                                          stExpect_bind
-                                            ((check_storage_class_specifiers
-                                              _lemReader_enum_definitions _lemReader_tagDefs) loc1
-                                              Function_decl_context specifs.storage_classes)
-                                            (fun (u : Unit) =>
-                                              match u with
-                                              | () =>
-                                                (lem_if not
-                                                    ((listEqualBy (fun x y => x == y)
-                                                      specifs.alignment_specifiers
-                                                      ([] : List alignment_specifier))) then
+                          match translate_type_qualifiers specifs.type_qualifiers with
+                          | (isAtomic, tquals_qs) =>
+                            (let base_qs := combine_qualifiers specs_qs tquals_qs;
+                             stExpect_bind
+                               ((desugar_init_declarator_BROKEN _lemReader_enum_definitions
+                                 _lemReader_tagDefs) base_qs base_ty specifs.storage_classes init)
+                               (fun (p :
+                                 (attributes × identifier × Bool × (qualifiers × ctype) ×
+                                   (Unit → state_with_markers → exceptM
+                                     (Option (ctype × expression Unit) × state_with_markers)
+                                     error))) =>
+                                 match p with
+                                 | (ident_attrs, ident, is_tentative, (qs, _ty), mk_desug_init) =>
+                                   (let attrs1 := combine_attributes attrs1 ident_attrs;
+                                    stExpect_bind (desugar_gnu_attributes loc1 attrs1)
+                                      (fun (gnu_effects : gnu_decl_effects) =>
+                                        let ident_loc :=
+                                          match ident with
+                                          | (Identifier loc1 _) => loc1;
+                                        match lem_if isAtomic then mk_ctype_atomic _ty else _ty with
+                                        | cty@(Ctype _ ty1) =>
+                                          (lem_if is_tentative then /- NOTE: this shouldn't be possible since tentative definition are file scoped -/
+                                            (failwithI
+                                              "Cabs_to_ail.desugar_declaration_base found a positive is_tentative" :
+                                              state_with_markers → exceptM
+                                              (List (sym × Option (expression Unit)) ×
+                                                state_with_markers) error)
+                                          else lem_if (listEqualBy (fun x y => x == y)
+                                              specifs.storage_classes
+                                              [SC_typedef]) then /- Case of a typedef -/
+                                            lem_if gnu_effects.gnu_packed ||
+                                                gnu_effects.gnu_noreturn then
+                                              fun (_ : state_with_markers) =>
+                                                fail0
+                                                  (loc1,
+                                                    DESUGAR
+                                                      (Desugar_NotYetSupported
+                                                        "GNU packed/noreturn is not a typedef effect"))
+                                            else
+                                              stExpect_bind
+                                                (register_typedef ident
+                                                  (attrs1, qs,
+                                                    gnu_align_typedef gnu_effects.gnu_aligned
+                                                      (gnu_annotate_type attrs1 cty)))
+                                                (fun (_ : Unit) => stExpect_return acc)
+                                          else
+                                            let do_function : (qualifiers × ctype) → Option
+                                              (List (qualifiers × ctype × Bool)) → Bool →
+                                              state_with_markers → exceptM
+                                              (List (sym × Option (expression Unit)) ×
+                                                state_with_markers) error :=
+                                              (fun (return_qs_ty : (qualifiers × ctype))
+                                                (params_opt : Option
+                                                  (List (qualifiers × ctype × Bool)))
+                                                (is_variadic : Bool) =>
+                                                lem_if gnu_effects.gnu_packed || not
+                                                    (isNothing gnu_effects.gnu_aligned) then
                                                   fun (_ : state_with_markers) =>
                                                     fail0
-                                                      (ident_loc,
+                                                      (loc1,
                                                         DESUGAR
-                                                          (Desugar_ConstraintViolation
-                                                            (IllegalAlignas
-                                                              IllegalAlignas_function)))
+                                                          (Desugar_NotYetSupported
+                                                            "GNU function placement alignment is not represented by Ail"))
                                                 else
                                                   stExpect_bind
-                                                    (register_ordinary_identifier ident OK_function
+                                                    ((check_storage_class_specifiers
+                                                      _lemReader_enum_definitions
+                                                      _lemReader_tagDefs) loc1 Function_decl_context
                                                       specifs.storage_classes)
-                                                    (fun (p : (linkage × sym)) =>
-                                                      match p with
-                                                      | (_, sym1) =>
-                                                        stExpect_bind
-                                                          (register_function_declaration ident_loc
-                                                            attrs1 sym1 true
-                                                            (return_qs_ty, params_opt, is_variadic,
-                                                              Lem_List.elem FS_inline
-                                                                specifs.function_specifiers,
-                                                              Lem_List.elem FS_Noreturn
-                                                                specifs.function_specifiers))
-                                                          (fun (_ : Unit) =>
-                                                            stExpect_return acc)))));
-                                      match ty1 with
-                                      | Function return_qs_ty params is_variadic =>
-                                        do_function return_qs_ty (some params) is_variadic
-                                      | FunctionNoParams return_qs_ty =>
-                                        do_function return_qs_ty none false
-                                      | _ =>
-                                        (lem_if Lem_List.elem SC_register specifs.storage_classes &&
-                                            not
-                                            ((listEqualBy (fun x y => x == y)
-                                              specifs.alignment_specifiers
-                                              ([] : List alignment_specifier))) then
-                                          fun (_ : state_with_markers) =>
-                                            fail0
-                                              (ident_loc,
-                                                DESUGAR
-                                                  (Desugar_ConstraintViolation
-                                                    (IllegalAlignas IllegalAlignas_register)))
-                                        else
-                                          stExpect_bind
-                                            ((desugar_alignment_specifiers
-                                              _lemReader_enum_definitions _lemReader_tagDefs)
-                                              ident_loc cty specifs.alignment_specifiers)
-                                            (fun (align_opt : Option alignment) =>
-                                              stExpect_bind
-                                                ((check_storage_class_specifiers
-                                                  _lemReader_enum_definitions _lemReader_tagDefs)
-                                                  loc1 Object_decl_context specifs.storage_classes)
-                                                (fun (u : Unit) =>
-                                                  match u with
-                                                  | () =>
+                                                    (fun (u : Unit) =>
+                                                      match u with
+                                                      | () =>
+                                                        (lem_if not
+                                                            ((listEqualBy (fun x y => x == y)
+                                                              specifs.alignment_specifiers
+                                                              ([] : List alignment_specifier))) then
+                                                          fun (_ : state_with_markers) =>
+                                                            fail0
+                                                              (ident_loc,
+                                                                DESUGAR
+                                                                  (Desugar_ConstraintViolation
+                                                                    (IllegalAlignas
+                                                                      IllegalAlignas_function)))
+                                                        else
+                                                          stExpect_bind
+                                                            (register_ordinary_identifier ident
+                                                              OK_function specifs.storage_classes)
+                                                            (fun (p : (linkage × sym)) =>
+                                                              match p with
+                                                              | (_, sym1) =>
+                                                                stExpect_bind
+                                                                  (register_function_declaration
+                                                                    ident_loc attrs1 sym1 true
+                                                                    (return_qs_ty, params_opt,
+                                                                      is_variadic,
+                                                                      Lem_List.elem FS_inline
+                                                                        specifs.function_specifiers,
+                                                                      (Lem_List.elem FS_Noreturn
+                                                                        specifs.function_specifiers ||
+                                                                        gnu_effects.gnu_noreturn)))
+                                                                  (fun (_ : Unit) =>
+                                                                    stExpect_return acc)))));
+                                            match ty1 with
+                                            | Function return_qs_ty params is_variadic =>
+                                              do_function return_qs_ty (some params) is_variadic
+                                            | FunctionNoParams return_qs_ty =>
+                                              do_function return_qs_ty none false
+                                            | _ =>
+                                              (lem_if Lem_List.elem SC_register
+                                                  specifs.storage_classes && not
+                                                  ((listEqualBy (fun x y => x == y)
+                                                    specifs.alignment_specifiers
+                                                    ([] : List alignment_specifier))) then
+                                                fun (_ : state_with_markers) =>
+                                                  fail0
+                                                    (ident_loc,
+                                                      DESUGAR
+                                                        (Desugar_ConstraintViolation
+                                                          (IllegalAlignas IllegalAlignas_register)))
+                                              else
+                                                stExpect_bind
+                                                  ((desugar_alignment_specifiers
+                                                    _lemReader_enum_definitions _lemReader_tagDefs)
+                                                    ident_loc cty specifs.alignment_specifiers)
+                                                  (fun (align_opt : Option alignment) =>
                                                     stExpect_bind
-                                                      (register_ordinary_identifier ident
-                                                        (OK_object false) specifs.storage_classes)
-                                                      (fun (p : (linkage × sym)) =>
-                                                        match p with
-                                                        | (link1, sym1) =>
-                                                          (let dur :=
-                                                             determinate_storage_duration link1
-                                                               specifs.storage_classes;
-                                                           stExpect_bind
-                                                             (stExpect_bind
-                                                               (stExpect_bind
-                                                                 (match link1 with
-                                                                  | Linkage_external =>
-                                                                    register_external_object_declaration
-                                                                      sym1
-                                                                      (false /- TODO:check -/,
-                                                                        ident_loc, attrs1, dur,
-                                                                        Lem_List.elem SC_register
-                                                                          specifs.storage_classes,
-                                                                        align_opt, qs, cty)
-                                                                  | _ =>
-                                                                    register_internal_object_declaration
-                                                                      sym1
-                                                                      (ident_loc, dur,
-                                                                        Lem_List.elem SC_register
-                                                                          specifs.storage_classes,
-                                                                        align_opt, qs, cty))
-                                                                 (fun (_ : Unit) =>
-                                                                   mk_desug_init ()))
-                                                               (fun (x : Option
-                                                                 (ctype × expression Unit)) =>
-                                                                 match x with
-                                                                 | some (ty', d_e) =>
-                                                                   stExpect_bind
-                                                                     (stExpect_return
-                                                                       (CerbDebug.print_debug_pure 2
-                                                                         [DB_desugaring]
-                                                                         (fun (u : Unit) =>
-                                                                           match u with
-                                                                           | () =>
-                                                                             String.append
-                                                                               "Hello, ty' = "
-                                                                               (CerbPP.stringFromAil_ctype
-                                                                                 no_qualifiers
-                                                                                 ty'))))
-                                                                     (fun (u : Unit) =>
-                                                                       match u with
-                                                                       | () =>
-                                                                         stExpect_bind
-                                                                           (lem_if ((fun (ty1 :
-                                                                               ctype)
-                                                                               (ty2 : ctype) =>
-                                                                               not
-                                                                                 (ctypeEqual ty1
-                                                                                   ty2)) cty
-                                                                               ty') then
+                                                      (desugar_gnu_alignment ident_loc attrs1 cty
+                                                        align_opt false)
+                                                      (fun (align_opt : Option alignment) =>
+                                                        stExpect_bind
+                                                          ((check_storage_class_specifiers
+                                                            _lemReader_enum_definitions
+                                                            _lemReader_tagDefs) loc1
+                                                            Object_decl_context
+                                                            specifs.storage_classes)
+                                                          (fun (u : Unit) =>
+                                                            match u with
+                                                            | () =>
+                                                              stExpect_bind
+                                                                (register_ordinary_identifier ident
+                                                                  (OK_object false)
+                                                                  specifs.storage_classes)
+                                                                (fun (p : (linkage × sym)) =>
+                                                                  match p with
+                                                                  | (link1, sym1) =>
+                                                                    (let dur :=
+                                                                       determinate_storage_duration
+                                                                         link1
+                                                                         specifs.storage_classes;
+                                                                     stExpect_bind
+                                                                       (stExpect_bind
+                                                                         (stExpect_bind
+                                                                           (match link1 with
+                                                                            | Linkage_external =>
+                                                                              register_external_object_declaration
+                                                                                sym1
+                                                                                (false /- TODO:check -/,
+                                                                                  ident_loc, attrs1,
+                                                                                  dur,
+                                                                                  Lem_List.elem
+                                                                                    SC_register
+                                                                                    specifs.storage_classes,
+                                                                                  align_opt, qs,
+                                                                                  cty)
+                                                                            | _ =>
+                                                                              register_internal_object_declaration
+                                                                                sym1
+                                                                                (ident_loc, dur,
+                                                                                  Lem_List.elem
+                                                                                    SC_register
+                                                                                    specifs.storage_classes,
+                                                                                  align_opt, qs,
+                                                                                  cty))
+                                                                           (fun (_ : Unit) =>
+                                                                             mk_desug_init ()))
+                                                                         (fun (x : Option
+                                                                           (ctype × expression
+                                                                             Unit)) =>
+                                                                           match x with
+                                                                           | some (ty', d_e) =>
                                                                              stExpect_bind
                                                                                (stExpect_return
                                                                                  (CerbDebug.print_debug_pure
@@ -4590,104 +4891,153 @@ partial def desugar_declaration_base [LemFuel] [CerberusFresh.Digest] [CerbImplC
                                                                                      Unit) =>
                                                                                      match u with
                                                                                      | () =>
-                                                                                       "ty' is new")))
+                                                                                       String.append
+                                                                                         "Hello, ty' = "
+                                                                                         (CerbPP.stringFromAil_ctype
+                                                                                           no_qualifiers
+                                                                                           ty'))))
                                                                                (fun (u : Unit) =>
                                                                                  match u with
-                                                                                 | () => /- TODO: tentative -/
-                                                                                   update_internal_object_type
-                                                                                     sym1 ty')
-                                                                               /-
+                                                                                 | () =>
+                                                                                   stExpect_bind
+                                                                                     (lem_if ((fun (ty1 :
+                                                                                         ctype)
+                                                                                         (ty2 :
+                                                                                           ctype) =>
+                                                                                         not
+                                                                                           (ctypeEqual
+                                                                                             ty1
+                                                                                             ty2))
+                                                                                         cty
+                                                                                         ty') then
+                                                                                       stExpect_bind
+                                                                                         (stExpect_return
+                                                                                           (CerbDebug.print_debug_pure
+                                                                                             2
+                                                                                             [DB_desugaring]
+                                                                                             (fun (u :
+                                                                                               Unit) =>
+                                                                                               match u with
+                                                                                               | () =>
+                                                                                                 "ty' is new")))
+                                                                                         (fun (u :
+                                                                                           Unit) =>
+                                                                                           match u with
+                                                                                           | () => /- TODO: tentative -/
+                                                                                             update_internal_object_type
+                                                                                               sym1
+                                                                                               ty')
+                                                                                         /-
                             E.register_internal_object_declaration ident_loc sym
                               (dur, List.elem SC_register specifs.storage_classes, qs, ty')
   -/
-                                                                           else
-                                                                             stExpect_return ())
-                                                                           (fun (_ : Unit) =>
-                                                                             match dur with
-                                                                             | Static =>
-                                                                               stExpect_bind
-                                                                                 (register_global_object_definition2
-                                                                                   ident_loc sym1
-                                                                                   link1
-                                                                                   (Definition d_e))
-                                                                                 (fun (_ : Unit) =>
-                                                                                   stExpect_return
-                                                                                     (ty', acc))
-                                                                             | Thread =>
-                                                                               (failwithI
-                                                                                 "TODO: desugar_declaration_base, Thread duration" :
-                                                                                 state_with_markers →
-                                                                                 exceptM
-                                                                                 ((ctype × List
-                                                                                   (sym × Option
-                                                                                     (expression
-                                                                                       Unit))) ×
-                                                                                   state_with_markers)
-                                                                                 error)
-                                                                             | _ =>
-                                                                               stExpect_return
-                                                                                 (ty',
-                                                                                   ((sym1,
-                                                                                     some d_e) ::
-                                                                                     acc))))
-                                                                 | none =>
-                                                                   (match dur with
-                                                                    | Static =>
-                                                                      (lem_if not
-                                                                          (Lem_List.elem SC_extern
-                                                                            specifs.storage_classes) then
-                                                                        stExpect_bind
-                                                                          get_tag_definitions
-                                                                          (fun (tagDefs1 : Fmap
-                                                                            ail_identifier
-                                                                            tag_definition0) =>
-                                                                            stExpect_bind
-                                                                              (register_global_object_definition
-                                                                                sym1
-                                                                                (Definition
-                                                                                  (mk_zeroInit
-                                                                                    tagDefs1 cty)))
-                                                                              (fun (u : Unit) =>
-                                                                                match u with
-                                                                                | () =>
+                                                                                     else
+                                                                                       stExpect_return
+                                                                                         ())
+                                                                                     (fun (_ :
+                                                                                       Unit) =>
+                                                                                       match dur with
+                                                                                       | Static =>
+                                                                                         stExpect_bind
+                                                                                           (register_global_object_definition2
+                                                                                             ident_loc
+                                                                                             sym1
+                                                                                             link1
+                                                                                             (Definition
+                                                                                               d_e))
+                                                                                           (fun (_ :
+                                                                                             Unit) =>
+                                                                                             stExpect_return
+                                                                                               (ty',
+                                                                                                 acc))
+                                                                                       | Thread =>
+                                                                                         (failwithI
+                                                                                           "TODO: desugar_declaration_base, Thread duration" :
+                                                                                           state_with_markers →
+                                                                                           exceptM
+                                                                                           ((ctype ×
+                                                                                             List
+                                                                                             (sym ×
+                                                                                               Option
+                                                                                               (expression
+                                                                                                 Unit))) ×
+                                                                                             state_with_markers)
+                                                                                           error)
+                                                                                       | _ =>
+                                                                                         stExpect_return
+                                                                                           (ty',
+                                                                                             ((sym1,
+                                                                                               some
+                                                                                                 d_e) ::
+                                                                                               acc))))
+                                                                           | none =>
+                                                                             (match dur with
+                                                                              | Static =>
+                                                                                (lem_if not
+                                                                                    (Lem_List.elem
+                                                                                      SC_extern
+                                                                                      specifs.storage_classes) then
+                                                                                  stExpect_bind
+                                                                                    get_tag_definitions
+                                                                                    (fun (tagDefs1 :
+                                                                                      Fmap
+                                                                                      ail_identifier
+                                                                                      tag_definition0) =>
+                                                                                      stExpect_bind
+                                                                                        (register_global_object_definition
+                                                                                          sym1
+                                                                                          (Definition
+                                                                                            (mk_zeroInit
+                                                                                              tagDefs1
+                                                                                              cty)))
+                                                                                        (fun (u :
+                                                                                          Unit) =>
+                                                                                          match u with
+                                                                                          | () =>
+                                                                                            stExpect_return
+                                                                                              (cty,
+                                                                                                acc)))
+                                                                                else
                                                                                   stExpect_return
-                                                                                    (cty, acc)))
-                                                                      else
-                                                                        stExpect_return (cty, acc))
-                                                                    | Automatic =>
-                                                                      stExpect_return
-                                                                        (cty, ((sym1, none) :: acc))
-                                                                    | Thread => /- TODO check -/
-                                                                      stExpect_return (cty, acc))))
-                                                             (fun (p :
-                                                               (ctype × List
-                                                                 (sym × Option
-                                                                   (expression Unit)))) =>
-                                                               match p with
-                                                               | (ty', ret) =>
-                                                                 stExpect_bind
-                                                                   (cabs_to_ail_effect_is_incomplete
-                                                                     ty')
-                                                                   (fun (is_incomplete2 : Bool) =>
-                                                                     lem_if (link1 ==
-                                                                         Linkage_none) &&
-                                                                         is_incomplete2 then
-                                                                       fun (_ :
-                                                                         state_with_markers) =>
-                                                                         fail0
-                                                                           ((match ident with
-                                                                             | (Identifier loc1
-                                                                               _) =>
-                                                                               loc1),
-                                                                             DESUGAR
-                                                                               (Desugar_UndefinedBehaviour
-                                                                                 UB059_incomplete_no_linkage_identifier))
-                                                                     else
-                                                                       stExpect_return
-                                                                         ret)))))))))))))
-                    ([] : List (sym × Option (expression Unit))) idecltors)
-                  ((fun (x : List (sym × Option (expression Unit)))=>
-                    stExpect_return (List.reverse x)))))
+                                                                                    (cty, acc))
+                                                                              | Automatic =>
+                                                                                stExpect_return
+                                                                                  (cty,
+                                                                                    ((sym1, none) ::
+                                                                                      acc))
+                                                                              | Thread => /- TODO check -/
+                                                                                stExpect_return
+                                                                                  (cty, acc))))
+                                                                       (fun (p :
+                                                                         (ctype × List
+                                                                           (sym × Option
+                                                                             (expression Unit)))) =>
+                                                                         match p with
+                                                                         | (ty', ret) =>
+                                                                           stExpect_bind
+                                                                             (cabs_to_ail_effect_is_incomplete
+                                                                               ty')
+                                                                             (fun (is_incomplete2 :
+                                                                               Bool) =>
+                                                                               lem_if (link1 ==
+                                                                                   Linkage_none) &&
+                                                                                   is_incomplete2 then
+                                                                                 fun (_ :
+                                                                                   state_with_markers) =>
+                                                                                   fail0
+                                                                                     ((match ident with
+                                                                                       | (Identifier
+                                                                                         loc1 _) =>
+                                                                                         loc1),
+                                                                                       DESUGAR
+                                                                                         (Desugar_UndefinedBehaviour
+                                                                                           UB059_incomplete_no_linkage_identifier))
+                                                                               else
+                                                                                 stExpect_return
+                                                                                   ret)))))))))))))))
+                      ([] : List (sym × Option (expression Unit))) idecltors)
+                    ((fun (x : List (sym × Option (expression Unit)))=>
+                      stExpect_return (List.reverse x))))))
 partial def desugar_block_statement [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
     [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
@@ -4753,407 +5103,477 @@ partial def desugar_statement_aux [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.
     state_with_markers → exceptM (statement Unit × state_with_markers) error :=
   match ctx, c with
   | ctx, (CabsStatement loc1 attrs1 stmt_) =>
-    (let attrs_outer := attrs1;
-     let self :=(desugar_statement_aux _lemReader_enum_definitions _lemReader_tagDefs) ctx;
-     let desug_info2 :=
-       (({ is_forloop_body := false,
-           desug_case0 :=
-             match stmt_ with
-             | CabsSfor _ _ _ _ => some Desug_forloop
-             | CabsScontinue => some Desug_continue
-             | _ => none } : desug_info));
+    (let attrs1 :=
+       match stmt_ with
+       | CabsSdecl (Declaration_base decl_attrs _ _) => combine_attributes attrs1 decl_attrs
+       | _ => attrs1;
+     let attrs_outer := attrs1;
      stExpect_bind
        (match stmt_ with
-        | CabsSlabel ident s =>
-          stExpect_bind
-            (stExpect_bind
-              (stExpect_bind (resolve_label ident) (fun (z : sym) => stExpect_return (AilSlabel z)))
-              (fun (f : statement Unit → Option label_annot → statement_ Unit) =>
-                stExpect_bind (self s) (fun (z : statement Unit) => stExpect_return (f z))))
-            (fun (f : Option label_annot → statement_ Unit) =>
-              stExpect_bind (stExpect_return none) (fun (z : Option label_annot) =>
-                stExpect_return (f z)))
-        | CabsScase e s =>
-          (lem_if CerbGlobal.isAgnostic () then
-            fun (_ : state_with_markers) =>
-              fail0
-                (loc1,
-                  DESUGAR
-                    (Desugar_agnosticFailure
-                      "case statements are not supported in the agnostic mode"))
-          else
-            stExpect_bind
-              (stExpect_bind
-                ((desugar_expression0 _lemReader_enum_definitions _lemReader_tagDefs) e)
-                (evaluate_integer_constant_expression0
-                  (match e with
-                   | (CabsExpression loc1 _) => loc1) none))
-              (fun (n : Int) =>
+        | CabsSdecl _ => stExpect_return gnu_no_effects
+        | _ => desugar_gnu_attributes loc1 attrs1)
+       (fun (statement_effects : gnu_decl_effects) =>
+         lem_if statement_effects.gnu_packed ||
+             (statement_effects.gnu_noreturn || not (isNothing statement_effects.gnu_aligned)) then
+           fun (_ : state_with_markers) =>
+             fail0
+               (loc1,
+                 DESUGAR
+                   (Desugar_NotYetSupported
+                     "GNU declaration layout/effect cannot be attached to a statement"))
+         else
+           let self :=(desugar_statement_aux _lemReader_enum_definitions _lemReader_tagDefs) ctx;
+           let desug_info2 :=
+             (({ is_forloop_body := false,
+                 desug_case0 :=
+                   match stmt_ with
+                   | CabsSfor _ _ _ _ => some Desug_forloop
+                   | CabsScontinue => some Desug_continue
+                   | _ => none } : desug_info));
+           stExpect_bind
+             (match stmt_ with
+              | CabsSlabel ident s =>
                 stExpect_bind
-                  (register_case
-                    (match e with
-                     | (CabsExpression loc1 _) => loc1) (CaseSelectConst n))
-                  (fun (u : Unit) =>
-                    match u with
-                    | () =>
-                      stExpect_bind (self s) (fun (z : statement Unit) =>
-                        stExpect_return (AilScase n z)))))
-        | CabsSdefault s =>
-          stExpect_bind (register_default loc1) (fun (u : Unit) =>
-            match u with
-            | () =>
-              stExpect_bind (self s) (fun (z : statement Unit) => stExpect_return (AilSdefault z)))
-        | CabsSblock ss =>
-          stExpect_bind
-            ((desugar_block_statement _lemReader_enum_definitions _lemReader_tagDefs) self ss)
-            (fun (p :
-              (List
-                (ail_identifier ×
-                  ((CerbLocation.Loc × storageDuration × Bool) × Option alignment × qualifiers ×
-                    ctype)) × List (statement Unit))) =>
-              match p with
-              | (bs, d_ss') => stExpect_return (AilSblock bs d_ss'))
-        | CabsSdecl (Declaration_base attrs1 specifs idecltors) =>
-          stExpect_bind
-            ((desugar_declaration_base _lemReader_enum_definitions _lemReader_tagDefs) attrs1
-              specifs idecltors)
-            (fun (z : List (ail_identifier × Option (expression Unit))) =>
-              stExpect_return
-                ((fun (x : List (ail_identifier × Option (expression Unit))) =>
-                  match x with
-                  | [] => AilSskip
-                  | xs => AilSdeclaration xs) z))
-        | CabsSdecl (Declaration_static_assert sa_decl) =>
-          stExpect_bind
-            ((desugar_and_register_static_assert_declaration _lemReader_enum_definitions
-              _lemReader_tagDefs) sa_decl)
-            (fun (_ : Unit) => /- TODO: hackish -/ stExpect_return AilSskip)
-        | CabsSnull => stExpect_return AilSskip
-        | CabsSexpr e =>
-          stExpect_bind ((desugar_expression0 _lemReader_enum_definitions _lemReader_tagDefs) e)
-            (fun (z : expression Unit) => stExpect_return (AilSexpr z))
-        | CabsSif e s1 s2_opt =>
-          stExpect_bind /- STD §6.8.4#3 both the if-statement and its sub statements are distinct blocks -/
-            /- NOTE: there is no risk of missing object delcarations in these scopes because:
+                  (stExpect_bind
+                    (stExpect_bind (resolve_label ident) (fun (z : sym) =>
+                      stExpect_return (AilSlabel z)))
+                    (fun (f : statement Unit → Option label_annot → statement_ Unit) =>
+                      stExpect_bind (self s) (fun (z : statement Unit) => stExpect_return (f z))))
+                  (fun (f : Option label_annot → statement_ Unit) =>
+                    stExpect_bind (stExpect_return none) (fun (z : Option label_annot) =>
+                      stExpect_return (f z)))
+              | CabsScase e s =>
+                (lem_if CerbGlobal.isAgnostic () then
+                  fun (_ : state_with_markers) =>
+                    fail0
+                      (loc1,
+                        DESUGAR
+                          (Desugar_agnosticFailure
+                            "case statements are not supported in the agnostic mode"))
+                else
+                  stExpect_bind
+                    (stExpect_bind
+                      ((desugar_expression0 _lemReader_enum_definitions _lemReader_tagDefs) e)
+                      (evaluate_integer_constant_expression0
+                        (match e with
+                         | (CabsExpression loc1 _) => loc1) none))
+                    (fun (n : Int) =>
+                      stExpect_bind
+                        (register_case
+                          (match e with
+                           | (CabsExpression loc1 _) => loc1) (CaseSelectConst n))
+                        (fun (u : Unit) =>
+                          match u with
+                          | () =>
+                            stExpect_bind (self s) (fun (z : statement Unit) =>
+                              stExpect_return (AilScase n z)))))
+              | CabsSdefault s =>
+                stExpect_bind (register_default loc1) (fun (u : Unit) =>
+                  match u with
+                  | () =>
+                    stExpect_bind (self s) (fun (z : statement Unit) =>
+                      stExpect_return (AilSdefault z)))
+              | CabsSblock ss =>
+                stExpect_bind
+                  ((desugar_block_statement _lemReader_enum_definitions _lemReader_tagDefs) self ss)
+                  (fun (p :
+                    (List
+                      (ail_identifier ×
+                        ((CerbLocation.Loc × storageDuration × Bool) × Option alignment ×
+                          qualifiers × ctype)) × List (statement Unit))) =>
+                    match p with
+                    | (bs, d_ss') => stExpect_return (AilSblock bs d_ss'))
+              | CabsSdecl (Declaration_base attrs1 specifs idecltors) =>
+                stExpect_bind
+                  ((desugar_declaration_base _lemReader_enum_definitions _lemReader_tagDefs) attrs1
+                    specifs idecltors)
+                  (fun (z : List (ail_identifier × Option (expression Unit))) =>
+                    stExpect_return
+                      ((fun (x : List (ail_identifier × Option (expression Unit))) =>
+                        match x with
+                        | [] => AilSskip
+                        | xs => AilSdeclaration xs) z))
+              | CabsSdecl (Declaration_static_assert sa_decl) =>
+                stExpect_bind
+                  ((desugar_and_register_static_assert_declaration _lemReader_enum_definitions
+                    _lemReader_tagDefs) sa_decl)
+                  (fun (_ : Unit) => /- TODO: hackish -/ stExpect_return AilSskip)
+              | CabsSnull => stExpect_return AilSskip
+              | CabsSexpr e =>
+                stExpect_bind
+                  ((desugar_expression0 _lemReader_enum_definitions _lemReader_tagDefs) e)
+                  (fun (z : expression Unit) => stExpect_return (AilSexpr z))
+              | CabsSif e s1 s2_opt =>
+                stExpect_bind /- STD §6.8.4#3 both the if-statement and its sub statements are distinct blocks -/
+                  /- NOTE: there is no risk of missing object delcarations in these scopes because:
                      1. the controlling expression can't declare any object (but can declare enum
                         constants, hence the scope)
                      2. if the sub-statements are declaring objects, it can be because of
                         a naked CabsSdecl because the parser won't accept it -/
-            fresh_block_scope
-            (fun (if_scope : scope) =>
-              stExpect_bind fresh_block_scope (fun (s1_scope : scope) =>
-                under_scope if_scope
-                  (stExpect_bind
-                    (stExpect_bind
-                      (stExpect_bind
-                        ((desugar_expression0 _lemReader_enum_definitions _lemReader_tagDefs) e)
-                        (fun (z : expression Unit) => stExpect_return (AilSif z)))
-                      (fun (f : statement Unit → statement Unit → statement_ Unit) =>
-                        stExpect_bind (under_scope s1_scope (self s1)) (fun (z : statement Unit) =>
-                          stExpect_return (f z))))
-                    (fun (f : statement Unit → statement_ Unit) =>
-                      stExpect_bind
-                        (maybe0 (stExpect_return (mk_statement loc1 AilSskip))
-                          (fun (z : cabs_statement) =>
-                            stExpect_bind fresh_block_scope (fun (s2_scope : scope) =>
-                              under_scope s2_scope (self z))) s2_opt)
-                        (fun (z : statement Unit) => stExpect_return (f z))))))
-        | CabsSswitch e s =>
-          stExpect_bind /- STD §6.8.4#3 both the switch-statement and its sub statement are distinct blocks -/
-            /- NOTE: see the note in CabsSif -/ fresh_block_scope
-            (fun (switch_scope : scope) =>
-              stExpect_bind fresh_block_scope (fun (s_scope : scope) =>
-                under_scope switch_scope
-                  (stExpect_bind
-                    (stExpect_bind
-                      ((desugar_expression0 _lemReader_enum_definitions _lemReader_tagDefs) e)
-                      (fun (z : expression Unit) => stExpect_return (AilSswitch z)))
-                    (fun (f : statement Unit → statement_ Unit) =>
-                      stExpect_bind (under_scope s_scope (as_switch_body (self s)))
-                        (fun (z : statement Unit) => stExpect_return (f z))))))
-        | CabsSwhile e s =>
-          stExpect_bind
-            (/- TODO: when supporting VLAs ==> §6.8.4.2#2 -/ freshify
-              (Identifier loc1 "__cerb_continue"))
-            (fun (cont_ident : identifier) =>
-              stExpect_bind
-                (stExpect_bind (register_label cont_ident) (fun (_ : Unit) =>
-                  resolve_label cont_ident))
-                (fun (cont_sym : sym) =>
-                  let ctx' := (({ cont_ident_opt := (some cont_ident) } : stmt_context));
-                  stExpect_bind /- STD §6.8.5#5 both the while-statement and its body are distinct blocks -/
-                    /- NOTE: the note in CabsSif also applies here -/ fresh_block_scope
-                    (fun (while_scope : scope) =>
-                      stExpect_bind fresh_block_scope (fun (s_scope : scope) =>
-                        stExpect_bind
-                          (under_scope while_scope
+                  fresh_block_scope
+                  (fun (if_scope : scope) =>
+                    stExpect_bind fresh_block_scope (fun (s1_scope : scope) =>
+                      under_scope if_scope
+                        (stExpect_bind
+                          (stExpect_bind
                             (stExpect_bind
                               ((desugar_expression0 _lemReader_enum_definitions _lemReader_tagDefs)
-                                e)
-                              (fun (d_e : expression Unit) =>
-                                stExpect_bind
-                                  (under_scope s_scope
-                                    ((desugar_statement_aux _lemReader_enum_definitions
-                                      _lemReader_tagDefs) ctx' s))
-                                  (fun (d_s : statement Unit) => stExpect_return (d_e, d_s)))))
-                          (fun (p : (expression Unit × statement Unit)) =>
-                            match p with
-                            | (d_e, d_s) =>
-                              stExpect_bind (fresh_sym_int ()) (fun (loop_id1 : Nat) =>
-                                stExpect_bind
-                                  (record_loop_attribute loop_id1 attrs1
-                                    (match e with
-                                     | (CabsExpression loc1 _) => loc1) loc1)
-                                  (fun (u : Unit) =>
-                                    match u with
-                                    | () =>
-                                      (lem_if has_continue
-                                          s then /- while (E) S  ==>  while (E) { S; cont: ;} -/
-                                        stExpect_return
-                                          (AilSwhile d_e
-                                            (mk_statement loc1
-                                              (AilSblock
-                                                ([] : List
-                                                  (ail_identifier ×
-                                                    ((CerbLocation.Loc × storageDuration × Bool) ×
-                                                      Option alignment × qualifiers × ctype)))
-                                                [d_s,
-                                                  mk_statement loc1
-                                                    (AilSlabel cont_sym (mk_statement loc1 AilSskip)
-                                                      (some (LAloop_continue loop_id1)))]))
-                                            loop_id1)
-                                      else
-                                        stExpect_return (AilSwhile d_e d_s loop_id1)))))))))
-        | CabsSdo e s =>
-          stExpect_bind (freshify (Identifier loc1 "__cerb_continue"))
-            (fun (cont_ident : identifier) =>
-              stExpect_bind
-                (stExpect_bind (register_label cont_ident) (fun (_ : Unit) =>
-                  resolve_label cont_ident))
-                (fun (cont_sym : sym) =>
-                  let ctx' := (({ cont_ident_opt := (some cont_ident) } : stmt_context));
-                  stExpect_bind /- STD §6.8.5#5 both the do-statement and its body are distinct blocks -/
-                    /- NOTE: the note in CabsSif also applies here -/ fresh_block_scope
-                    (fun (while_scope : scope) =>
-                      stExpect_bind fresh_block_scope (fun (s_scope : scope) =>
-                        stExpect_bind
-                          (under_scope while_scope
-                            (stExpect_bind
-                              (under_scope s_scope
-                                ((desugar_statement_aux _lemReader_enum_definitions
-                                  _lemReader_tagDefs) ctx' s))
-                              (fun (d_s : statement Unit) =>
-                                stExpect_bind
-                                  ((desugar_expression0 _lemReader_enum_definitions
-                                    _lemReader_tagDefs) e)
-                                  (fun (d_e : expression Unit) => stExpect_return (d_e, d_s)))))
-                          (fun (p : (expression Unit × statement Unit)) =>
-                            match p with
-                            | (d_e, d_s) =>
-                              stExpect_bind (fresh_sym_int ()) (fun (loop_id1 : Nat) =>
-                                stExpect_bind
-                                  (record_loop_attribute loop_id1 attrs1
-                                    (match e with
-                                     | (CabsExpression loc1 _) => loc1) loc1)
-                                  (fun (u : Unit) =>
-                                    match u with
-                                    | () =>
-                                      (lem_if has_continue
-                                          s then /- do S (E)  ==>  do { S; cont: ;} (E) -/
-                                        stExpect_return
-                                          (AilSdo
-                                            (mk_statement loc1
-                                              (AilSblock
-                                                ([] : List
-                                                  (ail_identifier ×
-                                                    ((CerbLocation.Loc × storageDuration × Bool) ×
-                                                      Option alignment × qualifiers × ctype)))
-                                                [d_s,
-                                                  mk_statement loc1
-                                                    (AilSlabel cont_sym (mk_statement loc1 AilSskip)
-                                                      (some (LAloop_continue loop_id1)))])) d_e
-                                            loop_id1)
-                                      else
-                                        stExpect_return (AilSdo d_s d_e loop_id1)))))))))
-        | CabsSfor (some (FC_decl decl_loc ((Declaration_base attrs1 specifs idecltors)))) e2_opt
-          e3_opt s =>
-          stExpect_bind (freshify (Identifier loc1 "__cerb_continue"))
-            (fun (cont_ident : identifier) =>
-              stExpect_bind
-                (stExpect_bind (register_label cont_ident) (fun (_ : Unit) =>
-                  resolve_label cont_ident))
-                (fun (cont_sym : sym) =>
-                  let ctx' := (({ cont_ident_opt := (some cont_ident) } : stmt_context));
-                  stExpect_bind fresh_block_scope (fun (for_scope : scope) =>
-                    under_scope for_scope
-                      (stExpect_bind
-                        ((desugar_type_specifiers _lemReader_enum_definitions _lemReader_tagDefs)
-                          specifs.type_specifiers)
-                        (fun (p : (qualifiers × ctype)) =>
-                          match p with
-                          | (specs_qs, base_ty) =>
-                            (match translate_type_qualifiers specifs.type_qualifiers with
-                             | (isAtomic, tquals_qs) =>
-                               (let base_qs := combine_qualifiers specs_qs tquals_qs;
-                                stExpect_bind
-                                  (stExpect_mapM
-                                    (fun (i : init_declarator) =>
-                                      match i with
-                                      | init@(InitDecl loc1 _ _) =>
-                                        stExpect_bind
-                                          ((check_storage_class_specifiers
-                                            _lemReader_enum_definitions _lemReader_tagDefs) loc1
-                                            Object_decl_context specifs.storage_classes)
-                                          (fun (u : Unit) =>
-                                            match u with
-                                            | () =>
-                                              (desugar_init_declarator _lemReader_enum_definitions
-                                                _lemReader_tagDefs) attrs1 isAtomic
-                                                (not
-                                                  ((listEqualBy (fun x y => x == y)
-                                                    specifs.alignment_specifiers
-                                                    ([] : List alignment_specifier)))) base_qs
-                                                base_ty specifs.storage_classes init)) idecltors)
-                                  (fun (xs : List
-                                    (Option
-                                      (CerbLocation.Loc × attributes × linkage × sym × Bool ×
-                                        (qualifiers × ctype) ×
-                                        (Unit → state_with_markers → exceptM
-                                          (Option (ctype × expression Unit) × state_with_markers)
-                                          error)))) =>
+                                e) (fun (z : expression Unit) => stExpect_return (AilSif z)))
+                            (fun (f : statement Unit → statement Unit → statement_ Unit) =>
+                              stExpect_bind (under_scope s1_scope (self s1))
+                                (fun (z : statement Unit) => stExpect_return (f z))))
+                          (fun (f : statement Unit → statement_ Unit) =>
+                            stExpect_bind
+                              (maybe0 (stExpect_return (mk_statement loc1 AilSskip))
+                                (fun (z : cabs_statement) =>
+                                  stExpect_bind fresh_block_scope (fun (s2_scope : scope) =>
+                                    under_scope s2_scope (self z))) s2_opt)
+                              (fun (z : statement Unit) => stExpect_return (f z))))))
+              | CabsSswitch e s =>
+                stExpect_bind /- STD §6.8.4#3 both the switch-statement and its sub statement are distinct blocks -/
+                  /- NOTE: see the note in CabsSif -/ fresh_block_scope
+                  (fun (switch_scope : scope) =>
+                    stExpect_bind fresh_block_scope (fun (s_scope : scope) =>
+                      under_scope switch_scope
+                        (stExpect_bind
+                          (stExpect_bind
+                            ((desugar_expression0 _lemReader_enum_definitions _lemReader_tagDefs) e)
+                            (fun (z : expression Unit) => stExpect_return (AilSswitch z)))
+                          (fun (f : statement Unit → statement_ Unit) =>
+                            stExpect_bind (under_scope s_scope (as_switch_body (self s)))
+                              (fun (z : statement Unit) => stExpect_return (f z))))))
+              | CabsSwhile e s =>
+                stExpect_bind
+                  (/- TODO: when supporting VLAs ==> §6.8.4.2#2 -/ freshify
+                    (Identifier loc1 "__cerb_continue"))
+                  (fun (cont_ident : identifier) =>
+                    stExpect_bind
+                      (stExpect_bind (register_label cont_ident) (fun (_ : Unit) =>
+                        resolve_label cont_ident))
+                      (fun (cont_sym : sym) =>
+                        let ctx' := (({ cont_ident_opt := (some cont_ident) } : stmt_context));
+                        stExpect_bind /- STD §6.8.5#5 both the while-statement and its body are distinct blocks -/
+                          /- NOTE: the note in CabsSif also applies here -/ fresh_block_scope
+                          (fun (while_scope : scope) =>
+                            stExpect_bind fresh_block_scope (fun (s_scope : scope) =>
+                              stExpect_bind
+                                (under_scope while_scope
+                                  (stExpect_bind
+                                    ((desugar_expression0 _lemReader_enum_definitions
+                                      _lemReader_tagDefs) e)
+                                    (fun (d_e : expression Unit) =>
+                                      stExpect_bind
+                                        (under_scope s_scope
+                                          ((desugar_statement_aux _lemReader_enum_definitions
+                                            _lemReader_tagDefs) ctx' s))
+                                        (fun (d_s : statement Unit) =>
+                                          stExpect_return (d_e, d_s)))))
+                                (fun (p : (expression Unit × statement Unit)) =>
+                                  match p with
+                                  | (d_e, d_s) =>
                                     stExpect_bind (fresh_sym_int ()) (fun (loop_id1 : Nat) =>
                                       stExpect_bind
-                                        (stExpect_bind
-                                          (record_loop_attribute loop_id1 attrs_outer
-                                            (match e2_opt with
-                                             | some e2 =>
-                                               (match e2 with
-                                                | (CabsExpression loc1 _) => loc1)
-                                             | none => CerbLocation.unknown) loc1)
-                                          (fun (_ : Unit) => /- for each [init_declarator] -/
-                                            foldrM0
-                                              (fun (opt : Option
-                                                (CerbLocation.Loc × attributes × linkage × sym ×
-                                                  Bool × (qualifiers × ctype) ×
-                                                  (Unit → state_with_markers → exceptM
-                                                    (Option (ctype × expression Unit) ×
-                                                      state_with_markers) error)))
-                                                (p :
-                                                  (List (sym × Option (expression Unit)) × List
-                                                    (sym ×
-                                                      ((CerbLocation.Loc × storageDuration × Bool) ×
-                                                        Option alignment × qualifiers × ctype)))) =>
-                                                match opt, p with
-                                                | opt, (acc1, acc2) =>
-                                                  (match opt with
-                                                   | none =>
-                                                     (/- Case of a typedef -/ fun (_ :
-                                                       state_with_markers) =>
-                                                       fail0
-                                                         (loc1,
-                                                           DESUGAR
-                                                             (Desugar_ConstraintViolation
-                                                               IllegalStorageClassIterationStatement)))
-                                                   | some
-                                                     (ident_loc, _, link1, sym1, is_tentative,
-                                                       (qs, ty1), mk_desug_init) =>
-                                                     (lem_if is_tentative then /- NOTE: this shouldn't be possible since tentative definition are file scoped -/
-                                                       (failwithI
-                                                         "Cabs_to_ail.desugar_statement, CabsSfor found a positive is_tentative" :
-                                                         state_with_markers → exceptM
-                                                         ((List (sym × Option (expression Unit)) ×
-                                                           List
-                                                           (sym ×
-                                                             ((CerbLocation.Loc × storageDuration ×
-                                                               Bool) × Option alignment ×
-                                                               qualifiers × ctype))) ×
-                                                           state_with_markers)
-                                                         (CerbLocation.Loc × cause))
-                                                     else lem_if not
-                                                         ((listEqualBy (fun x y => x == y)
-                                                           specifs.storage_classes
-                                                           ([] : List storage_class_specifier)) ||
-                                                           ((listEqualBy (fun x y => x == y)
-                                                             specifs.storage_classes [SC_auto]) ||
-                                                             (listEqualBy (fun x y => x == y)
-                                                               specifs.storage_classes
-                                                               [SC_register]))) then /- NOTE: amusingly, as it is written, the STD doesn't allow the absence of storage-class ... -/
-                                                       fun (_ : state_with_markers) =>
-                                                         fail0
-                                                           (ident_loc,
-                                                             DESUGAR
-                                                               (Desugar_ConstraintViolation
-                                                                 IllegalStorageClassIterationStatement))
-                                                     else
-                                                       match ty1 with
-                                                       | Ctype _ (Function _ _ _) =>
-                                                         (fun (_ : state_with_markers) =>
-                                                           fail0
-                                                             (loc1,
-                                                               DESUGAR
-                                                                 (Desugar_ConstraintViolation
-                                                                   IllegalStorageClassIterationStatement)))
-                                                       | _ =>
-                                                         stExpect_bind (mk_desug_init ())
-                                                           (fun (x : Option
-                                                             (ctype × expression Unit)) =>
-                                                             match x with
-                                                             | some (ty', d_e) =>
-                                                               (let dur :=
-                                                                  determinate_storage_duration link1
-                                                                    specifs.storage_classes;
-                                                                stExpect_bind
-                                                                  (stExpect_return
-                                                                    (CerbDebug.print_debug_pure 2
-                                                                      [DB_desugaring]
-                                                                      (fun (u : Unit) =>
-                                                                        match u with
-                                                                        | () =>
-                                                                          String.append
-                                                                            "Hello, ty' = "
-                                                                            (CerbPP.stringFromAil_ctype
-                                                                              no_qualifiers ty'))))
-                                                                  (fun (u : Unit) =>
-                                                                    match u with
-                                                                    | () =>
+                                        (record_loop_attribute loop_id1 attrs1
+                                          (match e with
+                                           | (CabsExpression loc1 _) => loc1) loc1)
+                                        (fun (u : Unit) =>
+                                          match u with
+                                          | () =>
+                                            (lem_if has_continue
+                                                s then /- while (E) S  ==>  while (E) { S; cont: ;} -/
+                                              stExpect_return
+                                                (AilSwhile d_e
+                                                  (mk_statement loc1
+                                                    (AilSblock
+                                                      ([] : List
+                                                        (ail_identifier ×
+                                                          ((CerbLocation.Loc × storageDuration ×
+                                                            Bool) × Option alignment × qualifiers ×
+                                                            ctype)))
+                                                      [d_s,
+                                                        mk_statement loc1
+                                                          (AilSlabel cont_sym
+                                                            (mk_statement loc1 AilSskip)
+                                                            (some (LAloop_continue loop_id1)))]))
+                                                  loop_id1)
+                                            else
+                                              stExpect_return (AilSwhile d_e d_s loop_id1)))))))))
+              | CabsSdo e s =>
+                stExpect_bind (freshify (Identifier loc1 "__cerb_continue"))
+                  (fun (cont_ident : identifier) =>
+                    stExpect_bind
+                      (stExpect_bind (register_label cont_ident) (fun (_ : Unit) =>
+                        resolve_label cont_ident))
+                      (fun (cont_sym : sym) =>
+                        let ctx' := (({ cont_ident_opt := (some cont_ident) } : stmt_context));
+                        stExpect_bind /- STD §6.8.5#5 both the do-statement and its body are distinct blocks -/
+                          /- NOTE: the note in CabsSif also applies here -/ fresh_block_scope
+                          (fun (while_scope : scope) =>
+                            stExpect_bind fresh_block_scope (fun (s_scope : scope) =>
+                              stExpect_bind
+                                (under_scope while_scope
+                                  (stExpect_bind
+                                    (under_scope s_scope
+                                      ((desugar_statement_aux _lemReader_enum_definitions
+                                        _lemReader_tagDefs) ctx' s))
+                                    (fun (d_s : statement Unit) =>
+                                      stExpect_bind
+                                        ((desugar_expression0 _lemReader_enum_definitions
+                                          _lemReader_tagDefs) e)
+                                        (fun (d_e : expression Unit) =>
+                                          stExpect_return (d_e, d_s)))))
+                                (fun (p : (expression Unit × statement Unit)) =>
+                                  match p with
+                                  | (d_e, d_s) =>
+                                    stExpect_bind (fresh_sym_int ()) (fun (loop_id1 : Nat) =>
+                                      stExpect_bind
+                                        (record_loop_attribute loop_id1 attrs1
+                                          (match e with
+                                           | (CabsExpression loc1 _) => loc1) loc1)
+                                        (fun (u : Unit) =>
+                                          match u with
+                                          | () =>
+                                            (lem_if has_continue
+                                                s then /- do S (E)  ==>  do { S; cont: ;} (E) -/
+                                              stExpect_return
+                                                (AilSdo
+                                                  (mk_statement loc1
+                                                    (AilSblock
+                                                      ([] : List
+                                                        (ail_identifier ×
+                                                          ((CerbLocation.Loc × storageDuration ×
+                                                            Bool) × Option alignment × qualifiers ×
+                                                            ctype)))
+                                                      [d_s,
+                                                        mk_statement loc1
+                                                          (AilSlabel cont_sym
+                                                            (mk_statement loc1 AilSskip)
+                                                            (some (LAloop_continue loop_id1)))]))
+                                                  d_e loop_id1)
+                                            else
+                                              stExpect_return (AilSdo d_s d_e loop_id1)))))))))
+              | CabsSfor (some (FC_decl decl_loc ((Declaration_base attrs1 specifs idecltors))))
+                e2_opt e3_opt s =>
+                stExpect_bind (freshify (Identifier loc1 "__cerb_continue"))
+                  (fun (cont_ident : identifier) =>
+                    stExpect_bind
+                      (stExpect_bind (register_label cont_ident) (fun (_ : Unit) =>
+                        resolve_label cont_ident))
+                      (fun (cont_sym : sym) =>
+                        let ctx' := (({ cont_ident_opt := (some cont_ident) } : stmt_context));
+                        stExpect_bind fresh_block_scope (fun (for_scope : scope) =>
+                          under_scope for_scope
+                            (stExpect_bind
+                              ((desugar_type_specifiers _lemReader_enum_definitions
+                                _lemReader_tagDefs) specifs.type_specifiers)
+                              (fun (p : (qualifiers × ctype)) =>
+                                match p with
+                                | (specs_qs, base_ty) =>
+                                  (match translate_type_qualifiers specifs.type_qualifiers with
+                                   | (isAtomic, tquals_qs) =>
+                                     (let base_qs := combine_qualifiers specs_qs tquals_qs;
+                                      stExpect_bind
+                                        (stExpect_mapM
+                                          (fun (i : init_declarator) =>
+                                            match i with
+                                            | init@(InitDecl loc1 _ _) =>
+                                              stExpect_bind
+                                                ((check_storage_class_specifiers
+                                                  _lemReader_enum_definitions _lemReader_tagDefs)
+                                                  loc1 Object_decl_context specifs.storage_classes)
+                                                (fun (u : Unit) =>
+                                                  match u with
+                                                  | () =>
+                                                    (desugar_init_declarator
+                                                      _lemReader_enum_definitions
+                                                      _lemReader_tagDefs) attrs1 isAtomic
+                                                      (not
+                                                        ((listEqualBy (fun x y => x == y)
+                                                          specifs.alignment_specifiers
+                                                          ([] : List alignment_specifier)))) base_qs
+                                                      base_ty specifs.storage_classes init))
+                                          idecltors)
+                                        (fun (xs : List
+                                          (Option
+                                            (CerbLocation.Loc × attributes × linkage × sym × Bool ×
+                                              (qualifiers × ctype) ×
+                                              (Unit → state_with_markers → exceptM
+                                                (Option (ctype × expression Unit) ×
+                                                  state_with_markers) error)))) =>
+                                          stExpect_bind (fresh_sym_int ()) (fun (loop_id1 : Nat) =>
+                                            stExpect_bind
+                                              (stExpect_bind
+                                                (record_loop_attribute loop_id1 attrs_outer
+                                                  (match e2_opt with
+                                                   | some e2 =>
+                                                     (match e2 with
+                                                      | (CabsExpression loc1 _) => loc1)
+                                                   | none => CerbLocation.unknown) loc1)
+                                                (fun (_ : Unit) => /- for each [init_declarator] -/
+                                                  foldrM0
+                                                    (fun (opt : Option
+                                                      (CerbLocation.Loc × attributes × linkage ×
+                                                        sym × Bool × (qualifiers × ctype) ×
+                                                        (Unit → state_with_markers → exceptM
+                                                          (Option (ctype × expression Unit) ×
+                                                            state_with_markers) error)))
+                                                      (p :
+                                                        (List (sym × Option (expression Unit)) ×
+                                                          List
+                                                          (sym ×
+                                                            ((CerbLocation.Loc × storageDuration ×
+                                                              Bool) × Option alignment ×
+                                                              qualifiers × ctype)))) =>
+                                                      match opt, p with
+                                                      | opt, (acc1, acc2) =>
+                                                        (match opt with
+                                                         | none =>
+                                                           (/- Case of a typedef -/ fun (_ :
+                                                             state_with_markers) =>
+                                                             fail0
+                                                               (loc1,
+                                                                 DESUGAR
+                                                                   (Desugar_ConstraintViolation
+                                                                     IllegalStorageClassIterationStatement)))
+                                                         | some
+                                                           (ident_loc, _, link1, sym1, is_tentative,
+                                                             (qs, ty1), mk_desug_init) =>
+                                                           (lem_if is_tentative then /- NOTE: this shouldn't be possible since tentative definition are file scoped -/
+                                                             (failwithI
+                                                               "Cabs_to_ail.desugar_statement, CabsSfor found a positive is_tentative" :
+                                                               state_with_markers → exceptM
+                                                               ((List
+                                                                 (sym × Option (expression Unit)) ×
+                                                                 List
+                                                                 (sym ×
+                                                                   ((CerbLocation.Loc ×
+                                                                     storageDuration × Bool) ×
+                                                                     Option alignment × qualifiers ×
+                                                                     ctype))) × state_with_markers)
+                                                               (CerbLocation.Loc × cause))
+                                                           else lem_if not
+                                                               ((listEqualBy (fun x y => x == y)
+                                                                 specifs.storage_classes
+                                                                 ([] : List
+                                                                   storage_class_specifier)) ||
+                                                                 ((listEqualBy (fun x y => x == y)
+                                                                   specifs.storage_classes
+                                                                   [SC_auto]) ||
+                                                                   (listEqualBy (fun x y => x == y)
+                                                                     specifs.storage_classes
+                                                                     [SC_register]))) then /- NOTE: amusingly, as it is written, the STD doesn't allow the absence of storage-class ... -/
+                                                             fun (_ : state_with_markers) =>
+                                                               fail0
+                                                                 (ident_loc,
+                                                                   DESUGAR
+                                                                     (Desugar_ConstraintViolation
+                                                                       IllegalStorageClassIterationStatement))
+                                                           else
+                                                             match ty1 with
+                                                             | Ctype _ (Function _ _ _) =>
+                                                               (fun (_ : state_with_markers) =>
+                                                                 fail0
+                                                                   (loc1,
+                                                                     DESUGAR
+                                                                       (Desugar_ConstraintViolation
+                                                                         IllegalStorageClassIterationStatement)))
+                                                             | _ =>
+                                                               stExpect_bind (mk_desug_init ())
+                                                                 (fun (x : Option
+                                                                   (ctype × expression Unit)) =>
+                                                                   match x with
+                                                                   | some (ty', d_e) =>
+                                                                     (let dur :=
+                                                                        determinate_storage_duration
+                                                                          link1
+                                                                          specifs.storage_classes;
                                                                       stExpect_bind
-                                                                        (lem_if ((fun (ty1 : ctype)
-                                                                            (ty2 : ctype) =>
-                                                                            not
-                                                                              (ctypeEqual ty1 ty2))
-                                                                            ty1 ty') then
-                                                                          stExpect_bind
-                                                                            (stExpect_return
-                                                                              (CerbDebug.print_debug_pure
-                                                                                2 [DB_desugaring]
-                                                                                (fun (u : Unit) =>
-                                                                                  match u with
-                                                                                  | () =>
-                                                                                    "ty' is new")))
+                                                                        (stExpect_return
+                                                                          (CerbDebug.print_debug_pure
+                                                                            2 [DB_desugaring]
                                                                             (fun (u : Unit) =>
                                                                               match u with
-                                                                              | () => /- TODO: tentative -/
+                                                                              | () =>
+                                                                                String.append
+                                                                                  "Hello, ty' = "
+                                                                                  (CerbPP.stringFromAil_ctype
+                                                                                    no_qualifiers
+                                                                                    ty'))))
+                                                                        (fun (u : Unit) =>
+                                                                          match u with
+                                                                          | () =>
+                                                                            stExpect_bind
+                                                                              (lem_if ((fun (ty1 :
+                                                                                  ctype)
+                                                                                  (ty2 : ctype) =>
+                                                                                  not
+                                                                                    (ctypeEqual ty1
+                                                                                      ty2)) ty1
+                                                                                  ty') then
+                                                                                stExpect_bind
+                                                                                  (stExpect_return
+                                                                                    (CerbDebug.print_debug_pure
+                                                                                      2
+                                                                                      [DB_desugaring]
+                                                                                      (fun (u :
+                                                                                        Unit) =>
+                                                                                        match u with
+                                                                                        | () =>
+                                                                                          "ty' is new")))
+                                                                                  (fun (u : Unit) =>
+                                                                                    match u with
+                                                                                    | () => /- TODO: tentative -/
+                                                                                      register_internal_object_declaration
+                                                                                        sym1
+                                                                                        (ident_loc,
+                                                                                          dur,
+                                                                                          Lem_List.elem
+                                                                                            SC_register
+                                                                                            specifs.storage_classes,
+                                                                                          none, qs,
+                                                                                          ty'))
+                                                                              else
                                                                                 register_internal_object_declaration
                                                                                   sym1
                                                                                   (ident_loc, dur,
                                                                                     Lem_List.elem
                                                                                       SC_register
                                                                                       specifs.storage_classes,
-                                                                                    none, qs, ty'))
-                                                                        else
-                                                                          register_internal_object_declaration
-                                                                            sym1
-                                                                            (ident_loc, dur,
-                                                                              Lem_List.elem
-                                                                                SC_register
-                                                                                specifs.storage_classes,
-                                                                              none, qs, ty1))
+                                                                                    none, qs, ty1))
+                                                                              (fun (u : Unit) =>
+                                                                                match u with
+                                                                                | () =>
+                                                                                  stExpect_return
+                                                                                    (((sym1,
+                                                                                      some d_e) ::
+                                                                                      acc1),
+                                                                                      ((sym1,
+                                                                                        ((ident_loc,
+                                                                                          dur,
+                                                                                          Lem_List.elem
+                                                                                            SC_register
+                                                                                            specifs.storage_classes),
+                                                                                          none, qs,
+                                                                                          ty1)) ::
+                                                                                        acc2)))))
+                                                                   | none =>
+                                                                     (let dur :=
+                                                                        determinate_storage_duration
+                                                                          link1
+                                                                          specifs.storage_classes;
+                                                                      stExpect_bind
+                                                                        (register_internal_object_declaration
+                                                                          sym1
+                                                                          (ident_loc, dur,
+                                                                            Lem_List.elem
+                                                                              SC_register
+                                                                              specifs.storage_classes,
+                                                                            none, qs, ty1))
                                                                         (fun (u : Unit) =>
                                                                           match u with
                                                                           | () =>
                                                                             stExpect_return
-                                                                              (((sym1, some d_e) ::
-                                                                                acc1),
+                                                                              (acc1,
                                                                                 ((sym1,
                                                                                   ((ident_loc, dur,
                                                                                     Lem_List.elem
@@ -5161,362 +5581,365 @@ partial def desugar_statement_aux [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.
                                                                                       specifs.storage_classes),
                                                                                     none, qs,
                                                                                     ty1)) ::
-                                                                                  acc2)))))
-                                                             | none =>
-                                                               (let dur :=
-                                                                  determinate_storage_duration link1
-                                                                    specifs.storage_classes;
-                                                                stExpect_bind
-                                                                  (register_internal_object_declaration
-                                                                    sym1
-                                                                    (ident_loc, dur,
-                                                                      Lem_List.elem SC_register
-                                                                        specifs.storage_classes,
-                                                                      none, qs, ty1))
-                                                                  (fun (u : Unit) =>
-                                                                    match u with
-                                                                    | () =>
-                                                                      stExpect_return
-                                                                        (acc1,
-                                                                          ((sym1,
-                                                                            ((ident_loc, dur,
-                                                                              Lem_List.elem
-                                                                                SC_register
-                                                                                specifs.storage_classes),
-                                                                              none, qs, ty1)) ::
-                                                                            acc2))))))))
-                                              (([] : List (sym × Option (expression Unit))),
-                                                ([] : List
-                                                  (sym ×
+                                                                                  acc2))))))))
+                                                    (([] : List (sym × Option (expression Unit))),
+                                                      ([] : List
+                                                        (sym ×
+                                                          ((CerbLocation.Loc × storageDuration ×
+                                                            Bool) × Option alignment × qualifiers ×
+                                                            ctype)))) (List.reverse xs)))
+                                              (fun (p :
+                                                (List (ail_identifier × Option (expression Unit)) ×
+                                                  List
+                                                  (ail_identifier ×
                                                     ((CerbLocation.Loc × storageDuration × Bool) ×
-                                                      Option alignment × qualifiers × ctype))))
-                                              (List.reverse xs)))
-                                        (fun (p :
-                                          (List (ail_identifier × Option (expression Unit)) × List
-                                            (ail_identifier ×
-                                              ((CerbLocation.Loc × storageDuration × Bool) × Option
-                                                alignment × qualifiers × ctype)))) =>
-                                          match p with
-                                          | (sym_d_es, bindings1) =>
-                                            stExpect_bind
-                                              (/- see (§6.8.5.3#2, second sentence) for the Nothing case -/ maybe0
-                                                (stExpect_return oneAil)
-                                                (desugar_expression0 _lemReader_enum_definitions
-                                                  _lemReader_tagDefs) e2_opt)
-                                              (fun (d_e2 : expression Unit) =>
-                                                stExpect_bind /- STD §6.8.5#5 the body has its own scope -/
-                                                  /- NOTE: the desugaring of s needs to be done last, because there might be some enum constants
+                                                      Option alignment × qualifiers × ctype)))) =>
+                                                match p with
+                                                | (sym_d_es, bindings1) =>
+                                                  stExpect_bind
+                                                    (/- see (§6.8.5.3#2, second sentence) for the Nothing case -/ maybe0
+                                                      (stExpect_return oneAil)
+                                                      (desugar_expression0
+                                                        _lemReader_enum_definitions
+                                                        _lemReader_tagDefs) e2_opt)
+                                                    (fun (d_e2 : expression Unit) =>
+                                                      stExpect_bind /- STD §6.8.5#5 the body has its own scope -/
+                                                        /- NOTE: the desugaring of s needs to be done last, because there might be some enum constants
                        declarations in any of the expressions -/
-                                                  fresh_block_scope
-                                                  (fun (s_scope : scope) =>
-                                                    let loop_annot :=
-                                                      some (LAloop_continue loop_id1);
-                                                    stExpect_bind
-                                                      (match e3_opt with
-                                                       | some e3 =>
-                                                         stExpect_bind
-                                                           ((desugar_expression0
-                                                             _lemReader_enum_definitions
-                                                             _lemReader_tagDefs) e3)
-                                                           (fun (d_e3 : expression Unit) =>
-                                                             stExpect_bind
-                                                               (under_scope s_scope
-                                                                 ((desugar_statement_aux
+                                                        fresh_block_scope
+                                                        (fun (s_scope : scope) =>
+                                                          let loop_annot :=
+                                                            some (LAloop_continue loop_id1);
+                                                          stExpect_bind
+                                                            (match e3_opt with
+                                                             | some e3 =>
+                                                               stExpect_bind
+                                                                 ((desugar_expression0
                                                                    _lemReader_enum_definitions
-                                                                   _lemReader_tagDefs) ctx' s))
-                                                               (fun (d_s : statement Unit) =>
-                                                                 let d_s :=
-                                                                   mark_as_forloop_body d_s;
-                                                                 let d_s_e3 :=
-                                                                   mk_statement CerbLocation.unknown
-                                                                     (AilSexpr d_e3);
-                                                                 stExpect_return
-                                                                   (match d_s.node with
-                                                                    | AilSblock bindings1 d_ss =>
-                                                                      mk_statement_full d_s.loc
-                                                                        d_s.desug_info0 d_s.attrs
-                                                                        (AilSblock bindings1
-                                                                          (d_ss ++
-                                                                            [mk_statement loc1
-                                                                              (AilSlabel cont_sym
-                                                                                d_s_e3
-                                                                                loop_annot)]))
-                                                                    | _ =>
-                                                                      mk_statement loc1
-                                                                        (AilSblock
-                                                                          ([] : List
-                                                                            (ail_identifier ×
-                                                                              ((CerbLocation.Loc ×
-                                                                                storageDuration ×
-                                                                                Bool) × Option
-                                                                                alignment ×
-                                                                                qualifiers ×
-                                                                                ctype)))
-                                                                          [d_s,
+                                                                   _lemReader_tagDefs) e3)
+                                                                 (fun (d_e3 : expression Unit) =>
+                                                                   stExpect_bind
+                                                                     (under_scope s_scope
+                                                                       ((desugar_statement_aux
+                                                                         _lemReader_enum_definitions
+                                                                         _lemReader_tagDefs) ctx'
+                                                                         s))
+                                                                     (fun (d_s : statement Unit) =>
+                                                                       let d_s :=
+                                                                         mark_as_forloop_body d_s;
+                                                                       let d_s_e3 :=
+                                                                         mk_statement
+                                                                           CerbLocation.unknown
+                                                                           (AilSexpr d_e3);
+                                                                       stExpect_return
+                                                                         (match d_s.node with
+                                                                          | AilSblock bindings1
+                                                                            d_ss =>
+                                                                            mk_statement_full
+                                                                              d_s.loc
+                                                                              d_s.desug_info0
+                                                                              d_s.attrs
+                                                                              (AilSblock bindings1
+                                                                                (d_ss ++
+                                                                                  [mk_statement loc1
+                                                                                    (AilSlabel
+                                                                                      cont_sym
+                                                                                      d_s_e3
+                                                                                      loop_annot)]))
+                                                                          | _ =>
                                                                             mk_statement loc1
-                                                                              (AilSlabel cont_sym
-                                                                                d_s_e3
-                                                                                loop_annot)]))))
-                                                       | none =>
-                                                         stExpect_bind
-                                                           (under_scope s_scope
-                                                             ((desugar_statement_aux
-                                                               _lemReader_enum_definitions
-                                                               _lemReader_tagDefs) ctx' s))
-                                                           (fun (d_s : statement Unit) =>
-                                                             let d_s := mark_as_forloop_body d_s;
-                                                             stExpect_return
-                                                               (mk_statement loc1
-                                                                 (AilSblock
-                                                                   ([] : List
-                                                                     (ail_identifier ×
-                                                                       ((CerbLocation.Loc ×
-                                                                         storageDuration × Bool) ×
-                                                                         Option alignment ×
-                                                                         qualifiers × ctype)))
-                                                                   [d_s,
-                                                                     mk_statement loc1
-                                                                       (AilSlabel cont_sym
-                                                                         (mk_statement loc1
-                                                                           AilSskip)
-                                                                         loop_annot)]))))
-                                                      (fun (d_s_body : statement
-                                                        Unit) => /- TODO: this seems to put the attributes not on the while loop but the declaration part -/
-                                                        stExpect_return
-                                                          (AilSblock bindings1
-                                                            [mk_statement decl_loc
-                                                              (AilSdeclaration sym_d_es),
-                                                              mk_statement loc1
-                                                                (AilSwhile d_e2 d_s_body
-                                                                  loop_id1)]))))))))))))))
-        | CabsSfor fc_opt e2_opt e3_opt s =>
-          stExpect_bind
-            (/- fc_opt is either Nothing, a static assertion, or a FC_expr -/ freshify
-              (Identifier loc1 "__cerb_continue"))
-            (fun (cont_ident : identifier) =>
-              stExpect_bind
-                (stExpect_bind (register_label cont_ident) (fun (_ : Unit) =>
-                  resolve_label cont_ident))
-                (fun (cont_sym : sym) =>
-                  stExpect_bind (fresh_sym_int ()) (fun (loop_id1 : Nat) =>
+                                                                              (AilSblock
+                                                                                ([] : List
+                                                                                  (ail_identifier ×
+                                                                                    ((CerbLocation.Loc ×
+                                                                                      storageDuration ×
+                                                                                      Bool) × Option
+                                                                                      alignment ×
+                                                                                      qualifiers ×
+                                                                                      ctype)))
+                                                                                [d_s,
+                                                                                  mk_statement loc1
+                                                                                    (AilSlabel
+                                                                                      cont_sym
+                                                                                      d_s_e3
+                                                                                      loop_annot)]))))
+                                                             | none =>
+                                                               stExpect_bind
+                                                                 (under_scope s_scope
+                                                                   ((desugar_statement_aux
+                                                                     _lemReader_enum_definitions
+                                                                     _lemReader_tagDefs) ctx' s))
+                                                                 (fun (d_s : statement Unit) =>
+                                                                   let d_s :=
+                                                                     mark_as_forloop_body d_s;
+                                                                   stExpect_return
+                                                                     (mk_statement loc1
+                                                                       (AilSblock
+                                                                         ([] : List
+                                                                           (ail_identifier ×
+                                                                             ((CerbLocation.Loc ×
+                                                                               storageDuration ×
+                                                                               Bool) × Option
+                                                                               alignment ×
+                                                                               qualifiers × ctype)))
+                                                                         [d_s,
+                                                                           mk_statement loc1
+                                                                             (AilSlabel cont_sym
+                                                                               (mk_statement loc1
+                                                                                 AilSskip)
+                                                                               loop_annot)]))))
+                                                            (fun (d_s_body : statement
+                                                              Unit) => /- TODO: this seems to put the attributes not on the while loop but the declaration part -/
+                                                              stExpect_return
+                                                                (AilSblock bindings1
+                                                                  [mk_statement decl_loc
+                                                                    (AilSdeclaration sym_d_es),
+                                                                    mk_statement loc1
+                                                                      (AilSwhile d_e2 d_s_body
+                                                                        loop_id1)]))))))))))))))
+              | CabsSfor fc_opt e2_opt e3_opt s =>
+                stExpect_bind
+                  (/- fc_opt is either Nothing, a static assertion, or a FC_expr -/ freshify
+                    (Identifier loc1 "__cerb_continue"))
+                  (fun (cont_ident : identifier) =>
                     stExpect_bind
-                      (record_loop_attribute loop_id1 attrs1
-                        (match e2_opt with
-                         | some e2 =>
-                           (match e2 with
-                            | (CabsExpression loc1 _) => loc1)
-                         | none => CerbLocation.unknown) loc1)
-                      (fun (_ : Unit) =>
-                        let ctx' := (({ cont_ident_opt := (some cont_ident) } : stmt_context));
-                        /- this avoids introducing an unecessary block -/
-                        let mk_d_s_body : statement Unit → statement Unit → statement Unit :=
-                          (fun (d_s_e3 : statement Unit) (stmt : statement Unit) =>
-                            match stmt.node with
-                            | AilSblock bs d_ss =>
-                              mk_statement_full stmt.loc stmt.desug_info0 stmt.attrs
-                                (AilSblock bs (d_ss ++ [d_s_e3]))
-                            | _ =>
-                              mk_statement loc1
-                                (AilSblock
-                                  ([] : List
-                                    (ail_identifier ×
-                                      ((CerbLocation.Loc × storageDuration × Bool) × Option
-                                        alignment × qualifiers × ctype))) [stmt, d_s_e3]));
-                        stExpect_bind
-                          /- NOTE: it is important that the expressions and the body are
+                      (stExpect_bind (register_label cont_ident) (fun (_ : Unit) =>
+                        resolve_label cont_ident))
+                      (fun (cont_sym : sym) =>
+                        stExpect_bind (fresh_sym_int ()) (fun (loop_id1 : Nat) =>
+                          stExpect_bind
+                            (record_loop_attribute loop_id1 attrs1
+                              (match e2_opt with
+                               | some e2 =>
+                                 (match e2 with
+                                  | (CabsExpression loc1 _) => loc1)
+                               | none => CerbLocation.unknown) loc1)
+                            (fun (_ : Unit) =>
+                              let ctx' :=
+                                (({ cont_ident_opt := (some cont_ident) } : stmt_context));
+                              /- this avoids introducing an unecessary block -/
+                              let mk_d_s_body : statement Unit → statement Unit → statement Unit :=
+                                (fun (d_s_e3 : statement Unit) (stmt : statement Unit) =>
+                                  match stmt.node with
+                                  | AilSblock bs d_ss =>
+                                    mk_statement_full stmt.loc stmt.desug_info0 stmt.attrs
+                                      (AilSblock bs (d_ss ++ [d_s_e3]))
+                                  | _ =>
+                                    mk_statement loc1
+                                      (AilSblock
+                                        ([] : List
+                                          (ail_identifier ×
+                                            ((CerbLocation.Loc × storageDuration × Bool) × Option
+                                              alignment × qualifiers × ctype))) [stmt, d_s_e3]));
+                              stExpect_bind
+                                /- NOTE: it is important that the expressions and the body are
              desugared in the order of the syntax -/
-                          fresh_block_scope
-                          (fun (for_scope : scope) =>
-                            under_scope for_scope
-                              (stExpect_bind
-                                (match fc_opt with
-                                 | some (FC_expr e1) =>
-                                   stExpect_bind
-                                     (/- for (E1; E2; E3) S ==> { E1; while(E2) { S'; E3; } }  -/ /- for (E1; E2; ) S   ==> { E1; while(E2) { S'      } }  -/ (desugar_expression0
-                                       _lemReader_enum_definitions _lemReader_tagDefs) e1)
-                                     (fun (d_e1 : expression Unit) =>
-                                       let d_s_e1 :=
-                                         mk_statement
-                                           (match e1 with
-                                            | (CabsExpression loc1 _) => loc1) (AilSexpr d_e1);
-                                       stExpect_return
-                                         (fun (d_e2 : expression Unit) (d_s_e3 : statement Unit)
-                                           (d_s : statement Unit) =>
-                                           AilSblock
-                                             ([] : List
-                                               (ail_identifier ×
-                                                 ((CerbLocation.Loc × storageDuration × Bool) ×
-                                                   Option alignment × qualifiers × ctype)))
-                                             [d_s_e1,
-                                               mk_statement loc1
-                                                 (AilSwhile d_e2 (mk_d_s_body d_s_e3 d_s)
-                                                   loop_id1)]))
-                                 | some (FC_decl _ (Declaration_base _ _ _)) =>
-                                   (failwithI
-                                     "desugar_statement_aux: Just (FC_decl (Declaration_base _ _ _)), _)" :
-                                     state_with_markers → exceptM
-                                     ((expression Unit → statement Unit → statement Unit →
-                                       statement_ Unit) × state_with_markers) error)
-                                 | some (FC_decl _ (Declaration_static_assert sa_decl)) =>
-                                   stExpect_bind
-                                     (/- for (_Static_assert(...); E2; E3) S ==> while(E2) { S'; E3; } -/ /- for (_Static_assert(...); E2; ) S   ==> while(E2) { S' } -/ (desugar_and_register_static_assert_declaration
-                                       _lemReader_enum_definitions _lemReader_tagDefs) sa_decl)
-                                     (fun (u : Unit) =>
-                                       match u with
-                                       | () =>
+                                fresh_block_scope
+                                (fun (for_scope : scope) =>
+                                  under_scope for_scope
+                                    (stExpect_bind
+                                      (match fc_opt with
+                                       | some (FC_expr e1) =>
+                                         stExpect_bind
+                                           (/- for (E1; E2; E3) S ==> { E1; while(E2) { S'; E3; } }  -/ /- for (E1; E2; ) S   ==> { E1; while(E2) { S'      } }  -/ (desugar_expression0
+                                             _lemReader_enum_definitions _lemReader_tagDefs) e1)
+                                           (fun (d_e1 : expression Unit) =>
+                                             let d_s_e1 :=
+                                               mk_statement
+                                                 (match e1 with
+                                                  | (CabsExpression loc1 _) => loc1)
+                                                 (AilSexpr d_e1);
+                                             stExpect_return
+                                               (fun (d_e2 : expression Unit)
+                                                 (d_s_e3 : statement Unit) (d_s : statement Unit) =>
+                                                 AilSblock
+                                                   ([] : List
+                                                     (ail_identifier ×
+                                                       ((CerbLocation.Loc × storageDuration ×
+                                                         Bool) × Option alignment × qualifiers ×
+                                                         ctype)))
+                                                   [d_s_e1,
+                                                     mk_statement loc1
+                                                       (AilSwhile d_e2 (mk_d_s_body d_s_e3 d_s)
+                                                         loop_id1)]))
+                                       | some (FC_decl _ (Declaration_base _ _ _)) =>
+                                         (failwithI
+                                           "desugar_statement_aux: Just (FC_decl (Declaration_base _ _ _)), _)" :
+                                           state_with_markers → exceptM
+                                           ((expression Unit → statement Unit → statement Unit →
+                                             statement_ Unit) × state_with_markers) error)
+                                       | some (FC_decl _ (Declaration_static_assert sa_decl)) =>
+                                         stExpect_bind
+                                           (/- for (_Static_assert(...); E2; E3) S ==> while(E2) { S'; E3; } -/ /- for (_Static_assert(...); E2; ) S   ==> while(E2) { S' } -/ (desugar_and_register_static_assert_declaration
+                                             _lemReader_enum_definitions _lemReader_tagDefs)
+                                             sa_decl)
+                                           (fun (u : Unit) =>
+                                             match u with
+                                             | () =>
+                                               stExpect_return
+                                                 (fun (d_e2 : expression Unit)
+                                                   (d_s_e3 : statement Unit)
+                                                   (d_s : statement Unit) =>
+                                                   AilSwhile d_e2 (mk_d_s_body d_s_e3 d_s)
+                                                     loop_id1))
+                                       | none => /- for (; E2; E3) S ==> while(E2) { S'; cont: E3 } -/ /- for (; E2; ) S ==> while(E2) { S'; cont: skip } -/
                                          stExpect_return
                                            (fun (d_e2 : expression Unit) (d_s_e3 : statement Unit)
                                              (d_s : statement Unit) =>
                                              AilSwhile d_e2 (mk_d_s_body d_s_e3 d_s) loop_id1))
-                                 | none => /- for (; E2; E3) S ==> while(E2) { S'; cont: E3 } -/ /- for (; E2; ) S ==> while(E2) { S'; cont: skip } -/
-                                   stExpect_return
-                                     (fun (d_e2 : expression Unit) (d_s_e3 : statement Unit)
-                                       (d_s : statement Unit) =>
-                                       AilSwhile d_e2 (mk_d_s_body d_s_e3 d_s) loop_id1))
-                                (fun (mk_for : expression Unit → statement Unit → statement Unit →
-                                  statement_ Unit) =>
-                                  stExpect_bind
-                                    (/- see (§6.8.5.3#2, second sentence) for the Nothing case -/ /- for (...; ; ...) ...   ==> { ...; while(1) ... } -/ maybe0
-                                      (stExpect_return oneAil)
-                                      (desugar_expression0 _lemReader_enum_definitions
-                                        _lemReader_tagDefs) e2_opt)
-                                    (fun (d_e2 : expression Unit) =>
-                                      let loop_annot := some (LAloop_continue loop_id1);
-                                      stExpect_bind
-                                        (match e3_opt with
-                                         | none =>
-                                           stExpect_return
-                                             (mk_statement loc1
-                                               (AilSlabel cont_sym (mk_statement loc1 AilSskip)
-                                                 loop_annot))
-                                         | some e3 =>
-                                           stExpect_bind
-                                             ((desugar_expression0 _lemReader_enum_definitions
-                                               _lemReader_tagDefs) e3)
-                                             (fun (d_e3 : expression Unit) =>
-                                               stExpect_return
-                                                 (mk_statement loc1
-                                                   (AilSlabel cont_sym
-                                                     (mk_statement
-                                                       (match e3 with
-                                                        | (CabsExpression loc1 _) => loc1)
-                                                       (AilSexpr d_e3)) loop_annot))))
-                                        (fun (d_s_e3 : statement Unit) =>
-                                          stExpect_bind fresh_block_scope (fun (s_scope : scope) =>
+                                      (fun (mk_for : expression Unit → statement Unit → statement
+                                        Unit → statement_ Unit) =>
+                                        stExpect_bind
+                                          (/- see (§6.8.5.3#2, second sentence) for the Nothing case -/ /- for (...; ; ...) ...   ==> { ...; while(1) ... } -/ maybe0
+                                            (stExpect_return oneAil)
+                                            (desugar_expression0 _lemReader_enum_definitions
+                                              _lemReader_tagDefs) e2_opt)
+                                          (fun (d_e2 : expression Unit) =>
+                                            let loop_annot := some (LAloop_continue loop_id1);
                                             stExpect_bind
-                                              (under_scope s_scope
-                                                ((desugar_statement_aux _lemReader_enum_definitions
-                                                  _lemReader_tagDefs) ctx' s))
-                                              (fun (d_s : statement Unit) =>
-                                                let d_s := mark_as_forloop_body d_s;
-                                                stExpect_return (mk_for d_e2 d_s_e3 d_s))))))))))))
-        | CabsSgoto ident =>
-          stExpect_bind (resolve_label ident) (fun (z : sym) => stExpect_return (AilSgoto z))
-        | CabsScontinue =>
-          (match ctx.cont_ident_opt with
-           | none =>
-             (fun (_ : state_with_markers) =>
-               fail0 (loc1, DESUGAR (Desugar_ConstraintViolation ContinueOutsideLoop)))
-           | some cont_ident =>
-             stExpect_bind (self (CabsStatement loc1 no_attributes (CabsSgoto cont_ident)))
-               (fun (stmt : statement Unit) => stExpect_return stmt.node))
-        | CabsSbreak =>
-          stExpect_bind is_in_switch (fun (x : Bool) =>
-            match x with
-            | true => stExpect_return AilSbreak
-            | false =>
-              (match ctx.cont_ident_opt with
-               | some _ => stExpect_return AilSbreak
-               | none =>
-                 (fun (_ : state_with_markers) =>
-                   fail0 (loc1, DESUGAR (Desugar_ConstraintViolation BreakOutsideSwitchOrLoop)))))
-        | CabsSreturn none =>
-          stExpect_bind get_current_return_type (fun (x : ctype) =>
-            match x with
-            | Ctype _ Void0 => stExpect_return AilSreturnVoid
-            | _ =>
-              (fun (_ : state_with_markers) =>
-                fail0 (loc1, DESUGAR (Desugar_ConstraintViolation VoidReturnNonVoidFunction))))
-        | CabsSreturn (some e) =>
-          stExpect_bind get_current_return_type (fun (x : ctype) =>
-            match x with
-            | Ctype _ Void0 =>
-              (fun (_ : state_with_markers) =>
-                fail0 (loc1, DESUGAR (Desugar_ConstraintViolation NonVoidReturnVoidFunction)))
-            | _ =>
-              stExpect_bind ((desugar_expression0 _lemReader_enum_definitions _lemReader_tagDefs) e)
-                (fun (z : expression Unit) => stExpect_return (AilSreturn z)))
-        | CabsSpar ss =>
-          stExpect_bind (stExpect_mapM self ss) (fun (z : List (statement Unit)) =>
-            stExpect_return (AilSpar z))
-        | CabsSasm _ _ _ =>
-          (/- FORK (asm refusal, 2026-10-05; [USER 2026-10-05] ruled that inline
+                                              (match e3_opt with
+                                               | none =>
+                                                 stExpect_return
+                                                   (mk_statement loc1
+                                                     (AilSlabel cont_sym
+                                                       (mk_statement loc1 AilSskip) loop_annot))
+                                               | some e3 =>
+                                                 stExpect_bind
+                                                   ((desugar_expression0 _lemReader_enum_definitions
+                                                     _lemReader_tagDefs) e3)
+                                                   (fun (d_e3 : expression Unit) =>
+                                                     stExpect_return
+                                                       (mk_statement loc1
+                                                         (AilSlabel cont_sym
+                                                           (mk_statement
+                                                             (match e3 with
+                                                              | (CabsExpression loc1 _) => loc1)
+                                                             (AilSexpr d_e3)) loop_annot))))
+                                              (fun (d_s_e3 : statement Unit) =>
+                                                stExpect_bind fresh_block_scope
+                                                  (fun (s_scope : scope) =>
+                                                    stExpect_bind
+                                                      (under_scope s_scope
+                                                        ((desugar_statement_aux
+                                                          _lemReader_enum_definitions
+                                                          _lemReader_tagDefs) ctx' s))
+                                                      (fun (d_s : statement Unit) =>
+                                                        let d_s := mark_as_forloop_body d_s;
+                                                        stExpect_return
+                                                          (mk_for d_e2 d_s_e3 d_s))))))))))))
+              | CabsSgoto ident =>
+                stExpect_bind (resolve_label ident) (fun (z : sym) => stExpect_return (AilSgoto z))
+              | CabsScontinue =>
+                (match ctx.cont_ident_opt with
+                 | none =>
+                   (fun (_ : state_with_markers) =>
+                     fail0 (loc1, DESUGAR (Desugar_ConstraintViolation ContinueOutsideLoop)))
+                 | some cont_ident =>
+                   stExpect_bind (self (CabsStatement loc1 no_attributes (CabsSgoto cont_ident)))
+                     (fun (stmt : statement Unit) => stExpect_return stmt.node))
+              | CabsSbreak =>
+                stExpect_bind is_in_switch (fun (x : Bool) =>
+                  match x with
+                  | true => stExpect_return AilSbreak
+                  | false =>
+                    (match ctx.cont_ident_opt with
+                     | some _ => stExpect_return AilSbreak
+                     | none =>
+                       (fun (_ : state_with_markers) =>
+                         fail0
+                           (loc1, DESUGAR (Desugar_ConstraintViolation BreakOutsideSwitchOrLoop)))))
+              | CabsSreturn none =>
+                stExpect_bind get_current_return_type (fun (x : ctype) =>
+                  match x with
+                  | Ctype _ Void0 => stExpect_return AilSreturnVoid
+                  | _ =>
+                    (fun (_ : state_with_markers) =>
+                      fail0
+                        (loc1, DESUGAR (Desugar_ConstraintViolation VoidReturnNonVoidFunction))))
+              | CabsSreturn (some e) =>
+                stExpect_bind get_current_return_type (fun (x : ctype) =>
+                  match x with
+                  | Ctype _ Void0 =>
+                    (fun (_ : state_with_markers) =>
+                      fail0 (loc1, DESUGAR (Desugar_ConstraintViolation NonVoidReturnVoidFunction)))
+                  | _ =>
+                    stExpect_bind
+                      ((desugar_expression0 _lemReader_enum_definitions _lemReader_tagDefs) e)
+                      (fun (z : expression Unit) => stExpect_return (AilSreturn z)))
+              | CabsSpar ss =>
+                stExpect_bind (stExpect_mapM self ss) (fun (z : List (statement Unit)) =>
+                  stExpect_return (AilSpar z))
+              | CabsSasm _ _ _ =>
+                (/- FORK (asm refusal, 2026-10-05; [USER 2026-10-05] ruled that inline
              asm is a loud refusal): upstream ERASES inline assembly here
              (`E.return AilSskip`, "TODO: erasing inline assembly for now"), so a
              program whose meaning lives in its asm silently runs as if the asm
              were absent. Both fork engines now refuse it, basic and extended
              forms alike; no asm semantics is invented.
              Record: lean_frontend/docs/2026-10-05_asm-refusal-record.md -/
-          fun (_ : state_with_markers) =>
-            fail0
-              (loc1,
-                DESUGAR (Desugar_NotYetSupported "inline assembly (asm statement) is unsupported")))
-        | CabsScaseGNU e1 e2 s =>
-          (let desugar_case_constant : cabs_expression → state_with_markers → exceptM
-             (Int × state_with_markers) error :=
-             (fun (e : cabs_expression) =>
-               stExpect_bind
-                 ((desugar_expression0 _lemReader_enum_definitions _lemReader_tagDefs) e)
-                 (evaluate_integer_constant_expression0
-                   (match e with
-                    | (CabsExpression loc1 _) => loc1) none));
-           lem_if CerbGlobal.isAgnostic () then
-             fun (_ : state_with_markers) =>
-               fail0
-                 (loc1,
-                   DESUGAR
-                     (Desugar_agnosticFailure
-                       "case statements are not supported in the agnostic mode"))
-           else
-             stExpect_bind is_in_switch (fun (x : Bool) =>
-               match x with
-               | true =>
-                 stExpect_bind (/- TODOO -/ desugar_case_constant e1) (fun (n1 : Int) =>
-                   stExpect_bind (desugar_case_constant e2) (fun (n2 : Int) =>
+                fun (_ : state_with_markers) =>
+                  fail0
+                    (loc1,
+                      DESUGAR
+                        (Desugar_NotYetSupported "inline assembly (asm statement) is unsupported")))
+              | CabsScaseGNU e1 e2 s =>
+                (let desugar_case_constant : cabs_expression → state_with_markers → exceptM
+                   (Int × state_with_markers) error :=
+                   (fun (e : cabs_expression) =>
                      stExpect_bind
-                       (register_case
-                         (CerbLocation.bboxLocation
-                           [match e1 with
-                            | (CabsExpression loc1 _) => loc1,
-                             match e2 with
-                             | (CabsExpression loc1 _) => loc1]) (CaseSelectRange n1 n2))
-                       (fun (u : Unit) =>
-                         match u with
-                         | () =>
-                           (lem_if intLteb n1 n2 then
-                             stExpect_bind (self s) (fun (z : statement Unit) =>
-                               stExpect_return (AilScase_rangeGNU n1 n2 z))
-                           else
-                             stExpect_bind
-                               (stExpect_return
-                                 (CerbDebug.warn [DB_desugaring] (fun (u : Unit) =>
-                                   match u with
-                                   | () =>
-                                     String.append "empty case range ["
-                                       (String.append (CerbLocation.stringFromLocation loc1)
-                                         "] discarded by the desugaring"))))
-                               (fun (u : Unit) =>
-                                 match u with
-                                 | () => stExpect_return AilSskip)))))
-               | false =>
-                 (fun (_ : state_with_markers) =>
-                   fail0
-                     (loc1, DESUGAR (Desugar_ConstraintViolation LabelStatementOutsideSwitch)))))
-        | CabsSmarker s =>
-          stExpect_bind (record_marker ()) (fun (id1 : Nat) =>
-            stExpect_bind (self s) (fun (z : statement Unit) =>
-              stExpect_return (AilSmarker id1 z))))
-       (fun (z : statement_ Unit) => stExpect_return (mk_statement_full loc1 desug_info2 attrs1 z)))
+                       ((desugar_expression0 _lemReader_enum_definitions _lemReader_tagDefs) e)
+                       (evaluate_integer_constant_expression0
+                         (match e with
+                          | (CabsExpression loc1 _) => loc1) none));
+                 lem_if CerbGlobal.isAgnostic () then
+                   fun (_ : state_with_markers) =>
+                     fail0
+                       (loc1,
+                         DESUGAR
+                           (Desugar_agnosticFailure
+                             "case statements are not supported in the agnostic mode"))
+                 else
+                   stExpect_bind is_in_switch (fun (x : Bool) =>
+                     match x with
+                     | true =>
+                       stExpect_bind (/- TODOO -/ desugar_case_constant e1) (fun (n1 : Int) =>
+                         stExpect_bind (desugar_case_constant e2) (fun (n2 : Int) =>
+                           stExpect_bind
+                             (register_case
+                               (CerbLocation.bboxLocation
+                                 [match e1 with
+                                  | (CabsExpression loc1 _) => loc1,
+                                   match e2 with
+                                   | (CabsExpression loc1 _) => loc1]) (CaseSelectRange n1 n2))
+                             (fun (u : Unit) =>
+                               match u with
+                               | () =>
+                                 (lem_if intLteb n1 n2 then
+                                   stExpect_bind (self s) (fun (z : statement Unit) =>
+                                     stExpect_return (AilScase_rangeGNU n1 n2 z))
+                                 else
+                                   stExpect_bind
+                                     (stExpect_return
+                                       (CerbDebug.warn [DB_desugaring] (fun (u : Unit) =>
+                                         match u with
+                                         | () =>
+                                           String.append "empty case range ["
+                                             (String.append (CerbLocation.stringFromLocation loc1)
+                                               "] discarded by the desugaring"))))
+                                     (fun (u : Unit) =>
+                                       match u with
+                                       | () => stExpect_return AilSskip)))))
+                     | false =>
+                       (fun (_ : state_with_markers) =>
+                         fail0
+                           (loc1,
+                             DESUGAR (Desugar_ConstraintViolation LabelStatementOutsideSwitch)))))
+              | CabsSmarker s =>
+                stExpect_bind (record_marker ()) (fun (id1 : Nat) =>
+                  stExpect_bind (self s) (fun (z : statement Unit) =>
+                    stExpect_return (AilSmarker id1 z))))
+             (fun (z : statement_ Unit) =>
+               stExpect_return (mk_statement_full loc1 desug_info2 attrs1 z))))
 end
 def desugar_statement [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl] [CerbGlobal.Switches]
     (_lemReader_enum_definitions : Fmap sym integerType)
@@ -6431,141 +6854,165 @@ def desugar_and_register_function_definition [LemFuel] [CerberusFresh.Digest] [C
               (Fmap (identifier × namespace0) registration ×
                 ((attributes × identifier) × (qualifiers → ctype → (qualifiers × ctype))))) =>
               match p with
-              | (idents_map, ((_, fun_ident), mk_qs_ctype)) =>
-                stExpect_bind
-                  (stExpect_bind
-                    (/- NOTE: as per §6.9.1#2, we perform a dummy instantiation of the type
+              | (idents_map, ((ident_attrs, fun_ident), mk_qs_ctype)) =>
+                (let fundef_attrs := combine_attributes fundef_attrs ident_attrs;
+                 stExpect_bind (desugar_gnu_attributes fundef_loc fundef_attrs)
+                   (fun (gnu_effects : gnu_decl_effects) =>
+                     lem_if gnu_effects.gnu_packed || not (isNothing gnu_effects.gnu_aligned) then
+                       fun (_ : state_with_markers) =>
+                         fail0
+                           (fundef_loc,
+                             DESUGAR
+                               (Desugar_NotYetSupported
+                                 "GNU function placement alignment is not represented by Ail"))
+                     else
+                       stExpect_bind
+                         (stExpect_bind
+                           (/- NOTE: as per §6.9.1#2, we perform a dummy instantiation of the type
        **specified by the declarator portion of the function definition**, which
        here means `ddecltor' without `specifs' -/
-                    match mk_qs_ctype no_qualifiers (Ctype ([] : List annot) Void0) with
-                    | (_, Ctype _ (Function _ _ _)) => stExpect_return ()
-                    | (_, Ctype _ (FunctionNoParams _)) => stExpect_return ()
-                    | _ =>
-                      (/- STD §6.9.1#2 -/ fun (_ : state_with_markers) =>
-                        fail0
-                          ((loc_of_direct_declarator ddecltor),
-                            DESUGAR (Desugar_ConstraintViolation WrongTypeFunctionIdentifier))))
-                    (fun (_ : Unit) =>
-                      register_ordinary_identifier fun_ident OK_function specifs.storage_classes))
-                  (fun (p : (linkage × sym)) =>
-                    match p with
-                    | (_ /- loc_fun_sym -/, fun_sym) =>
-                      under_scope Scope_function
-                        (stExpect_bind
-                          (stExpect_bind (register_labels stmt) (fun (_ : Unit) =>
-                            under_scope funblock_scope
-                              (stExpect_bind
-                                (stExpect_bind
-                                  (/- TODO: this is a horrible hack, DO BETTER -/ hack_inject_idents_map
-                                    idents_map)
-                                  (fun (_ :
-                                    Unit) => /-        desugar_declarator (IsFunDef specifs) decltor >>= fun (fun_ident, mk_qs_ctype) -> -/
-                                    (desugar_type_specifiers _lemReader_enum_definitions
-                                      _lemReader_tagDefs) specifs.type_specifiers))
-                                (fun (p : (qualifiers × ctype)) =>
-                                  match p with
-                                  | (specs_qs, specs_ty) =>
-                                    (match translate_type_qualifiers specifs.type_qualifiers with
-                                     | (isAtomic, tquals_qs) =>
-                                       (let base_ty :=
-                                          lem_if isAtomic then
-                                            mk_ctype_atomic specs_ty
-                                          else
-                                            specs_ty;
-                                        let base_qs := combine_qualifiers specs_qs tquals_qs;
-                                        match mk_qs_ctype base_qs base_ty with
-                                        | (qs, ty1) =>
-                                          (let process : (qualifiers × ctype) → Option
-                                             (List (qualifiers × ctype × Bool)) → Bool →
-                                             state_with_markers → exceptM
-                                             ((CerbLocation.Loc × Nat × sym × statement Unit) ×
-                                               state_with_markers) error :=
-                                             (fun (p : (qualifiers × ctype))
-                                               (params_opt : Option
-                                                 (List (qualifiers × ctype × Bool)))
-                                               (isVariadic : Bool) =>
-                                               match p, params_opt, isVariadic with
-                                               | (return_qs, return_ty1), params_opt, isVariadic =>
-                                                 (/- NOTE: the constraint in §6.9.1#3 is enforced later in the Ail
+                           match mk_qs_ctype no_qualifiers (Ctype ([] : List annot) Void0) with
+                           | (_, Ctype _ (Function _ _ _)) => stExpect_return ()
+                           | (_, Ctype _ (FunctionNoParams _)) => stExpect_return ()
+                           | _ =>
+                             (/- STD §6.9.1#2 -/ fun (_ : state_with_markers) =>
+                               fail0
+                                 ((loc_of_direct_declarator ddecltor),
+                                   DESUGAR
+                                     (Desugar_ConstraintViolation WrongTypeFunctionIdentifier))))
+                           (fun (_ : Unit) =>
+                             register_ordinary_identifier fun_ident OK_function
+                               specifs.storage_classes))
+                         (fun (p : (linkage × sym)) =>
+                           match p with
+                           | (_ /- loc_fun_sym -/, fun_sym) =>
+                             under_scope Scope_function
+                               (stExpect_bind
+                                 (stExpect_bind (register_labels stmt) (fun (_ : Unit) =>
+                                   under_scope funblock_scope
+                                     (stExpect_bind
+                                       (stExpect_bind
+                                         (/- TODO: this is a horrible hack, DO BETTER -/ hack_inject_idents_map
+                                           idents_map)
+                                         (fun (_ :
+                                           Unit) => /-        desugar_declarator (IsFunDef specifs) decltor >>= fun (fun_ident, mk_qs_ctype) -> -/
+                                           (desugar_type_specifiers _lemReader_enum_definitions
+                                             _lemReader_tagDefs) specifs.type_specifiers))
+                                       (fun (p : (qualifiers × ctype)) =>
+                                         match p with
+                                         | (specs_qs, specs_ty) =>
+                                           (match translate_type_qualifiers
+                                                specifs.type_qualifiers with
+                                            | (isAtomic, tquals_qs) =>
+                                              (let base_ty :=
+                                                 lem_if isAtomic then
+                                                   mk_ctype_atomic specs_ty
+                                                 else
+                                                   specs_ty;
+                                               let base_qs := combine_qualifiers specs_qs tquals_qs;
+                                               match mk_qs_ctype base_qs base_ty with
+                                               | (qs, ty1) =>
+                                                 (let process : (qualifiers × ctype) → Option
+                                                    (List (qualifiers × ctype × Bool)) → Bool →
+                                                    state_with_markers → exceptM
+                                                    ((CerbLocation.Loc × Nat × sym × statement
+                                                      Unit) × state_with_markers) error :=
+                                                    (fun (p : (qualifiers × ctype))
+                                                      (params_opt : Option
+                                                        (List (qualifiers × ctype × Bool)))
+                                                      (isVariadic : Bool) =>
+                                                      match p, params_opt, isVariadic with
+                                                      | (return_qs, return_ty1), params_opt,
+                                                        isVariadic =>
+                                                        (/- NOTE: the constraint in §6.9.1#3 is enforced later in the Ail
             typechecker -/
-                                                 (lemSeq
-                                                   (fun _ =>
-                                                     CerbDebug.print_debug_pure 4 ([] : List domain)
-                                                       (fun (u : Unit) =>
-                                                         match u with
-                                                         | () =>
-                                                           String.append
-                                                             (match fun_ident with
-                                                              | Identifier _ str => str)
-                                                             (String.append " ===> "
-                                                               (CerbPP.stringFromAil_ctype qs
-                                                                 ty1))))
-                                                   (fun _ =>
-                                                     stExpect_bind
-                                                       (stExpect_bind
-                                                         (stExpect_bind
-                                                           (function_is_defined fun_sym)
-                                                           (fun (x : Bool) =>
-                                                             match x with
-                                                             | true =>
-                                                               (fun (_ : state_with_markers) =>
-                                                                 fail0
-                                                                   ((match fun_ident with
-                                                                     | (Identifier loc1 _) => loc1),
-                                                                     DESUGAR
-                                                                       (Desugar_ConstraintViolation
-                                                                         (ExternalRedefinition
-                                                                           fun_sym))))
-                                                             | false => stExpect_return ()))
-                                                         (fun (_ : Unit) =>
-                                                           register_function_declaration
-                                                             (match fun_ident with
-                                                              | (Identifier loc1 _) => loc1)
-                                                             fundef_attrs fun_sym false
-                                                             ((return_qs, return_ty1), params_opt,
-                                                               isVariadic,
-                                                               Lem_List.elem FS_inline
-                                                                 specifs.function_specifiers,
-                                                               Lem_List.elem FS_Noreturn
-                                                                 specifs.function_specifiers)))
-                                                       (fun (_ : Unit) =>
-                                                         inside_function return_ty1
-                                                           (stExpect_bind (record_marker ())
-                                                             (fun (marker_id1 : Nat) =>
-                                                               stExpect_bind
-                                                                 ((desugar_statement
-                                                                   _lemReader_enum_definitions
-                                                                   _lemReader_tagDefs) stmt)
-                                                                 (fun (d_stmt : statement Unit) =>
-                                                                   stExpect_return
-                                                                     (match fun_ident with
-                                                                      | (Identifier loc1 _) => loc1,
-                                                                       marker_id1, fun_sym,
-                                                                       d_stmt)))))))));
-                                           match ty1 with
-                                           | Ctype _ (Function return_qs_ty params isVariadic) =>
-                                             process return_qs_ty (some params) isVariadic
-                                           | Ctype _ (FunctionNoParams return_qs_ty) =>
-                                             process return_qs_ty none false
-                                           | _ => /- This should not be possible due to the earlier check -/
-                                             (failwithI
-                                               "Cabs_to_ail.desugar_and_register_function_definition" :
-                                               state_with_markers → exceptM
-                                               ((CerbLocation.Loc × Nat × sym × statement Unit) ×
-                                                 state_with_markers) error))))))))
-                          (fun (p : (CerbLocation.Loc × Nat × sym × statement Unit)) =>
-                            match p with
-                            | (loc1, marker_id1, fun_sym, d_stmt) =>
-                              stExpect_bind (bindings_of_idents_map idents_map)
-                                (fun (bindings1 : List
-                                  (sym ×
-                                    ((storageDuration × Bool) × Option alignment × qualifiers ×
-                                      ctype))) =>
-                                  register_function_definition fun_sym
-                                    /- NOTE: the Cabs parser can't easily find the location of the
+                                                        (lemSeq
+                                                          (fun _ =>
+                                                            CerbDebug.print_debug_pure 4
+                                                              ([] : List domain)
+                                                              (fun (u : Unit) =>
+                                                                match u with
+                                                                | () =>
+                                                                  String.append
+                                                                    (match fun_ident with
+                                                                     | Identifier _ str => str)
+                                                                    (String.append " ===> "
+                                                                      (CerbPP.stringFromAil_ctype qs
+                                                                        ty1))))
+                                                          (fun _ =>
+                                                            stExpect_bind
+                                                              (stExpect_bind
+                                                                (stExpect_bind
+                                                                  (function_is_defined fun_sym)
+                                                                  (fun (x : Bool) =>
+                                                                    match x with
+                                                                    | true =>
+                                                                      (fun (_ :
+                                                                        state_with_markers) =>
+                                                                        fail0
+                                                                          ((match fun_ident with
+                                                                            | (Identifier loc1 _) =>
+                                                                              loc1),
+                                                                            DESUGAR
+                                                                              (Desugar_ConstraintViolation
+                                                                                (ExternalRedefinition
+                                                                                  fun_sym))))
+                                                                    | false => stExpect_return ()))
+                                                                (fun (_ : Unit) =>
+                                                                  register_function_declaration
+                                                                    (match fun_ident with
+                                                                     | (Identifier loc1 _) => loc1)
+                                                                    fundef_attrs fun_sym false
+                                                                    ((return_qs, return_ty1),
+                                                                      params_opt, isVariadic,
+                                                                      Lem_List.elem FS_inline
+                                                                        specifs.function_specifiers,
+                                                                      (Lem_List.elem FS_Noreturn
+                                                                        specifs.function_specifiers ||
+                                                                        gnu_effects.gnu_noreturn))))
+                                                              (fun (_ : Unit) =>
+                                                                inside_function return_ty1
+                                                                  (stExpect_bind (record_marker ())
+                                                                    (fun (marker_id1 : Nat) =>
+                                                                      stExpect_bind
+                                                                        ((desugar_statement
+                                                                          _lemReader_enum_definitions
+                                                                          _lemReader_tagDefs) stmt)
+                                                                        (fun (d_stmt : statement
+                                                                          Unit) =>
+                                                                          stExpect_return
+                                                                            (match fun_ident with
+                                                                             | (Identifier loc1
+                                                                               _) =>
+                                                                               loc1, marker_id1,
+                                                                              fun_sym,
+                                                                              d_stmt)))))))));
+                                                  match ty1 with
+                                                  | Ctype _
+                                                    (Function return_qs_ty params isVariadic) =>
+                                                    process return_qs_ty (some params) isVariadic
+                                                  | Ctype _ (FunctionNoParams return_qs_ty) =>
+                                                    process return_qs_ty none false
+                                                  | _ => /- This should not be possible due to the earlier check -/
+                                                    (failwithI
+                                                      "Cabs_to_ail.desugar_and_register_function_definition" :
+                                                      state_with_markers → exceptM
+                                                      ((CerbLocation.Loc × Nat × sym × statement
+                                                        Unit) × state_with_markers) error))))))))
+                                 (fun (p : (CerbLocation.Loc × Nat × sym × statement Unit)) =>
+                                   match p with
+                                   | (loc1, marker_id1, fun_sym, d_stmt) =>
+                                     stExpect_bind (bindings_of_idents_map idents_map)
+                                       (fun (bindings1 : List
+                                         (sym ×
+                                           ((storageDuration × Bool) × Option alignment ×
+                                             qualifiers × ctype))) =>
+                                         register_function_definition fun_sym
+                                           /- NOTE: the Cabs parser can't easily find the location of the
          function identifier, so add it here -/
-                                    (CerbLocation.withCursorFrom fundef_loc loc1, marker_id1,
-                                      fundef_attrs, List.map Prod.fst bindings1, d_stmt))))))))
+                                           (CerbLocation.withCursorFrom fundef_loc loc1, marker_id1,
+                                             fundef_attrs, List.map Prod.fst bindings1,
+                                             d_stmt))))))))))
 def desugar_and_register_external_declaration [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl]
     [CerbGlobal.Switches] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
@@ -6630,11 +7077,27 @@ def desugar_and_register_external_declaration [LemFuel] [CerberusFresh.Digest] [
              else
                ())
            (fun _ =>
-             CerbUtils.STD_ "§6.7.2.3#7" cabs_to_ail_effect_void
-               (register_tag edecl_loc Kind_struct (some ident)))))
+             lem_if has_gnu_attributes attrs1 then
+               fun (_ : state_with_markers) =>
+                 fail0
+                   (edecl_loc,
+                     DESUGAR
+                       (Desugar_NotYetSupported
+                         "GNU forward-tag attributes need a completion attachment rule"))
+             else
+               CerbUtils.STD_ "§6.7.2.3#7" cabs_to_ail_effect_void
+                 (register_tag edecl_loc Kind_struct (some ident)))))
        | [], [TSpec _ (TSpec_union attrs1 (some ident) none)], [], [], [], _, [] =>
-         CerbUtils.STD_ "§6.7.2.3#7" cabs_to_ail_effect_void
-           (register_tag edecl_loc Kind_union (some ident))
+         (lem_if has_gnu_attributes attrs1 then
+           fun (_ : state_with_markers) =>
+             fail0
+               (edecl_loc,
+                 DESUGAR
+                   (Desugar_NotYetSupported
+                     "GNU forward-tag attributes need a completion attachment rule"))
+         else
+           CerbUtils.STD_ "§6.7.2.3#7" cabs_to_ail_effect_void
+             (register_tag edecl_loc Kind_union (some ident)))
        | [], [TSpec _ (TSpec_enum (some ident) none)], [], [], [], _, [] =>
          (fun (_ : state_with_markers) =>
            fail0
@@ -6642,167 +7105,188 @@ def desugar_and_register_external_declaration [LemFuel] [CerberusFresh.Digest] [
                | (Identifier loc1 _) => loc1),
                DESUGAR (Desugar_MiscViolation EnumSimpleDeclarationConstruction)))
        | _, _, _, _, _, _, _ =>
-         stExpect_bind
-           ((desugar_type_specifiers _lemReader_enum_definitions _lemReader_tagDefs)
-             s.type_specifiers)
-           (fun (p : (qualifiers × ctype)) =>
-             match p with
-             | (specs_qs, base_ty) =>
-               (match translate_type_qualifiers s.type_qualifiers with
-                | (isAtomic, tquals_qs) =>
-                  (let base_qs := combine_qualifiers specs_qs tquals_qs;
-                   stExpect_bind
-                     (/- TODO: why the two maps? -/ /- NOTE: this is (at least) needed to get the scope of typedefs right
+         (lem_if List.isEmpty l && has_gnu_attributes a then
+           fun (_ : state_with_markers) =>
+             fail0
+               (edecl_loc,
+                 DESUGAR
+                   (Desugar_NotYetSupported
+                     "GNU attributes on a declaration without an entity require an attachment rule"))
+         else
+           stExpect_bind
+             ((desugar_type_specifiers _lemReader_enum_definitions _lemReader_tagDefs)
+               s.type_specifiers)
+             (fun (p : (qualifiers × ctype)) =>
+               match p with
+               | (specs_qs, base_ty) =>
+                 (match translate_type_qualifiers s.type_qualifiers with
+                  | (isAtomic, tquals_qs) =>
+                    (let base_qs := combine_qualifiers specs_qs tquals_qs;
+                     stExpect_bind
+                       (/- TODO: why the two maps? -/ /- NOTE: this is (at least) needed to get the scope of typedefs right
            (see suite/parsing/declarator_visibility.c) -/
-                     /- NOTE: `desugar_init_declarator' does register the identifier it finds -/ stExpect_mapM
-                       (fun (init : init_declarator) =>
-                         (desugar_init_declarator _lemReader_enum_definitions _lemReader_tagDefs) a
-                           isAtomic
-                           (not
-                             ((listEqualBy (fun x y => x == y) s.alignment_specifiers
-                               ([] : List alignment_specifier)))) base_qs base_ty s.storage_classes
-                           init) l)
-                     (fun (xs : List
-                       (Option
-                         (CerbLocation.Loc × attributes × linkage × sym × Bool ×
-                           (qualifiers × ctype) ×
-                           (Unit → state_with_markers → exceptM
-                             (Option (ctype × expression Unit) × state_with_markers)
-                             error)))) => /- for each [init_declarator] -/
-                       lemListFoldr
-                         (fun (m : state_with_markers → exceptM (Unit × state_with_markers)
-                           (CerbLocation.Loc × cause))
-                           (f : state_with_markers → exceptM (Unit × state_with_markers)
-                             (CerbLocation.Loc × cause))=>
-                           stExpect_bind m (fun (_ : Unit) => f)) (stExpect_return ())
-                         (List.map
-                           (fun (x : Option
-                             (CerbLocation.Loc × attributes × linkage × sym × Bool ×
-                               (qualifiers × ctype) ×
-                               (Unit → state_with_markers → exceptM
-                                 (Option (ctype × expression Unit) × state_with_markers) error))) =>
-                             match x with
-                             | none => /- Case of a typedef -/ stExpect_return ()
-                             | some
-                               (ident_loc, ident_attrs, link1, sym1, isTentative, (qs, ty1),
-                                 mk_desug_init) =>
-                               (let do_function : qualifiers → (qualifiers × ctype) → Option
-                                  (List (qualifiers × ctype × Bool)) → Bool → state_with_markers →
-                                  exceptM (Unit × state_with_markers) error :=
-                                  (fun (fun_qs : qualifiers) (return_qs_ty : (qualifiers × ctype))
-                                    (params_opt : Option (List (qualifiers × ctype × Bool)))
-                                    (is_variadic : Bool) =>
-                                    (lemSeq
-                                      (fun _ =>
-                                        lem_if no_attributes != ident_attrs then
-                                          CerbDebug.print_debug_pure 0 ([] : List domain)
-                                            (fun (u : Unit) =>
-                                              match u with
-                                              | () =>
-                                                "WARNING: desugaring of a function initdecl is erasing some attributes!")
-                                        else
-                                          ())
-                                      (fun _ =>
-                                        lem_if ((fun (qs1 : qualifiers) (qs2 : qualifiers) =>
-                                            not (qualifiersEqual qs1 qs2)) qs no_qualifiers) then
-                                          fun (_ : state_with_markers) =>
-                                            fail0
-                                              (ident_loc,
-                                                DESUGAR
-                                                  (Desugar_UndefinedBehaviour
-                                                    UB066_qualified_function_specification))
-                                        else lem_if not
-                                            ((listEqualBy (fun x y => x == y) s.alignment_specifiers
-                                              ([] : List alignment_specifier))) then
-                                          fun (_ : state_with_markers) =>
-                                            fail0
-                                              (ident_loc,
-                                                DESUGAR
-                                                  (Desugar_ConstraintViolation
-                                                    (IllegalAlignas IllegalAlignas_function)))
-                                        else
-                                          register_function_declaration ident_loc a sym1 true
-                                            (return_qs_ty, params_opt, is_variadic,
-                                              Lem_List.elem FS_inline s.function_specifiers,
-                                              Lem_List.elem FS_Noreturn s.function_specifiers))));
-                                /- NOTE: `desugar_init_declarator' takes care of isAtomic -/
-                                match ty1 with
-                                | Ctype _ (Function return_qs_ty params is_variadic) =>
-                                  do_function qs return_qs_ty (some params) is_variadic
-                                | Ctype _ (FunctionNoParams return_qs_ty) =>
-                                  do_function qs return_qs_ty none false
-                                | ty1 =>
-                                  (lem_if Lem_List.elem SC_register s.storage_classes && not
-                                      ((listEqualBy (fun x y => x == y) s.alignment_specifiers
-                                        ([] : List alignment_specifier))) then
-                                    fun (_ : state_with_markers) =>
-                                      fail0
-                                        (ident_loc,
-                                          DESUGAR
-                                            (Desugar_ConstraintViolation
-                                              (IllegalAlignas IllegalAlignas_register)))
-                                  else
-                                    stExpect_bind
-                                      ((desugar_alignment_specifiers _lemReader_enum_definitions
-                                        _lemReader_tagDefs) ident_loc ty1 s.alignment_specifiers)
-                                      (fun (align_opt : Option alignment) =>
-                                        let dur :=
-                                          determinate_storage_duration link1 s.storage_classes;
-                                        stExpect_bind
-                                          (stExpect_bind
-                                            (register_external_object_declaration sym1
-                                              (isTentative, ident_loc,
-                                                combine_attributes a ident_attrs, dur,
-                                                Lem_List.elem SC_register s.storage_classes,
-                                                align_opt, qs, ty1))
-                                            (fun (_ : Unit) => mk_desug_init ()))
-                                          (fun (x : Option (ctype × expression Unit)) =>
-                                            match x with
-                                            | some (ty', d_e) =>
+                       /- NOTE: `desugar_init_declarator' does register the identifier it finds -/ stExpect_mapM
+                         (fun (init : init_declarator) =>
+                           (desugar_init_declarator _lemReader_enum_definitions _lemReader_tagDefs)
+                             a isAtomic
+                             (not
+                               ((listEqualBy (fun x y => x == y) s.alignment_specifiers
+                                 ([] : List alignment_specifier)))) base_qs base_ty
+                             s.storage_classes init) l)
+                       (fun (xs : List
+                         (Option
+                           (CerbLocation.Loc × attributes × linkage × sym × Bool ×
+                             (qualifiers × ctype) ×
+                             (Unit → state_with_markers → exceptM
+                               (Option (ctype × expression Unit) × state_with_markers)
+                               error)))) => /- for each [init_declarator] -/
+                         lemListFoldr
+                           (fun (m : state_with_markers → exceptM (Unit × state_with_markers)
+                             (CerbLocation.Loc × cause))
+                             (f : state_with_markers → exceptM (Unit × state_with_markers)
+                               (CerbLocation.Loc × cause))=>
+                             stExpect_bind m (fun (_ : Unit) => f)) (stExpect_return ())
+                           (List.map
+                             (fun (x : Option
+                               (CerbLocation.Loc × attributes × linkage × sym × Bool ×
+                                 (qualifiers × ctype) ×
+                                 (Unit → state_with_markers → exceptM
+                                   (Option (ctype × expression Unit) × state_with_markers)
+                                   error))) =>
+                               match x with
+                               | none => /- Case of a typedef -/ stExpect_return ()
+                               | some
+                                 (ident_loc, ident_attrs, link1, sym1, isTentative, (qs, ty1),
+                                   mk_desug_init) =>
+                                 (let do_function : qualifiers → (qualifiers × ctype) → Option
+                                    (List (qualifiers × ctype × Bool)) → Bool → state_with_markers →
+                                    exceptM (Unit × state_with_markers) error :=
+                                    (fun (fun_qs : qualifiers) (return_qs_ty : (qualifiers × ctype))
+                                      (params_opt : Option (List (qualifiers × ctype × Bool)))
+                                      (is_variadic : Bool) =>
+                                      let attrs1 := combine_attributes a ident_attrs;
+                                      stExpect_bind (desugar_gnu_attributes ident_loc attrs1)
+                                        (fun (effects : gnu_decl_effects) =>
+                                          lem_if effects.gnu_packed || not
+                                              (isNothing effects.gnu_aligned) then
+                                            fun (_ : state_with_markers) =>
+                                              fail0
+                                                (ident_loc,
+                                                  DESUGAR
+                                                    (Desugar_NotYetSupported
+                                                      "GNU function placement alignment is retained but not represented by Ail"))
+                                          else lem_if ((fun (qs1 : qualifiers) (qs2 : qualifiers) =>
+                                              not (qualifiersEqual qs1 qs2)) qs no_qualifiers) then
+                                            fun (_ : state_with_markers) =>
+                                              fail0
+                                                (ident_loc,
+                                                  DESUGAR
+                                                    (Desugar_UndefinedBehaviour
+                                                      UB066_qualified_function_specification))
+                                          else lem_if not
+                                              ((listEqualBy (fun x y => x == y)
+                                                s.alignment_specifiers
+                                                ([] : List alignment_specifier))) then
+                                            fun (_ : state_with_markers) =>
+                                              fail0
+                                                (ident_loc,
+                                                  DESUGAR
+                                                    (Desugar_ConstraintViolation
+                                                      (IllegalAlignas IllegalAlignas_function)))
+                                          else
+                                            register_function_declaration ident_loc attrs1 sym1 true
+                                              (return_qs_ty, params_opt, is_variadic,
+                                                Lem_List.elem FS_inline s.function_specifiers,
+                                                (Lem_List.elem FS_Noreturn s.function_specifiers ||
+                                                  effects.gnu_noreturn))));
+                                  /- NOTE: `desugar_init_declarator' takes care of isAtomic -/
+                                  match ty1 with
+                                  | Ctype _ (Function return_qs_ty params is_variadic) =>
+                                    do_function qs return_qs_ty (some params) is_variadic
+                                  | Ctype _ (FunctionNoParams return_qs_ty) =>
+                                    do_function qs return_qs_ty none false
+                                  | ty1 =>
+                                    (lem_if Lem_List.elem SC_register s.storage_classes && not
+                                        ((listEqualBy (fun x y => x == y) s.alignment_specifiers
+                                          ([] : List alignment_specifier))) then
+                                      fun (_ : state_with_markers) =>
+                                        fail0
+                                          (ident_loc,
+                                            DESUGAR
+                                              (Desugar_ConstraintViolation
+                                                (IllegalAlignas IllegalAlignas_register)))
+                                    else
+                                      stExpect_bind
+                                        ((desugar_alignment_specifiers _lemReader_enum_definitions
+                                          _lemReader_tagDefs) ident_loc ty1 s.alignment_specifiers)
+                                        (fun (align_opt : Option alignment) =>
+                                          stExpect_bind
+                                            (desugar_gnu_alignment ident_loc
+                                              (combine_attributes a ident_attrs) ty1 align_opt
+                                              false)
+                                            (fun (align_opt : Option alignment) =>
+                                              let dur :=
+                                                determinate_storage_duration link1
+                                                  s.storage_classes;
                                               stExpect_bind
-                                                (stExpect_return
-                                                  (CerbDebug.print_debug_pure 2 [DB_desugaring]
-                                                    (fun (u : Unit) =>
-                                                      match u with
-                                                      | () =>
-                                                        String.append "Hello, ty' = "
-                                                          (CerbPP.stringFromAil_ctype no_qualifiers
-                                                            ty'))))
-                                                (fun (u : Unit) =>
-                                                  match u with
-                                                  | () =>
+                                                (stExpect_bind
+                                                  (register_external_object_declaration sym1
+                                                    (isTentative, ident_loc,
+                                                      combine_attributes a ident_attrs, dur,
+                                                      Lem_List.elem SC_register s.storage_classes,
+                                                      align_opt, qs, ty1))
+                                                  (fun (_ : Unit) => mk_desug_init ()))
+                                                (fun (x : Option (ctype × expression Unit)) =>
+                                                  match x with
+                                                  | some (ty', d_e) =>
                                                     stExpect_bind
-                                                      (stExpect_bind
-                                                        (lem_if ((fun (ty1 : ctype) (ty2 : ctype) =>
-                                                            not (ctypeEqual ty1 ty2)) ty1 ty') then
+                                                      (stExpect_return
+                                                        (CerbDebug.print_debug_pure 2
+                                                          [DB_desugaring]
+                                                          (fun (u : Unit) =>
+                                                            match u with
+                                                            | () =>
+                                                              String.append "Hello, ty' = "
+                                                                (CerbPP.stringFromAil_ctype
+                                                                  no_qualifiers ty'))))
+                                                      (fun (u : Unit) =>
+                                                        match u with
+                                                        | () =>
                                                           stExpect_bind
-                                                            (stExpect_return
-                                                              (CerbDebug.print_debug_pure 2
-                                                                [DB_desugaring]
-                                                                (fun (u : Unit) =>
-                                                                  match u with
-                                                                  | () => "ty' is new")))
-                                                            (fun (u : Unit) =>
-                                                              match u with
-                                                              | () => /- TODO: tentative -/
-                                                                update_external_object_type sym1
-                                                                  ty')
-                                                        else
-                                                          stExpect_return ())
-                                                        (fun (_ :
-                                                          Unit) => /- NOTE: it is the type after the initialisation which must be complete -/
-                                                          cabs_to_ail_effect_is_incomplete ty'))
-                                                      (fun (is_incomplete2 : Bool) =>
-                                                        lem_if (link1 == Linkage_none) &&
-                                                            is_incomplete2 then
-                                                          fun (_ : state_with_markers) =>
-                                                            fail0
-                                                              (ident_loc,
-                                                                DESUGAR
-                                                                  (Desugar_UndefinedBehaviour
-                                                                    UB059_incomplete_no_linkage_identifier))
-                                                        else
-                                                          /- KKK:
+                                                            (stExpect_bind
+                                                              (lem_if ((fun (ty1 : ctype)
+                                                                  (ty2 : ctype) =>
+                                                                  not (ctypeEqual ty1 ty2)) ty1
+                                                                  ty') then
+                                                                stExpect_bind
+                                                                  (stExpect_return
+                                                                    (CerbDebug.print_debug_pure 2
+                                                                      [DB_desugaring]
+                                                                      (fun (u : Unit) =>
+                                                                        match u with
+                                                                        | () => "ty' is new")))
+                                                                  (fun (u : Unit) =>
+                                                                    match u with
+                                                                    | () => /- TODO: tentative -/
+                                                                      update_external_object_type
+                                                                        sym1 ty')
+                                                              else
+                                                                stExpect_return ())
+                                                              (fun (_ :
+                                                                Unit) => /- NOTE: it is the type after the initialisation which must be complete -/
+                                                                cabs_to_ail_effect_is_incomplete
+                                                                  ty'))
+                                                            (fun (is_incomplete2 : Bool) =>
+                                                              lem_if (link1 == Linkage_none) &&
+                                                                  is_incomplete2 then
+                                                                fun (_ : state_with_markers) =>
+                                                                  fail0
+                                                                    (ident_loc,
+                                                                      DESUGAR
+                                                                        (Desugar_UndefinedBehaviour
+                                                                          UB059_incomplete_no_linkage_identifier))
+                                                              else
+                                                                /- KKK:
                             E.global_object_is_defined sym >>= function
                               | true ->
                                   match link with
@@ -6819,41 +7303,42 @@ def desugar_and_register_external_declaration [LemFuel] [CerberusFresh.Digest] [
                                   E.register_global_object_definition2 sym (E.ExternalDefinition d_e)
                               end
 -/
-                                                          register_global_object_definition2
-                                                            ident_loc sym1 link1
-                                                            (ExternalDefinition d_e)))
-                                            | none =>
-                                              stExpect_bind (cabs_to_ail_effect_is_incomplete ty1)
-                                                (fun (is_incomplete2 : Bool) =>
-                                                  lem_if (link1 == Linkage_internal) &&
-                                                      is_incomplete2 then /- TODO: this is wrong (see tentative definition in the STD) -/
-                                                    fun (_ : state_with_markers) =>
-                                                      fail0
-                                                        (ident_loc,
-                                                          DESUGAR
-                                                            (Desugar_UndefinedBehaviour
-                                                              UB089_tentative_definition_internal_linkage))
-                                                  else lem_if (link1 == Linkage_none) &&
-                                                      is_incomplete2 then
-                                                    fun (_ : state_with_markers) =>
-                                                      fail0
-                                                        (ident_loc,
-                                                          DESUGAR
-                                                            (Desugar_UndefinedBehaviour
-                                                              UB059_incomplete_no_linkage_identifier))
-                                                  else lem_if (dur == Static) ||
-                                                      (dur ==
-                                                        Thread) then /- TODO: not correct for thread? -/
-                                                    lem_if Lem_List.elem SC_extern
-                                                        s.storage_classes then
-                                                      stExpect_return ()
-                                                    else
-                                                      register_global_object_definition2 ident_loc
-                                                        sym1 link1
-                                                        (Tentative ident_loc
-                                                          ty1 /- mk_zeroInit tagDefs ty -/)
-                                                  else
-                                                    stExpect_return ())))))) xs))))))
+                                                                register_global_object_definition2
+                                                                  ident_loc sym1 link1
+                                                                  (ExternalDefinition d_e)))
+                                                  | none =>
+                                                    stExpect_bind
+                                                      (cabs_to_ail_effect_is_incomplete ty1)
+                                                      (fun (is_incomplete2 : Bool) =>
+                                                        lem_if (link1 == Linkage_internal) &&
+                                                            is_incomplete2 then /- TODO: this is wrong (see tentative definition in the STD) -/
+                                                          fun (_ : state_with_markers) =>
+                                                            fail0
+                                                              (ident_loc,
+                                                                DESUGAR
+                                                                  (Desugar_UndefinedBehaviour
+                                                                    UB089_tentative_definition_internal_linkage))
+                                                        else lem_if (link1 == Linkage_none) &&
+                                                            is_incomplete2 then
+                                                          fun (_ : state_with_markers) =>
+                                                            fail0
+                                                              (ident_loc,
+                                                                DESUGAR
+                                                                  (Desugar_UndefinedBehaviour
+                                                                    UB059_incomplete_no_linkage_identifier))
+                                                        else lem_if (dur == Static) ||
+                                                            (dur ==
+                                                              Thread) then /- TODO: not correct for thread? -/
+                                                          lem_if Lem_List.elem SC_extern
+                                                              s.storage_classes then
+                                                            stExpect_return ()
+                                                          else
+                                                            register_global_object_definition2
+                                                              ident_loc sym1 link1
+                                                              (Tentative ident_loc
+                                                                ty1 /- mk_zeroInit tagDefs ty -/)
+                                                        else
+                                                          stExpect_return ()))))))) xs)))))))
     | EDecl_decl (Declaration_static_assert s0) =>
       (desugar_and_register_static_assert_declaration _lemReader_enum_definitions
         _lemReader_tagDefs) s0

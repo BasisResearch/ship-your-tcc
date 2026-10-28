@@ -287,7 +287,6 @@ where
   | "__builtin_va_copy" | "__va_copy" => some .VA_COPY
   | "__builtin_va_arg" => some .VA_ARG
   | "__builtin_va_end" => some .VA_END
-  | "__builtin_va_list" => some .BUILTIN_VA_LIST
   | _ => none
 
 /-- The lexer state between tokens. -/
@@ -302,7 +301,7 @@ structure St where
 
 /-- Emit `t` spanning `[st.i, st.i + n)` (no newline inside a token). -/
 @[inline] def St.emit (st : St) (t : Tok) (n : Nat) : St :=
-  { st with i := st.i + n, toks := st.toks.push ⟨t, st.pos, ⟨st.lnum, st.bol, st.i + n⟩⟩ }
+  { st with i := st.i + n, toks := st.toks.push ⟨t, st.pos, ⟨st.lnum, st.bol, st.i + n⟩, ""⟩ }
 
 /-- Decimal value of the digits `[i, j)` (the line number of a marker). -/
 def decValue (s : ByteArray) (i j : Nat) : Nat :=
@@ -447,7 +446,7 @@ consumes a byte. -/
 def lexLoop (cfg : LexCfg) (s : ByteArray) : Nat → St → Except LexErr St
   | 0, st => .error ⟨st.pos, "lexer fuel exhausted"⟩
   | f+1, st =>
-    if st.i ≥ s.size then .ok { st with toks := st.toks.push ⟨.EOF, st.pos, st.pos⟩ }
+    if st.i ≥ s.size then .ok { st with toks := st.toks.push ⟨.EOF, st.pos, st.pos, ""⟩ }
     else
       -- `step`'s token alternatives capture its state. Keep the accumulated
       -- token array outside those closures so an emitted token never copies
@@ -468,6 +467,6 @@ end Lex
 markers. -/
 def lex (cfg : LexCfg) (src : ByteArray) : Except LexErr (Array RawTok × Array LineMark) := do
   let st ← Lex.lexLoop cfg src (src.size + 1) ⟨0, 1, 0, #[], #[]⟩
-  return (st.toks, st.marks)
+  return (st.toks.map (fun t => { t with spelling := Lex.slice src t.sp.cnum t.ep.cnum }), st.marks)
 
 end CSemCParser

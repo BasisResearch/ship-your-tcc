@@ -23,10 +23,10 @@ let lookup_tag_definition s sym =
    containers are ordinary members; member_paths supplies promotion. *)
 let source_members sigm tag =
   match lookup_tag_definition sigm tag with
-    | Just (StructDef xs Nothing) -> xs
-    | Just (StructDef xs (Just (FlexibleArrayMember attrs ident qs ty))) ->
+    | Just (StructDef _ xs Nothing) -> xs
+    | Just (StructDef _ xs (Just (FlexibleArrayMember attrs ident qs ty))) ->
         xs ++ [(ident, (attrs, Nothing, qs, Ctype [] (Array ty Nothing)))]
-    | Just (UnionDef xs) -> xs
+    | Just (UnionDef _ xs) -> xs
     | _ -> []
   end
 
@@ -795,7 +795,7 @@ let rec annotate_expression annotate_block sigm gamm ctx (AnnotatedExpression ()
     | AilEstruct tag_sym xs ->
         let struct_gty = GenStruct tag_sym in
         match lookup_tag_definition sigm tag_sym with
-          | Just (StructDef membersDefs _) ->
+          | Just (StructDef _ membersDefs _) ->
               (* NOTE: the potential flexible array member is never prevent in the list of expressions
                        (as it cannot be initialised with an initializer) *)
               if List.length xs <> List.length membersDefs then
@@ -822,7 +822,7 @@ let rec annotate_expression annotate_block sigm gamm ctx (AnnotatedExpression ()
     | AilEunion tag_sym memb_ident (Just e) ->
         let union_gty = GenUnion tag_sym in
         match lookup_tag_definition sigm tag_sym with
-          | Just (UnionDef membersDefs) ->
+          | Just (UnionDef _ membersDefs) ->
               match List.lookup memb_ident membersDefs with
                 | Just (_, align_opt, _, memb_ty) ->
                     annotate_assignee true InitializationAsSimpleAssignment loc memb_ty e >>= fun a_e ->
@@ -2285,7 +2285,7 @@ let annotate_sigma sigm =
     else
       E.return () in
   E.mapM (function
-    | (_, (_, _, StructDef xs flexible_opt)) ->
+    | (_, (_, _, StructDef _ xs flexible_opt)) ->
         E.mapM_ (check_member true) xs >>= fun () ->
         E.mapM_ (fun (_, (_, _, qs, ty)) ->
           (* TODO: check that it is ok to use wf_lvalue (instead of just wf_type) *)
@@ -2297,7 +2297,7 @@ let annotate_sigma sigm =
           | Just (FlexibleArrayMember _ _ flex_qs flex_elem_ty) ->
               wf_lvalue sigm flex_qs (Ctype [] (Array flex_elem_ty Nothing))
         end
-    | (_, (_, _, UnionDef xs)) ->
+    | (_, (_, _, UnionDef _ xs)) ->
         E.mapM (check_member false) xs >>
         E.mapM_ (fun (_, (_, _, qs, ty)) ->
           (* TODO: check that it is ok to use wf_lvalue (instead of just wf_type) *)

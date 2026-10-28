@@ -1,0 +1,346 @@
+--- a/frontend/model/ail/ailTypesAux.lem
++++ b/frontend/model/ail/ailTypesAux.lem
+@@ -172,16 +172,16 @@
+ let rec has_flexible_array_member sigm = function
+   | Ctype _ (Struct tag_sym) ->
+       match List.lookup tag_sym sigm.tag_definitions with
+-        | Just (_, _, StructDef _ Nothing) ->
++        | Just (_, _, StructDef _ _ Nothing) ->
+             false
+-        | Just (_, _, StructDef _ (Just _)) ->
++        | Just (_, _, StructDef _ _ (Just _)) ->
+             true
+         | _ ->
+             error "AilTypesAux.has_flexible_array_member: Struct, UnionDef or Nothing"
+       end
+   | Ctype _ (Union tag_sym) ->
+       match List.lookup tag_sym sigm.tag_definitions with
+-        | Just (_, _, UnionDef xs) ->
++        | Just (_, _, UnionDef _ xs) ->
+             List.any (fun (_, (_, _, _, memb_ty)) ->
+               has_flexible_array_member sigm memb_ty
+             ) xs
+@@ -250,11 +250,11 @@
+     (* STD §6.2.5#22, sentence 3-4 *)
+   | Struct sym ->
+       match List.lookup sym sigm.tag_definitions with
+-        | Just (_, _, StructDef _ _) ->
++        | Just (_, _, StructDef _ _ _) ->
+             (* TODO[note]: as far as I can tell, a struct with a flexible array member
+                            is still a complete type *)
+             true
+-        | Just (_, _, UnionDef _) ->
++        | Just (_, _, UnionDef _ _) ->
+             error "AilTypesAux.is_complete: Struct --> tag resolved to a UnionDef"
+         | Nothing ->
+             false
+@@ -262,9 +262,9 @@
+     (* STD §6.2.5#22, sentence 3-4 *)
+   | Union sym ->
+       match List.lookup sym sigm.tag_definitions with
+-        | Just (_, _, StructDef _ _) ->
++        | Just (_, _, StructDef _ _ _) ->
+             error "AilTypesAux.is_complete: Struct --> tag resolved to a StructDef"
+-        | Just (_, _, UnionDef _) ->
++        | Just (_, _, UnionDef _ _) ->
+             true
+         | Nothing ->
+             false
+--- a/frontend/model/ail/genTypesAux.lem
++++ b/frontend/model/ail/genTypesAux.lem
+@@ -396,7 +396,7 @@
+       (* STD §6.2.5#22, sentence 3-4 *)
+     | GenStruct sym ->
+         match List.lookup sym sigm.tag_definitions with
+-          | Just (_, _, StructDef _ _) ->
++          | Just (_, _, StructDef _ _ _) ->
+               (* TODO[note]: as far as I can tell, a struct with a flexible array member
+                               is still a complete type *)
+               true
+@@ -408,7 +408,7 @@
+       (* STD §6.2.5#22, sentence 3-4 *)
+     | GenUnion sym ->
+         match List.lookup sym sigm.tag_definitions with
+-          | Just (_, _, UnionDef _) ->
++          | Just (_, _, UnionDef _ _) ->
+               true
+           | _ ->
+               false
+--- a/frontend/model/core_aux.lem
++++ b/frontend/model/core_aux.lem
+@@ -593,9 +593,9 @@
+         zeros_aux tagDefs ty'
+     | Struct tag ->
+         match Map.lookup tag tagDefs with
+-          | Just (_, StructDef ident_tys Nothing) ->
++          | Just (_, StructDef _ ident_tys Nothing) ->
+               Mem.struct_mval tag (List.map (fun (ident, (_, _, _, ty)) -> (ident, ty, zeros_aux tagDefs ty)) ident_tys)
+-          | Just (_, StructDef ident_tys (Just (FlexibleArrayMember _ flex_ident flex_qs flex_elem_ty))) ->
++          | Just (_, StructDef _ ident_tys (Just (FlexibleArrayMember _ flex_ident flex_qs flex_elem_ty))) ->
+               let () = Debug.print_debug 0 [] (fun () ->
+                 "TODO: check Core_aux.zeros_aux for flexible array member"
+               ) in
+@@ -605,7 +605,7 @@
+         end
+     | Union tag ->
+         match Map.lookup tag tagDefs with
+-          | Just (_, UnionDef ((ident, (_, _, _, ty'))::_)) ->
++          | Just (_, UnionDef _ ((ident, (_, _, _, ty'))::_)) ->
+               Mem.union_mval tag ident (zeros_aux tagDefs ty')
+           | _ ->
+               error "Core_aux.zeros_aux, not UnionDef"
+--- a/frontend/model/core_eval.lem
++++ b/frontend/model/core_eval.lem
+@@ -859,7 +859,7 @@
+           | Just cvals ->
+               let xs = List.map (fun (memb_ident, cval) ->
+                 match snd $ fromJust "Core_eval, PEstruct 1,1" (Map.lookup tag_sym file.tagDefs) with
+-                  | Ctype.StructDef membrs flexible_opt ->
++                  | Ctype.StructDef _ membrs flexible_opt ->
+                       (* let () = match flexible_opt with
+                         | Nothing ->
+                             ()
+@@ -870,7 +870,7 @@
+                       let (_, _, _, memb_ty) = fromJust "Core_eval, PEstruct 1" (List.lookup memb_ident membrs) in
+                       let mval = fromJust "Core_Eval, PEstruct 2" (Caux.memValueFromValue memb_ty cval) in
+                       (memb_ident, memb_ty, mval)
+-                  | Ctype.UnionDef _ ->
++                  | Ctype.UnionDef _ _ ->
+                       error "Core_eval.step_eval_pexpr, PEstruct found a UnionDef"
+                 end
+               ) (List.zip idents cvals) in
+@@ -886,11 +886,11 @@
+         match Caux.valueFromPexpr pe' with
+           | Just cval ->
+               match snd $ fromJust "Core_eval, PEunion 1,1" (Map.lookup tag_sym file.tagDefs) with
+-                | Ctype.UnionDef membrs ->
++                | Ctype.UnionDef _ membrs ->
+                     let (_, _, _, memb_ty) = fromJust "Core_eval, PEunion 1" (List.lookup memb_ident membrs) in
+                     let mval = fromJust "Core_Eval, PEunion 2" (Caux.memValueFromValue memb_ty cval) in
+                     EU.return (PEval (Vobject (OVunion tag_sym memb_ident mval)))
+-                | Ctype.StructDef _ _ ->
++                | Ctype.StructDef _ _ _ ->
+                       error "Core_eval.step_eval_pexpr, PEunion found a StructDef"
+                 end
+           | Nothing ->
+--- a/frontend/model/core_typing.lem
++++ b/frontend/model/core_typing.lem
+@@ -589,10 +589,10 @@
+         E.return (Pexpr annot (InferredType_object OTy_pointer) (PEarray_shift pe1' cty pe2'))
+     | PEmember_shift pe tag_sym memb_ident ->
+         let xs = match snd $ fromJust "Core_typing.infer_pexpr, PEmember_shift" (Map.lookup tag_sym tagDefs) with
+-          | Cty.StructDef z Nothing -> z
+-          | Cty.StructDef z (Just _) ->
++          | Cty.StructDef _ z Nothing -> z
++          | Cty.StructDef _ z (Just _) ->
+                 error "TODO: Core_typing, PEmember_shift => struct with flexible array member"
+-          | Cty.UnionDef  z -> z
++          | Cty.UnionDef _  z -> z
+         end in
+         typecheck_pexpr tagDefs env (BTy_object OTy_pointer) pe >>= fun pe' ->
+           match List.lookup memb_ident xs with
+@@ -688,9 +688,9 @@
+         end
+     | PEstruct tag_sym fields ->
+         match snd $ fromJust "Core_typing.infer_pexpr, PEstruct" (Map.lookup tag_sym tagDefs) with
+-          | Cty.UnionDef _ ->
++          | Cty.UnionDef _ _ ->
+               E.fail loc (InvalidTag tag_sym)
+-          | Cty.StructDef xs _ ->
++          | Cty.StructDef _ xs _ ->
+               E.mapM (fun (ident, pe) ->
+                 match List.lookup ident xs with
+                   | Nothing ->
+@@ -714,9 +714,9 @@
+         end
+     | PEunion tag_sym ident pe ->
+         match snd $ fromJust "Core_typing.infer_pexpr, PEunion" (Map.lookup tag_sym tagDefs) with
+-          | Cty.StructDef _ _ ->
++          | Cty.StructDef _ _ _ ->
+               E.fail loc (InvalidTag tag_sym)
+-          | Cty.UnionDef xs ->
++          | Cty.UnionDef _ xs ->
+               match List.lookup ident xs with
+                 | Nothing ->
+                     E.fail loc (InvalidMember tag_sym ident)
+@@ -738,11 +738,11 @@
+                                          InferredType_boolean; InferredType_boolean]) (PEcfunction pe')
+     | PEmemberof tag_sym memb_ident pe ->
+         let (oty_ctor, xs) = match snd $ fromJust "Core_typing.infer_pexpr, PEmemberof" (Map.lookup tag_sym tagDefs) with
+-          | Cty.StructDef xs Nothing ->
++          | Cty.StructDef _ xs Nothing ->
+               (OTy_struct, xs)
+-          | Cty.StructDef xs (Just _) ->
++          | Cty.StructDef _ xs (Just _) ->
+                 error "TODO: Core_typing, PEmemberof => struct with flexible array member"
+-          | Cty.UnionDef xs ->
++          | Cty.UnionDef _ xs ->
+               (OTy_union, xs)
+         end in
+         match List.lookup memb_ident xs with
+@@ -1004,10 +1004,10 @@
+                        <*> typecheck_pexpr tagDefs env (BTy_object OTy_integer) pe2)
+     | PEmember_shift pe tag_sym memb_ident ->
+           let xs = match snd $ fromJust "Core_typing.typecheck_pexpr, PEmember_shift 1" (Map.lookup tag_sym tagDefs) with
+-            | Cty.StructDef z Nothing -> z
+-            | Cty.StructDef z (Just _) ->
++            | Cty.StructDef _ z Nothing -> z
++            | Cty.StructDef _ z (Just _) ->
+                 error "TODO: Core_typing, PEmember_shift => struct with flexible array member"
+-            | Cty.UnionDef  z -> z
++            | Cty.UnionDef _  z -> z
+           end in
+           match List.lookup memb_ident xs with
+             | Nothing ->
+@@ -1106,9 +1106,9 @@
+     | PEstruct tag_sym fields ->
+         guard_match loc "struct()" bTy (BTy_object (OTy_struct tag_sym)) >>
+         match snd $ fromJust "Core_typing.typecheck_pexpr, PEstruct" (Map.lookup tag_sym tagDefs) with
+-          | Cty.UnionDef _ ->
++          | Cty.UnionDef _ _ ->
+               E.fail loc (InvalidTag tag_sym)
+-          | Cty.StructDef xs flexible_opt ->
++          | Cty.StructDef _ xs flexible_opt ->
+               E.mapM (fun (ident, pe) ->
+                 match List.lookup ident xs with
+                   | Nothing ->
+@@ -1130,9 +1130,9 @@
+     | PEunion tag_sym ident pe ->
+         guard_match loc "union()" bTy (BTy_object (OTy_union tag_sym)) >>
+         match snd $ fromJust "Core_typing.typecheck_pexpr, PEunion" (Map.lookup tag_sym tagDefs) with
+-          | Cty.StructDef _ _ ->
++          | Cty.StructDef _ _ _ ->
+               E.fail loc (InvalidTag tag_sym)
+-          | Cty.UnionDef xs ->
++          | Cty.UnionDef _ xs ->
+               match List.lookup ident xs with
+                 | Nothing ->
+                     E.fail loc (InvalidMember tag_sym ident)
+@@ -1152,11 +1152,11 @@
+         (PEcfunction <$> typecheck_pexpr tagDefs env (BTy_loaded OTy_pointer) pe)
+     | PEmemberof tag_sym memb_ident pe ->
+         let (oty_ctor, xs) = match snd $ fromJust "Core_typing.typecheck_pexpr, PEmemberof" (Map.lookup tag_sym tagDefs) with
+-          | Cty.StructDef xs Nothing ->
++          | Cty.StructDef _ xs Nothing ->
+               (OTy_struct, xs)
+-          | Cty.StructDef xs (Just _) ->
++          | Cty.StructDef _ xs (Just _) ->
+               error "TODO: Core_typing, PEmemberof => struct with flexible array member"
+-          | Cty.UnionDef xs ->
++          | Cty.UnionDef _ xs ->
+               (OTy_union, xs)
+         end in
+         match List.lookup memb_ident xs with
+--- a/frontend/model/ctype_aux.lem
++++ b/frontend/model/ctype_aux.lem
+@@ -48,7 +48,7 @@
+ val get_structDef_with_tagDefs: map Symbol.sym (Loc.t * tag_definition) -> Symbol.sym -> list (Symbol.identifier * (Annot.attributes * maybe alignment * qualifiers * ctype)) * maybe Ctype.flexible_array_member
+ let get_structDef_with_tagDefs tagDefs tag_sym =
+   match Map.lookup tag_sym tagDefs with
+-    | Just (_, StructDef xs flexible_opt) ->
++    | Just (_, StructDef _ xs flexible_opt) ->
+         (xs, flexible_opt)
+     | Just _ ->
+         error ("Core_type.aux.get_structDef_with_tagDefs (" ^ show tag_sym ^
+@@ -66,10 +66,10 @@
+ val get_unionDef: Symbol.sym -> (Symbol.identifier * (Annot.attributes * maybe alignment * qualifiers * ctype)) * list (Symbol.identifier * (Annot.attributes * maybe alignment * qualifiers * ctype))
+ let get_unionDef tag_sym =
+   match Map.lookup tag_sym (tagDefs ()) with
+-    | Just (_, UnionDef []) ->
++    | Just (_, UnionDef _ []) ->
+         error ("Core_type.aux.get_unionDef (" ^ show tag_sym ^
+                "): found an empty union definition")
+-    | Just (_, UnionDef (x::xs)) ->
++    | Just (_, UnionDef _ (x::xs)) ->
+         (x, xs)
+     | Just _ ->
+         error ("Core_type.aux.get_unionDef (" ^ show tag_sym ^
+@@ -134,7 +134,7 @@
+                   true
+               | (Nothing, Just _) ->
+                   true
+-              | (Just (_, StructDef xs1 flexible_opt1), Just (_, StructDef xs2 flexible_opt2)) ->
++              | (Just (_, StructDef _ xs1 flexible_opt1), Just (_, StructDef _ xs2 flexible_opt2)) ->
+                   if List.length xs1 <> List.length xs2 then
+                     false
+                   else
+@@ -177,7 +177,7 @@
+                   true
+               | (Nothing, Just _) ->
+                   true
+-              | (Just (_, UnionDef xs1), Just (_, UnionDef xs2)) ->
++              | (Just (_, UnionDef _ xs1), Just (_, UnionDef _ xs2)) ->
+                   if List.length xs1 <> List.length xs2 then
+                     false
+                   else
+--- a/frontend/model/defacto_memory.lem
++++ b/frontend/model/defacto_memory.lem
+@@ -351,9 +351,9 @@
+ 
+ let mk_offsetof_ival_ acc tag_sym memb_ident =
+   match Ctype_aux.get_membersDefs tag_sym with
+-    | StructDef _ (Just _) ->
++    | StructDef _ _ (Just _) ->
+         error "TODO: Defacto_memory.mk_offsetof_ival_ ==> for struct with flexible array member"
+-    | StructDef xs Nothing ->
++    | StructDef _ xs Nothing ->
+         (* we take the prefix the members before the one we want to offset to *)
+         let prefix_xs =
+           List.takeWhile (fun (ident, _) -> memb_ident <> ident) xs in
+@@ -366,7 +366,7 @@
+             mk_op_ival_ IntAdd (IVsizeof ty)
+               (mk_op_ival_ IntAdd (IVpadding tag_sym ident) acc')
+         ) acc (List.reverse prefix_xs)
+-    | UnionDef _ ->
++    | UnionDef _ _ ->
+         (* TODO: check, but if we have a struct this should be no offset to do *)
+         acc
+   end
+@@ -1300,10 +1300,10 @@
+             (return false)
+     | (SPE_member tag_sym memb_ident) :: sh' ->
+         let xs = match Ctype_aux.get_membersDefs tag_sym with
+-          | StructDef z Nothing -> z
+-          | StructDef _ (Just _) ->
++          | StructDef _ z Nothing -> z
++          | StructDef _ _ (Just _) ->
+               error "TODO: Defacto_memory.isBeginningShift ==> for struct with flexible array member"
+-          | UnionDef  z -> z
++          | UnionDef _  z -> z
+         end in
+         match xs with
+           | [] ->
+--- a/frontend/model/implementation.lem
++++ b/frontend/model/implementation.lem
+@@ -136,7 +136,7 @@
+    integer member types through `(get ()).alignof_ity` — i.e. through the
+    enum registry — so the Lean rep needs the map: a reader consumer too
+    (charter erratum, record §0). *)
+-val alignof_ty: map AilSyntax.ail_identifier (list (maybe Ctype.alignment * Ctype.ctype)) ->  Ctype.ctype -> maybe nat
++val alignof_ty: map AilSyntax.ail_identifier (Ctype.aggregate_layout * list (maybe Ctype.alignment * Ctype.ctype)) ->  Ctype.ctype -> maybe nat
+ declare ocaml target_rep function alignof_ty = `Ocaml_implementation.alignof_proxy`
+ declare lean target_rep function alignof_ty = `CerberusImpl.alignof_ty`
+ declare {lean} reader_consumer val alignof_ty
+--- a/frontend/model/translation.lem
++++ b/frontend/model/translation.lem
+@@ -2781,7 +2781,7 @@
+       
+       | A.AilEstruct tag_sym ident_e_opts ->
+           let ident_tys = match Map.lookup tag_sym tagDefs with
+-            | Just (_, Cty.StructDef z _) ->
++            | Just (_, Cty.StructDef _ z _) ->
+                 z
+             | (*BISECT-IGNORE*) _ ->
+                 illTypedAil loc "AilEstruct"
+@@ -2822,9 +2822,9 @@
+           match Map.lookup tag_sym tagDefs with
+             | (*BISECT-IGNORE*) Nothing ->
+                 illTypedAil loc "AilEunion: couldn't find the definition"
+-            | (*BISECT-IGNORE*) Just (_, Cty.StructDef _ _) ->
++            | (*BISECT-IGNORE*) Just (_, Cty.StructDef _ _ _) ->
+                 illTypedAil loc "AilEunion: found a struct definition"
+-            | Just (_, Cty.UnionDef ident_tys) ->
++            | Just (_, Cty.UnionDef _ ident_tys) ->
+                 match List.lookup memb_ident ident_tys with
+                   | (*BISECT-IGNORE*) Nothing ->
+                       illTypedAil loc "AilEunion: couldn't find a union definition"

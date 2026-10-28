@@ -1,0 +1,12 @@
+{
+  "command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+    "--tcc",
+    "--gnu",
+    "--fslist",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/gnu-attributes/initial/fs.list",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/gnu-attributes/initial/ordinary.c"
+  ],
+  "exit": 0,
+  "binary_sha256": "7453b755c5b76469648a3ac5703656b0232b95b2f0719a8a2742391f1d5cc7d8"
+}

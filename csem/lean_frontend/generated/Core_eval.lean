@@ -1010,7 +1010,7 @@ def step_eval_pexpr_lemFuel [LemFuel] [CerbImplCfg.Impl] (lemFuel : Nat)
                                     ((fmapLookupBy
                                       (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2) tag_sym
                                       file1.tagDefs)) : (CerbLocation.Loc × tag_definition))) with
-                              | StructDef membrs flexible_opt =>
+                              | StructDef _ membrs flexible_opt =>
                                 (/- let () = match flexible_opt with
                         | Nothing ->
                             ()
@@ -1026,7 +1026,7 @@ def step_eval_pexpr_lemFuel [LemFuel] [CerbImplCfg.Impl] (lemFuel : Nat)
                                        ((memValueFromValue _lemReader_enum_definitions
                                          _lemReader_tagDefs) memb_ty cval) : CerbMem.MemValue);
                                    (memb_ident, memb_ty, mval)))
-                              | UnionDef _ =>
+                              | UnionDef _ _ =>
                                 (failwithI "Core_eval.step_eval_pexpr, PEstruct found a UnionDef" :
                                   (identifier × ctype × CerbMem.MemValue))))
                          (lemListZip idents1 cvals);
@@ -1043,7 +1043,7 @@ KKK:              EU.return (PEval (Vloaded (LVspecified (OVstruct tag_sym xs)))
                       ((fromJustI "Core_eval, PEunion 1,1"
                         ((fmapLookupBy (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2)
                           tag_sym file1.tagDefs)) : (CerbLocation.Loc × tag_definition))) with
-                  | UnionDef membrs =>
+                  | UnionDef _ membrs =>
                     (match (fromJustI "Core_eval, PEunion 1"
                          ((lookupBy idEqual memb_ident membrs)) :
                          (attributes × Option alignment × qualifiers × ctype)) with
@@ -1052,7 +1052,7 @@ KKK:              EU.return (PEval (Vloaded (LVspecified (OVstruct tag_sym xs)))
                             ((memValueFromValue _lemReader_enum_definitions _lemReader_tagDefs)
                               memb_ty cval) : CerbMem.MemValue);
                         exception_undef_return (PEval (Vobject (OVunion tag_sym memb_ident mval)))))
-                  | StructDef _ _ =>
+                  | StructDef _ _ _ =>
                     (failwithI "Core_eval.step_eval_pexpr, PEunion found a StructDef" : exceptM
                       (t0 (generic_pexpr_ Unit sym)) core_run_cause))
                | none => exception_undef_return (PEunion tag_sym memb_ident pe'))

@@ -627,7 +627,7 @@ def zeros_aux_lemFuel { a : Type } [CerbImplCfg.Impl] (lemFuel : Nat)
         | Struct tag =>
           (match (fmapLookupBy (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2) tag
                tagDefs1) with
-           | some (_, StructDef ident_tys none) =>
+           | some (_, StructDef _ ident_tys none) =>
              CerbMem.structMval tag
                (List.map
                  (fun (p : (identifier × (attributes × Option alignment × qualifiers × ctype))) =>
@@ -636,7 +636,7 @@ def zeros_aux_lemFuel { a : Type } [CerbImplCfg.Impl] (lemFuel : Nat)
                      (ident, ty1, (zeros_aux_lemFuel lemFuel) tagDefs1 ty1)) ident_tys)
            | some
              (_,
-               StructDef ident_tys
+               StructDef _ ident_tys
                  (some (FlexibleArrayMember _ flex_ident flex_qs flex_elem_ty))) =>
              ((lemSeq
                (fun _ =>
@@ -655,7 +655,7 @@ def zeros_aux_lemFuel { a : Type } [CerbImplCfg.Impl] (lemFuel : Nat)
         | Union0 tag =>
           (match (fmapLookupBy (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2) tag
                tagDefs1) with
-           | some (_, UnionDef ((ident, (_, _, _, ty')) :: _)) =>
+           | some (_, UnionDef _ ((ident, (_, _, _, ty')) :: _)) =>
              CerbMem.unionMval tag ident ((zeros_aux_lemFuel lemFuel) tagDefs1 ty')
            | _ => (failwithI "Core_aux.zeros_aux, not UnionDef" : CerbMem.MemValue))
         | _ =>

@@ -1032,11 +1032,11 @@ partial def infer_pexpr { a bty : Type } [Inhabited a] (tagDefs1 : Fmap sym (a �
               (fromJust "Core_typing.infer_pexpr, PEmember_shift"
                 ((fmapLookupBy (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2) tag_sym
                   tagDefs1))) with
-          | StructDef z none => z
-          | StructDef z (some _) =>
+          | StructDef _ z none => z
+          | StructDef _ z (some _) =>
             (failwithI "TODO: Core_typing, PEmember_shift => struct with flexible array member" :
               List (identifier × (attributes × Option alignment × qualifiers × ctype)))
-          | UnionDef z => z;
+          | UnionDef _ z => z;
         except_bind (typecheck_pexpr tagDefs1 env1 (BTy_object OTy_pointer) pe)
           (fun (pe' : generic_pexpr inferred sym) =>
             match (lookupBy idEqual memb_ident xs) with
@@ -1154,8 +1154,8 @@ partial def infer_pexpr { a bty : Type } [Inhabited a] (tagDefs1 : Fmap sym (a �
               (fromJust "Core_typing.infer_pexpr, PEstruct"
                 ((fmapLookupBy (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2) tag_sym
                   tagDefs1))) with
-          | UnionDef _ => core_typing_effect_fail loc1 (InvalidTag tag_sym)
-          | StructDef xs _ =>
+          | UnionDef _ _ => core_typing_effect_fail loc1 (InvalidTag tag_sym)
+          | StructDef _ xs _ =>
             except_mapM
               (fun (p : (identifier × generic_pexpr bty sym)) =>
                 match p with
@@ -1183,8 +1183,8 @@ partial def infer_pexpr { a bty : Type } [Inhabited a] (tagDefs1 : Fmap sym (a �
             (fromJust "Core_typing.infer_pexpr, PEunion"
               ((fmapLookupBy (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2) tag_sym
                 tagDefs1))) with
-        | StructDef _ _ => core_typing_effect_fail loc1 (InvalidTag tag_sym)
-        | UnionDef xs =>
+        | StructDef _ _ _ => core_typing_effect_fail loc1 (InvalidTag tag_sym)
+        | UnionDef _ xs =>
           (match (lookupBy idEqual ident xs) with
            | none => core_typing_effect_fail loc1 (InvalidMember tag_sym ident)
            | some (_, _, _, ty1) =>
@@ -1213,12 +1213,12 @@ partial def infer_pexpr { a bty : Type } [Inhabited a] (tagDefs1 : Fmap sym (a �
                   (fromJust "Core_typing.infer_pexpr, PEmemberof"
                     ((fmapLookupBy (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2) tag_sym
                       tagDefs1))) with
-              | StructDef xs none => (OTy_struct, xs)
-              | StructDef xs (some _) =>
+              | StructDef _ xs none => (OTy_struct, xs)
+              | StructDef _ xs (some _) =>
                 (failwithI "TODO: Core_typing, PEmemberof => struct with flexible array member" :
                   ((sym → core_object_type) × List
                     (identifier × (attributes × Option alignment × qualifiers × ctype))))
-              | UnionDef xs => (OTy_union, xs) with
+              | UnionDef _ xs => (OTy_union, xs) with
         | (oty_ctor, xs) =>
           (match (lookupBy idEqual memb_ident xs) with
            | none => core_typing_effect_fail loc1 (InvalidMember tag_sym memb_ident)
@@ -1620,11 +1620,11 @@ partial def typecheck_pexpr { a bty : Type } [Inhabited a]
                  (fromJust "Core_typing.typecheck_pexpr, PEmember_shift 1"
                    ((fmapLookupBy (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2) tag_sym
                      tagDefs1))) with
-             | StructDef z none => z
-             | StructDef z (some _) =>
+             | StructDef _ z none => z
+             | StructDef _ z (some _) =>
                (failwithI "TODO: Core_typing, PEmember_shift => struct with flexible array member" :
                  List (identifier × (attributes × Option alignment × qualifiers × ctype)))
-             | UnionDef z => z;
+             | UnionDef _ z => z;
            match (lookupBy idEqual memb_ident xs) with
            | none => core_typing_effect_fail loc1 (InvalidMember tag_sym memb_ident)
            | _ =>
@@ -1757,8 +1757,8 @@ partial def typecheck_pexpr { a bty : Type } [Inhabited a]
                     (fromJust "Core_typing.typecheck_pexpr, PEstruct"
                       ((fmapLookupBy (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2) tag_sym
                         tagDefs1))) with
-                | UnionDef _ => core_typing_effect_fail loc1 (InvalidTag tag_sym)
-                | StructDef xs flexible_opt =>
+                | UnionDef _ _ => core_typing_effect_fail loc1 (InvalidTag tag_sym)
+                | StructDef _ xs flexible_opt =>
                   except_mapM
                     (fun (p : (identifier × generic_pexpr bty sym)) =>
                       match p with
@@ -1787,8 +1787,8 @@ partial def typecheck_pexpr { a bty : Type } [Inhabited a]
                   (fromJust "Core_typing.typecheck_pexpr, PEunion"
                     ((fmapLookupBy (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2) tag_sym
                       tagDefs1))) with
-              | StructDef _ _ => core_typing_effect_fail loc1 (InvalidTag tag_sym)
-              | UnionDef xs =>
+              | StructDef _ _ _ => core_typing_effect_fail loc1 (InvalidTag tag_sym)
+              | UnionDef _ xs =>
                 (match (lookupBy idEqual ident xs) with
                  | none => core_typing_effect_fail loc1 (InvalidMember tag_sym ident)
                  | some (_, _, _, ty1) =>
@@ -1814,12 +1814,12 @@ partial def typecheck_pexpr { a bty : Type } [Inhabited a]
                      (fromJust "Core_typing.typecheck_pexpr, PEmemberof"
                        ((fmapLookupBy (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2) tag_sym
                          tagDefs1))) with
-                 | StructDef xs none => (OTy_struct, xs)
-                 | StructDef xs (some _) =>
+                 | StructDef _ xs none => (OTy_struct, xs)
+                 | StructDef _ xs (some _) =>
                    (failwithI "TODO: Core_typing, PEmemberof => struct with flexible array member" :
                      ((sym → core_object_type) × List
                        (identifier × (attributes × Option alignment × qualifiers × ctype))))
-                 | UnionDef xs => (OTy_union, xs) with
+                 | UnionDef _ xs => (OTy_union, xs) with
            | (oty_ctor, xs) =>
              (match (lookupBy idEqual memb_ident xs) with
               | none => core_typing_effect_fail loc1 (InvalidMember tag_sym memb_ident)

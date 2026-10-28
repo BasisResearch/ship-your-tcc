@@ -82,8 +82,8 @@ theorem reconstructValueAbst_lemFuel_default_closure [CerbImplCfg.Impl] (fo fo' 
       | some e =>
         obtain ⟨s, l, d⟩ := e
         cases d with
-        | StructDef _ _ => rfl
-        | UnionDef membrs =>
+        | StructDef layout _ _ => rfl
+        | UnionDef layout membrs =>
           cases membrs with
           | nil => rfl
           | cons m rest => simp only [ih]

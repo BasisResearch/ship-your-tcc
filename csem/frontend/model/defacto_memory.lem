@@ -351,9 +351,9 @@ let mk_op_ival_ iop ival_1 ival_2 =
 
 let mk_offsetof_ival_ acc tag_sym memb_ident =
   match Ctype_aux.get_membersDefs tag_sym with
-    | StructDef _ (Just _) ->
+    | StructDef _ _ (Just _) ->
         error "TODO: Defacto_memory.mk_offsetof_ival_ ==> for struct with flexible array member"
-    | StructDef xs Nothing ->
+    | StructDef _ xs Nothing ->
         (* we take the prefix the members before the one we want to offset to *)
         let prefix_xs =
           List.takeWhile (fun (ident, _) -> memb_ident <> ident) xs in
@@ -366,7 +366,7 @@ let mk_offsetof_ival_ acc tag_sym memb_ident =
             mk_op_ival_ IntAdd (IVsizeof ty)
               (mk_op_ival_ IntAdd (IVpadding tag_sym ident) acc')
         ) acc (List.reverse prefix_xs)
-    | UnionDef _ ->
+    | UnionDef _ _ ->
         (* TODO: check, but if we have a struct this should be no offset to do *)
         acc
   end
@@ -1300,10 +1300,10 @@ let rec isBeginningShift sh =
             (return false)
     | (SPE_member tag_sym memb_ident) :: sh' ->
         let xs = match Ctype_aux.get_membersDefs tag_sym with
-          | StructDef z Nothing -> z
-          | StructDef _ (Just _) ->
+          | StructDef _ z Nothing -> z
+          | StructDef _ _ (Just _) ->
               error "TODO: Defacto_memory.isBeginningShift ==> for struct with flexible array member"
-          | UnionDef  z -> z
+          | UnionDef _  z -> z
         end in
         match xs with
           | [] ->

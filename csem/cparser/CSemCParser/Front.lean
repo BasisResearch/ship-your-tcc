@@ -33,7 +33,7 @@ def mapPositions (fname : String) (toks : Array RawTok) (marks : Array LineMark)
   (toks.foldl (fun (acc : Array PTok × Nat) t =>
       let j := advanceMarks marks t.sp.lnum (marks.size + 1) acc.2
       let je := advanceMarks marks t.ep.lnum (marks.size + 1) j
-      (acc.1.push ⟨t.tok, mkPos fname marks j t.sp, mkPos fname marks je t.ep⟩, j))
+      (acc.1.push ⟨t.tok, mkPos fname marks j t.sp, mkPos fname marks je t.ep, t.spelling⟩, j))
     (#[], 0)).1
 
 /-- Parse a token array. The fuel is 64 per token: each recursion level of the

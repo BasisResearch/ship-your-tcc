@@ -81,9 +81,16 @@ type alignment =
   | AlignInteger of integer
   | AlignType of ctype
 
+type aggregate_layout = <|
+  aggregate_packed: bool;
+  aggregate_alignment: maybe integer;
+|>
+
+let no_aggregate_layout = <| aggregate_packed= false; aggregate_alignment= Nothing |>
+
 type tag_definition =
-  | StructDef of list (Symbol.identifier * (Annot.attributes * maybe alignment * qualifiers * ctype)) * maybe flexible_array_member
-  | UnionDef of list (Symbol.identifier * (Annot.attributes * maybe alignment * qualifiers * ctype))
+  | StructDef of aggregate_layout * list (Symbol.identifier * (Annot.attributes * maybe alignment * qualifiers * ctype)) * maybe flexible_array_member
+  | UnionDef of aggregate_layout * list (Symbol.identifier * (Annot.attributes * maybe alignment * qualifiers * ctype))
 
 (** Type class instances *)
 
@@ -221,12 +228,12 @@ instance (Show tag_definition)
       ) "[" tag_defs ^ "]"
     in
     match def with
-      | StructDef tag_defs Nothing ->
+      | StructDef _ tag_defs Nothing ->
           string_of_identifiers tag_defs
-      | StructDef tag_defs (Just (FlexibleArrayMember attrs ident qs elem_ty)) ->
+      | StructDef _ tag_defs (Just (FlexibleArrayMember attrs ident qs elem_ty)) ->
           let ty = Ctype [] (Array elem_ty Nothing) in
           string_of_identifiers (tag_defs ++ [(ident, (attrs, Nothing, qs, ty))])
-      | UnionDef tag_defs ->
+      | UnionDef _ tag_defs ->
           string_of_identifiers tag_defs
     end
 end
@@ -508,3 +515,87 @@ let member_paths depth members ty =
     ) xs)
   ) (fun _ -> []) (List.replicate depth ()) in
   paths ty
+
+(* GNU typedef alignment changes alignment alone: sizeof(T) remains the
+   underlying sizeof, unlike aggregate alignment's trailing padding. The
+   unspellable internal attribute is a typed translation artifact, not a
+   public field or an additional allocation. Readers consume it explicitly. *)
+let gnu_decimal str =
+  let cs = String.toCharList str in
+  if List.null cs then Nothing else
+  List.foldl (fun acc c ->
+    match acc with
+      | Nothing -> Nothing
+      | Just n ->
+          match String.toString [c] with
+            | "0" -> Just (10*n) | "1" -> Just (10*n+1)
+            | "2" -> Just (10*n+2) | "3" -> Just (10*n+3)
+            | "4" -> Just (10*n+4) | "5" -> Just (10*n+5)
+            | "6" -> Just (10*n+6) | "7" -> Just (10*n+7)
+            | "8" -> Just (10*n+8) | "9" -> Just (10*n+9)
+            | _ -> Nothing
+          end
+    end
+  ) (Just (0:integer)) cs
+
+
+let gnu_align_typedef alignment ty =
+  match (alignment, ty) with
+    | (Nothing, _) -> ty
+    | (Just n, Ctype annots ty) ->
+        Ctype (Annot.Aattrs (Annot.Attrs [<|
+          Annot.attr_ns= Nothing;
+          Annot.attr_id= Identifier unknown ":gnu-typedef-alignment:";
+          Annot.attr_args= [(Loc.unknown, show n, [])];
+        |>]) :: annots) ty
+  end
+
+let gnu_typedef_alignment annots =
+  List.foldl (fun acc annot ->
+    match annot with
+      | Annot.Aattrs (Annot.Attrs xs) ->
+          List.foldl (fun acc attr ->
+            let Identifier _ name = attr.Annot.attr_id in
+            if name = ":gnu-typedef-alignment:" && isNothing attr.Annot.attr_ns then
+              match (acc, attr.Annot.attr_args) with
+                | (Nothing, [(_, str, _)]) -> gnu_decimal str
+                | _ -> acc
+              end
+            else acc
+          ) acc xs
+      | _ -> acc
+    end
+  ) Nothing annots
+
+(* The tag owns these effects. Member alignments are kept independently: GNU
+   expression-alignof can observe the distinction. Validation is performed by
+   the shared Cabs elaborator before the attributes reach this projection. *)
+let aggregate_layout_of_attributes (Annot.Attrs attrs) =
+  List.foldl (fun layout attr ->
+    let ns = maybe "" (fun (Identifier _ s) -> s) attr.Annot.attr_ns in
+    let Identifier _ name = attr.Annot.attr_id in
+    if ns = "__attribute" || ns = "__attribute__" || ns = "gnu" then
+      if name = "packed" || name = "__packed__" then <| layout with aggregate_packed= true |>
+      else if name = "aligned" || name = "__aligned__" then
+        let n = match attr.Annot.attr_args with
+          | [] -> Just (16:integer) (* cfgTcc's maximum alignment *)
+          | [(_, str, _)] -> gnu_decimal str
+          | _ -> Nothing
+        end in
+        <| layout with aggregate_alignment= match (layout.aggregate_alignment, n) with
+          | (Nothing, _) -> n | (_, Nothing) -> layout.aggregate_alignment
+          | (Just old, Just n) -> Just (max old n)
+        end |>
+      else layout
+    else layout
+  ) no_aggregate_layout attrs
+
+let effective_member_alignment packed alignment =
+  if packed && isNothing alignment then Just (AlignInteger 1) else alignment
+
+let aggregate_align layout natural =
+  maybe natural (fun n -> max natural (natFromInteger n)) layout.aggregate_alignment
+
+let effective_aggregate_members packed members =
+  List.map (fun (ident, (attrs, al, qs, ty)) ->
+    (ident, (attrs, effective_member_alignment packed al, qs, ty))) members

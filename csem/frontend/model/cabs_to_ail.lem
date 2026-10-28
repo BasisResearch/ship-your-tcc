@@ -3,7 +3,7 @@ open import Pervasives Utils Cabs AilSyntax Std Constraint Assert_extra
 open import Cabs_to_ail_aux
 import Cabs_to_ail_effect
 
-import IntegerImpl Range Ctype
+import IntegerImpl Range Ctype Implementation
 
 import Debug Pp Cabs Multiset Decode
 import AilSyntaxAux AilTypesAux Builtins
@@ -996,7 +996,7 @@ val desugar_struct_declarator:
 
 val desugar_init_declarator_BROKEN:
   Ctype.qualifiers -> Ctype.ctype -> list storage_class_specifier -> init_declarator ->
-  E.desugM (Symbol.identifier * bool * (Ctype.qualifiers * Ctype.ctype) *
+  E.desugM (Annot.attributes * Symbol.identifier * bool * (Ctype.qualifiers * Ctype.ctype) *
             (unit -> E.desugM (maybe (Ctype.ctype * expression unit))))
 
 val desugar_init_declarator:
@@ -1546,6 +1546,112 @@ type stmt_context = <|
 |>
 
 
+(* GNU declaration attributes remain syntax in Cabs and annotations in Ail.
+   Aggregate layout is an explicit Ctype.aggregate_layout field, separate
+   from declared member alignments. The memory adapters compute effective
+   packed alignment only while laying out the aggregate. Explicit member
+   alignment and GNU expression-alignof therefore remain distinguishable. *)
+type gnu_decl_effects = <|
+  gnu_packed: bool;
+  gnu_aligned: maybe integer;
+  gnu_noreturn: bool;
+|>
+
+let gnu_no_effects = <| gnu_packed= false; gnu_aligned= Nothing; gnu_noreturn= false |>
+
+let gnu_attribute_name attr =
+  match attr.Annot.attr_ns with
+    | Just (Symbol.Identifier _ ns) ->
+        if ns = "__attribute" || ns = "__attribute__" || ns = "gnu" ||
+           ns = "asm" || ns = "__asm" || ns = "__asm__" || ns = "__extension__" then
+          let Symbol.Identifier _ name = attr.Annot.attr_id in Just name
+        else Nothing
+    | Nothing -> Nothing
+  end
+
+let has_gnu_attributes (Annot.Attrs attrs) =
+  List.any (fun attr -> isJust (gnu_attribute_name attr)) attrs
+
+let gnu_name_is name base = name = base || name = "__" ^ base ^ "__"
+
+(* The current literal adapter is deliberately checked. In particular it does
+   not feed identifiers, arbitrary expressions or malformed strings into the
+   unchecked implementation decoder. Nonliteral ICEs remain a diagnostic. *)
+let desugar_gnu_attributes loc (Annot.Attrs attrs) =
+  E.foldlM (fun effects attr ->
+    match gnu_attribute_name attr with
+      | Nothing -> E.return effects
+      | Just name ->
+          let args = attr.Annot.attr_args in
+          let attr_loc = Loc.locOf attr.Annot.attr_id in
+          if gnu_name_is name "aligned" then
+            match args with
+              | [] -> E.return (Just (integerFromNat Implementation.max_alignment))
+              | [(_, str, _)] ->
+                  match Ctype.gnu_decimal str with
+                    | Just n -> E.return (Just n)
+                    | Nothing -> E.fail attr_loc (Errors.Desugar_NotYetSupported "GNU aligned argument needs constant-expression elaboration; retained in Cabs")
+                  end
+              | _ -> E.fail attr_loc (Errors.Desugar_NotYetSupported "invalid GNU aligned expects one argument")
+            end >>= fun n_opt ->
+            match n_opt with
+              | Just n ->
+                  if n <= 0 || not (is_power_of_two n) then
+                    E.fail attr_loc (Errors.Desugar_NotYetSupported "invalid GNU alignment must be a positive power of two")
+                  else E.return <| effects with gnu_aligned= Just (maybe n (fun old -> max old n) effects.gnu_aligned) |>
+              | Nothing -> E.return effects
+            end
+          else if gnu_name_is name "packed" then
+            if args <> [] then E.fail attr_loc (Errors.Desugar_NotYetSupported "invalid GNU packed takes no arguments")
+            else E.return <| effects with gnu_packed= true |>
+          else if gnu_name_is name "noreturn" then
+            if args <> [] then E.fail attr_loc (Errors.Desugar_NotYetSupported "invalid GNU noreturn takes no arguments")
+            else E.return <| effects with gnu_noreturn= true |>
+          else if List.any (gnu_name_is name)
+            ["diagnostic_mode"; "unused"; "used"; "const"; "pure"; "noinline"; "always_inline"; "gnu_inline";
+             "malloc"; "nothrow"; "leaf"; "warn_unused_result"; "returns_twice"] then
+            if args <> [] then E.fail attr_loc (Errors.Desugar_NotYetSupported "invalid GNU declaration hint takes no arguments")
+            else E.return effects
+          else if gnu_name_is name "format" then
+            if List.length args <> 3 then E.fail attr_loc (Errors.Desugar_NotYetSupported "invalid GNU format expects three arguments")
+            else E.return effects
+          else if List.any (gnu_name_is name) ["section"; "visibility"; "weak"; "alias"; "asm_label"] then
+            E.fail attr_loc (Errors.Desugar_NotYetSupported "GNU linker/binding effect (DESIGN section 5); retained separately from declaration layout")
+          else
+            E.fail attr_loc (Errors.Desugar_NotYetSupported ("GNU attribute effect retained but not implemented: " ^ name))
+    end
+  ) gnu_no_effects attrs
+
+let gnu_annotate_type attrs (Ctype.Ctype annots ty as cty) =
+  if attrs = Annot.no_attributes then cty else Ctype.Ctype (Annot.Aattrs attrs :: annots) ty
+
+let desugar_gnu_alignment loc attrs ty old_alignment allow_packed =
+  desugar_gnu_attributes loc attrs >>= fun effects ->
+  if effects.gnu_noreturn then
+    E.fail loc (Errors.Desugar_NotYetSupported "invalid GNU noreturn requires a function declaration")
+  else if effects.gnu_packed && not allow_packed then
+    E.fail loc (Errors.Desugar_NotYetSupported "GNU packed requires an aggregate or aggregate member")
+  else if not effects.gnu_packed && isNothing effects.gnu_aligned then
+    E.return old_alignment
+  else
+    E.get_alignof >>= fun alignof_ty ->
+    let alignment_value al = match al with
+      | Nothing -> if effects.gnu_packed then Just (1:nat) else alignof_ty ty
+      | Just (Ctype.AlignInteger n) -> Just (natFromInteger n)
+      | Just (Ctype.AlignType ty) -> alignof_ty ty
+    end in
+    match alignment_value old_alignment with
+      | Nothing -> E.fail loc (Errors.Desugar_NotYetSupported "GNU layout requires a complete concrete member alignment")
+      | Just old ->
+          let n = maybe (integerFromNat old) (fun n -> max n (integerFromNat old)) effects.gnu_aligned in
+          E.return (Just (Ctype.AlignInteger n))
+    end
+
+let desugar_gnu_aggregate_layout loc attrs members =
+  desugar_gnu_attributes loc attrs >>= fun effects ->
+  if effects.gnu_noreturn then E.fail loc (Errors.Desugar_NotYetSupported "GNU noreturn requires a function")
+  else E.return members
+
 val     desugar_type_specifiers: list cabs_type_specifier -> E.desugM (Ctype.qualifiers * Ctype.ctype)
 let rec desugar_type_specifiers specs =
   match project_base_type_specifiers specs with
@@ -1571,6 +1677,7 @@ let rec desugar_type_specifiers specs =
           E.register_tag loc kind_ctor tag_ident_opt >>= fun tag_sym ->
           (* TODO: check that is indeed the UB I'm thinking of... *)
           List.concat <$> E.mapM desugar_struct_declaration sdecls >>= fun raw_membDefs ->
+          desugar_gnu_aggregate_layout loc attrs raw_membDefs >>= fun raw_membDefs ->
           E.get_tag_definitions >>= fun nested_tagDefs ->
           let nested_members tag = match Map.lookup tag nested_tagDefs with
             | Just (Struct_definition _ _ _ xs _) -> xs
@@ -1762,8 +1869,8 @@ let rec desugar_type_specifiers specs =
                     (* TODO: check the namespace *)
                     E.resolve_ordinary_identifier cid_loc ident >>= function
                       | Just (_, E.OReg_typedef sym) ->
-                          E.resolve_typedef sym >>= fun (attrs, qs, Ctype.Ctype _ ty) ->
-                          E.return (qs, Ctype.Ctype [Annot.Aloc cid_loc; Annot.Atypedef sym] ty)
+                          E.resolve_typedef sym >>= fun (attrs, qs, Ctype.Ctype annots ty) ->
+                          E.return (qs, Ctype.Ctype ([Annot.Aloc cid_loc; Annot.Atypedef sym] ++ annots) ty)
                       | Just _ ->
                           E.fail cid_loc (Errors.Desugar_NotYetSupported "TODO: Tspec_name, not King_typedef")
                       | Nothing ->
@@ -2157,7 +2264,11 @@ and desugar_parameter_declaration is_first fundef param_decl =
         else
           (* NOTE: specs_qs <> no_qualifiers when the specifiers had a type-name or _Atomic *)
           desugar_type_specifiers specifs.type_specifiers >>= fun (specs_qs, base_ty)       ->
-          desugar_declarator NotFunDef decltor            >>= fun ((_, ident), mk_qs_ctype) ->
+          desugar_declarator NotFunDef decltor            >>= fun ((param_attrs, ident), mk_qs_ctype) ->
+          desugar_gnu_attributes decltor_loc param_attrs >>= fun effects ->
+          if effects.gnu_packed || effects.gnu_noreturn || not (isNothing effects.gnu_aligned) then
+            E.fail decltor_loc (Errors.Desugar_NotYetSupported "GNU parameter layout/effect retained but not represented")
+          else
           let (isAtomic, tquals_qs) = translate_type_qualifiers specifs.type_qualifiers in
           (* STD §6.9.1#7, sentence 4 *)
           let (_qs, _ty) =
@@ -2615,7 +2726,7 @@ and desugar_init_declarator_BROKEN base_qs base_ty (scs: list storage_class_spec
   E.get_scope >>= fun scope ->
   match idecltor with
     | InitDecl _ decltor Nothing ->
-        desugar_declarator NotFunDef decltor >>= fun ((_, ident), mk_qs_ctype) ->
+        desugar_declarator NotFunDef decltor >>= fun ((ident_attrs, ident), mk_qs_ctype) ->
         let (qs, ty) = mk_qs_ctype base_qs base_ty in
         let mk_desug_init =
           fun () -> E.return Nothing in
@@ -2626,10 +2737,10 @@ and desugar_init_declarator_BROKEN base_qs base_ty (scs: list storage_class_spec
           | _ ->
               false
         end in
-        E.return (ident, is_tentative, (qs, ty), mk_desug_init)
+        E.return (ident_attrs, ident, is_tentative, (qs, ty), mk_desug_init)
     
     | InitDecl loc decltor (Just init) ->
-        desugar_declarator NotFunDef decltor >>= fun ((_, ident), mk_qs_ctype) ->
+        desugar_declarator NotFunDef decltor >>= fun ((ident_attrs, ident), mk_qs_ctype) ->
         let (qs, ty) = mk_qs_ctype base_qs base_ty in
         
         (* TODO: check that we really never have parameter objects here *)
@@ -2650,7 +2761,7 @@ and desugar_init_declarator_BROKEN base_qs base_ty (scs: list storage_class_spec
             (* NOTE: not using <$> because of a bug in Lem *)
             wip_desugar_initializer_ loc (determinate_storage_duration link scs) ty init >>= fun z ->
             E.return (Just z) in
-          E.return (ident, false, (qs, ty), mk_desug_init)
+          E.return (ident_attrs, ident, false, (qs, ty), mk_desug_init)
   end
 
 
@@ -2661,6 +2772,8 @@ and desugar_init_declarator attrs isAtomic has_alignment base_qs base_ty (scs: l
   match idecltor with
     | InitDecl loc decltor Nothing ->
         desugar_declarator NotFunDef decltor >>= fun ((ident_attrs, ident), mk_qs_ctype) ->
+        let all_attrs = Annot.combine_attributes attrs ident_attrs in
+        desugar_gnu_attributes loc all_attrs >>= fun _ ->
         let (qs, _ty) = mk_qs_ctype base_qs base_ty in
         let ty = if isAtomic then wrap_atomic _ty else _ty in
         let mk_desug_init =
@@ -2676,7 +2789,11 @@ and desugar_init_declarator attrs isAtomic has_alignment base_qs base_ty (scs: l
           if has_alignment then
             E.constraint_violation loc (IllegalAlignas IllegalAlignas_typedef)
           else
-            E.register_typedef ident (attrs, qs, ty) >>= fun () ->
+            let attrs = Annot.combine_attributes attrs ident_attrs in
+            desugar_gnu_attributes loc attrs >>= fun effects ->
+            if effects.gnu_packed || effects.gnu_noreturn then
+              E.fail loc (Errors.Desugar_NotYetSupported "GNU packed/noreturn is not a typedef effect")
+            else E.register_typedef ident (attrs, qs, Ctype.gnu_align_typedef effects.gnu_aligned (gnu_annotate_type attrs ty)) >>= fun () ->
             E.return Nothing
         else
           let (ctx, ok) =
@@ -2750,7 +2867,9 @@ and desugar_struct_declaration struct_decl =
             let (qs, ty) =
               mk_qs_ctype (Ctype.combine_qualifiers tquals_qs specs_qs) base_ty in
             desugar_alignment_specifiers (Loc.locOf ident) ty align_specs >>= fun align_opt ->
-            E.return (ident, (Annot.combine_attributes outer_attrs attrs, align_opt, qs, if isAtomic then wrap_atomic ty else ty))
+            let attrs = Annot.combine_attributes outer_attrs attrs in
+            desugar_gnu_alignment (Loc.locOf ident) attrs ty align_opt true >>= fun align_opt ->
+            E.return (ident, (attrs, align_opt, qs, if isAtomic then wrap_atomic ty else ty))
           ) sdecltors
     
     | Struct_assert sa_decl ->
@@ -3598,6 +3717,9 @@ and desugar_and_register_static_assert_declaration sa_decl =
 (* TODO: this is broken *)
 (* val desugar_declaration_base: Annot.attributes -> specifiers -> list init_declarator -> E.desugM (list (ail_identifier * expression unit)) *)
 and desugar_declaration_base attrs specifs idecltors =
+  if List.null idecltors && has_gnu_attributes attrs then
+    E.fail Loc.unknown (Errors.Desugar_NotYetSupported "GNU attributes on a declaration without an entity require an attachment rule")
+  else
   E.print_debugM 2 (fun () ->
     "BROKEN: desugar_declaration_base"
   ) >>= fun () ->
@@ -3608,7 +3730,9 @@ and desugar_declaration_base attrs specifs idecltors =
                pattern match on [ty]) *)
             let (isAtomic, tquals_qs) = translate_type_qualifiers specifs.type_qualifiers in
             let base_qs = Ctype.combine_qualifiers specs_qs tquals_qs in
-            desugar_init_declarator_BROKEN base_qs base_ty specifs.storage_classes init >>= fun (ident, is_tentative, (qs, _ty), mk_desug_init) ->
+            desugar_init_declarator_BROKEN base_qs base_ty specifs.storage_classes init >>= fun (ident_attrs, ident, is_tentative, (qs, _ty), mk_desug_init) ->
+            let attrs = Annot.combine_attributes attrs ident_attrs in
+            desugar_gnu_attributes loc attrs >>= fun gnu_effects ->
             let ident_loc = Loc.locOf ident in
             let (Ctype.Ctype _ ty as cty) = if isAtomic then Ctype.mk_ctype_atomic _ty else _ty in
             
@@ -3618,11 +3742,16 @@ and desugar_declaration_base attrs specifs idecltors =
             
             else if specifs.storage_classes = [SC_typedef] then
               (* Case of a typedef *)
-              E.register_typedef ident (attrs, qs, cty) >>
+              if gnu_effects.gnu_packed || gnu_effects.gnu_noreturn then
+                E.fail loc (Errors.Desugar_NotYetSupported "GNU packed/noreturn is not a typedef effect")
+              else E.register_typedef ident (attrs, qs, Ctype.gnu_align_typedef gnu_effects.gnu_aligned (gnu_annotate_type attrs cty)) >>
               E.return acc
               
             else
               let do_function return_qs_ty params_opt is_variadic =
+                if gnu_effects.gnu_packed || not (isNothing gnu_effects.gnu_aligned) then
+                  E.fail loc (Errors.Desugar_NotYetSupported "GNU function placement alignment is not represented by Ail")
+                else
                 check_storage_class_specifiers loc Function_decl_context specifs.storage_classes >>= fun () ->
                 if specifs.alignment_specifiers <> [] then
                   E.constraint_violation ident_loc (IllegalAlignas IllegalAlignas_function)
@@ -3634,7 +3763,7 @@ and desugar_declaration_base attrs specifs idecltors =
                     params_opt,
                     is_variadic,
                     List.elem FS_inline   specifs.function_specifiers,
-                    List.elem FS_Noreturn specifs.function_specifiers
+                    List.elem FS_Noreturn specifs.function_specifiers || gnu_effects.gnu_noreturn
                   ) >>
                   E.return acc in
               match ty with
@@ -3647,6 +3776,7 @@ and desugar_declaration_base attrs specifs idecltors =
                       E.constraint_violation ident_loc (IllegalAlignas IllegalAlignas_register)
                     else
                     desugar_alignment_specifiers ident_loc cty specifs.alignment_specifiers >>= fun align_opt ->
+                    desugar_gnu_alignment ident_loc attrs cty align_opt false >>= fun align_opt ->
                     check_storage_class_specifiers loc Object_decl_context specifs.storage_classes >>= fun () ->
                     E.register_ordinary_identifier ident
                       (E.OK_object false) specifs.storage_classes >>= fun (link, sym) ->
@@ -3761,7 +3891,18 @@ E.fresh_block_scope >>= fun scope ->
 
 
 and desugar_statement_aux ctx (CabsStatement loc attrs stmt_) =
+  let attrs = match stmt_ with
+    | CabsSdecl (Declaration_base decl_attrs _ _) -> Annot.combine_attributes attrs decl_attrs
+    | _ -> attrs
+  end in
   let attrs_outer = attrs in
+  (match stmt_ with
+    | CabsSdecl _ -> E.return gnu_no_effects
+    | _ -> desugar_gnu_attributes loc attrs
+  end) >>= fun statement_effects ->
+  if statement_effects.gnu_packed || statement_effects.gnu_noreturn || not (isNothing statement_effects.gnu_aligned) then
+    E.fail loc (Errors.Desugar_NotYetSupported "GNU declaration layout/effect cannot be attached to a statement")
+  else
   let self = desugar_statement_aux ctx in
   let desug_info = <|
     is_forloop_body= false;
@@ -4734,7 +4875,12 @@ let desugar_and_register_function_definition (FunDef fundef_loc fundef_attrs spe
     E.fresh_block_scope >>= fun funblock_scope ->
     E.with_scope2 funblock_scope begin
       desugar_declarator IsFunDef decltor
-    end >>= fun (idents_map, ((_, fun_ident), mk_qs_ctype)) ->
+    end >>= fun (idents_map, ((ident_attrs, fun_ident), mk_qs_ctype)) ->
+    let fundef_attrs = Annot.combine_attributes fundef_attrs ident_attrs in
+    desugar_gnu_attributes fundef_loc fundef_attrs >>= fun gnu_effects ->
+    if gnu_effects.gnu_packed || not (isNothing gnu_effects.gnu_aligned) then
+      E.fail fundef_loc (Errors.Desugar_NotYetSupported "GNU function placement alignment is not represented by Ail")
+    else
     
     (* NOTE: as per §6.9.1#2, we perform a dummy instantiation of the type
        **specified by the declarator portion of the function definition**, which
@@ -4781,7 +4927,7 @@ let desugar_and_register_function_definition (FunDef fundef_loc fundef_attrs spe
             params_opt,
             isVariadic,
             List.elem FS_inline   specifs.function_specifiers,
-            List.elem FS_Noreturn specifs.function_specifiers
+            List.elem FS_Noreturn specifs.function_specifiers || gnu_effects.gnu_noreturn
           ) >>
           E.inside_function return_ty begin
             E.record_marker ()     >>= fun marker_id ->
@@ -4833,6 +4979,9 @@ let desugar_and_register_external_declaration edecl =
             Debug.print_debug 0 [] (fun () ->
               "TODO(attributes ignored) -- TSpec_struct 3 => " ^ show ident)
           else () in
+        if has_gnu_attributes attrs then
+          E.fail edecl_loc (Errors.Desugar_NotYetSupported "GNU forward-tag attributes need a completion attachment rule")
+        else
         STD_ "§6.7.2.3#7"
         E.void (E.register_tag edecl_loc E.Kind_struct (Just ident))
     
@@ -4844,6 +4993,9 @@ let desugar_and_register_external_declaration edecl =
         function_specifiers= [];
         alignment_specifiers= [];
       |> []) ->
+        if has_gnu_attributes attrs then
+          E.fail edecl_loc (Errors.Desugar_NotYetSupported "GNU forward-tag attributes need a completion attachment rule")
+        else
         STD_ "§6.7.2.3#7"
         E.void (E.register_tag edecl_loc E.Kind_union (Just ident))
     
@@ -4859,6 +5011,9 @@ let desugar_and_register_external_declaration edecl =
     
     (* TODO: check *)
     | EDecl_decl (Declaration_base attrs specifs idecltors) ->
+        if List.null idecltors && has_gnu_attributes attrs then
+          E.fail edecl_loc (Errors.Desugar_NotYetSupported "GNU attributes on a declaration without an entity require an attachment rule")
+        else
         desugar_type_specifiers specifs.type_specifiers >>= fun (specs_qs, base_ty) ->
         let (isAtomic, tquals_qs) = translate_type_qualifiers specifs.type_qualifiers in
         let base_qs = Ctype.combine_qualifiers specs_qs tquals_qs in
@@ -4877,13 +5032,11 @@ let desugar_and_register_external_declaration edecl =
               E.return ()
           | Just (ident_loc, ident_attrs, link, sym, isTentative, (qs, ty), mk_desug_init) ->
               let do_function fun_qs return_qs_ty params_opt is_variadic =
-                let () =
-                  if Annot.no_attributes <> ident_attrs then
-                    Debug.print_debug 0 [] (fun () ->
-                      "WARNING: desugaring of a function initdecl is erasing some attributes!"
-                    )
-                  else
-                    () in
+                let attrs = Annot.combine_attributes attrs ident_attrs in
+                desugar_gnu_attributes ident_loc attrs >>= fun effects ->
+                if effects.gnu_packed || not (isNothing effects.gnu_aligned) then
+                  E.fail ident_loc (Errors.Desugar_NotYetSupported "GNU function placement alignment is retained but not represented by Ail")
+                else
                 if qs <> Ctype.no_qualifiers then
                   E.undef ident_loc Undefined.UB066_qualified_function_specification
                 else if specifs.alignment_specifiers <> [] then
@@ -4894,7 +5047,7 @@ let desugar_and_register_external_declaration edecl =
                   params_opt,
                   is_variadic,
                   List.elem FS_inline   specifs.function_specifiers,
-                  List.elem FS_Noreturn specifs.function_specifiers
+                  List.elem FS_Noreturn specifs.function_specifiers || effects.gnu_noreturn
                 ) in
               (* NOTE: `desugar_init_declarator' takes care of isAtomic *)
               match ty with
@@ -4907,6 +5060,7 @@ let desugar_and_register_external_declaration edecl =
                       E.constraint_violation ident_loc (IllegalAlignas IllegalAlignas_register)
                     else
                     desugar_alignment_specifiers ident_loc ty specifs.alignment_specifiers >>= fun align_opt ->
+                    desugar_gnu_alignment ident_loc (Annot.combine_attributes attrs ident_attrs) ty align_opt false >>= fun align_opt ->
                     let dur = determinate_storage_duration link specifs.storage_classes in
                     E.register_external_object_declaration sym
                       (isTentative, ident_loc, Annot.combine_attributes attrs ident_attrs, dur, List.elem SC_register specifs.storage_classes, align_opt, qs, ty) >>

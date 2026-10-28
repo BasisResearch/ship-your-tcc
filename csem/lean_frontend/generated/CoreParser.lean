@@ -2210,7 +2210,7 @@ private partial def pDefStruct : P Decl := do
   let tag ← lexSymId
   lexSym ":="
   let (fields, flexOpt) ← pDefFields
-  return (Decl.tagDecl tag (loc0, StructDef fields flexOpt))
+  return (Decl.tagDecl tag (loc0, StructDef no_aggregate_layout fields flexOpt))
 
 /-- Parse a union definition: def union name := fields —
     core_parser.mly:1775-1777 `UnionDef (xs @ [last])`: for a UNION the
@@ -2226,7 +2226,7 @@ private partial def pDefUnion : P Decl := do
     | none => fields
     | some (FlexibleArrayMember attrs ident qs elemTy) =>
       fields ++ [(ident, (attrs, none, qs, Ctype [] (Array0 elemTy none)))]
-  return (Decl.tagDecl tag (loc0, UnionDef fields))
+  return (Decl.tagDecl tag (loc0, UnionDef no_aggregate_layout fields))
 
 /-- Parse a def declaration (impl constant or struct/union). -/
 private partial def pDefDecl [CerbImplCfg.Impl] : P Decl := do
@@ -3073,11 +3073,11 @@ private def renameMember (ctx : RenameCtx) :
 /-- Rename the tag symbols inside a tag definition (member ctypes,
     alignment types, the flexible array member's type). -/
 def renameTagDef (ctx : RenameCtx) : tag_definition → tag_definition
-  | StructDef membrs flexOpt =>
-    StructDef (membrs.map (renameMember ctx)) (match flexOpt with
+  | StructDef layout membrs flexOpt =>
+    StructDef layout (membrs.map (renameMember ctx)) (match flexOpt with
       | some (FlexibleArrayMember a i q t) => some (FlexibleArrayMember a i q (renameCtype ctx t))
       | none => none)
-  | UnionDef membrs => UnionDef (membrs.map (renameMember ctx))
+  | UnionDef layout membrs => UnionDef layout (membrs.map (renameMember ctx))
 
 /-- Rename every symbol occurrence of a parsed Core file — declaration keys
     included — through the two namespace maps of `ctx` (see the section

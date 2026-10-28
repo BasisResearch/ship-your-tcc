@@ -965,9 +965,13 @@ private def q_linking_kind : (linking_kind) → Result
 private def q_loop_attribute : (loop_attribute) → Result
   | loop_attribute.mk x0 x1 x2 x3 => return typedNode "(loop_attribute)" "loop_attribute.mk" [← qNat x0, ← q_attributes x1, ← q_CerbLocation_Loc x2, ← q_CerbLocation_Loc x3]
 
+private def q_aggregate_layout (x : aggregate_layout) : Result :=
+  return typedNode "(aggregate_layout)" "aggregate_layout.mk"
+    [← qBool x.aggregate_packed, ← (qOption qInt) x.aggregate_alignment]
+
 private def q_tag_definition : (tag_definition) → Result
-  | tag_definition.StructDef x0 x1 => return typedNode "(tag_definition)" "tag_definition.StructDef" [← (qList "(Prod (identifier) (Prod (attributes) (Prod (Option (alignment)) (Prod (qualifiers) (ctype)))))" (qProd q_identifier (qProd q_attributes (qProd (qOption q_alignment) (qProd q_qualifiers q_ctype))))) x0, ← (qOption q_flexible_array_member) x1]
-  | tag_definition.UnionDef x0 => return typedNode "(tag_definition)" "tag_definition.UnionDef" [← (qList "(Prod (identifier) (Prod (attributes) (Prod (Option (alignment)) (Prod (qualifiers) (ctype)))))" (qProd q_identifier (qProd q_attributes (qProd (qOption q_alignment) (qProd q_qualifiers q_ctype))))) x0]
+  | tag_definition.StructDef layout x0 x1 => return typedNode "(tag_definition)" "tag_definition.StructDef" [← q_aggregate_layout layout, ← (qList "(Prod (identifier) (Prod (attributes) (Prod (Option (alignment)) (Prod (qualifiers) (ctype)))))" (qProd q_identifier (qProd q_attributes (qProd (qOption q_alignment) (qProd q_qualifiers q_ctype))))) x0, ← (qOption q_flexible_array_member) x1]
+  | tag_definition.UnionDef layout x0 => return typedNode "(tag_definition)" "tag_definition.UnionDef" [← q_aggregate_layout layout, ← (qList "(Prod (identifier) (Prod (attributes) (Prod (Option (alignment)) (Prod (qualifiers) (ctype)))))" (qProd q_identifier (qProd q_attributes (qProd (qOption q_alignment) (qProd q_qualifiers q_ctype))))) x0]
 
 private def inField (field : String) (r : Result) : Result :=
   r.mapError fun e => { e with construct := field ++ "." ++ e.construct }

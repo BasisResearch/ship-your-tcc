@@ -396,7 +396,7 @@ let is_complete sigm gty =
       (* STD §6.2.5#22, sentence 3-4 *)
     | GenStruct sym ->
         match List.lookup sym sigm.tag_definitions with
-          | Just (_, _, StructDef _ _) ->
+          | Just (_, _, StructDef _ _ _) ->
               (* TODO[note]: as far as I can tell, a struct with a flexible array member
                               is still a complete type *)
               true
@@ -408,7 +408,7 @@ let is_complete sigm gty =
       (* STD §6.2.5#22, sentence 3-4 *)
     | GenUnion sym ->
         match List.lookup sym sigm.tag_definitions with
-          | Just (_, _, UnionDef _) ->
+          | Just (_, _, UnionDef _ _) ->
               true
           | _ ->
               false

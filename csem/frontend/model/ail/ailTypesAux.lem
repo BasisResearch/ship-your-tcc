@@ -172,16 +172,16 @@ val     has_flexible_array_member: forall 'a. sigma 'a -> ctype -> bool
 let rec has_flexible_array_member sigm = function
   | Ctype _ (Struct tag_sym) ->
       match List.lookup tag_sym sigm.tag_definitions with
-        | Just (_, _, StructDef _ Nothing) ->
+        | Just (_, _, StructDef _ _ Nothing) ->
             false
-        | Just (_, _, StructDef _ (Just _)) ->
+        | Just (_, _, StructDef _ _ (Just _)) ->
             true
         | _ ->
             error "AilTypesAux.has_flexible_array_member: Struct, UnionDef or Nothing"
       end
   | Ctype _ (Union tag_sym) ->
       match List.lookup tag_sym sigm.tag_definitions with
-        | Just (_, _, UnionDef xs) ->
+        | Just (_, _, UnionDef _ xs) ->
             List.any (fun (_, (_, _, _, memb_ty)) ->
               has_flexible_array_member sigm memb_ty
             ) xs
@@ -250,11 +250,11 @@ let rec is_complete sigm ty =
     (* STD §6.2.5#22, sentence 3-4 *)
   | Struct sym ->
       match List.lookup sym sigm.tag_definitions with
-        | Just (_, _, StructDef _ _) ->
+        | Just (_, _, StructDef _ _ _) ->
             (* TODO[note]: as far as I can tell, a struct with a flexible array member
                            is still a complete type *)
             true
-        | Just (_, _, UnionDef _) ->
+        | Just (_, _, UnionDef _ _) ->
             error "AilTypesAux.is_complete: Struct --> tag resolved to a UnionDef"
         | Nothing ->
             false
@@ -262,9 +262,9 @@ let rec is_complete sigm ty =
     (* STD §6.2.5#22, sentence 3-4 *)
   | Union sym ->
       match List.lookup sym sigm.tag_definitions with
-        | Just (_, _, StructDef _ _) ->
+        | Just (_, _, StructDef _ _ _) ->
             error "AilTypesAux.is_complete: Struct --> tag resolved to a StructDef"
-        | Just (_, _, UnionDef _) ->
+        | Just (_, _, UnionDef _ _) ->
             true
         | Nothing ->
             false

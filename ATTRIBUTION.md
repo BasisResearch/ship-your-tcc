@@ -228,3 +228,15 @@ instruction-identity claim is made. No generated recovery files were imported.
   Lua inventory/mandatory table consulted; no machine-library proof copied
   and no instruction-byte identity claim added. Generated handwritten copies
   are produced by the pinned Lem recipe (BSD-2-Clause as the fork).
+
+GNU declaration/layout extension (2026-10-28): the existing Cerberus Cabs
+attribute carrier, Ail declaration/member alignment fields, concrete layout
+adapters and `layout_stable_aux` proof are extended in place. The Lua
+mandatory table and abstraction inventory were read before adapting proofs;
+no new machine/library routine proof is reused, so no new instruction-byte
+identity claim is made. The GNU-only isolated OCaml oracle uses the same five
+shared Lem semantic inputs plus pinned source patches for typedef/tag layout
+and constructor compatibility. Other Core/IEEE modules stay pristine there;
+this oracle is not claimed equivalent to the Lean IEEE semantics or to
+non-concrete memory backends. Exact provenance and patch inventories are in
+results/csem/gnu-attributes.md.

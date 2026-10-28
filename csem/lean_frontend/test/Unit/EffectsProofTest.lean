@@ -49,9 +49,9 @@ example (a a' : List annot) (i : integerType) :
 example :
     get_membersDefs fmapEmpty
       (fmapAddBy symbol_compare (Symbol "" 0 SD_None)
-        (CerbLocation.unknown, UnionDef []) fmapEmpty)
+        (CerbLocation.unknown, UnionDef no_aggregate_layout []) fmapEmpty)
       (Symbol "" 0 SD_None)
-    = UnionDef [] := rfl
+    = UnionDef no_aggregate_layout [] := rfl
 
 /-! ### Fuel threading: `zeros_aux` is total with explicit fuel -/
 

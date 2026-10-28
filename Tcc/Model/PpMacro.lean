@@ -1215,7 +1215,8 @@ def ghostTokenStart : M Nat := do
         (p,{ p with col := p.col+width })
   let view := input.language
   let view := { view with
-    positioned := { view.positioned with tokens := view.positioned.tokens.push { tok := lexical, sp := sp, ep := ep } },
+    positioned := { view.positioned with tokens := view.positioned.tokens.push {
+      tok := lexical, sp := sp, ep := ep, spelling := Bytes.toStr obs.spell } },
     origins := if s.tok == TOK_EOF then view.origins else view.origins.push record.origin }
   let input := { input with
     language := view,

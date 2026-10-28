@@ -411,16 +411,38 @@ instance (priority := 500) : Lem_Basic_classes.Ord0 alignment where
   isGreater := defaultGreater
   isGreaterEqual := defaultGreaterEq
 
+structure aggregate_layout where
+  aggregate_packed : Bool
+  aggregate_alignment : Option Int
+  deriving BEq, Ord
+instance : Inhabited aggregate_layout where
+  default := { aggregate_packed := default, aggregate_alignment := default }
+instance (priority := 500) : Lem_Basic_classes.SetType aggregate_layout where
+  setElemCompare := defaultCompare
+instance (priority := 500) : Lem_Basic_classes.Eq0 aggregate_layout where
+  isEqual x y := x == y
+  isInequal x y := !(x == y)
+instance (priority := 500) : Lem_Basic_classes.Ord0 aggregate_layout where
+  compare := defaultCompare
+  isLess := defaultLess
+  isLessEqual := defaultLessEq
+  isGreater := defaultGreater
+  isGreaterEqual := defaultGreaterEq
+
+def no_aggregate_layout : aggregate_layout :=
+  (({ aggregate_packed := false, aggregate_alignment := none } : aggregate_layout))
+
 inductive tag_definition : Type where
   | StructDef :
-      List (identifier × (attributes × Option alignment × qualifiers × ctype)) → Option
-          flexible_array_member → tag_definition
+      aggregate_layout → List (identifier × (attributes × Option alignment × qualifiers × ctype)) →
+          Option flexible_array_member → tag_definition
   | UnionDef :
-      List (identifier × (attributes × Option alignment × qualifiers × ctype)) → tag_definition
+      aggregate_layout → List (identifier × (attributes × Option alignment × qualifiers × ctype)) →
+          tag_definition
   deriving BEq, Ord
 export tag_definition (StructDef UnionDef)
 instance : Inhabited tag_definition where
-  default := StructDef default default
+  default := StructDef default default default
 instance (priority := 500) : Lem_Basic_classes.SetType tag_definition where
   setElemCompare := defaultCompare
 instance (priority := 500) : Lem_Basic_classes.Eq0 tag_definition where
@@ -595,11 +617,11 @@ instance : Show tag_definition where
                       (match ident with
                        | Identifier _ str => str) "; ")) "[" tag_defs) "]");
       match «def» with
-      | StructDef tag_defs none => string_of_identifiers tag_defs
-      | StructDef tag_defs (some (FlexibleArrayMember attrs1 ident qs elem_ty)) =>
+      | StructDef _ tag_defs none => string_of_identifiers tag_defs
+      | StructDef _ tag_defs (some (FlexibleArrayMember attrs1 ident qs elem_ty)) =>
         (let ty1 := Ctype ([] : List annot) (Array0 elem_ty none);
          string_of_identifiers (tag_defs ++ [(ident, (attrs1, none, qs, ty1))]))
-      | UnionDef tag_defs => string_of_identifiers tag_defs
+      | UnionDef _ tag_defs => string_of_identifiers tag_defs
 
 /- * Some useful functions -/
 
@@ -819,3 +841,111 @@ def member_paths (depth : Nat)
                        ([] : List (identifier × member_path))))) xs))
       (fun (_ : ctype) => ([] : List (identifier × member_path))) (List.replicate depth ());
   paths ty1
+
+/- GNU typedef alignment changes alignment alone: sizeof(T) remains the
+   underlying sizeof, unlike aggregate alignment's trailing padding. The
+   unspellable internal attribute is a typed translation artifact, not a
+   public field or an additional allocation. Readers consume it explicitly. -/
+def gnu_decimal (str : String) : Option Int :=
+  let cs := String.toList str;
+  lem_if List.isEmpty cs then
+    none
+  else
+    List.foldl
+      (fun (acc : Option Int) (c : Char) =>
+        match acc with
+        | none => none
+        | some n =>
+          (match String.ofList [c] with
+           | "0" => some ((10 : Int) * n)
+           | "1" => some (((10 : Int) * n) + (1 : Int))
+           | "2" => some (((10 : Int) * n) + (2 : Int))
+           | "3" => some (((10 : Int) * n) + (3 : Int))
+           | "4" => some (((10 : Int) * n) + (4 : Int))
+           | "5" => some (((10 : Int) * n) + (5 : Int))
+           | "6" => some (((10 : Int) * n) + (6 : Int))
+           | "7" => some (((10 : Int) * n) + (7 : Int))
+           | "8" => some (((10 : Int) * n) + (8 : Int))
+           | "9" => some (((10 : Int) * n) + (9 : Int))
+           | _ => none)) (some ((0 : Int) : Int)) cs
+
+def gnu_align_typedef { a : Type } [Show a] (alignment1 : Option a) (ty1 : ctype) : ctype :=
+  match alignment1, ty1 with
+  | none, _ => ty1
+  | some n, Ctype annots1 ty1 =>
+    Ctype
+      (Aattrs
+        (Attrs
+          [(({ attr_ns := none,
+               attr_id := (Identifier CerbLocation.unknown ":gnu-typedef-alignment:"),
+               attr_args :=
+                 [(CerbLocation.unknown, show0 n, ([] : List (CerbLocation.Loc × String)))] } :
+            attribute0))]) :: annots1) ty1
+
+def gnu_typedef_alignment (annots1 : List annot) : Option Int :=
+  List.foldl
+    (fun (acc : Option Int) (annot1 : annot) =>
+      match annot1 with
+      | Aattrs (Attrs xs) =>
+        List.foldl
+          (fun (acc : Option Int) (attr : attribute0) =>
+            match attr.attr_id with
+            | Identifier _ name1 =>
+              (lem_if (name1 == ":gnu-typedef-alignment:") && isNothing attr.attr_ns then
+                match acc, attr.attr_args with
+                | none, [(_, str, _)] => gnu_decimal str
+                | _, _ => acc
+              else
+                acc)) acc xs
+      | _ => acc) none annots1
+
+/- The tag owns these effects. Member alignments are kept independently: GNU
+   expression-alignof can observe the distinction. Validation is performed by
+   the shared Cabs elaborator before the attributes reach this projection. -/
+def aggregate_layout_of_attributes (a : attributes) : aggregate_layout :=
+  match a with
+  | (Attrs attrs1) =>
+    List.foldl
+      (fun (layout : aggregate_layout) (attr : attribute0) =>
+        let ns :=
+          maybe0 ""
+            (fun (i : identifier) =>
+              match i with
+              | (Identifier _ s) => s) attr.attr_ns;
+        match attr.attr_id with
+        | Identifier _ name1 =>
+          (lem_if (ns == "__attribute") || ((ns == "__attribute__") || (ns == "gnu")) then
+            lem_if (name1 == "packed") || (name1 == "__packed__") then
+              { layout with aggregate_packed := true }
+            else lem_if (name1 == "aligned") || (name1 == "__aligned__") then
+              let n :=
+                match attr.attr_args with
+                | [] => some ((16 : Int) : Int) /- cfgTcc's maximum alignment -/
+                | [(_, str, _)] => gnu_decimal str
+                | _ => none;
+              { layout with
+                aggregate_alignment :=
+                  match layout.aggregate_alignment, n with
+                  | none, _ => n
+                  | _, none => layout.aggregate_alignment
+                  | some old, some n => some (max old n) }
+            else
+              layout
+          else
+            layout)) no_aggregate_layout attrs1
+
+def effective_member_alignment (packed : Bool) (alignment1 : Option alignment) : Option alignment :=
+  lem_if packed && isNothing alignment1 then some (AlignInteger ((1 : Int))) else alignment1
+
+def aggregate_align (layout : aggregate_layout) (natural1 : Nat) : Nat :=
+  maybe0 natural1 (fun (n : Int) => natMax natural1 (Int.natAbs (lemIntFromInteger n)))
+    layout.aggregate_alignment
+
+def effective_aggregate_members { a b c d : Type } (packed : Bool)
+    (members : List (a × (c × Option alignment × b × d))) :
+    List (a × (c × Option alignment × b × d)) :=
+  List.map
+    (fun (p : (a × (c × Option alignment × b × d))) =>
+      match p with
+      | (ident, (attrs1, al, qs, ty1)) =>
+        (ident, (attrs1, effective_member_alignment packed al, qs, ty1))) members

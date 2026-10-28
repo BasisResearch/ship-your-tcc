@@ -102,8 +102,8 @@ def flexTags : Option flexible_array_member → List sym
   | some (.FlexibleArrayMember _ _ _ ty) => tagsIn ty
 
 def defTags : tag_definition → List sym
-  | .StructDef xs fo => memberTags xs ++ flexTags fo
-  | .UnionDef xs => memberTags xs
+  | .StructDef _ xs fo => memberTags xs ++ flexTags fo
+  | .UnionDef _ xs => memberTags xs
 
 def pmapTags : Pmap sym (CerbLocation.Loc × tag_definition) → List sym
   | .Empty => []
@@ -121,8 +121,8 @@ def flexSize : Option flexible_array_member → Nat
   | some (.FlexibleArrayMember _ _ _ ty) => ctype.lemSize ty
 
 def defSize : tag_definition → Nat
-  | .StructDef xs fo => memberSizes xs + flexSize fo
-  | .UnionDef xs => memberSizes xs
+  | .StructDef _ xs fo => memberSizes xs + flexSize fo
+  | .UnionDef _ xs => memberSizes xs
 
 def pmapValsSize : Pmap sym (CerbLocation.Loc × tag_definition) → Nat
   | .Empty => 0
@@ -495,9 +495,9 @@ theorem member_tags_sublist {u : ctype} {i : identifier} {at_ : attributes} {al 
 
 /-- A struct member's contribution: its size is at most the table's, and its tags all
     occur in the table (so its `missing` count is 0). -/
-theorem member_bounds {cmp : sym → sym → LemOrdering} {s : sym} {t : Table}
+theorem member_bounds {layout : aggregate_layout} {cmp : sym → sym → LemOrdering} {s : sym} {t : Table}
     {loc : CerbLocation.Loc} {xs : List Member} {fo : Option flexible_array_member}
-    (hl : fmapLookupBy cmp s t = some (loc, .StructDef xs fo))
+    (hl : fmapLookupBy cmp s t = some (loc, .StructDef layout xs fo))
     {u : ctype} {i : identifier} {at_ : attributes} {al : Option alignment} {q : qualifiers}
     (hm : (i, (at_, al, q, u)) ∈ xs) :
     ctype.lemSize u ≤ valsSize t ∧ missing (tagsIn u) (occ t) = 0 := by
@@ -510,9 +510,9 @@ theorem member_bounds {cmp : sym → sym → LemOrdering} {s : sym} {t : Table}
     apply mem_elem_sym
     exact ht.subset (List.mem_append_left _ ((member_tags_sublist hm).subset ha))
 
-theorem union_member_bounds {cmp : sym → sym → LemOrdering} {s : sym} {t : Table}
+theorem union_member_bounds {layout : aggregate_layout} {cmp : sym → sym → LemOrdering} {s : sym} {t : Table}
     {loc : CerbLocation.Loc} {xs : List Member}
-    (hl : fmapLookupBy cmp s t = some (loc, .UnionDef xs))
+    (hl : fmapLookupBy cmp s t = some (loc, .UnionDef layout xs))
     {u : ctype} {i : identifier} {at_ : attributes} {al : Option alignment} {q : qualifiers}
     (hm : (i, (at_, al, q, u)) ∈ xs) :
     ctype.lemSize u ≤ valsSize t ∧ missing (tagsIn u) (occ t) = 0 := by
@@ -525,10 +525,10 @@ theorem union_member_bounds {cmp : sym → sym → LemOrdering} {s : sym} {t : T
     apply mem_elem_sym
     exact ht.subset ((member_tags_sublist hm).subset ha)
 
-theorem flex_bounds {cmp : sym → sym → LemOrdering} {s : sym} {t : Table}
+theorem flex_bounds {layout : aggregate_layout} {cmp : sym → sym → LemOrdering} {s : sym} {t : Table}
     {loc : CerbLocation.Loc} {xs : List Member} {at_ : attributes} {i : identifier}
     {q : qualifiers} {u : ctype}
-    (hl : fmapLookupBy cmp s t = some (loc, .StructDef xs (some (.FlexibleArrayMember at_ i q u)))) :
+    (hl : fmapLookupBy cmp s t = some (loc, .StructDef layout xs (some (.FlexibleArrayMember at_ i q u)))) :
     ctype.lemSize u ≤ valsSize t ∧ missing (tagsIn u) (occ t) = 0 := by
   obtain ⟨hs, ht⟩ := fmapLookupBy_some_bounds hl
   simp only [defSize, defTags, flexSize, flexTags] at hs ht

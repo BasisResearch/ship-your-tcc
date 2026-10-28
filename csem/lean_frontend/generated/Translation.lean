@@ -3945,7 +3945,7 @@ def translate_expression_lemFuel [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.I
                   (let ident_tys :=
                      match (fmapLookupBy (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2)
                          tag_sym tagDefs1) with
-                     | some (_, StructDef z _) => z
+                     | some (_, StructDef _ z _) => z
                      | /- BISECT-IGNORE -/ _ => illTypedAil loc1 "AilEstruct";
                    bind1
                      (foldlM
@@ -4006,9 +4006,9 @@ def translate_expression_lemFuel [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.I
                        tag_sym tagDefs1) with
                    | /- BISECT-IGNORE -/ none =>
                      illTypedAil loc1 "AilEunion: couldn't find the definition"
-                   | /- BISECT-IGNORE -/ some (_, StructDef _ _) =>
+                   | /- BISECT-IGNORE -/ some (_, StructDef _ _ _) =>
                      illTypedAil loc1 "AilEunion: found a struct definition"
-                   | some (_, UnionDef ident_tys) =>
+                   | some (_, UnionDef _ ident_tys) =>
                      (match (lookupBy idEqual memb_ident ident_tys) with
                       | /- BISECT-IGNORE -/ none =>
                         illTypedAil loc1 "AilEunion: couldn't find a union definition"

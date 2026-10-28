@@ -1882,7 +1882,7 @@ declare {lean} reader_seed val make_composite_fdecl_seeded
 
 val alignof_ty_seeded:
   map Symbol.sym Ctype.integerType -> map Symbol.sym (Loc.t * Ctype.tag_definition) ->
-  map A.ail_identifier (list (maybe Ctype.alignment * Ctype.ctype)) -> Ctype.ctype -> maybe nat
+  map A.ail_identifier (Ctype.aggregate_layout * list (maybe Ctype.alignment * Ctype.ctype)) -> Ctype.ctype -> maybe nat
 let alignof_ty_seeded en tds pseudo_tagDefs ty = Implementation.alignof_ty pseudo_tagDefs ty
 declare {lean} reader_seed val alignof_ty_seeded
 
@@ -2263,18 +2263,18 @@ let get_alignof =
   get_tag_definitions >>= fun tagDefs ->
   let pseudo_tagDefs =
     Map.map function
-      | Struct_definition _ _ _ membrs flex_opt ->
-          List.map (fun (_, (_, align_opt, _, ty)) -> (align_opt, ty)) membrs ++
+      | Struct_definition _ attrs _ membrs flex_opt ->
+          (Ctype.aggregate_layout_of_attributes attrs, List.map (fun (_, (_, align_opt, _, ty)) -> (align_opt, ty)) membrs ++
           match flex_opt with
             | Nothing ->
                 []
             | Just (Ctype.FlexibleArrayMember _ _ _ ty) ->
                 [(Nothing, Ctype.Ctype [] (Ctype.Array ty Nothing))]
-          end
-      | Union_definition _ _ _ membrs ->
-          List.map (fun (_, (_, align_opt, _, ty)) -> (Nothing, ty)) membrs
+          end)
+      | Union_definition _ attrs _ membrs ->
+          (Ctype.aggregate_layout_of_attributes attrs, List.map (fun (_, (_, align_opt, _, ty)) -> (align_opt, ty)) membrs)
       | Enum_definition _ ->
-          [(* dummy, this won't be called *)]
+          (Ctype.no_aggregate_layout, [(* dummy, this won't be called *)])
     end tagDefs in
   return (fun z -> alignof_ty_seeded (enum_map_of_tag_definitions tagDefs) desugar_time_tagDefs pseudo_tagDefs z)
 
@@ -2596,9 +2596,9 @@ let mk_current_ail_sigma =
             List.foldl (fun acc (ident, tagDef) ->
               match tagDef with
                 | Struct_definition loc attrs _ xs flexible_opt ->
-                    (ident, (loc, attrs, Ctype.StructDef xs flexible_opt)) :: acc
+                    (ident, (loc, attrs, Ctype.StructDef (Ctype.aggregate_layout_of_attributes attrs) xs flexible_opt)) :: acc
                 | Union_definition loc attrs _ xs ->
-                    (ident, (loc, attrs, Ctype.UnionDef xs)) :: acc
+                    (ident, (loc, attrs, Ctype.UnionDef (Ctype.aggregate_layout_of_attributes attrs) xs)) :: acc
                 | Enum_definition _ ->
                     acc
               end
@@ -2784,9 +2784,9 @@ let extract_program startup_str =
      A.tag_definitions= List.foldr (fun (sym, def) acc ->
                           match def with
                            | Struct_definition loc attrs _ membersDefs flexible_opt ->
-                               (sym, (loc, attrs, Ctype.StructDef membersDefs flexible_opt)) :: acc
+                               (sym, (loc, attrs, Ctype.StructDef (Ctype.aggregate_layout_of_attributes attrs) membersDefs flexible_opt)) :: acc
                            | Union_definition loc attrs _ membersDefs ->
-                               (sym, (loc, attrs, Ctype.UnionDef membersDefs)) :: acc
+                               (sym, (loc, attrs, Ctype.UnionDef (Ctype.aggregate_layout_of_attributes attrs) membersDefs)) :: acc
                            | Enum_definition _ ->
                                acc
                            end
@@ -2870,9 +2870,9 @@ let get_sigma_sofar =
        A.tag_definitions= List.foldr (fun (sym, def) acc ->
                             match def with
                              | Struct_definition loc attrs _ membersDefs flexible_opt ->
-                                 (sym, (loc, attrs, Ctype.StructDef membersDefs flexible_opt)) :: acc
+                                 (sym, (loc, attrs, Ctype.StructDef (Ctype.aggregate_layout_of_attributes attrs) membersDefs flexible_opt)) :: acc
                              | Union_definition loc attrs _ membersDefs ->
-                                 (sym, (loc, attrs, Ctype.UnionDef membersDefs)) :: acc
+                                 (sym, (loc, attrs, Ctype.UnionDef (Ctype.aggregate_layout_of_attributes attrs) membersDefs)) :: acc
                              | Enum_definition _ ->
                                  acc
                              end

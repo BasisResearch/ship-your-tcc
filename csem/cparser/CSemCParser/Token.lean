@@ -61,6 +61,7 @@ structure RawTok where
   tok : Tok
   sp : LPos
   ep : LPos
+  spelling : String := ""
   deriving Inhabited
 
 /-- One `#` line marker the lexer saw (`LineMap.add`, c_lexer.mll

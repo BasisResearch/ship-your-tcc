@@ -66,10 +66,10 @@ def lookup_tag_definition { a : Type } (s : sigma a) (sym1 : sym) : Option tag_d
 def source_members { a : Type } (sigm : sigma a) (tag : sym) :
     List (identifier × (attributes × Option alignment × qualifiers × ctype)) :=
   match lookup_tag_definition sigm tag with
-  | some (StructDef xs none) => xs
-  | some (StructDef xs (some (FlexibleArrayMember attrs1 ident qs ty1))) =>
+  | some (StructDef _ xs none) => xs
+  | some (StructDef _ xs (some (FlexibleArrayMember attrs1 ident qs ty1))) =>
     xs ++ [(ident, (attrs1, none, qs, Ctype ([] : List annot) (Array0 ty1 none)))]
-  | some (UnionDef xs) => xs
+  | some (UnionDef _ xs) => xs
   | _ => ([] : List (identifier × (attributes × Option alignment × qualifiers × ctype)))
 
 def member_access_path { a : Type } (sigm : sigma a) (physical : Bool) (ty1 : ctype)
@@ -1257,7 +1257,7 @@ partial def annotate_expression [CerbImplCfg.Impl]
         | AilEstruct tag_sym xs =>
           (let struct_gty := GenStruct tag_sym;
            match lookup_tag_definition sigm tag_sym with
-           | some (StructDef membersDefs _) =>
+           | some (StructDef _ membersDefs _) =>
              (/- NOTE: the potential flexible array member is never prevent in the list of expressions
                        (as it cannot be initialised with an initializer) -/
              lem_if not ((List.length xs) == (List.length membersDefs)) then
@@ -1299,7 +1299,7 @@ partial def annotate_expression [CerbImplCfg.Impl]
         | AilEunion tag_sym memb_ident (some e) =>
           (let union_gty := GenUnion tag_sym;
            match lookup_tag_definition sigm tag_sym with
-           | some (UnionDef membersDefs) =>
+           | some (UnionDef _ membersDefs) =>
              (match (lookupBy idEqual memb_ident membersDefs) with
               | some (_, align_opt, _, memb_ty) =>
                 bind3 (annotate_assignee1 true InitializationAsSimpleAssignment loc1 memb_ty e)
@@ -3810,7 +3810,7 @@ def annotate_sigma [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym in
             (ailErr_mapM
               (fun (x : (sym × (CerbLocation.Loc × attributes × tag_definition))) =>
                 match x with
-                | (_, (_, _, StructDef xs flexible_opt)) =>
+                | (_, (_, _, StructDef _ xs flexible_opt)) =>
                   bind3
                     (lemListFoldr
                       (fun (m : errorM Unit) (f : errorM Unit)=> bind3 m (fun (_ : Unit) => f))
@@ -3841,7 +3841,7 @@ def annotate_sigma [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym in
                                | some (FlexibleArrayMember _ _ flex_qs flex_elem_ty) =>
                                  wf_lvalue sigm flex_qs
                                    (Ctype ([] : List annot) (Array0 flex_elem_ty none)))))
-                | (_, (_, _, UnionDef xs)) =>
+                | (_, (_, _, UnionDef _ xs)) =>
                   bind3 (ailErr_mapM (check_member false) xs) (fun (_ : List Unit) =>
                     lemListFoldr
                       (fun (m : errorM Unit) (f : errorM Unit)=> bind3 m (fun (_ : Unit) => f))

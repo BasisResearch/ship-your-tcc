@@ -1,0 +1,36 @@
+{
+  "runs": [
+    {
+      "name": "tokens",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--gnu",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/gnu-attributes/initial/fs.list",
+        "--phase4",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/gnu-attributes/initial/ordinary.c"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "parse",
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/.lake/build/bin/csem_raw",
+        "--tcc",
+        "--gnu",
+        "--fslist",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/gnu-attributes/initial/fs.list",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/gnu-attributes/initial/ordinary.c"
+      ],
+      "exit": 1
+    }
+  ],
+  "sha256": {
+    "results/csem/gnu-attributes/initial/ordinary.c": "86004d65c4f387c95467c6cee92bc1f1f8cb04d6650be09fbd1e359834a56766",
+    "c/build/tcc-src/include/tccdefs.h": "d1016b6170c45f1b8e7f8d83bf1f00f21e288eb2e446d9f141457f6f821acf7b",
+    "vendor/TINYCC_REV": "76ca376f1f96cf1b316713d8f94d91c8629445929d1e7474792fd76610bce1c0",
+    "vendor/CSEM_REV": "f4728490acefb712e9ea36f3c89ee387c98b31f8bb297f639ed71f520b92dfd6",
+    ".lake/build/bin/csem_raw": "10b6101b8dafbb5ce490ea43789d9ef9bfeda2afc1ecf36328c2fbc0cc901363"
+  }
+}

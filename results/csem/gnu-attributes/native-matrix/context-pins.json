@@ -1,0 +1,11 @@
+{
+  "c/build/base.elf": "3566247325b96cba4d17322b0b9ec267b91d8ded620b3138bc765a65562114cf",
+  "c/build/tcc.o": "7ac510d3127eee4b4bcfdc89b6595174965766bd15be6941b6fd0245702d2e55",
+  "c/build/main.o": "7f02dca6bd5c1fe676b2866b64f54a0699b7a73d3032c7dbecb151f0919d90ea",
+  "vendor/TINYCC_REV": "76ca376f1f96cf1b316713d8f94d91c8629445929d1e7474792fd76610bce1c0",
+  "vendor/CSEM_REV": "f4728490acefb712e9ea36f3c89ee387c98b31f8bb297f639ed71f520b92dfd6",
+  "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+  "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+  "patches/0003-tcc-c11.patch": "c0ea34110e1a26fea8296fc2022d918c7bf02215c6269f2a6c389379056e14ba",
+  "patches/0004-tcc-binary128-literals.patch": "15d4a95ec667c9ec18ea2be3fc1475c1178668853fea28213c3061afa0f863ff"
+}

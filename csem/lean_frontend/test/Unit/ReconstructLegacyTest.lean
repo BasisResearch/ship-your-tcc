@@ -211,7 +211,7 @@ def reconstructValueLegacy_lemFuel (diagnostics : ReconstructionDiagnostics) (le
     -- last_used_union_members at this address; default to the FIRST
     -- declared member when absent (:1084-1086).
     match CerbTagsWf.lookupEntry ambient tagSym with
-    | some (_, (_, UnionDef membrs)) =>
+    | some (_, (_, UnionDef layout membrs)) =>
       match membrs with
       | [] => failwithI (diagnostics.emptyUnion)
       | (firstIdent, (_, _, _, firstTy)) :: _ =>
@@ -336,7 +336,7 @@ def reconstructValueLegacy_indexed_lemFuel (diagnostics : ReconstructionDiagnost
       .MVstruct tagSym revXs.reverse
   | Ctype _ (.Union0 tagSym) =>
     match CerbTagsWf.lookupEntry ambient tagSym with
-    | some (_, (_, UnionDef membrs)) =>
+    | some (_, (_, UnionDef layout membrs)) =>
       match membrs with
       | [] => failwithI (diagnostics.emptyUnion)
       | (firstIdent, (_, _, _, firstTy)) :: _ =>
@@ -469,7 +469,7 @@ private def reconstructValueFrozen_lemFuel (lemFuel : Nat) (enumDefs : EnumDefs)
       .MVstruct tagSym revXs.reverse
   | Ctype _ (.Union0 tagSym) =>
     match CerbTagsWf.lookupEntry ambient tagSym with
-    | some (_, (_, UnionDef membrs)) =>
+    | some (_, (_, UnionDef layout membrs)) =>
       match membrs with
       | [] => failwithI "CerbMem.reconstructValue: empty UnionDef (OCaml: match failure)"
       | (firstIdent, (_, _, _, firstTy)) :: _ =>
@@ -573,7 +573,7 @@ private def reconstructValueFrozen_indexed_lemFuel (lemFuel : Nat) (enumDefs : E
       .MVstruct tagSym revXs.reverse
   | Ctype _ (.Union0 tagSym) =>
     match CerbTagsWf.lookupEntry ambient tagSym with
-    | some (_, (_, UnionDef membrs)) =>
+    | some (_, (_, UnionDef layout membrs)) =>
       match membrs with
       | [] => failwithI "CerbMem.reconstructValue: empty UnionDef (OCaml: match failure)"
       | (firstIdent, (_, _, _, firstTy)) :: _ =>
@@ -675,8 +675,8 @@ theorem reconstructValueAbst_default_snd_eq_legacy (fo : Address → OverlapResu
       | some e =>
         obtain ⟨s, l, d⟩ := e
         cases d with
-        | StructDef _ _ => rfl
-        | UnionDef membrs =>
+        | StructDef layout _ _ => rfl
+        | UnionDef layout membrs =>
           cases membrs with
           | nil => rfl
           | cons m rest =>

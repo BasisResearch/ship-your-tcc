@@ -118,9 +118,9 @@ def memberTypes1 (m : Member) : List ctype :=
     ordinary member, impl_mem.ml:104-108; alignof folds
     `Array0 elemTy none` in, :234-239). -/
 def memberTypes : tag_definition → List ctype
-  | StructDef membrs none => membrs.flatMap memberTypes1
-  | StructDef membrs (some (FlexibleArrayMember _ _ _ elemTy)) => membrs.flatMap memberTypes1 ++ [elemTy]
-  | UnionDef membrs => membrs.flatMap memberTypes1
+  | StructDef _ membrs none => membrs.flatMap memberTypes1
+  | StructDef _ membrs (some (FlexibleArrayMember _ _ _ elemTy)) => membrs.flatMap memberTypes1 ++ [elemTy]
+  | UnionDef _ membrs => membrs.flatMap memberTypes1
 
 /-- The by-value tag references OF a definition (the edges of the graph
     whose acyclicity is the hypothesis). -/

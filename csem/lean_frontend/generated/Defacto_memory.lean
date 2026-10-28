@@ -327,10 +327,10 @@ def mk_offsetof_ival_ [LemFuel] [CerbImplCfg.Impl]
     (tag_sym : sym) (memb_ident : identifier) :
     integer_value_base :=
   match (get_membersDefs _lemReader_enum_definitions _lemReader_tagDefs) tag_sym with
-  | StructDef _ (some _) =>
+  | StructDef _ _ (some _) =>
     (failwithI "TODO: Defacto_memory.mk_offsetof_ival_ ==> for struct with flexible array member" :
       integer_value_base)
-  | StructDef xs none =>
+  | StructDef _ xs none =>
     (/- we take the prefix the members before the one we want to offset to -/
     let prefix_xs :=
       Lem_List.takeWhile
@@ -353,7 +353,7 @@ def mk_offsetof_ival_ [LemFuel] [CerbImplCfg.Impl]
             (mk_op_ival_ _lemReader_enum_definitions _lemReader_tagDefs) IntAdd (IVsizeof ty1)
               ((mk_op_ival_ _lemReader_enum_definitions _lemReader_tagDefs) IntAdd
                 (IVpadding tag_sym ident) acc'))) acc (List.reverse prefix_xs))
-  | UnionDef _ => /- TODO: check, but if we have a struct this should be no offset to do -/ acc
+  | UnionDef _ _ => /- TODO: check, but if we have a struct this should be no offset to do -/ acc
 
 def get_allocation_id (ptr_val_ : pointer_value_base) : Option Nat :=
   match ptr_val_ with
@@ -1343,12 +1343,12 @@ def isBeginningShift (_lemReader_enum_definitions : Fmap sym integerType)
   | (SPE_member tag_sym memb_ident) :: sh' =>
     (let xs :=
        match (get_membersDefs _lemReader_enum_definitions _lemReader_tagDefs) tag_sym with
-       | StructDef z none => z
-       | StructDef _ (some _) =>
+       | StructDef _ z none => z
+       | StructDef _ _ (some _) =>
          (failwithI
            "TODO: Defacto_memory.isBeginningShift ==> for struct with flexible array member" : List
            (identifier × (attributes × Option alignment × qualifiers × ctype)))
-       | UnionDef z => z;
+       | UnionDef _ z => z;
      match xs with
      | [] =>
        (failwithI "Mem.isBeginningShift, get_membersDefs returning an empty list" : ndM Bool String

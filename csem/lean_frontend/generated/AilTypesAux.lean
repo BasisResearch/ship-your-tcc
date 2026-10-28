@@ -175,8 +175,8 @@ partial def has_flexible_array_member { a : Type } (sigm : sigma a) : ctype → 
                    true
                else
                  false)) tag_sym sigm.tag_definitions) with
-       | some (_, _, StructDef _ none) => false
-       | some (_, _, StructDef _ (some _)) => true
+       | some (_, _, StructDef _ _ none) => false
+       | some (_, _, StructDef _ _ (some _)) => true
        | _ =>
          (failwithI "AilTypesAux.has_flexible_array_member: Struct, UnionDef or Nothing" : Bool))
     | Ctype _ (Union0 tag_sym) =>
@@ -199,7 +199,7 @@ partial def has_flexible_array_member { a : Type } (sigm : sigma a) : ctype → 
                    true
                else
                  false)) tag_sym sigm.tag_definitions) with
-       | some (_, _, UnionDef xs) =>
+       | some (_, _, UnionDef _ xs) =>
          List.any xs
            (fun (p : (identifier × (attributes × Option alignment × qualifiers × ctype))) =>
              match p with
@@ -267,11 +267,11 @@ partial def is_complete { a : Type } (sigm : sigma a) (ty1 : ctype) : Bool :=
                  true
              else
                false)) sym1 sigm.tag_definitions) with
-     | some (_, _, StructDef _ _) =>
+     | some (_, _, StructDef _ _ _) =>
        /- TODO[note]: as far as I can tell, a struct with a flexible array member
                            is still a complete type -/
        true
-     | some (_, _, UnionDef _) =>
+     | some (_, _, UnionDef _ _) =>
        (failwithI "AilTypesAux.is_complete: Struct --> tag resolved to a UnionDef" : Bool)
      | none => false)
   /- STD §6.2.5#22, sentence 3-4 -/
@@ -295,9 +295,9 @@ partial def is_complete { a : Type } (sigm : sigma a) (ty1 : ctype) : Bool :=
                  true
              else
                false)) sym1 sigm.tag_definitions) with
-     | some (_, _, StructDef _ _) =>
+     | some (_, _, StructDef _ _ _) =>
        (failwithI "AilTypesAux.is_complete: Struct --> tag resolved to a StructDef" : Bool)
-     | some (_, _, UnionDef _) => true
+     | some (_, _, UnionDef _ _) => true
      | none => false)
   | Byte => true
 

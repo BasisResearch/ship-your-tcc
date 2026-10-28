@@ -1,0 +1,482 @@
+--- a/memory/cheri-coq/impl_mem.ml
++++ b/memory/cheri-coq/impl_mem.ml
+@@ -220,21 +220,20 @@
+     | AlignType cty -> AlignType (toCoq_ctype cty)
+ 
+   let toCoq_tag_definition: Ctype.tag_definition -> CoqCtype.tag_definition = function
+-    | StructDef (l, f)
+-      -> StructDef (List.map (fun (sym,(attr,align_opt,q,cty)) ->
++    | StructDef (layout, l, f)
++      -> StructDef (layout, List.map (fun (sym,(attr,align_opt,q,cty)) ->
+                         (toCoq_Symbol_identifier sym,
+                          (((toCoq_attributes attr, Option.map toCoq_alignment align_opt),
+                            toCoq_qualifiers q),
+                           toCoq_ctype cty))) l,
+                     Option.map toCoq_flexible_array_member f)
+-    | UnionDef l ->
+-       UnionDef
+-         (List.map (fun (s,(attr,align_opt,q,cty)) ->
++    | UnionDef (layout, l) ->
++       UnionDef (layout, (List.map (fun (s,(attr,align_opt,q,cty)) ->
+               (toCoq_Symbol_identifier s,
+                ( ((toCoq_attributes attr, Option.map toCoq_alignment align_opt),
+                   toCoq_qualifiers q),
+                  toCoq_ctype cty))
+-            ) l)
++            ) l))
+ 
+   (* very inefficient! *)
+   let toCoq_SymMap (m:(Symbol.sym, Cerb_location.t * Ctype.tag_definition) Pmap.map) : CoqCtype.tag_definition CoqSymbol.SymMap.t =
+--- a/memory/symbolic/impl_mem.ml
++++ b/memory/symbolic/impl_mem.ml
+@@ -180,11 +180,11 @@
+       (* FIXME VICTOR *)
+       Pmap.iter (fun (Sym.Symbol (_, tag_sym_n, _)) tagDef ->
+         let xs = match tagDef with
+-          | _, Ctype.StructDef (z, None) ->
++          | _, Ctype.StructDef (layout, z, None) ->
+               z
+-          | _, Ctype.StructDef (z, Some (FlexibleArrayMember (attrs, ident, qs, elem_ty))) ->
++          | _, Ctype.StructDef (layout, z, Some (FlexibleArrayMember (attrs, ident, qs, elem_ty))) ->
+               z @ [(ident, (attrs, None, qs, Ctype ([], Array (elem_ty, None))))]
+-          | _, Ctype.UnionDef z ->
++          | _, Ctype.UnionDef (layout, z) ->
+               z in
+         List.iter (fun (Sym.Identifier (_, membr_str), _) ->
+           let padding_str = "padding__tag_" ^ string_of_int tag_sym_n ^ "__" ^ membr_str in
+--- a/memory/symbolic/mem_simplify.ml
++++ b/memory/symbolic/mem_simplify.ml
+@@ -184,9 +184,9 @@
+               simplify_integer_value_base (IVsizeof atom_ty)
+           | Struct tag_sym ->
+               let membrs = match Pmap.find tag_sym (Tags.tagDefs ()) with
+-                | _, StructDef (membrs, None) ->
++                | _, StructDef (layout, membrs, None) ->
+                     membrs
+-                | _, StructDef (membrs, Some (FlexibleArrayMember (attrs, ident, qs, elem_ty))) ->
++                | _, StructDef (layout, membrs, Some (FlexibleArrayMember (attrs, ident, qs, elem_ty))) ->
+                     membrs @ [(ident, (attrs, None, qs, Ctype ([], Array (elem_ty, None))))]
+                 | _ -> assert false
+               in
+@@ -202,7 +202,7 @@
+                  just one past the union respect it's own alignment constraint
+                  (i.e. we wan't to be able to have arrays of unions) *)
+               let membrs = match Pmap.find tag_sym (Tags.tagDefs ()) with
+-                | _, UnionDef membrs -> membrs
++                | _, UnionDef (layout, membrs) -> membrs
+                 | _ -> assert false
+               in
+               let align =
+@@ -264,7 +264,7 @@
+           | Union tag_sym ->
+               (* NOTE: these two partial patterns are ok by typing of Ail *)
+               let membrs = match Pmap.find tag_sym (Tags.tagDefs ()) with
+-                | _, UnionDef membrs -> membrs
++                | _, UnionDef (layout, membrs) -> membrs
+                 | _ -> assert false
+               in
+               begin match List.map (fun (memb_ident, (_, align_opt, _, ty)) ->
+--- a/memory/concrete/impl_mem.ml
++++ b/memory/concrete/impl_mem.ml
+@@ -98,7 +98,7 @@
+ let rec offsetsof ?(ignore_flexible=false) tagDefs tag_sym =
+   let open Z in
+   match Pmap.find tag_sym tagDefs with
+-    | _, StructDef (membrs_, flexible_opt) ->
++    | _, StructDef (layout, membrs_, flexible_opt) ->
+         (* NOTE: the offset of a flexible array member is just like
+            that of any other member *)
+         let membrs = match flexible_opt with
+@@ -109,6 +109,7 @@
+                 membrs_
+               else
+                 membrs_ @ [(ident, (attrs, None, qs, ty))] in
++        let membrs = Ctype.effective_aggregate_members layout.Ctype.aggregate_packed membrs in
+         let (xs, maxoffset) =
+           List.fold_left (fun (xs, last_offset) (membr, (_, align_opt, _, ty)) ->
+             let size = sizeof ~tagDefs ty in
+@@ -125,7 +126,7 @@
+             ((membr, ty, add last_offset pad) :: xs, add (add last_offset pad) size)
+           ) ([], zero) membrs in
+         (List.rev xs, maxoffset)
+-    | _, UnionDef membrs ->
++    | _, UnionDef (layout, membrs) ->
+         (List.map (fun (ident, (_, _, _, ty)) -> (ident, ty, zero)) membrs, zero)
+ 
+ and sizeof ?(tagDefs= Tags.tagDefs ()) (Ctype (_, ty) as cty) : Z.t =
+@@ -173,7 +174,8 @@
+         begin match Pmap.find tag_sym tagDefs with
+           | _, StructDef _ ->
+               assert false
+-          | _, UnionDef membrs ->
++          | _, UnionDef (layout, membrs) ->
++              let membrs = Ctype.effective_aggregate_members layout.Ctype.aggregate_packed membrs in
+               let (max_size, max_align) =
+                 List.fold_left (fun (acc_size, acc_align) (_, (_, align_opt, _, ty)) ->
+                   let align =
+@@ -187,6 +189,7 @@
+                   (max acc_size (sizeof ~tagDefs ty), max acc_align align)
+                 ) (zero, zero) membrs in
+               (* NOTE: adding padding at the end to satisfy the alignment constraints *)
++              let max_align = match layout.Ctype.aggregate_alignment with None -> max_align | Some n -> max n max_align in
+               let x = modulus max_size max_align in
+               if equal x zero then max_size else add max_size (sub max_align x)
+         end
+@@ -231,17 +234,18 @@
+         begin match Pmap.find tag_sym tagDefs with
+           | _, UnionDef _ ->
+               assert false
+-          | _, StructDef (membrs, flexible_opt)  ->
++          | _, StructDef (layout, membrs, flexible_opt)  ->
+               (* NOTE: we take into account the potential flexible array member by tweaking
+                  the accumulator init of the fold. *)
+               let init = match flexible_opt with
+                 | None ->
+                     0
+                 | Some (FlexibleArrayMember (_, _, _, elem_ty)) ->
+-                    alignof ~tagDefs (Ctype ([], Array (elem_ty, None))) in
++                    if layout.Ctype.aggregate_packed then 1 else alignof ~tagDefs (Ctype ([], Array (elem_ty, None))) in
+               (* NOTE: Structs (and unions) alignment is that of the maximum alignment
+                  of any of their components. *)
+-              List.fold_left (fun acc (_, (_, align_opt, _, ty)) ->
++              let membrs = Ctype.effective_aggregate_members layout.Ctype.aggregate_packed membrs in
++              Ctype.aggregate_align layout (List.fold_left (fun acc (_, (_, align_opt, _, ty)) ->
+                 let memb_align =
+                   match align_opt with
+                     | None ->
+@@ -251,16 +255,17 @@
+                     | Some (AlignType al_ty) ->
+                       alignof ~tagDefs al_ty in
+                 max memb_align acc
+-              ) init membrs
++              ) init membrs)
+         end
+     | Union tag_sym ->
+         begin match Pmap.find tag_sym tagDefs with
+           | _, StructDef _ ->
+               assert false
+-          | _, UnionDef membrs ->
++          | _, UnionDef (layout, membrs) ->
+               (* NOTE: Structs (and unions) alignment is that of the maximum alignment
+                  of any of their components. *)
+-              List.fold_left (fun acc (_, (_, align_opt, _, ty)) ->
++              let membrs = Ctype.effective_aggregate_members layout.Ctype.aggregate_packed membrs in
++              Ctype.aggregate_align layout (List.fold_left (fun acc (_, (_, align_opt, _, ty)) ->
+                 let memb_align =
+                   match align_opt with
+                     | None ->
+@@ -270,7 +275,7 @@
+                     | Some (AlignType al_ty) ->
+                       alignof ~tagDefs al_ty in
+                 max memb_align acc
+-              ) 0 membrs
++              ) 0 membrs)
+         end
+     | Byte ->
+       1
+@@ -1113,7 +1118,7 @@
+             (* TODO: hack to prevent pointer zap from crashing if a union is in the memory *)
+             ( `NoTaint, MVunspecified cty, bs2)
+           else (match Pmap.find tag_sym (Tags.tagDefs ()) with
+-            | _, UnionDef ((first_membr_def :: _) as membrs) ->
++            | _, UnionDef (layout, ((first_membr_def :: _) as membrs)) ->
+                 let (membr_ident, (_, _, _, membr_ty)) =
+                   match IntMap.find_opt addr unionmap with
+                     | None ->
+--- a/memory/vip/common.ml
++++ b/memory/vip/common.ml
+@@ -7,7 +7,7 @@
+ 
+ let rec offsetsof ?(ignore_flexible=false) tagDefs tag_sym =
+   match Pmap.find tag_sym tagDefs with
+-    | _, StructDef (membrs_, flexible_opt) ->
++    | _, StructDef (layout, membrs_, flexible_opt) ->
+         (* NOTE: the offset of a flexible array member is just like
+            that of any other member *)
+         let membrs = match flexible_opt with
+@@ -34,7 +34,7 @@
+             ((membr, ty, last_offset + pad) :: xs, last_offset + pad + size)
+           ) ([], 0) membrs in
+         (List.rev xs, maxoffset)
+-    | _, UnionDef membrs ->
++    | _, UnionDef (layout, membrs) ->
+         (List.map (fun (ident, (_, _, _, ty)) -> (ident, ty, 0)) membrs, 0)
+ 
+ and sizeof ?(tagDefs= Tags.tagDefs ()) (Ctype (_, ty) as cty) =
+@@ -81,7 +81,7 @@
+         begin match Pmap.find tag_sym (Tags.tagDefs ()) with
+           | _, StructDef _ ->
+               assert false
+-          | _, UnionDef membrs ->
++          | _, UnionDef (layout, membrs) ->
+               let (max_size, max_align) =
+                 List.fold_left (fun (acc_size, acc_align) (_, (_, align_opt, _, ty)) ->
+                   let align =
+@@ -137,7 +137,7 @@
+         begin match Pmap.find tag_sym tagDefs with
+           | _, UnionDef _ ->
+               assert false
+-          | _, StructDef (membrs, flexible_opt)  ->
++          | _, StructDef (layout, membrs, flexible_opt)  ->
+               (* NOTE: we take into account the potential flexible array member by tweaking
+                  the accumulator init of the fold. *)
+               let init = match flexible_opt with
+@@ -163,7 +163,7 @@
+         begin match Pmap.find tag_sym (Tags.tagDefs ()) with
+           | _, StructDef _ ->
+               assert false
+-          | _, UnionDef membrs ->
++          | _, UnionDef (layout, membrs) ->
+               (* NOTE: Structs (and unions) alignment is that of the maximum alignment
+                  of any of their components. *)
+               List.fold_left (fun acc (_, (_, align_opt, _, ty)) ->
+--- a/ocaml_frontend/core_remove_unused_functions.ml
++++ b/ocaml_frontend/core_remove_unused_functions.ml
+@@ -452,7 +452,7 @@
+     record_keep (Sym sym) >>
+     let name_collector = deps_of (Sym sym) in
+     match tagDef with
+-    | Ctype.StructDef (fields, flexible_opt) ->
++    | Ctype.StructDef (layout, fields, flexible_opt) ->
+        iterate fields (fun (Identifier (_,id), (_,_,_,ct)) -> 
+            record_dep (Sym sym) (Id id) >>
+            name_collector.names_in_ctype ct) >>
+@@ -462,7 +462,7 @@
+          | Some (FlexibleArrayMember (_, _, _, elem_ty)) ->
+              name_collector.names_in_ctype (Ctype ([], Array (elem_ty, None)))
+        end
+-    | Ctype.UnionDef d ->
++    | Ctype.UnionDef (layout, d) ->
+        iterate d (fun (Identifier (_,id), (_,_,_,ct)) -> 
+            record_dep (Sym sym) (Id id) >>
+            name_collector.names_in_ctype ct)
+--- a/ocaml_frontend/ocaml_implementation.ml
++++ b/ocaml_frontend/ocaml_implementation.ml
+@@ -442,16 +442,16 @@
+    (where tagDefs is a bit different from the Ctype version) *)
+ let alignof_tagDefs_aux () =
+   Pmap.map (function
+-    | _, Ctype.StructDef (xs, flex_opt) ->
+-      List.map (fun (_, (_, align_opt, _, ty)) -> (align_opt, ty)) xs @
++    | _, Ctype.StructDef (layout, xs, flex_opt) ->
++      (layout, List.map (fun (_, (_, align_opt, _, ty)) -> (align_opt, ty)) xs @
+       begin match flex_opt with
+         | None ->
+             []
+         | Some (FlexibleArrayMember (_, _, _, ty)) ->
+             [(None, Ctype ([], Array (ty, None)))]
+-      end
+-    | _, Ctype.UnionDef xs ->
+-        List.map (fun (_, (_, align_opt, _, ty)) -> (align_opt, ty)) xs
++      end)
++    | _, Ctype.UnionDef (layout, xs) ->
++        (layout, List.map (fun (_, (_, align_opt, _, ty)) -> (align_opt, ty)) xs)
+   ) (Tags.tagDefs ())
+ 
+ let rec alignof ?(tagDefs= alignof_tagDefs_aux ()) (Ctype (annots, ty)) =
+@@ -489,9 +489,10 @@
+     | Atomic atom_ty ->
+         alignof ~tagDefs atom_ty
+     | Struct tag_sym ->
+-        List.fold_left (fun acc_opt (align_opt, ty) ->
++        let layout, members = Pmap.find tag_sym tagDefs in
++        Option.map (Ctype.aggregate_align layout) (List.fold_left (fun acc_opt (align_opt, ty) ->
+           let al_opt =
+-            match align_opt with
++            match Ctype.effective_member_alignment layout.Ctype.aggregate_packed align_opt with
+               | None ->
+                   alignof ~tagDefs ty
+               | Some (AlignInteger al_n) ->
+@@ -503,13 +504,14 @@
+                 Some (max al acc)
+             | _ ->
+                 None
+-        ) (Some 1) (Pmap.find tag_sym tagDefs)
++        ) (Some 1) members)
+     | Union tag_sym ->
++        let layout, members = Pmap.find tag_sym tagDefs in
+         (* NOTE: Structs (and unions) alignment is that of the maximum alignment
+             of any of their components. *)
+-        List.fold_left (fun acc_opt (align_opt, ty) ->
++        Option.map (Ctype.aggregate_align layout) (List.fold_left (fun acc_opt (align_opt, ty) ->
+           let al_opt =
+-            match align_opt with
++            match Ctype.effective_member_alignment layout.Ctype.aggregate_packed align_opt with
+               | None ->
+                   alignof ~tagDefs ty
+               | Some (AlignInteger al_n) ->
+@@ -521,7 +523,7 @@
+                 Some (max al acc)
+             | _ ->
+                 None
+-        ) (Some 1) (Pmap.find tag_sym tagDefs)
++        ) (Some 1) members)
+     | Byte ->
+       Some 1
+ 
+--- a/ocaml_frontend/pprinters/pp_core.ml
++++ b/ocaml_frontend/pprinters/pp_core.ml
+@@ -749,14 +749,14 @@
+   let tagDefs = Pmap.bindings_list tagDefs in
+   let pp (sym, (loc, tagDef)) =
+     let (ty, tags) = match tagDef with
+-      | Ctype.StructDef (membrs_, flexible_opt) ->
++      | Ctype.StructDef (layout, membrs_, flexible_opt) ->
+           let membrs = match flexible_opt with
+             | None ->
+                 membrs_
+             | Some (FlexibleArrayMember (attrs, ident, qs, elem_ty)) ->
+                 membrs_ @ [(ident, (attrs, None, qs, Ctype ([], Array (elem_ty, None))))] in
+           ("struct", membrs)
+-      | Ctype.UnionDef membrs -> ("union", membrs)
++      | Ctype.UnionDef (layout, membrs) -> ("union", membrs)
+     in
+     let pp_tag (Symbol.Identifier (_, name), (_, align_opt(*TODO*), _, ty)) =
+       !^name ^^ P.colon ^^^ pp_ctype ty
+--- a/ocaml_frontend/pprinters/pp_ail_ast.ml
++++ b/ocaml_frontend/pprinters/pp_ail_ast.ml
+@@ -580,7 +580,7 @@
+              P.optional (fun z -> P.space ^^ P.brackets (pp_alignment z)) align_opt)
+     end
+   in with_attributes def_attrs begin match tag with
+-    | StructDef (fs_, flexible_opt) ->
++    | StructDef (layout, fs_, flexible_opt) ->
+         let fs = match flexible_opt with
+           | None ->
+               fs_
+@@ -591,7 +591,7 @@
+               , List.map dleaf_of_field fs)
+ 
+ 
+-    | UnionDef fs ->
++    | UnionDef (layout, fs) ->
+         Dnode ( pp_ctor "UnionDef" ^^^ Cerb_location.pp_location ~clever:false tagdef_loc ^^^
+                 Pp_ail.pp_id ~is_human:true i
+               , List.map dleaf_of_field fs)
+--- a/ocaml_frontend/pprinters/pp_ail.ml
++++ b/ocaml_frontend/pprinters/pp_ail.ml
+@@ -752,7 +752,7 @@
+ 
+ let pp_tag_definition (tag, (_, Annot.Attrs attrs, def)) =
+   match def with
+-    | StructDef (ident_qs_tys, flexible_opt) ->
++    | StructDef (layout, ident_qs_tys, flexible_opt) ->
+         pp_keyword "struct" ^^^ pp_id_type tag ^^^ P.braces (
+           P.nest 2 (
+             P.break 1 ^^
+@@ -765,7 +765,7 @@
+             P.blank 2 ^^ pp_ctype_declaration (Pp_symbol.pp_identifier ident) qs (Ctype ([], Array (elem_ty, None))) ^^ P.semi ^^ P.break 1
+           ) flexible_opt
+           ) ^^ P.semi
+-    | UnionDef ident_qs_tys ->
++    | UnionDef (layout, ident_qs_tys) ->
+         let s (Symbol.Identifier (_,s)) = s in
+         let is_enum = match attrs with 
+           | [] -> false
+--- a/backend/bmc/bmc_sorts.ml
++++ b/backend/bmc/bmc_sorts.ml
+@@ -222,7 +222,7 @@
+       Option.get ((Ocaml_implementation.get ()).alignof_pointer)
+   | Struct sym ->
+       begin match Pmap.lookup sym file.tagDefs with
+-      | Some (_, StructDef (members, _)) ->
++      | Some (_, StructDef (layout, members, _)) ->
+           (* Let alignment be max alignment of a member? *)
+           let alignments =
+             List.map (fun (_, (_, _, _, mem_ctype)) -> alignof_type mem_ctype file)
+@@ -333,7 +333,7 @@
+   and struct_member_index_list tag (file: unit typed_file) =
+     (* Compute offset of member from base addr *)
+     begin match Pmap.lookup tag file.tagDefs with
+-    | Some (_, StructDef (members, _)) ->
++    | Some (_, StructDef (layout, members, _)) ->
+         let rec helper rest total_size acc : int * ((int list) * int list) =
+           begin match rest with
+           | [] -> (total_size, acc)
+@@ -1155,7 +1155,7 @@
+                             (file: unit typed_file)
+                             : Sort.sort =
+     match Pmap.lookup struct_sym file.tagDefs with
+-    | Some (_, StructDef (memlist, _)) ->
++    | Some (_, StructDef (layout, memlist, _)) ->
+         let sortlist =
+             List.map (fun (_,(_, _, _, ctype)) -> ctype_to_z3_sort ctype file)
+                      memlist in
+--- a/backend/bmc/bmc_common.ml
++++ b/backend/bmc/bmc_common.ml
+@@ -96,7 +96,7 @@
+       assert false
+   | Struct sym ->
+       begin match Pmap.lookup sym file.tagDefs with
+-      | Some (_, StructDef (memlist, _)) ->
++      | Some (_, StructDef (layout, memlist, _)) ->
+           CaseSortList (List.map (fun (_, (_, _, _, ty)) -> ctype_to_bmcz3sort ty file)
+                                  memlist)
+       | _ -> assert false
+--- a/backend/bmc/bmc_incremental.ml
++++ b/backend/bmc/bmc_incremental.ml
+@@ -1380,7 +1380,7 @@
+         z3_pe ptr >>= fun z3d_ptr ->
+         get_file  >>= fun file ->
+         begin match Pmap.lookup sym file.tagDefs with
+-        | Some (_, StructDef (memlist, _)) ->
++        | Some (_, StructDef (layout, memlist, _)) ->
+             let (size, (index_list, _)) =
+               PointerSort.struct_member_index_list sym file in
+             let member_indices = zip index_list memlist in
+--- a/backend/common/ail_sym_hwm.ml
++++ b/backend/common/ail_sym_hwm.ml
+@@ -265,7 +265,7 @@
+         List.iter (fun (_q, ct, _reg) -> walk_ctype ct) params
+   in
+   let walk_tag_definition = function
+-    | Ctype.StructDef (members, fam_opt) ->
++    | Ctype.StructDef (layout, members, fam_opt) ->
+         List.iter
+           (fun (_member_ident, (_attrs, align_opt, _q, ct)) ->
+             note_opt walk_alignment align_opt; walk_ctype ct)
+@@ -274,7 +274,7 @@
+           (fun (Ctype.FlexibleArrayMember (_attrs, _ident, _q, ct)) ->
+             walk_ctype ct)
+           fam_opt
+-    | Ctype.UnionDef members ->
++    | Ctype.UnionDef (layout, members) ->
+         List.iter
+           (fun (_member_ident, (_attrs, align_opt, _q, ct)) ->
+             note_opt walk_alignment align_opt; walk_ctype ct)
+--- a/backend/rustic/src/typechecker.ml
++++ b/backend/rustic/src/typechecker.ml
+@@ -380,7 +380,7 @@
+   let s =
+     Rustic_types.map_option
+       (function
+-      | (id, (attrs, Ctype.StructDef (xs, _))) -> Some (string_of_sym id, rc_types_of_fields xs)
++      | (id, (attrs, Ctype.StructDef (layout, xs, _))) -> Some (string_of_sym id, rc_types_of_fields xs)
+       | (_, (_, Ctype.UnionDef _)) -> (* TODO: let us not support unions for now *) None)
+      s.tag_definitions in
+   match Rustic_types.String_map_aux.of_list s with
+--- a/parsers/core/core_parser.mly
++++ b/parsers/core/core_parser.mly
+@@ -1770,11 +1770,11 @@
+               (xs, Some (FlexibleArrayMember (attrs, ident, qs, elem_ty)))
+           | (xs, last) ->
+               (xs @ [last], None) in
+-        Aggregate_decl (name, StructDef (membrs, flex_opt))
++        Aggregate_decl (name, StructDef (Ctype.no_aggregate_layout, membrs, flex_opt))
+     }
+ | DEF UNION name=SYM COLON_EQ fds_=def_fields
+   { let (xs, last) = fds_ in
+-    Aggregate_decl (name, UnionDef (xs @ [last])) }
++    Aggregate_decl (name, UnionDef (Ctype.no_aggregate_layout, (xs @ [last]))) }
+ ;
+ 
+ ifun_declaration:
+--- a/ocaml_frontend/ocaml_implementation.mli
++++ b/ocaml_frontend/ocaml_implementation.mli
+@@ -49,5 +49,5 @@
+    OCaml rep of the shared lem val Implementation.enum_definitions *)
+ val enum_definitions: unit -> (Symbol.sym, integerType) Pmap.map
+ 
+-val alignof_proxy: (union_tag, (alignment option * ctype) list) Pmap.map -> ctype -> int option
++val alignof_proxy: (union_tag, (aggregate_layout * (alignment option * ctype) list)) Pmap.map -> ctype -> int option
+ 

@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/default/backend/driver/main.exe",
+    "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/install/default",
+    "--cpp=python3 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/raw_frontend_cat.py",
+    "--nolibc",
+    "--cabs-json",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/gnu-attributes/initial/ordinary.c"
+  ],
+  "exit": 1,
+  "oracle_sha256": "a71dd0968846b72196506a7ce78cd300cb39c6a8a8b10e87945a44c30517d091",
+  "layout_sha256": "71197659d06c4ddc9d8c7bb4c237ac13dee18879ec47d2b916158d3f9abd6f3a"
+}

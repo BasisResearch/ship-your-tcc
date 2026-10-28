@@ -385,7 +385,7 @@ def is_complete0 { a : Type } (sigm : sigma a) (gty : genType) : Bool :=
                  true
              else
                false)) sym1 sigm.tag_definitions) with
-     | some (_, _, StructDef _ _) =>
+     | some (_, _, StructDef _ _ _) =>
        /- TODO[note]: as far as I can tell, a struct with a flexible array member
                               is still a complete type -/
        true
@@ -414,7 +414,7 @@ def is_complete0 { a : Type } (sigm : sigma a) (gty : genType) : Bool :=
                  true
              else
                false)) sym1 sigm.tag_definitions) with
-     | some (_, _, UnionDef _) => true
+     | some (_, _, UnionDef _ _) => true
      | _ => false)
   | GenByte => true
 

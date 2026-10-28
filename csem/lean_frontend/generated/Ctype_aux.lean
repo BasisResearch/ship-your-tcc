@@ -57,7 +57,7 @@ def get_structDef_with_tagDefs (tagDefs1 : Fmap sym (CerbLocation.Loc × tag_def
     (List (identifier × (attributes × Option alignment × qualifiers × ctype)) × Option
       flexible_array_member) :=
   match (fmapLookupBy (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2) tag_sym tagDefs1) with
-  | some (_, StructDef xs flexible_opt) => (xs, flexible_opt)
+  | some (_, StructDef _ xs flexible_opt) => (xs, flexible_opt)
   | some _ =>
     (failwithI
       (String.append "Core_type.aux.get_structDef_with_tagDefs ("
@@ -82,13 +82,13 @@ def get_unionDef (_lemReader_enum_definitions : Fmap sym integerType)
       (identifier × (attributes × Option alignment × qualifiers × ctype))) :=
   match (fmapLookupBy (fun (sym1 : sym) (sym2 : sym)=> ordCompare sym1 sym2) tag_sym
       _lemReader_tagDefs) with
-  | some (_, UnionDef []) =>
+  | some (_, UnionDef _ []) =>
     (failwithI
       (String.append "Core_type.aux.get_unionDef ("
         (String.append (show_symbol tag_sym) "): found an empty union definition")) :
       ((identifier × (attributes × Option alignment × qualifiers × ctype)) × List
         (identifier × (attributes × Option alignment × qualifiers × ctype))))
-  | some (_, UnionDef (x :: xs)) => (x, xs)
+  | some (_, UnionDef _ (x :: xs)) => (x, xs)
   | some _ =>
     (failwithI
       (String.append "Core_type.aux.get_unionDef ("
@@ -218,8 +218,8 @@ def are_compatible_aux_lemFuel (lemFuel : Nat) (_lemReader_enum_definitions : Fm
                      | none, none => true
                      | some _, none => true
                      | none, some _ => true
-                     | some (_, StructDef xs1 flexible_opt1),
-                       some (_, StructDef xs2 flexible_opt2) =>
+                     | some (_, StructDef _ xs1 flexible_opt1),
+                       some (_, StructDef _ xs2 flexible_opt2) =>
                        (lem_if not ((List.length xs1) == (List.length xs2)) then
                          false
                        else
@@ -285,7 +285,7 @@ def are_compatible_aux_lemFuel (lemFuel : Nat) (_lemReader_enum_definitions : Fm
                      | none, none => true
                      | some _, none => true
                      | none, some _ => true
-                     | some (_, UnionDef xs1), some (_, UnionDef xs2) =>
+                     | some (_, UnionDef _ xs1), some (_, UnionDef _ xs2) =>
                        (lem_if not ((List.length xs1) == (List.length xs2)) then
                          false
                        else

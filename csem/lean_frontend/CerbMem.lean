@@ -558,14 +558,14 @@ def offsetsof_lemFuel [CerbImplCfg.Impl] (lemFuel : Nat) (enumDefs : EnumDefs) (
   | lemFuel + 1 =>
     match CerbTagsWf.lookupEntry tagDefs tagSym with
     | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.offsetsof "CerbMem.offsetsof: unknown tag (OCaml: Pmap.find Not_found)")))
-    | some (_, (_, StructDef membrs_ flexibleOpt)) =>
+    | some (_, (_, StructDef layout membrs_ flexibleOpt)) =>
       let membrs := match flexibleOpt with
         | none => membrs_
         | some (FlexibleArrayMember attrs ident qs ty) =>
           if ignoreFlexible then membrs_
           else membrs_ ++ [(ident, (attrs, none, qs, ty))]  -- impl_mem.ml:107-108 (raw stored ctype)
-      offsetsofMembers_lemFuel lemFuel enumDefs ambient tagDefs membrs
-    | some (_, (_, UnionDef membrs)) =>
+      offsetsofMembers_lemFuel lemFuel enumDefs ambient tagDefs (effective_aggregate_members layout.aggregate_packed membrs)
+    | some (_, (_, UnionDef layout membrs)) =>
       (membrs.map (fun (ident, (_, _, _, ty)) => (ident, ty, 0)), 0)
 
 /-- sizeof — impl_mem.ml:131-194.
@@ -608,14 +608,15 @@ def sizeofCtype_lemFuel [CerbImplCfg.Impl] (lemFuel : Nat) (enumDefs : EnumDefs)
       | .Union0 tagSym =>                           -- impl_mem.ml:172-192
         -- Same explicit definition table as recursive layout calls.
         match CerbTagsWf.lookupEntry tagDefs tagSym with
-        | some (_, (_, UnionDef membrs)) =>
+        | some (_, (_, UnionDef layout membrs)) =>
           let (maxSize, maxAlign) := membrs.foldl (init := ((0 : Nat), (0 : Nat)))
             fun (acc : Nat × Nat) memb =>
               let (accSize, accAlign) := acc
               let (_, (_, alignOpt, _, ty)) := memb
               (max accSize (sizeofCtype_lemFuel lemFuel enumDefs ambient tagDefs ty),
-               max accAlign (memberAlign_lemFuel lemFuel enumDefs ambient tagDefs alignOpt ty))
+               max accAlign (memberAlign_lemFuel lemFuel enumDefs ambient tagDefs (effective_member_alignment layout.aggregate_packed alignOpt) ty))
           -- trailing padding up to the max alignment — impl_mem.ml:189-191
+          let maxAlign := aggregate_align layout maxAlign
           let x := maxSize % maxAlign
           if x == 0 then maxSize else maxSize + (maxAlign - x)
         | _ => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.sizeofUnion "CerbMem.sizeofCtype: Union tag not a UnionDef (OCaml: assert false / Not_found)")))
@@ -634,50 +635,53 @@ def alignofCtype_lemFuel [CerbImplCfg.Impl] (lemFuel : Nat) (enumDefs : EnumDefs
   | 0 => fuelExhaustedWith "CerbMem.alignofCtype: fuel exhausted" 1
   | lemFuel + 1 =>
     match cty with
-    | Ctype _ ty_ =>
-      match ty_ with
-      | .Void0 => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.alignofVoid "CerbMem.alignofCtype: Void (impl_mem.ml:198-199 assert false)")))
-      | .Function _ _ _ | .FunctionNoParams _ =>
-        failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.alignofFunction "CerbMem.alignofCtype: function type (impl_mem.ml:216-218 assert false)")))
-      | .Basic (.Integer ity) =>
-        match CerberusImpl.alignof_ity (CerberusImpl.resolveEnum enumDefs ity) with     -- impl_mem.ml:200-206
-        | some n => n
-        | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.alignofInteger "CerbMem.alignofCtype: the concrete memory model requires a complete implementation alignof INTEGER")))
-      | .Basic (.Floating fty) =>
-        match CerberusImpl.alignof_fty fty with     -- impl_mem.ml:207-213
-        | some n => n
-        | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.alignofFloat "CerbMem.alignofCtype: the concrete memory model requires a complete implementation alignof FLOATING")))
-      | .Array0 elemCty _ => alignofCtype_lemFuel lemFuel enumDefs ambient tagDefs elemCty   -- impl_mem.ml:214-215 (alignof ~tagDefs)
-      | .Pointer _ _ => targetPtrSize               -- impl_mem.ml:219-225
-      | .Atomic innerCty => alignofCtype_lemFuel lemFuel enumDefs ambient tagDefs innerCty   -- impl_mem.ml:226-227 (alignof ~tagDefs)
-      | .Struct tagSym =>                           -- impl_mem.ml:228-252
-        -- threaded lookup: impl_mem.ml:229 is `Pmap.find tag_sym tagDefs`
-        match CerbTagsWf.lookupEntry tagDefs tagSym with
-        | some (_, (_, StructDef membrs flexibleOpt)) =>
-          let init := match flexibleOpt with        -- impl_mem.ml:234-239
-            | none => 0
-            | some (FlexibleArrayMember _ _ _ elemTy) =>
-              alignofCtype_lemFuel lemFuel enumDefs ambient tagDefs (mkCtype (.Array0 elemTy none))
-          membrs.foldl (init := init) fun acc memb =>
-            let (_, (_, alignOpt, _, ty)) := memb
-            -- ISO-fix register R7 (VALIDATION.md §2; the R3 class, [USER 2026-10-03]
-            -- rulings): impl_mem.ml:248 reads an `AlignInteger al_n` through
-            -- `Z.to_int al_n`, which raises Z.Overflow outside OCaml's native int
-            -- range; upstream's own Lem interface is unbounded (implementation.lem:27
-            -- `alignof_ty … -> maybe nat`, mem.lem:191 `alignof_ival`), so the
-            -- unbounded maximum is computed here (pins zd-ta-alignas-huge-*).
-            max (memberAlign_lemFuel lemFuel enumDefs ambient tagDefs alignOpt ty) acc  -- impl_mem.ml:242-251
-        | _ => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.alignofStruct "CerbMem.alignofCtype: Struct tag not a StructDef (OCaml: assert false / Not_found)")))
-      | .Union0 tagSym =>                           -- impl_mem.ml:253-271
-        -- Same explicit definition table as recursive layout calls.
-        match CerbTagsWf.lookupEntry tagDefs tagSym with
-        | some (_, (_, UnionDef membrs)) =>
-          membrs.foldl (init := (0 : Nat)) fun acc memb =>
-            let (_, (_, alignOpt, _, ty)) := memb
-            -- ISO-fix register R7: as the struct fold (impl_mem.ml:267 `Z.to_int al_n`)
-            max (memberAlign_lemFuel lemFuel enumDefs ambient tagDefs alignOpt ty) acc
-        | _ => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.alignofUnion "CerbMem.alignofCtype: Union tag not a UnionDef (OCaml: assert false / Not_found)")))
-      | .Byte => 1                                  -- impl_mem.ml:272-273
+    | Ctype annots ty_ =>
+      match gnu_typedef_alignment annots with
+      | some n => n.toNat
+      | none =>
+        match ty_ with
+        | .Void0 => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.alignofVoid "CerbMem.alignofCtype: Void (impl_mem.ml:198-199 assert false)")))
+        | .Function _ _ _ | .FunctionNoParams _ =>
+          failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.alignofFunction "CerbMem.alignofCtype: function type (impl_mem.ml:216-218 assert false)")))
+        | .Basic (.Integer ity) =>
+          match CerberusImpl.alignof_ity (CerberusImpl.resolveEnum enumDefs ity) with     -- impl_mem.ml:200-206
+          | some n => n
+          | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.alignofInteger "CerbMem.alignofCtype: the concrete memory model requires a complete implementation alignof INTEGER")))
+        | .Basic (.Floating fty) =>
+          match CerberusImpl.alignof_fty fty with     -- impl_mem.ml:207-213
+          | some n => n
+          | none => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.alignofFloat "CerbMem.alignofCtype: the concrete memory model requires a complete implementation alignof FLOATING")))
+        | .Array0 elemCty _ => alignofCtype_lemFuel lemFuel enumDefs ambient tagDefs elemCty   -- impl_mem.ml:214-215 (alignof ~tagDefs)
+        | .Pointer _ _ => targetPtrSize               -- impl_mem.ml:219-225
+        | .Atomic innerCty => alignofCtype_lemFuel lemFuel enumDefs ambient tagDefs innerCty   -- impl_mem.ml:226-227 (alignof ~tagDefs)
+        | .Struct tagSym =>                           -- impl_mem.ml:228-252
+          -- threaded lookup: impl_mem.ml:229 is `Pmap.find tag_sym tagDefs`
+          match CerbTagsWf.lookupEntry tagDefs tagSym with
+          | some (_, (_, StructDef layout membrs flexibleOpt)) =>
+            let init := match flexibleOpt with        -- impl_mem.ml:234-239
+              | none => 0
+              | some (FlexibleArrayMember _ _ _ elemTy) =>
+                alignofCtype_lemFuel lemFuel enumDefs ambient tagDefs (mkCtype (.Array0 elemTy none))
+            aggregate_align layout <| membrs.foldl (init := init) fun acc memb =>
+              let (_, (_, alignOpt, _, ty)) := memb
+              -- ISO-fix register R7 (VALIDATION.md §2; the R3 class, [USER 2026-10-03]
+              -- rulings): impl_mem.ml:248 reads an `AlignInteger al_n` through
+              -- `Z.to_int al_n`, which raises Z.Overflow outside OCaml's native int
+              -- range; upstream's own Lem interface is unbounded (implementation.lem:27
+              -- `alignof_ty … -> maybe nat`, mem.lem:191 `alignof_ival`), so the
+              -- unbounded maximum is computed here (pins zd-ta-alignas-huge-*).
+              max (memberAlign_lemFuel lemFuel enumDefs ambient tagDefs (effective_member_alignment layout.aggregate_packed alignOpt) ty) acc  -- impl_mem.ml:242-251
+          | _ => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.alignofStruct "CerbMem.alignofCtype: Struct tag not a StructDef (OCaml: assert false / Not_found)")))
+        | .Union0 tagSym =>                           -- impl_mem.ml:253-271
+          -- Same explicit definition table as recursive layout calls.
+          match CerbTagsWf.lookupEntry tagDefs tagSym with
+          | some (_, (_, UnionDef layout membrs)) =>
+            aggregate_align layout <| membrs.foldl (init := (0 : Nat)) fun acc memb =>
+              let (_, (_, alignOpt, _, ty)) := memb
+              -- ISO-fix register R7: as the struct fold (impl_mem.ml:267 `Z.to_int al_n`)
+              max (memberAlign_lemFuel lemFuel enumDefs ambient tagDefs (effective_member_alignment layout.aggregate_packed alignOpt) ty) acc
+          | _ => failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.alignofUnion "CerbMem.alignofCtype: Union tag not a UnionDef (OCaml: assert false / Not_found)")))
+        | .Byte => 1                                  -- impl_mem.ml:272-273
 
 end
 
@@ -1439,7 +1443,7 @@ def reconstructValueAbst_lemFuel [CerbImplCfg.Impl] [CerbGlobal.Switches] (lemFu
     -- declared member when absent (:1116-1118); the taint is the member's
     -- (:1125-1126). (`is_zap`, :1110-1112, is not ported.)
     match CerbTagsWf.lookupEntry ambient tagSym with
-    | some (_, (_, UnionDef membrs)) =>
+    | some (_, (_, UnionDef layout membrs)) =>
       match membrs with
       | [] => (.NoTaint, failwithI (CerbStop.render (.upstreamCrash (CerbStopSites.reconstructEmptyUnion "CerbMem.reconstructValue: empty UnionDef (OCaml: match failure)"))))
       | (firstIdent, (_, _, _, firstTy)) :: _ =>
@@ -2012,7 +2016,7 @@ def memberShiftPtrval [CerbImplCfg.Impl] [LemFuel] (enumDefs : EnumDefs) (tagDef
     fmapElements tagDefs
   let (.IV _ offsetVal) := offsetofIval enumDefs tagDefs tagDefs tag memb
   let isUnion := match tagDefsAsList.find? (fun (s, _) => symbolEquality s tag) with
-    | some (_, (_, UnionDef _)) => true
+    | some (_, (_, UnionDef layout _)) => true
     | _ => false
   let unionMem := if isUnion then some memb else none
   match pv with

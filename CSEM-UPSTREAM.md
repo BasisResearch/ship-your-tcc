@@ -289,3 +289,22 @@ Exact source, positioned Cabs, compiler commands, streams and oracle executable
 hash are retained under `results/csem/function-redeclaration/after/invalid-object*`
 (large streams in `after/streams.tar.xz`) and `sail/invalid-object*`. Neither acceptance is counted as defined-C coverage;
 Supported/Fits are unchanged. No report has been sent externally.
+
+**PATCH-11 — GNU declaration carriers and concrete layout (2026-10-28).**
+Local compiler-verification extension work, not a newly alleged upstream bug.
+The parser retains exact GNU attribute introducers/aliases, located argument
+pieces, asm-label declarations, the real __builtin_va_list binder and declaration
+__extension__ markers. Shared Lem semantics plus explicit adapter patches give
+concrete typedef alignment and separate aggregate packing/minimum alignment;
+member alignment remains independent. The Lean memory reader and normal-budget
+fuel proof are adapted, and generated Core quotation retains the fields.
+Twenty-three focused cases agree with GCC, and three explicitly labeled
+historical-Menhir counterparts agree with the patched concrete OCaml engine.
+The complete 21-case cross-program Sail matrix preserves three tcc typedef
+query failures, which belong to the compiler task rather than CSem semantics.
+The new oracle preserves its stated upstream floating scope; arity shims are
+not claims of symbolic/CHERI GNU-layout support. Nonliteral ICEs, pragma pack,
+other GNU effects and injected binding/runtime meaning remain open. The old
+Supported visitor needs an identity-aware asm-label connection. See
+results/csem/gnu-attributes.md and patches/csem/0002 through 0004 for Kiran's
+review. No external report has been sent.

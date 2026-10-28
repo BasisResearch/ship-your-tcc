@@ -380,6 +380,17 @@ def pSpecifiers : Nat → SpecMode → SpecAcc → P SpecAcc
       if acc.typedefs > 1 then failAt "duplicate 'typedef'"
       return acc
     match t.tok with
+    | .ATTRIBUTE =>
+      let attrs ← pAttrSeqOpt n
+      pSpecifiers n mode { acc with attrs := combineAttrs acc.attrs (toAttrs attrs) }
+    | .EXTENSION =>
+      let kw ← advance
+      -- A diagnostic-mode marker, retained in Cabs/Ail. It does not change
+      -- the declaration's C type or waive any semantic check.
+      let attr : attribute0 := {
+        attr_ns := some (Identifier (rg kw.sp kw.ep) kw.spelling),
+        attr_id := Identifier (rg kw.sp kw.ep) "diagnostic_mode", attr_args := [] }
+      pSpecifiers n mode { acc with attrs := combineAttrs acc.attrs (Attrs [attr]) }
     | .TYPEDEF =>
       if mode == .decl true then
         let _ ← advance
@@ -388,46 +399,46 @@ def pSpecifiers : Nat → SpecMode → SpecAcc → P SpecAcc
     | .ATOMIC =>
       if acc.tstate == .none && isTok .LPAREN (← peekN 1) then
         let ts ← pAtomicSpec n
-        skipAttrs n
+        if ← at? .LBRACK_LBRACK then skipAttrs n
         pSpecifiers n mode { acc with ts := acc.ts.push ts, tstate := .uniq }
       else
         let _ ← advance
-        skipAttrs n
+        if ← at? .LBRACK_LBRACK then skipAttrs n
         pSpecifiers n mode { acc with tq := acc.tq.push .Q_Atomic }
     | .ALIGNAS =>
       let a ← pAlignas n
-      skipAttrs n
+      if ← at? .LBRACK_LBRACK then skipAttrs n
       pSpecifiers n mode { acc with al := acc.al.push a }
     | .NAME s =>
       if acc.tstate == .none && (← isTypedefName s) then
         let _ ← advance
         let ts := TSpec (rg t.sp t.ep) (.TSpec_name (Identifier (.point t.sp) s))
-        skipAttrs n
+        if ← at? .LBRACK_LBRACK then skipAttrs n
         pSpecifiers n mode { acc with ts := acc.ts.push ts, tstate := .uniq }
       else stop
     | .VOID | .BOOL =>
       if acc.tstate == .none then
         let _ ← advance
         let ts := TSpec (rg t.sp t.ep) (match t.tok with | .VOID => .TSpec_void | _ => .TSpec_Bool)
-        skipAttrs n
+        if ← at? .LBRACK_LBRACK then skipAttrs n
         pSpecifiers n mode { acc with ts := acc.ts.push ts, tstate := .uniq }
       else stop
     | .STRUCT | .UNION =>
       if acc.tstate == .none then
         let ts ← pStructOrUnion n
-        skipAttrs n
+        if ← at? .LBRACK_LBRACK then skipAttrs n
         pSpecifiers n mode { acc with ts := acc.ts.push ts, tstate := .uniq }
       else stop
     | .ENUM =>
       if acc.tstate == .none then
         let ts ← pEnum n
-        skipAttrs n
+        if ← at? .LBRACK_LBRACK then skipAttrs n
         pSpecifiers n mode { acc with ts := acc.ts.push ts, tstate := .uniq }
       else stop
     | .TYPEOF =>
       if acc.tstate == .none then
         let ts ← pTypeof n
-        skipAttrs n
+        if ← at? .LBRACK_LBRACK then skipAttrs n
         pSpecifiers n mode { acc with ts := acc.ts.push ts, tstate := .uniq }
       else stop
     | tk =>
@@ -435,23 +446,23 @@ def pSpecifiers : Nat → SpecMode → SpecAcc → P SpecAcc
       | some sp, _, _, _ =>
         if acc.tstate != .uniq then
           let _ ← advance
-          skipAttrs n
+          if ← at? .LBRACK_LBRACK then skipAttrs n
           pSpecifiers n mode { acc with ts := acc.ts.push (TSpec (rg t.sp t.ep) sp), tstate := .nonuniq }
         else stop
       | none, some q, _, _ =>
         let _ ← advance
-        skipAttrs n
+        if ← at? .LBRACK_LBRACK then skipAttrs n
         pSpecifiers n mode { acc with tq := acc.tq.push q }
       | none, none, some sc, _ =>
         if isDecl then
           let _ ← advance
-          skipAttrs n
+          if ← at? .LBRACK_LBRACK then skipAttrs n
           pSpecifiers n mode { acc with sc := acc.sc.push sc }
         else stop
       | none, none, none, some f =>
         if isDecl then
           let _ ← advance
-          skipAttrs n
+          if ← at? .LBRACK_LBRACK then skipAttrs n
           pSpecifiers n mode { acc with fs := acc.fs.push f }
         else stop
       | none, none, none, none => stop
@@ -506,8 +517,9 @@ def pStructOrUnion : Nat → P cabs_type_specifier
           pure (some ds)
       else if iopt.isNone then failAt "expected '{' or a tag after struct/union"
       else pure none
+    let trailing ← if ← at? .ATTRIBUTE then pAttrSeqOpt n else pure none
     let loc := rg kw.sp (← prevEnd)
-    let a := toAttrs attrs
+    let a := combineAttrs (toAttrs attrs) (toAttrs trailing)
     match kw.tok with
     | .STRUCT => return TSpec loc (.TSpec_struct a iopt body)
     | _ => return TSpec loc (.TSpec_union a iopt body)
@@ -534,7 +546,7 @@ def pStructDeclaration : Nat → P struct_declaration
     let ds ← if ← at? .SEMICOLON then pure [] else pStructDeclarators n
     let _ ← expectT .SEMICOLON
     let _ ← pSemis n
-    return .Struct_declaration (toAttrs attrs) acc.ts.toList acc.tq.toList acc.al.toList ds
+    return .Struct_declaration (combineAttrs (toAttrs attrs) acc.attrs) acc.ts.toList acc.tq.toList acc.al.toList ds
 
 /-- `struct_declarator_list` (in order). -/
 def pStructDeclarators : Nat → P (List struct_declarator)
@@ -584,6 +596,7 @@ def pTypeName : Nat → P type_name
   | 0 => fuelOut
   | n+1 => do
     let acc ← pSpecifiers n .specQual {}
+    if acc.attrs != Attrs [] then failAt "GNU attributes on a type name need an explicit type representation"
     let ad ← match ← peek with
       | .STAR | .LPAREN | .LBRACK =>
         match ← pDeclGen n .abstract with
@@ -593,14 +606,33 @@ def pTypeName : Nat → P type_name
     return Type_name acc.ts.toList acc.tq.toList acc.al.toList ad
 
 /-- `pointer`. -/
-def pPointer : Nat → P pointer_declarator
+def pPointer : Nat → P (pointer_declarator × attributes)
   | 0 => fuelOut
   | n+1 => do
     let st ← advance
-    skipAttrs n
-    let tq ← pTypeQuals n
-    let inner ← if ← at? .STAR then pure (some (← pPointer n)) else pure none
-    return PDecl (rg st.sp (← prevEnd)) tq inner
+    if ← at? .LBRACK_LBRACK then skipAttrs n
+    let (tq, attrs) ← pPointerQuals n
+    let (inner, nested) ← if ← at? .STAR then
+        let (p, a) ← pPointer n
+        pure (some p, a)
+      else pure (none, Attrs [])
+    return (PDecl (rg st.sp (← prevEnd)) tq inner, combineAttrs attrs nested)
+
+/-- GNU attributes among pointer qualifiers retain their entity attachment.
+Abstract type positions are diagnosed by the caller rather than erased. -/
+def pPointerQuals : Nat → P (List cabs_type_qualifier × attributes)
+  | 0 => fuelOut
+  | n+1 => do
+    if ← at? .ATTRIBUTE then
+      let attrs ← pAttrSeqOpt n
+      let (qs, rest) ← pPointerQuals n
+      return (qs, combineAttrs (toAttrs attrs) rest)
+    match typeQualifier (← peek) with
+    | some q =>
+      let _ ← advance
+      let (qs, attrs) ← pPointerQuals n
+      return (q :: qs, attrs)
+    | none => return ([], Attrs [])
 
 /-- `type_qualifier_list?` (in order). -/
 def pTypeQuals : Nat → P (List cabs_type_qualifier)
@@ -615,7 +647,12 @@ def pTypeQuals : Nat → P (List cabs_type_qualifier)
 def pDeclGen : Nat → DMode → P GenDecl
   | 0, _ => fuelOut
   | n+1, mode => do
-    let ptr ← if ← at? .STAR then pure (some (← pPointer n)) else pure none
+    let (ptr, pointerAttrs) ← if ← at? .STAR then
+        let (p, a) ← pPointer n
+        pure (some p, a)
+      else pure (none, Attrs [])
+    if mode == .abstract && pointerAttrs != Attrs [] then
+      failAt "GNU attributes on an abstract pointer need a type representation"
     let t ← cur
     match t.tok with
     | .NAME s =>
@@ -623,7 +660,7 @@ def pDeclGen : Nat → DMode → P GenDecl
       let _ ← advance
       let attrs ← pAttrSeqOpt n
       let d : LFDecl := { id := s, sort := .ident,
-                          direct := .DDecl_identifier (toAttrs attrs) (Identifier (rg t.sp t.ep) s) }
+                          direct := .DDecl_identifier (combineAttrs pointerAttrs (toAttrs attrs)) (Identifier (rg t.sp t.ep) s) }
       let d ← pConcSuffix n t.sp d
       return .conc (applyPtr ptr d)
     | .LPAREN =>
@@ -632,6 +669,7 @@ def pDeclGen : Nat → DMode → P GenDecl
         else if isTok .RPAREN t1 then pure true
         else startsParamDecl t1
       if funNow then
+        if pointerAttrs != Attrs [] then failAt "GNU attributes on an abstract pointer need a type representation"
         let dabs ← pAbsFun n none
         let dabs ← pAbsSuffix n dabs
         return .abs (.AbsDecl_direct ptr dabs)
@@ -643,16 +681,20 @@ def pDeclGen : Nat → DMode → P GenDecl
         | .conc d =>
           let d' : LFDecl := { d with direct := .DDecl_declarator d.cabs, sort := .other }
           let d' ← pConcSuffix n t.sp d'
-          return .conc (applyPtr ptr d')
+          let dd ← addDirectAttrs n pointerAttrs d'.direct
+          return .conc (applyPtr ptr { d' with direct := dd })
         | .abs a =>
+          if pointerAttrs != Attrs [] then failAt "GNU attributes on an abstract pointer need a type representation"
           let dabs ← pAbsSuffix n (.DAbs_abs_declarator a)
           return .abs (.AbsDecl_direct ptr dabs)
     | .LBRACK =>
+      if pointerAttrs != Attrs [] then failAt "GNU attributes on an abstract pointer need a type representation"
       if mode == .concrete then failAt "expected a declarator"
       let dabs ← pAbsArray n none
       let dabs ← pAbsSuffix n dabs
       return .abs (.AbsDecl_direct ptr dabs)
     | _ =>
+      if pointerAttrs != Attrs [] then failAt "GNU attributes on an abstract pointer need a type representation"
       match ptr, mode with
       | some p, .abstract => return .abs (.AbsDecl_pointer p)
       | some p, .either => return .abs (.AbsDecl_pointer p)
@@ -672,9 +714,13 @@ def pConcSuffix : Nat → Pos → LFDecl → P LFDecl
   | 0, _, _ => fuelOut
   | n+1, start, d => do
     match ← peek with
+    | .ATTRIBUTE =>
+      let a ← pAttrSeqOpt n
+      let dd ← addDirectAttrs n (toAttrs a) d.direct
+      pConcSuffix n start { d with direct := dd }
     | .LBRACK =>
       let ad ← pConcArray n start
-      skipAttrs n
+      if ← at? .LBRACK_LBRACK then skipAttrs n
       pConcSuffix n start { d with direct := .DDecl_array d.direct ad, sort := .other }
     | .LPAREN =>
       let t1 ← peekN 1
@@ -696,7 +742,7 @@ def pConcSuffix : Nat → Pos → LFDecl → P LFDecl
         let _ ← advance
         let (ptys, c) ← pParamTypeListScoped n
         let _ ← expectT .RPAREN
-        skipAttrs n
+        if ← at? .LBRACK_LBRACK then skipAttrs n
         pConcSuffix n start { d with direct := .DDecl_function d.direct ptys, sort := .fn c }
     | _ => return d
 
@@ -740,17 +786,24 @@ def pParamList : Nat → P (List parameter_declaration × Bool)
 def pParamDecl : Nat → P parameter_declaration
   | 0 => fuelOut
   | n+1 => do
-    skipAttrs n
+    if ← at? .LBRACK_LBRACK then skipAttrs n
+    let leading ← pAttrSeqOpt n
     let acc ← pSpecifiers n (.decl false) {}
+    let attrs := combineAttrs (toAttrs leading) acc.attrs
     let specs := acc.specifiers
     match ← peek with
-    | .COMMA | .RPAREN => return PDeclaration_abs_decl specs none
+    | .COMMA | .RPAREN =>
+      if attrs != Attrs [] then failAt "GNU attributes on an unnamed parameter need a type representation"
+      return PDeclaration_abs_decl specs none
     | _ =>
       match ← pDeclGen n .either with
       | .conc d =>
         declareVarname d.id    -- declarator_varname
-        return PDeclaration_decl specs d.cabs
-      | .abs a => return PDeclaration_abs_decl specs (some a)
+        let direct ← addDirectAttrs n attrs d.direct
+        return PDeclaration_decl specs ({ d with direct := direct }).cabs
+      | .abs a =>
+        if attrs != Attrs [] then failAt "GNU attributes on an abstract parameter need a type representation"
+        return PDeclaration_abs_decl specs (some a)
 
 /-- `array_declarator` from its `[` (the region starts at the direct
 declarator's start). -/
@@ -907,10 +960,24 @@ def pInitDeclTail : Nat → Pos → Bool → LFDecl → P init_declarator
   | 0, _, _, _ => fuelOut
   | n+1, start, isTD, d => do
     declareDecl isTD d
-    if ← at? .ASM then
-      -- asm_register: the fork refuses it in the action (c_parser.mly, FORK
-      -- asm refusal 2026-10-05)
-      failAt "unimplemented keyword 'asm (inline assembly label on a declarator is unsupported)'"
+    let d ← if ← at? .ASM then
+        if !(← gnu) then
+          failAt "unimplemented keyword 'asm (inline assembly label on a declarator is unsupported)'"
+        let kw ← advance
+        let _ ← expectT .LPAREN
+        match ← peek with
+        | .STRING_LITERAL _ _ => pure ()
+        | _ => failAt "expected an asm-label string literal"
+        let args ← pGnuAttrArgs n [] [] []
+        let _ ← expectT .RPAREN
+        -- Syntax is retained, with its original alias and literal locations.
+        -- The shared elaborator diagnoses the separate DESIGN §5 effect.
+        let attr : attribute0 := {
+          attr_ns := some (Identifier (rg kw.sp kw.ep) kw.spelling),
+          attr_id := Identifier (rg kw.sp kw.ep) "asm_label", attr_args := args }
+        let dd ← addDirectAttrs n (Attrs [attr]) d.direct
+        pure { d with direct := dd }
+      else pure d
     let init ← if ← accept .EQ then pure (some (← pInitializer n)) else pure none
     return InitDecl (rg start (← prevEnd)) d.cabs init
 
@@ -920,7 +987,7 @@ def pDeclarationAfterSpecs : Nat → Option AttrSeq → SpecAcc → P cabs_decla
   | n+1, attrs, acc => do
     let ids ← if ← at? .SEMICOLON then pure [] else pInitDeclarators n (acc.typedefs > 0)
     let _ ← expectT .SEMICOLON
-    return .Declaration_base (toAttrs attrs) acc.specifiers ids
+    return .Declaration_base (combineAttrs (toAttrs attrs) acc.attrs) acc.specifiers ids
 
 /-- `declaration`, after its leading attribute sequence (if any; `start` is
 where the declaration begins). -/
@@ -960,7 +1027,7 @@ def pBlockItem : Nat → P cabs_statement
   | n+1 => do
     let t ← cur
     match t.tok with
-    | .LBRACK_LBRACK =>
+    | .LBRACK_LBRACK | .ATTRIBUTE =>
       let attrs ← pAttrSeq n
       let t' ← peek
       if isTok .SEMICOLON t' then
@@ -983,7 +1050,7 @@ def pStatement : Nat → P cabs_statement
   | 0 => fuelOut
   | n+1 => do
     let t ← cur
-    if isTok .LBRACK_LBRACK t.tok then
+    if startsAttrs t.tok then
       let attrs ← pAttrSeq n
       pStatementAttrs n (some attrs) t.sp
     else pStatementAttrs n none t.sp
@@ -1232,7 +1299,7 @@ def pExternalDecl : Nat → P external_declaration
       if ← accept .SEMICOLON then return .EDecl_decl (attributeDeclaration t.sp (← prevEnd))
     let acc ← pSpecifiers n (.decl true) {}
     if acc.typedefs > 0 then return .EDecl_decl (← pDeclarationAfterSpecs n attrs acc)
-    if ← accept .SEMICOLON then return .EDecl_decl (.Declaration_base (toAttrs attrs) acc.specifiers [])
+    if ← accept .SEMICOLON then return .EDecl_decl (.Declaration_base (combineAttrs (toAttrs attrs) acc.attrs) acc.specifiers [])
     let dstart := (← cur).sp
     let d ← pDeclConcrete n
     declareVarname d.id     -- declarator_varname (both alternatives reduce it)
@@ -1251,11 +1318,13 @@ def pExternalDecl : Nat → P external_declaration
       let _ ← accept .SEMICOLON     -- boption(SEMICOLON)
       let loc := rg t.sp (← prevEnd)
       setCtx ctxt
-      return .EDecl_func (← createFunctionDefinition loc attrs acc.specifiers d body decls)
+      let f ← createFunctionDefinition loc attrs acc.specifiers d body decls
+      match f with
+      | FunDef l a sp de st => return .EDecl_func (FunDef l (combineAttrs a acc.attrs) sp de st)
     let first ← pInitDeclTail n dstart false d
     let rest ← if ← accept .COMMA then pInitDeclarators n false else pure []
     let _ ← expectT .SEMICOLON
-    return .EDecl_decl (.Declaration_base (toAttrs attrs) acc.specifiers (first :: rest))
+    return .EDecl_decl (.Declaration_base (combineAttrs (toAttrs attrs) acc.attrs) acc.specifiers (first :: rest))
 
 /-- `external_declaration_list` until `EOF`. -/
 def pExternalDecls : Nat → Array external_declaration → P (List external_declaration)

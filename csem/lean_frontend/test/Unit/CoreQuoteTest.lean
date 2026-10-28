@@ -45,7 +45,7 @@ partial def census (s : Shape) (counts : Std.HashMap String Nat := {}) : Std.Has
 mutual
 partial def view0 (x : generic_file Unit core_run_annotation) : Shape :=
   match x with
-  | .mk a0 a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 => .node "generic_file.mk" #[(view1 a0), (view17 a1), (view18 a2), (view62 a3), (view64 a4), (view150 a5), (view153 a6), (view64 a7), (view157 a8), (view161 a9), (view170 a10), (view173 a11)]
+  | .mk a0 a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 => .node "generic_file.mk" #[(view1 a0), (view17 a1), (view18 a2), (view63 a3), (view65 a4), (view151 a5), (view154 a6), (view65 a7), (view158 a8), (view162 a9), (view171 a10), (view174 a11)]
 partial def view1 (x : Option sym) : Shape :=
   match x with
   | .none  => .node "Option.none" #[]
@@ -119,82 +119,89 @@ partial def view20 (x : CerbLocation.Loc × tag_definition) : Shape :=
   | .mk a0 a1 => .node "Prod.mk" #[(view6 a0), (view21 a1)]
 partial def view21 (x : tag_definition) : Shape :=
   match x with
-  | .StructDef a0 a1 => .node "tag_definition.StructDef" #[(view22 a0), (view60 a1)]
-  | .UnionDef a0 => .node "tag_definition.UnionDef" #[(view22 a0)]
-partial def view22 (x : List (identifier × attributes × Option alignment × qualifiers × ctype)) : Shape :=
-  .node "List" (x.toArray.map view23)
-partial def view23 (x : identifier × attributes × Option alignment × qualifiers × ctype) : Shape :=
+  | .StructDef a0 a1 a2 => .node "tag_definition.StructDef" #[(view22 a0), (view25 a1), (view61 a2)]
+  | .UnionDef a0 a1 => .node "tag_definition.UnionDef" #[(view22 a0), (view25 a1)]
+partial def view22 (x : aggregate_layout) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view24 a0), (view25 a1)]
-partial def view24 (x : identifier) : Shape :=
-  match x with
-  | .Identifier a0 a1 => .node "identifier.Identifier" #[(view6 a0), (view3 a1)]
-partial def view25 (x : attributes × Option alignment × qualifiers × ctype) : Shape :=
-  match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view26 a0), (view35 a1)]
-partial def view26 (x : attributes) : Shape :=
-  match x with
-  | .Attrs a0 => .node "attributes.Attrs" #[(view27 a0)]
-partial def view27 (x : List attribute0) : Shape :=
-  .node "List" (x.toArray.map view28)
-partial def view28 (x : attribute0) : Shape :=
-  match x with
-  | .mk a0 a1 a2 => .node "attribute0.mk" #[(view29 a0), (view24 a1), (view30 a2)]
-partial def view29 (x : Option identifier) : Shape :=
+  | .mk a0 a1 => .node "aggregate_layout.mk" #[(view13 a0), (view23 a1)]
+partial def view23 (x : Option Int) : Shape :=
   match x with
   | .none  => .node "Option.none" #[]
   | .some a0 => .node "Option.some" #[(view24 a0)]
-partial def view30 (x : List (CerbLocation.Loc × String × List (CerbLocation.Loc × String))) : Shape :=
+partial def view24 (x : Int) : Shape :=
+  .scalar "Int" (toString x)
+partial def view25 (x : List (identifier × attributes × Option alignment × qualifiers × ctype)) : Shape :=
+  .node "List" (x.toArray.map view26)
+partial def view26 (x : identifier × attributes × Option alignment × qualifiers × ctype) : Shape :=
+  match x with
+  | .mk a0 a1 => .node "Prod.mk" #[(view27 a0), (view28 a1)]
+partial def view27 (x : identifier) : Shape :=
+  match x with
+  | .Identifier a0 a1 => .node "identifier.Identifier" #[(view6 a0), (view3 a1)]
+partial def view28 (x : attributes × Option alignment × qualifiers × ctype) : Shape :=
+  match x with
+  | .mk a0 a1 => .node "Prod.mk" #[(view29 a0), (view38 a1)]
+partial def view29 (x : attributes) : Shape :=
+  match x with
+  | .Attrs a0 => .node "attributes.Attrs" #[(view30 a0)]
+partial def view30 (x : List attribute0) : Shape :=
   .node "List" (x.toArray.map view31)
-partial def view31 (x : CerbLocation.Loc × String × List (CerbLocation.Loc × String)) : Shape :=
+partial def view31 (x : attribute0) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view6 a0), (view32 a1)]
-partial def view32 (x : String × List (CerbLocation.Loc × String)) : Shape :=
-  match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view3 a0), (view33 a1)]
-partial def view33 (x : List (CerbLocation.Loc × String)) : Shape :=
-  .node "List" (x.toArray.map view34)
-partial def view34 (x : CerbLocation.Loc × String) : Shape :=
-  match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view6 a0), (view3 a1)]
-partial def view35 (x : Option alignment × qualifiers × ctype) : Shape :=
-  match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view36 a0), (view55 a1)]
-partial def view36 (x : Option alignment) : Shape :=
+  | .mk a0 a1 a2 => .node "attribute0.mk" #[(view32 a0), (view27 a1), (view33 a2)]
+partial def view32 (x : Option identifier) : Shape :=
   match x with
   | .none  => .node "Option.none" #[]
-  | .some a0 => .node "Option.some" #[(view37 a0)]
-partial def view37 (x : alignment) : Shape :=
+  | .some a0 => .node "Option.some" #[(view27 a0)]
+partial def view33 (x : List (CerbLocation.Loc × String × List (CerbLocation.Loc × String))) : Shape :=
+  .node "List" (x.toArray.map view34)
+partial def view34 (x : CerbLocation.Loc × String × List (CerbLocation.Loc × String)) : Shape :=
   match x with
-  | .AlignInteger a0 => .node "alignment.AlignInteger" #[(view38 a0)]
-  | .AlignType a0 => .node "alignment.AlignType" #[(view39 a0)]
-partial def view38 (x : Int) : Shape :=
-  .scalar "Int" (toString x)
-partial def view39 (x : ctype) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view6 a0), (view35 a1)]
+partial def view35 (x : String × List (CerbLocation.Loc × String)) : Shape :=
   match x with
-  | .Ctype a0 a1 => .node "ctype.Ctype" #[(view40 a0), (view50 a1)]
-partial def view40 (x : List annot) : Shape :=
-  .node "List" (x.toArray.map view41)
-partial def view41 (x : annot) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view3 a0), (view36 a1)]
+partial def view36 (x : List (CerbLocation.Loc × String)) : Shape :=
+  .node "List" (x.toArray.map view37)
+partial def view37 (x : CerbLocation.Loc × String) : Shape :=
+  match x with
+  | .mk a0 a1 => .node "Prod.mk" #[(view6 a0), (view3 a1)]
+partial def view38 (x : Option alignment × qualifiers × ctype) : Shape :=
+  match x with
+  | .mk a0 a1 => .node "Prod.mk" #[(view39 a0), (view56 a1)]
+partial def view39 (x : Option alignment) : Shape :=
+  match x with
+  | .none  => .node "Option.none" #[]
+  | .some a0 => .node "Option.some" #[(view40 a0)]
+partial def view40 (x : alignment) : Shape :=
+  match x with
+  | .AlignInteger a0 => .node "alignment.AlignInteger" #[(view24 a0)]
+  | .AlignType a0 => .node "alignment.AlignType" #[(view41 a0)]
+partial def view41 (x : ctype) : Shape :=
+  match x with
+  | .Ctype a0 a1 => .node "ctype.Ctype" #[(view42 a0), (view52 a1)]
+partial def view42 (x : List annot) : Shape :=
+  .node "List" (x.toArray.map view43)
+partial def view43 (x : annot) : Shape :=
   match x with
   | .Astd a0 => .node "annot.Astd" #[(view3 a0)]
   | .Aloc a0 => .node "annot.Aloc" #[(view6 a0)]
   | .Auid a0 => .node "annot.Auid" #[(view3 a0)]
   | .Amarker a0 => .node "annot.Amarker" #[(view4 a0)]
   | .Amarker_object_types a0 => .node "annot.Amarker_object_types" #[(view4 a0)]
-  | .Abmc a0 => .node "annot.Abmc" #[(view42 a0)]
-  | .Aattrs a0 => .node "annot.Aattrs" #[(view26 a0)]
+  | .Abmc a0 => .node "annot.Abmc" #[(view44 a0)]
+  | .Aattrs a0 => .node "annot.Aattrs" #[(view29 a0)]
   | .Atypedef a0 => .node "annot.Atypedef" #[(view2 a0)]
-  | .Alabel a0 => .node "annot.Alabel" #[(view43 a0)]
-  | .Acerb a0 => .node "annot.Acerb" #[(view44 a0)]
-  | .Avalue a0 => .node "annot.Avalue" #[(view45 a0)]
-  | .Ainlined_label a0 => .node "annot.Ainlined_label" #[(view48 a0)]
+  | .Alabel a0 => .node "annot.Alabel" #[(view45 a0)]
+  | .Acerb a0 => .node "annot.Acerb" #[(view46 a0)]
+  | .Avalue a0 => .node "annot.Avalue" #[(view47 a0)]
+  | .Ainlined_label a0 => .node "annot.Ainlined_label" #[(view50 a0)]
   | .Astmt  => .node "annot.Astmt" #[]
   | .Aexpr  => .node "annot.Aexpr" #[]
-partial def view42 (x : bmc_annot) : Shape :=
+partial def view44 (x : bmc_annot) : Shape :=
   match x with
   | .Abmc_id a0 => .node "bmc_annot.Abmc_id" #[(view4 a0)]
-partial def view43 (x : label_annot) : Shape :=
+partial def view45 (x : label_annot) : Shape :=
   match x with
   | .LAloop a0 => .node "label_annot.LAloop" #[(view4 a0)]
   | .LAloop_continue a0 => .node "label_annot.LAloop_continue" #[(view4 a0)]
@@ -204,26 +211,26 @@ partial def view43 (x : label_annot) : Shape :=
   | .LAcase  => .node "label_annot.LAcase" #[]
   | .LAdefault  => .node "label_annot.LAdefault" #[]
   | .LAactual_label  => .node "label_annot.LAactual_label" #[]
-partial def view44 (x : cerb_attribute) : Shape :=
+partial def view46 (x : cerb_attribute) : Shape :=
   match x with
-  | .ACerb_with_address a0 => .node "cerb_attribute.ACerb_with_address" #[(view38 a0)]
+  | .ACerb_with_address a0 => .node "cerb_attribute.ACerb_with_address" #[(view24 a0)]
   | .ACerb_hidden  => .node "cerb_attribute.ACerb_hidden" #[]
-partial def view45 (x : value_annot) : Shape :=
+partial def view47 (x : value_annot) : Shape :=
   match x with
-  | .Ainteger a0 => .node "value_annot.Ainteger" #[(view46 a0)]
-partial def view46 (x : integerType) : Shape :=
+  | .Ainteger a0 => .node "value_annot.Ainteger" #[(view48 a0)]
+partial def view48 (x : integerType) : Shape :=
   match x with
   | .Char0  => .node "integerType.Char0" #[]
   | .Bool0  => .node "integerType.Bool0" #[]
-  | .Signed a0 => .node "integerType.Signed" #[(view47 a0)]
-  | .Unsigned a0 => .node "integerType.Unsigned" #[(view47 a0)]
+  | .Signed a0 => .node "integerType.Signed" #[(view49 a0)]
+  | .Unsigned a0 => .node "integerType.Unsigned" #[(view49 a0)]
   | .Enum0 a0 => .node "integerType.Enum0" #[(view2 a0)]
   | .Wchar_t  => .node "integerType.Wchar_t" #[]
   | .Wint_t  => .node "integerType.Wint_t" #[]
   | .Size_t  => .node "integerType.Size_t" #[]
   | .Ptrdiff_t  => .node "integerType.Ptrdiff_t" #[]
   | .Ptraddr_t  => .node "integerType.Ptraddr_t" #[]
-partial def view47 (x : integerBaseType) : Shape :=
+partial def view49 (x : integerBaseType) : Shape :=
   match x with
   | .Ichar  => .node "integerBaseType.Ichar" #[]
   | .Short  => .node "integerBaseType.Short" #[]
@@ -235,145 +242,141 @@ partial def view47 (x : integerBaseType) : Shape :=
   | .Int_fastN_t a0 => .node "integerBaseType.Int_fastN_t" #[(view4 a0)]
   | .Intmax_t  => .node "integerBaseType.Intmax_t" #[]
   | .Intptr_t  => .node "integerBaseType.Intptr_t" #[]
-partial def view48 (x : CerbLocation.Loc × sym × label_annot) : Shape :=
+partial def view50 (x : CerbLocation.Loc × sym × label_annot) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view6 a0), (view49 a1)]
-partial def view49 (x : sym × label_annot) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view6 a0), (view51 a1)]
+partial def view51 (x : sym × label_annot) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view2 a0), (view43 a1)]
-partial def view50 (x : ctype_) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view2 a0), (view45 a1)]
+partial def view52 (x : ctype_) : Shape :=
   match x with
   | .Void0  => .node "ctype_.Void0" #[]
-  | .Basic a0 => .node "ctype_.Basic" #[(view51 a0)]
-  | .Array0 a0 a1 => .node "ctype_.Array0" #[(view39 a0), (view54 a1)]
-  | .Function a0 a1 a2 => .node "ctype_.Function" #[(view55 a0), (view57 a1), (view13 a2)]
-  | .FunctionNoParams a0 => .node "ctype_.FunctionNoParams" #[(view55 a0)]
-  | .Pointer a0 a1 => .node "ctype_.Pointer" #[(view56 a0), (view39 a1)]
-  | .Atomic a0 => .node "ctype_.Atomic" #[(view39 a0)]
+  | .Basic a0 => .node "ctype_.Basic" #[(view53 a0)]
+  | .Array0 a0 a1 => .node "ctype_.Array0" #[(view41 a0), (view23 a1)]
+  | .Function a0 a1 a2 => .node "ctype_.Function" #[(view56 a0), (view58 a1), (view13 a2)]
+  | .FunctionNoParams a0 => .node "ctype_.FunctionNoParams" #[(view56 a0)]
+  | .Pointer a0 a1 => .node "ctype_.Pointer" #[(view57 a0), (view41 a1)]
+  | .Atomic a0 => .node "ctype_.Atomic" #[(view41 a0)]
   | .Struct a0 => .node "ctype_.Struct" #[(view2 a0)]
   | .Union0 a0 => .node "ctype_.Union0" #[(view2 a0)]
   | .Byte  => .node "ctype_.Byte" #[]
-partial def view51 (x : basicType) : Shape :=
+partial def view53 (x : basicType) : Shape :=
   match x with
-  | .Integer a0 => .node "basicType.Integer" #[(view46 a0)]
-  | .Floating a0 => .node "basicType.Floating" #[(view52 a0)]
-partial def view52 (x : floatingType) : Shape :=
+  | .Integer a0 => .node "basicType.Integer" #[(view48 a0)]
+  | .Floating a0 => .node "basicType.Floating" #[(view54 a0)]
+partial def view54 (x : floatingType) : Shape :=
   match x with
-  | .RealFloating a0 => .node "floatingType.RealFloating" #[(view53 a0)]
-partial def view53 (x : realFloatingType) : Shape :=
+  | .RealFloating a0 => .node "floatingType.RealFloating" #[(view55 a0)]
+partial def view55 (x : realFloatingType) : Shape :=
   match x with
   | .Float0  => .node "realFloatingType.Float0" #[]
   | .Double  => .node "realFloatingType.Double" #[]
   | .LongDouble  => .node "realFloatingType.LongDouble" #[]
-partial def view54 (x : Option Int) : Shape :=
+partial def view56 (x : qualifiers × ctype) : Shape :=
   match x with
-  | .none  => .node "Option.none" #[]
-  | .some a0 => .node "Option.some" #[(view38 a0)]
-partial def view55 (x : qualifiers × ctype) : Shape :=
-  match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view56 a0), (view39 a1)]
-partial def view56 (x : qualifiers) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view57 a0), (view41 a1)]
+partial def view57 (x : qualifiers) : Shape :=
   match x with
   | .mk a0 a1 a2 => .node "qualifiers.mk" #[(view13 a0), (view13 a1), (view13 a2)]
-partial def view57 (x : List (qualifiers × ctype × Bool)) : Shape :=
-  .node "List" (x.toArray.map view58)
-partial def view58 (x : qualifiers × ctype × Bool) : Shape :=
+partial def view58 (x : List (qualifiers × ctype × Bool)) : Shape :=
+  .node "List" (x.toArray.map view59)
+partial def view59 (x : qualifiers × ctype × Bool) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view56 a0), (view59 a1)]
-partial def view59 (x : ctype × Bool) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view57 a0), (view60 a1)]
+partial def view60 (x : ctype × Bool) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view39 a0), (view13 a1)]
-partial def view60 (x : Option flexible_array_member) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view41 a0), (view13 a1)]
+partial def view61 (x : Option flexible_array_member) : Shape :=
   match x with
   | .none  => .node "Option.none" #[]
-  | .some a0 => .node "Option.some" #[(view61 a0)]
-partial def view61 (x : flexible_array_member) : Shape :=
+  | .some a0 => .node "Option.some" #[(view62 a0)]
+partial def view62 (x : flexible_array_member) : Shape :=
   match x with
-  | .FlexibleArrayMember a0 a1 a2 a3 => .node "flexible_array_member.FlexibleArrayMember" #[(view26 a0), (view24 a1), (view56 a2), (view39 a3)]
-partial def view62 (x : Fmap sym integerType) : Shape :=
-  match x with
-  | .empty  => .node "Fmap.empty" #[]
-  | .mk _ a1 => .node "Fmap.mk" #[(view63 a1)]
-partial def view63 (x : Pmap sym integerType) : Shape :=
-  match x with
-  | .Empty  => .node "Pmap.Empty" #[]
-  | .Node a0 a1 a2 a3 a4 => .node "Pmap.Node" #[(view63 a0), (view2 a1), (view46 a2), (view63 a3), (view4 a4)]
-partial def view64 (x : Fmap sym (generic_fun_map_decl Unit core_run_annotation)) : Shape :=
+  | .FlexibleArrayMember a0 a1 a2 a3 => .node "flexible_array_member.FlexibleArrayMember" #[(view29 a0), (view27 a1), (view57 a2), (view41 a3)]
+partial def view63 (x : Fmap sym integerType) : Shape :=
   match x with
   | .empty  => .node "Fmap.empty" #[]
-  | .mk _ a1 => .node "Fmap.mk" #[(view65 a1)]
-partial def view65 (x : Pmap sym (generic_fun_map_decl Unit core_run_annotation)) : Shape :=
+  | .mk _ a1 => .node "Fmap.mk" #[(view64 a1)]
+partial def view64 (x : Pmap sym integerType) : Shape :=
   match x with
   | .Empty  => .node "Pmap.Empty" #[]
-  | .Node a0 a1 a2 a3 a4 => .node "Pmap.Node" #[(view65 a0), (view2 a1), (view66 a2), (view65 a3), (view4 a4)]
-partial def view66 (x : generic_fun_map_decl Unit core_run_annotation) : Shape :=
+  | .Node a0 a1 a2 a3 a4 => .node "Pmap.Node" #[(view64 a0), (view2 a1), (view48 a2), (view64 a3), (view4 a4)]
+partial def view65 (x : Fmap sym (generic_fun_map_decl Unit core_run_annotation)) : Shape :=
   match x with
-  | .Fun a0 a1 a2 => .node "generic_fun_map_decl.Fun" #[(view67 a0), (view70 a1), (view72 a2)]
-  | .Proc a0 a1 a2 a3 a4 => .node "generic_fun_map_decl.Proc" #[(view6 a0), (view116 a1), (view67 a2), (view70 a3), (view117 a4)]
-  | .ProcDecl a0 a1 a2 => .node "generic_fun_map_decl.ProcDecl" #[(view6 a0), (view67 a1), (view68 a2)]
-  | .BuiltinDecl a0 a1 a2 => .node "generic_fun_map_decl.BuiltinDecl" #[(view6 a0), (view67 a1), (view68 a2)]
-partial def view67 (x : core_base_type) : Shape :=
+  | .empty  => .node "Fmap.empty" #[]
+  | .mk _ a1 => .node "Fmap.mk" #[(view66 a1)]
+partial def view66 (x : Pmap sym (generic_fun_map_decl Unit core_run_annotation)) : Shape :=
+  match x with
+  | .Empty  => .node "Pmap.Empty" #[]
+  | .Node a0 a1 a2 a3 a4 => .node "Pmap.Node" #[(view66 a0), (view2 a1), (view67 a2), (view66 a3), (view4 a4)]
+partial def view67 (x : generic_fun_map_decl Unit core_run_annotation) : Shape :=
+  match x with
+  | .Fun a0 a1 a2 => .node "generic_fun_map_decl.Fun" #[(view68 a0), (view71 a1), (view73 a2)]
+  | .Proc a0 a1 a2 a3 a4 => .node "generic_fun_map_decl.Proc" #[(view6 a0), (view117 a1), (view68 a2), (view71 a3), (view118 a4)]
+  | .ProcDecl a0 a1 a2 => .node "generic_fun_map_decl.ProcDecl" #[(view6 a0), (view68 a1), (view69 a2)]
+  | .BuiltinDecl a0 a1 a2 => .node "generic_fun_map_decl.BuiltinDecl" #[(view6 a0), (view68 a1), (view69 a2)]
+partial def view68 (x : core_base_type) : Shape :=
   match x with
   | .BTy_unit  => .node "core_base_type.BTy_unit" #[]
   | .BTy_boolean  => .node "core_base_type.BTy_boolean" #[]
   | .BTy_ctype  => .node "core_base_type.BTy_ctype" #[]
-  | .BTy_list a0 => .node "core_base_type.BTy_list" #[(view67 a0)]
-  | .BTy_tuple a0 => .node "core_base_type.BTy_tuple" #[(view68 a0)]
-  | .BTy_object a0 => .node "core_base_type.BTy_object" #[(view69 a0)]
-  | .BTy_loaded a0 => .node "core_base_type.BTy_loaded" #[(view69 a0)]
+  | .BTy_list a0 => .node "core_base_type.BTy_list" #[(view68 a0)]
+  | .BTy_tuple a0 => .node "core_base_type.BTy_tuple" #[(view69 a0)]
+  | .BTy_object a0 => .node "core_base_type.BTy_object" #[(view70 a0)]
+  | .BTy_loaded a0 => .node "core_base_type.BTy_loaded" #[(view70 a0)]
   | .BTy_storable  => .node "core_base_type.BTy_storable" #[]
-partial def view68 (x : List core_base_type) : Shape :=
-  .node "List" (x.toArray.map view67)
-partial def view69 (x : core_object_type) : Shape :=
+partial def view69 (x : List core_base_type) : Shape :=
+  .node "List" (x.toArray.map view68)
+partial def view70 (x : core_object_type) : Shape :=
   match x with
   | .OTy_integer  => .node "core_object_type.OTy_integer" #[]
   | .OTy_floating  => .node "core_object_type.OTy_floating" #[]
   | .OTy_pointer  => .node "core_object_type.OTy_pointer" #[]
-  | .OTy_array a0 => .node "core_object_type.OTy_array" #[(view69 a0)]
+  | .OTy_array a0 => .node "core_object_type.OTy_array" #[(view70 a0)]
   | .OTy_struct a0 => .node "core_object_type.OTy_struct" #[(view2 a0)]
   | .OTy_union a0 => .node "core_object_type.OTy_union" #[(view2 a0)]
-partial def view70 (x : List (sym × core_base_type)) : Shape :=
-  .node "List" (x.toArray.map view71)
-partial def view71 (x : sym × core_base_type) : Shape :=
+partial def view71 (x : List (sym × core_base_type)) : Shape :=
+  .node "List" (x.toArray.map view72)
+partial def view72 (x : sym × core_base_type) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view2 a0), (view67 a1)]
-partial def view72 (x : generic_pexpr Unit sym) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view2 a0), (view68 a1)]
+partial def view73 (x : generic_pexpr Unit sym) : Shape :=
   match x with
-  | .Pexpr a0 a1 a2 => .node "generic_pexpr.Pexpr" #[(view40 a0), (view73 a1), (view74 a2)]
-partial def view73 (x : PUnit) : Shape :=
+  | .Pexpr a0 a1 a2 => .node "generic_pexpr.Pexpr" #[(view42 a0), (view74 a1), (view75 a2)]
+partial def view74 (x : PUnit) : Shape :=
   let _ := x; .node "Unit.unit" #[]
-partial def view74 (x : generic_pexpr_ Unit sym) : Shape :=
+partial def view75 (x : generic_pexpr_ Unit sym) : Shape :=
   match x with
   | .PEsym a0 => .node "generic_pexpr_.PEsym" #[(view2 a0)]
-  | .PEimpl a0 => .node "generic_pexpr_.PEimpl" #[(view75 a0)]
-  | .PEval a0 => .node "generic_pexpr_.PEval" #[(view76 a0)]
-  | .PEconstrained a0 => .node "generic_pexpr_.PEconstrained" #[(view91 a0)]
-  | .PEundef a0 a1 => .node "generic_pexpr_.PEundef" #[(view6 a0), (view95 a1)]
-  | .PEerror a0 a1 => .node "generic_pexpr_.PEerror" #[(view3 a0), (view72 a1)]
-  | .PEctor a0 a1 => .node "generic_pexpr_.PEctor" #[(view98 a0), (view99 a1)]
-  | .PEcase a0 a1 => .node "generic_pexpr_.PEcase" #[(view72 a0), (view100 a1)]
-  | .PEarray_shift a0 a1 a2 => .node "generic_pexpr_.PEarray_shift" #[(view72 a0), (view39 a1), (view72 a2)]
-  | .PEmember_shift a0 a1 a2 => .node "generic_pexpr_.PEmember_shift" #[(view72 a0), (view2 a1), (view24 a2)]
-  | .PEmemop a0 a1 => .node "generic_pexpr_.PEmemop" #[(view106 a0), (view99 a1)]
-  | .PEnot a0 => .node "generic_pexpr_.PEnot" #[(view72 a0)]
-  | .PEop a0 a1 a2 => .node "generic_pexpr_.PEop" #[(view111 a0), (view72 a1), (view72 a2)]
-  | .PEconv_int a0 a1 => .node "generic_pexpr_.PEconv_int" #[(view46 a0), (view72 a1)]
-  | .PEwrapI a0 a1 a2 a3 => .node "generic_pexpr_.PEwrapI" #[(view46 a0), (view112 a1), (view72 a2), (view72 a3)]
-  | .PEcatch_exceptional_condition a0 a1 a2 a3 => .node "generic_pexpr_.PEcatch_exceptional_condition" #[(view46 a0), (view112 a1), (view72 a2), (view72 a3)]
-  | .PEstruct a0 a1 => .node "generic_pexpr_.PEstruct" #[(view2 a0), (view113 a1)]
-  | .PEunion a0 a1 a2 => .node "generic_pexpr_.PEunion" #[(view2 a0), (view24 a1), (view72 a2)]
-  | .PEcfunction a0 => .node "generic_pexpr_.PEcfunction" #[(view72 a0)]
-  | .PEmemberof a0 a1 a2 => .node "generic_pexpr_.PEmemberof" #[(view2 a0), (view24 a1), (view72 a2)]
-  | .PEcall a0 a1 => .node "generic_pexpr_.PEcall" #[(view115 a0), (view99 a1)]
-  | .PElet a0 a1 a2 => .node "generic_pexpr_.PElet" #[(view102 a0), (view72 a1), (view72 a2)]
-  | .PEif a0 a1 a2 => .node "generic_pexpr_.PEif" #[(view72 a0), (view72 a1), (view72 a2)]
-  | .PEis_scalar a0 => .node "generic_pexpr_.PEis_scalar" #[(view72 a0)]
-  | .PEis_integer a0 => .node "generic_pexpr_.PEis_integer" #[(view72 a0)]
-  | .PEis_signed a0 => .node "generic_pexpr_.PEis_signed" #[(view72 a0)]
-  | .PEis_unsigned a0 => .node "generic_pexpr_.PEis_unsigned" #[(view72 a0)]
-  | .PEbmc_assume a0 => .node "generic_pexpr_.PEbmc_assume" #[(view72 a0)]
-  | .PEare_compatible a0 a1 => .node "generic_pexpr_.PEare_compatible" #[(view72 a0), (view72 a1)]
-partial def view75 (x : implementation_constant) : Shape :=
+  | .PEimpl a0 => .node "generic_pexpr_.PEimpl" #[(view76 a0)]
+  | .PEval a0 => .node "generic_pexpr_.PEval" #[(view77 a0)]
+  | .PEconstrained a0 => .node "generic_pexpr_.PEconstrained" #[(view92 a0)]
+  | .PEundef a0 a1 => .node "generic_pexpr_.PEundef" #[(view6 a0), (view96 a1)]
+  | .PEerror a0 a1 => .node "generic_pexpr_.PEerror" #[(view3 a0), (view73 a1)]
+  | .PEctor a0 a1 => .node "generic_pexpr_.PEctor" #[(view99 a0), (view100 a1)]
+  | .PEcase a0 a1 => .node "generic_pexpr_.PEcase" #[(view73 a0), (view101 a1)]
+  | .PEarray_shift a0 a1 a2 => .node "generic_pexpr_.PEarray_shift" #[(view73 a0), (view41 a1), (view73 a2)]
+  | .PEmember_shift a0 a1 a2 => .node "generic_pexpr_.PEmember_shift" #[(view73 a0), (view2 a1), (view27 a2)]
+  | .PEmemop a0 a1 => .node "generic_pexpr_.PEmemop" #[(view107 a0), (view100 a1)]
+  | .PEnot a0 => .node "generic_pexpr_.PEnot" #[(view73 a0)]
+  | .PEop a0 a1 a2 => .node "generic_pexpr_.PEop" #[(view112 a0), (view73 a1), (view73 a2)]
+  | .PEconv_int a0 a1 => .node "generic_pexpr_.PEconv_int" #[(view48 a0), (view73 a1)]
+  | .PEwrapI a0 a1 a2 a3 => .node "generic_pexpr_.PEwrapI" #[(view48 a0), (view113 a1), (view73 a2), (view73 a3)]
+  | .PEcatch_exceptional_condition a0 a1 a2 a3 => .node "generic_pexpr_.PEcatch_exceptional_condition" #[(view48 a0), (view113 a1), (view73 a2), (view73 a3)]
+  | .PEstruct a0 a1 => .node "generic_pexpr_.PEstruct" #[(view2 a0), (view114 a1)]
+  | .PEunion a0 a1 a2 => .node "generic_pexpr_.PEunion" #[(view2 a0), (view27 a1), (view73 a2)]
+  | .PEcfunction a0 => .node "generic_pexpr_.PEcfunction" #[(view73 a0)]
+  | .PEmemberof a0 a1 a2 => .node "generic_pexpr_.PEmemberof" #[(view2 a0), (view27 a1), (view73 a2)]
+  | .PEcall a0 a1 => .node "generic_pexpr_.PEcall" #[(view116 a0), (view100 a1)]
+  | .PElet a0 a1 a2 => .node "generic_pexpr_.PElet" #[(view103 a0), (view73 a1), (view73 a2)]
+  | .PEif a0 a1 a2 => .node "generic_pexpr_.PEif" #[(view73 a0), (view73 a1), (view73 a2)]
+  | .PEis_scalar a0 => .node "generic_pexpr_.PEis_scalar" #[(view73 a0)]
+  | .PEis_integer a0 => .node "generic_pexpr_.PEis_integer" #[(view73 a0)]
+  | .PEis_signed a0 => .node "generic_pexpr_.PEis_signed" #[(view73 a0)]
+  | .PEis_unsigned a0 => .node "generic_pexpr_.PEis_unsigned" #[(view73 a0)]
+  | .PEbmc_assume a0 => .node "generic_pexpr_.PEbmc_assume" #[(view73 a0)]
+  | .PEare_compatible a0 a1 => .node "generic_pexpr_.PEare_compatible" #[(view73 a0), (view73 a1)]
+partial def view76 (x : implementation_constant) : Shape :=
   match x with
   | .Environment__startup_name  => .node "implementation_constant.Environment__startup_name" #[]
   | .Environment__startup_type  => .node "implementation_constant.Environment__startup_type" #[]
@@ -403,92 +406,92 @@ partial def view75 (x : implementation_constant) : Shape :=
   | .Ctype_min  => .node "implementation_constant.Ctype_min" #[]
   | .Ctype_max  => .node "implementation_constant.Ctype_max" #[]
   | .BuiltinFunction a0 => .node "implementation_constant.BuiltinFunction" #[(view3 a0)]
-partial def view76 (x : value) : Shape :=
+partial def view77 (x : value) : Shape :=
   match x with
-  | .Vobject a0 => .node "value.Vobject" #[(view77 a0)]
-  | .Vloaded a0 => .node "value.Vloaded" #[(view84 a0)]
+  | .Vobject a0 => .node "value.Vobject" #[(view78 a0)]
+  | .Vloaded a0 => .node "value.Vloaded" #[(view85 a0)]
   | .Vunit  => .node "value.Vunit" #[]
   | .Vtrue  => .node "value.Vtrue" #[]
   | .Vfalse  => .node "value.Vfalse" #[]
-  | .Vctype a0 => .node "value.Vctype" #[(view39 a0)]
-  | .Vlist a0 a1 => .node "value.Vlist" #[(view67 a0), (view90 a1)]
-  | .Vtuple a0 => .node "value.Vtuple" #[(view90 a0)]
-partial def view77 (x : object_value) : Shape :=
+  | .Vctype a0 => .node "value.Vctype" #[(view41 a0)]
+  | .Vlist a0 a1 => .node "value.Vlist" #[(view68 a0), (view91 a1)]
+  | .Vtuple a0 => .node "value.Vtuple" #[(view91 a0)]
+partial def view78 (x : object_value) : Shape :=
   match x with
-  | .OVinteger a0 => .node "object_value.OVinteger" #[(view78 a0)]
-  | .OVfloating a0 => .node "object_value.OVfloating" #[(view80 a0)]
-  | .OVpointer a0 => .node "object_value.OVpointer" #[(view81 a0)]
-  | .OVarray a0 => .node "object_value.OVarray" #[(view83 a0)]
-  | .OVstruct a0 a1 => .node "object_value.OVstruct" #[(view2 a0), (view85 a1)]
-  | .OVunion a0 a1 a2 => .node "object_value.OVunion" #[(view2 a0), (view24 a1), (view88 a2)]
-partial def view78 (x : CerbMem.IntegerValue) : Shape :=
+  | .OVinteger a0 => .node "object_value.OVinteger" #[(view79 a0)]
+  | .OVfloating a0 => .node "object_value.OVfloating" #[(view81 a0)]
+  | .OVpointer a0 => .node "object_value.OVpointer" #[(view82 a0)]
+  | .OVarray a0 => .node "object_value.OVarray" #[(view84 a0)]
+  | .OVstruct a0 a1 => .node "object_value.OVstruct" #[(view2 a0), (view86 a1)]
+  | .OVunion a0 a1 a2 => .node "object_value.OVunion" #[(view2 a0), (view27 a1), (view89 a2)]
+partial def view79 (x : CerbMem.IntegerValue) : Shape :=
   match x with
-  | .IV a0 a1 => .node "CerbMem.IntegerValue.IV" #[(view79 a0), (view38 a1)]
-partial def view79 (x : CerbMem.Provenance) : Shape :=
+  | .IV a0 a1 => .node "CerbMem.IntegerValue.IV" #[(view80 a0), (view24 a1)]
+partial def view80 (x : CerbMem.Provenance) : Shape :=
   match x with
   | .Prov_none  => .node "CerbMem.Provenance.Prov_none" #[]
-  | .Prov_some a0 => .node "CerbMem.Provenance.Prov_some" #[(view38 a0)]
-  | .Prov_symbolic a0 => .node "CerbMem.Provenance.Prov_symbolic" #[(view38 a0)]
+  | .Prov_some a0 => .node "CerbMem.Provenance.Prov_some" #[(view24 a0)]
+  | .Prov_symbolic a0 => .node "CerbMem.Provenance.Prov_symbolic" #[(view24 a0)]
   | .Prov_device  => .node "CerbMem.Provenance.Prov_device" #[]
-partial def view80 (x : CerbIEEE.FVal) : Shape :=
+partial def view81 (x : CerbIEEE.FVal) : Shape :=
   .scalar "IEEE.bits" (toString x.fmt.width ++ "/" ++ toString x.bits.toNat)
-partial def view81 (x : CerbMem.PointerValue) : Shape :=
+partial def view82 (x : CerbMem.PointerValue) : Shape :=
   match x with
-  | .PV a0 a1 => .node "CerbMem.PointerValue.PV" #[(view79 a0), (view82 a1)]
-partial def view82 (x : CerbMem.PointerValueBase) : Shape :=
+  | .PV a0 a1 => .node "CerbMem.PointerValue.PV" #[(view80 a0), (view83 a1)]
+partial def view83 (x : CerbMem.PointerValueBase) : Shape :=
   match x with
-  | .PVnull a0 => .node "CerbMem.PointerValueBase.PVnull" #[(view39 a0)]
+  | .PVnull a0 => .node "CerbMem.PointerValueBase.PVnull" #[(view41 a0)]
   | .PVfunction a0 => .node "CerbMem.PointerValueBase.PVfunction" #[(view2 a0)]
-  | .PVconcrete a0 a1 => .node "CerbMem.PointerValueBase.PVconcrete" #[(view29 a0), (view38 a1)]
-partial def view83 (x : List loaded_value) : Shape :=
-  .node "List" (x.toArray.map view84)
-partial def view84 (x : loaded_value) : Shape :=
+  | .PVconcrete a0 a1 => .node "CerbMem.PointerValueBase.PVconcrete" #[(view32 a0), (view24 a1)]
+partial def view84 (x : List loaded_value) : Shape :=
+  .node "List" (x.toArray.map view85)
+partial def view85 (x : loaded_value) : Shape :=
   match x with
-  | .LVspecified a0 => .node "loaded_value.LVspecified" #[(view77 a0)]
-  | .LVunspecified a0 => .node "loaded_value.LVunspecified" #[(view39 a0)]
-partial def view85 (x : List (identifier × ctype × CerbMem.MemValue)) : Shape :=
-  .node "List" (x.toArray.map view86)
-partial def view86 (x : identifier × ctype × CerbMem.MemValue) : Shape :=
+  | .LVspecified a0 => .node "loaded_value.LVspecified" #[(view78 a0)]
+  | .LVunspecified a0 => .node "loaded_value.LVunspecified" #[(view41 a0)]
+partial def view86 (x : List (identifier × ctype × CerbMem.MemValue)) : Shape :=
+  .node "List" (x.toArray.map view87)
+partial def view87 (x : identifier × ctype × CerbMem.MemValue) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view24 a0), (view87 a1)]
-partial def view87 (x : ctype × CerbMem.MemValue) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view27 a0), (view88 a1)]
+partial def view88 (x : ctype × CerbMem.MemValue) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view39 a0), (view88 a1)]
-partial def view88 (x : CerbMem.MemValue) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view41 a0), (view89 a1)]
+partial def view89 (x : CerbMem.MemValue) : Shape :=
   match x with
-  | .MVunspecified a0 => .node "CerbMem.MemValue.MVunspecified" #[(view39 a0)]
-  | .MVinteger a0 a1 => .node "CerbMem.MemValue.MVinteger" #[(view46 a0), (view78 a1)]
-  | .MVfloating a0 a1 => .node "CerbMem.MemValue.MVfloating" #[(view52 a0), (view80 a1)]
-  | .MVpointer a0 a1 => .node "CerbMem.MemValue.MVpointer" #[(view39 a0), (view81 a1)]
-  | .MVarray a0 => .node "CerbMem.MemValue.MVarray" #[(view89 a0)]
-  | .MVstruct a0 a1 => .node "CerbMem.MemValue.MVstruct" #[(view2 a0), (view85 a1)]
-  | .MVunion a0 a1 a2 => .node "CerbMem.MemValue.MVunion" #[(view2 a0), (view24 a1), (view88 a2)]
-partial def view89 (x : List CerbMem.MemValue) : Shape :=
-  .node "List" (x.toArray.map view88)
-partial def view90 (x : List value) : Shape :=
-  .node "List" (x.toArray.map view76)
-partial def view91 (x : List (mem_iv_constraint × generic_pexpr Unit sym)) : Shape :=
-  .node "List" (x.toArray.map view92)
-partial def view92 (x : mem_iv_constraint × generic_pexpr Unit sym) : Shape :=
+  | .MVunspecified a0 => .node "CerbMem.MemValue.MVunspecified" #[(view41 a0)]
+  | .MVinteger a0 a1 => .node "CerbMem.MemValue.MVinteger" #[(view48 a0), (view79 a1)]
+  | .MVfloating a0 a1 => .node "CerbMem.MemValue.MVfloating" #[(view54 a0), (view81 a1)]
+  | .MVpointer a0 a1 => .node "CerbMem.MemValue.MVpointer" #[(view41 a0), (view82 a1)]
+  | .MVarray a0 => .node "CerbMem.MemValue.MVarray" #[(view90 a0)]
+  | .MVstruct a0 a1 => .node "CerbMem.MemValue.MVstruct" #[(view2 a0), (view86 a1)]
+  | .MVunion a0 a1 a2 => .node "CerbMem.MemValue.MVunion" #[(view2 a0), (view27 a1), (view89 a2)]
+partial def view90 (x : List CerbMem.MemValue) : Shape :=
+  .node "List" (x.toArray.map view89)
+partial def view91 (x : List value) : Shape :=
+  .node "List" (x.toArray.map view77)
+partial def view92 (x : List (mem_iv_constraint × generic_pexpr Unit sym)) : Shape :=
+  .node "List" (x.toArray.map view93)
+partial def view93 (x : mem_iv_constraint × generic_pexpr Unit sym) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view93 a0), (view72 a1)]
-partial def view93 (x : mem_constraint CerbMem.IntegerValue) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view94 a0), (view73 a1)]
+partial def view94 (x : mem_constraint CerbMem.IntegerValue) : Shape :=
   match x with
   | .MC_empty  => .node "mem_constraint.MC_empty" #[]
-  | .MC_eq a0 a1 => .node "mem_constraint.MC_eq" #[(view78 a0), (view78 a1)]
-  | .MC_le a0 a1 => .node "mem_constraint.MC_le" #[(view78 a0), (view78 a1)]
-  | .MC_lt a0 a1 => .node "mem_constraint.MC_lt" #[(view78 a0), (view78 a1)]
-  | .MC_in_device a0 => .node "mem_constraint.MC_in_device" #[(view78 a0)]
-  | .MC_or a0 a1 => .node "mem_constraint.MC_or" #[(view93 a0), (view93 a1)]
-  | .MC_conj a0 => .node "mem_constraint.MC_conj" #[(view94 a0)]
-  | .MC_not a0 => .node "mem_constraint.MC_not" #[(view93 a0)]
-partial def view94 (x : List (mem_constraint CerbMem.IntegerValue)) : Shape :=
-  .node "List" (x.toArray.map view93)
-partial def view95 (x : undefined_behaviour) : Shape :=
+  | .MC_eq a0 a1 => .node "mem_constraint.MC_eq" #[(view79 a0), (view79 a1)]
+  | .MC_le a0 a1 => .node "mem_constraint.MC_le" #[(view79 a0), (view79 a1)]
+  | .MC_lt a0 a1 => .node "mem_constraint.MC_lt" #[(view79 a0), (view79 a1)]
+  | .MC_in_device a0 => .node "mem_constraint.MC_in_device" #[(view79 a0)]
+  | .MC_or a0 a1 => .node "mem_constraint.MC_or" #[(view94 a0), (view94 a1)]
+  | .MC_conj a0 => .node "mem_constraint.MC_conj" #[(view95 a0)]
+  | .MC_not a0 => .node "mem_constraint.MC_not" #[(view94 a0)]
+partial def view95 (x : List (mem_constraint CerbMem.IntegerValue)) : Shape :=
+  .node "List" (x.toArray.map view94)
+partial def view96 (x : undefined_behaviour) : Shape :=
   match x with
   | .DUMMY a0 => .node "undefined_behaviour.DUMMY" #[(view3 a0)]
   | .UB_unspecified_lvalue  => .node "undefined_behaviour.UB_unspecified_lvalue" #[]
-  | .UB_std_omission a0 => .node "undefined_behaviour.UB_std_omission" #[(view96 a0)]
+  | .UB_std_omission a0 => .node "undefined_behaviour.UB_std_omission" #[(view97 a0)]
   | .UB001  => .node "undefined_behaviour.UB001" #[]
   | .UB002  => .node "undefined_behaviour.UB002" #[]
   | .UB003  => .node "undefined_behaviour.UB003" #[]
@@ -722,13 +725,13 @@ partial def view95 (x : undefined_behaviour) : Shape :=
   | .UB_CHERI_BoundsViolation  => .node "undefined_behaviour.UB_CHERI_BoundsViolation" #[]
   | .UB_CHERI_UndefinedTag  => .node "undefined_behaviour.UB_CHERI_UndefinedTag" #[]
   | .UB_CHERI_ZeroLength  => .node "undefined_behaviour.UB_CHERI_ZeroLength" #[]
-  | .UB_CERB004_unspecified a0 => .node "undefined_behaviour.UB_CERB004_unspecified" #[(view97 a0)]
+  | .UB_CERB004_unspecified a0 => .node "undefined_behaviour.UB_CERB004_unspecified" #[(view98 a0)]
   | .UB_CERB005_free_nullptr  => .node "undefined_behaviour.UB_CERB005_free_nullptr" #[]
-partial def view96 (x : undefined_by_omission) : Shape :=
+partial def view97 (x : undefined_by_omission) : Shape :=
   match x with
   | .UB_OMIT_memcpy_non_object  => .node "undefined_by_omission.UB_OMIT_memcpy_non_object" #[]
   | .UB_OMIT_memcpy_out_of_bound  => .node "undefined_by_omission.UB_OMIT_memcpy_out_of_bound" #[]
-partial def view97 (x : unspecified_ub_context) : Shape :=
+partial def view98 (x : unspecified_ub_context) : Shape :=
   match x with
   | .UB_unspec_equality_ptr_vs_NULL  => .node "unspecified_ub_context.UB_unspec_equality_ptr_vs_NULL" #[]
   | .UB_unspec_equality_both_arith_or_ptr  => .node "unspecified_ub_context.UB_unspec_equality_both_arith_or_ptr" #[]
@@ -739,9 +742,9 @@ partial def view97 (x : unspecified_ub_context) : Shape :=
   | .UB_unspec_rvalue_memberof  => .node "unspecified_ub_context.UB_unspec_rvalue_memberof" #[]
   | .UB_unspec_memberofptr  => .node "unspecified_ub_context.UB_unspec_memberofptr" #[]
   | .UB_unspec_do  => .node "unspecified_ub_context.UB_unspec_do" #[]
-partial def view98 (x : ctor) : Shape :=
+partial def view99 (x : ctor) : Shape :=
   match x with
-  | .Cnil a0 => .node "ctor.Cnil" #[(view67 a0)]
+  | .Cnil a0 => .node "ctor.Cnil" #[(view68 a0)]
   | .Ccons  => .node "ctor.Ccons" #[]
   | .Ctuple  => .node "ctor.Ctuple" #[]
   | .Carray  => .node "ctor.Carray" #[]
@@ -763,37 +766,37 @@ partial def view98 (x : ctor) : Shape :=
   | .Cfvfromint  => .node "ctor.Cfvfromint" #[]
   | .Civfromfloat  => .node "ctor.Civfromfloat" #[]
   | .CivNULLcap a0 => .node "ctor.CivNULLcap" #[(view13 a0)]
-partial def view99 (x : List (generic_pexpr Unit sym)) : Shape :=
-  .node "List" (x.toArray.map view72)
-partial def view100 (x : List (generic_pattern sym × generic_pexpr Unit sym)) : Shape :=
-  .node "List" (x.toArray.map view101)
-partial def view101 (x : generic_pattern sym × generic_pexpr Unit sym) : Shape :=
-  match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view102 a0), (view72 a1)]
-partial def view102 (x : generic_pattern sym) : Shape :=
-  match x with
-  | .Pattern a0 a1 => .node "generic_pattern.Pattern" #[(view40 a0), (view103 a1)]
-partial def view103 (x : generic_pattern_ sym) : Shape :=
-  match x with
-  | .CaseBase a0 => .node "generic_pattern_.CaseBase" #[(view104 a0)]
-  | .CaseCtor a0 a1 => .node "generic_pattern_.CaseCtor" #[(view98 a0), (view105 a1)]
-partial def view104 (x : Option sym × core_base_type) : Shape :=
-  match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view1 a0), (view67 a1)]
-partial def view105 (x : List (generic_pattern sym)) : Shape :=
+partial def view100 (x : List (generic_pexpr Unit sym)) : Shape :=
+  .node "List" (x.toArray.map view73)
+partial def view101 (x : List (generic_pattern sym × generic_pexpr Unit sym)) : Shape :=
   .node "List" (x.toArray.map view102)
-partial def view106 (x : pure_memop) : Shape :=
+partial def view102 (x : generic_pattern sym × generic_pexpr Unit sym) : Shape :=
   match x with
-  | .DeriveCap a0 a1 => .node "pure_memop.DeriveCap" #[(view107 a0), (view13 a1)]
+  | .mk a0 a1 => .node "Prod.mk" #[(view103 a0), (view73 a1)]
+partial def view103 (x : generic_pattern sym) : Shape :=
+  match x with
+  | .Pattern a0 a1 => .node "generic_pattern.Pattern" #[(view42 a0), (view104 a1)]
+partial def view104 (x : generic_pattern_ sym) : Shape :=
+  match x with
+  | .CaseBase a0 => .node "generic_pattern_.CaseBase" #[(view105 a0)]
+  | .CaseCtor a0 a1 => .node "generic_pattern_.CaseCtor" #[(view99 a0), (view106 a1)]
+partial def view105 (x : Option sym × core_base_type) : Shape :=
+  match x with
+  | .mk a0 a1 => .node "Prod.mk" #[(view1 a0), (view68 a1)]
+partial def view106 (x : List (generic_pattern sym)) : Shape :=
+  .node "List" (x.toArray.map view103)
+partial def view107 (x : pure_memop) : Shape :=
+  match x with
+  | .DeriveCap a0 a1 => .node "pure_memop.DeriveCap" #[(view108 a0), (view13 a1)]
   | .CapAssignValue  => .node "pure_memop.CapAssignValue" #[]
   | .Ptr_tIntValue  => .node "pure_memop.Ptr_tIntValue" #[]
   | .ByteFromInt  => .node "pure_memop.ByteFromInt" #[]
   | .IntFromByte  => .node "pure_memop.IntFromByte" #[]
-partial def view107 (x : derivecap_op) : Shape :=
+partial def view108 (x : derivecap_op) : Shape :=
   match x with
-  | .DCunary a0 => .node "derivecap_op.DCunary" #[(view108 a0)]
-  | .DCbinary a0 => .node "derivecap_op.DCbinary" #[(view109 a0)]
-partial def view108 (x : unaryOperator) : Shape :=
+  | .DCunary a0 => .node "derivecap_op.DCunary" #[(view109 a0)]
+  | .DCbinary a0 => .node "derivecap_op.DCbinary" #[(view110 a0)]
+partial def view109 (x : unaryOperator) : Shape :=
   match x with
   | .Plus  => .node "unaryOperator.Plus" #[]
   | .Minus  => .node "unaryOperator.Minus" #[]
@@ -802,9 +805,9 @@ partial def view108 (x : unaryOperator) : Shape :=
   | .Indirection  => .node "unaryOperator.Indirection" #[]
   | .PostfixIncr  => .node "unaryOperator.PostfixIncr" #[]
   | .PostfixDecr  => .node "unaryOperator.PostfixDecr" #[]
-partial def view109 (x : binaryOperator) : Shape :=
+partial def view110 (x : binaryOperator) : Shape :=
   match x with
-  | .Arithmetic a0 => .node "binaryOperator.Arithmetic" #[(view110 a0)]
+  | .Arithmetic a0 => .node "binaryOperator.Arithmetic" #[(view111 a0)]
   | .Comma  => .node "binaryOperator.Comma" #[]
   | .And0  => .node "binaryOperator.And0" #[]
   | .Or0  => .node "binaryOperator.Or0" #[]
@@ -814,7 +817,7 @@ partial def view109 (x : binaryOperator) : Shape :=
   | .Ge  => .node "binaryOperator.Ge" #[]
   | .Eq1  => .node "binaryOperator.Eq1" #[]
   | .Ne0  => .node "binaryOperator.Ne0" #[]
-partial def view110 (x : arithmeticOperator) : Shape :=
+partial def view111 (x : arithmeticOperator) : Shape :=
   match x with
   | .Mul0  => .node "arithmeticOperator.Mul0" #[]
   | .Div0  => .node "arithmeticOperator.Div0" #[]
@@ -826,7 +829,7 @@ partial def view110 (x : arithmeticOperator) : Shape :=
   | .Band  => .node "arithmeticOperator.Band" #[]
   | .Bxor  => .node "arithmeticOperator.Bxor" #[]
   | .Bor  => .node "arithmeticOperator.Bor" #[]
-partial def view111 (x : binop) : Shape :=
+partial def view112 (x : binop) : Shape :=
   match x with
   | .OpAdd  => .node "binop.OpAdd" #[]
   | .OpSub  => .node "binop.OpSub" #[]
@@ -842,7 +845,7 @@ partial def view111 (x : binop) : Shape :=
   | .OpLe  => .node "binop.OpLe" #[]
   | .OpAnd  => .node "binop.OpAnd" #[]
   | .OpOr  => .node "binop.OpOr" #[]
-partial def view112 (x : iop) : Shape :=
+partial def view113 (x : iop) : Shape :=
   match x with
   | .IOpAdd  => .node "iop.IOpAdd" #[]
   | .IOpSub  => .node "iop.IOpSub" #[]
@@ -851,44 +854,44 @@ partial def view112 (x : iop) : Shape :=
   | .IOpShr  => .node "iop.IOpShr" #[]
   | .IOpDiv  => .node "iop.IOpDiv" #[]
   | .IOpRem_t  => .node "iop.IOpRem_t" #[]
-partial def view113 (x : List (identifier × generic_pexpr Unit sym)) : Shape :=
-  .node "List" (x.toArray.map view114)
-partial def view114 (x : identifier × generic_pexpr Unit sym) : Shape :=
+partial def view114 (x : List (identifier × generic_pexpr Unit sym)) : Shape :=
+  .node "List" (x.toArray.map view115)
+partial def view115 (x : identifier × generic_pexpr Unit sym) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view24 a0), (view72 a1)]
-partial def view115 (x : generic_name sym) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view27 a0), (view73 a1)]
+partial def view116 (x : generic_name sym) : Shape :=
   match x with
   | .Sym a0 => .node "generic_name.Sym" #[(view2 a0)]
-  | .Impl a0 => .node "generic_name.Impl" #[(view75 a0)]
-partial def view116 (x : Option Nat) : Shape :=
+  | .Impl a0 => .node "generic_name.Impl" #[(view76 a0)]
+partial def view117 (x : Option Nat) : Shape :=
   match x with
   | .none  => .node "Option.none" #[]
   | .some a0 => .node "Option.some" #[(view4 a0)]
-partial def view117 (x : generic_expr core_run_annotation Unit sym) : Shape :=
+partial def view118 (x : generic_expr core_run_annotation Unit sym) : Shape :=
   match x with
-  | .Expr a0 a1 => .node "generic_expr.Expr" #[(view40 a0), (view118 a1)]
-partial def view118 (x : generic_expr_ core_run_annotation Unit sym) : Shape :=
+  | .Expr a0 a1 => .node "generic_expr.Expr" #[(view42 a0), (view119 a1)]
+partial def view119 (x : generic_expr_ core_run_annotation Unit sym) : Shape :=
   match x with
-  | .Epure a0 => .node "generic_expr_.Epure" #[(view72 a0)]
-  | .Ememop a0 a1 => .node "generic_expr_.Ememop" #[(view119 a0), (view99 a1)]
-  | .Eaction a0 => .node "generic_expr_.Eaction" #[(view122 a0)]
-  | .Ecase a0 a1 => .node "generic_expr_.Ecase" #[(view72 a0), (view135 a1)]
-  | .Elet a0 a1 a2 => .node "generic_expr_.Elet" #[(view102 a0), (view72 a1), (view117 a2)]
-  | .Eif a0 a1 a2 => .node "generic_expr_.Eif" #[(view72 a0), (view117 a1), (view117 a2)]
-  | .Eccall a0 a1 a2 a3 => .node "generic_expr_.Eccall" #[(view125 a0), (view72 a1), (view72 a2), (view99 a3)]
-  | .Eproc a0 a1 a2 => .node "generic_expr_.Eproc" #[(view125 a0), (view115 a1), (view99 a2)]
-  | .Eunseq a0 => .node "generic_expr_.Eunseq" #[(view137 a0)]
-  | .Ewseq a0 a1 a2 => .node "generic_expr_.Ewseq" #[(view102 a0), (view117 a1), (view117 a2)]
-  | .Esseq a0 a1 a2 => .node "generic_expr_.Esseq" #[(view102 a0), (view117 a1), (view117 a2)]
-  | .Ebound a0 => .node "generic_expr_.Ebound" #[(view117 a0)]
-  | .End a0 => .node "generic_expr_.End" #[(view137 a0)]
-  | .Esave a0 a1 a2 => .node "generic_expr_.Esave" #[(view71 a0), (view138 a1), (view117 a2)]
-  | .Erun a0 a1 a2 => .node "generic_expr_.Erun" #[(view125 a0), (view2 a1), (view99 a2)]
-  | .Epar a0 => .node "generic_expr_.Epar" #[(view137 a0)]
+  | .Epure a0 => .node "generic_expr_.Epure" #[(view73 a0)]
+  | .Ememop a0 a1 => .node "generic_expr_.Ememop" #[(view120 a0), (view100 a1)]
+  | .Eaction a0 => .node "generic_expr_.Eaction" #[(view123 a0)]
+  | .Ecase a0 a1 => .node "generic_expr_.Ecase" #[(view73 a0), (view136 a1)]
+  | .Elet a0 a1 a2 => .node "generic_expr_.Elet" #[(view103 a0), (view73 a1), (view118 a2)]
+  | .Eif a0 a1 a2 => .node "generic_expr_.Eif" #[(view73 a0), (view118 a1), (view118 a2)]
+  | .Eccall a0 a1 a2 a3 => .node "generic_expr_.Eccall" #[(view126 a0), (view73 a1), (view73 a2), (view100 a3)]
+  | .Eproc a0 a1 a2 => .node "generic_expr_.Eproc" #[(view126 a0), (view116 a1), (view100 a2)]
+  | .Eunseq a0 => .node "generic_expr_.Eunseq" #[(view138 a0)]
+  | .Ewseq a0 a1 a2 => .node "generic_expr_.Ewseq" #[(view103 a0), (view118 a1), (view118 a2)]
+  | .Esseq a0 a1 a2 => .node "generic_expr_.Esseq" #[(view103 a0), (view118 a1), (view118 a2)]
+  | .Ebound a0 => .node "generic_expr_.Ebound" #[(view118 a0)]
+  | .End a0 => .node "generic_expr_.End" #[(view138 a0)]
+  | .Esave a0 a1 a2 => .node "generic_expr_.Esave" #[(view72 a0), (view139 a1), (view118 a2)]
+  | .Erun a0 a1 a2 => .node "generic_expr_.Erun" #[(view126 a0), (view2 a1), (view100 a2)]
+  | .Epar a0 => .node "generic_expr_.Epar" #[(view138 a0)]
   | .Ewait a0 => .node "generic_expr_.Ewait" #[(view4 a0)]
-  | .Eannot a0 a1 => .node "generic_expr_.Eannot" #[(view145 a0), (view117 a1)]
-  | .Eexcluded a0 a1 => .node "generic_expr_.Eexcluded" #[(view4 a0), (view124 a1)]
-partial def view119 (x : generic_memop sym) : Shape :=
+  | .Eannot a0 a1 => .node "generic_expr_.Eannot" #[(view146 a0), (view118 a1)]
+  | .Eexcluded a0 a1 => .node "generic_expr_.Eexcluded" #[(view4 a0), (view125 a1)]
+partial def view120 (x : generic_memop sym) : Shape :=
   match x with
   | .PtrEq  => .node "generic_memop.PtrEq" #[]
   | .PtrNe  => .node "generic_memop.PtrNe" #[]
@@ -902,7 +905,7 @@ partial def view119 (x : generic_memop sym) : Shape :=
   | .PtrValidForDeref  => .node "generic_memop.PtrValidForDeref" #[]
   | .PtrWellAligned  => .node "generic_memop.PtrWellAligned" #[]
   | .PtrArrayShift  => .node "generic_memop.PtrArrayShift" #[]
-  | .PtrMemberShift a0 a1 => .node "generic_memop.PtrMemberShift" #[(view2 a0), (view24 a1)]
+  | .PtrMemberShift a0 a1 => .node "generic_memop.PtrMemberShift" #[(view2 a0), (view27 a1)]
   | .Memcpy  => .node "generic_memop.Memcpy" #[]
   | .Memcmp  => .node "generic_memop.Memcmp" #[]
   | .Realloc  => .node "generic_memop.Realloc" #[]
@@ -911,69 +914,69 @@ partial def view119 (x : generic_memop sym) : Shape :=
   | .Va_arg  => .node "generic_memop.Va_arg" #[]
   | .Va_end  => .node "generic_memop.Va_end" #[]
   | .Copy_alloc_id  => .node "generic_memop.Copy_alloc_id" #[]
-  | .CHERI_intrinsic a0 a1 => .node "generic_memop.CHERI_intrinsic" #[(view3 a0), (view120 a1)]
-partial def view120 (x : ctype × List ctype) : Shape :=
+  | .CHERI_intrinsic a0 a1 => .node "generic_memop.CHERI_intrinsic" #[(view3 a0), (view121 a1)]
+partial def view121 (x : ctype × List ctype) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view39 a0), (view121 a1)]
-partial def view121 (x : List ctype) : Shape :=
-  .node "List" (x.toArray.map view39)
-partial def view122 (x : generic_paction core_run_annotation Unit sym) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view41 a0), (view122 a1)]
+partial def view122 (x : List ctype) : Shape :=
+  .node "List" (x.toArray.map view41)
+partial def view123 (x : generic_paction core_run_annotation Unit sym) : Shape :=
   match x with
-  | .Paction a0 a1 => .node "generic_paction.Paction" #[(view123 a0), (view124 a1)]
-partial def view123 (x : polarity) : Shape :=
+  | .Paction a0 a1 => .node "generic_paction.Paction" #[(view124 a0), (view125 a1)]
+partial def view124 (x : polarity) : Shape :=
   match x with
   | .Pos  => .node "polarity.Pos" #[]
   | .Neg0  => .node "polarity.Neg0" #[]
-partial def view124 (x : generic_action core_run_annotation Unit sym) : Shape :=
+partial def view125 (x : generic_action core_run_annotation Unit sym) : Shape :=
   match x with
-  | .Action a0 a1 a2 => .node "generic_action.Action" #[(view6 a0), (view125 a1), (view129 a2)]
-partial def view125 (x : core_run_annotation) : Shape :=
+  | .Action a0 a1 a2 => .node "generic_action.Action" #[(view6 a0), (view126 a1), (view130 a2)]
+partial def view126 (x : core_run_annotation) : Shape :=
   match x with
-  | .mk a0 a1 a2 => .node "core_run_annotation.mk" #[(view126 a0), (view128 a1), (view128 a2)]
-partial def view126 (x : Pset (thread_id × aid)) : Shape :=
+  | .mk a0 a1 a2 => .node "core_run_annotation.mk" #[(view127 a0), (view129 a1), (view129 a2)]
+partial def view127 (x : Pset (thread_id × aid)) : Shape :=
   match x with
   | .Empty  => .node "Pset.Empty" #[]
-  | .Node a0 a1 a2 a3 => .node "Pset.Node" #[(view126 a0), (view127 a1), (view126 a2), (view4 a3)]
-partial def view127 (x : thread_id × aid) : Shape :=
+  | .Node a0 a1 a2 a3 => .node "Pset.Node" #[(view127 a0), (view128 a1), (view127 a2), (view4 a3)]
+partial def view128 (x : thread_id × aid) : Shape :=
   match x with
   | .mk a0 a1 => .node "Prod.mk" #[(view4 a0), (view4 a1)]
-partial def view128 (x : Pset aid) : Shape :=
+partial def view129 (x : Pset aid) : Shape :=
   match x with
   | .Empty  => .node "Pset.Empty" #[]
-  | .Node a0 a1 a2 a3 => .node "Pset.Node" #[(view128 a0), (view4 a1), (view128 a2), (view4 a3)]
-partial def view129 (x : generic_action_ Unit sym) : Shape :=
+  | .Node a0 a1 a2 a3 => .node "Pset.Node" #[(view129 a0), (view4 a1), (view129 a2), (view4 a3)]
+partial def view130 (x : generic_action_ Unit sym) : Shape :=
   match x with
-  | .Create a0 a1 a2 => .node "generic_action_.Create" #[(view72 a0), (view72 a1), (view130 a2)]
-  | .CreateReadOnly a0 a1 a2 a3 => .node "generic_action_.CreateReadOnly" #[(view72 a0), (view72 a1), (view72 a2), (view130 a3)]
-  | .Alloc0 a0 a1 a2 => .node "generic_action_.Alloc0" #[(view72 a0), (view72 a1), (view130 a2)]
-  | .Kill a0 a1 => .node "generic_action_.Kill" #[(view132 a0), (view72 a1)]
-  | .Store0 a0 a1 a2 a3 a4 => .node "generic_action_.Store0" #[(view13 a0), (view72 a1), (view72 a2), (view72 a3), (view133 a4)]
-  | .Load0 a0 a1 a2 => .node "generic_action_.Load0" #[(view72 a0), (view72 a1), (view133 a2)]
-  | .SeqRMW a0 a1 a2 a3 a4 => .node "generic_action_.SeqRMW" #[(view13 a0), (view72 a1), (view72 a2), (view2 a3), (view72 a4)]
-  | .RMW0 a0 a1 a2 a3 a4 a5 => .node "generic_action_.RMW0" #[(view72 a0), (view72 a1), (view72 a2), (view72 a3), (view133 a4), (view133 a5)]
-  | .Fence0 a0 => .node "generic_action_.Fence0" #[(view133 a0)]
-  | .CompareExchangeStrong a0 a1 a2 a3 a4 a5 => .node "generic_action_.CompareExchangeStrong" #[(view72 a0), (view72 a1), (view72 a2), (view72 a3), (view133 a4), (view133 a5)]
-  | .CompareExchangeWeak a0 a1 a2 a3 a4 a5 => .node "generic_action_.CompareExchangeWeak" #[(view72 a0), (view72 a1), (view72 a2), (view72 a3), (view133 a4), (view133 a5)]
-  | .LinuxFence a0 => .node "generic_action_.LinuxFence" #[(view134 a0)]
-  | .LinuxLoad a0 a1 a2 => .node "generic_action_.LinuxLoad" #[(view72 a0), (view72 a1), (view134 a2)]
-  | .LinuxStore a0 a1 a2 a3 => .node "generic_action_.LinuxStore" #[(view72 a0), (view72 a1), (view72 a2), (view134 a3)]
-  | .LinuxRMW a0 a1 a2 a3 => .node "generic_action_.LinuxRMW" #[(view72 a0), (view72 a1), (view72 a2), (view134 a3)]
-partial def view130 (x : prefix0) : Shape :=
+  | .Create a0 a1 a2 => .node "generic_action_.Create" #[(view73 a0), (view73 a1), (view131 a2)]
+  | .CreateReadOnly a0 a1 a2 a3 => .node "generic_action_.CreateReadOnly" #[(view73 a0), (view73 a1), (view73 a2), (view131 a3)]
+  | .Alloc0 a0 a1 a2 => .node "generic_action_.Alloc0" #[(view73 a0), (view73 a1), (view131 a2)]
+  | .Kill a0 a1 => .node "generic_action_.Kill" #[(view133 a0), (view73 a1)]
+  | .Store0 a0 a1 a2 a3 a4 => .node "generic_action_.Store0" #[(view13 a0), (view73 a1), (view73 a2), (view73 a3), (view134 a4)]
+  | .Load0 a0 a1 a2 => .node "generic_action_.Load0" #[(view73 a0), (view73 a1), (view134 a2)]
+  | .SeqRMW a0 a1 a2 a3 a4 => .node "generic_action_.SeqRMW" #[(view13 a0), (view73 a1), (view73 a2), (view2 a3), (view73 a4)]
+  | .RMW0 a0 a1 a2 a3 a4 a5 => .node "generic_action_.RMW0" #[(view73 a0), (view73 a1), (view73 a2), (view73 a3), (view134 a4), (view134 a5)]
+  | .Fence0 a0 => .node "generic_action_.Fence0" #[(view134 a0)]
+  | .CompareExchangeStrong a0 a1 a2 a3 a4 a5 => .node "generic_action_.CompareExchangeStrong" #[(view73 a0), (view73 a1), (view73 a2), (view73 a3), (view134 a4), (view134 a5)]
+  | .CompareExchangeWeak a0 a1 a2 a3 a4 a5 => .node "generic_action_.CompareExchangeWeak" #[(view73 a0), (view73 a1), (view73 a2), (view73 a3), (view134 a4), (view134 a5)]
+  | .LinuxFence a0 => .node "generic_action_.LinuxFence" #[(view135 a0)]
+  | .LinuxLoad a0 a1 a2 => .node "generic_action_.LinuxLoad" #[(view73 a0), (view73 a1), (view135 a2)]
+  | .LinuxStore a0 a1 a2 a3 => .node "generic_action_.LinuxStore" #[(view73 a0), (view73 a1), (view73 a2), (view135 a3)]
+  | .LinuxRMW a0 a1 a2 a3 => .node "generic_action_.LinuxRMW" #[(view73 a0), (view73 a1), (view73 a2), (view135 a3)]
+partial def view131 (x : prefix0) : Shape :=
   match x with
-  | .PrefSource a0 a1 => .node "prefix0.PrefSource" #[(view6 a0), (view131 a1)]
-  | .PrefFunArg a0 a1 a2 => .node "prefix0.PrefFunArg" #[(view6 a0), (view3 a1), (view38 a2)]
+  | .PrefSource a0 a1 => .node "prefix0.PrefSource" #[(view6 a0), (view132 a1)]
+  | .PrefFunArg a0 a1 a2 => .node "prefix0.PrefFunArg" #[(view6 a0), (view3 a1), (view24 a2)]
   | .PrefStringLiteral a0 a1 => .node "prefix0.PrefStringLiteral" #[(view6 a0), (view3 a1)]
   | .PrefCompoundLiteral a0 a1 => .node "prefix0.PrefCompoundLiteral" #[(view6 a0), (view3 a1)]
   | .PrefMalloc  => .node "prefix0.PrefMalloc" #[]
   | .PrefTemporaryLifetime a0 a1 => .node "prefix0.PrefTemporaryLifetime" #[(view6 a0), (view3 a1)]
   | .PrefOther a0 => .node "prefix0.PrefOther" #[(view3 a0)]
-partial def view131 (x : List sym) : Shape :=
+partial def view132 (x : List sym) : Shape :=
   .node "List" (x.toArray.map view2)
-partial def view132 (x : kill_kind) : Shape :=
+partial def view133 (x : kill_kind) : Shape :=
   match x with
   | .Dynamic0  => .node "kill_kind.Dynamic0" #[]
-  | .Static0 a0 => .node "kill_kind.Static0" #[(view39 a0)]
-partial def view133 (x : memory_order) : Shape :=
+  | .Static0 a0 => .node "kill_kind.Static0" #[(view41 a0)]
+partial def view134 (x : memory_order) : Shape :=
   match x with
   | .NA  => .node "memory_order.NA" #[]
   | .Seq_cst  => .node "memory_order.Seq_cst" #[]
@@ -982,7 +985,7 @@ partial def view133 (x : memory_order) : Shape :=
   | .Acquire  => .node "memory_order.Acquire" #[]
   | .Consume  => .node "memory_order.Consume" #[]
   | .Acq_rel  => .node "memory_order.Acq_rel" #[]
-partial def view134 (x : linux_memory_order) : Shape :=
+partial def view135 (x : linux_memory_order) : Shape :=
   match x with
   | .Once  => .node "linux_memory_order.Once" #[]
   | .LAcquire  => .node "linux_memory_order.LAcquire" #[]
@@ -994,142 +997,142 @@ partial def view134 (x : linux_memory_order) : Shape :=
   | .RcuLock  => .node "linux_memory_order.RcuLock" #[]
   | .RcuUnlock  => .node "linux_memory_order.RcuUnlock" #[]
   | .SyncRcu  => .node "linux_memory_order.SyncRcu" #[]
-partial def view135 (x : List (generic_pattern sym × generic_expr core_run_annotation Unit sym)) : Shape :=
-  .node "List" (x.toArray.map view136)
-partial def view136 (x : generic_pattern sym × generic_expr core_run_annotation Unit sym) : Shape :=
+partial def view136 (x : List (generic_pattern sym × generic_expr core_run_annotation Unit sym)) : Shape :=
+  .node "List" (x.toArray.map view137)
+partial def view137 (x : generic_pattern sym × generic_expr core_run_annotation Unit sym) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view102 a0), (view117 a1)]
-partial def view137 (x : List (generic_expr core_run_annotation Unit sym)) : Shape :=
-  .node "List" (x.toArray.map view117)
-partial def view138 (x : List (sym × (core_base_type × Option (ctype × pass_by_value_or_pointer)) × generic_pexpr Unit sym)) : Shape :=
-  .node "List" (x.toArray.map view139)
-partial def view139 (x : sym × (core_base_type × Option (ctype × pass_by_value_or_pointer)) × generic_pexpr Unit sym) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view103 a0), (view118 a1)]
+partial def view138 (x : List (generic_expr core_run_annotation Unit sym)) : Shape :=
+  .node "List" (x.toArray.map view118)
+partial def view139 (x : List (sym × (core_base_type × Option (ctype × pass_by_value_or_pointer)) × generic_pexpr Unit sym)) : Shape :=
+  .node "List" (x.toArray.map view140)
+partial def view140 (x : sym × (core_base_type × Option (ctype × pass_by_value_or_pointer)) × generic_pexpr Unit sym) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view2 a0), (view140 a1)]
-partial def view140 (x : (core_base_type × Option (ctype × pass_by_value_or_pointer)) × generic_pexpr Unit sym) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view2 a0), (view141 a1)]
+partial def view141 (x : (core_base_type × Option (ctype × pass_by_value_or_pointer)) × generic_pexpr Unit sym) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view141 a0), (view72 a1)]
-partial def view141 (x : core_base_type × Option (ctype × pass_by_value_or_pointer)) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view142 a0), (view73 a1)]
+partial def view142 (x : core_base_type × Option (ctype × pass_by_value_or_pointer)) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view67 a0), (view142 a1)]
-partial def view142 (x : Option (ctype × pass_by_value_or_pointer)) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view68 a0), (view143 a1)]
+partial def view143 (x : Option (ctype × pass_by_value_or_pointer)) : Shape :=
   match x with
   | .none  => .node "Option.none" #[]
-  | .some a0 => .node "Option.some" #[(view143 a0)]
-partial def view143 (x : ctype × pass_by_value_or_pointer) : Shape :=
+  | .some a0 => .node "Option.some" #[(view144 a0)]
+partial def view144 (x : ctype × pass_by_value_or_pointer) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view39 a0), (view144 a1)]
-partial def view144 (x : pass_by_value_or_pointer) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view41 a0), (view145 a1)]
+partial def view145 (x : pass_by_value_or_pointer) : Shape :=
   match x with
   | .By_pointer  => .node "pass_by_value_or_pointer.By_pointer" #[]
   | .By_value  => .node "pass_by_value_or_pointer.By_value" #[]
-partial def view145 (x : List dyn_annotation) : Shape :=
-  .node "List" (x.toArray.map view146)
-partial def view146 (x : dyn_annotation) : Shape :=
+partial def view146 (x : List dyn_annotation) : Shape :=
+  .node "List" (x.toArray.map view147)
+partial def view147 (x : dyn_annotation) : Shape :=
   match x with
-  | .DA_neg a0 a1 a2 => .node "dyn_annotation.DA_neg" #[(view4 a0), (view147 a1), (view148 a2)]
-  | .DA_pos a0 a1 => .node "dyn_annotation.DA_pos" #[(view147 a0), (view148 a1)]
-partial def view147 (x : List Nat) : Shape :=
+  | .DA_neg a0 a1 a2 => .node "dyn_annotation.DA_neg" #[(view4 a0), (view148 a1), (view149 a2)]
+  | .DA_pos a0 a1 => .node "dyn_annotation.DA_pos" #[(view148 a0), (view149 a1)]
+partial def view148 (x : List Nat) : Shape :=
   .node "List" (x.toArray.map view4)
-partial def view148 (x : CerbMem.Footprint) : Shape :=
+partial def view149 (x : CerbMem.Footprint) : Shape :=
   match x with
-  | .FP a0 a1 a2 => .node "CerbMem.Footprint.FP" #[(view149 a0), (view38 a1), (view38 a2)]
-partial def view149 (x : CerbMem.FootprintAccess) : Shape :=
+  | .FP a0 a1 a2 => .node "CerbMem.Footprint.FP" #[(view150 a0), (view24 a1), (view24 a2)]
+partial def view150 (x : CerbMem.FootprintAccess) : Shape :=
   match x with
   | .W  => .node "CerbMem.FootprintAccess.W" #[]
   | .R  => .node "CerbMem.FootprintAccess.R" #[]
-partial def view150 (x : Fmap implementation_constant (generic_impl_decl Unit)) : Shape :=
+partial def view151 (x : Fmap implementation_constant (generic_impl_decl Unit)) : Shape :=
   match x with
   | .empty  => .node "Fmap.empty" #[]
-  | .mk _ a1 => .node "Fmap.mk" #[(view151 a1)]
-partial def view151 (x : Pmap implementation_constant (generic_impl_decl Unit)) : Shape :=
+  | .mk _ a1 => .node "Fmap.mk" #[(view152 a1)]
+partial def view152 (x : Pmap implementation_constant (generic_impl_decl Unit)) : Shape :=
   match x with
   | .Empty  => .node "Pmap.Empty" #[]
-  | .Node a0 a1 a2 a3 a4 => .node "Pmap.Node" #[(view151 a0), (view75 a1), (view152 a2), (view151 a3), (view4 a4)]
-partial def view152 (x : generic_impl_decl Unit) : Shape :=
+  | .Node a0 a1 a2 a3 a4 => .node "Pmap.Node" #[(view152 a0), (view76 a1), (view153 a2), (view152 a3), (view4 a4)]
+partial def view153 (x : generic_impl_decl Unit) : Shape :=
   match x with
-  | .Def a0 a1 => .node "generic_impl_decl.Def" #[(view67 a0), (view72 a1)]
-  | .IFun a0 a1 a2 => .node "generic_impl_decl.IFun" #[(view67 a0), (view70 a1), (view72 a2)]
-partial def view153 (x : List (sym × generic_globs core_run_annotation Unit)) : Shape :=
-  .node "List" (x.toArray.map view154)
-partial def view154 (x : sym × generic_globs core_run_annotation Unit) : Shape :=
+  | .Def a0 a1 => .node "generic_impl_decl.Def" #[(view68 a0), (view73 a1)]
+  | .IFun a0 a1 a2 => .node "generic_impl_decl.IFun" #[(view68 a0), (view71 a1), (view73 a2)]
+partial def view154 (x : List (sym × generic_globs core_run_annotation Unit)) : Shape :=
+  .node "List" (x.toArray.map view155)
+partial def view155 (x : sym × generic_globs core_run_annotation Unit) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view2 a0), (view155 a1)]
-partial def view155 (x : generic_globs core_run_annotation Unit) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view2 a0), (view156 a1)]
+partial def view156 (x : generic_globs core_run_annotation Unit) : Shape :=
   match x with
-  | .GlobalDef a0 a1 => .node "generic_globs.GlobalDef" #[(view156 a0), (view117 a1)]
-  | .GlobalDecl a0 => .node "generic_globs.GlobalDecl" #[(view156 a0)]
-partial def view156 (x : core_base_type × ctype) : Shape :=
+  | .GlobalDef a0 a1 => .node "generic_globs.GlobalDef" #[(view157 a0), (view118 a1)]
+  | .GlobalDecl a0 => .node "generic_globs.GlobalDecl" #[(view157 a0)]
+partial def view157 (x : core_base_type × ctype) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view67 a0), (view39 a1)]
-partial def view157 (x : Fmap identifier (List sym × linking_kind)) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view68 a0), (view41 a1)]
+partial def view158 (x : Fmap identifier (List sym × linking_kind)) : Shape :=
   match x with
   | .empty  => .node "Fmap.empty" #[]
-  | .mk _ a1 => .node "Fmap.mk" #[(view158 a1)]
-partial def view158 (x : Pmap identifier (List sym × linking_kind)) : Shape :=
+  | .mk _ a1 => .node "Fmap.mk" #[(view159 a1)]
+partial def view159 (x : Pmap identifier (List sym × linking_kind)) : Shape :=
   match x with
   | .Empty  => .node "Pmap.Empty" #[]
-  | .Node a0 a1 a2 a3 a4 => .node "Pmap.Node" #[(view158 a0), (view24 a1), (view159 a2), (view158 a3), (view4 a4)]
-partial def view159 (x : List sym × linking_kind) : Shape :=
+  | .Node a0 a1 a2 a3 a4 => .node "Pmap.Node" #[(view159 a0), (view27 a1), (view160 a2), (view159 a3), (view4 a4)]
+partial def view160 (x : List sym × linking_kind) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view131 a0), (view160 a1)]
-partial def view160 (x : linking_kind) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view132 a0), (view161 a1)]
+partial def view161 (x : linking_kind) : Shape :=
   match x with
   | .LK_none  => .node "linking_kind.LK_none" #[]
   | .LK_tentative a0 => .node "linking_kind.LK_tentative" #[(view2 a0)]
   | .LK_normal a0 => .node "linking_kind.LK_normal" #[(view2 a0)]
-partial def view161 (x : Fmap sym (CerbLocation.Loc × attributes × ctype × List (Option sym × ctype) × Bool × Bool)) : Shape :=
+partial def view162 (x : Fmap sym (CerbLocation.Loc × attributes × ctype × List (Option sym × ctype) × Bool × Bool)) : Shape :=
   match x with
   | .empty  => .node "Fmap.empty" #[]
-  | .mk _ a1 => .node "Fmap.mk" #[(view162 a1)]
-partial def view162 (x : Pmap sym (CerbLocation.Loc × attributes × ctype × List (Option sym × ctype) × Bool × Bool)) : Shape :=
+  | .mk _ a1 => .node "Fmap.mk" #[(view163 a1)]
+partial def view163 (x : Pmap sym (CerbLocation.Loc × attributes × ctype × List (Option sym × ctype) × Bool × Bool)) : Shape :=
   match x with
   | .Empty  => .node "Pmap.Empty" #[]
-  | .Node a0 a1 a2 a3 a4 => .node "Pmap.Node" #[(view162 a0), (view2 a1), (view163 a2), (view162 a3), (view4 a4)]
-partial def view163 (x : CerbLocation.Loc × attributes × ctype × List (Option sym × ctype) × Bool × Bool) : Shape :=
+  | .Node a0 a1 a2 a3 a4 => .node "Pmap.Node" #[(view163 a0), (view2 a1), (view164 a2), (view163 a3), (view4 a4)]
+partial def view164 (x : CerbLocation.Loc × attributes × ctype × List (Option sym × ctype) × Bool × Bool) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view6 a0), (view164 a1)]
-partial def view164 (x : attributes × ctype × List (Option sym × ctype) × Bool × Bool) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view6 a0), (view165 a1)]
+partial def view165 (x : attributes × ctype × List (Option sym × ctype) × Bool × Bool) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view26 a0), (view165 a1)]
-partial def view165 (x : ctype × List (Option sym × ctype) × Bool × Bool) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view29 a0), (view166 a1)]
+partial def view166 (x : ctype × List (Option sym × ctype) × Bool × Bool) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view39 a0), (view166 a1)]
-partial def view166 (x : List (Option sym × ctype) × Bool × Bool) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view41 a0), (view167 a1)]
+partial def view167 (x : List (Option sym × ctype) × Bool × Bool) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view167 a0), (view169 a1)]
-partial def view167 (x : List (Option sym × ctype)) : Shape :=
-  .node "List" (x.toArray.map view168)
-partial def view168 (x : Option sym × ctype) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view168 a0), (view170 a1)]
+partial def view168 (x : List (Option sym × ctype)) : Shape :=
+  .node "List" (x.toArray.map view169)
+partial def view169 (x : Option sym × ctype) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view1 a0), (view39 a1)]
-partial def view169 (x : Bool × Bool) : Shape :=
+  | .mk a0 a1 => .node "Prod.mk" #[(view1 a0), (view41 a1)]
+partial def view170 (x : Bool × Bool) : Shape :=
   match x with
   | .mk a0 a1 => .node "Prod.mk" #[(view13 a0), (view13 a1)]
-partial def view170 (x : Fmap loop_id loop_attribute) : Shape :=
+partial def view171 (x : Fmap loop_id loop_attribute) : Shape :=
   match x with
   | .empty  => .node "Fmap.empty" #[]
-  | .mk _ a1 => .node "Fmap.mk" #[(view171 a1)]
-partial def view171 (x : Pmap loop_id loop_attribute) : Shape :=
+  | .mk _ a1 => .node "Fmap.mk" #[(view172 a1)]
+partial def view172 (x : Pmap loop_id loop_attribute) : Shape :=
   match x with
   | .Empty  => .node "Pmap.Empty" #[]
-  | .Node a0 a1 a2 a3 a4 => .node "Pmap.Node" #[(view171 a0), (view4 a1), (view172 a2), (view171 a3), (view4 a4)]
-partial def view172 (x : loop_attribute) : Shape :=
+  | .Node a0 a1 a2 a3 a4 => .node "Pmap.Node" #[(view172 a0), (view4 a1), (view173 a2), (view172 a3), (view4 a4)]
+partial def view173 (x : loop_attribute) : Shape :=
   match x with
-  | .mk a0 a1 a2 a3 => .node "loop_attribute.mk" #[(view4 a0), (view26 a1), (view6 a2), (view6 a3)]
-partial def view173 (x : Fmap Nat (List (sym × ctype))) : Shape :=
+  | .mk a0 a1 a2 a3 => .node "loop_attribute.mk" #[(view4 a0), (view29 a1), (view6 a2), (view6 a3)]
+partial def view174 (x : Fmap Nat (List (sym × ctype))) : Shape :=
   match x with
   | .empty  => .node "Fmap.empty" #[]
-  | .mk _ a1 => .node "Fmap.mk" #[(view174 a1)]
-partial def view174 (x : Pmap Nat (List (sym × ctype))) : Shape :=
+  | .mk _ a1 => .node "Fmap.mk" #[(view175 a1)]
+partial def view175 (x : Pmap Nat (List (sym × ctype))) : Shape :=
   match x with
   | .Empty  => .node "Pmap.Empty" #[]
-  | .Node a0 a1 a2 a3 a4 => .node "Pmap.Node" #[(view174 a0), (view4 a1), (view175 a2), (view174 a3), (view4 a4)]
-partial def view175 (x : List (sym × ctype)) : Shape :=
-  .node "List" (x.toArray.map view176)
-partial def view176 (x : sym × ctype) : Shape :=
+  | .Node a0 a1 a2 a3 a4 => .node "Pmap.Node" #[(view175 a0), (view4 a1), (view176 a2), (view175 a3), (view4 a4)]
+partial def view176 (x : List (sym × ctype)) : Shape :=
+  .node "List" (x.toArray.map view177)
+partial def view177 (x : sym × ctype) : Shape :=
   match x with
-  | .mk a0 a1 => .node "Prod.mk" #[(view2 a0), (view39 a1)]
+  | .mk a0 a1 => .node "Prod.mk" #[(view2 a0), (view41 a1)]
 end
 -- END DATATYPE VISITOR
 

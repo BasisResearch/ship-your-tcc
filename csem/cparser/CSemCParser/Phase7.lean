@@ -128,7 +128,7 @@ def convertWithIdentity (identity : Option CerbLocation.LibraryConfig)
             | some physical => pure (some (policy.identify physical.physical.identity))
         let sp := { sp with sourceIdentity := source }
         let ep := { ep with sourceIdentity := source }
-        toks := toks.push ⟨t, sp, ep⟩
+        toks := toks.push ⟨t, sp, ep, Lex.slice (bytes p.token.spell) 0 p.token.spell.length⟩
         origins := origins.push p.origin
   if pending.isSome then throw "unterminated phase-four pragma boundary"
   let endPos := match toks.back? with
@@ -136,7 +136,7 @@ def convertWithIdentity (identity : Option CerbLocation.LibraryConfig)
     | some t => { t.ep with
         line := t.ep.line + 1, col := 1,
         lexingLine := 2 * toks.size + 1 }
-  toks := toks.push ⟨.EOF, endPos, endPos⟩
+  toks := toks.push ⟨.EOF, endPos, endPos, ""⟩
   return ⟨⟨toks, startPos fname⟩, origins, pragmas⟩
 
 /-- Historical positioned comparison view: labels/positions alone, as the

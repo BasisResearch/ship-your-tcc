@@ -138,7 +138,7 @@ declare ocaml target_rep function alignof_ity = `(Ocaml_implementation.get()).al
    integer member types through `(get ()).alignof_ity` — i.e. through the
    enum registry — so the Lean rep needs the map: a reader consumer too
    (charter erratum, record §0). *)
-val alignof_ty: map AilSyntax.ail_identifier (list (maybe Ctype.alignment * Ctype.ctype)) ->  Ctype.ctype -> maybe nat
+val alignof_ty: map AilSyntax.ail_identifier (Ctype.aggregate_layout * list (maybe Ctype.alignment * Ctype.ctype)) ->  Ctype.ctype -> maybe nat
 declare ocaml target_rep function alignof_ty = `Ocaml_implementation.alignof_proxy`
 declare lean target_rep function alignof_ty = `CerberusImpl.alignof_ty`
 declare {lean} reader_consumer val alignof_ty

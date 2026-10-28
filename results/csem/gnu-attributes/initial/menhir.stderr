@@ -1,0 +1,3 @@
+/lib/tcc/include/tccdefs.h:184:52: error: unexpected token after '(' and before '('
+Please add error message for state 375 to parsers/c/c_parser_error.messages
+

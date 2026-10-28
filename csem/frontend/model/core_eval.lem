@@ -875,7 +875,7 @@ let rec step_eval_pexpr n loc parent_call_loc_opt core_extern env mem_st_opt fil
           | Just cvals ->
               let xs = List.map (fun (memb_ident, cval) ->
                 match snd $ fromJust "Core_eval, PEstruct 1,1" (Map.lookup tag_sym file.tagDefs) with
-                  | Ctype.StructDef membrs flexible_opt ->
+                  | Ctype.StructDef _ membrs flexible_opt ->
                       (* let () = match flexible_opt with
                         | Nothing ->
                             ()
@@ -886,7 +886,7 @@ let rec step_eval_pexpr n loc parent_call_loc_opt core_extern env mem_st_opt fil
                       let (_, _, _, memb_ty) = fromJust "Core_eval, PEstruct 1" (List.lookup memb_ident membrs) in
                       let mval = fromJust "Core_Eval, PEstruct 2" (Caux.memValueFromValue memb_ty cval) in
                       (memb_ident, memb_ty, mval)
-                  | Ctype.UnionDef _ ->
+                  | Ctype.UnionDef _ _ ->
                       error "Core_eval.step_eval_pexpr, PEstruct found a UnionDef"
                 end
               ) (List.zip idents cvals) in
@@ -902,11 +902,11 @@ KKK:              EU.return (PEval (Vloaded (LVspecified (OVstruct tag_sym xs)))
         match Caux.valueFromPexpr pe' with
           | Just cval ->
               match snd $ fromJust "Core_eval, PEunion 1,1" (Map.lookup tag_sym file.tagDefs) with
-                | Ctype.UnionDef membrs ->
+                | Ctype.UnionDef _ membrs ->
                     let (_, _, _, memb_ty) = fromJust "Core_eval, PEunion 1" (List.lookup memb_ident membrs) in
                     let mval = fromJust "Core_Eval, PEunion 2" (Caux.memValueFromValue memb_ty cval) in
                     EU.return (PEval (Vobject (OVunion tag_sym memb_ident mval)))
-                | Ctype.StructDef _ _ ->
+                | Ctype.StructDef _ _ _ ->
                       error "Core_eval.step_eval_pexpr, PEunion found a StructDef"
                 end
           | Nothing ->

@@ -407,15 +407,15 @@ def alignof_fty [CerbImplCfg.Impl] : floatingType → Option Nat
     order) and resolves an Enum through the map before the type-only `alignof_ity`. -/
 partial def alignof_ty [CerbImplCfg.Impl] (enumDefs : EnumDefs)
     (_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition))
-    (tagDefs : Fmap sym (List (Option alignment × ctype)))
+    (tagDefs : Fmap sym (aggregate_layout × List (Option alignment × ctype)))
     (ty : ctype) : Option Nat :=
-  let lookupTag (tag : sym) : Option (List (Option alignment × ctype)) :=
+  let lookupTag (tag : sym) : Option (aggregate_layout × List (Option alignment × ctype)) :=
     -- arc-6 S3: Fmap is no longer a raw assoc list; scan the enumerated
     -- spine with the SAME BEq predicate as before (bit-identical result).
     (fmapElements tagDefs).find? (fun (k, _) => k == tag) |>.map Prod.snd
-  let foldMembers (members : List (Option alignment × ctype)) : Option Nat :=
+  let foldMembers (layout : aggregate_layout) (members : List (Option alignment × ctype)) : Option Nat :=
     members.foldl (fun acc_opt (align_opt, mty) =>
-      let al_opt := match align_opt with
+      let al_opt := match effective_member_alignment layout.aggregate_packed align_opt with
         | none => alignof_ty enumDefs _tagDefs tagDefs mty
         -- ISO-fix register R7 (VALIDATION.md §2; the R3 class): upstream
         -- ocaml_implementation.ml:483/:501 is `Some (Z.to_int al_n)` (Z.Overflow
@@ -427,24 +427,28 @@ partial def alignof_ty [CerbImplCfg.Impl] (enumDefs : EnumDefs)
       | some acc, some al => some (max al acc)
       | _, _ => none
     ) (some 1)
-  match ty with
-  | Ctype _ Void0 => none
-  | Ctype _ (Basic (Integer ity)) => alignof_ity (resolveEnum enumDefs ity)
-  | Ctype _ (Basic (Floating fty)) => alignof_fty fty
-  | Ctype _ (Array0 elem_ty _) => alignof_ty enumDefs _tagDefs tagDefs elem_ty
-  | Ctype _ (Function _ _ _) => none
-  | Ctype _ (FunctionNoParams _) => none
-  | Ctype _ (Pointer _ _) => some CerbImplCfg.Impl.params.alignofPointer  -- DefaultImpl: 8 (LP64)
-  | Ctype _ (Atomic atom_ty) => alignof_ty enumDefs _tagDefs tagDefs atom_ty
-  | Ctype _ (Struct tag_sym) =>
-    match lookupTag tag_sym with
-    | some members => foldMembers members
-    | none => none
-  | Ctype _ (Union0 tag_sym) =>
-    match lookupTag tag_sym with
-    | some members => foldMembers members
-    | none => none
-  | Ctype _ Byte => some 1
+  let annots := match ty with | Ctype annots _ => annots
+  match gnu_typedef_alignment annots with
+  | some n => some n.toNat
+  | none =>
+    match ty with
+    | Ctype _ Void0 => none
+    | Ctype _ (Basic (Integer ity)) => alignof_ity (resolveEnum enumDefs ity)
+    | Ctype _ (Basic (Floating fty)) => alignof_fty fty
+    | Ctype _ (Array0 elem_ty _) => alignof_ty enumDefs _tagDefs tagDefs elem_ty
+    | Ctype _ (Function _ _ _) => none
+    | Ctype _ (FunctionNoParams _) => none
+    | Ctype _ (Pointer _ _) => some CerbImplCfg.Impl.params.alignofPointer  -- DefaultImpl: 8 (LP64)
+    | Ctype _ (Atomic atom_ty) => alignof_ty enumDefs _tagDefs tagDefs atom_ty
+    | Ctype _ (Struct tag_sym) =>
+      match lookupTag tag_sym with
+      | some (layout, members) => (foldMembers layout members).map (aggregate_align layout)
+      | none => none
+    | Ctype _ (Union0 tag_sym) =>
+      match lookupTag tag_sym with
+      | some (layout, members) => (foldMembers layout members).map (aggregate_align layout)
+      | none => none
+    | Ctype _ Byte => some 1
 
 /-! ## alignof_ty fail paths — DECLARED (zero-discrepancy Z2-I-04)
 

@@ -248,8 +248,8 @@ private def libcMemberEq
     (CoreParser.renameCtype libcByNameCtx m2.2.2.2.2)
 
 private def libcTagDefEq : tag_definition → tag_definition → Bool
-  | StructDef xs1 f1, StructDef xs2 f2 =>
-    xs1.length == xs2.length &&
+  | StructDef layout1 xs1 f1, StructDef layout2 xs2 f2 =>
+    layout1 == layout2 && xs1.length == xs2.length &&
     (List.zip xs1 xs2).all (fun (a, b) => libcMemberEq a b) &&
     (match f1, f2 with
      | none, none => true
@@ -257,8 +257,8 @@ private def libcTagDefEq : tag_definition → tag_definition → Bool
        identName i1 == identName i2 && qualifiersEqual q1 q2 &&
        ctypeEqual (CoreParser.renameCtype libcByNameCtx t1) (CoreParser.renameCtype libcByNameCtx t2)
      | _, _ => false)
-  | UnionDef xs1, UnionDef xs2 =>
-    xs1.length == xs2.length &&
+  | UnionDef layout1 xs1, UnionDef layout2 xs2 =>
+    layout1 == layout2 && xs1.length == xs2.length &&
     (List.zip xs1 xs2).all (fun (a, b) => libcMemberEq a b)
   | _, _ => false
 
@@ -541,13 +541,13 @@ def ppCoreSignature (coreFile : file Unit) : IO Unit := do
     | Identifier _ s => s
   for (s, (_loc, td)) in fmapElements coreFile.tagDefs do
     match td with
-    | StructDef membrs flexOpt =>
+    | StructDef layout membrs flexOpt =>
       let names := membrs.map (fun (i, _) => identName i)
       let names := match flexOpt with
         | some (FlexibleArrayMember _ i _ _) => names ++ [identName i]
         | none => names
       IO.println s!"tagdef struct {ppSymbolPretty s} members={String.intercalate "," names}"
-    | UnionDef membrs =>
+    | UnionDef layout membrs =>
       let names := membrs.map (fun (i, _) => identName i)
       IO.println s!"tagdef union {ppSymbolPretty s} members={String.intercalate "," names}"
   for (s, g) in coreFile.globs do

@@ -1,0 +1,80 @@
+[
+  {
+    "case": "batch",
+    "engine": "xgcc",
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/run_xgcc_sail.sh",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/gnu-cases/batch.c"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "source_sha256": "4c0156899b6884a5bd415dafe22bac3fb9e3b1d6c44d40a58a25af6727cbcd91",
+    "work": "/Users/kirancodes/tmp/xgcc_sail.L4z0Hs",
+    "pins": {
+      "raw": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "prog.elf": "9e95498cf0cb45f3e2a0715d5b4b3d528b4bc3f60f56774c3c2a5d0ba406a7cf",
+      "cc.log": "207b6fa299115d2331f2a1c153aad505820ab18c33b9c77b66760100ca3a48f8",
+      "pcs": "080321df01c8eb91b74cc610c991fbc7d6f01bea72a7c9fdbf559aafd7032fa0",
+      "trace": "9414419c657e3d509e6e74e416fe0b4b8e96b7175e5911a7c33feae02a4fca0c"
+    }
+  },
+  {
+    "case": "batch",
+    "engine": "tcc",
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/run_tcc_sail.sh",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/gnu-cases/batch.c"
+    ],
+    "exit": 13,
+    "stdout": "",
+    "source_sha256": "4c0156899b6884a5bd415dafe22bac3fb9e3b1d6c44d40a58a25af6727cbcd91",
+    "work": "/Users/kirancodes/tmp/tcc_sail.AAdJlE",
+    "pins": {
+      "raw": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "prog.elf": "640f9d178f0c23575706ebfbd05a2e3d98bfcbb04fe96c99de643bc5e41de714",
+      "make.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "pcs": "3f7755ebb3256a6a0526577a93508f5e3a77e9b18434e73adae90e8cbe605da2",
+      "out": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "trace": "2d3e7d133f7283fcb7c8dd0356d041afd3865513326524e3174069fdeb125311"
+    }
+  },
+  {
+    "case": "member-alignment",
+    "engine": "xgcc",
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/run_xgcc_sail.sh",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/gnu-attributes/native/member-alignment.c"
+    ],
+    "exit": 0,
+    "stdout": "16 1 16 1 16 16\n",
+    "source_sha256": "cfe08be0399151597e96da01276ce469e06d1d11b3b340dc73e795e3a4d456f7",
+    "work": "/Users/kirancodes/tmp/xgcc_sail.1nNThd",
+    "pins": {
+      "raw": "ada42ac07dd01f6dd9394587f8ac9e63267abb7b95bf282168fada238806baf6",
+      "prog.elf": "d7eec37fc105e6d2dceb0a621cb0d3e64c1766b9e75cb6ebf98eb54099266829",
+      "cc.log": "eed5c90573a3ff4e3b30626a4d74e3ec69bda1fbe0063f6056235063bb006105",
+      "pcs": "080321df01c8eb91b74cc610c991fbc7d6f01bea72a7c9fdbf559aafd7032fa0",
+      "trace": "73ae26fd813e059212b73a5198c51e3699ec1fd0170c8663e5fbc374d27c7272"
+    }
+  },
+  {
+    "case": "member-alignment",
+    "engine": "tcc",
+    "command": [
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/run_tcc_sail.sh",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/gnu-attributes/native/member-alignment.c"
+    ],
+    "exit": 0,
+    "stdout": "16 1 16 1 16 1\n",
+    "source_sha256": "cfe08be0399151597e96da01276ce469e06d1d11b3b340dc73e795e3a4d456f7",
+    "work": "/Users/kirancodes/tmp/tcc_sail.3htMVa",
+    "pins": {
+      "raw": "762eb57a1395ce44dc5bc5c6eff8b511a2848e4e8e5fb82ac7c8dcf2be13467c",
+      "prog.elf": "72cd9ecb9d97e549605fa3e29657dbddfe5e6ebd1b577477cee2cfeb869273e1",
+      "make.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "pcs": "3f7755ebb3256a6a0526577a93508f5e3a77e9b18434e73adae90e8cbe605da2",
+      "out": "762eb57a1395ce44dc5bc5c6eff8b511a2848e4e8e5fb82ac7c8dcf2be13467c",
+      "trace": "1ad29195cc6e89df6d026a1ff90a2f6cb3402460de08523a0eaa66737fa93ec3"
+    }
+  }
+]

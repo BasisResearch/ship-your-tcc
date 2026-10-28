@@ -13,13 +13,18 @@ cd "$_repo"
 shared_sources=(
   csem/frontend/model/ctype.lem
   csem/frontend/model/cabs_to_ail.lem
+  csem/frontend/model/cabs_to_ail_effect.lem
   csem/frontend/model/ail/genTyping.lem
   csem/frontend/model/desugaring_init.lem
 )
 # The shared Mem API already passes the complete layout table. Both
 # handwritten adapters must honor it even before the runtime table is set.
-adapter_sources=(csem/lean_frontend/CerbMem.lean)
-adapter_patches=(patches/csem/0001-union-layout-tags.patch)
+adapter_sources=(csem/lean_frontend/CerbMem.lean csem/lean_frontend/CerberusImpl.lean)
+adapter_patches=(patches/csem/0001-union-layout-tags.patch patches/csem/0002-gnu-typedef-alignment.patch patches/csem/0003-gnu-aggregate-layout.patch patches/csem/0004-tag-layout-arity.patch)
+# Pin every patched handwritten adapter, including arity-only non-concrete
+# shims. Their inclusion in the manifest does not claim layout support in
+# symbolic/CHERI backends; the differential engine is the concrete backend.
+mapfile -t patched_adapter_paths < <(sed -n 's#^+++ b/##p' "${adapter_patches[@]}" | sort -u)
 key() {
   python3 - "${shared_sources[@]}" "${adapter_sources[@]}" "${adapter_patches[@]}" <<'PY'
 import hashlib, sys
@@ -57,7 +62,7 @@ printf '%s\n' "${shared_sources[@]}" > "$fork/.shared-sources"
 sha256sum "${adapter_sources[@]}" "${adapter_patches[@]}" > "$fork/.adapter-inputs.sha256"
 sha256sum "${shared_sources[@]}" > "$fork/.shared-sources.sha256"
 (cd "$fork" && for source in "${shared_sources[@]}"; do sha256sum "${source#csem/}"; done > .overlay.sha256
- sha256sum memory/concrete/impl_mem.ml >> .overlay.sha256)
+ sha256sum "${patched_adapter_paths[@]}" >> .overlay.sha256)
 [ "$(key)" = "$input_hash" ] || { echo "csem_fork_oracle: inputs changed while copying" >&2; exit 2; }
 csem_opam make -C "$fork" prelude-src >&2
 (cd "$fork" && csem_opam dune build -j 4 backend/driver/main.exe cerberus-lib.install cerberus.install) >&2

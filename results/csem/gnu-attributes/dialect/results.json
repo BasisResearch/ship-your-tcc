@@ -1,0 +1,45 @@
+{
+  "source_sha256": "7adec057e78e8ea278d3e702a720e2f7f42006bb562a4d395a02e9a2db10a165",
+  "rows": [
+    {
+      "engine": "raw",
+      "command": [
+        ".lake/build/bin/csem_raw",
+        "--tcc",
+        "--fslist",
+        "c/build/fs.list",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/gnu-attributes/dialect/brackets.c"
+      ],
+      "exit": 1,
+      "diagnostic": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/gnu-attributes/dialect/brackets.c:1:1: expected a type specifier (at [)\n"
+    },
+    {
+      "engine": "gcc",
+      "command": [
+        "gcc",
+        "-std=c11",
+        "-pedantic-errors",
+        "-fsyntax-only",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/gnu-attributes/dialect/brackets.c"
+      ],
+      "exit": 1,
+      "diagnostic": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/gnu-attributes/dialect/brackets.c:1:1: error: ISO C does not support \u2018[[]]\u2019 attributes before C23 [-Wpedantic]\n    1 | [[gnu::unused]] int main(void){return 0;}\n      | ^\n"
+    },
+    {
+      "engine": "tcc",
+      "command": [
+        "build/cross/riscv64-tcc",
+        "-std=c11",
+        "-nostdinc",
+        "-Ic/build/fs/tccinclude",
+        "-Ic/build/fs/include",
+        "-c",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/gnu-attributes/dialect/brackets.c",
+        "-o",
+        "build/gnu-dialect.o"
+      ],
+      "exit": 1,
+      "diagnostic": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/results/csem/gnu-attributes/dialect/brackets.c:1: error: declaration expected\n"
+    }
+  ]
+}

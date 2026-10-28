@@ -1,0 +1,30 @@
+--- a/memory/concrete/impl_mem.ml
++++ b/memory/concrete/impl_mem.ml
+@@ -193,8 +193,10 @@
+     | Byte ->
+       of_int 1
+ 
+-and alignof ?(tagDefs= Tags.tagDefs ()) (Ctype (_, ty) as cty) =
+-  match ty with
++and alignof ?(tagDefs= Tags.tagDefs ()) (Ctype (annots, ty) as cty) =
++  match Ctype.gnu_typedef_alignment annots with
++  | Some n -> Z.to_int n
++  | None -> match ty with
+     | Void ->
+         assert false
+     | Basic (Integer ity) ->
+--- a/ocaml_frontend/ocaml_implementation.ml
++++ b/ocaml_frontend/ocaml_implementation.ml
+@@ -454,8 +454,10 @@
+         List.map (fun (_, (_, align_opt, _, ty)) -> (align_opt, ty)) xs
+   ) (Tags.tagDefs ())
+ 
+-let rec alignof ?(tagDefs= alignof_tagDefs_aux ()) (Ctype (_, ty)) =
+-  match ty with
++let rec alignof ?(tagDefs= alignof_tagDefs_aux ()) (Ctype (annots, ty)) =
++  match Ctype.gnu_typedef_alignment annots with
++  | Some n -> Some (Z.to_int n)
++  | None -> match ty with
+     | Void ->
+         assert false
+     | Basic (Integer ity) ->

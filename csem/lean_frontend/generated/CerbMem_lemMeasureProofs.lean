@@ -177,9 +177,28 @@ def alignPot : Option alignment → Nat
 def mPot (al : Option alignment) (ty : ctype) : Nat :=
   max (pot ambient tagDefs R L ty) (alignPot ambient tagDefs R L al)
 
+theorem mPot_effective_alignment (packed : Bool) (al : Option alignment) (ty : ctype) :
+    mPot ambient tagDefs R L (effective_member_alignment packed al) ty = mPot ambient tagDefs R L al ty := by
+  cases packed <;> cases al <;> rfl
+
 def membersPot : List Member → Nat
   | [] => 0
   | mb :: rest => max (mPot ambient tagDefs R L mb.2.2.1 mb.2.2.2.2) (membersPot rest)
+
+theorem membersPot_effective (packed : Bool) (members : List Member) :
+    membersPot ambient tagDefs R L (effective_aggregate_members packed members) = membersPot ambient tagDefs R L members := by
+  induction members with
+  | nil => rfl
+  | cons mb rest ih =>
+    obtain ⟨i, at_, al, qs, ty⟩ := mb
+    change max (mPot ambient tagDefs R L (effective_member_alignment packed al) ty) (membersPot ambient tagDefs R L (effective_aggregate_members packed rest)) = _
+    rw [mPot_effective_alignment, ih]
+    rfl
+
+theorem memberTypes1_effective (packed : Bool) (mb : Member) :
+    memberTypes1 (mb.1, (mb.2.1, effective_member_alignment packed mb.2.2.1, mb.2.2.2.1, mb.2.2.2.2)) = memberTypes1 mb := by
+  obtain ⟨i, at_, al, qs, ty⟩ := mb
+  cases packed <;> cases al <;> rfl
 
 /-- The member list `offsetsof` folds over (its `let membrs := …`). -/
 def structMembers (membrs : List Member) (flex : Option flexible_array_member) (ignoreFlexible : Bool) : List Member :=
@@ -190,7 +209,7 @@ def structMembers (membrs : List Member) (flex : Option flexible_array_member) (
 
 def oPot (t : sym) (ignoreFlexible : Bool) : Nat :=
   match lookup tagDefs t with
-  | some (_, StructDef membrs flex) => membersPot ambient tagDefs R L (structMembers membrs flex ignoreFlexible) + 3
+  | some (_, StructDef layout membrs flex) => membersPot ambient tagDefs R L (structMembers membrs flex ignoreFlexible) + 3
   | _ => 1
 
 /-! ### Weight lemmas -/
@@ -332,18 +351,18 @@ theorem mem_memberTypes1_ty (mb : Member) : mb.2.2.2.2 ∈ memberTypes1 mb := by
 theorem mem_memberTypes1_align (mb : Member) (a : ctype) (h : mb.2.2.1 = some (AlignType a)) : a ∈ memberTypes1 mb := by
   obtain ⟨i, at_, al, q, ty⟩ := mb; simp only at h; subst h; simp [memberTypes1, alignTypes]
 
-theorem mem_memberTypes_of_struct (membrs : List Member) (flex : Option flexible_array_member) {y : ctype}
-    (h : ∃ mb ∈ membrs, y ∈ memberTypes1 mb) : y ∈ memberTypes (StructDef membrs flex) := by
+theorem mem_memberTypes_of_struct {layout : aggregate_layout} (membrs : List Member) (flex : Option flexible_array_member) {y : ctype}
+    (h : ∃ mb ∈ membrs, y ∈ memberTypes1 mb) : y ∈ memberTypes (StructDef layout membrs flex) := by
   cases flex with
   | none => simp only [memberTypes]; exact List.mem_flatMap.mpr h
   | some fl => obtain ⟨_, _, _, _⟩ := fl; simp only [memberTypes]; exact List.mem_append.mpr (Or.inl (List.mem_flatMap.mpr h))
 
-theorem mem_memberTypes_of_union (membrs : List Member) {y : ctype}
-    (h : ∃ mb ∈ membrs, y ∈ memberTypes1 mb) : y ∈ memberTypes (UnionDef membrs) := by
+theorem mem_memberTypes_of_union {layout : aggregate_layout} (membrs : List Member) {y : ctype}
+    (h : ∃ mb ∈ membrs, y ∈ memberTypes1 mb) : y ∈ memberTypes (UnionDef layout membrs) := by
   simp only [memberTypes]; exact List.mem_flatMap.mpr h
 
-theorem mem_memberTypes_flex (membrs : List Member) (attrs : attributes) (ident : identifier) (qs : qualifiers) (elemTy : ctype) :
-    elemTy ∈ memberTypes (StructDef membrs (some (FlexibleArrayMember attrs ident qs elemTy))) := by
+theorem mem_memberTypes_flex {layout : aggregate_layout} (membrs : List Member) (attrs : attributes) (ident : identifier) (qs : qualifiers) (elemTy : ctype) :
+    elemTy ∈ memberTypes (StructDef layout membrs (some (FlexibleArrayMember attrs ident qs elemTy))) := by
   simp [memberTypes]
 
 /-- The alignment potential of a member is bounded like its type's. -/
@@ -394,9 +413,9 @@ theorem membersPot_le (members : List Member) (bound : Nat) (hb : 2 ≤ bound)
 
 /-- Every member the struct fold visits (flexible member appended or not)
     has its types among the definition's `memberTypes`. -/
-theorem structMembers_types (membrs : List Member) (flex : Option flexible_array_member) (flag : Bool)
+theorem structMembers_types {layout : aggregate_layout} (membrs : List Member) (flex : Option flexible_array_member) (flag : Bool)
     {mb : Member} (h : mb ∈ structMembers membrs flex flag) :
-    ∀ y ∈ memberTypes1 mb, y ∈ memberTypes (StructDef membrs flex) := by
+    ∀ y ∈ memberTypes1 mb, y ∈ memberTypes (StructDef layout membrs flex) := by
   intro y hy
   cases flex with
   | none => exact mem_memberTypes_of_struct membrs none ⟨mb, h, hy⟩
@@ -424,13 +443,13 @@ theorem lookup_of_entry {m : CerbTags.TagDefsMap} {t s : sym} {v : Entry}
     (h : lookupEntry m t = some (s, v)) : lookup m t = some v := by
   simp [lookup, h]
 
-theorem oPot_of_struct {t : sym} {l : CerbLocation.Loc} {membrs : List Member} {flex : Option flexible_array_member}
-    (h : lookup tagDefs t = some (l, StructDef membrs flex)) (flag : Bool) :
+theorem oPot_of_struct {layout : aggregate_layout} {t : sym} {l : CerbLocation.Loc} {membrs : List Member} {flex : Option flexible_array_member}
+    (h : lookup tagDefs t = some (l, StructDef layout membrs flex)) (flag : Bool) :
     oPot ambient tagDefs R L t flag = membersPot ambient tagDefs R L (structMembers membrs flex flag) + 3 := by
   simp [oPot, h]
 
-theorem oPot_of_union {t : sym} {l : CerbLocation.Loc} {membrs : List Member}
-    (h : lookup tagDefs t = some (l, UnionDef membrs)) (flag : Bool) : oPot ambient tagDefs R L t flag = 1 := by
+theorem oPot_of_union {layout : aggregate_layout} {t : sym} {l : CerbLocation.Loc} {membrs : List Member}
+    (h : lookup tagDefs t = some (l, UnionDef layout membrs)) (flag : Bool) : oPot ambient tagDefs R L t flag = 1 := by
   simp [oPot, h]
 
 theorem oPot_of_none {t : sym} (h : lookup tagDefs t = none) (flag : Bool) : oPot ambient tagDefs R L t flag = 1 := by
@@ -485,53 +504,60 @@ theorem layout_stable_aux [CerbImplCfg.Impl]
       | zero => omega
       | succ g =>
       obtain ⟨an, ty_⟩ := ty
-      cases ty_ <;> simp only [alignofCtype_lemFuel]
-      case Basic bty => cases bty <;> rfl
-      case Array0 c n =>
-        rw [pot_array] at hk hf hg
-        exact ihA c f g (by omega) (by omega) (by omega)
-      case Atomic c =>
-        rw [pot_atomic] at hk hf hg
-        exact ihA c f g (by omega) (by omega) (by omega)
-      case Struct t =>
-        split
-        · rename_i s l membrs flex heq
-          have hl : lookup tagDefs t = some (l, StructDef membrs flex) := lookup_of_entry heq
-          rw [pot_struct ambient tagDefs R L an t _ hl] at hk hf hg
-          have hcong : ∀ (acc : Nat) (memb : Member), memb ∈ membrs →
-              max (memberAlign_lemFuel f enumDefs ambient tagDefs memb.2.2.1 memb.2.2.2.2) acc =
-              max (memberAlign_lemFuel g enumDefs ambient tagDefs memb.2.2.1 memb.2.2.2.2) acc := by
+      simp only [alignofCtype_lemFuel]
+      cases hal : gnu_typedef_alignment an with
+      | some n => simp only [hal]
+      | none =>
+        simp only [hal]
+        cases ty_ <;> try simp only
+        case Basic bty => cases bty <;> rfl
+        case Array0 c n =>
+          rw [pot_array] at hk hf hg
+          exact ihA c f g (by omega) (by omega) (by omega)
+        case Atomic c =>
+          rw [pot_atomic] at hk hf hg
+          exact ihA c f g (by omega) (by omega) (by omega)
+        case Struct t =>
+          split
+          · rename_i s l layout membrs flex heq
+            have hl : lookup tagDefs t = some (l, StructDef layout membrs flex) := lookup_of_entry heq
+            rw [pot_struct ambient tagDefs R L an t _ hl] at hk hf hg
+            have hcong : ∀ (acc : Nat) (memb : Member), memb ∈ membrs →
+                max (memberAlign_lemFuel f enumDefs ambient tagDefs (effective_member_alignment layout.aggregate_packed memb.2.2.1) memb.2.2.2.2) acc =
+                max (memberAlign_lemFuel g enumDefs ambient tagDefs (effective_member_alignment layout.aggregate_packed memb.2.2.1) memb.2.2.2.2) acc := by
+              intro acc memb hmemb
+              have hm := mPot_le ambient tagDefs R L hR hLS hLU (Or.inl hl)
+                (fun y hy => mem_memberTypes_of_struct membrs flex ⟨memb, hmemb, hy⟩)
+              rw [ihM (effective_member_alignment layout.aggregate_packed memb.2.2.1) memb.2.2.2.2 f g (by simpa only [mPot_effective_alignment] using (show mPot ambient tagDefs R L memb.2.2.1 memb.2.2.2.2 + 1 ≤ k from by omega)) (by simpa only [mPot_effective_alignment] using (show mPot ambient tagDefs R L memb.2.2.1 memb.2.2.2.2 + 1 ≤ f from by omega)) (by simpa only [mPot_effective_alignment] using (show mPot ambient tagDefs R L memb.2.2.1 memb.2.2.2.2 + 1 ≤ g from by omega))]
+            apply congrArg (aggregate_align layout)
+            cases flex with
+            | none =>
+              simp only
+              exact lfoldl_congr membrs _ _ hcong _
+            | some fl =>
+              obtain ⟨attrs, ident, qs, elemTy⟩ := fl
+              simp only
+              have hm := pot_member ambient tagDefs R L hR hLS hLU (Or.inl hl)
+                (mem_memberTypes_flex membrs attrs ident qs elemTy)
+              rw [ihA (mkCtype (.Array0 elemTy none)) f g (by rw [pot_mkArray]; omega)
+                (by rw [pot_mkArray]; omega) (by rw [pot_mkArray]; omega)]
+              exact lfoldl_congr membrs _ _ hcong _
+          · rfl
+        case Union0 t =>
+          split
+          · rename_i s l layout membrs heq
+            have hl : lookup tagDefs t = some (l, UnionDef layout membrs) := lookup_of_entry heq
+            rw [pot_union ambient tagDefs R L an t _ hl] at hk hf hg
+            apply congrArg (aggregate_align layout)
+            apply lfoldl_congr
             intro acc memb hmemb
+            obtain ⟨ident, at_, al, q, ty⟩ := memb
+            dsimp only
             have hm := mPot_le ambient tagDefs R L hR hLS hLU (Or.inl hl)
-              (fun y hy => mem_memberTypes_of_struct membrs flex ⟨memb, hmemb, hy⟩)
-            rw [ihM memb.2.2.1 memb.2.2.2.2 f g (by omega) (by omega) (by omega)]
-          cases flex with
-          | none =>
-            simp only
-            exact lfoldl_congr membrs _ _ hcong _
-          | some fl =>
-            obtain ⟨attrs, ident, qs, elemTy⟩ := fl
-            simp only
-            have hm := pot_member ambient tagDefs R L hR hLS hLU (Or.inl hl)
-              (mem_memberTypes_flex membrs attrs ident qs elemTy)
-            rw [ihA (mkCtype (.Array0 elemTy none)) f g (by rw [pot_mkArray]; omega)
-              (by rw [pot_mkArray]; omega) (by rw [pot_mkArray]; omega)]
-            exact lfoldl_congr membrs _ _ hcong _
-        · rfl
-      case Union0 t =>
-        split
-        · rename_i s l membrs heq
-          have hl : lookup tagDefs t = some (l, UnionDef membrs) := lookup_of_entry heq
-          rw [pot_union ambient tagDefs R L an t _ hl] at hk hf hg
-          apply lfoldl_congr
-          intro acc memb hmemb
-          obtain ⟨ident, at_, al, q, ty⟩ := memb
-          dsimp only
-          have hm := mPot_le ambient tagDefs R L hR hLS hLU (Or.inl hl)
-            (fun y hy => mem_memberTypes_of_union membrs ⟨(ident, (at_, al, q, ty)), hmemb, hy⟩)
-          simp only at hm
-          rw [ihM al ty f g (by omega) (by omega) (by omega)]
-        · rfl
+              (fun y hy => mem_memberTypes_of_union membrs ⟨(ident, (at_, al, q, ty)), hmemb, hy⟩)
+            simp only at hm
+            rw [ihM (effective_member_alignment layout.aggregate_packed al) ty f g (by simp only [mPot_effective_alignment]; omega) (by simp only [mPot_effective_alignment]; omega) (by simp only [mPot_effective_alignment]; omega)]
+          · rfl
     · -- sizeofCtype
       intro ty f g hk hf hg
       cases f with
@@ -563,31 +589,31 @@ theorem layout_stable_aux [CerbImplCfg.Impl]
               (by rw [oPot_of_none ambient tagDefs R L hl]; omega) (by rw [oPot_of_none ambient tagDefs R L hl]; omega)
           · rw [pot_struct ambient tagDefs R L an t _ hl] at hk hf hg
             cases d with
-            | StructDef membrs flex =>
-              have hmp := membersPot_le ambient tagDefs R L (structMembers membrs flex true) (W R L (l, StructDef membrs flex))
+            | StructDef layout membrs flex =>
+              have hmp := membersPot_le ambient tagDefs R L (structMembers membrs flex true) (W R L (l, StructDef layout membrs flex))
                 (by have := W_self R L (hLS _ _ hl); omega)
                 (fun mb hmb => mPot_le ambient tagDefs R L hR hLS hLU (Or.inl hl) (structMembers_types membrs flex true hmb))
               exact ihO t true f g (by rw [oPot_of_struct ambient tagDefs R L hl]; omega)
                 (by rw [oPot_of_struct ambient tagDefs R L hl]; omega) (by rw [oPot_of_struct ambient tagDefs R L hl]; omega)
-            | UnionDef membrs =>
+            | UnionDef layout membrs =>
               exact ihO t true f g (by rw [oPot_of_union ambient tagDefs R L hl]; omega)
                 (by rw [oPot_of_union ambient tagDefs R L hl]; omega) (by rw [oPot_of_union ambient tagDefs R L hl]; omega)
         rw [hO]
       case Union0 t =>
         split
-        · rename_i s l membrs heq
-          have hl : lookup tagDefs t = some (l, UnionDef membrs) := lookup_of_entry heq
+        · rename_i s l layout membrs heq
+          have hl : lookup tagDefs t = some (l, UnionDef layout membrs) := lookup_of_entry heq
           rw [pot_union ambient tagDefs R L an t _ hl] at hk hf hg
           have hfold : ∀ (init : Nat × Nat), membrs.foldl (fun (acc : Nat × Nat) memb =>
               let (accSize, accAlign) := acc
               let (_, (_, alignOpt, _, ty)) := memb
               (max accSize (sizeofCtype_lemFuel f enumDefs ambient tagDefs ty),
-               max accAlign (memberAlign_lemFuel f enumDefs ambient tagDefs alignOpt ty))) init =
+               max accAlign (memberAlign_lemFuel f enumDefs ambient tagDefs (effective_member_alignment layout.aggregate_packed alignOpt) ty))) init =
             membrs.foldl (fun (acc : Nat × Nat) memb =>
               let (accSize, accAlign) := acc
               let (_, (_, alignOpt, _, ty)) := memb
               (max accSize (sizeofCtype_lemFuel g enumDefs ambient tagDefs ty),
-               max accAlign (memberAlign_lemFuel g enumDefs ambient tagDefs alignOpt ty))) init := by
+               max accAlign (memberAlign_lemFuel g enumDefs ambient tagDefs (effective_member_alignment layout.aggregate_packed alignOpt) ty))) init := by
             apply lfoldl_congr
             intro acc memb hmemb
             obtain ⟨accSize, accAlign⟩ := acc
@@ -597,7 +623,7 @@ theorem layout_stable_aux [CerbImplCfg.Impl]
               (fun y hy => mem_memberTypes_of_union membrs ⟨(ident, (at_, al, q, ty)), hmemb, hy⟩)
             simp only at hm
             have hp : pot ambient tagDefs R L ty ≤ mPot ambient tagDefs R L al ty := Nat.le_max_left _ _
-            rw [ihZ ty f g (by omega) (by omega) (by omega), ihM al ty f g (by omega) (by omega) (by omega)]
+            rw [ihZ ty f g (by omega) (by omega) (by omega), ihM (effective_member_alignment layout.aggregate_packed al) ty f g (by simp only [mPot_effective_alignment]; omega) (by simp only [mPot_effective_alignment]; omega) (by simp only [mPot_effective_alignment]; omega)]
           rw [hfold]
         · rfl
     · -- memberAlign
@@ -666,12 +692,12 @@ theorem layout_stable_aux [CerbImplCfg.Impl]
       simp only [offsetsof_lemFuel]
       split
       · rfl
-      · rename_i s l membrs flex heq
-        have hl : lookup tagDefs t = some (l, StructDef membrs flex) := lookup_of_entry heq
+      · rename_i s l layout membrs flex heq
+        have hl : lookup tagDefs t = some (l, StructDef layout membrs flex) := lookup_of_entry heq
         rw [oPot_of_struct ambient tagDefs R L hl flag] at hk hf hg
-        show offsetsofMembers_lemFuel f enumDefs ambient tagDefs (structMembers membrs flex flag) =
-          offsetsofMembers_lemFuel g enumDefs ambient tagDefs (structMembers membrs flex flag)
-        exact ihOM _ f g (by omega) (by omega) (by omega)
+        show offsetsofMembers_lemFuel f enumDefs ambient tagDefs (effective_aggregate_members layout.aggregate_packed (structMembers membrs flex flag)) =
+          offsetsofMembers_lemFuel g enumDefs ambient tagDefs (effective_aggregate_members layout.aggregate_packed (structMembers membrs flex flag))
+        exact ihOM _ f g (by rw [membersPot_effective]; omega) (by rw [membersPot_effective]; omega) (by rw [membersPot_effective]; omega)
       · rfl
 
 end LayoutStable
@@ -776,18 +802,18 @@ theorem mPot_le_entry (ambient tagDefs : CerbTags.TagDefsMap) (R : Entry → Nat
       have h2' : ctype.lemSize a ≤ defSize v.2 := le_sum_of_mem ctype.lemSize (hmb a (mem_memberTypes1_align mb a hal))
       omega
 
-theorem membersPot_le_entry (ambient tagDefs : CerbTags.TagDefsMap) (R : Entry → Nat) (L : List Entry) (bound : Nat)
+theorem membersPot_le_entry {layout : aggregate_layout} (ambient tagDefs : CerbTags.TagDefsMap) (R : Entry → Nat) (L : List Entry) (bound : Nat)
     (hW : ∀ v, W R L v ≤ bound) {l : CerbLocation.Loc} {membrs : List Member} {flex : Option flexible_array_member} (flag : Bool) :
-    membersPot ambient tagDefs R L (structMembers membrs flex flag) ≤ defSize (StructDef membrs flex) + bound := by
-  suffices hs : ∀ (ms : List Member), (∀ mb ∈ ms, ∀ y ∈ memberTypes1 mb, y ∈ memberTypes (l, StructDef membrs flex).2) →
-      membersPot ambient tagDefs R L ms ≤ defSize (StructDef membrs flex) + bound from
+    membersPot ambient tagDefs R L (structMembers membrs flex flag) ≤ defSize (StructDef layout membrs flex) + bound := by
+  suffices hs : ∀ (ms : List Member), (∀ mb ∈ ms, ∀ y ∈ memberTypes1 mb, y ∈ memberTypes (l, StructDef layout membrs flex).2) →
+      membersPot ambient tagDefs R L ms ≤ defSize (StructDef layout membrs flex) + bound from
     hs _ (fun mb hmb => structMembers_types membrs flex flag hmb)
   intro ms hms
   induction ms with
   | nil => simp [membersPot]
   | cons mb rest ih =>
     simp only [membersPot]
-    have h1 := mPot_le_entry ambient tagDefs R L bound hW (v := (l, StructDef membrs flex)) (hms mb (List.mem_cons_self ..))
+    have h1 := mPot_le_entry ambient tagDefs R L bound hW (v := (l, StructDef layout membrs flex)) (hms mb (List.mem_cons_self ..))
     simp only at h1
     have := ih (fun mb' h' => hms mb' (List.mem_cons_of_mem _ h'))
     omega
@@ -858,13 +884,13 @@ theorem offsetsof_measure_sufficient [CerbImplCfg.Impl] (enumDefs : CerberusImpl
     rcases hl : lookup tagDefs tagSym with _ | ⟨l, d⟩
     · rw [oPot_of_none ambient tagDefs R _ hl]; omega
     · cases d with
-      | StructDef membrs flex =>
+      | StructDef layout membrs flex =>
         rw [oPot_of_struct ambient tagDefs R _ hl]
-        have h1 := membersPot_le_entry ambient tagDefs R (entries ambient ++ entries tagDefs) _ hW (l := l) (membrs := membrs) (flex := flex) ignoreFlexible
+        have h1 := membersPot_le_entry ambient tagDefs R (entries ambient ++ entries tagDefs) _ hW (layout := layout) (l := l) (membrs := membrs) (flex := flex) ignoreFlexible
         have h2 := defSize_le_defsWeight hl
         simp only at h2
         omega
-      | UnionDef membrs => rw [oPot_of_union ambient tagDefs R _ hl]; omega
+      | UnionDef layout membrs => rw [oPot_of_union ambient tagDefs R _ hl]; omega
   have h := (layout_stable_aux enumDefs ambient tagDefs R (entries ambient ++ entries tagDefs) hR hLS hLU
     (oPot ambient tagDefs R (entries ambient ++ entries tagDefs) tagSym ignoreFlexible)).2.2.2.2
   exact h tagSym ignoreFlexible lemFuel (offsetsofBound ambient tagDefs) (Nat.le_refl _) (by omega) hp
@@ -929,12 +955,16 @@ theorem offsetsof_types [CerbImplCfg.Impl] (n : Nat) (enumDefs : CerberusImpl.En
   split at hx
   · rename_i heq
     simp [lookup, heq] at hl
-  · rename_i s l membrs flex heq
+  · rename_i s l layout membrs flex heq
     have hl' := lookup_of_entry heq
     rw [hl'] at hl; cases hl
-    obtain ⟨mb, hmb, hty⟩ := offsetsofMembers_types n enumDefs ambient tagDefs (structMembers membrs flex flag) x hx
-    rw [hty]; exact structMembers_types membrs flex flag hmb _ (mem_memberTypes1_ty mb)
-  · rename_i s l membrs heq
+    obtain ⟨mb, hmb, hty⟩ := offsetsofMembers_types n enumDefs ambient tagDefs (effective_aggregate_members layout.aggregate_packed (structMembers membrs flex flag)) x hx
+    rcases List.mem_map.mp hmb with ⟨original, horiginal, heq⟩
+    rw [← heq] at hty
+    change x.2.1 = original.2.2.2.2 at hty
+    rw [hty]
+    exact structMembers_types membrs flex flag horiginal _ (mem_memberTypes1_ty original)
+  · rename_i s l layout membrs heq
     have hl' := lookup_of_entry heq
     rw [hl'] at hl; cases hl
     simp only [List.mem_map] at hx
@@ -1011,13 +1041,13 @@ theorem reconstructValueAbst_stable_aux [CerbImplCfg.Impl] [CerbGlobal.Switches]
           rw [key _ _ _ membTy _ (by simp only at h1; omega)]
     case Union0 t =>
       split
-      · rename_i s l membrs heq
+      · rename_i s l layout membrs heq
         have hl := lookup_of_entry heq
         have h2 := pot_union ambient ambient R (entries ambient) an t _ hl
         split
         · rfl
         · rename_i firstIdent at_ al q firstTy rest
-          have hfirst : firstTy ∈ memberTypes (l, UnionDef ((firstIdent, (at_, al, q, firstTy)) :: rest)).2 :=
+          have hfirst : firstTy ∈ memberTypes (l, UnionDef layout ((firstIdent, (at_, al, q, firstTy)) :: rest)).2 :=
             mem_memberTypes_of_union _ ⟨_, List.mem_cons_self .., mem_memberTypes1_ty (firstIdent, (at_, al, q, firstTy))⟩
           split
           · -- no recorded member: the first member
@@ -1026,7 +1056,7 @@ theorem reconstructValueAbst_stable_aux [CerbImplCfg.Impl] [CerbGlobal.Switches]
           · rename_i a membr heq2
             split
             · rename_i i at2 al2 q2 t2 heq3
-              have hmem : t2 ∈ memberTypes (l, UnionDef ((firstIdent, (at_, al, q, firstTy)) :: rest)).2 :=
+              have hmem : t2 ∈ memberTypes (l, UnionDef layout ((firstIdent, (at_, al, q, firstTy)) :: rest)).2 :=
                 mem_memberTypes_of_union _ ⟨_, List.mem_of_find?_eq_some heq3, mem_memberTypes1_ty (i, (at2, al2, q2, t2))⟩
               have h1 := pot_member ambient ambient R (entries ambient) hR hLS hLS (Or.inl hl) hmem
               rw [key _ _ _ t2 _ (by omega)]

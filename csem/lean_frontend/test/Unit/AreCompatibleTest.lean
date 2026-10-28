@@ -33,7 +33,7 @@ def tag (digest : String) (n : Nat) : sym := sym.Symbol digest n (symbol_descrip
 /-- `struct S { int a[n]; }` under tag `t`. -/
 def structS (t : sym) (n : Option Int) : sym × (CerbLocation.Loc × tag_definition) :=
   (t, (CerbLocation.unknown,
-       tag_definition.StructDef [(identifier.Identifier CerbLocation.unknown "a", (attributes.Attrs [], none, no_qualifiers, arr n))] none))
+       tag_definition.StructDef no_aggregate_layout [(identifier.Identifier CerbLocation.unknown "a", (attributes.Attrs [], none, no_qualifiers, arr n))] none))
 
 def check (name : String) (got expected : Bool) : IO Bool := do
   if got == expected then

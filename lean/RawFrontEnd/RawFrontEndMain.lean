@@ -212,7 +212,7 @@ def main (args : List String) : IO UInt32 := do
   let pre := if opts.tcc then CSem.Pre.Tcc.cfgTcc else cfgIso
   let cfg : Tcc.CSem.Raw.Config := {
     pre := { pre with mainName := bs file, sysIncludePaths := opts.includes ++ pre.sysIncludePaths }, fs,
-    parser := { gnu := opts.gnu }, libraryFiles := opts.library }
+    parser := { gnu := opts.gnu || opts.tcc }, libraryFiles := opts.library }
   if opts.phase4 then
     match phases14WithOrigins cfg.pre fs src.toList with
     | .error e => IO.eprintln e.msg; return 1

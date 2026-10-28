@@ -608,3 +608,31 @@ requested corrections until the lead surfaced them explicitly.
   regression claim. The corrected run gives 1,345/1,815, no harness failures.
   A first erasure run lacked the source manifest; restoring the verified
   seven fixtures plus manifest allowed the unchanged driver to pass.
+- GNU declaration attributes (2026-10-28): strengthening an aggregate's
+  first member alignment is not an exact GNU desugaring: expression-alignof
+  can distinguish it from aggregate alignment. The final implementation uses
+  explicit aggregate_layout fields, independently of member alignments.
+  Preserve the GCC/tcc member-expression observations as a separate unresolved
+  GNU meaning connection, not a C11 counterexample.
+- Header byte pins: c/build/tcc-src/include/tccdefs.h is pristine source; the
+  actual image embeds strip_headers.py output in fs/tccinclude. Both produce
+  the same semantic token sequence, but GNU token10 is at column40 versus36.
+  Verify actual FS bytes against both the stripper and Spec.ImageFS; never
+  silently call the source-header pin the image-header pin.
+- GNU oracle2: wholesale local Core/translation overlays pulled in the
+  Lean-only Mem.convert_fval ABI. Use shared GNU semantic files and explicit
+  arity-only patches against pristine unrelated modules; never stub floating
+  operations. Oracle3 then exposed the old ocaml_implementation.mli pseudo-tag
+  map type. Close the handwritten interface as well as its implementation.
+  Oracle4 builds with every patched path pinned; non-concrete arity shims do
+  not establish symbolic/CHERI layout semantics.
+- GNU syntax transport: Lex.slice takes an end index, not a length. Retaining
+  text token spelling with end-start produced empty attribute names outside
+  the raw path. GNU attribute names that lex as keywords must also preserve
+  their original alias (__const__), rather than keywordString's const. The
+  maintained full raw/text Cabs checks and alias control cover both repairs.
+- GNU target comparison: the original complete native batch returns13 on
+  patched tcc, not0. The exhaustive21-case matrix reports mask28672 (three
+  typedef _Alignof checks) versus GCC0. Physical typedef layout is correct;
+  _Alignof(type) loses the attribute, including through a typedef chain. Do
+  not alter CSem, hide the cases or count the batch as passing agreement.

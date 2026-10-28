@@ -109,6 +109,8 @@ structure PTok where
   tok : Tok
   sp : Pos
   ep : Pos
+  /-- Exact phase-7 spelling, retained for GNU attribute arguments. -/
+  spelling : String := ""
   deriving Inhabited
 
 /-- Parser configuration: `gnu` turns on the grammar extensions of
@@ -204,6 +206,7 @@ structure SpecAcc where
   tq : Array cabs_type_qualifier := #[]
   fs : Array function_specifier := #[]
   al : Array alignment_specifier := #[]
+  attrs : attributes := Attrs []
   typedefs : Nat := 0
   tstate : TState := .none
 
@@ -469,23 +472,125 @@ where
     if ← accept .COMMA then return (tokn, args) :: (← list n)
     else return [(tokn, args)]
 
-/-- `attribute_specifier_sequence` (at least one specifier; result reversed). -/
+/-- GNU arguments retain every token and location, including nested lists.
+No expression or unknown effect is interpreted by the parser. -/
+def pGnuAttrArgs : Nat → List Tok → List AttrArg → List (Loc × String) → P (List AttrArg)
+  | 0, _, _, _ => failAt "parser fuel exhausted"
+  | n+1, stack, args, pieces => do
+    let t ← cur
+    match t.tok, stack with
+    | .RPAREN, [] =>
+      if pieces.isEmpty then
+        if args.isEmpty then return []
+        return (args.reverse ++ [(rg t.sp t.sp, "", [])])
+      let ps := pieces.reverse
+      let loc := match ps with | (l, _) :: _ => l | [] => .unknown
+      return ((loc, " ".intercalate (ps.map Prod.snd), ps) :: args).reverse
+    | .COMMA, [] =>
+      let ps := pieces.reverse
+      let loc := match ps with | (l, _) :: _ => l | [] => rg t.sp t.sp
+      let _ ← advance
+      pGnuAttrArgs n [] ((loc, " ".intercalate (ps.map Prod.snd), ps) :: args) []
+    | .EOF, _ => failAt "unterminated GNU attribute arguments"
+    | .RPAREN, .RPAREN :: rest | .RBRACK, .RBRACK :: rest | .RBRACE, .RBRACE :: rest =>
+      let _ ← advance
+      pGnuAttrArgs n rest args ((rg t.sp t.ep, t.spelling) :: pieces)
+    | .RPAREN, _ | .RBRACK, _ | .RBRACE, _ => failAt "unbalanced GNU attribute arguments"
+    | tk, _ =>
+      let stack := match tk with
+        | .LPAREN => .RPAREN :: stack
+        | .LBRACK => .RBRACK :: stack
+        | .LBRACE => .RBRACE :: stack
+        | _ => stack
+      let _ ← advance
+      pGnuAttrArgs n stack args ((rg t.sp t.ep, t.spelling) :: pieces)
+
+/-- GNU attribute names may be keyword aliases such as __const__. Keep
+those original spellings instead of the standard keyword's pretty name. -/
+def pGnuAttrIdent : P identifier := do
+  let t ← cur
+  let name ← match t.tok with
+    | .NAME s => pure (if t.spelling.isEmpty then s else t.spelling)
+    | tk => match keywordString tk with
+      | some s => pure (if t.spelling.isEmpty then s else t.spelling)
+      | none => failAt "expected a GNU attribute name"
+  let _ ← advance
+  return Identifier (rg t.sp t.ep) name
+
+/-- GNU declaration attributes, represented in the existing Cabs attribute
+carrier. The namespace retains the introducer spelling; names retain aliases,
+and each argument retains a located sequence of exact token spellings. -/
+def pGnuAttrSpec (n : Nat) : P (List Attr1) := do
+  let kw ← expectT .ATTRIBUTE
+  let _ ← expectT .LPAREN
+  let _ ← expectT .LPAREN
+  let attrs ← items n (Identifier (rg kw.sp kw.ep) (if kw.spelling.isEmpty then "__attribute__" else kw.spelling))
+  let _ ← expectT .RPAREN
+  let _ ← expectT .RPAREN
+  return attrs
+where
+  items : Nat → identifier → P (List Attr1)
+  | 0, _ => failAt "parser fuel exhausted"
+  | n+1, ns => do
+    if ← at? .RPAREN then return []
+    if ← accept .COMMA then return (← items n ns)
+    let id ← pGnuAttrIdent
+    let args ← if ← accept .LPAREN then
+        let start := (← cur).sp
+        let xs ← pGnuAttrArgs n [] [] []
+        let finish := (← cur).sp
+        let _ ← expectT .RPAREN
+        pure (some (if xs.isEmpty then [(rg start finish, "", [])] else xs))
+      else pure none
+    let rest ← if ← accept .COMMA then items n ns else pure []
+    return ((some ns, id), args) :: rest
+
+def startsAttrs : Tok → Bool
+  | .LBRACK_LBRACK | .ATTRIBUTE => true
+  | _ => false
+
+/-- `attribute_specifier_sequence`, with both GNU introducer aliases. -/
 def pAttrSeq : Nat → P AttrSeq
   | 0 => failAt "parser fuel exhausted"
   | n+1 => do
-    let a ← pAttrSpec n
+    let a ← if ← at? .ATTRIBUTE then pGnuAttrSpec n else pAttrSpec n
     go n [a]
 where
   go : Nat → AttrSeq → P AttrSeq
   | 0, acc => return acc
   | n+1, acc => do
-    if ← at? .LBRACK_LBRACK then go n ((← pAttrSpec n) :: acc) else return acc
+    if startsAttrs (← peek) then
+      let a ← if ← at? .ATTRIBUTE then pGnuAttrSpec n else pAttrSpec n
+      go n (a :: acc)
+    else return acc
 
 def pAttrSeqOpt (n : Nat) : P (Option AttrSeq) := do
-  if ← at? .LBRACK_LBRACK then return some (← pAttrSeq n) else return none
+  if startsAttrs (← peek) then return some (← pAttrSeq n) else return none
 
-/-- `ioption(attribute_specifier_sequence)` whose value the action drops. -/
-def skipAttrs (n : Nat) : P Unit := do let _ ← pAttrSeqOpt n
+/-- Historical Menhir positions which erase bracket attributes. GNU effects
+must instead be attached at a declaration/type position or diagnosed. -/
+def skipAttrs : Nat → P Unit
+  | 0 => failAt "parser fuel exhausted"
+  | n+1 => do
+    if ← at? .ATTRIBUTE then failAt "GNU attribute at an unrepresented type position"
+    if ← at? .LBRACK_LBRACK then
+      let _ ← pAttrSpec n
+      if ← at? .LBRACK_LBRACK then skipAttrs n
+
+def combineAttrs (a b : attributes) : attributes :=
+  match a, b with | Attrs xs, Attrs ys => Attrs (xs ++ ys)
+
+/-- Attributes after function/array/parenthesized declarators apply to the
+entity. Walking to its name preserves the declarator's entire type shape. -/
+def addDirectAttrs : Nat → attributes → direct_declarator → P direct_declarator
+  | 0, _, _ => failAt "parser fuel exhausted"
+  | n+1, a, d => do
+    match d with
+    | .DDecl_identifier b i => return .DDecl_identifier (combineAttrs b a) i
+    | .DDecl_declarator (.Declarator p d) =>
+      return .DDecl_declarator (.Declarator p (← addDirectAttrs n a d))
+    | .DDecl_array d x => return .DDecl_array (← addDirectAttrs n a d) x
+    | .DDecl_function d x => return .DDecl_function (← addDirectAttrs n a d) x
 
 /-- `declarator_varname`/`declarator_typedefname`. -/
 def declareDecl (isTypedef : Bool) (d : LFDecl) : P Unit :=

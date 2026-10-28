@@ -2682,7 +2682,8 @@ def make_composite_fdecl_seeded (en : Fmap sym integerType)
   (make_composite_fdecl en tds) d1 d2
 def alignof_ty_seeded [CerbImplCfg.Impl] (en : Fmap sym integerType)
     (tds : Fmap sym (CerbLocation.Loc × tag_definition))
-    (pseudo_tagDefs : Fmap ail_identifier (List (Option alignment × ctype))) (ty1 : ctype) :
+    (pseudo_tagDefs : Fmap ail_identifier (aggregate_layout × List (Option alignment × ctype)))
+    (ty1 : ctype) :
     Option Nat :=
   (CerberusImpl.alignof_ty en tds) pseudo_tagDefs ty1
 def get_anonymous_struct_or_union (ty1 : ctype) :
@@ -3104,22 +3105,25 @@ def get_alignof [CerbImplCfg.Impl] :
       fmapMap
         (fun (x : tag_definition0) =>
           match x with
-          | Struct_definition _ _ _ membrs flex_opt =>
-            List.map
-              (fun (p : (identifier × (attributes × Option alignment × qualifiers × ctype))) =>
-                match p with
-                | (_, (_, align_opt, _, ty1)) => (align_opt, ty1)) membrs ++
-              (match flex_opt with
-               | none => ([] : List (Option alignment × ctype))
-               | some (FlexibleArrayMember _ _ _ ty1) =>
-                 [(none, Ctype ([] : List annot) (Array0 ty1 none))])
-          | Union_definition _ _ _ membrs =>
-            List.map
-              (fun (p : (identifier × (attributes × Option alignment × qualifiers × ctype))) =>
-                match p with
-                | (_, (_, align_opt, _, ty1)) => (none, ty1)) membrs
+          | Struct_definition _ attrs1 _ membrs flex_opt =>
+            (aggregate_layout_of_attributes attrs1,
+              (List.map
+                (fun (p : (identifier × (attributes × Option alignment × qualifiers × ctype))) =>
+                  match p with
+                  | (_, (_, align_opt, _, ty1)) => (align_opt, ty1)) membrs ++
+                (match flex_opt with
+                 | none => ([] : List (Option alignment × ctype))
+                 | some (FlexibleArrayMember _ _ _ ty1) =>
+                   [(none, Ctype ([] : List annot) (Array0 ty1 none))])))
+          | Union_definition _ attrs1 _ membrs =>
+            (aggregate_layout_of_attributes attrs1,
+              List.map
+                (fun (p : (identifier × (attributes × Option alignment × qualifiers × ctype))) =>
+                  match p with
+                  | (_, (_, align_opt, _, ty1)) => (align_opt, ty1)) membrs)
           | Enum_definition _ =>
-            ([] : List (Option alignment × ctype)) /- dummy, this won't be called -/) tagDefs1;
+            (no_aggregate_layout,
+              ([] : List (Option alignment × ctype)) /- dummy, this won't be called -/)) tagDefs1;
     stExpect_return (fun (z : ctype) =>
       alignof_ty_seeded (enum_map_of_tag_definitions tagDefs1) desugar_time_tagDefs pseudo_tagDefs
         z))
@@ -3567,9 +3571,13 @@ def mk_current_ail_sigma [CerbImplCfg.Impl] :
                   | acc, (ident, tagDef) =>
                     (match tagDef with
                      | Struct_definition loc1 attrs1 _ xs flexible_opt =>
-                       (ident, (loc1, attrs1, StructDef xs flexible_opt)) :: acc
+                       (ident,
+                         (loc1, attrs1,
+                           StructDef (aggregate_layout_of_attributes attrs1) xs flexible_opt)) ::
+                         acc
                      | Union_definition loc1 attrs1 _ xs =>
-                       (ident, (loc1, attrs1, UnionDef xs)) :: acc
+                       (ident,
+                         (loc1, attrs1, UnionDef (aggregate_layout_of_attributes attrs1) xs)) :: acc
                      | Enum_definition _ => acc))
                 ([] : List (sym × (CerbLocation.Loc × attributes × tag_definition)))
                 (fmapElements ident_tagDefs))),
@@ -3852,9 +3860,15 @@ def extract_program [CerbImplCfg.Impl] (startup_str : String) :
                           | (sym1, def1), acc =>
                             (match def1 with
                              | Struct_definition loc1 attrs1 _ membersDefs flexible_opt =>
-                               (sym1, (loc1, attrs1, StructDef membersDefs flexible_opt)) :: acc
+                               (sym1,
+                                 (loc1, attrs1,
+                                   StructDef (aggregate_layout_of_attributes attrs1) membersDefs
+                                     flexible_opt)) :: acc
                              | Union_definition loc1 attrs1 _ membersDefs =>
-                               (sym1, (loc1, attrs1, UnionDef membersDefs)) :: acc
+                               (sym1,
+                                 (loc1, attrs1,
+                                   UnionDef (aggregate_layout_of_attributes attrs1) membersDefs)) ::
+                                 acc
                              | Enum_definition _ => acc))
                         ([] : List (sym × (CerbLocation.Loc × attributes × tag_definition)))
                         (fmapElements st.tag_definitions0)),
@@ -3970,9 +3984,14 @@ def get_sigma_sofar [CerbImplCfg.Impl] :
               | (sym1, def1), acc =>
                 (match def1 with
                  | Struct_definition loc1 attrs1 _ membersDefs flexible_opt =>
-                   (sym1, (loc1, attrs1, StructDef membersDefs flexible_opt)) :: acc
+                   (sym1,
+                     (loc1, attrs1,
+                       StructDef (aggregate_layout_of_attributes attrs1) membersDefs
+                         flexible_opt)) :: acc
                  | Union_definition loc1 attrs1 _ membersDefs =>
-                   (sym1, (loc1, attrs1, UnionDef membersDefs)) :: acc
+                   (sym1,
+                     (loc1, attrs1,
+                       UnionDef (aggregate_layout_of_attributes attrs1) membersDefs)) :: acc
                  | Enum_definition _ => acc))
             ([] : List (sym × (CerbLocation.Loc × attributes × tag_definition)))
             (fmapElements st.tag_definitions0)),
