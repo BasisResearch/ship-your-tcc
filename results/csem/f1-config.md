@@ -1,5 +1,10 @@
 # F1: patched TinyCC RV64I/lp64 implementation configuration
 
+Follow-up, 2026-10-28: fresh p04/p09/p10 Sail and CSem observations now agree
+after the adopted IEEE/filesystem repairs. See
+[config-followup-2026-10-28.md](config-followup-2026-10-28.md). The original
+measurement and failure descriptions below are retained as dated evidence.
+
 Recovery resumed 2026-10-27 from checkpoint `f7c5019` (unvalidated).
 The configuration is `CerbImplCfg.tccRV64`, supplied through the Lem instance
 reader `impl_params`; `Tcc.cfgTcc` supplies that reader to both Core library

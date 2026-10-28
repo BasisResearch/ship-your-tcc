@@ -26,8 +26,9 @@ before calling an item an upstream bug. Keep fixed, superseded and rejected entr
 | PATCH-04 | Pure image filesystem with descriptor-based `fstat` | Integrated after full fork gate and eight exact Sail probes; descriptor fstat, state ordering and link proxy corrections in results/csem/f1-filesystem.md. Image-specific choices need separation before proposing upstream. |
 | PATCH-05 | Lean C parser and fail-closed Cabs comparison harness | Landed executable parser: 614 exact agreements / 664 inputs; remaining forms and F2 integration open. This is our new frontend, not an upstream parser correctness claim. |
 
-The tcc C11 deviations (patch 0003), newlib binary128 conversion defect
-(patch 0004 / F7), our F2 UCN and `_Pragma` repairs, and our model cache-key bug
+The tcc C11 deviations (patch 0003), compiler literal-rounding repair
+(patch 0004), remaining newlib binary128 library defects (F7), our F2 UCN
+and `_Pragma` repairs, and our model cache-key bug
 belong to other components. Do not report them as cerberus-lean bugs.
 
 ## Scheduled repin evaluation
@@ -227,3 +228,9 @@ compiler/model; its complete 78-case batch now passes full Sail
 (`results/model/anonymous-members.md`). The older CSem worker's four compiler
 counterexamples remain historical captures. No external message has been
 sent; Kiran retains the report handoff.
+
+2026-10-28 validation follow-up: the adopted IEEE/filesystem repairs now
+match fresh full tcc/Sail runs on the original binary128-precision,
+binary32-conversion and stdin-EOF probes. See
+results/csem/config-followup-2026-10-28.md for all three captures and pins.
+This updates local repair evidence; it is not a new pristine-upstream check.

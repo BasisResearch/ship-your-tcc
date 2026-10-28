@@ -38,12 +38,13 @@ pushes main without force. Record unsuccessful approaches in
 The launcher follows 4ct-digest's MANAGER.md/codexwork.sh workflow, adapted
 to this project's two-worker limit and shared Lean build lock.
 
-Current assignments, 2026-10-27: slot 1 runs bounded allocation recovery in
-sol-csem-repin. Slot 2 runs tasks/f3-ghost-cabs.md in sol-f2-tokens, after the
-raw frontend adoption. The reviewed anonymous-member semantics are adopted with pure IEEE after
-the combined gate. Compiler qualifiers and direct source-literal
-rounding are adopted. The next independent F1 task is
-tasks/f1-library-identity.md; pack/layout consumption remains required.
+Current assignments, 2026-10-28: slot 1 runs tasks/f1-library-identity.md in
+sol-c11-line. Slot 2 continues tasks/f3-ghost-cabs.md in sol-f2-tokens. The lead
+integrates the reviewed allocation checkpoint in sol-csem-repin. Both workers
+resumed after their usage-limit interruption; unfinished edits were preserved.
+Anonymous-member, IEEE, compiler qualifier, direct literal and once-cache
+repairs are adopted. The next independent F1 task is tasks/f1-bitfields.md;
+pack/layout consumption remains required.
 
 Frozen build requests use the shared 12 GB lock. Changed inputs invalidate
 a request; freeze a new hash manifest before retrying. Infrastructure limits

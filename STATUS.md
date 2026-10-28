@@ -181,7 +181,10 @@ No unfinished checkpoint is claimed as an adopted implementation.
 The next independent CSem coverage task is tasks/f1-bitfields.md (CSEM-08):
 representation, target layout and semantic accesses, including unnamed padding.
 It is queued, not a third active worker. Fresh p04/p09/p10 configuration
-checks now execute defined in CSem; fresh target confirmations are running.
+checks now agree exactly between CSem and full Sail: binary128 precision,
+binary32 rounding/conversion and stdin EOF/feof. Exact captures are in
+results/csem/config-followup-2026-10-28.md; the earlier failures remain dated
+evidence. This does not recertify the other twelve configuration probes.
 
 ## Needs user
 

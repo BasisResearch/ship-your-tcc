@@ -1,0 +1,4 @@
+probe	tcc	csem	agreement
+p04_ldouble	defined	defined	yes
+p09_stdin	defined	defined	yes
+p10_float	defined	defined	yes

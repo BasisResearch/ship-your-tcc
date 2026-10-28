@@ -288,3 +288,10 @@ Oct 28 (library identity and ghost Cabs). The lead handles allocation integratio
 The concrete CSEM-08 bitfield follow-up is queued as tasks/f1-bitfields.md,
 covering representation, RV64 layout, lvalues, initialization and constraints.
 The two-worker limit remains in force; this task has not started.
+
+F1 configuration follow-up (2026-10-28): fresh full compiler Sail and CSem
+agree exactly on p04 binary128, p09 stdin EOF/feof and p10 binary32/64. These
+close the three earlier probe failures after the IEEE/filesystem repairs;
+they do not recertify the other twelve measurements or prove configuration
+correctness. Evidence: results/csem/config-followup-2026-10-28.md. Bitfield
+coverage and separately classified GNU enum extension work remain.

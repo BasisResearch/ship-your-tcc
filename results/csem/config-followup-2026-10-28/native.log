@@ -1,0 +1,8 @@
+Running as unit: run-p1866186-i470933379.scope; invocation ID: 3e38c943b3dc46829d2bf0e31fc5c5f2
+p09_stdin tcc: defined (314.56s)
+p10_float tcc: defined (330.77s)
+p04_ldouble tcc: defined (345.22s)
+probe	tcc	csem	agreement
+p04_ldouble	defined	defined	yes
+p09_stdin	defined	defined	yes
+p10_float	defined	defined	yes
