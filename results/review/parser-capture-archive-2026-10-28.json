@@ -1,0 +1,35 @@
+{
+  "rows": [
+    {
+      "original": ".claude/worktrees/sol-csem-repin/build/f1a/run-m_6mggvl",
+      "archive": "build/recovery/parser-captures-2026-10-28/run-m_6mggvl.tar.gz",
+      "sha256": "bafb7929fb2723f3c16c57902e4a4882b2754db1d685a0d9ca9fd3b7517c2af7",
+      "manifest": "build/recovery/parser-captures-2026-10-28/run-m_6mggvl.json",
+      "manifest_sha256": "2a4f58e86c872854e45c195ab2cbb6e62aae1045464ec5965bbf0207eca82dc6",
+      "files": 7191,
+      "uncompressed_bytes": 2296757982,
+      "compressed_bytes": 129725126
+    },
+    {
+      "original": ".claude/worktrees/sol-csem-repin/build/f1a/run-_x1muxu6",
+      "archive": "build/recovery/parser-captures-2026-10-28/run-_x1muxu6.tar.gz",
+      "sha256": "073d0c5cbe24e1c3193edabd4611a22a8e45c38f9526d52ab5f128d48424ac48",
+      "manifest": "build/recovery/parser-captures-2026-10-28/run-_x1muxu6.json",
+      "manifest_sha256": "e94923db767350eb39a71b6009c3c0ece3d7db39484a35f635fdf253b1f8f957",
+      "files": 7191,
+      "uncompressed_bytes": 2296757982,
+      "compressed_bytes": 129709756
+    },
+    {
+      "original": ".claude/worktrees/sol-csem-repin/build/f1a/run-tgfiw79e",
+      "archive": "build/recovery/parser-captures-2026-10-28/run-tgfiw79e.tar.gz",
+      "sha256": "f30e19ca09c22d1ade18aadc62deddae29b9e45baf29886f12a105b54b3d4705",
+      "manifest": "build/recovery/parser-captures-2026-10-28/run-tgfiw79e.json",
+      "manifest_sha256": "9560ce68d3e88ac32f79a867500633499b853ea04aff8f9354ee3b553d7fd4f6",
+      "files": 3443,
+      "uncompressed_bytes": 1356849366,
+      "compressed_bytes": 79977910
+    }
+  ],
+  "scope": "Three completed Oct 27 parser-capture directories only; full file contents archived and independently rehashed before removing loose copies. Sources, toolchains, executables and active captures untouched."
+}

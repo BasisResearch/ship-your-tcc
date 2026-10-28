@@ -34,6 +34,7 @@ import subprocess
 import sys
 import tempfile
 import time
+from source_fixtures import fixture_files, fixture_entries
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TC = next(d for d in [os.path.expanduser('~/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin')] if os.path.isdir(d))
@@ -96,7 +97,7 @@ def runtime_key():
         image_path, host_path = line.rstrip('\n').split('=', 1)
         add('fs:' + image_path, open(host_path, 'rb').read())
     for path in ('c/src/gen_embed.sh', 'scripts/ref_arena.sh',
-                 'scripts/rv64emu.c', 'scripts/model_diff.py'):
+                 'scripts/rv64emu.c', 'scripts/model_diff.py', 'scripts/source_fixtures.py'):
         add(path, open(os.path.join(ROOT, path), 'rb').read())
     return h.hexdigest()
 
@@ -292,9 +293,9 @@ def compare(prog, mode, rtkey, sail=None):
     name = os.path.relpath(prog, ROOT)
     tag = sha(name, mode)
     # gen_embed and ModelMain both prepend -std=c11 to these identical args.
-    # Embed sibling headers at the same relative image paths for both runs.
-    import glob
-    extra = [('/' + os.path.basename(h), h) for h in sorted(glob.glob(os.path.join(os.path.dirname(prog), '*.h')))]
+    # Share the exact F2 corpus fixtures, including macro self-includes and
+    # parent-directory aliases. Inputs never come from observed compiler output.
+    extra = [(virtual, str(host)) for virtual, host in fixture_entries(prog)]
     args, src = ['-w'], prog
     if mode == 'obj':
         objdir = os.path.join(WORK, 'obj')
@@ -424,6 +425,8 @@ def main():
     os.makedirs(CACHE, exist_ok=True)
     os.makedirs(WORK, exist_ok=True)
     rtkey = runtime_key()
+    inputs = {str(p): hashlib.sha256(p.read_bytes()).hexdigest()
+              for _, files in groups for f in files for p in fixture_files(f)}
     mode = 'obj' if a.obj else 'c'
     results = {}
     t0 = time.time()
@@ -463,14 +466,16 @@ def main():
     print('%-14s %6d %6d   (%.0f s wall)' % ('all', tot['n'], tot['same'], wall))
     if not a.no_report:
         write_report(results, rows, tot, mode, wall, sail)
+    if any(hashlib.sha256(Path(p).read_bytes()).hexdigest() != h for p, h in inputs.items()):
+        raise RuntimeError('source/fixture changed during comparison')
     if a.json_out:
         pins = {p: hashlib.sha256(open(os.path.join(ROOT, p), 'rb').read()).hexdigest()
                 for p in ['vendor/TINYCC_REV', 'patches/0001-tcc-rv64i-soft.patch',
                           'patches/0002-tcc-baremetal-run.patch', 'patches/0003-tcc-c11.patch',
                           'patches/0004-tcc-binary128-literals.patch', 'c/build/base.elf',
-                          'c/src/gen_embed.sh', 'scripts/model_diff.py', '.lake/build/bin/tcc_model']}
-        pins.update({os.path.relpath(f, ROOT): hashlib.sha256(open(f, 'rb').read()).hexdigest()
-                     for _, fs in groups for f in fs})
+                          'c/src/gen_embed.sh', 'scripts/model_diff.py',
+                          'scripts/source_fixtures.py', '.lake/build/bin/tcc_model']}
+        pins.update({os.path.relpath(f, ROOT): h for f, h in inputs.items()})
         with open(a.json_out, 'w') as out:
             json.dump(dict(command=sys.argv, runtime_key=rtkey, pins=pins, results=results,
                            rows=rows, totals=tot, wall_seconds=wall,

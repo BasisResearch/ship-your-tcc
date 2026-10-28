@@ -22,6 +22,7 @@ import tempfile
 
 import pre_diff as old
 from raw_tokens import parse, spec_bytes, e_encoding, ProtocolError
+from source_fixtures import fixture_files, fixture_entries
 ROOT=Path(__file__).resolve().parents[1]
 MODEL=ROOT/'.lake/build/bin/tcc_pre_tokens'
 REF=ROOT/'build/pre-tokens-ref/pre_tokens_ref'
@@ -39,12 +40,6 @@ def run(cmd,timeout=120):
         raise ProtocolError('timeout: '+str(cmd[0])) from e
 
 
-def fixture_files(path):
-    names=re.findall(rb'#\s*include\s*"([^"/]+)"',path.read_bytes())
-    direct=[path.parent/n.decode() for n in names if (path.parent/n.decode()).is_file()]
-    return sorted({path,*path.parent.glob('*.h'),*direct})
-
-
 def materialize(path,d):
     """Same virtual names for both raw observers. Header bytes are independent
     image files, never spec/model outputs. First fs.list entry wins."""
@@ -58,10 +53,9 @@ def materialize(path,d):
     # themselves by basename (including through macro operands) and sibling
     # headers as ../<original-directory>/header.h. Supply the same explicit
     # aliases to every observer; these are input bytes, never observed output.
-    for h in fixture_files(path):
-        for virtual in ['/'+h.name, '/'+path.parent.name+'/'+h.name]:
-            if virtual not in seen:
-                seen.add(virtual);entries.append((virtual,h))
+    for virtual,h in fixture_entries(path):
+        if virtual not in seen:
+            seen.add(virtual);entries.append((virtual,h))
     for p,h in entries:
         target=d/p.lstrip('/')
         target.parent.mkdir(parents=True,exist_ok=True)
@@ -206,7 +200,7 @@ def main():
         files += [Path(p) for p in old.default_files(str(ROOT/'corpus'))]
     files=sorted(set(p.resolve() for p in files))
     if not files:ap.error('empty selection')
-    pins=[MODEL,REF,SPEC,ROOT/'scripts/pre_tokens_diff.py',ROOT/'scripts/raw_tokens.py',
+    pins=[MODEL,REF,SPEC,ROOT/'scripts/pre_tokens_diff.py',ROOT/'scripts/raw_tokens.py',ROOT/'scripts/source_fixtures.py',
           ROOT/'scripts/pre_tokens_ref.c',ROOT/'scripts/build_pre_tokens_ref.py',ROOT/'scripts/gen_pre_token_cases.py']
     pins += list((ROOT/'Tcc/Model').glob('*.lean'))+list((ROOT/'Spec/Pre').rglob('*.lean'))
     pins += [ROOT/'Tcc/ModelPreMain.lean',ROOT/'Spec/PreSpec.lean',ROOT/'lakefile.toml',ROOT/'lean-toolchain']

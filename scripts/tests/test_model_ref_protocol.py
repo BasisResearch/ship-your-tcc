@@ -1,11 +1,14 @@
 import importlib.util
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
 
-spec = importlib.util.spec_from_file_location('model_diff', Path(__file__).resolve().parents[1] / 'model_diff.py')
+SCRIPTS = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(SCRIPTS))
+spec = importlib.util.spec_from_file_location('model_diff', SCRIPTS / 'model_diff.py')
 m = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(m)
 ARENA = b'TCCARENA 1\nbase 86400000\nentry 86400000\ncode 86400000 4\nsize 4\nABCD'
