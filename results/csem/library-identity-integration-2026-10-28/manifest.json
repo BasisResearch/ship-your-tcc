@@ -1,0 +1,11 @@
+{
+  "source-pins.json.gz": "c36a448dba52cd716779ef10a057f8604dc63398b463b36bae08063367d2974a",
+  "allocation-default-equivalence.json": "c46566cf8951353c12337155aa4c4cddd00c3f576d7fefa1b9a8e03635621918",
+  "raw-tests.log": "4ba5cfeda36fbb7ae8ecad637d1ad7490cfd32d61aaa2f2a9e999bc7364d16a1",
+  "validation.json": "e789abff90bcc81b1e46a351c195f546ffce111d195d7fc01bacb138be97b310",
+  "raw-tests.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+  "gate.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+  "identity-results.json": "07c5405d36f1ee6dfaed7fe78cd1d20076ce711a6b409b8a4152acf7728a237b",
+  "gate.log": "936d388104a5df50c4c7f89e01545900155be7a2dc103136dd67d01acce6b688",
+  "allocation-focused.json": "293943290b94b5ac1898d0583be94ef2ab87c3d62a705137770fd70a503611fe"
+}

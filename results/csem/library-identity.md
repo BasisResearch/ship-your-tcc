@@ -153,3 +153,24 @@ Dead ends retained for the lead:
 - Fourteen attempted preprocessing integration methods skipped for absent
   independent observer binaries and are not validation. The actual final
   --csem gate and the eleven raw methods above are the claimed checks.
+
+## Adopted combined integration, 2026-10-28
+
+The library identity changes are combined with the adopted allocation policy,
+including verdictsWithAllocation, allocation-resolved outcomes/NoUB and the
+new identity-aware Config/stdlib/elaborate path. The full CSem gate passes on
+this combination, with all 2,291 pinned tracked inputs unchanged. Eleven raw
+frontend methods pass after the gate. The maintained matrix again yields
+22 passes, two separately retained pointer gaps and 5,580 consumer checks;
+the 20 maintained allocation controls and six default/historical comparisons
+also pass. The earlier independent native placement replay remains in its
+allocation report; this integration does not rerun that capture.
+Both semantic cones retain zero native floating operations; regenerated files
+and theorem axioms pass their gates. Exact combined binary/source pins and
+fresh outputs are in library-identity-integration-2026-10-28/; the original
+worker observations above remain historical and unchanged.
+
+CSEM-10 now has a separate worker task, tasks/f1-function-redeclaration.md.
+GNU declaration attributes needed by the actual injected header are queued in
+tasks/f1-gnu-attributes.md, alongside the existing bitfield task. Parser,
+semantic transport, runtime membership and whole-compiler proofs remain open.

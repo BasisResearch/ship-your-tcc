@@ -1,0 +1,17 @@
+{
+  "revision": "741660fa328831c50d78ca076eccf817c2e5ec54",
+  "source_hashes_verified": 2291,
+  "gate_exit": 0,
+  "raw_tests_exit": 0,
+  "identity_pass": 22,
+  "identity_known_pointer_gaps": 2,
+  "consumer_checks": 5580,
+  "binaries": {
+    ".lake/build/bin/csem_raw": "10b6101b8dafbb5ce490ea43789d9ef9bfeda2afc1ecf36328c2fbc0cc901363",
+    ".lake/build/bin/csem_run": "dbd44a982247f848fa6516e6f7fe5f7b9d1a974cdf5bcfff4ac5c5b3900a6cdb"
+  },
+  "historical_evidence": "results/csem/library-identity/",
+  "oracle_key": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/fork-oracle/9e775864dfd595f06f61463e4ff16d6664b5aa7dea800e471cd821462c73602f",
+  "allocation_controls": 20,
+  "allocation_default_comparisons": 6
+}

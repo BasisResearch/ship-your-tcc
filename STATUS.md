@@ -39,8 +39,8 @@ removed. Patch 0004 fixes compiler literals using exact integer rounding;
 public libc `strtold` still needs correction in the library lane. Matching refusals likewise do not satisfy the F3 success criterion.
 
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
-two at a time, following MANAGER.md. Slot 1 now handles semantic library-source
-identity; the bounded allocation checkpoint is adopted. Slot 2
+two at a time, following MANAGER.md. Slot 1 now handles the isolated CSEM-10 function-pointer redeclaration defect;
+library identity and bounded allocation are adopted. Slot 2
 continues ghost Cabs from modeled compiler parser actions. Both resumed after
 the interruption; the latest continuation status is below. The anonymous-member repair is adopted with IEEE after its combined gate.
 The pure IEEE implementation is integrated after the combined gate; the compiler/model
@@ -194,6 +194,16 @@ placement/dispatch proofs use standard axioms. Invalid replies have no C
 outcome and remain separate from UB/refusal. BumpPlacementPre, frontend
 constant-expression mini-runs, memory simulation and eventual fuel adequacy
 remain explicit F4/F5 duties. See results/csem/allocation-oracle.md.
+
+Library identity adoption (2026-10-28): the combined full CSem gate passes,
+with 2,291 unchanged tracked input hashes, 11 raw methods, 22 identity passes
+and 5,580 semantic consumer checks. The two inherited pointer failures remain
+explicit; slot 1 diagnoses their independently established local Lean defect.
+The default/historical allocation comparisons still pass. See
+results/csem/library-identity.md. GNU declaration attributes in the actual
+injected tccdefs are queued next in tasks/f1-gnu-attributes.md; this independent
+spec work complements slot 2's model-owned macro provenance/ghost construction.
+The existing bitfield task remains queued. None is a Supported exclusion.
 
 ## Needs user
 

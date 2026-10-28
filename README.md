@@ -29,8 +29,10 @@ zero native floating in its checked cones. Its anonymous-member repair passes
 92 focused checks and the combined full gate; bitfields and aggregate-value
 initialization remain open. The raw-source frontend reaches
 positioned Cabs with retained provenance; its 18 independent comparisons and
-combined gate pass, while pack/layout and library-origin consumption remain
-open (results/csem/raw-frontend.md). F1–F3 and the whole-compiler theorem
+combined gate pass. Runtime-library identity now reaches the semantic consumers
+with preserved C-visible labels: 22 checks and 5,580 consumer probes pass after
+combined allocation integration; two inherited pointer gaps stay separate
+(results/csem/library-identity.md). Pack/layout and transport proofs remain open. F1–F3 and the whole-compiler theorem
 remain open; newlib binary128 formatting/sqrt and other
 recorded semantic gaps still require work. The runtime allocation oracle is
 adopted after the combined gate: arbitrary checked placements enter CSem's
