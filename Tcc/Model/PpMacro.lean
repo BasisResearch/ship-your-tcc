@@ -94,6 +94,21 @@ def ghostLexOrigin : M Unit := do
     return
   let f := (st.file.head?).getD default
   if f.fd < 0 then
+    -- Only the actual generated predefine opening has raw-byte coordinates.
+    -- Paste/_Pragma buffers stay synthetic and acquire derivation origins.
+    if let some root := st.ghostCompilerRoot then
+      if root.source.id == f.id && root.source.contents == f.buf.extract f.bufStart f.buf_end then
+        let offset := st.ghostLexOffset-f.bufStart
+        let span := root.source.span offset (f.buf_ptr-st.ghostLexOffset)
+        let anchor : Ghost.ModelOrigin := {
+          source := f.id, bufferOffset := st.ghostLexOffset, physicalOffset := some offset,
+          presumed := f.filename, line := st.tok_line.toNat',
+          includeFiles := st.file.toArray.map (·.id), macroFrames := st.macro_stack.toArray.map (·.id), segments := #[span] }
+        let id ← gorigin (.source {
+          physical := span, presumed := f.filename.toList, line := st.tok_line.toNat',
+          endLine := st.tok_line.toNat', includes := [] }) (some anchor) true
+        modify fun s => { s with ghostTokOrigin := id }
+        return
     let id ← gorigin .unavailable none true
     modify fun s => { s with ghostTokOrigin := id }
     return
@@ -642,7 +657,7 @@ def macro_twosharps (R : Rec) (ptr0 : TokPtr) : M TokArr := do
       let (t2', cv2, ptr') := TOK_GET ptr {}
       ptr := ptr'
       if t2' == TOK_PLCHLDR then continue
-      origin ← if t1 == TOK_PLCHLDR then pure rightOrigin
+      origin ← if t1 == TOK_PLCHLDR && (← get).tokcstr.size == 0 then pure rightOrigin
         else gderive .paste (← get).ghostExpansionOrigin #[origin,rightOrigin]
       if t1 != TOK_PLCHLDR then
         let s1 ← get_tok_str t1 (some cv1)
@@ -1217,11 +1232,16 @@ def ghostTokenStart : M Nat := do
         | none => input.language.positioned.start
       (e,e)
     else match record.origin.site with
-      | some site => CSemCParser.Phase7.position "/model-phase4.c" i site width
+      | some site => CSemCParser.Phase7.position "/prog.c" i site width
       | none =>
         -- Declared virtual coordinates only, never an invented physical site.
         let p := { input.language.positioned.start with lexingLine := 2*i+2 }
         (p,{ p with col := p.col+width })
+  let identity := record.origin.identitySite.map (fun site =>
+    CSemCParser.Phase7.identify { files := s.ghostLibraryFiles }
+      (s.ghostCompilerEvent.bind Ghost.CompilerEvent.authority) site)
+  let sp := { sp with sourceIdentity := identity }
+  let ep := { ep with sourceIdentity := identity }
   let view := input.language
   let view := { view with
     positioned := { view.positioned with tokens := view.positioned.tokens.push {
@@ -1365,6 +1385,8 @@ def putdef (p : String) : ByteArray :=
 /-- `tcc_predefs(s1, cs, is_asm)` -/
 def tcc_predefs (is_asm : Bool) : M ByteArray := do
   let s ← get
+  if s.ghostEnabled then
+    modify fun st => { st with ghostImplicitOffset := none, ghostCompilerRoot := none, ghostCompilerEvent := none }
   let mut cs := cfmt "#define __TINYC__ 9%.2s\n" [.s "28rc".toUTF8]
   for d in target_machine_defs do cs := cs ++ putdef d
   for d in target_os_defs do cs := cs ++ putdef d
@@ -1382,6 +1404,8 @@ def tcc_predefs (is_asm : Bool) : M ByteArray := do
     cs := cs ++ putdef "__STDC__"
     cs := cs ++ cfmt "#define __STDC_HOSTED__ %d\n" [.i (if s.nostdlib != 0 then 0 else 1)]
     cs := cs ++ cfmt "#define __STDC_VERSION__ %dL\n" [.i s.cversion.toInt]
+    if s.ghostEnabled then
+      modify fun st => { st with ghostImplicitOffset := some cs.size }
     cs := cs ++ "#include <tccdefs.h>\n".toUTF8
   cs := cs ++ cfmt "#define __BASE_FILE__ \"%s\"\n" [.s (← curFile).filename]
   return cs
@@ -1424,6 +1448,17 @@ def preprocess_start (R : Rec) (filetype : Int32) : M Unit := do
     let fid := (← curFile).id
     modify fun s => { s with include_stack := s.include_stack.push fid }
     tcc_open_bf "<command line>".toUTF8 (some cstr)
+    let st ← get
+    if st.ghostEnabled then
+      if let some offset := st.ghostImplicitOffset then
+        let id := (← curFile).id
+        let root : Ghost.ModelSource := {
+          id := id, openedAs := "<command line>".toUTF8, contents := cstr,
+          identity := CSem.Pre.FileSys.normComponents "<command line>".toUTF8.toList,
+          generated := true }
+        modify fun s => { s with
+          ghostSources := s.ghostSources.map (fun src => if src.id == id then root else src),
+          ghostCompilerRoot := some { source := root, directive := root.span offset 1 } }
   modify fun s => { s with parse_flags := if is_asm then PARSE_FLAG_ASM_FILE else 0 }
 
 /-- `preprocess_end(s1)` -/

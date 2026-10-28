@@ -3,6 +3,7 @@ import CSemCParser.CabsExport
 import Spec.Pre.Main
 import Spec.Pre.Tcc.Cfg
 import Spec.Pre.Tcc.ImageFS
+import Tcc.Model.CompilerOpening
 
 open Lean Tcc.Model CSemCParser
 
@@ -32,9 +33,27 @@ def physicalLog (s : TccSt) (id : Nat) : Option (Array Ghost.PhysicalChar) :=
   | some f => some f.ghostPhysical
   | none => s.ghostClosedPhysical.get? id
 
+def bindingMetadata (tu : translation_unit) : List (String × Json) :=
+  [("excluded",toJson ((Tcc.CSem.excluded tu).map reprStr)),
+   ("bindings",Json.arr ((Tcc.CSem.Raw.injectedBindings tu).toArray.map fun b => Json.mkObj [
+     ("name",toJson b.identity.binding_name),("target",toJson b.identity.binding_linker_name),
+     ("intrinsic",toJson (match b.identity.binding_kind with | .Function_allocation_intrinsic => true | _ => false)),
+     ("declaration",CabsExport.declaration b.declaration)]))]
+
+def eventJson (e : Ghost.CompilerEvent) : Json := Json.mkObj [
+  ("root_id",toJson e.root.source.id),("header_id",toJson e.header.id),
+  ("predefined",toJson (e.root.source.contents.toList.map UInt8.toNat)),
+  ("header_contents",toJson (e.header.contents.toList.map UInt8.toNat)),
+  ("directive",toJson (reprStr e.root.directive)),
+  ("authenticated",toJson e.authority.isSome)]
+
 def modelMetadata (s : TccSt) : List (String × Json) :=
   let input := s.ghostInput
-  [("normalizations",GhostExport.normalizations s),("tokens",toJson (((input.map (·.spelling)).getD #[]).toList.map fun t => (reprStr t.kind,t.spell.map UInt8.toNat))),
+  [("compiler_event",(s.ghostCompilerEvent.map eventJson).getD Json.null),
+   ("opening_files",Json.arr ((Ghost.openingFiles s).toArray.map fun f => Json.mkObj [
+     ("opened_as",toJson (f.openedAs.map UInt8.toNat)),("identity",toJson (f.identity.map (List.map UInt8.toNat))),
+     ("contents",toJson (f.contents.map UInt8.toNat)),("included_at",toJson (f.includedAt.map reprStr))])),
+   ("normalizations",GhostExport.normalizations s),("tokens",toJson (((input.map (·.spelling)).getD #[]).toList.map fun t => (reprStr t.kind,t.spell.map UInt8.toNat))),
    ("origins",toJson (((input.map (·.language.origins)).getD #[]).toList.map reprStr)),
    ("model_origins",Json.arr (s.ghostOrigins.map fun o => Json.mkObj [
      ("source",toJson o.source),("buffer_offset",toJson o.bufferOffset),
@@ -57,10 +76,20 @@ def modelMetadata (s : TccSt) : List (String × Json) :=
      ("counter_before",toJson p.counterBefore.toInt),("counter_after",toJson p.counterAfter.toInt)]))]
 
 def main (args : List String) : IO UInt32 := do
-  let (mode,path,filesPath) ← match args with
-    | [mode,path] => pure (mode,path,none)
-    | [mode,path,"--files",filesPath] => pure (mode,path,some filesPath)
-    | _ => IO.eprintln "usage: tcc_ghost MODE SOURCE [--files JSON_STRING_PAIRS]"; return 2
+  let (mode,path,opts) ← match args with
+    | mode :: path :: opts => pure (mode,path,opts)
+    | _ => IO.eprintln "usage: tcc_ghost MODE SOURCE [--files JSON_STRING_PAIRS] [--library IMAGEPATH]"; return 2
+  let mut filesPath : Option String := none
+  let mut libraries : List (List CSem.Pre.Bytes) := []
+  let mut rest := opts
+  for _ in [:opts.length] do
+    match rest with
+    | "--files" :: p :: tail => filesPath := some p; rest := tail
+    | "--library" :: p :: tail =>
+      libraries := libraries ++ [CSem.Pre.FileSys.normComponents p.toUTF8.toList]
+      rest := tail
+    | [] => break
+    | _ => IO.eprintln "invalid option"; return 2
   let extra ← match filesPath with
     | none => pure []
     | some path =>
@@ -69,11 +98,27 @@ def main (args : List String) : IO UInt32 := do
       match parsed with
       | .ok fs => pure (fs.map (fun (p,b) => (p.toUTF8.toList,b.toUTF8.toList)))
       | .error e => IO.eprintln e; return 2
-  let fs := { CSem.Pre.Tcc.imageFS with files := extra ++ CSem.Pre.Tcc.imageFS.files }
+  let fs := { CSem.Pre.Tcc.imageFS with files := CSem.Pre.Tcc.imageFS.files ++ extra }
   let src ← IO.FS.readBinFile path
+  if mode == "independent-raw" then
+    let cfg : Tcc.CSem.Raw.Config := {
+      pre := CSem.Pre.Tcc.cfgTcc, fs := fs, parser := { gnu := true },
+      compilerEnvironment := some Tcc.CSem.Raw.tccEnvironment, libraryFiles := libraries }
+    match Tcc.CSem.Raw.checked cfg src.toList with
+    | .error e =>
+      IO.println ((Json.mkObj [("status",toJson "raw-checked-error"),("error",toJson e.code)]).compress)
+    | .ok r =>
+      IO.println ((Json.mkObj ([("status",toJson "ok"),("cabs",CabsExport.translationUnit r.cabs),
+        ("tokens",toJson (r.preprocessing.tokens.map fun t => (reprStr t.token.kind,t.token.spell.map UInt8.toNat))),
+        ("origins",toJson (r.input.origins.toList.map reprStr)),
+        ("compiler_opening",toJson ((Tcc.CSem.Raw.compilerOpening cfg r.preprocessing).map fun o => reprStr o.directive)),
+        ("sources",Json.arr (r.preprocessing.sources.toArray.map fun f => Json.mkObj [
+          ("opened_as",toJson (f.openedAs.map UInt8.toNat)),("identity",toJson (f.identity.map (List.map UInt8.toNat))),
+          ("contents",toJson (f.contents.map UInt8.toNat)),("included_at",toJson (f.includedAt.map reprStr))]))] ++ bindingMetadata r.cabs)).compress)
+    return 0
   if mode == "raw-model" || mode == "raw-spec" then
-    let result := Ghost.runRaw src fs.files
-    let plain := Ghost.runRaw src fs.files false
+    let result := Ghost.runRaw src fs.files true libraries
+    let plain := Ghost.runRaw src fs.files false libraries
     let s := match result with | .ok _ s | .error _ s => s
     let p := match plain with | .ok _ s | .error _ s => s
     let base := [("console_equal",toJson (s.console == p.console)),
@@ -88,10 +133,10 @@ def main (args : List String) : IO UInt32 := do
           match s.ghostInput with
           | none => [("status",toJson "unimplemented"),("error",toJson "no model token view")]
           | some input => match parsePositioned { gnu := true } input.language.positioned with
-            | .ok tu => [("status",toJson "ok"),("cabs",CabsExport.translationUnit tu)]
+            | .ok tu => [("status",toJson "ok"),("cabs",CabsExport.translationUnit tu)] ++ bindingMetadata tu
             | .error e => [("status",toJson "spec-rejected"),("error",toJson e.msg)]
         else match Ghost.output s with
-          | .ok tu => [("status",toJson "ok"),("cabs",CabsExport.translationUnit tu)]
+          | .ok tu => [("status",toJson "ok"),("cabs",CabsExport.translationUnit tu)] ++ bindingMetadata tu
           | .error g => [("status",toJson "unimplemented"),("gap",gapJson g)]
     IO.println ((Json.mkObj (fields ++ base ++ modelMetadata s)).compress)
     return 0

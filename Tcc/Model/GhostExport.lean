@@ -45,6 +45,7 @@ def artifact (s : TccSt) : Json :=
     | .ok tu => [("status",toJson "ok"),("cabs",CSemCParser.CabsExport.translationUnit tu)]
     | .error g => [("status",toJson "unimplemented"),("gap",gap g)]
   Json.mkObj (fields ++ [("normalizations",normalizations s),("audit",Json.arr (s.ghostAudit.map fragment)),
+    ("compiler_opening",toJson ((s.ghostCompilerEvent.bind CompilerEvent.authority).map fun o => reprStr o.directive)),
     ("token_errors",toJson s.ghostTokenErrors),
     ("tokens",toJson (((s.ghostInput.map (·.spelling)).getD #[]).toList.map fun t =>
       (reprStr t.kind,t.spell.map UInt8.toNat))),

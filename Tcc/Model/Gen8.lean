@@ -595,7 +595,7 @@ def tccgen_compile (R : Rec) : M Int32 := do
   tcc_debug_start
   modify fun s => { s with parse_flags := PARSE_FLAG_PREPROCESS ||| PARSE_FLAG_TOK_NUM ||| PARSE_FLAG_TOK_STR }
   if (← get).ghostEnabled && !(← get).ghostFixture then
-    let start := CSemCParser.Phase7.startPos "/model-phase4.c"
+    let start := CSemCParser.Phase7.startPos "/prog.c"
     modify fun s => { s with
       ghostParsing := true, ghostInput := some ⟨⟨⟨#[],start⟩,#[],#[]⟩,#[]⟩ }
   let gm ← gmark

@@ -243,6 +243,13 @@ def parse_include (R : Rec) (do_next : Bool) (test : Bool) : M Int32 := do
         includedAt := directive
         includes := directive.toList ++ (parent.map (·.includes)).getD []
         includeComplete := directive.isSome && (parent.map (·.includeComplete)).getD false }) }
+    -- The designated control edge, not a filename/order heuristic, grants
+    -- permission to record the candidate. Changed bytes still fail authority.
+    if !test then
+      if let some root := before.ghostCompilerRoot then
+        if parent.any (fun p => p.id == root.source.id) && directive == some root.directive then
+          if let some header := (← get).ghostSources.find? (fun src => src.id == id) then
+            modify fun s => { s with ghostCompilerEvent := some { root := root, header := header } }
   if test then
     tcc_close
   else

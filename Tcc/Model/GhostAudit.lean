@@ -1,4 +1,4 @@
-import Tcc.Model.GhostDriver
+import Tcc.Model.CompilerOpening
 -- All are definitions/open obligations, not proved parser correctness.
 #print axioms Tcc.Model.Ghost.runRaw
 #print axioms Tcc.Model.Ghost.build
@@ -13,3 +13,6 @@ import Tcc.Model.GhostDriver
 #print axioms Tcc.Model.Ghost.PhysicalOriginMap_Statement
 
 #print axioms Tcc.Model.Ghost.PhysicalReadView_Statement
+
+#print axioms Tcc.Model.Ghost.InjectedAuthorityTransport_Statement
+#print axioms Tcc.Model.Ghost.InjectedAuthorityErasure_Statement

@@ -186,6 +186,8 @@ if [ -f lakefile.toml ] || [ -f lakefile.lean ]; then
       || fail "injected runtime bindings (artifacts: $binding_checks/semantics)"
     python3 scripts/check_injected_openings.py --out "$binding_checks/openings" \
       || fail "compiler opening authority (artifacts: $binding_checks/openings)"
+    python3 scripts/injected_origins_cmp.py --gate-build --out "$binding_checks/model-origins" \
+      || fail "independent injected model origins (artifacts: $binding_checks/model-origins)"
     echo "injected binding artifacts: $binding_checks"
   fi
   if [ "${1:-}" = "--compile-cut" ]; then
