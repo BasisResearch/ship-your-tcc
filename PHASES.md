@@ -356,3 +356,15 @@ and RawConstruction_Statement. The last requires successful whole-unit
 construction for every Supported/Fits source with no refusal disjunct.
 Phase-four identity/provenance, fuel adequacy and binary refinement are also
 open. Evidence and preserved integration failures: results/model/ghost-cabs.md.
+
+F1 CSEM-10 adoption (2026-10-28): reserve zero at both pure Lean C symbol-supply
+entries. Canonical symbols already survived redeclarations; the defect was
+serialization of symbol zero as NULL. The combined full gate passes with
+2,304 unchanged tracked source hashes, 24 library controls/5,580 consumer checks
+and 30 common declaration checks. Two other matrix gaps remain explicit.
+Normal-budget seed positivity and positive-draw proofs have no axioms; generic
+elaboration-supply and function-address representability/refinement remain
+open. Twenty-eight cross-tcc/GCC Sail program pairs and one full tcc-run probe
+are distinct pinned observations, not compiler proofs. CSEM-11 is a separate
+inherited incompatible function/object constraint bug, queued in
+tasks/f1-declaration-constraints.md. GNU attributes and bitfields remain work.

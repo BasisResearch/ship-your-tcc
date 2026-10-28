@@ -1,0 +1,11 @@
+{
+  "source-pins.json.gz": "fa4c5326706af21bd58b093e6ff6dc7fd6a1b4016075c1a10518161d7dd4b726",
+  "allocation-default-equivalence.json": "e13d2c5397a0a82f1b7a1ae31903eb6620b73749d51cdfa95d62ace144a4b5ec",
+  "fresh-matrix.tar.gz": "b6f52c5b70c48eae823cbec5051358993e760bb9cd0bc0b91e2564dcf3229a29",
+  "gate.log.gz": "e10c3ec6cb8e10a5cbd2151756393012fd2793bff1ba880296af6f229eaa473b",
+  "validation.json": "0c2a4dddb643bf999f24771013aa3243bfad86f06f9032b063806ee9c6fac9d4",
+  "gate.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+  "redeclaration.json": "378910f1b813f75ed67535ca90a299a9736bc9fac4b104c0ad87d17a11c0cede",
+  "identity.json": "8c7627aeb83a1ce2d2a3317726786eb6cde633ffbdce054d32b6557623265510",
+  "allocation-focused.json": "b2350b57383ccfba0ac744153e289406cba6dbecd4752108b7256b5591a3ba93"
+}

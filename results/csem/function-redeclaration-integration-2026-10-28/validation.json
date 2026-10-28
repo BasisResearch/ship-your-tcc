@@ -1,0 +1,13 @@
+{
+  "revision": "00f0c86d101e25e27d8c999d0e504701807fdb42",
+  "gate_exit": 0,
+  "source_hashes_verified": 2304,
+  "library_identity_passes": 24,
+  "semantic_consumer_checks": 5580,
+  "binaries": {
+    ".lake/build/bin/csem_raw": "298030bb23fbcf121f6df9b73295d16a0ef485c7858aa3297718866deab038c7",
+    ".lake/build/bin/csem_run": "092a0130ab0a5592ec106bce99d33ce24a54615b3f4a3a1088690fe07392102b",
+    ".lake/build/bin/tcc_model": "be608c04bd2ee7ddd34a328abf925e36d3d84f0964cea0406f5715a482821822",
+    ".lake/build/bin/tcc_ghost": "75157306040bc1e543c87b89412e5d2ee8e6d4562fe99c59d209d8775dc7f21d"
+  }
+}

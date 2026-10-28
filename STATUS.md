@@ -39,8 +39,8 @@ removed. Patch 0004 fixes compiler literals using exact integer rounding;
 public libc `strtold` still needs correction in the library lane. Matching refusals likewise do not satisfy the F3 success criterion.
 
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
-two at a time, following MANAGER.md. Slot 1 now handles the isolated CSEM-10 function-pointer redeclaration defect;
-library identity and bounded allocation are adopted. Slot 2
+two at a time, following MANAGER.md. Slot 1 now handles GNU declaration attributes in sol-csem-repin;
+CSEM-10, library identity and bounded allocation are adopted. Slot 2
 continues ghost Cabs from modeled compiler parser actions. Both resumed after
 the interruption; the latest continuation status is below. The anonymous-member repair is adopted with IEEE after its combined gate.
 The pure IEEE implementation is integrated after the combined gate; the compiler/model
@@ -198,8 +198,8 @@ remain explicit F4/F5 duties. See results/csem/allocation-oracle.md.
 
 Library identity adoption (2026-10-28): the combined full CSem gate passes,
 with 2,291 unchanged tracked input hashes, 11 raw methods, 22 identity passes
-and 5,580 semantic consumer checks. The two inherited pointer failures remain
-explicit; slot 1 diagnoses their independently established local Lean defect.
+and 5,580 semantic consumer checks. The two pointer failures were subsequently diagnosed as a local zero-symbol
+collision and repaired in the adoption below; their original captures remain.
 The default/historical allocation comparisons still pass. See
 results/csem/library-identity.md. GNU declaration attributes in the actual
 injected tccdefs are queued next in tasks/f1-gnu-attributes.md; this independent
@@ -229,6 +229,17 @@ Three ordinary strict controls still fail on model macro provenance and actual
 injected-header syntax. Slot 2 continues those model constructions. All five
 erasure/agreement/total-construction Statements remain unproved; no refusal
 escape or Supported restriction is added. See results/model/ghost-cabs.md.
+
+CSEM-10 adoption (2026-10-28): both Lean C-translation entries now reserve
+symbol zero, preventing a valid function pointer from becoming NULL on storage.
+The combined full CSem gate passes with 2,304 unchanged tracked input hashes;
+24 library-identity cases and 5,580 consumer checks pass. Thirty common
+redeclaration rows pass, with one historical proxy gap and inherited CSEM-11
+constraint acceptance kept separate. The 28 cross-compiled Sail program pairs
+and one distinct full tcc-run observation remain pinned evidence. See
+results/csem/function-redeclaration.md. Slot 1 now implements GNU attributes;
+CSEM-11's general constraint repair and concrete bitfields are queued. Function
+address/supply invariants and all whole-compiler proofs remain open.
 
 ## Needs user
 

@@ -38,13 +38,13 @@ pushes main without force. Record unsuccessful approaches in
 The launcher follows 4ct-digest's MANAGER.md/codexwork.sh workflow, adapted
 to this project's two-worker limit and shared Lean build lock.
 
-Current assignments, 2026-10-28: slot 1 runs tasks/f1-function-redeclaration.md
-in sol-c11-line, addressing the independently confirmed CSEM-10 local Lean
-pointer defect. Slot 2 continues tasks/f3-ghost-cabs.md in sol-f2-tokens.
-Library identity and allocation are adopted after their combined full gate.
-GNU declaration attributes (tasks/f1-gnu-attributes.md) and concrete bitfields
-(tasks/f1-bitfields.md) are queued; pack/layout consumption remains required.
-The lead validates shared compiler corpus fixtures against complete Sail arenas.
+Current assignments, 2026-10-28: slot 1 runs tasks/f1-gnu-attributes.md in
+sol-csem-repin, providing independent F1 syntax and attribute meaning. Slot 2
+continues tasks/f3-ghost-cabs.md in sol-f2-tokens, now model-owned macro origins,
+replay and typed header construction. The typed checkpoint and CSEM-10 zero
+symbol repair are adopted after combined gates. General declaration constraints
+(tasks/f1-declaration-constraints.md, CSEM-11) and concrete bitfields
+(tasks/f1-bitfields.md) are queued. Pack/layout consumption remains required.
 
 Frozen build requests use the shared 12 GB lock. Changed inputs invalidate
 a request; freeze a new hash manifest before retrying. Infrastructure limits

@@ -172,3 +172,21 @@ A simultaneous lead/worker cache-link setup briefly created a redundant nested
 symlink; it was removed, and the six oracle artifact/overlay hashes reverified.
 No cached source or binary bytes changed. Lead-requested CSEM-11 documentation
 and separate cross-program/full-compiler Sail labels are complete.
+
+## Adopted combined integration, 2026-10-28
+
+The repair is combined with the adopted typed ghost checkpoint, shared corpus
+fixtures and comparison isolation. The full CSem gate passes with all 2,304
+tracked input hashes unchanged. The maintained declaration matrix again has
+30 common passing rows (27 defined programs and three rejected constraints),
+one historical proxy gap and one inherited CSEM-11 constraint gap. All 28
+defined raw programs succeed; library identity is 24/24 with 5,580 consumer
+checks. Allocation/anonymous regressions, regeneration, purity and axiom audits
+pass in the same gate. Exact combined binaries, the complete fresh matrix and
+gate/source pins are in function-redeclaration-integration-2026-10-28/.
+The earlier native observations are retained rather than relabeled as reruns.
+
+CSEM-11 now has a queued general declaration-constraint task. Slot 1 has moved
+to independent GNU attribute syntax/meaning; slot 2 continues model-owned
+macro provenance. Function address representation and whole-pipeline supply
+invariants remain explicit obligations, alongside the remaining compiler work.
