@@ -578,10 +578,18 @@ Main artifacts refreshed after member-attribute adoption: image, symbols and
 seven executables rebuild successfully on the same 3,577 source inputs. The
 lead combined reviewed multi-TU and physical proofs at 75a2df8; its new full
 gate freezes 4,162 tracked inputs including configuration/assembly/expected
-outputs and established runtime fixtures. Fresh native two-file 104 execution
-and independent comparisons are pending. Slot 2 works on GNU conditional
+outputs and established runtime fixtures. Fresh native two-file 104 execution passes;
+independent comparisons and the combined gate are pending. Slot 2 works on GNU conditional
 semantics; slot 1 refines full-width enum type policy and reruns its gate.
 No new whole-compiler or transport theorem is claimed.
+
+
+Fresh two-file native104 observation (2026-10-28): candidate75a2df8 matches the
+entire 4 MiB Sail arena and handoff registers, then executes the exact same ELF
+with exit0 and expected output. Compile11,461,362/program64,583/total11,525,970
+steps. Actual primary/companion bytes, invocation, registers and ELF are retained.
+The combined full gate and independent postchecks are still pending; this is
+finite execution evidence, not main adoption or a compiler/refinement theorem.
 
 ## Needs user
 

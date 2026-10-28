@@ -707,3 +707,10 @@ and seven executables rebuild with verified unchanged source hashes. Candidate
 inputs, independent syntax/physical checks and fresh native two-file 104 are
 pending. Slot 2 now handles shared GNU conditional semantics; slot 1's newer
 full-width enum policy needs its new gate, not the historical full4 receipt.
+
+Fresh two-file native104 observation (2026-10-28): candidate75a2df8 matches the
+entire 4 MiB Sail arena and handoff registers, then executes the exact same ELF
+with exit0 and expected output. Compile11,461,362/program64,583/total11,525,970
+steps. Actual primary/companion bytes, invocation, registers and ELF are retained.
+The combined full gate and independent postchecks are still pending; this is
+finite execution evidence, not main adoption or a compiler/refinement theorem.
