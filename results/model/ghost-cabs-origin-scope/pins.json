@@ -1,0 +1,32 @@
+{
+  "source_parent": "291bbb27b7c8e2ca0a2635dc2ab2a6769d220d8f",
+  "source_count": 2077,
+  "source_manifest": "full-gate.request.json.gz",
+  "binary_hashes": {
+    ".lake/build/bin/tcc_ghost": "7e8320addc54037d795e3659babe5738c60ef51e7451493452b4892c39b0d2db",
+    ".lake/build/bin/tcc_model": "9a404e770dbb8704406db655e2e4def17fdbde5c6ea37f755b7f78c343c6a026",
+    ".lake/build/bin/tcc_pre_tokens": "c845689c1e5b5e30c8fce60aae6f74b8b2dfefc89b1164559aa8f8a816fa6348",
+    ".lake/build/bin/pre_spec": "7aebea96161ed6338893e8b9a2fc3107381483a5667b7cb881664ea71dac135d",
+    "c/build/base.elf": "be5acb99a33809cb85a256c3dcfab6352746bc1398bb89a4c0f206de8301ab64"
+  },
+  "artifacts": {
+    "after-gate-exit-statuses.json": "b87985cb0169d338e717d5645a4109275904a504f0941c638562a2503453d740",
+    "arenas.json": "157d0c9d5de11d4da57b2dc3678f27292c343886e9305ecf8834abd34cdce66f",
+    "artifacts.tar.gz": "37b1c1b492e539bc10a0c443aa9aed59a19f9be55d041a75861d81a98378a842",
+    "erasure.json": "1535fbfa58aba2b3f846822468c28cbc22704eff1f65b2b75a334cbaefddd320",
+    "exit-statuses.json": "3ec8b2d9734a51bb8d343f67f985afef37f52b555d0b96abbc7ff644a7497ee8",
+    "explicit-build.log.gz": "7d7227a9d2a6f850e06c5a010882fcb42047699a025d58def94b38d8dd3581a6",
+    "explicit-build.request.json.gz": "3d76aab4ae6ab4da4bd2be33e72e83b6d6eb3030836eab848823c4610a5c718f",
+    "explicit-build.result.json.gz": "55c0dec99713bdb3ee7bae7af48868b8bdc2427ad3ded01b858b36b464f1438f",
+    "fixtures.json": "46f2fc655df9683841d61efb7ee76afb8e060b6830887e214130771a9d2d722c",
+    "full-gate.log.gz": "a1dd3e1c6c41989c8533fbf6cedc5973cc49e993eb5269b721a6dbe7dfb54fd5",
+    "full-gate.request.json.gz": "742f117094a25c0321c37159f072e3e7450c99e0a966f2667c2f636b057e4b1b",
+    "full-gate.result.json.gz": "51c1e056a05cbb3fad89a5965c03026d53f123cc7cc2187fb6bb9455b9037a24",
+    "lead-review.txt": "fb7e55227883c99e6a4a53d2e7245da3eb2c2bfcf77a4a41b13874578ef6ab42",
+    "origin-exit.json": "69688edb09b7fafca1776eae6cc01da08f49139929c0ae506331faaa2df3c8e4",
+    "origins.json": "51669daa42a502b03c2ee6deb23780986eda5c5c58f92da80b36150fba22bf2e",
+    "prior-commit-result.json": "c4c8a70c4d6daf43098b56052d66625c59e6e7689ff306bf73a2e229e97f0c5c",
+    "raw-strict.json": "ebc6012ff60198c78acf99d7afabb0c20c4c1f88bd9412ee0274fabe44a25b6d",
+    "verify.py": "171990e12858756cc33c09461bc51194ce2da6d51395faaf9f6d2615a4ff5940"
+  }
+}

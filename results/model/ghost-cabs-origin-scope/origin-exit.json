@@ -1,0 +1,1 @@
+{"command": ["python3", "scripts/ghost_origins_cmp.py", "--build-id", "ghost-origins-13", "--out", "build/ghost-origins13-origins"], "exit": 0}

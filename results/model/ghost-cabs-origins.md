@@ -130,3 +130,30 @@ old definition; the modeled compiler installs the new one. This branch keeps
 its actual origin and the 16-exact/three-gap checkpoint unchanged until combined
 validation. The full final lead note is pinned with the evidence. The
 independent typedef/compiler alias follow-ups also remain outside this patch.
+
+## Comparison-scope follow-up
+
+Final review tightened the origin harness after checkpoint 291bbb2: its model
+source selection now comes entirely from actual model opening records. It
+excludes only the identified initial tccdefs opening and rejects any other
+prefix anchor. All remaining physical openings, including non-emitting and
+unmatched ones, must agree with the independent source graph. Spec source names
+never select the model records. Three perturbations of actual captures verify
+that extra non-emitting openings, extra model-only prefix tokens and missing
+opening graphs fail comparison; these are harness checks, not success counts.
+The source-fixture result remains 16 required exact and three explicit gaps.
+
+The follow-up evidence and current-source verifier are in
+[ghost-cabs-origin-scope](ghost-cabs-origin-scope/pins.json). The older origin
+package and verifier refer to the exact 291bbb2 snapshot; do not use its
+--sources option to claim that a later source tree is unchanged. Both packages
+retain their exact manifests and failures. No model computation or spec grammar
+changes in this follow-up.
+
+The tightened harness is rebuilt under `ghost-origins-13` and validated by
+full `ghost-origins-gate-2` (2,077 frozen inputs verified). All three omission
+checks pass, the 44 required Cabs controls remain exact, and strict ordinary
+model/spec acceptance still returns 1 for its three spec rejections. Both
+seven-case arena/on-off regressions pass again after gate 2. The gate preserves
+the compared ghost executable. Verify this final snapshot with
+`python3 results/model/ghost-cabs-origin-scope/verify.py --sources`.

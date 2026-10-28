@@ -1,0 +1,33 @@
+[
+  {
+    "check": "fixtures",
+    "command": [
+      "python3",
+      "scripts/ghost_cabs_cmp.py",
+      "--build-id",
+      "ghost-origins-13",
+      "--out",
+      "build/ghost-origins13-validation/fixtures"
+    ],
+    "exit": 0
+  },
+  {
+    "check": "raw-strict",
+    "command": [
+      "python3",
+      "scripts/ghost_cabs_cmp.py",
+      "--build-id",
+      "ghost-origins-13",
+      "--raw",
+      "--case",
+      "scalar-declarations",
+      "--case",
+      "definition",
+      "--case",
+      "macro-provenance",
+      "--out",
+      "build/ghost-origins13-validation/raw"
+    ],
+    "exit": 1
+  }
+]

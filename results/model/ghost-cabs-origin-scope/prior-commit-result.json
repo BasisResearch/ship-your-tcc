@@ -1,0 +1,7 @@
+{
+  "request_id": "ghost-cabs-origins-checkpoint-1",
+  "commit": "291bbb27b7c8e2ca0a2635dc2ab2a6769d220d8f",
+  "source_hashes_verified": true,
+  "main_landed": false,
+  "note": "Reviewed checkpoint committed; lead combines independently with main/GNU/spec follow-up through a new gate. No push from worker."
+}

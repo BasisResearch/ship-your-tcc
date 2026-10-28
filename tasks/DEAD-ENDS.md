@@ -592,3 +592,10 @@ requested corrections until the lead surfaced them explicitly.
   do not choose the spec origin or normalize the histories to manufacture
   equality. Separate repeated-declaration and nested/#line/alias controls
   check include ancestry without concealing this discrepancy.
+- Final origin-harness review: selecting model user sources from the spec's
+  source-name set can hide an extra model-only header/non-emitting opening or
+  prefix tokens. Select all actual physical model openings and exclude only
+  the identified first injected tccdefs opening; reject other prefix anchors
+  and compare all remaining opening records. Actual-capture perturbations now
+  verify unmatched openings/prefix tokens and missing opening graphs fail.
+  These harness controls do not count as successful source fixtures.
