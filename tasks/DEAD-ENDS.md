@@ -475,3 +475,7 @@ requested corrections until the lead surfaced them explicitly.
 - A 900-second native wall limit is too short for the 34-million-step bitfield
   captures. Keep timeouts as harness errors and rerun with adequate wall time;
   do not alter Lean budgets or classify a timeout as a compiler refusal.
+- The model_diff overlap hazard is now repaired (2026-10-28): invocations in
+  one worktree serialize cache/scratch access, and duplicate selected paths
+  are rejected. Two simultaneous real comparisons and maintained subprocess
+  exclusion/release controls pass. The old stopped overlap remains a failure.

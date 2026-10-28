@@ -214,6 +214,12 @@ protocol checks pass; source/input/image pins and earlier timeout/overlap
 failures are retained in results/model/corpus-fixtures-2026-10-28.md.
 Whole-corpus native coverage and ghost/compiler proofs remain open.
 
+Comparison isolation (2026-10-28): model_diff now serializes invocations in
+one worktree and rejects duplicated selected paths. Two overlapping real
+comparisons, protocol tests and the maintained static gate pass. The prior
+stopped overlap remains a diagnostic, not accepted evidence. See
+results/review/model-comparison-isolation-2026-10-28.md.
+
 ## Needs user
 
 None currently. Implementation defects and unfinished obligations are work

@@ -25,6 +25,8 @@ the runtime image). The summary goes to results/model/f3-diff.md.
 """
 import argparse
 import concurrent.futures as cf
+from contextlib import contextmanager
+import fcntl
 import hashlib
 import json
 from pathlib import Path
@@ -46,6 +48,24 @@ WORK = os.path.join(ROOT, 'build', 'model_diff', 'work')
 FSLIST = os.path.join(ROOT, 'c', 'build', 'fs.list')
 SYMS = os.path.join(ROOT, 'build', 'image.syms')
 REPORT = os.path.join(ROOT, 'results', 'model', 'f3-diff.md')
+
+
+@contextmanager
+def invocation_lock():
+    """Protect this worktree's shared reference cache and source-named scratch.
+
+    Jobs within one invocation remain parallel. Separate invocations wait,
+    including native captures, so no process observes another's partial files.
+    """
+    os.makedirs(WORK, exist_ok=True)
+    with open(os.path.join(WORK, '.invocation.lock'), 'a') as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            print('model_diff: waiting for this worktree\'s active comparison',
+                  file=sys.stderr, flush=True)
+            fcntl.flock(lock, fcntl.LOCK_EX)
+        yield
 
 CORPORA = {
     'tests': 'c/tests/*.c', 'run': 'c/tests/run/*.c', 'tcc': 'c/tests/tcc/*.c', 'p3': 'c/tests/p3/*.c',
@@ -396,17 +416,27 @@ def main():
             groups.append((os.path.relpath(os.path.dirname(os.path.abspath(t)), ROOT), [os.path.abspath(t)]))
     if a.limit < 0 or a.require_success < 0:
         ap.error('limits and required successes must be nonnegative')
+    if a.limit:
+        groups = [(group, files[:a.limit]) for group, files in groups]
+    seen = set()
     for group, files in groups:
         if not files:
             ap.error(f'empty corpus {group}: generate/populate it before comparison')
         for source in files:
             if not os.path.isfile(source):
                 ap.error(f'input does not exist: {source}')
+            if source in seen:
+                ap.error(f'duplicate input: {source}')
+            seen.add(source)
+    with invocation_lock():
+        return run_comparison(a, groups, sail)
+
+
+def run_comparison(a, groups, sail):
     # Rebuild before fingerprinting: patches can change the runtime and its
     # exported addresses. Never pair a new reference with stale model symbols
     # or cache it under the previous image's key.
     with open(os.path.join(ROOT, 'c', '.build.lock'), 'w') as lock:
-        import fcntl
         fcntl.flock(lock, fcntl.LOCK_EX)
         subprocess.run(['make', '-s', '-C', os.path.join(ROOT, 'c'),
                         'BUILD=build', 'FLAGS=0', 'ELF=build/base.elf', 'build/base.elf'],
@@ -433,8 +463,6 @@ def main():
     with cf.ThreadPoolExecutor(a.j) as ex:
         futs = {}
         for g, files in groups:
-            if a.limit:
-                files = files[:a.limit]
             for f in files:
                 futs[ex.submit(compare, f, mode, rtkey, sail)] = (g, f)
         for fu in cf.as_completed(futs):

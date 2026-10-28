@@ -335,3 +335,9 @@ arena/model/harness failures occur. Initial wall timeouts and an overlapping
 scratch-path diagnostic remain failures; only serialized, source-pinned final
 runs supply evidence. Static/protocol checks pass. This changes no compiler
 or model bytes, proves no compiler theorem and regenerates no sum cuts.
+
+F3 harness isolation (2026-10-28): serialize independent model_diff invocations
+within each worktree and reject duplicate selected paths. Real overlapping
+controls and maintained subprocess tests pass, closing the scratch/cache race
+recorded during fixture validation. This contributes no new Sail coverage or
+compiler theorem; prior failed observations remain unchanged.

@@ -1,0 +1,16 @@
+{
+  "source_pins": {
+    "scripts/model_diff.py": "ff47a137f779e4812d4ebc42624262e079732af365153f7ba2fe237400880548",
+    "scripts/check.sh": "2bcb305adc9a0c91dfa8a2f9747efb415dd8e4247373c2c103fadecf5a347508",
+    "scripts/tests/test_model_concurrency.py": "9c7ec35ce9ca5c74a6f4a8b0caf38c408a8be2f5150afcb6515bd0b63143fba5"
+  },
+  "actual_overlapping_invocations": 2,
+  "successful_arenas_per_invocation": 1,
+  "lock_observed": true,
+  "tests": {
+    "concurrency": 2,
+    "reference_protocol": 6,
+    "sail_capture": 7
+  },
+  "static_gate": 0
+}

@@ -106,6 +106,9 @@ scripts/cclib_src.sh --check || fail "vendor/certora-export-patched is not prist
 scripts/gen_prog_clight.sh --check || fail "Tcc/Prog/*/Clight.lean or c/tests/p3/*.clight.lean stale"
 scripts/gen_cclib_audit.sh --check || fail "Tcc/Audit/StepOrig.lean stale"
 
+echo "== (4b) comparison isolation"
+python3 scripts/tests/test_model_concurrency.py || fail "comparison isolation"
+
 [ "${1:-}" = "--static-only" ] && { echo "check: static stages OK"; exit 0; }
 if [ -f lakefile.toml ] || [ -f lakefile.lean ]; then
   echo "== (5) lake build"
