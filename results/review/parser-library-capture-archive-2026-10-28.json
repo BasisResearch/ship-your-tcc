@@ -1,0 +1,25 @@
+{
+  "rows": [
+    {
+      "original": ".claude/worktrees/sol-c11-line/build/f1a/run-qube9f3d",
+      "archive": "build/recovery/parser-captures-library-2026-10-28/run-qube9f3d.tar.gz",
+      "sha256": "bd6d18d8a34f65f97e1b95e3ad5cfd312a70179dcfb749ea23e493b6f78737f5",
+      "manifest": "build/recovery/parser-captures-library-2026-10-28/run-qube9f3d.json",
+      "manifest_sha256": "7a3bb59adbf2c8c1a38282413dc48d89d608f2761d895568be676c3d2ff7c6b3",
+      "files": 7191,
+      "uncompressed_bytes": 2287733134,
+      "compressed_bytes": 129414241
+    },
+    {
+      "original": ".claude/worktrees/sol-c11-line/build/f1a/run-2r19nl3u",
+      "archive": "build/recovery/parser-captures-library-2026-10-28/run-2r19nl3u.tar.gz",
+      "sha256": "2b0da212bd8231cab71bdb28aa652b14f97c518e02ad19cf639a6e9a8d28e638",
+      "manifest": "build/recovery/parser-captures-library-2026-10-28/run-2r19nl3u.json",
+      "manifest_sha256": "7a3bb59adbf2c8c1a38282413dc48d89d608f2761d895568be676c3d2ff7c6b3",
+      "files": 7191,
+      "uncompressed_bytes": 2287733134,
+      "compressed_bytes": 129422075
+    }
+  ],
+  "scope": "Two completed Oct 27 parser-capture directories only; full file contents archived and independently rehashed before removing loose copies. Sources, toolchains, executables and active captures untouched."
+}
