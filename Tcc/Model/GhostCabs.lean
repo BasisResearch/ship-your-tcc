@@ -263,6 +263,13 @@ def buildSpecs (c : Context) : Build specifiers := do
   for _ in [0:c.range.last-c.range.first] do
     if i >= c.range.last then break
     let t := (c.token i).tok
+    if let some f := c.children.find? (fun f => f.production == .typeofSpec && f.range.first == i) then
+      match ← f.value with
+      | .typeSpecifier sp =>
+        s := { s with type_specifiers := s.type_specifiers ++ [sp] }
+        i := f.range.last
+        continue
+      | _ => return ← c.fail "typeof specifier action kind"
     if let some f := c.children.find? (fun f => f.production == .typedefName && f.range.first == i) then
       match ← f.value with
       | .identifier id =>
@@ -484,6 +491,13 @@ def buildChain (c : Context) : Build Syntax := do
 def buildExpression (c : Context) : Build Syntax := do
   let start := c.range.first
   let t := c.token start
+  if c.production == .typeofSpec then
+    let vs ← c.values
+    let sp ← match vs.toList with
+      | [.typeName ty] => pure (.TSpec_typeof_type ty)
+      | [.expression e] => pure (.TSpec_typeof_expr e)
+      | _ => c.fail "typeof operand must be the compiler's expression or type action"
+    return .typeSpecifier (TSpec (c.loc c.range) sp)
   if c.production == .ident then
     if !c.children.isEmpty then return ← c.fail "identifier has syntax children"
     return c.wrapExpression (.CabsEident (← c.pointId start))
@@ -574,6 +588,7 @@ def buildExpression (c : Context) : Build Syntax := do
     | none => c.fail "assignment operator spelling"
   | .cond, [a,b,d] => pure (c.wrapExpression (.CabsEcond a b d) (some c.children[0]!.range.last))
   | .condGNU, [a,b] => pure (c.wrapExpression (.CabsEcondGNU a b) (some c.children[0]!.range.last))
+  | .choose, [a,b,d] => pure (c.wrapExpression (.CabsEbuiltinGNU (.GNUbuiltin_choose_expr a b d)))
   | _, _ => c.fail "expression action needs typed construction"
 
 /-- Complete label headers in source order. A dangling label is an explicit

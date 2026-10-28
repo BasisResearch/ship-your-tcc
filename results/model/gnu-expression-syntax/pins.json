@@ -1,0 +1,59 @@
+{
+  "base_revision": "eb8902e5cc8c2e0e0d491bec8f57f12ad5fdd617",
+  "files": {
+    "artifact-manifest.json": "d43d18ffb60d33b054ddbcdcb1039d6efb6ac0a74cee2689761d8c36981d0e8e",
+    "evidence.tar.xz": "94058800a07c0bebe161766586ba944a588f785382b759f1f7d9da4d02b65193",
+    "freeze.py": "963d982aa2bb509af57d80013beb576fa6390468e1a21c440d98ed49df91d1c8",
+    "verify.py": "a799fa4a54e8a5042b0db3c918c99404aca753a72625b875ca3e297cf772849d",
+    "extra.py": "7eeada71d20ccb38befd0a5dd84fbd543754fe6e9f4781c634eb17de14f3e8e6",
+    "git-staging.stderr": "7b1007ed047969469448238d2742435a49c1541cf5452713a3dc18b146bc557d"
+  },
+  "members": 15217,
+  "source_pins": 3381,
+  "gates": [
+    "build/array-decay-gate.tfWnfp",
+    "build/assert-messages-gate.2hLBZr",
+    "build/function-redeclaration-gate.NNephQ",
+    "build/gnu-attribute-gate.ezFGMA",
+    "build/gnu-expr-gate.Q1EUlJ",
+    "build/injected-binding-gate.f4aPvq",
+    "build/library-identity-gate.UfHSdU",
+    "build/unevaluated-syntax-gate.3Gj9Te"
+  ],
+  "native": [
+    {
+      "report": "build/array-decay-gate.tfWnfp/comparison/array-alias-decay-native/arenas.json",
+      "directory": "0",
+      "steps": 3380808
+    },
+    {
+      "report": "build/array-decay-gate.tfWnfp/comparison/calls-spill-native/arenas.json",
+      "directory": "1",
+      "steps": 3464585
+    },
+    {
+      "report": "build/array-decay-gate.tfWnfp/comparison/element-referent-native/arenas.json",
+      "directory": "2",
+      "steps": 3392324
+    },
+    {
+      "report": "build/assert-messages-gate.2hLBZr/native/arenas.json",
+      "directory": "3",
+      "steps": 3605779
+    },
+    {
+      "report": "build/gnu-expr-gate.Q1EUlJ/arenas/native/arenas.json",
+      "directory": "4",
+      "steps": 3517476
+    },
+    {
+      "report": "build/unevaluated-syntax-gate.3Gj9Te/native/arenas.json",
+      "directory": "5",
+      "steps": 3489892
+    }
+  ],
+  "prior_evidence": {
+    "results/model/static-assert-messages/evidence.tar.xz": "fbf4dd07cc0c4f40fe1a0676c9bcfe06c03f72c126e07f6da8cdb636c5cacc3f",
+    "results/model/replay-integration-2026-10-28.md": "29781ad496db899a05bd0d42c2d3d95176fa1a84943704041f24bf9c5ea48353"
+  }
+}

@@ -1093,3 +1093,38 @@ an explicit follow-up, not established by arena equality.
   frozen receipt, complete observations and binary-hash diagnosis. Do not
   repair this by priming a cache, weakening cases, or treating stale failures
   as semantic regressions. The new combined gate must pass from that state.
+
+## GNU expression compiler-action syntax, 2026-10-28
+
+- Omitted-middle conditionals already have the model's distinct two-child
+  condGNU action. The independent raw grammar only handled the text lexer's
+  QUESTION_COLON token; real phase four correctly supplies QUESTION and COLON
+  separately. Accept that GNU grammar production while retaining both tokens
+  and origins. Do not fuse preprocessing tokens, inject spec syntax into the
+  compiler model or replace the conditional by duplicated condition syntax.
+- The first focused suite finds two GCC-diagnosed GNU policies accepted by both
+  compiler/model: a read-only increment inside typeof and a comma condition
+  in choose_expr. GCC diagnoses both. Preserve the failed first expectation,
+  independently checked complete syntax and exact actual compiler policy;
+  classify these outside valid syntax and defined-program arena counts. The
+  read-only-location warning is itself a diagnostic; do not claim absent-
+  diagnostic C11 conformance evidence for either GNU extension policy.
+- The first arena matrix gave invalid snippets no main, so an accepted
+  constraint could still become a matching unresolved-main refusal. Its 12
+  refusals are retained as superseded observations, not constraint evidence.
+  Add main to every executable probe and independently compile each input
+  with GCC and the current cross tcc before classifying compiler diagnostics.
+  The corrected matrix distinguishes ten actual refusals and two acceptances.
+- A bare host tcc -run invocation lacked its configured runtime search path
+  and reported missing runmain.o/libtcc1.a. Preserve this host harness failure;
+  supplemental host controls use the exact -B build/test-c11/host directory.
+  Host observations never substitute for native Sail arena/execution evidence.
+- The direct root-locked systemd-12GB focused build again fails at the sandbox
+  user bus before Lean starts. Its exact log and the matching frozen-service
+  receipts are retained. No uncapped build or dependency-project modification
+  is used. The adopted local replay proof remains unchanged.
+- GNU staging again cannot create this worktree's read-only index.lock. The
+  exact stderr is in results/model/gnu-expression-syntax/git-staging.stderr;
+  use the existing frozen scoped lead commit service after archive/source
+  verification. No alternate Git index/object store or semantic rerun repairs
+  this environment restriction.

@@ -14,6 +14,7 @@ def gap (g : Gap) : Json := Json.mkObj [
 def value : Ghost.Syntax → Json
   | .expression e => CSemCParser.CabsExport.tag "expression" [("value",CSemCParser.CabsExport.expr e)]
   | .typeName t => CSemCParser.CabsExport.tag "typeName" [("value",CSemCParser.CabsExport.typeName t)]
+  | .typeSpecifier t => CSemCParser.CabsExport.tag "typeSpecifier" [("value",CSemCParser.CabsExport.typeSpec t)]
   | .identifier id => CSemCParser.CabsExport.tag "identifier" [("value",CSemCParser.CabsExport.ident id)]
   | .attributes a => CSemCParser.CabsExport.tag "attributes" [("value",CSemCParser.CabsExport.attributes a)]
   | .asmBinding s => CSemCParser.CabsExport.tag "asmBinding" [("literal",CSemCParser.CabsExport.stringLiteral s)]

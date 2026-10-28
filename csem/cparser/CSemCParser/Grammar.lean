@@ -325,6 +325,14 @@ def pCond : Nat → P (cabs_expression × Bool)
     match t.tok with
     | .QUESTION =>
       let _ ← advance
+      -- Phase four retains '?' and ':' as distinct preprocessing tokens.
+      -- The text lexer also supplies QUESTION_COLON for adjacent spelling.
+      -- Recognize the same GNU grammar production without merging either
+      -- occurrence or its independent physical provenance.
+      if (← get).cfg.gnu && (← cur).tok == .COLON then
+        let _ ← advance
+        let (e3, _) ← pCond n
+        return (CabsExpression (rgc start (← prevEnd) t.sp) (CabsEcondGNU c e3), false)
       let e2 ← pExpr n
       let _ ← expectT .COLON
       let (e3, _) ← pCond n

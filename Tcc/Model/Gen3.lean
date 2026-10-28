@@ -684,8 +684,12 @@ def parse_btype (R : Rec) (_ad0 : AttributeDef) (ignore_label : Int32) : M (Bool
         t := (t &&& ~~~(VT_BTYPE ||| VT_LONG)) ||| u'
       cont := true
     else if tok == TOK_TYPEOF1 || tok == TOK_TYPEOF2 || tok == TOK_TYPEOF3 then
+      -- Retain the actual disambiguated operand before CType merging. The
+      -- existing parse_expr_type path alone decides VLA-bound evaluation.
+      let typeofMark ← gmark
       R.next
       let mut type1 ← R.parse_expr_type
+      gwrap typeofMark .typeofSpec
       type1 := { type1 with t := type1.t &&& ~~~(VT_STORAGE &&& ~~~VT_TYPEDEF) }
       if type1.ref != 0 then
         ad := sym_to_attr ad (← getSym type1.ref)
@@ -1079,11 +1083,14 @@ def expr_type (R : Rec) (expr_fn : M Unit) : M TypeQuery := do
 /-- `parse_expr_type(type)` -/
 def parse_expr_type (R : Rec) : M CType := do
   skip R 40
+  let gm ← gmark
   let (f, type, ad) ← R.parse_btype {} 0
   let mut ty := type
   if f then
     let (t', _, _) ← R.type_decl type ad TYPE_ABSTRACT
     ty := t'
+    -- Wrap the already-parsed abstract declarator; never replay a VLA bound.
+    gwrap gm .type
   else
     ty := (← expr_type R R.gexpr).type
   skip R 41

@@ -158,7 +158,7 @@ structure Range where
 inductive Production where
   | ident | constant | string | paren | deref | addr | lnot | bnot | uplus | neg
   | preinc | predec | postinc | postdec | sizeof | alignof | func | builtin
-  | generic | labeladdr | call | arrow | member | index | complit | type | cast | stmtexpr
+  | generic | choose | typeofSpec | labeladdr | call | arrow | member | index | complit | type | cast | stmtexpr
   | binop | logop | cond | condGNU | assign | comma
   | specifiers | declarator | initializer | initDecl | declaration | fundef | tu
   | ifStmt | whileStmt | block | returnStmt | breakStmt | continueStmt | forStmt | doStmt
@@ -188,6 +188,7 @@ inductive ParsedDeclarator where
 inductive Syntax where
   | expression (value : cabs_expression)
   | typeName (value : type_name)
+  | typeSpecifier (value : cabs_type_specifier)
   | identifier (value : identifier)
   | attributes (value : attributes)
   | asmBinding (value : cabs_string_literal)

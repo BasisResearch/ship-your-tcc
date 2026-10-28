@@ -212,6 +212,16 @@ if [ -f lakefile.toml ] || [ -f lakefile.lean ]; then
         || fail "C11 assertion message native Sail batch (artifacts: $message_checks/native)"
     fi
     echo "assertion message artifacts: $message_checks"
+    gnu_checks=$(mktemp -d build/gnu-expr-gate.XXXXXX)
+    python3 scripts/unevaluated_syntax_cmp.py --gnu --gate-build --out "$gnu_checks/syntax" \
+      || fail "GNU conditional/typeof/choose syntax (artifacts: $gnu_checks/syntax)"
+    gnu_args=()
+    if [ -x build/unevaluated-native-tool/capture_cut ]; then
+      gnu_args=(--sail-capture build/unevaluated-native-tool/capture_cut)
+    fi
+    python3 scripts/gnu_expression_arenas.py --out "$gnu_checks/arenas" "${gnu_args[@]}" \
+      || fail "GNU expression arenas/constraints/erasure (artifacts: $gnu_checks/arenas)"
+    echo "GNU expression artifacts: $gnu_checks"
     decay_checks=$(mktemp -d build/array-decay-gate.XXXXXX)
     decay_args=()
     if [ -x build/unevaluated-native-tool/capture_cut ]; then

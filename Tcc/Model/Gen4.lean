@@ -235,6 +235,7 @@ def unaryGhostKind (tok : Int32) : Ghost.Production :=
   else if tok == TOK_SIZEOF then .sizeof
   else if tok == TOK_ALIGNOF1 || tok == TOK_ALIGNOF2 || tok == TOK_ALIGNOF3 then .alignof
   else if tok == TOK_GENERIC then .generic else if tok == TOK_LAND then .labeladdr
+  else if tok == TOK_builtin_choose_expr then .choose
   else if tok == TOK___FUNC__ || tok == TOK___FUNCTION__ then .func
   else if tok == TOK___NAN__ || tok == TOK___SNAN__ || tok == TOK___INF__ then .constant
   else if (tok ≥ TOK_builtin_types_compatible_p && tok ≤ TOK___atomic_nand_fetch) || tok == TOK___riscv64_clear_cache then .builtin
@@ -383,6 +384,9 @@ def unary (R : Rec) : M Unit := do
     modify fun s => { s with vtop := s.vtop - 2 }
     vpushi R (b2i n)
   else if tok == TOK_builtin_choose_expr then
+    -- Both branches run the compiler's expression actions, even under
+    -- nocode_wanted. Their ghost children survive the real vpop operations;
+    -- no selected-only replay or additional expression evaluation is needed.
     R.next
     skip R 40
     let c ← R.expr_const64

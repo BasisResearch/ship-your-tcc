@@ -63,7 +63,7 @@ int main(void){
 '''
 
 def main():
- ap=argparse.ArgumentParser(description=__doc__);a=ap.add_mutually_exclusive_group(required=True);a.add_argument('--build-id');a.add_argument('--gate-build',action='store_true');ap.add_argument('--messages',action='store_true');ap.add_argument('--out',type=Path,required=True);args=ap.parse_args()
+ ap=argparse.ArgumentParser(description=__doc__);a=ap.add_mutually_exclusive_group(required=True);a.add_argument('--build-id');a.add_argument('--gate-build',action='store_true');suite=ap.add_mutually_exclusive_group();suite.add_argument('--messages',action='store_true');suite.add_argument('--gnu',action='store_true');ap.add_argument('--out',type=Path,required=True);args=ap.parse_args()
  valid_cases,invalid_cases,residual_cases,extension_cases=VALID,INVALID,RESIDUALS,EXTENSIONS
  files_by_case={'include-origins':[['/syntax.h',HEADER]]}; batch=BATCH
  categories={n:'valid' for n in valid_cases}|{n:'diagnostic' for n in invalid_cases}|{n:'residual' for n in residual_cases}|{n:'extension' for n in extension_cases}
@@ -76,6 +76,15 @@ def main():
   extension_cases={n:s for n,(s,c) in selected.items() if c=='extension'};residual_cases={}
   categories={n:c for n,(s,c) in selected.items()}|{'batch':'valid'}
   files_by_case={'include':[['/messages.h',MESSAGE_HEADER]]};batch=message_batch()
+ if args.gnu:
+  from gen_gnu_expression_fixtures import fixtures, HEADER as GNU_HEADER, batch as gnu_batch
+  selected=fixtures()
+  valid_cases={n:s for n,(s,c) in selected.items() if c=='valid'}
+  valid_cases['batch']=gnu_batch()
+  invalid_cases={n:s for n,(s,c) in selected.items() if c in ('diagnostic','compiler-constraint-gap')}
+  residual_cases={};extension_cases={}
+  categories={n:c for n,(s,c) in selected.items()}|{'batch':'valid'}
+  files_by_case={'include':[['/gnu-syntax.h',GNU_HEADER]]};batch=gnu_batch()
  out=args.out.resolve();out.mkdir(parents=True,exist_ok=False)
  receipt=build_receipt(args.build_id) if args.build_id else {'scope':'preceding gate executable build; outer receipt required'}
  pins=source_pins();driver=sha(Path(__file__));exe=ROOT/'.lake/build/bin/tcc_ghost';binary=sha(exe);rows=[];inputs={}
@@ -97,6 +106,8 @@ def main():
   # The compiler must reject, or syntax construction must explicitly diagnose.
   valid=name in valid_cases
   accepted=all(x['difference'] is None for x in scopes.values()) if valid else captures['raw-model']['status']!='ok'
+  if categories[name]=='compiler-constraint-gap':
+   accepted=all(x['difference'] is None for x in scopes.values())
   if name in residual_cases:accepted=captures['raw-model']['status']=='model-rejected' and captures['independent-raw']['status']=='ok'
   rows.append(dict(case=name,category=categories[name],valid=valid,residual=name in residual_cases,accepted=accepted,comparisons=scopes))
   print(name,'exact' if valid and accepted else (categories[name] if accepted else 'FAILED'),flush=True)
@@ -104,7 +115,7 @@ def main():
  assert source_pins()==pins and sha(exe)==binary and sha(Path(__file__))==driver
  assert all(sha(Path(p))==h for p,h in inputs.items())
  report=dict(build=receipt,driver_sha256=driver,binary_sha256=binary,source_hashes=pins,inputs=inputs,rows=rows,
-             exact_valid=sum(r['valid'] and r['accepted'] for r in rows),diagnostics=sum(not r['valid'] and not r['residual'] and r['category']!='extension' and r['accepted'] for r in rows),extensions=[r['case'] for r in rows if r['category']=='extension'],residuals=[r['case'] for r in rows if r['residual']])
+             exact_valid=sum(r['valid'] and r['accepted'] for r in rows),diagnostics=sum(not r['valid'] and not r['residual'] and r['category'] not in ('extension','compiler-constraint-gap') and r['accepted'] for r in rows),compiler_constraints=[r['case'] for r in rows if r['category']=='compiler-constraint-gap'],extensions=[r['case'] for r in rows if r['category']=='extension'],residuals=[r['case'] for r in rows if r['residual']])
  (out/'comparison.json').write_text(json.dumps(report,indent=2)+'\n')
  return int(not all(r['accepted'] for r in rows))
 if __name__=='__main__':raise SystemExit(main())
