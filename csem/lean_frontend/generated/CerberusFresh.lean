@@ -39,6 +39,15 @@ set_option autoImplicit true
 
 namespace CerberusFresh
 
+/-- First available C symbol number. Concrete function pointers serialize the
+symbol number as their address, and zero bytes denote NULL. The OCaml frontend
+has consumed runtime symbols before translating C; the pure Lean runtime parser
+uses separate hash-based symbols, so its C supply must explicitly reserve zero.
+Every pipeline starts here and threads the returned supply across all TUs. -/
+def initialSymbolSupply : Nat := 1
+
+theorem initialSymbolSupply_pos : 0 < initialSymbolSupply := by decide
+
 /-- Compare two digests (hex-form strings). Returns negative, zero, or
     positive. Corresponds to: Digest.compare (order-isomorphic on the hex
     representation — see the module note). -/

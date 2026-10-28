@@ -176,12 +176,12 @@ def identityProxyNames (names : Fmap String sym)
       | _ => false))
 
 /-- Cabs → Core for one TU: the fork driver's `frontendTU` without its IO
-(same calls, same arguments; the supply starts at 0 as in `runPipeline`). -/
+(same calls, same arguments; zero is reserved as in `runPipeline`). -/
 def elaborate [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] [CerberusFresh.Digest] (cfg : Config)
     (std : (Fmap String sym × fun_map Unit) × impl) (tu : translation_unit) :
     Except Verdict (file Unit × Nat) :=
   let ((ailnames, stdFunMap), coreImpl) := std
-  match desugar fmapEmpty fmapEmpty 0 cfg.addressSpaceTop (ailnames, stdFunMap, coreImpl)
+  match desugar fmapEmpty fmapEmpty CerberusFresh.initialSymbolSupply cfg.addressSpaceTop (ailnames, stdFunMap, coreImpl)
       empty_init "main" tu with
   | .Exception (loc, cause) =>
     .error (elabFailure loc (match cause with

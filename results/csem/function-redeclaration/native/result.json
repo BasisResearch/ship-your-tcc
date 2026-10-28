@@ -1,0 +1,35 @@
+{
+  "exit": 0,
+  "stdout": "",
+  "steps": [
+    3382570,
+    3382595,
+    3382698
+  ],
+  "isa_exit": 0,
+  "pins": {
+    "build/redecl-native-neutral/prog.elf": "95a2bdb6ef40b48fa86a950da1eff6d9d7858b5d542d8e04ac4e3483feb390a0",
+    "build/redecl-native-neutral/embed.S": "91c5db95230be3b330115e5b1fb7483b1c52d14b272821a7dd9b03cbdead8df7",
+    "build/redecl-native-neutral/embed.o": "a68c64dccfa980f66e384687e16391da34f5fe1afe6bed3ddc485dc21758793f",
+    "results/csem/library-identity/pointer-adopted/neutral.c": "b8a7a9d32ed7551d5b015a5b1b53250e2d747122932a96c8299623cd181a185e",
+    "c/build/base.elf": "d8c6ad02646237fe06fc1e613df63045c112188b8e96e7c418bdda3a8b4e13de",
+    "c/build/crt0.o": "1f934eb8bf6be0b3e39c823289f91f44e68576f4e0aada5e35f5be45115ff8c8",
+    "c/build/htif.o": "8429dd1c48a8a05da22589272d84c2d02ebfd97e269140de041a08412e2e77b1",
+    "c/build/main.o": "7f02dca6bd5c1fe676b2866b64f54a0699b7a73d3032c7dbecb151f0919d90ea",
+    "c/build/tcc.o": "7ac510d3127eee4b4bcfdc89b6595174965766bd15be6941b6fd0245702d2e55",
+    "c/build/fs.list": "b570b3f51e30358ad9e834cd295a6be391b78a0b52aa0529191c612c956e3759",
+    "c/src/gen_embed.sh": "68534ee3a238c143bf4e749fcb0ea43e8b53933c4a9d6843422d995c879d7d76",
+    "/data/home/kirancodes/Documents/code/ship-your-lua/riscv-lean/lean_emulator/.lake/build/bin/lean_riscv_emulator": "8989bde8a95345de658fb9c9111e15ce4a5561bc747dab28f798080f0778120b"
+  },
+  "command": [
+    "timeout",
+    "900",
+    "/data/home/kirancodes/Documents/code/ship-your-lua/riscv-lean/lean_emulator/.lake/build/bin/lean_riscv_emulator",
+    "build/redecl-native-neutral/prog.elf",
+    "--trace-pcs",
+    "build/redecl-native-neutral/pcs",
+    "--max-steps",
+    "20000000"
+  ],
+  "image_note": "Fresh /prog.c embed linked against unchanged worktree runtime objects. No base image or sum cut regenerated."
+}

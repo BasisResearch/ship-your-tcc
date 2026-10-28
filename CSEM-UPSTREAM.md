@@ -259,3 +259,33 @@ The proxy-named internal-linkage control is retained separately. See
 `results/csem/library-identity.md` and its pointer baseline artifacts; Kiran
 can inspect the minimal neutral source before reporting. No Supported/Fits
 restriction or semantic-success count retires it.
+
+CSEM-10 repair, 2026-10-28: the first prototype retains symbol number zero
+through valid redeclarations in the local zero-seeded Lean supply. The concrete
+memory adapter serializes that symbol as address zero; reconstruction takes
+the NULL arm before consulting the function map. Pinned OCaml has consumed
+runtime symbols already (`mine` is 483 with the identical positioned input; 502 with the ordinary
+builtin-injecting preprocessor); there is no redeclaration symbol loss.
+Both local pipeline entries now share `CerberusFresh.initialSymbolSupply = 1`,
+reserving NULL without changing translation, proxy filtering or memory encoding.
+Focused comparisons pass on the neutral case and declaration-order/storage
+matrix; independent historical proxying and a function/object constraint gap
+remain separate. Full validation, exact diagnosis, original two residuals and
+ledger suggestions are retained in `results/csem/function-redeclaration.md`.
+This corrects a local Lean entry seam, not the pinned OCaml sources.
+
+**CSEM-11 — inherited function/object redeclaration constraint accepted.** Minimal
+strict-C11-invalid source: `int mine(int); int mine; int main(void){return 0;}`.
+Pristine pinned Cerberus/cerberus-lean
+`704c4e697845127bced66c93fa0763eb51527ca4` (Lem
+`e6d8db5680962f49060257d6c2bcb13c284b910f`) and both local Lean paths accept
+it with `Defined {value: "Specified(0)", stdout: "", stderr: "", blocked: "false"}`.
+Strict GCC rejects it as `‘mine’ redeclared as different kind of symbol`;
+patched cross-tcc rejects it as `incompatible types for redefinition of 'mine'`.
+It violates the C11 6.7p4 same-scope/same-namespace compatible-type constraint.
+This is independently inherited from the pinned OCaml frontend; it is separate
+from local CSEM-10 and from three correctly rejected function constraints.
+Exact source, positioned Cabs, compiler commands, streams and oracle executable
+hash are retained under `results/csem/function-redeclaration/after/invalid-object*`
+(large streams in `after/streams.tar.xz`) and `sail/invalid-object*`. Neither acceptance is counted as defined-C coverage;
+Supported/Fits are unchanged. No report has been sent externally.

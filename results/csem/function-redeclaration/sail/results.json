@@ -1,0 +1,569 @@
+{
+  "rows": [
+    {
+      "case": "array",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/array.c",
+      "source_sha256": "2fdc5470080b62ddb3b1ae0079ecd4419de61be073b12d145be97b15f710994e",
+      "tcc": {
+        "exit": 0,
+        "steps": 3062,
+        "image": "build/test-tcc/array.tcc.elf",
+        "image_sha256": "17eafc57847355d321a93ad71c136681f5baa92277ab0e143eb185241f562751",
+        "object_sha256": "798b50730f8bc1b74e2e6df1b55aef64d3310a1db95d9bc93e7c5d49cfade70b"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3045,
+        "image": "build/test-tcc/array.gcc.elf",
+        "image_sha256": "0dda7eab1e702e4312e8a3ea0821114d7c4c3b9e8e49c5d25f807f5d30df6645",
+        "object_sha256": "be069b0727373093f7ed0badedb8aa62fe3034d7acd68a62ab3204e67b902f92"
+      }
+    },
+    {
+      "case": "assign",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/assign.c",
+      "source_sha256": "7c75ea8648e570d2ea198d2c9401e5d052dfdbf97afd06c0f8b770dd3444115c",
+      "tcc": {
+        "exit": 0,
+        "steps": 3042,
+        "image": "build/test-tcc/assign.tcc.elf",
+        "image_sha256": "4543d6d29f15772e1da53ea1d3d1ddbb43d24faba667165ffb840c22481435f1",
+        "object_sha256": "0b9d16e1085bd0566c35c715b31ada4b59cc6e43c3d9d448987daa2f69eec2fe"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3045,
+        "image": "build/test-tcc/assign.gcc.elf",
+        "image_sha256": "cdcff5d1f40fda62c105a430e0c5d34baad4a8f487942d97d0dcc4e26a8baa2b",
+        "object_sha256": "80dec969da9f09937a3065f3764d621c161a11ef4358fe3de3b8b8b73c93534f"
+      }
+    },
+    {
+      "case": "bytes",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/bytes.c",
+      "source_sha256": "89c2b466b4e76cab01b53d1a4cbe8a51ed35a8041264d4c8c2fbcac43930cada",
+      "tcc": {
+        "exit": 0,
+        "steps": 3196,
+        "image": "build/test-tcc/bytes.tcc.elf",
+        "image_sha256": "3f55bff07a75cc1a10036f362189ef2a0e03d625aa9eecfc82d60fb87d729d62",
+        "object_sha256": "1bfac2a4fb99a169d2c4f4ccee42193944d5497342583369675517298174c2f6"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3165,
+        "image": "build/test-tcc/bytes.gcc.elf",
+        "image_sha256": "e408ebfb5f6751c56a9a5d559270a392a536880ccfd08450ff4a3b3e66283839",
+        "object_sha256": "fd69a1ea2360a65b38185f6cab9950bb5100b9a78bd01cfc9140c946b325ae0e"
+      }
+    },
+    {
+      "case": "different",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/different.c",
+      "source_sha256": "24c25f5036fda0a82dce70a35a349bab4674f4d1c378d2bafbcd35e7c6c01fda",
+      "tcc": {
+        "exit": 0,
+        "steps": 3067,
+        "image": "build/test-tcc/different.tcc.elf",
+        "image_sha256": "b4432d64dd9aa551bd620ee93b7004e5714830354bd492a203b3e79025332cbc",
+        "object_sha256": "ac91cb04bbdd211cab4f99b6f037ea16553a25c19c366a60449af8c9f3b79752"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3074,
+        "image": "build/test-tcc/different.gcc.elf",
+        "image_sha256": "40d86bb7d9525abaf63271d78eb15ec179da186e2f92dc3192143eede51570c6",
+        "object_sha256": "19507c78731b6788cc0b0f166073b28713d618f7013bdea492b79e3b5fe03506"
+      }
+    },
+    {
+      "case": "direct",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/direct.c",
+      "source_sha256": "d2cf9c328206dec23113ade86154c1ad453ff55e3fcb5846124d0633e037ddb4",
+      "tcc": {
+        "exit": 0,
+        "steps": 3031,
+        "image": "build/test-tcc/direct.tcc.elf",
+        "image_sha256": "b64cf9d1810c36aa4ca582bc6aa1ab81fc6592301b73291b6e1619703fa1f122",
+        "object_sha256": "d4f32d7d3a4e6cf18c5b418a335d49859e5babe1eb07bbf6f9f1b658ab789690"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3037,
+        "image": "build/test-tcc/direct.gcc.elf",
+        "image_sha256": "197bff7506d43364c685ff03a0094f4023b4e1909c1e2fc79ac7438670a1f4d3",
+        "object_sha256": "603beda3aafca345502dfa8839067bb6807958c785a76664db27e797b119a758"
+      }
+    },
+    {
+      "case": "external-definition",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/external-definition.c",
+      "source_sha256": "4d3aabddf5e279317c0e142861f2df4ae7f3480ef992d7a6c9c5aeb7fc819e58",
+      "tcc": {
+        "exit": 0,
+        "steps": 3082,
+        "image": "build/test-tcc/external-definition.tcc.elf",
+        "image_sha256": "d07cc5b900086c37464f1b1f319af71f7982db1adb6fdaecec2660be447bed6f",
+        "object_sha256": "f05d7a9e6d64e66e1596adce17950e29aaaf1d1ec01d19908f91121a47f5b99d"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3088,
+        "image": "build/test-tcc/external-definition.gcc.elf",
+        "image_sha256": "0bc89388fae21f32e88824cfab46d401af4863d024bd6f04eaadd5ac039d517e",
+        "object_sha256": "58eeecad066004985d73d70d65cfec232db934ef42f55702608544dda87b873c"
+      }
+    },
+    {
+      "case": "external-dpmp",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/external-dpmp.c",
+      "source_sha256": "13cf2ce0b348a65819ff78a2231adce166e240aa87bf6c13028c9f4ff8871d16",
+      "tcc": {
+        "exit": 0,
+        "steps": 3082,
+        "image": "build/test-tcc/external-dpmp.tcc.elf",
+        "image_sha256": "cabde16155fca0d4e29a7b37fb55f88e82aee6c0e59ff3698997377e4bdb040f",
+        "object_sha256": "304c4f458105f8dd4665a0188546fef66e595eca9a655c6b367c4ce7e770d20c"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3088,
+        "image": "build/test-tcc/external-dpmp.gcc.elf",
+        "image_sha256": "316189abae60da44289555f0818b00664225c36a44810ad47c115072ab37afbe",
+        "object_sha256": "8a88ea2290a66e228d984ae507e69b8dfcfc3cef852f3a459fdd531dcb428fc0"
+      }
+    },
+    {
+      "case": "external-dprm",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/external-dprm.c",
+      "source_sha256": "2875d0f1cf23b83c5121f60f5f29814101576b1313b5ecb5f42287a1f235133c",
+      "tcc": {
+        "exit": 0,
+        "steps": 3082,
+        "image": "build/test-tcc/external-dprm.tcc.elf",
+        "image_sha256": "af13da30705d473e249b9f236f0f2d2b0632cb33a30069ae62e3c8ad14fb8f5a",
+        "object_sha256": "5b75f5111b029d7567fd9defe8a83e12eda67c72e074d317510744ba101b2818"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3088,
+        "image": "build/test-tcc/external-dprm.gcc.elf",
+        "image_sha256": "bbf45eb381227c4893e86d6728a2ef14dca94d231c3a2917c62697b7afd32fc1",
+        "object_sha256": "710afc5ca92cf42cd450a1418533ec6185b973208a469ee00a5281b58b486689"
+      }
+    },
+    {
+      "case": "external-pdrm",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/external-pdrm.c",
+      "source_sha256": "709ad24430c4f6936c5e8ffb5e1e43df59bc0a557edab565083147a7c6bac418",
+      "tcc": {
+        "exit": 0,
+        "steps": 3082,
+        "image": "build/test-tcc/external-pdrm.tcc.elf",
+        "image_sha256": "379845b00293f0cbf4d9281bd0b2721b677d0aee22757d67ddcc01c0b0f78ecf",
+        "object_sha256": "a9d379208a21e2eee71ac684d92284ad849d1d9fa8b1941b56bc5490c2905055"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3088,
+        "image": "build/test-tcc/external-pdrm.gcc.elf",
+        "image_sha256": "d92ced5c20d347a7dd644b8eeac6855414d2ad28ed2ed763d2684ba9c30f1e08",
+        "object_sha256": "c8f8e8f8b75eed657206db0143cc089483742d5a00291a29b84bca74023e430f"
+      }
+    },
+    {
+      "case": "external-pmdr",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/external-pmdr.c",
+      "source_sha256": "c6673500e6be1728f654db7ce2763d5256191585a066f531f12f785a02e43874",
+      "tcc": {
+        "exit": 0,
+        "steps": 3082,
+        "image": "build/test-tcc/external-pmdr.tcc.elf",
+        "image_sha256": "3c0211b813c44f171cd1a2e17b6d2a8e6378ba9c40da10f7fcc154e909b86e3c",
+        "object_sha256": "41737a8f21d98d9838459d34a93c6bc761ce806bede66b97cd1b8ecbdc5d9c2d"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3088,
+        "image": "build/test-tcc/external-pmdr.gcc.elf",
+        "image_sha256": "7b0031a089e58d87bed86241e9d483ba0aee911609024bebda5184e8c542e440",
+        "object_sha256": "f671eb1f087c5e5b6e9eb41780e4fa3bb8255ec0abaa09c112f92ce659f75821"
+      }
+    },
+    {
+      "case": "external-pprdm",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/external-pprdm.c",
+      "source_sha256": "014987d4404b1e6c040d18815db69749b6ebee434c4b82dd042428f39dfd1836",
+      "tcc": {
+        "exit": 0,
+        "steps": 3082,
+        "image": "build/test-tcc/external-pprdm.tcc.elf",
+        "image_sha256": "14f0534ef396f28093cb7729ba55c62870b12c389900a8a38a0abee002a0d9f9",
+        "object_sha256": "a306e7870d1b085eeccde956b42f31d180b740bce7978a2928b9dcaccc6ecf0f"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3088,
+        "image": "build/test-tcc/external-pprdm.gcc.elf",
+        "image_sha256": "1a2cc10bb64927ecb0a3b9be3e7ebc567858b70c83b2d3e8083687b257745214",
+        "object_sha256": "19dfbf87050f37e7f28c4660c3ded2a37cdbf211be613c60043b8b7ff1efd2be"
+      }
+    },
+    {
+      "case": "external-prototype-definition",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/external-prototype-definition.c",
+      "source_sha256": "17474bc884861c253f5097724b4bc80aac7f63c6607c9131773331d07de42a68",
+      "tcc": {
+        "exit": 0,
+        "steps": 3082,
+        "image": "build/test-tcc/external-prototype-definition.tcc.elf",
+        "image_sha256": "ac65f39acb6eae3372953078090b40e65f8fa19124688a06f989c4f0419d474b",
+        "object_sha256": "5bf6813fc8e8297f3069002c5bc047660841e21a63e6b368af1a208313397a66"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3088,
+        "image": "build/test-tcc/external-prototype-definition.gcc.elf",
+        "image_sha256": "b3431cfedc4c04c4441daa5f401feac46f81a47d1de0fcc58cb638fdca1023b6",
+        "object_sha256": "29812249a7d32d337cca5c91f41299819ea81d32ba4af0eb8482dccea3cd87a6"
+      }
+    },
+    {
+      "case": "global",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/global.c",
+      "source_sha256": "25f1cd3bc76d5cbfe44e2594159481d2328bce3680dc068701de040219fbd011",
+      "tcc": {
+        "exit": 0,
+        "steps": 3041,
+        "image": "build/test-tcc/global.tcc.elf",
+        "image_sha256": "fc793e35161f25d2256981e67a660059157d64271e8dc2629cc2074f0c6b8e8e",
+        "object_sha256": "ca6ecfa58dd16b616275e9c0d8a6c0039de108038c828b6958bafb85adf582db"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3043,
+        "image": "build/test-tcc/global.gcc.elf",
+        "image_sha256": "2bc52680412b506999aaaaa5500b7c6602e138ce19c4edae1f701626292eb1c5",
+        "object_sha256": "924485394feceadad3ac501a0675919cf0b59917b61a352559fcdda9beea8512"
+      }
+    },
+    {
+      "case": "internal-definition",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/internal-definition.c",
+      "source_sha256": "8621309d5b660a654c45eea3fa6406197dfa05a85b5360a2f1e192d59c93415e",
+      "tcc": {
+        "exit": 0,
+        "steps": 3080,
+        "image": "build/test-tcc/internal-definition.tcc.elf",
+        "image_sha256": "e20147a9df4e37f900242fa379c547bb018a0476016d468eb6bd4d691c8eb102",
+        "object_sha256": "1ce0276e20e3f1e3686c2d83379c0da0570558155dcb1784f9a2fadaba80e78f"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3088,
+        "image": "build/test-tcc/internal-definition.gcc.elf",
+        "image_sha256": "10a429329520c9b2c51641a5c9f430a0a7e47b2aeefa5df6ecaa8106079def9b",
+        "object_sha256": "79a6f747a87c351229261c3d4ab053609810af07d99e853a1aa3682a91341c76"
+      }
+    },
+    {
+      "case": "internal-dpmp",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/internal-dpmp.c",
+      "source_sha256": "e62d0a59e7f1f84bb8abdfdf53c6d16f950b9a5a0d1c379bbb8797082a60ca5f",
+      "tcc": {
+        "exit": 0,
+        "steps": 3080,
+        "image": "build/test-tcc/internal-dpmp.tcc.elf",
+        "image_sha256": "7e71e5d83e957cf68a175c528ec9d9bcfcb714f06ae7cb2cbc6cd09d5e5eeaee",
+        "object_sha256": "c0a93a66cbc240533c5a962a82b9df3a4c4143d7a450c82a212f377f656d0e25"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3088,
+        "image": "build/test-tcc/internal-dpmp.gcc.elf",
+        "image_sha256": "52896e5ff95674f5d4a0718ed900bcfda25bc6c53bc06b04da54710f01487a64",
+        "object_sha256": "ad6ec12c604bd1a32edff3d1630139dc9f5d880bd3d8a922e264c08ee55b1a79"
+      }
+    },
+    {
+      "case": "internal-dprm",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/internal-dprm.c",
+      "source_sha256": "6e14a1936453b3805fb22c9656bf41299bbdbb33e3df9542d653fe2d74d19967",
+      "tcc": {
+        "exit": 0,
+        "steps": 3080,
+        "image": "build/test-tcc/internal-dprm.tcc.elf",
+        "image_sha256": "32071de7916e0e1486d6d81ae50289573d7d64b7f8cf48b5036349ced3a1ac51",
+        "object_sha256": "e1de18ab9d7d89e3bd98b1e9c8073dceddf4236ffd6c6207c700bb372f97c143"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3088,
+        "image": "build/test-tcc/internal-dprm.gcc.elf",
+        "image_sha256": "6167da386a4e3e5d7fba4beeea98f743e8569fd773e2fed7ed2d9b8141de673f",
+        "object_sha256": "dbc2412b4e87c613e8e1d80605bbb4c34ece3e7d1f583d3344bea552f293b0aa"
+      }
+    },
+    {
+      "case": "internal-pdrm",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/internal-pdrm.c",
+      "source_sha256": "31f46a80d3214650555dfa7933629f509c12440e9bf8b67b4c9ffaa871c57e83",
+      "tcc": {
+        "exit": 0,
+        "steps": 3080,
+        "image": "build/test-tcc/internal-pdrm.tcc.elf",
+        "image_sha256": "49f39ab8379475feb422cefd9434634258b4bd2880ca5b81a5df18d306970bbe",
+        "object_sha256": "d8320adba8388d33f2330bec3cca9a6f1cb411f7052ef7ba6937d30b654e8c61"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3088,
+        "image": "build/test-tcc/internal-pdrm.gcc.elf",
+        "image_sha256": "5b0712d86da6f9a40d02c31dfd1d0dee9f81b65c261a65c10f5adfa9b00b7940",
+        "object_sha256": "638df6ef318080d471f200948c679b4d18adf90769b752c98ded7fafd241f5ed"
+      }
+    },
+    {
+      "case": "internal-pmdr",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/internal-pmdr.c",
+      "source_sha256": "67a98758f58ad78b1f14505e62ee57e248c4b8ad0d30dba7572f9db7f4711fab",
+      "tcc": {
+        "exit": 0,
+        "steps": 3080,
+        "image": "build/test-tcc/internal-pmdr.tcc.elf",
+        "image_sha256": "0bbb119cf61d768a8e2f8d08a33af55f8f30d26acdffeb96874e580793a7f773",
+        "object_sha256": "565a82fc55941ffbf334c74d7baa6ba3f6eac61da3e593512bfea9272e362b32"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3088,
+        "image": "build/test-tcc/internal-pmdr.gcc.elf",
+        "image_sha256": "da3c28a9c60035352725812f9630664fa9dc8546d3616c34d30ced4214023a91",
+        "object_sha256": "63a2042e0756dc327b84c9680d283041deafc3df640e7531757692debef7bdf3"
+      }
+    },
+    {
+      "case": "internal-pprdm",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/internal-pprdm.c",
+      "source_sha256": "e7ba5a84304d18d2d55285d97b026ba6a02ec92edfcc4efd6e37cfc3795a7834",
+      "tcc": {
+        "exit": 0,
+        "steps": 3080,
+        "image": "build/test-tcc/internal-pprdm.tcc.elf",
+        "image_sha256": "bee8fceac0b3ecc2a94ccaa47618783725fc6442eaaccf504a0853a50b3ab3f6",
+        "object_sha256": "817a479a9d815ffb91c572dd1858077721df26354c601dbf90dd314e401e40d7"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3088,
+        "image": "build/test-tcc/internal-pprdm.gcc.elf",
+        "image_sha256": "468ffa2fc52a3e9d96ce9679b1bb515adf9878dc5aedb2e2594299152fcc40eb",
+        "object_sha256": "cc75bdc34fe9d12c9419934b90b586d4c086eff68d310ce919396ce412a62712"
+      }
+    },
+    {
+      "case": "internal-prototype-definition",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/internal-prototype-definition.c",
+      "source_sha256": "f0c25f693a0a5263ece324f98d23a713bd8ac9151594109d4de0e3830c4f03fc",
+      "tcc": {
+        "exit": 0,
+        "steps": 3080,
+        "image": "build/test-tcc/internal-prototype-definition.tcc.elf",
+        "image_sha256": "e672cce75471b2b50fa77d865a89ab6502a4b6a3db33a9f04dc63d2c7f312bef",
+        "object_sha256": "26066d9214cddedb9ad83703be78b42547ff764bf6194b7337a1d3c09f848564"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3088,
+        "image": "build/test-tcc/internal-prototype-definition.gcc.elf",
+        "image_sha256": "56058c7f57dc0d3d46178523efe1761491da03a4fda0cc3918fca96341833a6d",
+        "object_sha256": "8fdc09a86522c8a48b29058d72a4238a04d63a1f920ac699961fe5ac94ae6a9f"
+      }
+    },
+    {
+      "case": "local-static",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/local-static.c",
+      "source_sha256": "0d0a0116d250d17b8eec50b03a3290e41ca74f56e9666ac5534e55838267745e",
+      "tcc": {
+        "exit": 0,
+        "steps": 3039,
+        "image": "build/test-tcc/local-static.tcc.elf",
+        "image_sha256": "e333392fb0d200698c2676d62b64afb6d4691a4d0e6c662ed5dfe44dedcec952",
+        "object_sha256": "cf96a7591b015675f979ee15530a427e107fb9ed9e7a059c9ecec8959057c067"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3042,
+        "image": "build/test-tcc/local-static.gcc.elf",
+        "image_sha256": "6182de577332ce3082b8e82b9352d6ab410e8f7420a94b6058406070b3c879f6",
+        "object_sha256": "97a4a34338f37f5e87e4b2b6c2e9875ee06d3f6c86c535470748fbc3dc1e6db4"
+      }
+    },
+    {
+      "case": "nested",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/nested.c",
+      "source_sha256": "993cf092f7eec5ef5efd84b9619f6241abd913a8e9d5b6e22e29e2fa6e83fee2",
+      "tcc": {
+        "exit": 0,
+        "steps": 3064,
+        "image": "build/test-tcc/nested.tcc.elf",
+        "image_sha256": "d4c4fec2194987e00428d0f5ac3ada2a601e15cccc360fef8d7df62cae0a2fdd",
+        "object_sha256": "5c4fbe8dac4cb2f7809f9f3f93443de9211a5f7218469fd2139bbb524029b7a5"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3073,
+        "image": "build/test-tcc/nested.gcc.elf",
+        "image_sha256": "0739970f9bce2d9757951b8560e08662b8a3627eeed1d765838c62c2be6b19a8",
+        "object_sha256": "62984ecce7f78004e37f5b12940139cfc9d8f5ba93ad4d266d829e19d20aaa64"
+      }
+    },
+    {
+      "case": "neutral-minimized",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/neutral-minimized.c",
+      "source_sha256": "b8a7a9d32ed7551d5b015a5b1b53250e2d747122932a96c8299623cd181a185e",
+      "tcc": {
+        "exit": 0,
+        "steps": 3034,
+        "image": "build/test-tcc/neutral-minimized.tcc.elf",
+        "image_sha256": "0d5bb775491b736c3a8f4b787c551b8d834437bfb1a1adde91c8d11a6d8d5eb9",
+        "object_sha256": "20679a449eef41af9426e996c490e34d7fda6c558f9525ad144c049260affd8d"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3041,
+        "image": "build/test-tcc/neutral-minimized.gcc.elf",
+        "image_sha256": "d6cc18bdae8f0b661d86abca281168ac9b608fe8c69a3efe252021cb79c6bf50",
+        "object_sha256": "8217485e4b30a70ee406b7e36fa27365e89d9b93fcdbf3cd2d2e62c753ecbb58"
+      }
+    },
+    {
+      "case": "null-roundtrip",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/null-roundtrip.c",
+      "source_sha256": "c2992b33f70e9e99b581534c739f9c45c4d74adb603d2f0420db2e545efa5c64",
+      "tcc": {
+        "exit": 0,
+        "steps": 3029,
+        "image": "build/test-tcc/null-roundtrip.tcc.elf",
+        "image_sha256": "7c6d4ebb5a313565429878ad801f9c14f65825f9ee1fb7b7b62ec31b08b22e2d",
+        "object_sha256": "0f622098a47edd01160b305d365fa974dcb7e0ed449960ee987cdfe42d358783"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3027,
+        "image": "build/test-tcc/null-roundtrip.gcc.elf",
+        "image_sha256": "51558d7b3106aa16f581940f037818c9e699bf0461fade1b77e4f6ed344361ce",
+        "object_sha256": "2d6e6e296a261c0446cf4a3afb71867587935493e45d1458181a5829b4b78211"
+      }
+    },
+    {
+      "case": "proxy-name",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/proxy-name.c",
+      "source_sha256": "27ba07a44427d51b6d60cc9add532cdf1f207f2df3f24c994efddfd72eb51bf3",
+      "tcc": {
+        "exit": 0,
+        "steps": 3040,
+        "image": "build/test-tcc/proxy-name.tcc.elf",
+        "image_sha256": "60b253890c498da9b5ec4f011b28b22e201e82aca131aaf04ac7bf3c24d1504f",
+        "object_sha256": "ce09b565079cabfa7a9cd35390f22cdd1f23de03ad1fc43ea37591ca22cdfaa6"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3043,
+        "image": "build/test-tcc/proxy-name.gcc.elf",
+        "image_sha256": "942a3548105fa00477754e89488a877747b102df4fdbfd3717858ce33921f285",
+        "object_sha256": "d2384885fe59ccf1899199457fb8587c4eb213af8ae80c207422d189579931c0"
+      }
+    },
+    {
+      "case": "shadow-object",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/shadow-object.c",
+      "source_sha256": "5bb543e063b4e304dd45be8878dbf6d88b6be4e358a09fc089567543fcc91923",
+      "tcc": {
+        "exit": 0,
+        "steps": 3046,
+        "image": "build/test-tcc/shadow-object.tcc.elf",
+        "image_sha256": "fdc1a679b473d76a6a49ec29f5080bb6654f61de7c280b885fcb196435efcda5",
+        "object_sha256": "fac779a16cef52b1d064f8ec85deaf109b0486d51dcd4496a2e132fa8710b514"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3049,
+        "image": "build/test-tcc/shadow-object.gcc.elf",
+        "image_sha256": "6a1fe01a5c1e4d3f3863abe9cf507726e6e192fe404c778d2d1e9b0ccef03ad9",
+        "object_sha256": "ea1d3faed9bb909c5e0ab72108488be5c19628cd771e5acce029147cdbd149ef"
+      }
+    },
+    {
+      "case": "struct",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/struct.c",
+      "source_sha256": "20fac32ef399e52af5bc4e4a0c22f5cc6a0befb665d62fcae17ff28b77175dab",
+      "tcc": {
+        "exit": 0,
+        "steps": 3115,
+        "image": "build/test-tcc/struct.tcc.elf",
+        "image_sha256": "d75725cd6c7706287c3ccf35dc3ac86e5f8711dc283108150aa356185b2d76e0",
+        "object_sha256": "991c8b68309160d9cceaabad28867e8f67c97ce6990d07db216706c8efe3a75b"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3044,
+        "image": "build/test-tcc/struct.gcc.elf",
+        "image_sha256": "31243395bb33517d12478b27ea664bca83e8767fdd8bdfe93e07f799e9b5289f",
+        "object_sha256": "76b3ed74372f020c44d07d3a903bb3093242ab4ca33ad5d6d1ecc80d9360397a"
+      }
+    },
+    {
+      "case": "zero-arg",
+      "source": "results/csem/function-redeclaration/before/matrix/sources/zero-arg.c",
+      "source_sha256": "6347012b5f2a3918d3dd6ac671901547731c3b28c84aa5f648533bbd0fb1a65c",
+      "tcc": {
+        "exit": 0,
+        "steps": 3039,
+        "image": "build/test-tcc/zero-arg.tcc.elf",
+        "image_sha256": "9c365074ad0465f6c5540c081e2a34ba73e7d39f36a990286fa61baad9c32bb3",
+        "object_sha256": "2199d9ccf636156ca52bc1b10f5b53ba49b79c1a7571d851188f410250c2c418"
+      },
+      "gcc": {
+        "exit": 0,
+        "steps": 3040,
+        "image": "build/test-tcc/zero-arg.gcc.elf",
+        "image_sha256": "771b64270b41f8aaa9c019dcfffee66013d20abe22a503cb5b0295e1210bbbe7",
+        "object_sha256": "e9ef3fa9cd5c99d80194f78f791cceb45984178a5bd515192a64df981926aa7d"
+      }
+    },
+    {
+      "case": "invalid-parameter",
+      "invalid_constraint": true,
+      "tcc_compile_exit": 1,
+      "source_sha256": "f506a5eac45edd796219db1ad219093d3418c5af750b36ec2492bc26d9f700ef"
+    },
+    {
+      "case": "invalid-return",
+      "invalid_constraint": true,
+      "tcc_compile_exit": 1,
+      "source_sha256": "c8a25f0bc9fac0e56c0547d0555b4508c8244402f5ec9619c87eee432dadf347"
+    },
+    {
+      "case": "invalid-redefinition",
+      "invalid_constraint": true,
+      "tcc_compile_exit": 1,
+      "source_sha256": "d95518a6fb30dec23ee73b9877af1ee10cd0b19f74a5984b19acb85c3d75fdca"
+    },
+    {
+      "case": "invalid-object",
+      "invalid_constraint": true,
+      "tcc_compile_exit": 1,
+      "source_sha256": "8cb860cdc9f82c877f90c6b1e204621a116c1a2fad0d4cb85bffe03c9cab4561"
+    }
+  ],
+  "pins": {
+    "build/cross/riscv64-tcc": "a162012a4b210e2f648d743bc2b3ef3f8e02acb41347d1a1afb4064591546a63",
+    "build/cross/riscv64-libtcc1.a": "56f08642e73ccb93b16562cc8966a882bcdfd6a7eeea5753c54c5c56005b0ecd",
+    "/data/home/kirancodes/Documents/code/ship-your-lua/riscv-lean/lean_emulator/.lake/build/bin/lean_riscv_emulator": "8989bde8a95345de658fb9c9111e15ce4a5561bc747dab28f798080f0778120b",
+    "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+    "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+    "patches/0003-tcc-c11.patch": "c0ea34110e1a26fea8296fc2022d918c7bf02215c6269f2a6c389379056e14ba",
+    "patches/0004-tcc-binary128-literals.patch": "15d4a95ec667c9ec18ea2be3fc1475c1178668853fea28213c3061afa0f863ff"
+  }
+}

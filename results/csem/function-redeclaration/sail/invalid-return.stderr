@@ -1,0 +1,1 @@
+results/csem/function-redeclaration/before/matrix/sources/invalid-return.c:1: error: incompatible types for redefinition of 'mine'

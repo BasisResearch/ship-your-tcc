@@ -1,0 +1,1 @@
+results/csem/function-redeclaration/before/matrix/sources/invalid-redefinition.c:1: error: redefinition of 'mine'

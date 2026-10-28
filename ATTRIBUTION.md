@@ -218,3 +218,12 @@ instruction-identity claim is made. No generated recovery files were imported.
 | component | provenance |
 |---|---|
 | Compiler-action typed ghost (`Tcc/Model/Ghost*.lean`, `lean/Ghost/GhostMain.lean`, `scripts/ghost_cabs_cmp.py`) | Local instrumentation of this project's manual TinyCC 43c7708 translation. Reuses Cerberus/cerberus-lean's Cabs types and the existing `CSemCParser.Phase7` token/literal conversion and `CabsExport` serializer at `vendor/CSEM_REV`; parser structure is constructed from modeled compiler actions, never the spec parser's returned Cabs. No machine/library routine proof is reused or claimed instruction-identical. |
+
+- Function redeclaration identity (2026-10-28): reuses the fork's existing
+  supply threading (`Symbol.fresh`, `LemLib.supplySplit`, Cabs-to-Ail/Core)
+  and concrete function-pointer serialization, with a shared positive pipeline
+  seed. The diagnosis compares pinned Cerberus `util/cerb_fresh.ml` and
+  `memory/concrete/impl_mem.ml`; no upstream/toolchain cache was changed.
+  Lua inventory/mandatory table consulted; no machine-library proof copied
+  and no instruction-byte identity claim added. Generated handwritten copies
+  are produced by the pinned Lem recipe (BSD-2-Clause as the fork).

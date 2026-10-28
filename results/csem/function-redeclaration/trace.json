@@ -1,0 +1,29 @@
+{
+  "symbols": [
+    {
+      "phase": "before",
+      "canonical_mine_ids": [
+        0
+      ],
+      "quotation": "results/csem/function-redeclaration/before/neutral.lean",
+      "quotation_sha256": "d2d5cc28d246e3738877b3f28e6fc2b8f464aa36c7afc448baebc22d25760f5f"
+    },
+    {
+      "phase": "after",
+      "canonical_mine_ids": [
+        1
+      ],
+      "quotation": "results/csem/function-redeclaration/after/neutral.lean",
+      "quotation_sha256": "52e90be64700fa96d00915d98672088e431ddec13636129a6475e91f4666711a"
+    }
+  ],
+  "ocaml_mine_id": 483,
+  "ocaml_trace": "same-source/ocaml.stderr",
+  "before_binaries": {
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_raw": "2a364b7249fefba96f3d23cbd20c89b1f482559ab35b30052913d4abf3c0ab01",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run": "8c33c3d9caa6f2e403ef49f37edd84055328ce4d09261bf42ae28174069acfad"
+  },
+  "source": "results/csem/library-identity/pointer-adopted/neutral.c",
+  "notes": "Both Core declarations and all function pointer values retain the same canonical symbol. Before: symbol 0 serializes as zero and reconstructs as NULL before lookup. After: symbol 1 survives store/load. OCaml runtime has consumed 483 ids on the same positioned input (502 with ordinary builtin injection) before the first prototype.",
+  "ordinary_preprocessor_mine_id": 502
+}

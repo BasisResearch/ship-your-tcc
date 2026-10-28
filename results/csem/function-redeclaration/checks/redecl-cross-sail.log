@@ -1,0 +1,7 @@
+test                   isa   elf-isa tcc=gcc   tcc=host  tcc-steps   gcc-steps   rc
+internal-pdrm          ok    ok      PASS      PASS      3080        3088        0
+external-pdrm          ok    ok      PASS      PASS      3082        3088        0
+nested                 ok    ok      PASS      PASS      3064        3073        0
+different              ok    ok      PASS      PASS      3067        3074        0
+bytes                  ok    ok      PASS      PASS      3196        3165        0
+tcc vs gcc-rv64i (Sail): pass=5 fail=0; tcc vs host gcc: pass=5 fail=0; isa-bad objects=0 elfs=0

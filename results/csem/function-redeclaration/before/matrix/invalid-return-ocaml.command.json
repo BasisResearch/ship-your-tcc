@@ -1,0 +1,9 @@
+[
+  "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/default/backend/driver/main.exe",
+  "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/install/default",
+  "--nolibc",
+  "--exec",
+  "--batch",
+  "--mode=exhaustive",
+  "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/invalid-return.c"
+]

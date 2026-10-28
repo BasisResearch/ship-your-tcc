@@ -1,0 +1,374 @@
+[0.0264] 0. Using 'concrete'
+[0.0266] 1. Core standard library loaded.
+[0.0266] 2. Implementation file loaded.
+(debug 2): Using the C frontend
+(debug 5): C prepocessor
+[0.0269] 3. C parsing completed!
+(debug 3): ENTERING Scope: file
+(debug 3): ENTERING Scope: prototype(0)
+(debug 3): EXITING Scope: prototype(0)
+(debug 2): attempting to register identifier `mine' with scope= file with namespace= ordinary, kind= function, linkage= Just (internal)
+(debug 2): internal_register_identifier ==> link_opt <> Just Linkage_external
+(debug 2): lookup registered ==> Nothing
+(debug 2): lookup external ==> Nothing
+(debug 2): registering function declaration of 'Symbol(483, SD_Id("mine"))' with PROTOTYPE with decl= function (signed int) returning signed int
+(debug 2): ENTERING Scope(2): block(1)
+(debug 2): attempting to register identifier `x' with scope= block(1) with namespace= ordinary, kind= parameter, linkage= Just (none)
+(debug 2): internal_register_identifier ==> link_opt <> Just Linkage_external
+(debug 2): lookup registered ==> Nothing
+(debug 2): lookup external ==> Nothing
+(debug 2): attempting to register internal object declaration of `Symbol(484, SD_ObjectAddress"x")' with qs, ty= signed int
+(debug 2): EXITING Scope(2): block(1)
+(debug 2): attempting to register identifier `mine' with scope= file with namespace= ordinary, kind= function, linkage= Just (internal)
+(debug 2): internal_register_identifier ==> link_opt <> Just Linkage_external
+(debug 2): lookup registered ==> Just Internal
+(debug 3): ENTERING Scope: function
+(debug 3): ENTERING Scope: block(1)
+(debug 4): mine ===> function (signed int) returning signed int
+(debug 2): [register_function_declaration] - had prev, valid composite
+(debug 3): ENTERING Scope: block(2)
+(debug 2): DESUGARING, CabsEident: x
+(debug 2): attempting to resolve ordinary identifier `x
+(debug 2): USED IDENTIFIER
+(debug 2): before fetch_object_declaration ==> "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/library-identity/pointer-adopted/neutral.c:2:31:"
+(debug 3): EXITING Scope: block(2)
+(debug 3): EXITING Scope: block(1)
+(debug 2): registering function definition of 'Symbol(483, SD_Id("mine"))' with params: [Symbol(484, SD_ObjectAddress"x")]
+(debug 3): EXITING Scope: function
+(debug 3): ENTERING Scope: prototype(3)
+(debug 3): EXITING Scope: prototype(3)
+(debug 2): attempting to register identifier `mine' with scope= file with namespace= ordinary, kind= function, linkage= Just (internal)
+(debug 2): internal_register_identifier ==> link_opt <> Just Linkage_external
+(debug 2): lookup registered ==> Just Internal
+(debug 2): [register_function_declaration] - had prev, valid composite
+(debug 2): ENTERING Scope(2): block(4)
+(debug 2): EXITING Scope(2): block(4)
+(debug 2): attempting to register identifier `main' with scope= file with namespace= ordinary, kind= function, linkage= Just (external)
+(debug 2): internal_register_identifier ==> link_opt = Just Linkage_external
+(debug 2): lookup external ==> Nothing
+(debug 3): ENTERING Scope: function
+(debug 3): ENTERING Scope: block(4)
+(debug 4): main ===> function () returning signed int
+(debug 2): registering function declaration of 'Symbol(486, SD_Id("main"))' with decl= function () returning signed int
+(debug 2): BROKEN: desugar_declaration_base
+(debug 3): ENTERING Scope: block(5)
+(debug 2): TODO ==> USING `desugar_init_declarator_BROKEN'
+(debug 3): ENTERING Scope: prototype(6)
+(debug 3): EXITING Scope: prototype(6)
+warning: AilTypesAux.is_vla is BOGUS
+(debug 2): attempting to register identifier `f' with scope= block(5) with namespace= ordinary, kind= object, linkage= Just (none)
+(debug 2): internal_register_identifier ==> link_opt <> Just Linkage_external
+(debug 2): lookup registered ==> Nothing
+(debug 2): lookup external ==> Nothing
+(debug 2): attempting to register internal object declaration of `Symbol(488, SD_ObjectAddress"f")' with qs, ty= pointer to function (signed int) returning signed int
+(debug 2): DESUGARING, CabsEident: mine
+(debug 2): attempting to resolve ordinary identifier `mine
+(debug 2): USED IDENTIFIER
+(debug 2): Hello, ty' = pointer to function (signed int) returning signed int
+(debug 2): DESUGARING, CabsEident: f
+(debug 2): attempting to resolve ordinary identifier `f
+(debug 2): USED IDENTIFIER
+(debug 2): before fetch_object_declaration ==> "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/library-identity/pointer-adopted/neutral.c:4:42:"
+(debug 3): EXITING Scope: block(5)
+(debug 3): EXITING Scope: block(4)
+(debug 2): registering function definition of 'Symbol(486, SD_Id("main"))' with params: []
+(debug 3): EXITING Scope: function
+(debug 2): KKK: check + find STD quote
+(debug 2): KKK: check + find STD quote
+(debug 3): EXITING Scope: file
+[0.0274] 4. Cabs -> Ail completed!
+warning: (unsure) wf_type, Function calls ==> wf_lvalue_aux
+warning: (unsure) wf_type, Function calls ==> wf_lvalue_aux
+warning: (unsure) annotate_sigma doesn't look at [ret_qs]
+(debug 2): [AilEident (gamma)] Symbol(484, SD_ObjectAddress"x") -- signed int
+(debug 2): GenLValueType ==>signed int
+(debug 2): [well_typed_assignment] OK: bullet 1
+warning: (unsure) annotate_sigma doesn't look at [ret_qs]
+warning: (unsure) wf_type, Function calls ==> wf_lvalue_aux
+(debug 2): TODO: check the use of AAux.lvalue_conversion
+(debug 2): [well_typed_assignment] before bullet 3: conv_ty1= pointer to function (signed int) returning signed int -- gty2= signed int (*) (signed int)
+(debug 2): [well_typed_assignment] OK: bullet 3
+(debug 2): FIXME: sub_qualifiers sees the wrong qualifiers (GenTypeCategory RValue seems to be at fault) !!!!
+(debug 2): [AilEident (gamma)] Symbol(488, SD_ObjectAddress"f") -- pointer to function (signed int) returning signed int
+(debug 2): GenLValueType ==>pointer to function (signed int) returning signed int
+(debug 2): [well_typed_assignment] OK: bullet 1
+(debug 2): WTF []
+(debug 2): [well_typed_assignment] OK: bullet 1
+[0.0275] 5. Ail typing completed!
+warning: NON STD: usual_arithmetic_integer ==> if any operand is of type size_t, then the common type is size_t
+warning: NON STD: usual_arithmetic_integer ==> if any operand is of type size_t, then the common type is size_t
+warning: NON STD: usual_arithmetic_integer ==> if any operand is of type size_t, then the common type is size_t
+warning: NON STD: usual_arithmetic_integer ==> if any operand is of type size_t, then the common type is size_t
+[0.0276] 6. Translation to Core completed!
+(debug 2): HELLO from Smt2.runND, exec mode= exhaustive
+BEGIN BYTEMAP ==> AFTER STORE => other_location(errno init)
+@281474976710648 ==> @empty: 0
+@281474976710649 ==> @empty: 0
+@281474976710650 ==> @empty: 0
+@281474976710651 ==> @empty: 0
+END
+(debug 2): ENTERING Driver.driver2
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> Ivalignof('signed int (*) (signed int)')
+(debug 5): pulled ==> Ivalignof('signed int (*) (signed int)')
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> 'signed int (*) (signed int)'
+(debug 5): pulled ==> 'signed int (*) (signed int)'
+(debug 3): [/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/library-identity/pointer-adopted/neutral.c:4:15-52 (cursor: 4:22 - 4:23)] - REQUEST CREATE
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> 'signed int (*) (signed int)'
+(debug 5): pulled ==> 'signed int (*) (signed int)'
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> f{488}
+(debug 5): pulled ==> f{488}
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> a_491
+(debug 5): pulled ==> a_491
+(debug 3): [/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/library-identity/pointer-adopted/neutral.c:4:16-35] - REQUEST STORE
+(debug 1): NOTE: we fix the sizeof pointers to 8 bytes
+BEGIN BYTEMAP ==> AFTER STORE => /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/library-identity/pointer-adopted/neutral.c:4:16-35
+@281474976710640 ==> @empty: 227
+@281474976710641 ==> @empty: 1
+@281474976710642 ==> @empty: 0
+@281474976710643 ==> @empty: 0
+@281474976710644 ==> @empty: 0
+@281474976710645 ==> @empty: 0
+@281474976710646 ==> @empty: 0
+@281474976710647 ==> @empty: 0
+@281474976710648 ==> @empty: 0
+@281474976710649 ==> @empty: 0
+@281474976710650 ==> @empty: 0
+@281474976710651 ==> @empty: 0
+END
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> f{488}
+(debug 5): pulled ==> f{488}
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> 'signed int (*) (signed int)'
+(debug 5): pulled ==> 'signed int (*) (signed int)'
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> a_503
+(debug 5): pulled ==> a_503
+(debug 3): [/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/library-identity/pointer-adopted/neutral.c:4:42-43] - REQUEST LOAD
+(debug 1): TODO: Concrete, assuming pointer repr is unsigned??
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> (a_497, cfunction(a_497))
+(debug 5): pulled ==> (a_497, cfunction(a_497))
+(debug 3): function pointer: Symbol(483, SD_Id("mine"))
+(debug 3): function pointer (lookup): Symbol(483, SD_Id("mine"))
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> not(params_length{12}(a_500) = <@empty>:1)
+(debug 5): pulled ==> not(params_length{12}(a_500) = <@empty>:1)
+(debug 5): CALL_FUNCTION: params_length{12}(['signed int'])
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> not(params_length_aux{11}(<@empty>:0, ['signed int']) = <@empty>:1)
+(debug 5): pulled ==> not(params_length_aux{11}(<@empty>:0, ['signed int']) = <@empty>:1)
+(debug 5): CALL_FUNCTION: params_length_aux{11}(<@empty>:0, ['signed int'])
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> not(case ['signed int'] of
+| Nil() =>
+<@empty>:0
+| Cons(_: ctype, xs{443}: [ctype]) =>
+params_length_aux{11}(<@empty>:0 + <@empty>:1, xs{443})
+end = <@empty>:1)
+(debug 5): pulled ==> not(case ['signed int'] of
+| Nil() =>
+<@empty>:0
+| Cons(_: ctype, xs{443}: [ctype]) =>
+params_length_aux{11}(<@empty>:0 + <@empty>:1, xs{443})
+end = <@empty>:1)
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> not(params_length_aux{11}(<@empty>:0 + <@empty>:1, []) = <@empty>:1)
+(debug 5): pulled ==> not(params_length_aux{11}(<@empty>:0 + <@empty>:1, []) = <@empty>:1)
+(debug 5): CALL_FUNCTION: params_length_aux{11}(<@empty>:1, [])
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> not(case [] of
+| Nil() =>
+<@empty>:1
+| Cons(_: ctype, xs{443}: [ctype]) =>
+params_length_aux{11}(<@empty>:1 + <@empty>:1, xs{443})
+end = <@empty>:1)
+(debug 5): pulled ==> not(case [] of
+| Nil() =>
+<@empty>:1
+| Cons(_: ctype, xs{443}: [ctype]) =>
+params_length_aux{11}(<@empty>:1 + <@empty>:1, xs{443})
+end = <@empty>:1)
+warning: Pattern matching nil without checking types!
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> a_501 \/ not(are_compatible ('signed int', a_499))
+(debug 5): pulled ==> a_501 \/ not(are_compatible ('signed int', a_499))
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> params_nth{13}(a_500, <@empty>:0)
+(debug 5): pulled ==> params_nth{13}(a_500, <@empty>:0)
+(debug 5): CALL_FUNCTION: params_nth{13}(['signed int'], <@empty>:0)
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> case ['signed int'] of
+| Nil() =>
+error("params_nth", (['signed int'], <@empty>:0))
+| Cons(x{438}: ctype, xs{439}: [ctype]) =>
+if <@empty>:0 = <@empty>:0 then x{438} else if <@empty>:0 > <@empty>:0 then params_nth{13}(xs{439}, <@empty>:0 - <@empty>:1) else error("params_nth", (['signed int'], <@empty>:0))
+end
+(debug 5): pulled ==> case ['signed int'] of
+| Nil() =>
+error("params_nth", (['signed int'], <@empty>:0))
+| Cons(x{438}: ctype, xs{439}: [ctype]) =>
+if <@empty>:0 = <@empty>:0 then x{438} else if <@empty>:0 > <@empty>:0 then params_nth{13}(xs{439}, <@empty>:0 - <@empty>:1) else error("params_nth", (['signed int'], <@empty>:0))
+end
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> if <@empty>:0 = <@empty>:0 then 'signed int' else if <@empty>:0 > <@empty>:0 then params_nth{13}([], <@empty>:0 - <@empty>:1) else error("params_nth", (['signed int'], <@empty>:0))
+(debug 5): pulled ==> if <@empty>:0 = <@empty>:0 then 'signed int' else if <@empty>:0 > <@empty>:0 then params_nth{13}([], <@empty>:0 - <@empty>:1) else error("params_nth", (['signed int'], <@empty>:0))
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> not(are_compatible ('signed int', a_506))
+(debug 5): pulled ==> not(are_compatible ('signed int', a_506))
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> Ivalignof('signed int')
+(debug 5): pulled ==> Ivalignof('signed int')
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> 'signed int'
+(debug 5): pulled ==> 'signed int'
+(debug 3): [/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/library-identity/pointer-adopted/neutral.c:4:42-46] - REQUEST CREATE
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> 'signed int'
+(debug 5): pulled ==> 'signed int'
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> a_507
+(debug 5): pulled ==> a_507
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> conv_loaded_int{6}('signed int', a_505)
+(debug 5): pulled ==> conv_loaded_int{6}('signed int', a_505)
+(debug 5): CALL_FUNCTION: conv_loaded_int{6}('signed int', Specified(<@empty>:7))
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> case Specified(<@empty>:7) of
+| Specified(n{457}: integer) =>
+Specified(conv_int{4}('signed int', n{457}))
+| Unspecified(_: ctype) =>
+Unspecified('signed int')
+end
+(debug 5): pulled ==> case Specified(<@empty>:7) of
+| Specified(n{457}: integer) =>
+Specified(conv_int{4}('signed int', n{457}))
+| Unspecified(_: ctype) =>
+Unspecified('signed int')
+end
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> Specified(conv_int{4}('signed int', <@empty>:7))
+(debug 5): pulled ==> Specified(conv_int{4}('signed int', <@empty>:7))
+(debug 5): CALL_FUNCTION: conv_int{4}('signed int', <@empty>:7)
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> Specified(if 'signed int' = '_Bool' then if <@empty>:7 = <@empty>:0 then <@empty>:0 else <@empty>:1 else if is_representable_integer{0}(<@empty>:7, 'signed int') then <@empty>:7 else if is_unsigned ('signed int') then wrapI{26}('signed int', <@empty>:7) else <Integer.conv_nonrepresentable_signed_integer>('signed int', <@empty>:7))
+(debug 5): pulled ==> Specified(if 'signed int' = '_Bool' then if <@empty>:7 = <@empty>:0 then <@empty>:0 else <@empty>:1 else if is_representable_integer{0}(<@empty>:7, 'signed int') then <@empty>:7 else if is_unsigned ('signed int') then wrapI{26}('signed int', <@empty>:7) else <Integer.conv_nonrepresentable_signed_integer>('signed int', <@empty>:7))
+(debug 5): CALL_FUNCTION: is_representable_integer{0}(<@empty>:7, 'signed int')
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> Specified(if Ivmin('signed int') <= <@empty>:7 /\ <@empty>:7 <= Ivmax('signed int') then <@empty>:7 else if is_unsigned ('signed int') then wrapI{26}('signed int', <@empty>:7) else <Integer.conv_nonrepresentable_signed_integer>('signed int', <@empty>:7))
+(debug 5): pulled ==> Specified(if Ivmin('signed int') <= <@empty>:7 /\ <@empty>:7 <= Ivmax('signed int') then <@empty>:7 else if is_unsigned ('signed int') then wrapI{26}('signed int', <@empty>:7) else <Integer.conv_nonrepresentable_signed_integer>('signed int', <@empty>:7))
+(debug 3): [/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/library-identity/pointer-adopted/neutral.c:4:42-46] - REQUEST STORE
+BEGIN BYTEMAP ==> AFTER STORE => /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/library-identity/pointer-adopted/neutral.c:4:42-46
+@281474976710636 ==> @empty: 7
+@281474976710637 ==> @empty: 0
+@281474976710638 ==> @empty: 0
+@281474976710639 ==> @empty: 0
+@281474976710640 ==> @empty: 227
+@281474976710641 ==> @empty: 1
+@281474976710642 ==> @empty: 0
+@281474976710643 ==> @empty: 0
+@281474976710644 ==> @empty: 0
+@281474976710645 ==> @empty: 0
+@281474976710646 ==> @empty: 0
+@281474976710647 ==> @empty: 0
+@281474976710648 ==> @empty: 0
+@281474976710649 ==> @empty: 0
+@281474976710650 ==> @empty: 0
+@281474976710651 ==> @empty: 0
+END
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> a_507
+(debug 5): pulled ==> a_507
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> a_498
+(debug 5): pulled ==> a_498
+(debug 2): ND2.pick [misc: new_drive_core_threads] (|ms| = singleton)
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> a_498
+(debug 5): pulled ==> a_498
+(debug 2): ND2.pick [misc: driver non_blocked] (|ms| = singleton)
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> a_504
+(debug 5): pulled ==> a_504
+(debug 2): ENTERING Driver.driver2
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> x{484}
+(debug 5): pulled ==> x{484}
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> 'signed int'
+(debug 5): pulled ==> 'signed int'
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> a_518
+(debug 5): pulled ==> a_518
+(debug 3): [/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/library-identity/pointer-adopted/neutral.c:2:31-32] - REQUEST LOAD
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> case (a_513, a_514) of
+| (Specified(a_515: integer), Specified(a_516: integer)) =>
+Specified(catch_exceptional_condition_add('signed int', __conv_int__('signed int', a_515), __conv_int__('signed int', a_516)))
+| _: (loaded integer,loaded integer) =>
+undef(<<UB036_exceptional_condition>>)
+end
+(debug 5): pulled ==> case (a_513, a_514) of
+| (Specified(a_515: integer), Specified(a_516: integer)) =>
+Specified(catch_exceptional_condition_add('signed int', __conv_int__('signed int', a_515), __conv_int__('signed int', a_516)))
+| _: (loaded integer,loaded integer) =>
+undef(<<UB036_exceptional_condition>>)
+end
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> Specified(catch_exceptional_condition_add('signed int', __conv_int__('signed int', <@empty>:7), __conv_int__('signed int', <@empty>:10)))
+(debug 5): pulled ==> Specified(catch_exceptional_condition_add('signed int', __conv_int__('signed int', <@empty>:7), __conv_int__('signed int', <@empty>:10)))
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> conv_loaded_int{6}('signed int', a_519)
+(debug 5): pulled ==> conv_loaded_int{6}('signed int', a_519)
+(debug 5): CALL_FUNCTION: conv_loaded_int{6}('signed int', Specified(<@empty>:17))
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> case Specified(<@empty>:17) of
+| Specified(n{457}: integer) =>
+Specified(conv_int{4}('signed int', n{457}))
+| Unspecified(_: ctype) =>
+Unspecified('signed int')
+end
+(debug 5): pulled ==> case Specified(<@empty>:17) of
+| Specified(n{457}: integer) =>
+Specified(conv_int{4}('signed int', n{457}))
+| Unspecified(_: ctype) =>
+Unspecified('signed int')
+end
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> Specified(conv_int{4}('signed int', <@empty>:17))
+(debug 5): pulled ==> Specified(conv_int{4}('signed int', <@empty>:17))
+(debug 5): CALL_FUNCTION: conv_int{4}('signed int', <@empty>:17)
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> Specified(if 'signed int' = '_Bool' then if <@empty>:17 = <@empty>:0 then <@empty>:0 else <@empty>:1 else if is_representable_integer{0}(<@empty>:17, 'signed int') then <@empty>:17 else if is_unsigned ('signed int') then wrapI{26}('signed int', <@empty>:17) else <Integer.conv_nonrepresentable_signed_integer>('signed int', <@empty>:17))
+(debug 5): pulled ==> Specified(if 'signed int' = '_Bool' then if <@empty>:17 = <@empty>:0 then <@empty>:0 else <@empty>:1 else if is_representable_integer{0}(<@empty>:17, 'signed int') then <@empty>:17 else if is_unsigned ('signed int') then wrapI{26}('signed int', <@empty>:17) else <Integer.conv_nonrepresentable_signed_integer>('signed int', <@empty>:17))
+(debug 5): CALL_FUNCTION: is_representable_integer{0}(<@empty>:17, 'signed int')
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> Specified(if Ivmin('signed int') <= <@empty>:17 /\ <@empty>:17 <= Ivmax('signed int') then <@empty>:17 else if is_unsigned ('signed int') then wrapI{26}('signed int', <@empty>:17) else <Integer.conv_nonrepresentable_signed_integer>('signed int', <@empty>:17))
+(debug 5): pulled ==> Specified(if Ivmin('signed int') <= <@empty>:17 /\ <@empty>:17 <= Ivmax('signed int') then <@empty>:17 else if is_unsigned ('signed int') then wrapI{26}('signed int', <@empty>:17) else <Integer.conv_nonrepresentable_signed_integer>('signed int', <@empty>:17))
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> a_520
+(debug 5): pulled ==> a_520
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> a_504
+(debug 5): pulled ==> a_504
+(debug 3): [/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/library-identity/pointer-adopted/neutral.c:4:42-46] - REQUEST KILL
+(debug 1): KILLING alloc_id= 2
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> a_508
+(debug 5): pulled ==> a_508
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> case (a_492, a_493) of
+| (Specified(a_494: integer), Specified(a_495: integer)) =>
+if not(conv_int{4}('signed int', a_494) = conv_int{4}('signed int', a_495)) then Specified(<@empty>:1) else Specified(<@empty>:0)
+| _: (loaded integer,loaded integer) =>
+Unspecified('signed int')
+end
+(debug 5): pulled ==> case (a_492, a_493) of
+| (Specified(a_494: integer), Specified(a_495: integer)) =>
+if not(conv_int{4}('signed int', a_494) = conv_int{4}('signed int', a_495)) then Specified(<@empty>:1) else Specified(<@empty>:0)
+| _: (loaded integer,loaded integer) =>
+Unspecified('signed int')
+end
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> if not(conv_int{4}('signed int', <@empty>:17) = conv_int{4}('signed int', <@empty>:17)) then Specified(<@empty>:1) else Specified(<@empty>:0)
+(debug 5): pulled ==> if not(conv_int{4}('signed int', <@empty>:17) = conv_int{4}('signed int', <@empty>:17)) then Specified(<@empty>:1) else Specified(<@empty>:0)
+(debug 5): CALL_FUNCTION: conv_int{4}('signed int', <@empty>:17)
+(debug 5): CALL_FUNCTION: conv_int{4}('signed int', <@empty>:17)
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> if not(if 'signed int' = '_Bool' then if <@empty>:17 = <@empty>:0 then <@empty>:0 else <@empty>:1 else if is_representable_integer{0}(<@empty>:17, 'signed int') then <@empty>:17 else if is_unsigned ('signed int') then wrapI{26}('signed int', <@empty>:17) else <Integer.conv_nonrepresentable_signed_integer>('signed int', <@empty>:17) = if 'signed int' = '_Bool' then if <@empty>:17 = <@empty>:0 then <@empty>:0 else <@empty>:1 else if is_representable_integer{0}(<@empty>:17, 'signed int') then <@empty>:17 else if is_unsigned ('signed int') then wrapI{26}('signed int', <@empty>:17) else <Integer.conv_nonrepresentable_signed_integer>('signed int', <@empty>:17)) then Specified(<@empty>:1) else Specified(<@empty>:0)
+(debug 5): pulled ==> if not(if 'signed int' = '_Bool' then if <@empty>:17 = <@empty>:0 then <@empty>:0 else <@empty>:1 else if is_representable_integer{0}(<@empty>:17, 'signed int') then <@empty>:17 else if is_unsigned ('signed int') then wrapI{26}('signed int', <@empty>:17) else <Integer.conv_nonrepresentable_signed_integer>('signed int', <@empty>:17) = if 'signed int' = '_Bool' then if <@empty>:17 = <@empty>:0 then <@empty>:0 else <@empty>:1 else if is_representable_integer{0}(<@empty>:17, 'signed int') then <@empty>:17 else if is_unsigned ('signed int') then wrapI{26}('signed int', <@empty>:17) else <Integer.conv_nonrepresentable_signed_integer>('signed int', <@empty>:17)) then Specified(<@empty>:1) else Specified(<@empty>:0)
+(debug 5): CALL_FUNCTION: is_representable_integer{0}(<@empty>:17, 'signed int')
+(debug 5): CALL_FUNCTION: is_representable_integer{0}(<@empty>:17, 'signed int')
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> if not(if Ivmin('signed int') <= <@empty>:17 /\ <@empty>:17 <= Ivmax('signed int') then <@empty>:17 else if is_unsigned ('signed int') then wrapI{26}('signed int', <@empty>:17) else <Integer.conv_nonrepresentable_signed_integer>('signed int', <@empty>:17) = if Ivmin('signed int') <= <@empty>:17 /\ <@empty>:17 <= Ivmax('signed int') then <@empty>:17 else if is_unsigned ('signed int') then wrapI{26}('signed int', <@empty>:17) else <Integer.conv_nonrepresentable_signed_integer>('signed int', <@empty>:17)) then Specified(<@empty>:1) else Specified(<@empty>:0)
+(debug 5): pulled ==> if not(if Ivmin('signed int') <= <@empty>:17 /\ <@empty>:17 <= Ivmax('signed int') then <@empty>:17 else if is_unsigned ('signed int') then wrapI{26}('signed int', <@empty>:17) else <Integer.conv_nonrepresentable_signed_integer>('signed int', <@empty>:17) = if Ivmin('signed int') <= <@empty>:17 /\ <@empty>:17 <= Ivmax('signed int') then <@empty>:17 else if is_unsigned ('signed int') then wrapI{26}('signed int', <@empty>:17) else <Integer.conv_nonrepresentable_signed_integer>('signed int', <@empty>:17)) then Specified(<@empty>:1) else Specified(<@empty>:0)
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> f{488}
+(debug 5): pulled ==> f{488}
+(debug 3): [/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/library-identity/pointer-adopted/neutral.c:4:35-51] - REQUEST KILL
+(debug 1): KILLING alloc_id= 1
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> conv_loaded_int{6}('signed int', a_509)
+(debug 5): pulled ==> conv_loaded_int{6}('signed int', a_509)
+(debug 5): CALL_FUNCTION: conv_loaded_int{6}('signed int', Specified(<@empty>:0))
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> case Specified(<@empty>:0) of
+| Specified(n{457}: integer) =>
+Specified(conv_int{4}('signed int', n{457}))
+| Unspecified(_: ctype) =>
+Unspecified('signed int')
+end
+(debug 5): pulled ==> case Specified(<@empty>:0) of
+| Specified(n{457}: integer) =>
+Specified(conv_int{4}('signed int', n{457}))
+| Unspecified(_: ctype) =>
+Unspecified('signed int')
+end
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> Specified(conv_int{4}('signed int', <@empty>:0))
+(debug 5): pulled ==> Specified(conv_int{4}('signed int', <@empty>:0))
+(debug 5): CALL_FUNCTION: conv_int{4}('signed int', <@empty>:0)
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> Specified(if 'signed int' = '_Bool' then if <@empty>:0 = <@empty>:0 then <@empty>:0 else <@empty>:1 else if is_representable_integer{0}(<@empty>:0, 'signed int') then <@empty>:0 else if is_unsigned ('signed int') then wrapI{26}('signed int', <@empty>:0) else <Integer.conv_nonrepresentable_signed_integer>('signed int', <@empty>:0))
+(debug 5): pulled ==> Specified(if 'signed int' = '_Bool' then if <@empty>:0 = <@empty>:0 then <@empty>:0 else <@empty>:1 else if is_representable_integer{0}(<@empty>:0, 'signed int') then <@empty>:0 else if is_unsigned ('signed int') then wrapI{26}('signed int', <@empty>:0) else <Integer.conv_nonrepresentable_signed_integer>('signed int', <@empty>:0))
+(debug 5): CALL_FUNCTION: is_representable_integer{0}(<@empty>:0, 'signed int')
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> Specified(if Ivmin('signed int') <= <@empty>:0 /\ <@empty>:0 <= Ivmax('signed int') then <@empty>:0 else if is_unsigned ('signed int') then wrapI{26}('signed int', <@empty>:0) else <Integer.conv_nonrepresentable_signed_integer>('signed int', <@empty>:0))
+(debug 5): pulled ==> Specified(if Ivmin('signed int') <= <@empty>:0 /\ <@empty>:0 <= Ivmax('signed int') then <@empty>:0 else if is_unsigned ('signed int') then wrapI{26}('signed int', <@empty>:0) else <Integer.conv_nonrepresentable_signed_integer>('signed int', <@empty>:0))
+(debug 5): ENTERING Core_eval.eval_pexpr_aux2 ==> a_510
+(debug 5): pulled ==> a_510
+(debug 2): ND2.pick [misc: new_drive_core_threads] (|ms| = singleton)
+(debug 2): ND2.pick [misc: driver non_blocked] (|ms| = singleton)
+(debug 3): driver.process_core_step ==> Step_done2 with value: Specified(<@empty>:0)
+(debug 2): ENTERING Driver.hack
+Time spent: 0.028448 seconds

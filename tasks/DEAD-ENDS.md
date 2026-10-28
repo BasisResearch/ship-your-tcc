@@ -522,3 +522,25 @@ requested corrections until the lead surfaced them explicitly.
   runtime membership to satisfy constructor arity. An erasure-only invocation
   in a fresh integration worktree also needs normal generated image symbols;
   retain its missing-file failure, then prepare them through the harness.
+
+- CSEM-10 (2026-10-28): redeclarations correctly retain the canonical symbol.
+  The first prototype gets Lean id 0; storing it emits zero bytes, and loading
+  chooses NULL before function-map lookup. OCaml has already consumed runtime
+  ids (`mine` = 483 on identical positioned input, 502 with injected builtins). Reserve zero at both Lean pipeline entries; do not change
+  valid redeclarations, Supported, proxy names or null decoding to mask this.
+- Redeclaration harness: ordinary OCaml preprocessing injects builtins that
+  consume ids and hide the Lean zero-seed defect in exported Cabs. A bare
+  `--cpp=cat` then fails on automatic `-I` flags. Retain both attempts; use the
+  existing independent raw_frontend_cat.py positioned-input hook and check full
+  Cabs/digest equality. Neither harness attempt is semantic agreement evidence.
+- Redeclaration controls: pinned OCaml and Lean both accept the invalid
+  `int mine(int); int mine;` function/object conflict; strict GCC and patched
+  tcc reject it. Preserve it separately from three correctly rejected constraint
+  controls. Historical name-based printf proxying is also still separate from
+  the repaired identity-aware raw path. Neither gap narrows Supported/Fits.
+
+- Redeclaration full-gate attempt 1 correctly stopped because this worktree
+  lacked the content key for the already-adopted allocation adapter. Reuse the
+  reviewed sol-csem-repin cache at key 9e775864dfd595f06f61463e4ff16d6664b5aa7dea800e471cd821462c73602f
+  through a local link, after its artifact/overlay manifest verifies; do not
+  repin, rewrite or rebuild a shared oracle cache to bypass the check.

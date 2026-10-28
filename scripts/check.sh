@@ -162,6 +162,11 @@ if [ -f lakefile.toml ] || [ -f lakefile.lean ]; then
     python3 scripts/check_library_identity.py --artifacts "$identity_checks/run" \
       || fail "resolved library identity (artifacts: $identity_checks/run)"
     echo "resolved library identity artifacts: $identity_checks/run"
+    redecl_checks=$(mktemp -d build/function-redeclaration-gate.XXXXXX)
+    ( source scripts/csem_env.sh
+      python3 scripts/check_function_redeclaration.py --out "$redecl_checks/run"
+    ) || fail "function redeclaration identity (artifacts: $redecl_checks/run)"
+    echo "function redeclaration artifacts: $redecl_checks/run"
   fi
   if [ "${1:-}" = "--compile-cut" ]; then
     # opt-in: the evaluator run of tcc's compile phase (TccCompileCut, ~2.5 CPU-hours

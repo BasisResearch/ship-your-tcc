@@ -75,9 +75,7 @@ def main():
   if q.returncode:row['status']='HARNESS_ERROR'
   else:
    envelope=json.loads(q.stdout);r=envelope['parse'];sem=envelope['semantics'];row['semantics']=sem
-   if name.startswith('redecl-pointer-'):
-    row['status']='INHERITED_FUNCTION_POINTER_GAP' if isinstance(sem,list) and sem and all(x['status']=='other-driver-error' and x.get('diagnostic')=="ill-formed program: `null function pointer'" for x in sem) else 'POINTER_CLASSIFICATION_CHANGED'
-   elif name in ['plant','user-looking','runtime-relabel','include-alias','replacement','argument','user-replacement','paste']:
+   if name in ['plant','user-looking','runtime-relabel','include-alias','replacement','argument','user-replacement','paste']:
     row['status']='PASS' if isinstance(sem,list) and sem and all(x['status']=='undefined' for x in sem) else 'SEMANTIC_DIFF'
    else:
     row['status']='PASS' if isinstance(sem,list) and sem and all(x['status']=='defined' and x['exit']==expected for x in sem) else 'SEMANTIC_DIFF'
@@ -117,6 +115,6 @@ def main():
  assert all(sha(p)==h for p,h in pins.items()),'pinned input/binary drift'
  (d/'results.json').write_text(json.dumps(dict(pins=pins,rows=rows),indent=2)+'\n')
  pointer_rows=[r for r in rows if r['case'].startswith('redecl-pointer-')]
- assert len(pointer_rows)==2 and pointer_rows[0]['semantics']==pointer_rows[1]['semantics'], 'shadowing changed the inherited pointer gap'
- return int(any(r['status'] not in ['PASS','INHERITED_FUNCTION_POINTER_GAP'] for r in rows))
+ assert len(pointer_rows)==2 and pointer_rows[0]['semantics']==pointer_rows[1]['semantics'], 'shadowing changed function-pointer identity'
+ return int(any(r['status'] != 'PASS' for r in rows))
 if __name__=='__main__':raise SystemExit(main())

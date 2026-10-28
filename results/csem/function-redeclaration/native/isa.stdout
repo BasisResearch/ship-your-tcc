@@ -1,0 +1,6 @@
+NOTE build/redecl-native-neutral/prog.elf(build/redecl-native-neutral/prog.elf) .text 8001efe0: 00100073 ebreak 
+NOTE build/redecl-native-neutral/prog.elf(build/redecl-native-neutral/prog.elf) .text 800223bc: 00100073 ebreak 
+NOTE build/redecl-native-neutral/prog.elf(build/redecl-native-neutral/prog.elf) .text 8002b3ac: 00100073 ebreak 
+NOTE build/redecl-native-neutral/prog.elf(build/redecl-native-neutral/prog.elf) .text 8003fcd8: 00100073 ebreak 
+NOTE build/redecl-native-neutral/prog.elf(build/redecl-native-neutral/prog.elf) .text 80040b4c: 00100073 ebreak 
+OK   build/redecl-native-neutral/prog.elf insns=105472 bad=0 notes=5 zero-pad=0

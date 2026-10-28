@@ -1,0 +1,10 @@
+[
+  "gcc",
+  "-std=c11",
+  "-pedantic-errors",
+  "-fno-builtin",
+  "-O0",
+  "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/after/sources/local-static.c",
+  "-o",
+  "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/after/local-static.exe"
+]

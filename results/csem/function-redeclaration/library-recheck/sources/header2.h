@@ -1,0 +1,1 @@
+#define LIBZERO 0

@@ -1,0 +1,556 @@
+{
+  "pins": {
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/default/backend/driver/main.exe": "a71dd0968846b72196506a7ce78cd300cb39c6a8a8b10e87945a44c30517d091",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_raw": "2a364b7249fefba96f3d23cbd20c89b1f482559ab35b30052913d4abf3c0ab01",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run": "8c33c3d9caa6f2e403ef49f37edd84055328ce4d09261bf42ae28174069acfad",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/internal-pdrm.c": "31f46a80d3214650555dfa7933629f509c12440e9bf8b67b4c9ffaa871c57e83",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/internal-dprm.c": "6e14a1936453b3805fb22c9656bf41299bbdbb33e3df9542d653fe2d74d19967",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/internal-pprdm.c": "e7ba5a84304d18d2d55285d97b026ba6a02ec92edfcc4efd6e37cfc3795a7834",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/internal-pmdr.c": "67a98758f58ad78b1f14505e62ee57e248c4b8ad0d30dba7572f9db7f4711fab",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/internal-dpmp.c": "e62d0a59e7f1f84bb8abdfdf53c6d16f950b9a5a0d1c379bbb8797082a60ca5f",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/internal-definition.c": "8621309d5b660a654c45eea3fa6406197dfa05a85b5360a2f1e192d59c93415e",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/internal-prototype-definition.c": "f0c25f693a0a5263ece324f98d23a713bd8ac9151594109d4de0e3830c4f03fc",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/external-pdrm.c": "709ad24430c4f6936c5e8ffb5e1e43df59bc0a557edab565083147a7c6bac418",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/external-dprm.c": "2875d0f1cf23b83c5121f60f5f29814101576b1313b5ecb5f42287a1f235133c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/external-pprdm.c": "014987d4404b1e6c040d18815db69749b6ebee434c4b82dd042428f39dfd1836",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/external-pmdr.c": "c6673500e6be1728f654db7ce2763d5256191585a066f531f12f785a02e43874",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/external-dpmp.c": "13cf2ce0b348a65819ff78a2231adce166e240aa87bf6c13028c9f4ff8871d16",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/external-definition.c": "4d3aabddf5e279317c0e142861f2df4ae7f3480ef992d7a6c9c5aeb7fc819e58",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/external-prototype-definition.c": "17474bc884861c253f5097724b4bc80aac7f63c6607c9131773331d07de42a68",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/neutral-minimized.c": "b8a7a9d32ed7551d5b015a5b1b53250e2d747122932a96c8299623cd181a185e",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/direct.c": "d2cf9c328206dec23113ade86154c1ad453ff55e3fcb5846124d0633e037ddb4",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/null-roundtrip.c": "c2992b33f70e9e99b581534c739f9c45c4d74adb603d2f0420db2e545efa5c64",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/local-static.c": "0d0a0116d250d17b8eec50b03a3290e41ca74f56e9666ac5534e55838267745e",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/array.c": "2fdc5470080b62ddb3b1ae0079ecd4419de61be073b12d145be97b15f710994e",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/struct.c": "20fac32ef399e52af5bc4e4a0c22f5cc6a0befb665d62fcae17ff28b77175dab",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/assign.c": "7c75ea8648e570d2ea198d2c9401e5d052dfdbf97afd06c0f8b770dd3444115c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/nested.c": "993cf092f7eec5ef5efd84b9619f6241abd913a8e9d5b6e22e29e2fa6e83fee2",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/shadow-object.c": "5bb543e063b4e304dd45be8878dbf6d88b6be4e358a09fc089567543fcc91923",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/bytes.c": "89c2b466b4e76cab01b53d1a4cbe8a51ed35a8041264d4c8c2fbcac43930cada",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/global.c": "25f1cd3bc76d5cbfe44e2594159481d2328bce3680dc068701de040219fbd011",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/different.c": "24c25f5036fda0a82dce70a35a349bab4674f4d1c378d2bafbcd35e7c6c01fda",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/zero-arg.c": "6347012b5f2a3918d3dd6ac671901547731c3b28c84aa5f648533bbd0fb1a65c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/proxy-name.c": "27ba07a44427d51b6d60cc9add532cdf1f207f2df3f24c994efddfd72eb51bf3",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/invalid-parameter.c": "f506a5eac45edd796219db1ad219093d3418c5af750b36ec2492bc26d9f700ef",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/invalid-return.c": "c8a25f0bc9fac0e56c0547d0555b4508c8244402f5ec9619c87eee432dadf347",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/invalid-redefinition.c": "d95518a6fb30dec23ee73b9877af1ee10cd0b19f74a5984b19acb85c3d75fdca",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/before/matrix/sources/invalid-object.c": "8cb860cdc9f82c877f90c6b1e204621a116c1a2fad0d4cb85bffe03c9cab4561"
+  },
+  "rows": [
+    {
+      "case": "internal-pdrm",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "diagnostic": "ill-formed program: `null function pointer'",
+          "status": "other-driver-error"
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": false
+    },
+    {
+      "case": "internal-dprm",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": true
+    },
+    {
+      "case": "internal-pprdm",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "diagnostic": "ill-formed program: `null function pointer'",
+          "status": "other-driver-error"
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": false
+    },
+    {
+      "case": "internal-pmdr",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "diagnostic": "ill-formed program: `null function pointer'",
+          "status": "other-driver-error"
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": false
+    },
+    {
+      "case": "internal-dpmp",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": true
+    },
+    {
+      "case": "internal-definition",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": true
+    },
+    {
+      "case": "internal-prototype-definition",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "diagnostic": "ill-formed program: `null function pointer'",
+          "status": "other-driver-error"
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": false
+    },
+    {
+      "case": "external-pdrm",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "diagnostic": "ill-formed program: `null function pointer'",
+          "status": "other-driver-error"
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": false
+    },
+    {
+      "case": "external-dprm",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": true
+    },
+    {
+      "case": "external-pprdm",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "diagnostic": "ill-formed program: `null function pointer'",
+          "status": "other-driver-error"
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": false
+    },
+    {
+      "case": "external-pmdr",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "diagnostic": "ill-formed program: `null function pointer'",
+          "status": "other-driver-error"
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": false
+    },
+    {
+      "case": "external-dpmp",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": true
+    },
+    {
+      "case": "external-definition",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": true
+    },
+    {
+      "case": "external-prototype-definition",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "diagnostic": "ill-formed program: `null function pointer'",
+          "status": "other-driver-error"
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": false
+    },
+    {
+      "case": "neutral-minimized",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "diagnostic": "ill-formed program: `null function pointer'",
+          "status": "other-driver-error"
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": false
+    },
+    {
+      "case": "direct",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": true
+    },
+    {
+      "case": "null-roundtrip",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "exit": 2,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": false
+    },
+    {
+      "case": "local-static",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "exit": 1,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": false
+    },
+    {
+      "case": "array",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "diagnostic": "ill-formed program: `null function pointer'",
+          "status": "other-driver-error"
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": false
+    },
+    {
+      "case": "struct",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "diagnostic": "ill-formed program: `null function pointer'",
+          "status": "other-driver-error"
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": false
+    },
+    {
+      "case": "assign",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "exit": 1,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": false
+    },
+    {
+      "case": "nested",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "exit": 1,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": false
+    },
+    {
+      "case": "shadow-object",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "exit": 1,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": false
+    },
+    {
+      "case": "bytes",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "exit": 1,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": false
+    },
+    {
+      "case": "global",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "exit": 1,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": false
+    },
+    {
+      "case": "different",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "diagnostic": "ill-formed program: `null function pointer'",
+          "status": "other-driver-error"
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": false
+    },
+    {
+      "case": "zero-arg",
+      "invalid_constraint": false,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "exit": 1,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "historical_exit": 0,
+      "gcc_exit": 0,
+      "pass": false
+    },
+    {
+      "case": "proxy-name",
+      "invalid_constraint": false,
+      "ocaml_exit": 1,
+      "gcc_compile_exit": 0,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "diagnostic": "ill-formed program: `null function pointer'",
+          "status": "other-driver-error"
+        }
+      ],
+      "historical_exit": 1,
+      "gcc_exit": 0,
+      "pass": false
+    },
+    {
+      "case": "invalid-parameter",
+      "invalid_constraint": true,
+      "ocaml_exit": 1,
+      "gcc_compile_exit": 1,
+      "raw_exit": 0,
+      "raw_semantics": {
+        "status": "elaboration-error"
+      },
+      "historical_exit": 1,
+      "pass": false
+    },
+    {
+      "case": "invalid-return",
+      "invalid_constraint": true,
+      "ocaml_exit": 1,
+      "gcc_compile_exit": 1,
+      "raw_exit": 0,
+      "raw_semantics": {
+        "status": "elaboration-error"
+      },
+      "historical_exit": 1,
+      "pass": false
+    },
+    {
+      "case": "invalid-redefinition",
+      "invalid_constraint": true,
+      "ocaml_exit": 1,
+      "gcc_compile_exit": 1,
+      "raw_exit": 0,
+      "raw_semantics": {
+        "status": "elaboration-error"
+      },
+      "historical_exit": 1,
+      "pass": false
+    },
+    {
+      "case": "invalid-object",
+      "invalid_constraint": true,
+      "ocaml_exit": 0,
+      "gcc_compile_exit": 1,
+      "raw_exit": 0,
+      "raw_semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "historical_exit": 0,
+      "pass": false
+    }
+  ]
+}

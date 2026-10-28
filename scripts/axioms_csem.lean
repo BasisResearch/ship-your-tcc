@@ -46,3 +46,5 @@ cones include the fork's opaque native seams (opaque constants, not axioms). -/
 #print axioms Tcc.CSem.verdicts_default
 #print axioms CerbMem.allocator_below_request_kills
 #print axioms CerbMem.allocator_active_sound
+
+#print axioms CerberusFresh.initialSymbolSupply_pos

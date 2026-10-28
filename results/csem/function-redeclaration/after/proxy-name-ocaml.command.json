@@ -1,0 +1,10 @@
+[
+  "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/default/backend/driver/main.exe",
+  "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/csem-704c4e69-e6d8db56/cerberus-lean/_build/install/default",
+  "--nolibc",
+  "--cpp=/usr/bin/python3 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/scripts/raw_frontend_cat.py",
+  "--exec",
+  "--batch",
+  "--mode=exhaustive",
+  "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/after/sources/proxy-name.c"
+]

@@ -38,9 +38,24 @@ def assertEqual {α : Type} [BEq α] [Repr α] (label : String) (got expected : 
     each draw returns the current supply and advances by one. -/
 example : LemLib.supplySplit 100 = (100, 101) := rfl
 
+/-- Any draw from a positive supply remains positive and advances to another
+positive supply. This uses the existing supplySplit, without changing numbering
+inside the generated model or its OCaml target. -/
+theorem positiveSupplyDraw (s : Nat) (h : 0 < s) :
+    0 < (LemLib.supplySplit s).1 ∧ 0 < (LemLib.supplySplit s).2 := by
+  exact ⟨h, Nat.succ_pos s⟩
+
+#print axioms positiveSupplyDraw
+
 def testRunDigest : String := "900150983cd24fb0d6963f7d28e17f72"
 
 def symId : sym → Nat := fun | Symbol _ n _ => n
+
+def testPipelineSeed : IO Bool := do
+  let (s, next) := @fresh_pretty ⟨"tu"⟩ CerberusFresh.initialSymbolSupply "ordinary"
+  let ok ← assertEqual "pipeline first symbol reserves NULL" (symId s) 1
+  let okNext ← assertEqual "pipeline supply advances" next 2
+  return ok && okNext
 
 def testSupplyThreading : IO Bool := do
   -- the digest the native global held before any TU set it (F1b: a parameter)
@@ -174,7 +189,7 @@ def testDigestParameter : IO Bool := do
 def main : IO UInt32 := do
   let mut passed := 0
   let mut failed := 0
-  for test in [testSupplyThreading, testSupplyFamily, testMd5Hex, testDigestParameter] do
+  for test in [testPipelineSeed, testSupplyThreading, testSupplyFamily, testMd5Hex, testDigestParameter] do
     if ← test then
       passed := passed + 1
     else

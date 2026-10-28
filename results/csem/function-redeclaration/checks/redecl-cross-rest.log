@@ -1,0 +1,25 @@
+test                   isa   elf-isa tcc=gcc   tcc=host  tcc-steps   gcc-steps   rc
+internal-prototype-definition ok    ok      PASS      PASS      3080        3088        0
+external-pprdm         ok    ok      PASS      PASS      3082        3088        0
+internal-pprdm         ok    ok      PASS      PASS      3080        3088        0
+assign                 ok    ok      PASS      PASS      3042        3045        0
+external-pmdr          ok    ok      PASS      PASS      3082        3088        0
+zero-arg               ok    ok      PASS      PASS      3039        3040        0
+proxy-name             ok    ok      PASS      PASS      3040        3043        0
+external-definition    ok    ok      PASS      PASS      3082        3088        0
+array                  ok    ok      PASS      PASS      3062        3045        0
+internal-dpmp          ok    ok      PASS      PASS      3080        3088        0
+external-dprm          ok    ok      PASS      PASS      3082        3088        0
+global                 ok    ok      PASS      PASS      3041        3043        0
+internal-pmdr          ok    ok      PASS      PASS      3080        3088        0
+internal-dprm          ok    ok      PASS      PASS      3080        3088        0
+struct                 ok    ok      PASS      PASS      3115        3044        0
+direct                 ok    ok      PASS      PASS      3031        3037        0
+shadow-object          ok    ok      PASS      PASS      3046        3049        0
+null-roundtrip         ok    ok      PASS      PASS      3029        3027        0
+internal-definition    ok    ok      PASS      PASS      3080        3088        0
+external-dpmp          ok    ok      PASS      PASS      3082        3088        0
+neutral-minimized      ok    ok      PASS      PASS      3034        3041        0
+local-static           ok    ok      PASS      PASS      3039        3042        0
+external-prototype-definition ok    ok      PASS      PASS      3082        3088        0
+tcc vs gcc-rv64i (Sail): pass=23 fail=0; tcc vs host gcc: pass=23 fail=0; isa-bad objects=0 elfs=0

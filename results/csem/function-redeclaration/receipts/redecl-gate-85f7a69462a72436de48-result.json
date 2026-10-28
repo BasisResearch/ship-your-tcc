@@ -1,0 +1,12 @@
+{
+  "request": "redecl-gate-85f7a69462a72436de48",
+  "request_id": "redecl-gate-85f7a69462a72436de48",
+  "exit": 1,
+  "log": "build/worker-build-redecl-gate-85f7a69462a72436de48.log",
+  "command": [
+    "scripts/check.sh",
+    "--csem"
+  ],
+  "source_hashes_verified": true,
+  "lead_review_required": "New task CSEM-10 on reviewed library/allocation combination 741660f. The lead runs the final combined full gate in sol-csem-repin; work here is isolated. Library candidate is fully validated; preserve allocation, identities and historical observations. Do not service old library requests. Use fresh redecl-* build/toolchain/commit IDs; exact source hashes and matching completed receipts are required before edits. Root worker service handles bus restrictions with the shared 12GB lock. No native/Sail image changes, no sum regeneration. Read-only adopted oracle/toolchain caches may be reused by content key.\n\nMain update: library/allocation combination ae10afd passed the full gate, 11 raw tests, 22 identity passes + two explicit pointer gaps, 5580 consumer checks, 20 maintained allocation controls and six default/historical checks. Fixture repair is now adopted at main 0ee229d: 1345/1815 matching fast arenas, 463 refusals, seven assembly gaps; all three recovered include/bitfield cases pass complete native Sail captures. Do not rebase frozen or dirty work; lead integrates. Shared source_fixtures.py is available on main, so preserve it on integration.\n\nLead review: the canonical symbol trace supports reserving zero at the two pipeline entry seams; preserve the generic supply/64-bit/function-address obligations. Please add the independently reproduced function/object name-constraint defect to CSEM-UPSTREAM.md with a minimal source, exact pristine OCaml pin/observation and GCC/tcc rejections (new ID after CSEM-10); keep it separate from the repaired local zero-seed defect. Ensure the 28 cross-compiled program Sail observations are labeled separately from the one full tcc-run native observation; no pooling into full-compiler runs. Your current report already makes the two retained matrix gaps explicit.\n"
+}

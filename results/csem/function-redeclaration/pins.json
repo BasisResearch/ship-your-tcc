@@ -1,0 +1,9 @@
+{
+  "base_revision": "741660fa328831c50d78ca076eccf817c2e5ec54",
+  "csem_revision": "cerberus-lean 704c4e697845127bced66c93fa0763eb51527ca4\nlem-lean e6d8db5680962f49060257d6c2bcb13c284b910f\n# cerberus-lean: OathTech/cerberus-lean, branch mdd/cerberus-lean,\n# commit 2026-10-26 17:26:39 UTC (lead-fetched current snapshot 2026-10-27).\n# lem-lean: OathTech/lem-lean, branch mdd/lean-backend,\n# commit 2026-10-22 01:33:30 UTC; matching LemLib and generator.\n# Upstream targets Lean 4.35.0; this fork retains approved Lean 4.34.0.\n# Imported with scripts/csem_import.sh; local replay and validation recorded\n# in csem/PORT-4.34.md and results/csem/repin-2026-10-27.md.\n",
+  "gcc": "gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0",
+  "lean": "Lean (version 4.34.0, x86_64-unknown-linux-gnu, commit 293d5d0c0c3f3dded4688b3ccd6a33939ac5102b, Release)",
+  "generator": "scripts/csem_regen.sh; pinned Lem e6d8db5680962f49060257d6c2bcb13c284b910f",
+  "final_build_receipt": "redecl-gate-43da13328e6a43ac3576",
+  "oracle_cache_key": "9e775864dfd595f06f61463e4ff16d6664b5aa7dea800e471cd821462c73602f"
+}

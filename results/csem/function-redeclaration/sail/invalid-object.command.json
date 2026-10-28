@@ -1,0 +1,8 @@
+[
+  "build/cross/riscv64-tcc",
+  "-std=c11",
+  "-c",
+  "results/csem/function-redeclaration/before/matrix/sources/invalid-object.c",
+  "-o",
+  "results/csem/function-redeclaration/sail/invalid-object.o"
+]

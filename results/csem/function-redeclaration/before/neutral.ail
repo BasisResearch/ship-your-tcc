@@ -1,0 +1,12 @@
+// declare mine WITH PROTO as function (signed int) returning signed int
+signed int mine(signed int x)
+{
+  return rvalue(x) + 10;
+}
+
+// declare main as function () returning signed int
+signed int main()
+{
+  signed int (* f) (signed int) = function_decay(mine);
+  return rvalue(f)(7) != 17;
+}

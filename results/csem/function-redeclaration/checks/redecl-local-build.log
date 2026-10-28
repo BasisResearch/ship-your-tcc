@@ -1,0 +1,2 @@
+Failed to connect to user scope bus via local transport: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user)
+csem_build: csem_raw csem_run fresh-int-test TccCSem: exit 1, wall 0 s

@@ -1,0 +1,13 @@
+{
+  "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/library-identity/pointer-adopted/neutral.c",
+  "source_sha256": "b8a7a9d32ed7551d5b015a5b1b53250e2d747122932a96c8299623cd181a185e",
+  "oracle": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/default/backend/driver/main.exe",
+  "oracle_sha256": "a71dd0968846b72196506a7ce78cd300cb39c6a8a8b10e87945a44c30517d091",
+  "layout_sha256": "6f00fe04561202adff1da57c86904c6905a9ea209221aca3049c8d6ab3cf77c4",
+  "canonical_mine_ids": [
+    483
+  ],
+  "environment": {
+    "SYT_RAW_LAYOUT": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/results/csem/function-redeclaration/same-source/neutral.pp"
+  }
+}

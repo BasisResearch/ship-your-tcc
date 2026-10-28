@@ -1271,7 +1271,7 @@ def runPipeline [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] (runtime : St
   -- (per-TU desugar + const-expr mini-runs + elaboration) and into the
   -- run-init seed below — collisions impossible by construction; the
   -- former 2^20 desugar/ambient stratification is gone.
-  let mut supply : Nat := 0
+  let mut supply : Nat := CerberusFresh.initialSymbolSupply
   match libc with
   | some (libcCore, libcTus) =>
     match ← loadLibc runtime quiet supply addressSpaceTop coreEvalStuff ailnames stdFunMap coreImpl libcCore libcTus with
