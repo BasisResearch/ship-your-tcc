@@ -38,14 +38,14 @@ pushes main without force. Record unsuccessful approaches in
 The launcher follows 4ct-digest's MANAGER.md/codexwork.sh workflow, adapted
 to this project's two-worker limit and shared Lean build lock.
 
-Current assignments, 2026-10-28: slot 1 runs tasks/f1-gnu-attributes.md in
-sol-csem-repin, providing independent F1 syntax and attribute meaning. Slot 2
+Current assignments, 2026-10-28: slot 1 runs tasks/f1-injected-bindings.md in
+sol-csem-repin from the reviewed GNU/origin combination. GNU syntax/layout
+is handed off as 44dc780, with combined validation running in sol-c11-line. Slot 2
 runs tasks/f3-typedef-alignment.md in sol-f2-tokens, repairing the observed
 compiler query mismatch and its executable model. The model-origin continuation
 is adopted after its combined gate. General declaration constraints
 (tasks/f1-declaration-constraints.md, CSEM-11), concrete bitfields
-(tasks/f1-bitfields.md), physical transformation provenance (tasks/f3-physical-origin-maps.md) and actual tccdefs
-alias meaning (tasks/f1-injected-bindings.md) remain queued. Pack/layout
+(tasks/f1-bitfields.md), physical transformation provenance (tasks/f3-physical-origin-maps.md) remain queued. Actual tccdefs alias meaning is slot 1's active target. Pack/layout
 consumption remains required. Keep these separate from user asm exclusions.
 
 Frozen build requests use the shared 12 GB lock. Changed inputs invalidate

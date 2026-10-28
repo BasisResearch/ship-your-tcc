@@ -409,3 +409,13 @@ statements. Whole-C construction, runtime alias meaning, fuel adequacy and
 binary refinement remain open. Failed setup runs are retained in
 results/model/ghost-origins-integration-2026-10-28.md. Slot 2 proceeds with the
 separate typedef-alignment compiler/model repair; no sum cuts are regenerated.
+
+GNU handoff under review (2026-10-28): candidate 44dc780 retains located GNU
+syntax and explicit aggregate/typedef layout. Its worker full gate passes
+with 2,190 unchanged inputs, 23 focused semantic agreements and six actual
+header parses. Model capacity interrupted final packaging; the lead retained
+746 hash-verified captures and all failed build/oracle receipts. Combined
+integration with adopted origins and symbol reservation is running with 3,573
+frozen inputs. Slot 1 now takes the required injected-binding meaning and
+Supported visitor connection; this candidate does not close ordinary raw
+semantics, whole-C parser coverage or any correctness theorem.
