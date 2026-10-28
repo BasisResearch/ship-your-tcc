@@ -14,6 +14,9 @@ def TokenString.eraseGhost (s : TokenString) : TokenString := { s with ghostOrig
 def MacroFrame.eraseGhost (f : MacroFrame) : MacroFrame :=
   { f with str := f.str.eraseGhost, prev_ptr := f.prev_ptr.map TokPtr.eraseGhost }
 
+def BufferedFile.eraseGhost (f : BufferedFile) : BufferedFile :=
+  { f with ghostPhysical := #[], ghostBuffer := #[], ghostPending := #[] }
+
 end Tcc.Model
 
 namespace Tcc.Model.Ghost
@@ -29,7 +32,8 @@ def erase (s : TccSt) : TccSt :=
   { s with
     ghostEnabled := false, ghostFixture := false, ghostParsing := false,
     ghostNextDepth := 0, ghostStringCapture := false, ghostLexOffset := 0,
-    ghostLexPhysicalStart := none, ghostLexSourceId := 0, ghostPriorOrigin := 0,
+    file := s.file.map BufferedFile.eraseGhost,
+    ghostLexCharStart := none, ghostLexPhysicalStart := none, ghostLexSourceId := 0, ghostPriorOrigin := 0,
     ghostTokOrigin := 0, ghostExpansionOrigin := 0,
     ghostOriginTable := #[⟨.unavailable,none,false⟩],
     ghostSymD := {}, ghostSymE := {}, ghostArgIndex := {}, ghostLastOrigins := #[],
@@ -38,9 +42,52 @@ def erase (s : TccSt) : TccSt :=
     pragma_emitted := s.pragma_emitted.eraseGhost,
     tokstr_buf := s.tokstr_buf.eraseGhost,
     unget_buf := s.unget_buf.eraseGhost,
-    ghostSaved := #[], ghostReplay := {}, ghostFdSources := {}, ghostDirective := none, ghostSources := #[], ghostOrigins := #[], ghostPragmas := #[],
+    ghostSaved := #[], ghostReplay := {}, ghostFdSources := {}, ghostDirective := none, ghostSources := #[], ghostClosedPhysical := {}, ghostOrigins := #[], ghostPragmas := #[],
     ghostInput := none, ghostCurrent := 0, ghostPrior := 0,
     ghost := #[], ghostAudit := #[], ghostNormalizations := #[], ghostDrops := #[], ghostTokenErrors := #[] }
+
+/-- Supplied by the F3/F6 induction over actual reads, trigraph replacement,
+held-byte refill, ungets and successful splice branches. Finite comparisons
+supply neither these universal laws nor RawErasure_Statement. -/
+structure PhysicalTransformObligations : Prop where
+  blockErasure : ∀ bytes origins, (trigraphBlock bytes origins).1 = tcc_trigraphs bytes
+  blockShape : ∀ bytes origins, origins.size = bytes.size →
+    (trigraphBlock bytes origins).2.size = (trigraphBlock bytes origins).1.size
+  spliceErasure : ∀ st first last,
+    match (ghostSplice first last).run st with
+    | .ok _ after => erase after = erase st
+    | .error _ _ => False
+  refillErasure : ∀ R st,
+    match (handle_eob R).run st, (handle_eob R).run (erase st) with
+    | .ok a after, .ok b plain => a = b ∧ erase after = erase plain
+    | .error a after, .error b plain => a = b ∧ erase after = erase plain
+    | _, _ => False
+
+/-- Open physical interval law for the actual trigraph transform. The F3/F6
+read/refill invariant must supply contiguous input intervals, carry held bytes,
+and transport this local law through successful LF/CRLF splices and ungets.
+This states the transform's meaning without importing spec output into it. -/
+def PhysicalOriginMap_Statement : Prop :=
+  ∀ bytes,
+    let raw := bytes.data.mapIdx (fun i c =>
+      ({ byte := c, start := i, stop := i+1 } : PhysicalChar))
+    let mapped := (trigraphBlock bytes raw).2
+    mapped.toList.Pairwise (fun a b => a.stop ≤ b.start) ∧
+    ∀ c ∈ mapped.toList,
+      c.start < c.stop ∧ c.stop ≤ bytes.size ∧
+      (trigraphBlock (bytes.extract c.start c.stop) #[]).1 = ⟨#[c.byte]⟩
+
+/-- Open CRLF correspondence for the actual trigraph-block shadow, with no
+restriction on CRLF, lone CR, CR at EOF or absent terminal newline. This is
+an obligation about a view, not a construction from spec preprocessing. -/
+def PhysicalReadView_Statement : Prop :=
+  ∀ bytes,
+    let raw := bytes.data.mapIdx (fun i c =>
+      ({ byte := c, start := i, stop := i+1 } : PhysicalChar))
+    let mapped := (trigraphBlock bytes raw).2
+    (normalizePhysical mapped.toList).map (fun c => (c.byte,c.start,c.stop)) =
+      (CSem.Pre.locatedPhase1 true bytes.toList ⟨0,1,1⟩ []).map
+        (fun c => (c.c,(c.physical.getD default).1.offset,(c.physical.getD default).2.offset))
 
 def action (R : Rec) (src : ByteArray) : M Unit := do
   tccpp_new R

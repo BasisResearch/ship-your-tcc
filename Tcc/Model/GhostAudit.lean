@@ -8,3 +8,8 @@ import Tcc.Model.GhostDriver
 #print axioms Tcc.Model.Ghost.RawConstruction_Statement
 #print axioms Tcc.Model.Ghost.RawParserAgreement_Statement
 #print axioms Tcc.Model.Ghost.NormalizationAgreement_Statement
+
+#print axioms Tcc.Model.Ghost.PhysicalTransformObligations
+#print axioms Tcc.Model.Ghost.PhysicalOriginMap_Statement
+
+#print axioms Tcc.Model.Ghost.PhysicalReadView_Statement

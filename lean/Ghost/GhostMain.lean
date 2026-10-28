@@ -19,6 +19,19 @@ def errorText : Err → String
 def sectionBytes (s : TccSt) : Json := toJson (s.secs.toList.map fun sec =>
   (sec.name.toList.map UInt8.toNat, sec.data.toList.map UInt8.toNat, sec.data_offset, sec.reloc))
 
+def spanJson (s : CSem.Pre.SourceSpan) : Json := Json.mkObj [
+  ("opened_as",toJson (s.openedAs.map UInt8.toNat)),
+  ("identity",toJson (s.identity.map (List.map UInt8.toNat))),
+  ("start",toJson s.start.offset),("stop",toJson s.stop.offset)]
+
+def logicalJson (cs : List Ghost.LogicalChar) : Json := Json.arr (cs.toArray.map fun c =>
+  Json.arr #[toJson c.byte.toNat,toJson c.start,toJson c.stop,toJson c.synthesized])
+
+def physicalLog (s : TccSt) (id : Nat) : Option (Array Ghost.PhysicalChar) :=
+  match s.file.find? (fun f => f.id == id) with
+  | some f => some f.ghostPhysical
+  | none => s.ghostClosedPhysical.get? id
+
 def modelMetadata (s : TccSt) : List (String × Json) :=
   let input := s.ghostInput
   [("normalizations",GhostExport.normalizations s),("tokens",toJson (((input.map (·.spelling)).getD #[]).toList.map fun t => (reprStr t.kind,t.spell.map UInt8.toNat))),
@@ -26,11 +39,14 @@ def modelMetadata (s : TccSt) : List (String × Json) :=
    ("model_origins",Json.arr (s.ghostOrigins.map fun o => Json.mkObj [
      ("source",toJson o.source),("buffer_offset",toJson o.bufferOffset),
      ("physical_offset",toJson o.physicalOffset),("presumed",toJson (o.presumed.toList.map UInt8.toNat)),
-     ("line",toJson o.line),("includes",toJson o.includeFiles),("macro_frames",toJson o.macroFrames)])),
+     ("line",toJson o.line),("includes",toJson o.includeFiles),("macro_frames",toJson o.macroFrames),("physical_segments",toJson (o.segments.toList.map spanJson))])),
    ("sources",Json.arr (s.ghostSources.map fun f => Json.mkObj [
      ("id",toJson f.id),("opened_as",toJson (f.openedAs.toList.map UInt8.toNat)),("contents",toJson (f.contents.toList.map UInt8.toNat)),
      ("identity",toJson (f.identity.map (List.map UInt8.toNat))), ("generated",toJson f.generated),
-     ("included_at",toJson (f.includedAt.map reprStr)), ("include_complete",toJson f.includeComplete)])),
+     ("included_at",toJson (f.includedAt.map reprStr)), ("include_complete",toJson f.includeComplete),
+     ("logical_view",match physicalLog s f.id with
+       | some chars => logicalJson (Ghost.logicalView chars)
+       | none => Json.null)])),
    ("pragmas",Json.arr (s.ghostPragmas.map fun p => Json.mkObj [
      ("before_token",toJson p.beforeToken),("keyword",toJson p.keyword.toInt),
      ("pack_before",toJson (p.packBefore.toList.map Int32.toInt)),
@@ -60,7 +76,8 @@ def main (args : List String) : IO UInt32 := do
     let plain := Ghost.runRaw src fs.files false
     let s := match result with | .ok _ s | .error _ s => s
     let p := match plain with | .ok _ s | .error _ s => s
-    let base := [("section_bytes_equal",toJson (sectionBytes s == sectionBytes p)),
+    let base := [("console_equal",toJson (s.console == p.console)),
+      ("section_bytes_equal",toJson (sectionBytes s == sectionBytes p)),
       ("audit",Json.arr (s.ghostAudit.map fragmentJson)),
       ("token_errors",toJson s.ghostTokenErrors),
       ("pragma_effects",toJson s.ghostPragmas.size)]
@@ -97,7 +114,10 @@ def main (args : List String) : IO UInt32 := do
       ("origins",toJson (input.origins.toList.map reprStr)),
       ("sources",Json.arr (pp.sources.toArray.map fun f => Json.mkObj [
         ("opened_as",toJson (f.openedAs.map UInt8.toNat)), ("contents",toJson (f.contents.map UInt8.toNat)),
-        ("identity",toJson (f.identity.map (List.map UInt8.toNat))), ("included_at",toJson (f.includedAt.map reprStr))]))]).compress)
+        ("identity",toJson (f.identity.map (List.map UInt8.toNat))), ("included_at",toJson (f.includedAt.map reprStr)),
+        ("logical_view",logicalJson ((CSem.Pre.phases12 cfg f.contents).map fun c =>
+          let p := c.physical.getD default
+          ⟨c.c,p.1.offset,p.2.offset,p.1.offset == p.2.offset⟩))]))]).compress)
     return 0
   if mode == "spec" then
     match parsePositioned { gnu := true } input.positioned with

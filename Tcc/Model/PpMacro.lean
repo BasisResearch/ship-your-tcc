@@ -72,26 +72,20 @@ inductive NL where
   | redo | parseSharp | identSlow | maybeSpace | maybeNewline | parseSimple | identFast | parseNum | strConst | done | keep
   deriving BEq, Inhabited
 
-/-- A cursor is tied to a particular source opening before lexing starts.
-Refill may replace the buffer while one token is being read. A non-identity
-physical buffer (including phase-one transformations) is an explicit gap. -/
+/-- Opening-local read identities survive refill. This cursor is captured
+before the lexer consumes the occurrence, never by matching token spellings. -/
 def ghostLexStart (p : Nat) : M Unit := do
   let st ← get
   if !st.ghostEnabled then return
   let f := (st.file.head?).getD default
-  let fd := st.fds.getD f.fd.toNat' none
-  let raw := (fd.map (·.data)).getD ByteArray.empty
-  let readEnd := (fd.map (·.pos)).getD 0
-  let base := readEnd-(f.buf_end-f.bufStart)
-  let identity := f.fd >= 0 && f.trigraph_pending == 0 &&
-    raw.extract base readEnd == f.buf.extract f.bufStart f.buf_end
+  let first := f.ghostBuffer.getD p none
   modify fun s => { s with
-    ghostLexOffset := p, ghostLexSourceId := f.id,
-    ghostLexPhysicalStart := if identity && f.bufStart <= p && p <= f.buf_end then some (base+p-f.bufStart) else none }
+    ghostLexOffset := p, ghostLexSourceId := f.id, ghostLexCharStart := first,
+    ghostLexPhysicalStart := first.bind (fun i => (f.ghostPhysical[i]?).map (·.start)) }
 
-/-- Record the modeled physical lexer occurrence before any conversion or
-macro substitution. Synthetic model buffers are explicitly unavailable but
-complete as synthetic origins; unverified physical mappings remain gaps. -/
+/-- Record a token's actual surviving physical pieces. The independent Origin
+contract is their bounding span, including interior deleted splice bytes.
+Generated buffers remain explicitly synthetic; missing maps remain gaps. -/
 def ghostLexOrigin : M Unit := do
   let st ← get
   if !st.ghostEnabled then return
@@ -104,25 +98,34 @@ def ghostLexOrigin : M Unit := do
     modify fun s => { s with ghostTokOrigin := id }
     return
   let source := st.ghostSources.find? (fun x => x.id == f.id)
-  let raw := (source.map (·.contents)).getD ByteArray.empty
-  let readEnd := ((st.fds.getD f.fd.toNat' none).map (·.pos)).getD 0
-  let offset := st.ghostLexPhysicalStart.getD 0
-  let obs ← ppObservation
-  let base := readEnd-(f.buf_end-f.bufStart)
-  let identity := f.trigraph_pending == 0 && raw.extract base readEnd == f.buf.extract f.bufStart f.buf_end
-  let verified := source.isSome && st.ghostLexSourceId == f.id && st.ghostLexPhysicalStart.isSome && identity &&
-    raw.extract offset (offset+obs.spell.size) == obs.spell
-  let before := (raw.extract 0 offset).toList
-  let col := (before.reverse.takeWhile (· != 10)).length+1
-  let line := before.count 10+1
-  let anchor : Ghost.ModelOrigin := ⟨f.id,st.ghostLexOffset,
-    if verified then some offset else none,f.filename,st.tok_line.toNat',
-    st.file.toArray.map (·.id),st.macro_stack.toArray.map (·.id)⟩
+  let first := st.ghostLexCharStart
+  let last := f.ghostBuffer.getD f.buf_ptr none
+  let chars := (f.ghostPhysical.extract (first.getD 0) (last.getD 0)).filter (!·.removed)
+  let verified := source.isSome && st.ghostLexSourceId == f.id && first.isSome && last.isSome &&
+    last.getD 0 <= f.ghostPhysical.size && !chars.isEmpty &&
+    chars.all (fun c => c.start < c.stop && c.stop <= (source.map (·.contents.size)).getD 0)
+  let offset := (chars.getD 0 default).start
+  let stop := ((chars.back?).getD default).stop
+  let src := source.getD { id := 0, openedAs := ByteArray.empty, contents := ByteArray.empty }
+  let span := src.span offset (stop-offset)
+  let segments := chars.foldl (fun acc c =>
+    match acc.back? with
+    | some prev => if prev.stop.offset == c.start then
+        acc.pop.push (src.span prev.start.offset (c.stop-prev.start.offset))
+      else acc.push (src.span c.start (c.stop-c.start))
+    | none => acc.push (src.span c.start (c.stop-c.start))) (#[] : Array CSem.Pre.SourceSpan)
+  let anchor : Ghost.ModelOrigin := {
+    source := f.id, bufferOffset := st.ghostLexOffset,
+    physicalOffset := if verified then some offset else none,
+    presumed := f.filename, line := st.tok_line.toNat',
+    includeFiles := st.file.toArray.map (·.id), macroFrames := st.macro_stack.toArray.map (·.id),
+    segments := if verified then segments else #[] }
   let origin : CSem.Pre.Origin := if verified then .source
-    ⟨⟨(source.map (·.openedAs.toList)).getD [],(source.map (·.identity)).getD [],
-      ⟨offset,line,col⟩,⟨offset+obs.spell.size,line,col+obs.spell.size⟩⟩,
-      f.filename.toList,st.tok_line.toNat',st.tok_line.toNat',(source.map (·.includes)).getD []⟩ else .unavailable
-  let id ← gorigin origin (some anchor) (verified && (source.map (·.includeComplete)).getD false)
+    {
+      physical := span, presumed := f.filename.toList, line := st.tok_line.toNat',
+      endLine := st.tok_line.toNat' + span.stop.line-span.start.line, includes := src.includes }
+    else .unavailable
+  let id ← gorigin origin (some anchor) (verified && src.includeComplete)
   modify fun s => { s with ghostTokOrigin := id }
 
 /-- `next_nomacro()` -/
@@ -187,21 +190,23 @@ def next_nomacro (R : Rec) : M Unit := do
         else lbl := .identFast
       else if c == 76 || c == 117 || c == 85 then
         let original := c
+        let originalOrigin ← ghostCharAt p
         let (c', p') ← peekc R p
         c := c'; p := p'
         literalPrefix := original
         if original == 117 && c == 56 then
+          let eightOrigin ← ghostCharAt p
           let (c', p') ← peekc R p
           c := c'; p := p'
           if c == 34 then
             literalPrefix := 56; lbl := .strConst
           else
-            p := p - 1; wrb p 56
-            p := p - 1; wrb p original; c := original
+            p := p - 1; wrb p 56 eightOrigin
+            p := p - 1; wrb p original originalOrigin; c := original
             lbl := .identFast
         else if c == 39 || c == 34 then lbl := .strConst
         else
-          p := p - 1; wrb p original; c := original
+          p := p - 1; wrb p original originalOrigin; c := original
           lbl := .identFast
       else if (c ≥ 97 && c ≤ 122) || (c ≥ 65 && c ≤ 90) || c == 95 then
         lbl := .identFast
@@ -211,20 +216,22 @@ def next_nomacro (R : Rec) : M Unit := do
         c := c'; p := p'
         lbl := .parseNum
       else if c == 46 then
+        let dotOrigin ← ghostCharAt p
         let (c', p') ← peekc R p
         c := c'; p := p'
         if isNum c then
           t := 46; lbl := .parseNum
         else if ((← isidnum 46) &&& IS_ID != 0) && ((← isidnum c) &&& (IS_ID ||| IS_NUM) != 0) then
-          p := p - 1; wrb p 46; c := 46
+          p := p - 1; wrb p 46 dotOrigin; c := 46
           lbl := .identFast
         else if c == 46 then
+          let secondDotOrigin ← ghostCharAt p
           let (c', p') ← peekc R p
           c := c'; p := p'
           if c == 46 then
             p := p + 1; setTok TOK_DOTS
           else
-            p := p - 1; wrb p 46; setTok 46
+            p := p - 1; wrb p 46 secondDotOrigin; setTok 46
           lbl := .done
         else
           setTok 46; lbl := .done
@@ -293,10 +300,11 @@ def next_nomacro (R : Rec) : M Unit := do
           else
             setTok TOK_DG_SHARP
             if c == 37 then
+              let percentOrigin ← ghostCharAt p
               let (c', p') ← peekc R p
               c := c'; p := p'
               if c == 58 then p := p + 1; setTok TOK_DG_PASTE
-              else p := p - 1; wrb p 37
+              else p := p - 1; wrb p 37 percentOrigin
             lbl := .done
         else
           if c == 62 then p := p + 1; setTok TOK_DG_RBRACE
@@ -681,6 +689,7 @@ def peek_file (R : Rec) (ws0 : Option TokenString) : M (Int32 × Option TokenStr
     p := p'
     let mut c := c0
     if c == 47 then
+      let slashOrigin ← ghostCharAt p
       let (c1, p'') ← peekc R p
       p := p''
       if c1 == 42 then
@@ -690,7 +699,7 @@ def peek_file (R : Rec) (ws0 : Option TokenString) : M (Int32 × Option TokenStr
         p ← parse_line_comment R p
         p := p - 1; c := 32
       else
-        p := p - 1; wrb p 47
+        p := p - 1; wrb p 47 slashOrigin
         setBufPtr p
         return (47, ws)
     else if c == 32 || c == 9 then

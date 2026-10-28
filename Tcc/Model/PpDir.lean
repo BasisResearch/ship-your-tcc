@@ -736,14 +736,20 @@ def ghostDirectiveSpan : M (Option CSem.Pre.SourceSpan) := do
   if !s.ghostEnabled then return none
   let f := (s.file.head?).getD default
   let some src := s.ghostSources.find? (fun x => x.id == f.id) | return none
-  let offset := if src.generated && src.contents == f.buf.extract f.bufStart f.buf_end then
-      some (s.ghostLexOffset-f.bufStart)
-    else if s.ghostLexSourceId == f.id then s.ghostLexPhysicalStart else none
-  let some offset := offset | return none
-  let width := if src.contents.get! offset == 35 then 1
-    else if src.contents.extract offset (offset+2) == "%:".toUTF8 then 2 else 0
-  if width == 0 then return none
-  return some (src.span offset width)
+  if src.generated && src.contents == f.buf.extract f.bufStart f.buf_end then
+    let offset := s.ghostLexOffset-f.bufStart
+    let width := if src.contents.get! offset == 35 then 1
+      else if src.contents.extract offset (offset+2) == "%:".toUTF8 then 2 else 0
+    return if width == 0 then none else some (src.span offset width)
+  if s.ghostLexSourceId != f.id then return none
+  let some first := s.ghostLexCharStart | return none
+  let chars := (f.ghostPhysical.extract first f.ghostPhysical.size).filter (!·.removed)
+  let some c := chars[0]? | return none
+  if c.byte == 35 then return some (src.span c.start (c.stop-c.start))
+  if c.byte == 37 then
+    let some d := chars[1]? | return none
+    if d.byte == 58 then return some (src.span c.start (d.stop-c.start))
+  return none
 
 /-- Directive operands have preprocessing syntax, not phase-seven parser
 syntax. The existing directive still executes once with the same state. -/

@@ -224,6 +224,7 @@ structure TccSt where
   ghostStringCapture : Bool := false
   ghostLexOffset : Nat := 0
   ghostLexPhysicalStart : Option Nat := none
+  ghostLexCharStart : Option Nat := none
   ghostLexSourceId : Nat := 0
   ghostPriorOrigin : Nat := 0
   ghostTokOrigin : Nat := 0
@@ -238,6 +239,7 @@ structure TccSt where
   ghostFdSources : Std.HashMap Nat Ghost.OpenedFile := {}
   ghostDirective : Option CSem.Pre.SourceSpan := none
   ghostSources : Array Ghost.ModelSource := #[]
+  ghostClosedPhysical : Std.HashMap Nat (Array Ghost.PhysicalChar) := {}
   ghostOrigins : Array Ghost.ModelOrigin := #[]
   ghostPragmas : Array Ghost.PragmaEffect := #[]
   ghostInput : Option Ghost.Input := none

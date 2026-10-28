@@ -29,6 +29,44 @@ CASES={
  'include-alias':'#include "dir/../leaf.h"\nint n=VALUE;\n',
  'varargs':'#define V(x,...) x , ##__VA_ARGS__\nint a[]={V(1),V(2,3)};\n',
 }
+# Each padding prefix ends before the marked transformation at an exact byte.
+def at(offset, body):
+ assert offset >= 4
+ return '/*' + ' '*(offset-4) + '*/' + body
+CASES.update({
+ 'splice-crlf':'int lo\\\r\nngname=1;\n',
+ 'splice-macro':'#define NA\\\nME(x) x+\\\n1\nint n=NAME(2);\n',
+ 'splice-literal':'char *s="ab\\\ncd"; int c=\'a\\\r\nb\';\n',
+ 'splice-line':'#line 90 "label.c"\nint lo\\\nngname=1; int n=__LINE__;\n',
+ 'trigraph-nine':"??=define N 2\nint a??(2??) = ??<1,N??>; int n=??-1 ??! (2 ??' 3); char *s=\"??/n\";\n",
+ 'trigraph-splice':'int lo??/\nngname=1;\n',
+ 'trigraph-splice-crlf':'int lo??/\r\nngname=1;\n',
+ 'include-transformed':'??=include "outer.h"\n%\\\n:include "outer.h"\nint n=VALUE;\n',
+ 'include-spliced':'#inc\\\nlude "le\\\r\naf.h"\nint n=VALUE;\n',
+ # Trailing question marks are legal within a final line comment. These
+ # exercise held-byte flush at EOF without turning parser failure into success.
+ 'tail-question':'int n; // ?',
+ 'tail-two-questions':'int n; // ??',
+})
+for offset in [8190,8191,8192]:
+ CASES[f'boundary-trigraph-{offset}']=at(offset-8,'int n=1 ??! 2;\n')
+ CASES[f'boundary-questions-{offset}']=at(offset-9,'char *s="??";\n')
+ CASES[f'boundary-held-{offset}']=at(offset,'??=define N 2\nint n=N;\n')
+ CASES[f'boundary-splice-{offset}']=at(offset-6,'int lo\\\nngname=1;\n')
+ CASES[f'boundary-crlf-{offset}']=at(offset-6,'int lo\\\r\nngname=1;\n')
+ CASES[f'boundary-tri-splice-{offset}']=at(offset-6,'int lo??/\r\nngname=1;\n')
+ CASES[f'boundary-prefix-{offset}']=at(offset-4,'int u8name;\n')
+
+CASES.update({
+ 'plain-crlf':'int x;\r\nint y;\r\n',
+ 'lone-cr':'int x;\rint y;\n',
+ 'cr-eof':'int x;\r',
+ 'no-terminal-lf':'int x;',
+ 'splice-no-new-crlf':'int x;\r\\\n\nint y;\n',
+})
+for offset in [8191,8192]:
+ CASES[f'boundary-plain-crlf-{offset}']=at(offset-6,'int x;\r\nint y;\r\n')
+
 FILES={
  'include-repeat-declarations':[('/decl.h','extern int repeated;\n')],
  'include-line':[('/line.h','#line 700 "virtual.h"\n#define VALUE 11\nextern int line_name;\n')],
@@ -36,10 +74,15 @@ FILES={
  'include-repeat':[('/empty.h',''),('/again.h','extern int repeated;\n#define VAL 9\n')],
  'include-alias':[('/dir/empty.h',''),('/leaf.h','#define VALUE 11\nextern int leaf;\n')],
 }
-# Retained, diagnosed coverage failures, never counted as exact controls.
-DIAGNOSTIC={'splice','trigraph'}
+FILES.update({
+ 'include-transformed':[('/outer.h','??=include "leaf.h"\nextern int outer;\n'),('/leaf.h','#line 700 "label.h"\n#define VALUE 2\nextern int le\\\naf;\n')],
+ 'include-spliced':[('/leaf.h','extern int le\\\naf;\n#define VALUE 2\n')],
+})
+
+# Promoted only after the independent comparisons pass.
+DIAGNOSTIC=set()  # Both original gaps passed independent physical-3 comparisons.
 def source_view(s):
- return {k:s[k] for k in ['opened_as','identity','contents','included_at']}
+ return {k:s[k] for k in ['opened_as','identity','contents','included_at','logical_view']}
 def compare(m,s):
  first=None;issue=None;start=0
  physical=[x for x in m.get('sources',[]) if not x.get('generated')]
@@ -53,7 +96,9 @@ def compare(m,s):
  spec_sources=s.get('sources',[])
  if not spec_sources or bytes(spec_sources[0]['opened_as'])!=b'<command line>' or spec_sources[0]['contents'] or spec_sources[0]['included_at'] is not None:
   return 'independent no-predefs fixture has unexpected source prefix',None,0
- if m.get('token_errors'):issue='model has incomplete origins'
+ if any(x.get('logical_view') is None for x in model_sources):issue='missing actual physical read log'
+ elif m.get('section_bytes_equal') is not True or m.get('console_equal') is not True:issue='ghost on/off bytes differ'
+ elif m.get('token_errors'):issue='model has incomplete origins'
  elif s['status']!='ok':issue='spec has no complete origin fixture'
  elif len(m['model_origins'])!=len(m['tokens']):issue='model anchor table is not parallel'
  else:
@@ -79,6 +124,9 @@ def omission_checks(m,s):
  issue,diff,_=compare(x,s);checks['unmatched_prefix_tokens_rejected']=bool(issue or diff)
  x=copy.deepcopy(m);x['sources']=[]
  issue,diff,_=compare(x,s);checks['missing_model_openings_rejected']=bool(issue or diff)
+ x=copy.deepcopy(m)
+ next(f for f in x['sources'] if not f.get('generated'))['logical_view']=None
+ issue,diff,_=compare(x,s);checks['missing_physical_log_rejected']=bool(issue or diff)
  assert all(checks.values()),checks
  return checks
 
@@ -89,7 +137,7 @@ def main():
  exe=ROOT/'.lake/build/bin/tcc_ghost';binary=sha(exe);dest=a.out.resolve();dest.mkdir(parents=True,exist_ok=True);rows=[];harness_checks={}
  for name,source in CASES.items():
   if a.case and name not in a.case:continue
-  src=dest/(name+'.c');src.write_text(source+'\n');h=sha(src);data={}
+  src=dest/(name+'.c');src.write_text(source+('' if name.startswith('tail-') or name in {'cr-eof','no-terminal-lf'} else '\n'));h=sha(src);data={}
   files=dest/(name+'.files.json');files.write_text(json.dumps(FILES.get(name,[]))+'\n');fh=sha(files)
   for mode in ['raw-model','origin-spec']:
    p=subprocess.run([str(exe),mode,str(src),"--files",str(files)],capture_output=True,text=True,timeout=90,env={**os.environ,'LEAN_ABORT_ON_PANIC':'1'})
@@ -97,6 +145,13 @@ def main():
    assert p.returncode==0,(mode,p.returncode,p.stderr)
    data[mode]=json.loads(p.stdout)
   m,s=data['raw-model'],data['origin-spec'];issue,first,start=compare(m,s)
+  expected_segments={
+   'splice':[[4,6],[8,14]], 'splice-crlf':[[4,6],[9,15]],
+   'trigraph-splice':[[4,6],[10,16]], 'trigraph-splice-crlf':[[4,6],[11,17]],
+  }
+  if name in expected_segments and not issue and first is None:
+   actual=[[x['start'],x['stop']] for x in m['model_origins'][start+1]['physical_segments']]
+   if actual!=expected_segments[name]:issue='wrong independent physical segment endpoints'
   exact=not issue and first is None
   row=dict(case=name,required_exact=name not in DIAGNOSTIC,source_sha256=h,files_sha256=fh,origin_exact=exact,issue=issue,first_difference=first,cabs_status=m['status'],token_errors=len(m.get('token_errors',[])))
   if not issue:row['uncompared_header_prefix_tokens']=start

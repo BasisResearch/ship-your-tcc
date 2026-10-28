@@ -389,6 +389,8 @@ def tcc_close : M Unit := do
   let s ← get
   match s.file with
   | bf :: rest =>
+    if s.ghostEnabled && bf.fd >= 0 then
+      modify fun st => { st with ghostClosedPhysical := st.ghostClosedPhysical.insert bf.id bf.ghostPhysical }
     if bf.fd > 0 then
       Host.close bf.fd
       modify fun s => { s with total_lines := s.total_lines + bf.line_num - 1 }

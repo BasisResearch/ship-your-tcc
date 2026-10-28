@@ -714,3 +714,15 @@ requested corrections until the lead surfaced them explicitly.
   not independent raw preprocessing or compilerInjected provenance. Preserve
   those valid component counts and add the actual Raw.checked cfgTcc comparison
   for the binding-origin task; never feed spec Cabs back into model construction.
+- Physical origins (2026-10-28): physical-1 failed on two multiline Lean
+  record layouts; its receipt verifies unchanged inputs and exit 1. Physical-2
+  built but its first real comparison panicked when a synthetic lexer unget
+  wrote an absent physical map. Preserve generated buffers as synthetic and
+  guard shadow writes; never invent a physical map/default offset for them.
+- Raw shadow logs retain unspliced CR and LF separately. An early arbitrary
+  completed-log premise would equate that representation directly with the
+  spec's CRLF-collapsed phase12 and conceal ordinary inputs. Use an explicit
+  independent logical view of the actual shadow log and a typed phase-one
+  correspondence. Normalize only physically adjacent CRLF: splice deletion
+  must not create a second phase-one transformation. Keep lone CR, CR-at-EOF
+  and synthesized terminal LF distinct from actual physical reads.

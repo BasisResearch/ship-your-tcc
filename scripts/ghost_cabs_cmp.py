@@ -84,6 +84,7 @@ def source_pins():
         'Tcc/ModelMain.lean','lean/Ghost/GhostMain.lean','Spec/ImageFiles.lean',
         'Spec/Pre/Tcc/Cfg.lean','Spec/Pre/Tcc/ImageFS.lean',
         'scripts/ghost_cabs_cmp.py','scripts/ghost_build_request.py',
+        'scripts/ghost_origins_cmp.py','scripts/physical_build_request.py','scripts/physical_onoff_cmp.py',
         'lakefile.toml','lake-manifest.json','lean-toolchain','vendor/TINYCC_REV',
         'vendor/CSEM_REV']}
     paths |= set(ROOT.glob('patches/*.patch'))

@@ -41,6 +41,43 @@ structure OpenedFile where
   resolved : ByteArray
   contents : ByteArray
 
+/-- One byte emitted by the actual model refiller. Trigraphs own three
+physical bytes; deleted splice bytes remain recorded with `removed = true`.
+Indices into this opening-local log survive buffer replacement and ungets. -/
+structure PhysicalChar where
+  byte : UInt8 := 0
+  start : Nat := 0
+  stop : Nat := 0
+  removed : Bool := false
+  deriving Inhabited, BEq
+
+/-- A logical view distinguishes actual bytes from a terminal LF supplied
+only for the C11 comparison. It never becomes a compiler input or an origin. -/
+structure LogicalChar where
+  byte : UInt8
+  start : Nat
+  stop : Nat
+  synthesized : Bool := false
+
+/-- CRLF is normalized only when the two retained bytes were physically
+adjacent. Removing a splice must not create a new phase-one CRLF pair. -/
+def normalizePhysical : List PhysicalChar → List LogicalChar
+  | [] => []
+  | [c] => [⟨c.byte,c.start,c.stop,false⟩]
+  | c :: d :: rest =>
+    if c.byte == 13 && d.byte == 10 && c.stop == d.start then
+      ⟨10,c.start,d.stop,false⟩ :: normalizePhysical rest
+    else ⟨c.byte,c.start,c.stop,false⟩ :: normalizePhysical (d :: rest)
+termination_by cs => cs.length
+
+/-- Observation of the real shadow log after actual splice deletions.
+A missing terminal newline has no physical byte: its marker is explicit. -/
+def logicalView (chars : Array PhysicalChar) : List LogicalChar :=
+  let cs := normalizePhysical ((chars.filter (!·.removed)).toList)
+  match cs.getLast? with
+  | none => []
+  | some last => if last.byte == 10 then cs else cs ++ [⟨10,last.stop,last.stop,true⟩]
+
 structure ModelOrigin where
   source : Nat
   bufferOffset : Nat
@@ -49,6 +86,8 @@ structure ModelOrigin where
   line : Nat
   includeFiles : Array Nat
   macroFrames : Array Nat
+  /-- Surviving physical pieces, before the independent bounding-span projection. -/
+  segments : Array CSem.Pre.SourceSpan := #[]
 
 /-- Original source identities indexed by word offset in a saved compiler
 initializer/body token string. Replaying does not create source occurrences. -/

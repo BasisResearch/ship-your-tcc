@@ -562,6 +562,10 @@ structure BufferedFile where
   bufStart : Nat := 0          -- index of `buffer[0]`
   fd : Int32 := -1
   trigraph_pending : Nat := 0  -- trailing question marks across physical reads
+  /-- Named shadow of the physical read/transform history; never compiler bytes. -/
+  ghostPhysical : Array Ghost.PhysicalChar := #[]
+  ghostBuffer : Array (Option Nat) := #[]
+  ghostPending : Array Ghost.PhysicalChar := #[]
   line_num : Int32 := 1
   line_ref : Int32 := 0
   ifndef_macro : Int32 := 0

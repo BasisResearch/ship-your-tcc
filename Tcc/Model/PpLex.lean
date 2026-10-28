@@ -17,7 +17,22 @@ open C
   | f :: _ => return (f.buf.get! p).toUInt32.toInt32
   | [] => return 0
 
-@[inline] def wrb (p : Nat) (c : Int32) : M Unit := modFileBuf fun b => b.set! p c.toUInt8
+/-- Save/restore the identity of a byte alongside the C lexer unget. -/
+@[inline] def ghostCharAt (p : Nat) : M (Option Nat) := do
+  return ((← curFile).ghostBuffer.getD p none)
+
+@[inline] def wrb (p : Nat) (c : Int32) (origin : Option Nat := none) : M Unit := do
+  modFileBuf fun b => b.set! p c.toUInt8
+  if (← get).ghostEnabled then
+    modFile fun f => if p < f.ghostBuffer.size then
+      { f with ghostBuffer := f.ghostBuffer.set! p origin } else f
+
+/-- Only the successful actual LF/CRLF branch deletes these mapped bytes. -/
+def ghostSplice (first last : Option Nat) : M Unit := do
+  if !(← get).ghostEnabled then return
+  if let (some a, some b) := (first,last) then
+    modFile fun f => { f with ghostPhysical := f.ghostPhysical.mapIdx fun i c =>
+      if a <= i && i <= b then { c with removed := true } else c }
 
 @[inline] def bufPtr : M Nat := do return (← curFile).buf_ptr
 @[inline] def setBufPtr (p : Nat) : M Unit := modFile fun f => { f with buf_ptr := p }
@@ -28,11 +43,14 @@ open C
 /-- `tcc_trigraphs(buf, len)`: C11 phase 1 on a physical byte block.
 The refiller holds up to two trailing question marks for the next block.
 Synthetic token/paste/pragma buffers never enter this translation. -/
-def tcc_trigraphs (buf : ByteArray) : ByteArray := Id.run do
+def trigraphBlock (buf : ByteArray) (origins : Array Ghost.PhysicalChar) :
+    ByteArray × Array Ghost.PhysicalChar := Id.run do
   let mut out := ByteArray.empty
+  let mut mapped := #[]
   let mut i := 0
   for _ in [0:buf.size] do
     if i ≥ buf.size then break
+    let first := i
     let mut c := buf.get! i
     if c == 63 && i + 2 < buf.size && buf.get! (i + 1) == 63 then
       let r : Option UInt8 := match (buf.get! (i + 2)).toNat with
@@ -44,24 +62,37 @@ def tcc_trigraphs (buf : ByteArray) : ByteArray := Id.run do
         c := v
         i := i + 2
     out := out.push c
+    if !origins.isEmpty then
+      mapped := mapped.push {
+        byte := c, start := (origins.getD first default).start,
+        stop := (origins.getD i default).stop }
     i := i + 1
-  return out
+  return (out,mapped)
+
+def tcc_trigraphs (buf : ByteArray) : ByteArray := (trigraphBlock buf #[]).1
 
 /-- `handle_eob()` -/
 def handle_eob (R : Rec) : M Int32 := do
   let bf ← curFile
   if bf.buf_ptr ≥ bf.buf_end then
     let mut data := ByteArray.empty
+    let mut mapped : Array Ghost.PhysicalChar := #[]
+    let observe := (← get).ghostEnabled
     if bf.fd ≥ 0 then
       if (← get).cversion ≥ 201112 && (← get).parse_flags &&& PARSE_FLAG_ASM_FILE == 0 then
         -- Each empty non-EOF result accumulates another question mark;
         -- after at most three reads one byte must be emitted.
         let mut pending := bf.trigraph_pending
+        let mut held := bf.ghostPending
         for _ in [0:3] do
+          let readStart := (((← get).fds.getD bf.fd.toNat' none).map (·.pos)).getD 0
           let some raw ← Host.read bf.fd (IO_BUF_SIZE - pending)
             | tcc_error_s R "could not read source file"
           modify fun s => { s with total_bytes := s.total_bytes + UInt32.ofNat raw.size }
           let input := ByteArray.mk (Array.replicate pending (63 : UInt8)) ++ raw
+          let rawOrigins := if observe then raw.data.mapIdx (fun i c =>
+            ({ byte := c, start := readStart+i, stop := readStart+i+1 } : Ghost.PhysicalChar)) else #[]
+          let inputOrigins := held ++ rawOrigins
           pending := 0
           if raw.size > 0 then
             for _ in [0:2] do
@@ -69,12 +100,20 @@ def handle_eob (R : Rec) : M Int32 := do
                 pending := pending + 1
               else break
           modFile fun f => { f with trigraph_pending := pending }
-          data := tcc_trigraphs (input.extract 0 (input.size - pending))
+          held := inputOrigins.extract (input.size-pending) input.size
+          modFile fun f => { f with ghostPending := held }
+          let translated := trigraphBlock (input.extract 0 (input.size - pending))
+            (inputOrigins.extract 0 (input.size-pending))
+          data := translated.1
+          mapped := translated.2
           if data.size > 0 || raw.size == 0 then break
       else
+        let readStart := (((← get).fds.getD bf.fd.toNat' none).map (·.pos)).getD 0
         let some raw ← Host.read bf.fd IO_BUF_SIZE
           | tcc_error_s R "could not read source file"
         data := raw
+        if observe then mapped := raw.data.mapIdx (fun i c =>
+          { byte := c, start := readStart+i, stop := readStart+i+1 })
         modify fun s => { s with total_bytes := s.total_bytes + UInt32.ofNat data.size }
     let len := data.size
     modFile fun f =>
@@ -82,7 +121,12 @@ def handle_eob (R : Rec) : M Int32 := do
       let f := { f with buf := ByteArray.empty }
       let b := Bytes.copy b f.bufStart data 0 len
       let b := b.set! (f.bufStart + len) CH_EOB.toUInt8
-      { f with buf := b, buf_ptr := f.bufStart, buf_end := f.bufStart + len }
+      { f with
+        buf := b, buf_ptr := f.bufStart, buf_end := f.bufStart + len,
+        ghostPhysical := f.ghostPhysical ++ mapped,
+        ghostBuffer := if observe then
+          (Array.replicate f.bufStart none) ++ (mapped.mapIdx fun i _ => some (f.ghostPhysical.size+i)) ++ #[some (f.ghostPhysical.size+mapped.size)]
+          else #[] }
   let bf ← curFile
   if bf.buf_ptr < bf.buf_end then
     return (bf.buf.get! bf.buf_ptr).toUInt32.toInt32
@@ -103,24 +147,28 @@ def handle_stray_noerror (R : Rec) (err : Bool) : M Int32 := do
   for _ in [0:fuel] do
     let ch ← next_c R
     if ch != 92 then return ch
+    let slash ← ghostCharAt (← bufPtr)
     let ch ← next_c R
     if ch == 10 then
+      ghostSplice slash (← ghostCharAt (← bufPtr))
       modFile fun f => { f with line_num := f.line_num + 1 }
     else
       let mut ch := ch
       let mut newl := false
       if ch == 13 then
+        let cr ← ghostCharAt (← bufPtr)
         ch ← next_c R
         if ch == 10 then
+          ghostSplice slash (← ghostCharAt (← bufPtr))
           modFile fun f => { f with line_num := f.line_num + 1 }
           newl := true
         else
           modFile fun f => { f with buf_ptr := f.buf_ptr - 1 }
-          wrb (← bufPtr) 13
+          wrb (← bufPtr) 13 cr
       if !newl then
         if err && ch != 117 && ch != 85 then tcc_error_s R "stray '\\' in program"
         modFile fun f => { f with buf_ptr := f.buf_ptr - 1 }
-        wrb (← bufPtr) 92
+        wrb (← bufPtr) 92 slash
         return 92
   throw (.fuel "handle_stray_noerror")
 
