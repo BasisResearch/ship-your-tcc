@@ -51,7 +51,7 @@ def skip_or_save_block (R : Rec) (save : Bool) : M (Option TokArr) := do
 compiler state. Only typed fragments/audits escape. Token occurrences come
 from the scanner's saved word map; neither spec syntax nor spec origins enter.
 A replay diagnostic is a construction gap, never a compiler rejection. -/
-def genericAssociationSyntax (R : Rec) (saved : Ghost.SavedTokens) : M Unit := fun st =>
+def genericAssociationSyntax (R : Rec) (saved : Ghost.SavedTokens) : M Unit := do
   let parse : M Unit := do
     let frame ← begin_macro .heap saved.tokens 0 1
     modify fun s => { s with
@@ -60,24 +60,8 @@ def genericAssociationSyntax (R : Rec) (saved : Ghost.SavedTokens) : M Unit := f
     R.next
     R.expr_eq
     if (← getTok) != C.TOK_EOF then expect R ","
-  let failed := fun (after : TccSt) (reason : String) =>
-    let range : Ghost.Range := ⟨(saved.positions[0]?.map Prod.snd).getD st.ghostCurrent,st.ghostCurrent⟩
-    let gap : Ghost.Fragment := ⟨.generic,range,.error ⟨.generic,range,reason⟩⟩
-    .ok () { st with
-      ghost := st.ghost.push gap, ghostAudit := after.ghostAudit.push gap,
-      ghostTokenErrors := after.ghostTokenErrors }
-  match parse.run st with
-  | .ok _ after =>
-    let shape := fun (s : TccSt) => s.ghostInput.map fun input =>
-      (input.spelling.size,input.language.positioned.tokens.size,input.language.origins.size)
-    if shape after != shape st then
-      failed after "association replay appended source occurrences instead of transporting saved words"
-    else .ok () { st with
-      ghost := after.ghost, ghostAudit := after.ghostAudit,
-      ghostNormalizations := after.ghostNormalizations, ghostDrops := after.ghostDrops,
-      ghostTokenErrors := after.ghostTokenErrors }
-  | .error _ after =>
-    failed after ("association expression action diagnostic: " ++ Bytes.toStr after.console)
+  isolatedGhostSyntax .generic (saved.positions[0]?.map Prod.snd)
+    "association replay appended source occurrences instead of transporting saved words" "association expression action diagnostic: " parse
 
 /-- `unary()` call part: the function call at vtop (tok == '(') -/
 def unary_call (R : Rec) : M Unit := do

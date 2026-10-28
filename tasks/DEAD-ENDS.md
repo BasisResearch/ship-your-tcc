@@ -1183,3 +1183,68 @@ The strict member/hash verification rejected it. Use dereference=True for
 portable captures and verify all regular bytes; the retry passes 13,141 members.
 The initial cause label guessed inode deduplication; retained type-2 entries
 identify symbolic links. The failed archive remains in build/bitattr-package-failed-1.
+
+## Multi-TU ghost, 2026-10-28
+
+- The local root-locked 12GB build cannot connect to the sandbox systemd user
+  bus; retain `multitu-local-build-1.log` and use the frozen lead service.
+- `multitu-lean-1` verifies 3383 inputs and fails parsing a record field with
+  an unparenthesized pipeline. Parenthesize the optional filename extraction;
+  no budget increase or generated output edit. Preserve its receipt/snapshot.
+- The 104 inline bundle needs bodies the compiler defers or never emits.
+  A final-TU snapshot or selected-inline-only capture loses complete Cabs.
+  Replay scanner-owned saved words through actual function parser actions on
+  an isolated snapshot; retain all source occurrences and real emission policy.
+- `multitu-lean-2` verifies3384 inputs and exposes the same record layout
+  error: Lean aligns continuation fields with the first field after `{`,
+  not the outer field. Put the nested record's first field on its own line.
+  The pipeline parentheses alone did not repair it; both failures remain.
+- `multitu-lean-3` verifies3384 inputs and fails the isolated function replay's
+  multiline record layout and `Int32.toNat`. Put first fields on their own
+  line and reuse the model's existing `toNat'` conversion; no budget changes.
+- The first current executable comparison retains both104units and exact
+  primary Cabs/tokens/origins, but companion Cabs lacks prefix GNU `weak`
+  attributes in GOT expansions. Preserve the complete failed on/off/raw
+  captures. Retain modeled attribute-action children with specifiers and
+  attach them at the actual declaration entity; do not erase attributes or
+  copy the independent AST. This is needed for the pinned104bundle.
+- The second104comparison constructs both complete Cabs and all21 aliases,
+  but exact companion locations expose one remaining hard-coded `/prog.c`
+  in `ghostTokenStart`. Use the actual retained TU start's lexing filename;
+  do not project away locations or relabel the independent raw result.
+- Lead review requires one shared isolated replay wrapper. Factor the two
+  users through `isolatedGhostSyntax` and reuse `erase_syntaxFields` for both
+  local laws. The scanner snapshot is taken immediately at each definition,
+  before later declarations or another TU can change its scoped environment.
+  Whole-run saved-word coverage/transport still needs the named duties.
+- `multitu-lean-6` has exact ordered104Cabs/tokens/origins/openings for both
+  units. The reset fixture then exposes existing `Raw.checked` pack-layout
+  rejection, despite complete model Cabs and an independent second-unit
+  success. Preserve it as a raw-layout residual with a separately labeled
+  Raw.run syntax component. Macro/counter/name/reset positives have no pack
+  directive; do not promote the pack checked error or drop the residual.
+- The reset fixture's repeated include-guard header exposes a real opening
+  schedule gap: the compiler/model opens it once after caching its guard;
+  independent Raw.checked records two openings, despite exact Cabs/tokens/
+  origins. Keep this as a separate raw-opening residual; do not invent a
+  second physical model opening or normalize away the spec's extra edge.
+  Repeated unguarded-header positives test actual repeated reads separately.
+- Pack Raw.run exports phase-four pragma events along with language tokens,
+  while the compiler ghost token arena contains language tokens only. Its
+  first component postcheck therefore fails token-length equality after exact
+  Cabs/origins/openings. Label only those exact syntax components; retain the
+  phase-four token artifacts and Raw.checked pack obstruction. Do not call
+  this a checked or complete token agreement or discard event fields.
+- Final multi-TU staging again cannot create this worktree's read-only
+  index.lock. Exact stderr is retained in `multitu-staging.stderr`; use the
+  existing frozen scoped lead commit handoff, with no alternate index/object
+  store, push, main merge, semantic repetition or approval escalation.
+- The first multi-TU packaging attempt detects colliding gate artifact
+  basenames from distinct parent directories and stops before writing an
+  archive. Preserve the failure log/generator; use complete relative gate
+  paths rather than basenames, retaining all observations.
+- Portable verifier1 assumes every postcheck pin is in the build-service
+  suffix inventory and stops on vendor/CSEM_REV. Revision metadata is pinned
+  by the postchecks but omitted by that service inventory. Retain verifier1,
+  its log and the previous package manifest/generator; archive supplemental
+  pin bytes and require all shared pins to agree, without a semantic rerun.

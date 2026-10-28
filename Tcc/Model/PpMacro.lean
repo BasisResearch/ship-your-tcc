@@ -1232,7 +1232,7 @@ def ghostTokenStart : M Nat := do
         | none => input.language.positioned.start
       (e,e)
     else match record.origin.site with
-      | some site => CSemCParser.Phase7.position "/prog.c" i site width
+      | some site => CSemCParser.Phase7.position input.language.positioned.start.lexingFile i site width
       | none =>
         -- Declared virtual coordinates only, never an invented physical site.
         let p := { input.language.positioned.start with lexingLine := 2*i+2 }
@@ -1458,7 +1458,9 @@ def preprocess_start (R : Rec) (filetype : Int32) : M Unit := do
           generated := true }
         modify fun s => { s with
           ghostSources := s.ghostSources.map (fun src => if src.id == id then root else src),
-          ghostCompilerRoot := some { source := root, directive := root.span offset 1 } }
+          ghostCompilerRoot := some {
+            source := root, directive := root.span offset 1,
+            mainName := ((s.file.getLast?).map (·.filename)).getD ByteArray.empty } }
   modify fun s => { s with parse_flags := if is_asm then PARSE_FLAG_ASM_FILE else 0 }
 
 /-- `preprocess_end(s1)` -/

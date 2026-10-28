@@ -100,11 +100,13 @@ def main (argv : List String) : IO UInt32 := do
         | .unsupported w => s!"unsupported: {w}"
         | .internal w => s!"internal: {w}"
       if o.consoleOut ≠ "" then IO.FS.writeBinFile o.consoleOut s.console
+      if o.ghostOut ≠ "" then
+        IO.FS.writeFile o.ghostOut ((GhostExport.bundle s).compress ++ "\n")
       IO.println s!"model-error {msg}"
       return 2
   if o.consoleOut ≠ "" then IO.FS.writeBinFile o.consoleOut st.console
   if o.ghostOut ≠ "" then
-    IO.FS.writeFile o.ghostOut ((GhostExport.artifact st).compress ++ "\n")
+    IO.FS.writeFile o.ghostOut ((GhostExport.bundle st).compress ++ "\n")
   match outcome with
   | .exited n =>
     IO.println s!"exit {n.toUInt32.toUInt8.toNat}"

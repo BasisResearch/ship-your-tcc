@@ -307,3 +307,5 @@ its model is a local repair of the pinned `struct_decl`; placement follows
 inventory and mandatory task table were consulted again; no new library proof
 or instruction-byte identity claim is made. Existing full-compiler Sail,
 positioned-Cabs and independent fast-arena harnesses supply the observations.
+
+| Multi-TU ghost bundle (`UnitRecord`, `MultiTU`, `multitu_ghost_cmp`) | Reuses the pinned TinyCC model's actual `tcc_main` / `tcc_compile` dispatch and reset actions, scanner-owned `SavedTokens`, function parser actions, immutable physical origins, `CompilerEvent.authority`, `openingFiles`, `Ghost.erase`, independent `Raw.checked` and complete arena harness. Association and deferred-inline replay share `isolatedGhostSyntax`; both local erasure laws reuse `erase_syntaxFields` without new premises. Whole-command construction/transport/erasure remain explicit duties. Lua inventory and mandatory table were consulted; no external machine/library proof is copied or instruction identity asserted. |

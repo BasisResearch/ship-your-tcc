@@ -224,7 +224,7 @@ def buildStructuredSpecifier (c : Context) (i : Nat) : Build (cabs_type_specifie
           if (c.token j).tok == .COMMA then j := j+1
           else break
         if (c.token j).tok != .SEMICOLON then return ← c.fail "member declaration boundary"
-        fields := fields ++ [Struct_declaration (Attrs []) sp.type_specifiers sp.type_qualifiers sp.alignment_specifiers ds]
+        fields := fields ++ [Struct_declaration sp.attributes sp.specifiers.type_specifiers sp.specifiers.type_qualifiers sp.specifiers.alignment_specifiers ds]
         j := j+1
       if (c.token j).tok != .RBRACE then return ← c.fail "aggregate specifier boundary"
       members := some fields; j := j+1
@@ -255,15 +255,33 @@ def buildStructuredSpecifier (c : Context) (i : Nat) : Build (cabs_type_specifie
     return (TSpec (c.loc ⟨i,j⟩) (.TSpec_enum name members),j)
   c.fail "structured specifier needs typed construction"
 
+mutual
+ def addDeclaratorAttribute (d : declarator) (attr : attribute0) : declarator :=
+  match d with | .Declarator p dd => .Declarator p (addDirectAttribute dd attr)
+ def addDirectAttribute (d : direct_declarator) (attr : attribute0) : direct_declarator :=
+  match d with
+  | .DDecl_identifier (Attrs xs) id => .DDecl_identifier (Attrs (xs++[attr])) id
+  | .DDecl_declarator d => .DDecl_declarator (addDeclaratorAttribute d attr)
+  | .DDecl_array d a => .DDecl_array (addDirectAttribute d attr) a
+  | .DDecl_function d ps => .DDecl_function (addDirectAttribute d attr) ps
+end
+
 /-- Specifier spelling/order survives tcc's merged bit mask. A NAME here is
 known to be a typedef by the modeled parse_btype action, not by a second
 feedback environment. -/
-def buildSpecs (c : Context) : Build specifiers := do
+def buildSpecs (c : Context) : Build SpecifierSyntax := do
+  let mut attrs : List attribute0 := []
   let mut s : specifiers := ⟨[], [], [], [], []⟩
   let mut i := c.range.first
   for _ in [0:c.range.last-c.range.first] do
     if i >= c.range.last then break
     let t := (c.token i).tok
+    if t == .ATTRIBUTE then
+      let (xs,j) ← c.attributesAt i
+      if j == i then return ← c.fail "missing specifier attribute action"
+      attrs := attrs ++ xs
+      i := j
+      continue
     if let some f := c.children.find? (fun f => f.production == .typeofSpec && f.range.first == i) then
       match ← f.value with
       | .typeSpecifier sp =>
@@ -295,7 +313,7 @@ def buildSpecs (c : Context) : Build specifiers := do
     else return ← c.fail s!"specifier action needs construction for token {i}"
     i := i+1
   if i != c.range.last then return ← c.fail "specifier boundary"
-  pure s
+  pure ⟨s,Attrs attrs⟩
 
 /-! Pointer and direct-declarator structure is read only inside the range of
 an actual modeled type_decl action. Parameters and array bounds must be
@@ -412,9 +430,13 @@ mutual
       let sp ← match ← sf.value with
         | .specs s => pure s | _ => c.fail "parameter specifier kind"
       let (de, j) ← buildDeclarator fuel c sf.range.last stop
-      let p := match de with
-        | .concrete d => PDeclaration_decl sp d
-        | .abstract a => PDeclaration_abs_decl sp a
+      let p ← match de with
+        | .concrete d =>
+          let .Attrs attrs := sp.attributes
+          pure (PDeclaration_decl sp.specifiers (attrs.foldl addDeclaratorAttribute d))
+        | .abstract a =>
+          if sp.attributes != Attrs [] then c.fail "attributes on abstract parameter need a type representation"
+          else pure (PDeclaration_abs_decl sp.specifiers a)
       ps := ps ++ [p]
       i := j
       if (c.token i).tok == .COMMA then i := i+1
@@ -463,6 +485,8 @@ def Context.typeName (c : Context) : Build type_name := do
   let vs ← c.values
   let specs ← match vs.findSome? (fun v => match v with | .specs s => some s | _ => none) with
     | some s => pure s | none => c.fail "missing type-name specifier action"
+  if specs.attributes != Attrs [] then return ← c.fail "type-name attributes need a type representation"
+  let specs := specs.specifiers
   let d : Option abstract_declarator ← match vs.findSome? (fun v => match v with | .decl d => some d | _ => none) with
     | some (ParsedDeclarator.abstract a) => pure a
     | _ => c.fail "missing abstract declarator action"
@@ -717,16 +741,6 @@ def asmBindingAttribute (c : Context) (r : Range) : Build attribute0 := do
     (c.loc ⟨first+k,first+k+1⟩,c.rawSpelling (first+k)))
   pure ⟨some ns,id,[(c.loc ⟨first,first+1⟩,String.intercalate " " (tokens.map Prod.snd),tokens)]⟩
 
-mutual
- def addDeclaratorAttribute (d : declarator) (attr : attribute0) : declarator :=
-  match d with | .Declarator p dd => .Declarator p (addDirectAttribute dd attr)
- def addDirectAttribute (d : direct_declarator) (attr : attribute0) : direct_declarator :=
-  match d with
-  | .DDecl_identifier (Attrs xs) id => .DDecl_identifier (Attrs (xs++[attr])) id
-  | .DDecl_declarator d => .DDecl_declarator (addDeclaratorAttribute d attr)
-  | .DDecl_array d a => .DDecl_array (addDirectAttribute d attr) a
-  | .DDecl_function d ps => .DDecl_function (addDirectAttribute d attr) ps
-end
 
 def build (c : Context) : Build Syntax := do
   match c.production with
@@ -768,11 +782,11 @@ def build (c : Context) : Build Syntax := do
     let vs ← c.values
     match vs.toList with
     | .specs sp :: [.functionDeclarator d s] =>
-      return .external (.EDecl_func (FunDef (c.loc c.range) (Attrs []) sp d s))
+      return .external (.EDecl_func (FunDef (c.loc c.range) sp.attributes sp.specifiers d s))
     | .specs sp :: ids =>
       let ids ← ids.mapM (fun v => match v with
         | .initDecl i => pure i | _ => c.fail "declaration action child")
-      return .declaration (.Declaration_base (Attrs []) sp ids)
+      return .declaration (.Declaration_base sp.attributes sp.specifiers ids)
     | _ => return ← c.fail "missing declaration specifiers (including implicit-int normalization)"
   | .fundef =>
     let vs ← c.values

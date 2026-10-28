@@ -1,4 +1,4 @@
-import Tcc.Model.CompilerOpening
+import Tcc.Model.MultiTU
 -- Definitions, open obligations and the local replay theorem; parser correctness remains open.
 #print axioms Tcc.Model.Ghost.runRaw
 #print axioms Tcc.Model.Ghost.build
@@ -22,3 +22,11 @@ import Tcc.Model.CompilerOpening
 -- Local universal snapshot restoration; no parser-success assumptions.
 #print axioms Tcc.Model.Ghost.erase_syntaxFields
 #print axioms Tcc.Model.Ghost.associationReplayErasure
+
+#print axioms Tcc.Model.Ghost.MultiTUConstruction_Statement
+#print axioms Tcc.Model.Ghost.MultiTUErasure_Statement
+
+#print axioms Tcc.Model.Ghost.DeferredFunctionErasure_Statement
+
+#print axioms Tcc.Model.Ghost.isolatedGhostSyntax_erasure
+#print axioms Tcc.Model.Ghost.deferredFunctionErasure

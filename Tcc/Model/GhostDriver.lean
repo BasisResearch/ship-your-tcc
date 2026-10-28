@@ -30,7 +30,7 @@ def transport (input : Input) : ByteArray :=
 /-- Erase every ghost field, retaining all parser/codegen/compiler state. -/
 def erase (s : TccSt) : TccSt :=
   { s with
-    ghostEnabled := false, ghostFixture := false, ghostParsing := false,
+    ghostUnits := #[], ghostEnabled := false, ghostFixture := false, ghostParsing := false,
     ghostNextDepth := 0, ghostStringCapture := false, ghostLexOffset := 0,
     file := s.file.map BufferedFile.eraseGhost,
     ghostLexCharStart := none, ghostLexPhysicalStart := none, ghostLexSourceId := 0, ghostPriorOrigin := 0,
@@ -59,6 +59,20 @@ theorem erase_syntaxFields (st : TccSt) (fragments audit : Array Fragment)
       ghostNormalizations := normalizations, ghostDrops := drops,
       ghostTokenErrors := tokenErrors } = erase st := rfl
 
+/-- Any isolated parser action restores erased compiler state, including
+parser errors and the source-shape guard. This is independent of successful
+construction, saved-word coverage and complete command erasure. -/
+theorem isolatedGhostSyntax_erasure (production first shapeFailure errorPrefix action st) :
+    match (isolatedGhostSyntax production first shapeFailure errorPrefix action).run st with
+    | .ok _ after => erase after = erase st
+    | .error _ _ => False := by
+  simp only [isolatedGhostSyntax, EStateM.run]
+  split <;> rename_i _ _ _ hresult
+  all_goals
+    split at hresult
+    · split at hresult <;> cases hresult <;> exact erase_syntaxFields _ _ _ _ _ _
+    · cases hresult <;> exact erase_syntaxFields _ _ _ _ _ _
+
 /-- Local replay noninterference, including diagnostics. Proved below from
 snapshot restoration; saved-word coverage and
 complete typed expression construction additionally require the scanner/parser
@@ -75,12 +89,7 @@ result is arbitrary: no construction, coverage or parser-success premise is
 needed for this local law. -/
 theorem associationReplayErasure : AssociationReplayErasure_Statement := by
   intro R saved st
-  simp only [genericAssociationSyntax, EStateM.run]
-  split <;> rename_i _ _ _ hresult
-  all_goals
-    split at hresult
-    · split at hresult <;> cases hresult <;> exact erase_syntaxFields _ _ _ _ _ _
-    · cases hresult <;> exact erase_syntaxFields _ _ _ _ _ _
+  exact isolatedGhostSyntax_erasure _ _ _ _ _ _
 
 /-- Supplied by the F3/F6 induction over actual reads, trigraph replacement,
 held-byte refill, ungets and successful splice branches. Finite comparisons
@@ -164,14 +173,16 @@ def runRaw (src : ByteArray) (fs : List (CSem.Pre.Bytes × CSem.Pre.Bytes))
     sysinclude_paths := #["/lib/tcc/include".toUTF8, "/include".toUTF8] }
   (rawAction (Tie.tie base.fuel)).run initial
 
-def output (s : TccSt) : Except Gap translation_unit := do
-  if !s.ghostTokenErrors.isEmpty then
-    throw ⟨.tu,⟨0,s.ghostCurrent⟩,"token/provenance transport disagreement"⟩
-  match s.ghost.toList with
-  | [f] => match ← f.value with
-    | .translationUnit tu => pure tu
-    | _ => throw ⟨.tu,f.range,"model did not construct a translation unit"⟩
-  | _ => throw ⟨.tu,⟨0,s.ghostCurrent⟩,"model ghost stack has extra/missing productions"⟩
+def output (s : TccSt) : Except Gap translation_unit :=
+  outputFragments s.ghost s.ghostTokenErrors s.ghostCurrent
+
+/-- Diagnostic view of an immutable unit, never used by compiler execution. -/
+def unitView (u : UnitRecord) : TccSt := {
+  ghostInput := u.input, ghost := u.fragments, ghostAudit := u.audit,
+  ghostNormalizations := u.normalizations, ghostDrops := u.drops, ghostTokenErrors := u.tokenErrors,
+  ghostSources := u.sources, ghostClosedPhysical := u.physical.foldl (fun m (id,cs) => m.insert id cs) {},
+  ghostOrigins := u.origins, ghostPragmas := u.pragmas,
+  ghostCompilerRoot := u.root, ghostCompilerEvent := u.event, ghostLibraryFiles := u.libraries }
 
 /-- Whole parser/codegen state erasure, including identical errors. F3/F6
 must prove this by induction on the modeled actions. Finite byte comparisons

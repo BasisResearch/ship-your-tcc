@@ -86,7 +86,7 @@ def source_pins():
         'Spec/Pre/Tcc/Cfg.lean','Spec/Pre/Tcc/ImageFS.lean',
         'scripts/ghost_cabs_cmp.py','scripts/ghost_build_request.py',
         'scripts/ghost_origins_cmp.py','scripts/physical_build_request.py','scripts/physical_onoff_cmp.py',
-        'scripts/injected_origins_cmp.py','scripts/binding_origin_build_request.py',
+        'scripts/multitu_arenas.py','scripts/multitu_build_request.py','scripts/multitu_ghost_cmp.py','Spec/Pre/Tcc/Invocation.lean','scripts/injected_origins_cmp.py','scripts/binding_origin_build_request.py',
         'scripts/unevaluated_syntax_cmp.py','scripts/unevaluated_build_request.py','scripts/unevaluated_native_check.py','scripts/gen_gnu_expression_fixtures.py','scripts/gnu_expression_arenas.py','Tcc/CSem/RawFrontEnd.lean',
         'lakefile.toml','lake-manifest.json','lean-toolchain','vendor/TINYCC_REV',
         'vendor/CSEM_REV']}

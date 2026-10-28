@@ -217,6 +217,7 @@ structure TccSt where
   arena : ByteArray := ByteArray.empty
   -- ===== ghost =====
   /-- Optional positioned token fixture. No AST/digest/oracle fields. -/
+  ghostUnits : Array Ghost.UnitRecord := #[]
   ghostEnabled : Bool := false
   ghostFixture : Bool := false
   ghostParsing : Bool := false
@@ -362,6 +363,45 @@ def curFile : M BufferedFile := do
     let b := { b with buf := ByteArray.empty }
     { b with buf := f d }
 
+/-- Reset only the active TU observation. Compiler resets remain the actual
+preprocess_start/tccgen_finish actions; prior immutable units survive. -/
+def ghostBeginUnit : M Unit := do
+  if !(← get).ghostEnabled then return
+  modify fun s => { s with
+    ghostParsing := false, ghostNextDepth := 0, ghostStringCapture := false,
+    ghostLexOffset := 0, ghostLexPhysicalStart := none, ghostLexCharStart := none,
+    ghostLexSourceId := 0, ghostPriorOrigin := 0, ghostTokOrigin := 0, ghostExpansionOrigin := 0,
+    ghostOriginTable := #[⟨.unavailable,none,false⟩], ghostSymD := {}, ghostSymE := {},
+    ghostArgIndex := {}, ghostLastOrigins := #[], ghostSaved := #[], ghostReplay := {},
+    ghostDirective := none, ghostImplicitOffset := none, ghostCompilerRoot := none,
+    ghostCompilerEvent := none, ghostSources := #[], ghostClosedPhysical := {},
+    ghostOrigins := #[], ghostPragmas := #[], ghostInput := none,
+    ghostCurrent := 0, ghostPrior := 0, ghost := #[], ghostAudit := #[],
+    ghostNormalizations := #[], ghostDrops := #[], ghostTokenErrors := #[] }
+
+/-- Snapshot after closing every physical file, or at an escaping model error.
+Reads only model-owned observations. No independent parser is called. -/
+def ghostFinishUnit (filename : ByteArray) (filetype : Int32)
+    (source : Option Ghost.OpenedFile) (entry : TccSt) (result : Option Int32) : M Unit := do
+  let s ← get
+  if !s.ghostEnabled then return
+  let unit : Ghost.UnitRecord := {
+    ordinal := s.ghostUnits.size, filename := filename, filetype := filetype, source := source,
+    cversion := entry.cversion, includePaths := entry.include_paths, systemPaths := entry.sysinclude_paths,
+    commandDefines := entry.cmdline_defs, commandIncludes := entry.cmdline_incl,
+    input := s.ghostInput, fragments := s.ghost, audit := s.ghostAudit,
+    normalizations := s.ghostNormalizations, drops := s.ghostDrops,
+    tokenErrors := s.ghostTokenErrors, sources := s.ghostSources,
+    physical := s.ghostSources.filterMap (fun src =>
+      match s.file.find? (fun f => f.id == src.id) with
+      | some f => some (src.id,f.ghostPhysical)
+      | none => (s.ghostClosedPhysical.get? src.id).map (fun cs => (src.id,cs))),
+    origins := s.ghostOrigins, pragmas := s.ghostPragmas,
+    root := s.ghostCompilerRoot, event := s.ghostCompilerEvent, libraries := s.ghostLibraryFiles,
+    compilerResult := result,
+    tree := Ghost.outputFragments s.ghost s.ghostTokenErrors s.ghostCurrent }
+  modify fun st => { st with ghostUnits := st.ghostUnits.push unit }
+
 /-! ## Typed ghost output (DESIGN §4.1/§6.2)
 
 Actions only modify the named ghost fields. Syntax errors are retained as
@@ -435,6 +475,28 @@ def gnode (kind : Ghost.Production) (n : Nat := 0) : M Unit := do
   let h := s.ghost.size - n
   let first := if n == 0 then s.ghostCurrent else (s.ghost.getD h default).range.first
   gwrap ⟨h,first⟩ kind
+
+/-- Shared isolated parser observation. Restore the entire compiler snapshot,
+retaining only named syntax fields. Source occurrences must be transported
+from saved words; appending fresh source tokens is a construction gap. -/
+def isolatedGhostSyntax (production : Ghost.Production) (first : Option Nat)
+    (shapeFailure errorPrefix : String) (action : M Unit) : M Unit := fun st =>
+  let failed := fun (after : TccSt) (reason : String) =>
+    let range : Ghost.Range := ⟨first.getD st.ghostCurrent,st.ghostCurrent⟩
+    let gap : Ghost.Fragment := ⟨production,range,.error ⟨production,range,reason⟩⟩
+    .ok () { st with
+      ghost := st.ghost.push gap, ghostAudit := after.ghostAudit.push gap,
+      ghostTokenErrors := after.ghostTokenErrors }
+  match action.run st with
+  | .ok _ after =>
+    let shape := fun (s : TccSt) => s.ghostInput.map fun input =>
+      (input.spelling.size,input.language.positioned.tokens.size,input.language.origins.size)
+    if shape after != shape st then failed after shapeFailure
+    else .ok () { st with
+      ghost := after.ghost, ghostAudit := after.ghostAudit,
+      ghostNormalizations := after.ghostNormalizations, ghostDrops := after.ghostDrops,
+      ghostTokenErrors := after.ghostTokenErrors }
+  | .error _ after => failed after (errorPrefix ++ Bytes.toStr after.console)
 
 /-- Suppress duplicated syntax actions during real selected execution, and
 restore the retained token input on both success and compiler diagnostics. -/

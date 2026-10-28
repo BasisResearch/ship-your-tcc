@@ -335,6 +335,21 @@ def gen_function (R : Rec) (sym : SymId) : M Unit := do
   gwrap gm .fundef
   R.next
 
+/-- Deferred bodies are scanned once by the compiler and replayed through its
+actual function parser on an isolated snapshot. Only syntax fields escape;
+code, symbols and the selected inline emission policy stay with the real run.
+Saved-word coverage and whole-run erasure remain named obligations. -/
+def deferredFunctionSyntax (R : Rec) (sym : SymId) (saved : Ghost.SavedTokens) : M Unit := do
+  let parse : M Unit := do
+    let frame ← begin_macro .heap saved.tokens 0 1
+    modify fun s => { s with
+      ghostReplay := s.ghostReplay.insert frame saved.positions,
+      cur_text_section := s.text_section }
+    R.next
+    gen_function R sym
+  isolatedGhostSyntax .deferredFunction (saved.positions[0]?.map Prod.snd)
+    "deferred replay appended source occurrences" "deferred function action diagnostic: " parse
+
 /-- `gen_inline_functions(s)` -/
 def gen_inline_functions (R : Rec) : M Unit := do
   tcc_open_bf ":inline:".toUTF8 none
@@ -426,9 +441,11 @@ def decl_one_body (R : Rec) (l : Int32) (btype : CType) (adbase : AttributeDef) 
       let fname := (← curFile).filename
       let i := (← get).inline_fns.size
       modify fun s => { s with inline_fns := s.inline_fns.push { sym := sym, filename := fname } }
-      let gd ← gmark
+      let savedSlot := (← get).ghostSaved.size
       let toks ← R.skip_or_save_block
-      gwrap gd .deferredFunction
+      if (← get).ghostInput.isSome then
+        if let some saved := (← get).ghostSaved[savedSlot]? then
+          deferredFunctionSyntax R sym saved
       modify fun s => { s with inline_fns := s.inline_fns.modify i fun x => { x with func_str := toks } }
     else
       modify fun s => { s with cur_text_section := s.text_section }
@@ -599,13 +616,13 @@ def tccgen_compile (R : Rec) : M Int32 := do
   tcc_debug_start
   modify fun s => { s with parse_flags := PARSE_FLAG_PREPROCESS ||| PARSE_FLAG_TOK_NUM ||| PARSE_FLAG_TOK_STR }
   if (← get).ghostEnabled && !(← get).ghostFixture then
-    let start := CSemCParser.Phase7.startPos "/prog.c"
+    let start := CSemCParser.Phase7.startPos (Bytes.toStr ((((← get).file.getLast?).map (·.filename)).getD ByteArray.empty))
     modify fun s => { s with
       ghostParsing := true, ghostInput := some ⟨⟨⟨#[],start⟩,#[],#[]⟩,#[]⟩ }
   let gm ← gmark
   R.next
   let _ ← R.decl VT_CONST
-  R.gen_inline_functions
+  withoutGhostSyntax R.gen_inline_functions
   gwrap gm .tu
   modify fun s => { s with ghostParsing := s.ghostFixture }
   check_vstack R
@@ -632,6 +649,9 @@ def tccgen_finish (R : Rec) : M Unit := do
 
 /-- libtcc.c's `tcc_compile(s1, filetype, str, fd)` for a file -/
 def tcc_compile (R : Rec) (filetype : Int32) (filename : ByteArray) (fd : Int32) : M Int32 := do
+  ghostBeginUnit
+  let entry ← get
+  let source := entry.ghostFdSources.get? fd.toNat'
   modify fun s => { s with error_set_jmp_enabled := 1 }
   let body : M Unit := do
     tcc_open_bf filename none
@@ -645,10 +665,14 @@ def tcc_compile (R : Rec) (filetype : Int32) (filename : ByteArray) (fd : Int32)
   try body catch e =>
     match e with
     | .longjmp => pure ()
-    | e => throw e
+    | e =>
+      ghostFinishUnit filename filetype source entry none
+      throw e
   tccgen_finish R
   preprocess_end
   modify fun s => { s with error_set_jmp_enabled := 0 }
-  return if (← get).nb_errors != 0 then -1 else 0
+  let result := if (← get).nb_errors != 0 then -1 else 0
+  ghostFinishUnit filename filetype source entry (some result)
+  return result
 
 end Tcc.Model

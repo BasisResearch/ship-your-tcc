@@ -20,70 +20,19 @@ def errorText : Err → String
 def sectionBytes (s : TccSt) : Json := toJson (s.secs.toList.map fun sec =>
   (sec.name.toList.map UInt8.toNat, sec.data.toList.map UInt8.toNat, sec.data_offset, sec.reloc))
 
-def spanJson (s : CSem.Pre.SourceSpan) : Json := Json.mkObj [
-  ("opened_as",toJson (s.openedAs.map UInt8.toNat)),
-  ("identity",toJson (s.identity.map (List.map UInt8.toNat))),
-  ("start",toJson s.start.offset),("stop",toJson s.stop.offset)]
-
-def logicalJson (cs : List Ghost.LogicalChar) : Json := Json.arr (cs.toArray.map fun c =>
-  Json.arr #[toJson c.byte.toNat,toJson c.start,toJson c.stop,toJson c.synthesized])
-
-def physicalLog (s : TccSt) (id : Nat) : Option (Array Ghost.PhysicalChar) :=
-  match s.file.find? (fun f => f.id == id) with
-  | some f => some f.ghostPhysical
-  | none => s.ghostClosedPhysical.get? id
-
-def bindingMetadata (tu : translation_unit) : List (String × Json) :=
-  [("excluded",toJson ((Tcc.CSem.excluded tu).map reprStr)),
-   ("bindings",Json.arr ((Tcc.CSem.Raw.injectedBindings tu).toArray.map fun b => Json.mkObj [
-     ("name",toJson b.identity.binding_name),("target",toJson b.identity.binding_linker_name),
-     ("intrinsic",toJson (match b.identity.binding_kind with | .Function_allocation_intrinsic => true | _ => false)),
-     ("declaration",CabsExport.declaration b.declaration)]))]
-
-def eventJson (e : Ghost.CompilerEvent) : Json := Json.mkObj [
-  ("root_id",toJson e.root.source.id),("header_id",toJson e.header.id),
-  ("predefined",toJson (e.root.source.contents.toList.map UInt8.toNat)),
-  ("header_contents",toJson (e.header.contents.toList.map UInt8.toNat)),
-  ("directive",toJson (reprStr e.root.directive)),
-  ("authenticated",toJson e.authority.isSome)]
-
-def modelMetadata (s : TccSt) : List (String × Json) :=
-  let input := s.ghostInput
-  [("compiler_event",(s.ghostCompilerEvent.map eventJson).getD Json.null),
-   ("opening_files",Json.arr ((Ghost.openingFiles s).toArray.map fun f => Json.mkObj [
-     ("opened_as",toJson (f.openedAs.map UInt8.toNat)),("identity",toJson (f.identity.map (List.map UInt8.toNat))),
-     ("contents",toJson (f.contents.map UInt8.toNat)),("included_at",toJson (f.includedAt.map reprStr))])),
-   ("normalizations",GhostExport.normalizations s),("tokens",toJson (((input.map (·.spelling)).getD #[]).toList.map fun t => (reprStr t.kind,t.spell.map UInt8.toNat))),
-   ("origins",toJson (((input.map (·.language.origins)).getD #[]).toList.map reprStr)),
-   ("model_origins",Json.arr (s.ghostOrigins.map fun o => Json.mkObj [
-     ("source",toJson o.source),("buffer_offset",toJson o.bufferOffset),
-     ("physical_offset",toJson o.physicalOffset),("presumed",toJson (o.presumed.toList.map UInt8.toNat)),
-     ("line",toJson o.line),("includes",toJson o.includeFiles),("macro_frames",toJson o.macroFrames),("physical_segments",toJson (o.segments.toList.map spanJson))])),
-   ("sources",Json.arr (s.ghostSources.map fun f => Json.mkObj [
-     ("id",toJson f.id),("opened_as",toJson (f.openedAs.toList.map UInt8.toNat)),("contents",toJson (f.contents.toList.map UInt8.toNat)),
-     ("identity",toJson (f.identity.map (List.map UInt8.toNat))), ("generated",toJson f.generated),
-     ("included_at",toJson (f.includedAt.map reprStr)), ("include_complete",toJson f.includeComplete),
-     ("logical_view",match physicalLog s f.id with
-       | some chars => logicalJson (Ghost.logicalView chars)
-       | none => Json.null)])),
-   ("pragmas",Json.arr (s.ghostPragmas.map fun p => Json.mkObj [
-     ("before_token",toJson p.beforeToken),("keyword",toJson p.keyword.toInt),
-     ("pack_before",toJson (p.packBefore.toList.map Int32.toInt)),
-     ("pack_after",toJson (p.packAfter.toList.map Int32.toInt)),
-     ("pack_pointer_before",toJson p.packPointerBefore),("pack_pointer_after",toJson p.packPointerAfter),
-     ("libraries_before",toJson (p.librariesBefore.toList.map (fun b => b.toList.map UInt8.toNat))),
-     ("libraries_after",toJson (p.librariesAfter.toList.map (fun b => b.toList.map UInt8.toNat))),
-     ("counter_before",toJson p.counterBefore.toInt),("counter_after",toJson p.counterAfter.toInt)]))]
+open Tcc.Model.GhostExport
 
 def main (args : List String) : IO UInt32 := do
   let (mode,path,opts) ← match args with
     | mode :: path :: opts => pure (mode,path,opts)
     | _ => IO.eprintln "usage: tcc_ghost MODE SOURCE [--files JSON_STRING_PAIRS] [--library IMAGEPATH]"; return 2
+  let mut mainName := "/prog.c"
   let mut filesPath : Option String := none
   let mut libraries : List (List CSem.Pre.Bytes) := []
   let mut rest := opts
   for _ in [:opts.length] do
     match rest with
+    | "--main-name" :: p :: tail => mainName := p; rest := tail
     | "--files" :: p :: tail => filesPath := some p; rest := tail
     | "--library" :: p :: tail =>
       libraries := libraries ++ [CSem.Pre.FileSys.normComponents p.toUTF8.toList]
@@ -100,11 +49,14 @@ def main (args : List String) : IO UInt32 := do
       | .error e => IO.eprintln e; return 2
   let fs := { CSem.Pre.Tcc.imageFS with files := CSem.Pre.Tcc.imageFS.files ++ extra }
   let src ← IO.FS.readBinFile path
-  if mode == "independent-raw" then
+  if mode == "independent-raw" || mode == "independent-parse" then
+    let predefined := CSem.Pre.Tcc.predefsFor mainName
     let cfg : Tcc.CSem.Raw.Config := {
-      pre := CSem.Pre.Tcc.cfgTcc, fs := fs, parser := { gnu := true },
-      compilerEnvironment := some Tcc.CSem.Raw.tccEnvironment, libraryFiles := libraries }
-    match Tcc.CSem.Raw.checked cfg src.toList with
+      pre := { CSem.Pre.Tcc.cfgTcc with mainName := mainName.toUTF8.toList, predefs := predefined }, fs := fs, parser := { gnu := true },
+      compilerEnvironment := some { Tcc.CSem.Raw.tccEnvironment with predefined := predefined }, libraryFiles := libraries }
+    let result := if mode == "independent-raw" then Tcc.CSem.Raw.checked cfg src.toList
+      else (Tcc.CSem.Raw.run cfg src.toList).mapError Tcc.CSem.Raw.FrontEndError.parse
+    match result with
     | .error e =>
       IO.println ((Json.mkObj [("status",toJson "raw-checked-error"),("error",toJson e.code)]).compress)
     | .ok r =>
