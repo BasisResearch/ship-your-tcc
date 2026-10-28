@@ -1,6 +1,6 @@
 # Current status
 
-Takeover in progress, resumed 2026-10-27. The approved target is
+Takeover in progress, resumed 2026-10-28. The approved target is
 `tcc_run_correct` in DESIGN-COMPILER.md: whole compiler, `Supported` and
 `Fits` premises, no refusal disjunct. F0 is landed; F1–F3 remain open.
 
@@ -39,9 +39,10 @@ removed. Patch 0004 fixes compiler literals using exact integer rounding;
 public libc `strtold` still needs correction in the library lane. Matching refusals likewise do not satisfy the F3 success criterion.
 
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
-two at a time, following MANAGER.md. Slot 1 runs bounded allocation recovery after its reviewed raw frontend
-checkpoint passed integrated validation. Slot 2
-constructs ghost Cabs from modeled compiler parser actions. The anonymous-member repair is adopted with IEEE after its combined gate.
+two at a time, following MANAGER.md. Slot 1 is assigned bounded allocation recovery
+after its reviewed raw frontend checkpoint passed integrated validation. Slot 2
+is assigned ghost Cabs from modeled compiler parser actions. Both are stopped
+at usage limit; the latest continuation status is below. The anonymous-member repair is adopted with IEEE after its combined gate.
 The pure IEEE implementation is integrated after the combined gate; the compiler/model
 anonymous-container qualifier repair is also adopted. Exact-token/pragma integration is now
 validated with the nested-designator repair: strengthened full gate, 147
@@ -145,7 +146,7 @@ explicitly diagnoses missing pack consumption and library-identity mismatch;
 these remain whole-C obligations, not Supported restrictions or a universal
 F0 substitution. Four named connection Statements remain open. Fresh pins
 and logs are in results/csem/raw-frontend/integration/. Allocation recovery
-continues in external Sol slot 1; the anonymous CSem repair is adopted with IEEE after its combined gate. Slot 2 now runs the independent ghost-Cabs task.
+is assigned to external Sol slot 1; the anonymous CSem repair is adopted with IEEE after its combined gate. Slot 2 is assigned the independent ghost-Cabs task.
 Runtime-library identity consumption is queued as tasks/f1-library-identity.md.
 
 Compiler anonymous-container qualifiers are repaired and gated: old full Sail
@@ -162,6 +163,20 @@ lookup rejects guessed private container names. Both adapters use the passed
 union-layout table; the inherited fuel proof is adapted without larger bounds.
 Evidence is in results/csem/anonymous-members/integration/, and CSEM-UPSTREAM.md
 records CSEM-07/PATCH-08 and CSEM-09/PATCH-09 for Kiran. No external report sent.
+
+Latest checkpoint (2026-10-28): the opened-path pragma-once policy and corpus
+fixture materialization pass the combined full CSem gate. The 622 inputs now
+give 618 raw/616 spec exact agreements, zero differences/harness failures;
+six residual spec classifications remain explicit. Fourteen preprocessing,
+eleven raw frontend and seven protocol methods pass, plus the full Sail once
+reproducer. See results/pre/once-cache-2026-10-28.md. Sum cuts remain frozen.
+
+Both external Sol processes stopped at their usage limit during the interruption;
+their source changes are preserved. Allocation has a passing frozen worker
+gate and native placement observation, pending final review/integration with
+raw and anonymous semantics. Ghost Cabs remains unbuilt work in progress after
+its first failed build; ordinary source mapping is still required. The lead
+will resume these lanes from preserved changes, not claim them completed.
 
 ## Needs user
 

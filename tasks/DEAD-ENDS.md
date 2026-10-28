@@ -425,3 +425,10 @@ requested corrections until the lead surfaced them explicitly.
 - The union-layout adapter correction needs its existing fuel potential and
   two stability cases to read the explicit table too. Reuse layout_stable_aux;
   do not raise fuel or elaboration bounds to get around the old ambient premise.
+- Corpus include materialization must provide the actual `/prog.c` and
+  parent-directory fixture aliases, including macro self-inclusion. Missing
+  fixtures are harness defects, not evidence of compiler or spec refusals.
+- Do not conflate resolved physical provenance with the image's opened-path
+  pragma-once cache. Its realpath stub preserves spelling, unlike the host.
+  The initial repaired-fixture run exposed this mismatch; retained evidence
+  is results/pre/once-cache-2026-10-28/before-once-policy-*.json.

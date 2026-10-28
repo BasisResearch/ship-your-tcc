@@ -34,6 +34,11 @@ open (results/csem/raw-frontend.md). F1–F3 and the whole-compiler theorem
 remain open; newlib binary128 formatting/sqrt and other
 recorded semantic gaps still require work.
 
+The latest preprocessing corpus has 618 exact model/reference and 616 exact
+spec/reference agreements across 622 inputs. The image's opened-path once
+cache and include fixtures now agree; residuals and full gate/Sail evidence
+are recorded in [the preprocessing review](results/pre/once-cache-2026-10-28.md).
+
 ## The target: RV64I
 
 The shared executable Sail model implements RV64I only. `mul`, `div`, atomics,

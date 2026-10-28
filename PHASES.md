@@ -273,3 +273,14 @@ now honor the explicit union layout table, and the existing fuel-stability
 proof uses it without new premises or raised budgets. General aggregate-value
 initialization, bitfields, whole-C coverage and compiler refinement remain
 obligations. See results/csem/anonymous-members.md and CSEM-UPSTREAM.md.
+
+F2 once-cache follow-up (2026-10-28): cfgTcc now models the image's opened-path
+cache, separately from resolved physical provenance; cfgTccE keeps host keys.
+Corpus fixture self/parent includes are materialized identically for all
+engines. Full combined CSem gate, 14 preprocessing/11 raw/7 protocol methods
+and native Sail reproducer pass. Corpus: 618 raw/616 spec exact of 622, with
+six residual spec classifications and no token differences/harness failures.
+Evidence and pre-repair mismatch are retained in results/pre/once-cache-2026-10-28.md.
+All three F2 Statements remain open. Allocation's worker gate passes but its
+combined integration is pending; ghost Cabs is unfinished. Both Sol workers
+stopped at usage limit and their changes are retained for continuation.

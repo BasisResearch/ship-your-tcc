@@ -26,6 +26,24 @@
       "sha256": "6caf58a296a485c3dfee0a0da23548596f4c99f0e0311eaa2a0d8befdb4ef48b",
       "manifest": "build/recovery/configuration-recovery/manifest.json",
       "action": "Archived verified executables; removed reproducible inactive Lake build cache only."
+    },
+    {
+      "worktree": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-a031bfca8ff17108a",
+      "revision": "a4fd05410a251764b77573d37afee1b991852fa9",
+      "archived_files": 4,
+      "archive": "build/recovery/early-proof-recovery/binaries.tar.gz",
+      "sha256": "5a803da362236f1a64fe10b5338b454372f1ca3505a83627ed850410fdb9e39e",
+      "manifest": "build/recovery/early-proof-recovery/manifest.json",
+      "action": "Archived verified executables; removed reproducible inactive Lake build cache only."
+    },
+    {
+      "worktree": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/agent-aed6a50dc418e8340",
+      "revision": "81b16e3420fdfafc409d0ad21427c66c5c7cc0aa",
+      "archived_files": 4,
+      "archive": "build/recovery/early-compiler-recovery/binaries.tar.gz",
+      "sha256": "a147debe35c4756f3b43acdd283f51e518a590e0753c3cb5f8b923f48f4e0cb8",
+      "manifest": "build/recovery/early-compiler-recovery/manifest.json",
+      "action": "Archived verified executables; removed reproducible inactive Lake build cache only."
     }
   ],
   "scope": "Inactive project worktrees only; source, uncommitted recovery work, toolchains and oracle evidence retained. Archived binaries re-read and hashed before deleting only .lake/build."
