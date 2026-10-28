@@ -16,3 +16,5 @@ import Tcc.Model.CompilerOpening
 
 #print axioms Tcc.Model.Ghost.InjectedAuthorityTransport_Statement
 #print axioms Tcc.Model.Ghost.InjectedAuthorityErasure_Statement
+
+#print axioms Tcc.Model.Ghost.AssociationReplayErasure_Statement

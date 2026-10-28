@@ -72,7 +72,7 @@ CASES={
 # These are explicit diagnostics, never successful coverage or Supported
 # exclusions. Every other fixture is a required exact positive control.
 DIAGNOSTIC_CONTROLS = {
-    'gnu-conditional','typeof','generic','choose','attribute','static-assert',
+    'gnu-conditional','typeof','choose','attribute',
     'invalid-initializer','invalid-declarator','kr-definition','inline-unused',
     'local-labels','pack',
 }
@@ -86,7 +86,8 @@ def source_pins():
         'Spec/Pre/Tcc/Cfg.lean','Spec/Pre/Tcc/ImageFS.lean',
         'scripts/ghost_cabs_cmp.py','scripts/ghost_build_request.py',
         'scripts/ghost_origins_cmp.py','scripts/physical_build_request.py','scripts/physical_onoff_cmp.py',
-        'scripts/injected_origins_cmp.py','scripts/binding_origin_build_request.py','Tcc/CSem/RawFrontEnd.lean',
+        'scripts/injected_origins_cmp.py','scripts/binding_origin_build_request.py',
+        'scripts/unevaluated_syntax_cmp.py','scripts/unevaluated_build_request.py','scripts/unevaluated_native_check.py','Tcc/CSem/RawFrontEnd.lean',
         'lakefile.toml','lake-manifest.json','lean-toolchain','vendor/TINYCC_REV',
         'vendor/CSEM_REV']}
     paths |= set(ROOT.glob('patches/*.patch'))

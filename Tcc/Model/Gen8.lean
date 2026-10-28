@@ -361,16 +361,20 @@ def gen_inline_functions (R : Rec) : M Unit := do
 
 /-- `do_Static_assert()` -/
 def do_Static_assert (R : Rec) : M Unit := do
+  let gm ← gmark
   R.next
   skip R 40
   let c ← R.expr_const
   let mut msg := "_Static_assert fail".toUTF8
   if (← getTok) == 44 then
     R.next
+    let gs ← gmark
     msg := Bytes.cstrAt (← parse_mult_str R "string constant") 0
+    gwrap gs .string
   skip R 41
   if c == 0 then tcc_error R (cfmt "%s" [.s msg])
   skip R 59
+  gwrap gm .staticAssert
 
 /-- one declarator of `decl(l)`; returns `some ret` for decl's `return ret`,
 `none` to continue with the next declarator/declaration (`brk`: break the

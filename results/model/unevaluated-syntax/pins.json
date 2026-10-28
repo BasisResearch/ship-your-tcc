@@ -1,0 +1,12 @@
+{
+  "files": {
+    "artifact-manifest.json": "70a4f0de8453edded3a70fd828434c1cf163bdc6f09c9f3ebac783d70bd753bc",
+    "evidence.tar.xz": "515c4052b0ad7a95dd21ea72c2939f8c7fd14ae8bee51a587f2f5a504e2c3b73",
+    "freeze.py": "13adcea9a9e6dc649fb8374f021ef74b900875252a7ed359c8c024e85f23f688",
+    "verify.py": "4cae49fb0d2ad376493a0d5957c494718453f9f97bfc004bc2f8bde87f10f1f0"
+  },
+  "artifacts": 6830,
+  "source_pins": 3331,
+  "explicit_build": "unevaluated-lean-5",
+  "full_gate": "unevaluated-full-1"
+}

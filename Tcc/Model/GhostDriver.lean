@@ -48,6 +48,16 @@ def erase (s : TccSt) : TccSt :=
     ghostInput := none, ghostCurrent := 0, ghostPrior := 0,
     ghost := #[], ghostAudit := #[], ghostNormalizations := #[], ghostDrops := #[], ghostTokenErrors := #[] }
 
+/-- OPEN F3/F6 local replay noninterference, including diagnostics. The
+snapshot implementation supplies this erasure law; saved-word coverage and
+complete typed expression construction additionally require the scanner/parser
+induction in RawConstruction_Statement and InjectedAuthorityTransport_Statement. -/
+def AssociationReplayErasure_Statement : Prop :=
+  ∀ R saved st,
+    match (genericAssociationSyntax R saved).run st with
+    | .ok _ after => erase after = erase st
+    | .error _ _ => False
+
 /-- Supplied by the F3/F6 induction over actual reads, trigraph replacement,
 held-byte refill, ungets and successful splice branches. Finite comparisons
 supply neither these universal laws nor RawErasure_Statement. -/

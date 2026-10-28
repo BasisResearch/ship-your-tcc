@@ -436,6 +436,13 @@ def gnode (kind : Ghost.Production) (n : Nat := 0) : M Unit := do
   let first := if n == 0 then s.ghostCurrent else (s.ghost.getD h default).range.first
   gwrap ⟨h,first⟩ kind
 
+/-- Suppress duplicated syntax actions during real selected execution, and
+restore the retained token input on both success and compiler diagnostics. -/
+def withoutGhostSyntax (action : M α) : M α := fun st =>
+  match action.run { st with ghostInput := none } with
+  | .ok value after => .ok value { after with ghostInput := st.ghostInput }
+  | .error error after => .error error { after with ghostInput := st.ghostInput }
+
 /-- Only duplicated initializer dry runs and preprocessing expressions may
 be dropped; their syntax and the reason remain in the audit. -/
 def gdrop (mark : Ghost.Mark) (reason : Ghost.DropReason) : M Unit :=

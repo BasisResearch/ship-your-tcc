@@ -866,3 +866,34 @@ an explicit follow-up, not established by arena equality.
   Preserve the failed encoding in build/alignment-package-links.tar.xz;
   repack the same inputs with dereference=True and verify every member. No
   observation is removed and no failed package is adopted.
+
+## Unevaluated compiler-action syntax, 2026-10-28
+
+- Generic selected-only replay cannot construct complete C11 Cabs. The real
+  compiler skips unselected associations; retain each scanner-owned saved word
+  map and run the model expression actions on an isolated compiler snapshot.
+  Never use independent parser Cabs or returned origins as model inputs.
+- First independent generic/static-assert observations passed, but shared-token
+  generic transport failed. Replay lookup must precede the fixture EOF policy,
+  and the fixture runner must update the saved word cursor too. The first two
+  builds/comparisons remain separate from the final passing controls.
+- The service publishes worker-build.result before the verifier archives a
+  request-specific receipt. Waiting only for the latter delayed a completed
+  build; overlapping recovery launches then collided in an existing output
+  directory. Preserve the collision log and rerun in a fresh unique directory.
+- unevaluated-lean-4 fails on a multiline Lean record update's first-field
+  layout (Gen4 line66). Its matching receipt verifies all3331 inputs and exit1.
+  Put the first field on its own aligned line; do not raise budgets.
+- Strict GCC and independent Raw.checked accept `_Static_assert(1,L"wide")`;
+  the unchanged compiler/model reject it because parse_mult_str expects TOK_STR.
+  This is a valid-C compiler residual, outside successful syntax counts and
+  still inside the whole-C obligation. Do not call it an invalid control or
+  add a Supported exclusion. Ordinary/adjacent string messages are positive
+  controls. A no-message assertion is a distinct non-C11 extension diagnostic.
+- Direct native capture hits this sandbox's denied systemd user bus. Retain
+  the failed capture as a harness error and service the identical batch through
+  the capped frozen full gate; never substitute an uncapped Lean/Sail run.
+- Final unevaluated staging is blocked creating this worktree's
+  `.git/worktrees/sol-f2-tokens/index.lock` (read-only filesystem). Use the
+  existing frozen lead commit handoff with scoped path hashes; no alternate
+  index/object store or new semantic task is needed.

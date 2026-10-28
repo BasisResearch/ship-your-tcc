@@ -1195,6 +1195,13 @@ positioned view, with explicit diagnostics for incomplete provenance/replay. -/
 def ghostTokenStart : M Nat := do
   let s ← get
   if s.ghostInput.isNone then return 0
+  let fr := s.macro_stack.head?
+  if let some frame := fr then
+    if let some positions := s.ghostReplay.get? frame.id then
+      -- The caller records the word offset before TOK_GET advances it.
+      if let some (_,i) := positions.find? (fun (word,_) => word == s.ghostLexOffset) then
+        modify fun st => { st with ghostPrior := st.ghostCurrent, ghostCurrent := i }
+        return i
   if s.ghostFixture then
     let line := if s.macro_ptr.isSome then ((s.file.head?).map (·.line_num)).getD s.tok_line else s.tok_line
     let i := if s.tok == TOK_EOF then
@@ -1204,13 +1211,6 @@ def ghostTokenStart : M Nat := do
     return i
   if !s.ghostParsing || (s.ghostNextDepth != 1 && !s.ghostStringCapture) then return s.ghostCurrent
   let some input := s.ghostInput | return 0
-  let fr := s.macro_stack.head?
-  if let some frame := fr then
-    if let some positions := s.ghostReplay.get? frame.id then
-      -- The caller records the word offset before TOK_GET advances it.
-      if let some (_,i) := positions.find? (fun (word,_) => word == s.ghostLexOffset) then
-        modify fun st => { st with ghostPrior := st.ghostCurrent, ghostCurrent := i }
-        return i
   let record := s.ghostOriginTable.getD s.ghostTokOrigin default
   let obs ← ppObservation
   let pp : CSem.Pre.PPToken := ⟨match obs.kind with
@@ -1268,7 +1268,7 @@ def next_body (R : Rec) : M Unit := do
     let st ← get
     match st.macro_ptr with
     | some mp =>
-      if st.ghostEnabled then modify fun s => { s with ghostLexOffset := mp.pos, ghostTokOrigin := mp.origin }
+      if st.ghostEnabled || st.ghostFixture then modify fun s => { s with ghostLexOffset := mp.pos, ghostTokOrigin := mp.origin }
       let t := mp.get
       if TOK_HAS_VALUE t then
         let (tk, cv, mp') := tok_get mp st.tokc

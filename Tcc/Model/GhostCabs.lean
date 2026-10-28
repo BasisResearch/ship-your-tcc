@@ -191,6 +191,14 @@ def buildStructuredSpecifier (c : Context) (i : Nat) : Build (cabs_type_specifie
       let mut fields := []
       for _ in [0:c.range.last-i] do
         if (c.token j).tok == .RBRACE then break
+        if (c.token j).tok == .STATIC_ASSERT then
+          let af ← match c.children.find? (fun f => f.production == .staticAssert && f.range.first == j) with
+            | some f => pure f | none => c.fail "missing aggregate static assertion action"
+          match ← af.value with
+          | .declaration (.Declaration_static_assert a) => fields := fields ++ [.Struct_assert a]
+          | _ => return ← c.fail "aggregate static assertion kind"
+          j := af.range.last
+          continue
         let sf ← match c.children.find? (fun f => f.production == .specifiers && f.range.first == j) with
           | some f => pure f | none => c.fail "missing aggregate-member specifier action"
         let sp ← match ← sf.value with
@@ -498,6 +506,30 @@ def buildExpression (c : Context) : Build Syntax := do
     return c.wrapExpression (.CabsEstring (pref,parts))
   if c.production == .binop || c.production == .logop || c.production == .comma then
     return ← buildChain c
+  if c.production == .generic then
+    let (control,j0) ← c.expressionAt (start+2)
+    let mut j := j0
+    let mut assocs : List cabs_generic_association := []
+    for _ in [0:c.range.last-start] do
+      if (c.token j).tok != .COMMA then return ← c.fail "generic association separator"
+      j := j+1
+      let mut ty := none
+      if (c.token j).tok == .DEFAULT then j := j+1
+      else
+        let tf ← match c.children.find? (fun f => f.production == .type && f.range.first == j) with
+          | some f => pure f | none => c.fail "missing generic association type action"
+        match ← tf.value with
+        | .typeName t => ty := some t
+        | _ => return ← c.fail "generic association type kind"
+        j := tf.range.last
+      if (c.token j).tok != .COLON then return ← c.fail "generic association colon"
+      let (e,k) ← c.expressionAt (j+1)
+      assocs := (match ty with | some t => .GA_type t e | none => .GA_default e)::assocs
+      j := k
+      if (c.token j).tok == .RPAREN then break
+    if j+1 != c.range.last then return ← c.fail "generic expression boundary"
+    -- The pinned Cabs grammar retains associations in reverse source order.
+    return c.wrapExpression (.CabsEgeneric control assocs)
   if c.production == .cast then
     let ty ← c.typeName
     let vs ← c.values
@@ -742,7 +774,12 @@ def build (c : Context) : Build Syntax := do
   | .doStmt | .forStmt | .asmStmt => buildStatement c
   | .deferredFunction => c.fail "deferred inline function syntax awaits parser replay attachment"
   | .localLabels => c.fail "GNU local-label declaration requires a Cabs extension"
-  | .staticAssert => c.fail "static assertion construction remains explicit"
+  | .staticAssert =>
+    let vs ← c.values
+    match vs.toList with
+    | [.expression e, .expression (CabsExpression _ (.CabsEstring literal))] =>
+      return .declaration (.Declaration_static_assert (.Static_assert e literal))
+    | _ => c.fail "static assertion condition/message actions"
   | _ => buildExpression c
 
 end Tcc.Model.Ghost

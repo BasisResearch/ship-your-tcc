@@ -275,3 +275,7 @@ The two type-query definitions are projected verbatim from shared
 translation_aux into the isolated OCaml overlay after the adopted symbol
 proxy patch0006; unrelated IEEE routines stay at their pristine pin. No Lua or library machine proof is copied or asserted byte
 identical. The Lua inventory/mandatory table was consulted before this work.
+
+| Work | Provenance and reuse |
+|---|---|
+| Unevaluated C11 syntax (`Gen4`, `Gen8`, `GhostCabs`, `unevaluated_*` checks) | Local instrumentation of the existing TinyCC 43c7708 translation. Reuses model `skip_or_save_block`, saved-word occurrence maps, modeled expression/type actions, Cerberus Cabs generic/static-assert types, `Phase7` lexical conversion and the existing independent `Raw.checked` comparator. Lua's inventory and mandatory table were consulted; no external library proof or instruction-identity claim is introduced. The native capture utility is reused without rebuilding its dependency projects. |

@@ -14,6 +14,7 @@ open Tok
 
 /-- `skip_or_save_block(str)` (`save`: str != NULL): the saved tokens -/
 def skip_or_save_block (R : Rec) (save : Bool) : M (Option TokArr) := do
+  let capture := save || (← get).ghostInput.isSome
   let braces := (← getTok) == 123
   let mut level : Int32 := 0
   let mut str : TokenString := {}
@@ -25,8 +26,8 @@ def skip_or_save_block (R : Rec) (save : Bool) : M (Option TokArr) := do
     if t == C.TOK_EOF then
       if save || level > 0 then tcc_error_s R "unexpected end of file"
       else break
-    if save then
-      if (← get).ghostEnabled then
+    if capture then
+      if (← get).ghostInput.isSome then
         let ln := (← curFile).line_num
         let word := str.len.toNat' + (if ln != str.last_line_num then 2 else 0)
         positions := positions.push (word,(← get).ghostCurrent)
@@ -37,14 +38,46 @@ def skip_or_save_block (R : Rec) (save : Bool) : M (Option TokArr) := do
     else if t == 125 || t == 41 || t == 93 then
       level := level - 1
       if level == 0 && braces && t == 125 then break
-  if save then
-    if (← get).ghostEnabled then positions := positions.push (str.len.toNat', (← get).ghostCurrent)
+  if capture then
+    if (← get).ghostInput.isSome then positions := positions.push (str.len.toNat', (← get).ghostCurrent)
     str := tok_str_add str C.TOK_EOF
     let tokens := str.str.extract 0 str.len.toNat'
-    if (← get).ghostEnabled then
+    if (← get).ghostInput.isSome then
       modify fun s => { s with ghostSaved := s.ghostSaved.push ⟨tokens,positions⟩ }
     return some tokens
   return none
+
+/-- Replay an association through the modeled expression actions on an isolated
+compiler state. Only typed fragments/audits escape. Token occurrences come
+from the scanner's saved word map; neither spec syntax nor spec origins enter.
+A replay diagnostic is a construction gap, never a compiler rejection. -/
+def genericAssociationSyntax (R : Rec) (saved : Ghost.SavedTokens) : M Unit := fun st =>
+  let parse : M Unit := do
+    let frame ← begin_macro .heap saved.tokens 0 1
+    modify fun s => { s with
+      ghostReplay := s.ghostReplay.insert frame saved.positions,
+      nocode_wanted := s.nocode_wanted + 1 }
+    R.next
+    R.expr_eq
+    if (← getTok) != C.TOK_EOF then expect R ","
+  let failed := fun (after : TccSt) (reason : String) =>
+    let range : Ghost.Range := ⟨(saved.positions[0]?.map Prod.snd).getD st.ghostCurrent,st.ghostCurrent⟩
+    let gap : Ghost.Fragment := ⟨.generic,range,.error ⟨.generic,range,reason⟩⟩
+    .ok () { st with
+      ghost := st.ghost.push gap, ghostAudit := after.ghostAudit.push gap,
+      ghostTokenErrors := after.ghostTokenErrors }
+  match parse.run st with
+  | .ok _ after =>
+    let shape := fun (s : TccSt) => s.ghostInput.map fun input =>
+      (input.spelling.size,input.language.positioned.tokens.size,input.language.origins.size)
+    if shape after != shape st then
+      failed after "association replay appended source occurrences instead of transporting saved words"
+    else .ok () { st with
+      ghost := after.ghost, ghostAudit := after.ghostAudit,
+      ghostNormalizations := after.ghostNormalizations, ghostDrops := after.ghostDrops,
+      ghostTokenErrors := after.ghostTokenErrors }
+  | .error _ after =>
+    failed after ("association expression action diagnostic: " ++ Bytes.toStr after.console)
 
 /-- `unary()` call part: the function call at vtop (tok == '(') -/
 def unary_call (R : Rec) : M Unit := do
@@ -467,28 +500,37 @@ def unary (R : Rec) : M Unit := do
         if !has_match then learn := true
         R.next
       else
+        let gt ← gmark
         let (_, type0, ad0) ← R.parse_btype {} 0
         let (type, _, _) ← R.type_decl type0 ad0 TYPE_ABSTRACT
+        gwrap gt .type
         if ← compare_types R controlling_type type false then
           if has_match then tcc_error_s R "type match twice"
           has_match := true
           learn := true
       skip R 58
+      let slot := (← get).ghostSaved.size
       if learn then
         str ← R.skip_or_save_block
       else
         let _ ← skip_or_save_block R false
+      if (← get).ghostInput.isSome then
+        if let some saved := (← get).ghostSaved[slot]? then
+          genericAssociationSyntax R saved
       if (← getTok) == 41 then break
     match str with
     | none =>
       let buf ← type_to_str fuel 60 controlling_type none
       tcc_error R (cfmt "type '%s' does not match any association" [.s buf])
     | some toks =>
-      let _ ← begin_macro .heap toks 0 1
-      R.next
-      R.expr_eq
-      if (← getTok) != C.TOK_EOF then expect R ","
-      end_macro
+      -- All association syntax is already retained above. The real selected
+      -- execution follows the original path, without a second syntax replay.
+      withoutGhostSyntax do
+        let _ ← begin_macro .heap toks 0 1
+        R.next
+        R.expr_eq
+        if (← getTok) != C.TOK_EOF then expect R ","
+        end_macro
       R.next
   else if tok == TOK___NAN__ || tok == TOK___SNAN__ || tok == TOK___INF__ then
     let n : Int32 := if tok == TOK___NAN__ then 0x7fc00000 else if tok == TOK___SNAN__ then 0x7f800001 else 0x7f800000

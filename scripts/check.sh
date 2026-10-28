@@ -192,6 +192,17 @@ if [ -f lakefile.toml ] || [ -f lakefile.lean ]; then
     python3 scripts/injected_origins_cmp.py --gate-build --out "$binding_checks/model-origins" \
       || fail "independent injected model origins (artifacts: $binding_checks/model-origins)"
     echo "injected binding artifacts: $binding_checks"
+    syntax_checks=$(mktemp -d build/unevaluated-syntax-gate.XXXXXX)
+    python3 scripts/unevaluated_syntax_cmp.py --gate-build --out "$syntax_checks/syntax" \
+      || fail "complete generic/static-assert syntax (artifacts: $syntax_checks/syntax)"
+    # Optional native tool is an isolated, byte-pinned copy of the existing
+    # capture utility. The portable syntax checks above always run.
+    if [ -x build/unevaluated-native-tool/capture_cut ]; then
+      python3 scripts/unevaluated_native_check.py --source "$syntax_checks/syntax/batch.c" \
+        --sail-capture build/unevaluated-native-tool/capture_cut --out "$syntax_checks/native" \
+        || fail "unevaluated syntax native Sail batch (artifacts: $syntax_checks/native)"
+    fi
+    echo "unevaluated syntax artifacts: $syntax_checks"
   fi
   if [ "${1:-}" = "--compile-cut" ]; then
     # opt-in: the evaluator run of tcc's compile phase (TccCompileCut, ~2.5 CPU-hours
