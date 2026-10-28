@@ -1325,3 +1325,10 @@ the integration worktree before any after-run execution. Retain setup failure;
 copy the exact root bytes and siblings (145files/305348bytes), hash all846
 inputs and rerun. These supplemental test inputs are separately pinned and
 must be archived; they are not retroactively part of earlier build manifests.
+
+- Pack boundary host review: `-B` alone selects the runtime but does not find
+  this build's local stddef.h. Retain the initial compile failures; corrected
+  harness also passes `-Ibuild/test-c11/src/include`. Do not count post-brace
+  pragma placements rejected by GCC as successful C11 agreements. More
+  importantly, never bind a pack cap to the opening struct token: push/pop
+  inside the body changes the completed layout in both measured compilers.

@@ -40,9 +40,8 @@ public libc `strtold` still needs correction in the library lane. Matching refus
 
 The lead runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most two
 at a time, following MANAGER.md. Slot 1 now repairs valid enum-colon compiler forms after reviewed enum semantics;
-slot 2 has submitted reviewed physical-proof checkpoint b42f766 after
-reviewed multi-translation-unit checkpoint 96c520e. Their combined adoption is next;
-slot 2 now runs tasks/f1-gnu-conditional-semantics.md. C11 bitfields and GNU expression syntax are adopted after their combined full
+physical-proof checkpoint b42f766 and multi-translation-unit checkpoint 96c520e
+are adopted together at main925f88d. Slot 2 now runs tasks/f1-vla-semantics.md after reviewed GNU checkpoint2904c35. C11 bitfields and GNU expression syntax are adopted after their combined full
 gates; member attributes are now adopted after rebuilt-image integration. Assertion-message encodings are adopted. Local replay erasure is proved
 and adopted. Array-to-pointer alignment decay is adopted after the combined image/gate validation. Complete _Generic/_Static_assert syntax is adopted after its combined gate
 and independent raw/native checks. Binding meaning and actual model-owned compiler-injected
@@ -628,8 +627,48 @@ After multi-TU/physical adoption, main image/symbols and seven executable
 targets refresh successfully on the same4,162 source paths, with the exact
 post-gate launcher-only change separately pinned. Slot1 now runs enum-colon
 compiler/model repair; slot2 GNU conditional semantics. The include-guard
-opening mismatch is queued as tasks/f2-include-guard-openings.md. No new user
+opening repair is in validation under tasks/f2-include-guard-openings.md. No new user
 decision or universal theorem is claimed.
+
+Lead include-guard candidate (not adopted): independent target preprocessing
+now tracks completed-header guards;31/32 initial focused controls agree and
+original cached multiTU records become checked-exact without changing sources.
+The remaining EOF-header control exposed a model slow-identifier bug: rereading
+CH_EOB after PEEKC returned CH_EOF. Preserving that returned character repairs
+the original and three boundary variants;35/35 focused controls now agree.
+Full guard-openings-full-1 is running on4,163 pinned inputs, with complete native
+arena/same-ELF execution observations pending. Broad before/after uses identical
+846 source inputs:838exact tcc/833exact GCC, unchanged diagnostic classifications
+and token counts; five temporary paths and one clock context differ explicitly.
+Enum-colon work has14/14 complete native arenas; its final corrected observer
+passes the focused59-case matrix, and its full gate is running. GNU conditional
+full gate passes on4,227 pinned inputs. Independent review verifies its first
+portable package (19,610 members/10 frozen receipts); complete inherited native
+capture exports are being added before its scoped checkpoint commit. The
+49/50 native batch retains the bitfield-promotion defect as a separate task.
+The three guard native arena comparisons pass. Their full-execution follow-up
+initially failed because model_diff deliberately deletes successful ELFs; the
+retained failed harness is followed by a hash-identical relink, fresh capture
+and execution of each retained ELF. Those executions remain pending.
+All three candidates remain separate from main adoption; no user decision.
+
+The next pack-layout consumption task is prepared at
+tasks/f2-pack-layout-consumption.md. Host boundary evidence retains six
+matching layout controls and two separate post-brace GCC diagnostics; tcc
+samples the active cap when laying out the completed aggregate. No semantic
+implementation or native proof is claimed by this planning evidence.
+
+GNU conditional checkpoint2904c35 is reviewed and committed, not yet adopted
+on main. Its full gate passes4,227 pinned inputs; independent portable review
+verifies19,698 archive members/10 matching frozen receipts and six complete
+inherited native gate captures. The retained native batch has49/50 zero rows;
+the GNU bitfield type-selection bug remains compiler work, not a cfgTcc policy.
+Initial missing capture exports and the gzip verifier error are preserved;
+pristine observations explicitly use an existing binary, not a clean rebuild.
+Slot2 now runs tasks/f1-vla-semantics.md on34c8cc2 (reviewed GNU checkpoint plus
+main938fa20); slot1 continues enum-colon full validation. Guard native evidence
+now includes three fresh complete captures and same-ELF zero-exit executions;
+its full gate and independent postchecks remain pending. No user decision.
 
 ## Needs user
 

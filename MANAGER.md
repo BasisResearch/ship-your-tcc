@@ -40,7 +40,8 @@ to this project's two-worker limit and shared Lean build lock.
 
 Current assignments, 2026-10-28: slot 1 runs tasks/f3-enum-colon-forms.md in
 sol-csem-repin, after independently reviewed enum checkpoint7907c3a. Slot 2
-runs tasks/f1-gnu-conditional-semantics.md in sol-f2-tokens. The latter keeps
+runs tasks/f1-vla-semantics.md in sol-f2-tokens after reviewed GNU checkpoint
+2904c35 and main938fa20 were merged at34c8cc2. The GNU checkpoint keeps
 its observed GNU bitfield-promotion compiler bug separate; its compiler/model
 repair is queued after enum colon forms. Multi-TU96c520e and pure physical
 proofsb42f766 are adopted at main925f88d after the combined full gate, independent
@@ -48,8 +49,11 @@ postchecks, portable verification and fresh same-ELF native104 execution.
 Both physical-origin/read-view Statements are proved for arbitrary bytes;
 read/refill/host, raw and whole-command construction/erasure remain open.
 Original checkpoints and failed evidence remain preserved. No third worker runs.
-Bitfield/general declaration constraints, VLA semantics, include-guard opening
-schedules, pack-layout transport and runtime body coverage remain work items.
+The lead now validates tasks/f2-include-guard-openings.md with a related
+model EOF identifier repair; three fresh native captures/same-ELF executions
+pass, while its full gate/postchecks remain pending.
+Bitfield/general declaration constraints, VLA semantics, pack-layout transport
+and runtime body coverage remain work items.
 
 Frozen build requests use the shared 12 GB lock. Changed inputs invalidate
 a request; freeze a new hash manifest before retrying. Infrastructure limits
