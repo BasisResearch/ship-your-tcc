@@ -15,7 +15,9 @@ Use named binding records and typed obligations; never infer membership from #li
 Connect library/runtime identities to the existing semantic consumers and symbol resolution.
 Preserve declaration constraints, canonical function identity, pointer equality and address-taking.
 Do not drop syntax, invent meanings for arbitrary asm or use model Cabs as the spec output.
-Files: raw frontend/configuration, Cabs-to-Ail/Core binding consumers, identity transport and driver.
+Files: Tcc/CSem/Supported.lean, raw frontend/configuration, binding consumers, identity transport.
+Update the exclusion visitor: user asm-label carriers must remain excluded by DESIGN section 5;
+injected aliases need the pinned resolved-identity distinction, never blanket inclusion/exclusion.
 Change shared Lem sources and regenerate; keep generated Lean/OCaml overlays in sync.
 Test ordinary raw cfgTcc through execution, genuine aliases, relabeled headers and spoofed source.
 Include redeclarations, user definitions, function pointers and distinct aliases to one function.

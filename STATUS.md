@@ -291,6 +291,14 @@ tasks/f3-physical-origin-maps.md; no third worker is running. The old parser
 captures were archived only after every member
 was hash-verified; the storage record is results/review/parser-ghost-capture-archive-2026-10-28.json.
 
+GNU review follow-up: accepting located asm-label carriers makes the legacy
+Supported visitor's parser-rejection assumption stale. The binding task must
+explicitly exclude user asm labels while admitting only genuine injected
+bindings through resolved identity/content, with actual runtime meaning.
+Blanket exclusion would make ordinary raw Supported vacuous; blanket inclusion
+would admit DESIGN section 5 constructs. This is required implementation work
+in tasks/f1-injected-bindings.md, not a request to change the user-approved scope.
+
 ## Needs user
 
 None currently. Implementation defects and unfinished obligations are work
