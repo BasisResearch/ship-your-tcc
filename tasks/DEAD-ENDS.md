@@ -636,3 +636,10 @@ requested corrections until the lead surfaced them explicitly.
   typedef _Alignof checks) versus GCC0. Physical typedef layout is correct;
   _Alignof(type) loses the attribute, including through a typedef chain. Do
   not alter CSem, hide the cases or count the batch as passing agreement.
+
+- GNU combined review (2026-10-28): a passing full gate rebuilt csem_raw but
+  not root csem_cparse. The fresh raw semantics all worked, while its text
+  counterpart used the stale pre-GNU executable and failed every attribute
+  case. Preserve that comparison and binary pin. Rebuild csem_cparse in the
+  CSem gate and run the maintained GNU/header checks there; a default library
+  build alone does not refresh every executable used by the comparison.

@@ -40,7 +40,7 @@ public libc `strtold` still needs correction in the library lane. Matching refus
 
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
 two at a time, following MANAGER.md. Slot 1 now handles injected runtime bindings in sol-csem-repin; the GNU
-syntax/layout checkpoint is under combined integration review;
+syntax/layout checkpoint is adopted after combined validation;
 CSEM-10, library identity and bounded allocation are adopted. Slot 2
 repairs GNU typedef alignment in the compiler/model; the model-origin
 continuation is adopted after combined validation. Both resumed after
@@ -310,6 +310,19 @@ GNU gate is running with 3,573 frozen inputs in sol-c11-line. Slot 1 restarts
 on tasks/f1-injected-bindings.md from that reviewed combination; slot 2 still
 owns typedef alignment. GNU adoption and ordinary raw semantic support are
 not claimed yet. No model substitution or new user decision was needed.
+
+GNU adoption (2026-10-28): combined full gate passes with 3,573 unchanged
+source pins. Twenty-three semantic/GCC/full-text-Cabs controls and six actual
+header parses pass; ordinary model/spec Cabs is now 3/3 exact and shared-token
+Cabs is 45/56. Seventeen origin controls, three omission guards and both
+seven-case byte regressions pass. Eleven Cabs nonsuccesses, two physical-map
+gaps and semantic GNU residuals remain explicit. The gate now rebuilds the
+standalone text parser and runs GNU/header checks; its earlier stale-parser
+failure is preserved. Evidence is results/csem/gnu-integration-2026-10-28.md.
+Slot 1's injected-binding meaning and Supported visitor connection are still
+required; slot 2 continues compiler/model typedef alignment. This adoption
+closes neither whole-C coverage nor any of the six ghost proof Statements.
+No new native/broad observation or sum regeneration is claimed.
 
 ## Needs user
 

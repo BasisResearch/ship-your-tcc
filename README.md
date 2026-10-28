@@ -41,11 +41,14 @@ adopted after the combined gate: arbitrary checked placements enter CSem's
 outcome set, with generic placement contracts and 21 focused checks. The
 machine-memory simulation remains open (results/csem/allocation-oracle.md).
 
-Typed compiler-action Cabs has 44 exact shared-token controls; model-owned
+Typed compiler-action Cabs has 45 exact shared-token controls; model-owned
 macro/include provenance adds 17 exact origin checks and three omission guards.
 The combined full gate, seven finite erasure checks and broad arena regression
 pass. Ordinary whole-unit agreement and all six typed proof Statements remain
-open (results/model/ghost-origins-integration-2026-10-28.md).
+open. GNU declaration syntax/layout now passes its combined gate: 23 semantic
+controls, six actual-header parses and three exact ordinary Cabs comparisons.
+Injected runtime alias meaning remains work
+(results/csem/gnu-integration-2026-10-28.md).
 
 The latest preprocessing corpus has 618 exact model/reference and 616 exact
 spec/reference agreements across 622 inputs. The image's opened-path once

@@ -155,7 +155,7 @@ if [ -f lakefile.toml ] || [ -f lakefile.lean ]; then
     echo "== (8b) axioms of the F0 statement over CSem"
     audit scripts/axioms_csem.lean "$std"
     echo "== (8c) raw frontend build and axiom/purity census"
-    flock "$lock" systemd-run --user --scope -q -p MemoryMax=12G lake build csem_raw CSemConeReport \
+    flock "$lock" systemd-run --user --scope -q -p MemoryMax=12G lake build csem_raw csem_cparse CSemConeReport \
       || fail "raw frontend build"
     audit scripts/raw_frontend_audit.lean "$std"
     identity_checks=$(mktemp -d build/library-identity-gate.XXXXXX)
@@ -167,6 +167,14 @@ if [ -f lakefile.toml ] || [ -f lakefile.lean ]; then
       python3 scripts/check_function_redeclaration.py --out "$redecl_checks/run"
     ) || fail "function redeclaration identity (artifacts: $redecl_checks/run)"
     echo "function redeclaration artifacts: $redecl_checks/run"
+    # Both raw and text parser executables are rebuilt above: GNU checks
+    # compare their full Cabs, so a stale standalone parser is not acceptable.
+    gnu_checks=$(mktemp -d build/gnu-attribute-gate.XXXXXX)
+    python3 scripts/check_gnu_attributes.py --out "$gnu_checks/semantics" \
+      || fail "GNU declaration attributes (artifacts: $gnu_checks/semantics)"
+    python3 scripts/check_gnu_raw_headers.py --out "$gnu_checks/headers" \
+      || fail "actual injected-header syntax (artifacts: $gnu_checks/headers)"
+    echo "GNU declaration/header artifacts: $gnu_checks"
   fi
   if [ "${1:-}" = "--compile-cut" ]; then
     # opt-in: the evaluator run of tcc's compile phase (TccCompileCut, ~2.5 CPU-hours

@@ -40,7 +40,8 @@ to this project's two-worker limit and shared Lean build lock.
 
 Current assignments, 2026-10-28: slot 1 runs tasks/f1-injected-bindings.md in
 sol-csem-repin from the reviewed GNU/origin combination. GNU syntax/layout
-is handed off as 44dc780, with combined validation running in sol-c11-line. Slot 2
+is adopted after the full combined gate in sol-c11-line; its original
+checkpoint 44dc780 and all source-pinned observations remain preserved. Slot 2
 runs tasks/f3-typedef-alignment.md in sol-f2-tokens, repairing the observed
 compiler query mismatch and its executable model. The model-origin continuation
 is adopted after its combined gate. General declaration constraints

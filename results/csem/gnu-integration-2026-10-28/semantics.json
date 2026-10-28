@@ -1,0 +1,562 @@
+{
+  "rows": [
+    {
+      "case": "injected-aligned",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "status": "PASS",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": true
+    },
+    {
+      "case": "tag-prefix",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "status": "PASS",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": true
+    },
+    {
+      "case": "tag-suffix",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "status": "PASS",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": true
+    },
+    {
+      "case": "packed",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "status": "PASS",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": true
+    },
+    {
+      "case": "packed-aligned",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "status": "PASS",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": true
+    },
+    {
+      "case": "member-aligned",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "status": "PASS",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": true
+    },
+    {
+      "case": "member-prefix",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "status": "PASS",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": true
+    },
+    {
+      "case": "member-packed",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "status": "PASS",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": true
+    },
+    {
+      "case": "nested",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "status": "PASS",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": true
+    },
+    {
+      "case": "anonymous",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "status": "PASS",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": true
+    },
+    {
+      "case": "union",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "status": "PASS",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": true
+    },
+    {
+      "case": "packed-union",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "status": "PASS",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": true
+    },
+    {
+      "case": "typedef-up",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "status": "PASS",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": true
+    },
+    {
+      "case": "typedef-down",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "status": "PASS",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": true
+    },
+    {
+      "case": "typedef-chain",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "status": "PASS",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": true
+    },
+    {
+      "case": "pointer-placement",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "status": "PASS",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": true
+    },
+    {
+      "case": "extension-declaration",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "status": "PASS",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": true
+    },
+    {
+      "case": "keyword-alias",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "status": "PASS",
+      "full_text_cabs": true,
+      "original_keyword_alias": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": true
+    },
+    {
+      "case": "local",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "status": "PASS",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": true
+    },
+    {
+      "case": "global",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "status": "PASS",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": true
+    },
+    {
+      "case": "function",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "status": "PASS",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": true
+    },
+    {
+      "case": "macro",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "status": "PASS",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": true
+    },
+    {
+      "case": "nested-local",
+      "raw_exit": 0,
+      "semantics": [
+        {
+          "exit": 0,
+          "status": "defined",
+          "stdout": ""
+        }
+      ],
+      "status": "PASS",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": true
+    },
+    {
+      "case": "align-zero",
+      "raw_exit": 0,
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "status": "DIAGNOSTIC",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "required_positive": false
+    },
+    {
+      "case": "align-three",
+      "raw_exit": 0,
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "status": "DIAGNOSTIC",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 1,
+      "required_positive": false
+    },
+    {
+      "case": "align-empty",
+      "raw_exit": 0,
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "status": "DIAGNOSTIC",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "required_positive": false
+    },
+    {
+      "case": "align-many",
+      "raw_exit": 0,
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "status": "DIAGNOSTIC",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 1,
+      "required_positive": false
+    },
+    {
+      "case": "pack-argument",
+      "raw_exit": 0,
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "status": "DIAGNOSTIC",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 1,
+      "required_positive": false
+    },
+    {
+      "case": "unsupported-cleanup",
+      "raw_exit": 0,
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "status": "DIAGNOSTIC",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "required_positive": false
+    },
+    {
+      "case": "linker-section",
+      "raw_exit": 0,
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "status": "DIAGNOSTIC",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "required_positive": false
+    },
+    {
+      "case": "asm-label",
+      "raw_exit": 0,
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "status": "DIAGNOSTIC",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "required_positive": false
+    },
+    {
+      "case": "ice",
+      "raw_exit": 0,
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "status": "SEMANTIC_DIAGNOSTIC",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": false
+    },
+    {
+      "case": "empty",
+      "raw_exit": 0,
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "status": "SEMANTIC_DIAGNOSTIC",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": false
+    },
+    {
+      "case": "function-aligned",
+      "raw_exit": 0,
+      "semantics": {
+        "status": "elaboration-error"
+      },
+      "status": "SEMANTIC_DIAGNOSTIC",
+      "full_text_cabs": true,
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0,
+      "gcc_stdout": "",
+      "required_positive": false
+    }
+  ],
+  "pins": {
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_raw": "41102dc9ce02594549e5be2470c630e4f4f3b57cc778938f7e6a2f839eacfee3",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_cparse": "62649bb5a7259760a0cdedb690ceaf736d8117ad377d6f54eaccf3f389a90e6a",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/csem/runtime/libc/include/stddef.h": "0fb655b4e88e0960faa8bba272fa30d3040846edff8ed6ff94c747e9c4f57793",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/injected-aligned.c": "298e15fd6a9562c27f118d2b7aaea442e40db018a80e8ab86948d9cab9f2e3d3",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/tag-prefix.c": "a279293dcde83720ce0362c958273e4a8c2fa6c80246e34080fe82d7e2276f83",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/tag-suffix.c": "17590b5ee1c4bfe67e5bfdf35be2bf23847172ea8d9db6b19f6361d93d335b71",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/packed.c": "d294f226c192e30747d4302aead79f63cbcc5be87261d178bf5e1f4e1998133d",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/packed-aligned.c": "91ca994d14335d1a537be966a8bbcd16aedcac07b8a60331070d94991d3eb956",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/member-aligned.c": "a093d17b2103b20627a7d4237fb59dc6c18f65332932bc7197b0a66228de3f71",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/member-prefix.c": "11364dbf25e63e77fc2a6275969a5f615d115f1eaccba921027c3820650b6122",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/member-packed.c": "be6411c31a568ab1a1d07e8e153368fb738dbce4ae4db918eb8f22b0cf9f0f5f",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/nested.c": "7c5ac0fd74faababd531ad191acf109793df623a75d25aa9ffbc24ec8ece6028",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/anonymous.c": "491235b75f77bfa38c9dbfc3e0bdbe7dbd9b0874ebcd9c49807e68d5b7583122",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/union.c": "da23f77310e26924b52f0aabbe72d979e44bad34a30661d5f7a8b47d92a54cb7",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/packed-union.c": "ed2461d158e64c80a36a486aa09496d4eff4def5471d742aab617bcdc59133c9",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/typedef-up.c": "930b31f076015e357e7ee350f62f1cb8d18a5c43528e438f236a3ef9acaf6552",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/typedef-down.c": "3924dc35d6c4a4ded4d2db62091257b470c0b02ff645cbd76025bfcd6797991c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/typedef-chain.c": "e10b964dc3e9f178545d10dbe51d4617f827fc2ae233b04f235e66a22c0358a8",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/pointer-placement.c": "6e1fffc65e671afd228b739ae9879b81c10a4115c724077ca75bbf3ffc56a2d7",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/extension-declaration.c": "e8579c23685ff2f242806fdd97e3dbba1386f201ccbbecea628d1ecdf6ee8d53",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/keyword-alias.c": "773e1163dc39fb0101f53fd25686ad45abea81891d905c2f2b83d367fc271f31",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/local.c": "21834406751271bb8a31c0e3d70495615eecb9657a76672eafd723de9f5b61f6",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/global.c": "84fb30675900b5b028dd563bf962c5837f12b7e4802cadcbada631a559a7de7d",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/function.c": "4e402300e65a23c7ae981b21279a8f34e18b85854517260e086d49defb2c133e",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/macro.c": "59d66996acb39d43f2df973e04b12f928256c06959916d2b7d78049a024e03c5",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/nested-local.c": "435926b71e75c57fcc2c32e83467c2da83c8d788045f025561b8197945e78eba",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/align-zero.c": "9d1ee923d201fe5ac6397616f42f1fe00913f7d103cee5671dac99d0db67c7d1",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/align-three.c": "e62172609c1d42818bd625a0db5606c97de332c523fb2e59532b5caa7fe74afc",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/align-empty.c": "6735dac683c23bcfff92fa52cf9b8f786a993ae3d690498f58efe481e2695864",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/align-many.c": "74d6c45e6972be903e4b05bd022d0a90dbf926c863ba70bd7bbc036435ed6e98",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/pack-argument.c": "ec1230681dff4de734b52f13349c75a0979ee7a78bc9220d63da7607a65f8bad",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/unsupported-cleanup.c": "5910d05beec674847674d5f0ad767ce980268d44638cd8e1ad2bba7cbd4e66bf",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/linker-section.c": "f949e580b06a9a826cc01edaacb5a86ab217c1280ebddb93988f51dbfa991bde",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/asm-label.c": "f3c06057dcb3ed0a0c48005b5d2148068be3c4636835743313f5c83c0be69c9c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/ice.c": "711034e179b57027d82f3001f8a7ccaac5e9fe6645e0e247f9c2a1bb92cb3675",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/empty.c": "9b739e1041f7c9eec1216a4c044207e9cb14fae731cf1cfce5db2efc2476b19d",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/gnu-attribute-gate.haf3l2/semantics/sources/function-aligned.c": "82dafa42da1714c5bceec37a39bae7278fc8b063d553c9f5cb183595c7a85a82"
+  }
+}

@@ -419,3 +419,18 @@ integration with adopted origins and symbol reservation is running with 3,573
 frozen inputs. Slot 1 now takes the required injected-binding meaning and
 Supported visitor connection; this candidate does not close ordinary raw
 semantics, whole-C parser coverage or any correctness theorem.
+
+GNU syntax/layout adoption (2026-10-28): the final combined full gate passes
+with 3,573 unchanged source hashes. Twenty-three semantic/GCC/full text-Cabs
+controls, six actual-header parses and the existing semantic regressions pass.
+The new standalone text-parser target and maintained GNU/header checks close
+a stale-executable validation defect; its failed first comparison is retained.
+Ordinary model/spec Cabs is now 3/3 exact, shared-token Cabs 45/56 with an
+additional strict attribute control. Seventeen origin controls, three omission
+guards, seven on/off and seven independent fast-arena controls pass. These
+are finite observations: all six ghost Statements, complete Cabs construction,
+physical transformation maps and runtime binding meaning remain open. The
+identity-aware asm exclusion repair is slot 1's active task; no change to the
+whole-C target is approved or implied. Evidence and remaining semantic GNU
+residuals: results/csem/gnu-integration-2026-10-28.md. No new Sail execution,
+broad-corpus claim or sum regeneration is included in this adoption.
