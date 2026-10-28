@@ -1098,7 +1098,9 @@ def ghostTokenStart : M Nat := do
   let physicalLine := (raw.extract 0 offset).data.toList.count 10 + 1
   let file := Bytes.toStr f.filename
   let i := input.spelling.size
-  let sp : CerbLocation.Pos := ⟨file,s.tok_line.toNat',col,"/model-phase4.c",2*i+2⟩
+  let sp : CerbLocation.Pos := {
+    file := file, line := s.tok_line.toNat', col := col,
+    lexingFile := "/model-phase4.c", lexingLine := 2*i+2 }
   let ep := { sp with col := col+obs.spell.size }
   let origin : CSem.Pre.Origin := if verified then
     .source ⟨⟨f.true_filename.toList,CSem.Pre.FileSys.normComponents f.true_filename.toList,
