@@ -457,3 +457,16 @@ captures are in results/csem/array-constraints-2026-10-28.md. Repair is queued
 with CSem array/alignment semantics; the invalid programs add no success
 coverage and do not change Supported/Fits. Both active workers keep their
 independent binding and physical-origin tasks.
+
+F3 generator repair (2026-10-28): the unary-minus generator no longer merges
+with a negative float into a decrement token. All 1,200 new seed1–1200 inputs
+pass syntax checks and independent fast arenas, with no refusal or other error.
+Full gate passes with 3,577 frozen inputs. Historical1,815sources/463refusal
+consoles remain separate; 118 old cgen inputs are independently GCC-invalid.
+Evidence: results/model/cgen-negation-2026-10-28.md. No native Sail or NoUB
+claim is added. The 46/56 raw Cabs comparison is parser construction over
+model-produced positioned tokens; independent preprocessing and injected
+opening authority remain separately open. tasks/f3-injected-binding-origins.md
+requires the actual independent raw frontend comparison after the reviewed
+binding/physical checkpoints. tasks/f3-corpus-invocations.md retains intended
+multi-file invocations without removing historical standalone refusals.

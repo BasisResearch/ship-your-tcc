@@ -1,0 +1,6 @@
+{
+  "original_gzip_sha256": "7aa4a0104ed463bcdc9a14c3665b50d0324b3297a7c9d29e44d418e0fb7efa50",
+  "xz_sha256": "7c4e1941343c8a2631b385aebb1952f72a70cb2482c1c6c32814c81d6b241549",
+  "members_verified": 6133,
+  "note": "Lossless recompression of the same tar stream; every member reverified before removing duplicate gzip encoding."
+}

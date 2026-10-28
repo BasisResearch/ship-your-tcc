@@ -1,0 +1,9 @@
+{
+  "source": ".claude/worktrees/agent-a31b97b8f1c090141/build/f1a/run-l2lmoun6",
+  "archive": "build/recovery/parser-run-l2lmoun6-2026-10-28/captures.tar.gz",
+  "archive_sha256": "fe4d98bbaca3885d134d9001d80f0673720fbac65448238bdf86a811193ebf39",
+  "member_count": 7191,
+  "uncompressed_bytes": 2295297003,
+  "archive_bytes": 103541424,
+  "reason": "Inactive inherited parser captures; every member verified before removing loose duplicates. Source checkout and original observations unchanged."
+}

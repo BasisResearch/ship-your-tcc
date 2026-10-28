@@ -15,7 +15,9 @@ added to the immutable gate request. The gate now explicitly builds and audits
 Fresh combined-model checks give 45/56 shared-token Cabs agreements and
 **46/56 raw-source Cabs agreements**. The raw run retains the actual injected
 header and covers all 56 fixtures; it extends the previous three-case ordinary
-check. The eleven/shared and ten/raw nonsuccesses remain explicit. Seventeen
+check. In this mode the independent grammar parses model-produced positioned
+tokens; this is parser-construction agreement, not an independent raw
+preprocessing comparison. The eleven/shared and ten/raw nonsuccesses remain explicit. Seventeen
 origin controls and three omission guards pass; splice and trigraph physical
 origins remain the same two gaps. Seven ghost on/off checks preserve arena,
 console and status bytes, and seven independent fast-reference arenas match.

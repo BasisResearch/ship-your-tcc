@@ -160,7 +160,7 @@ class G:
             return '(%s)(%s %s %s)' % (t, self.expr(vars, o, depth + 1), r.choice(['<', '<=', '==', '!=', '>', '>=', '&&', '||']),
                                        self.expr(vars, o, depth + 1))
         if k < 0.68:
-            return '(%s)(-%s)' % (t, self.expr(vars, t, depth + 1))
+            return '(%s)(-(%s))' % (t, self.expr(vars, t, depth + 1))
         if k < 0.72 and not isf:
             return '(%s)(~%s)' % (t, self.expr(vars, t, depth + 1))
         if k < 0.76:

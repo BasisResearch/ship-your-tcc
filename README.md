@@ -51,8 +51,11 @@ Injected runtime alias meaning remains work
 (results/csem/gnu-integration-2026-10-28.md). Compiler typedef alignment is now
 repaired: three full compiler Sail probes succeed and two new complete native
 arenas match the model. The combined gate passes, with 46/56 exact raw Cabs
-controls; the representation proof and remaining gaps stay open
-(results/model/typedef-integration-2026-10-28.md).
+controls on model-produced positioned tokens; the representation proof and remaining gaps stay open
+(results/model/typedef-integration-2026-10-28.md). The C generator's unary-minus
+lexing defect is repaired: a separate fresh 1,200-input batch has 1,200 identical
+arenas and no refusals, with the full gate passing. Historical corpus counts
+remain unchanged (results/model/cgen-negation-2026-10-28.md).
 
 The latest preprocessing corpus has 618 exact model/reference and 616 exact
 spec/reference agreements across 622 inputs. The image's opened-path once

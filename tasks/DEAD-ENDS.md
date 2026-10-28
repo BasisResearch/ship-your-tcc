@@ -697,3 +697,20 @@ requested corrections until the lead surfaced them explicitly.
   Both initial and corrected records are retained in the array-constraint
   review. Plain invalid typedefs still expose genuine inherited Cerberus
   constraints; direct function arrays crash, rather than diagnose cleanly.
+
+- Generated negation (2026-10-28): concatenating unary minus with a negative
+  floating literal produced a decrement token (`--2.5f`). All118 old cgen
+  refusals independently fail GCC syntax checks for this reason. Parenthesize
+  the generated operand; do not edit generated outputs or replace historical
+  inputs/counts in place. The new1200-input snapshot matches all independent
+  arenas; historical1815source inputs and463refusal consoles remain archived.
+- Main gate cache setup (2026-10-28): the refreshed main executables passed
+  build checks, but the first cgen gate lacked the matching adopted GNU oracle
+  link. Verify its complete/artifact/overlay manifests and reuse the immutable
+  keyed engine; do not rebuild or mutate shared upstream to fix a local link.
+  The first failed receipt and the successful new frozen gate remain retained.
+- Raw ghost comparison scope (2026-10-28): raw-spec runs the independent
+  grammar on the model's positioned tokens. That tests parser construction,
+  not independent raw preprocessing or compilerInjected provenance. Preserve
+  those valid component counts and add the actual Raw.checked cfgTcc comparison
+  for the binding-origin task; never feed spec Cabs back into model construction.

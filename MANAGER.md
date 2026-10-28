@@ -62,3 +62,9 @@ requested corrections must be resolved or returned as an explicit obstruction.
 
 Keep build receipts compact: inspect ID/status/lead notes, and verify large
 hash manifests with scripts. Do not repeatedly print whole manifests or logs.
+
+Next integration duty: tasks/f3-injected-binding-origins.md follows the binding
+and physical-map checkpoints. Existing raw Cabs component checks parse model
+tokens; the additional comparison must call independent Raw.checked cfgTcc.
+Keep old counts and this stronger provenance obligation separate. Intended
+multi-file corpus invocations are queued in tasks/f3-corpus-invocations.md.

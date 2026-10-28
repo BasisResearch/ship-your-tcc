@@ -346,6 +346,20 @@ records this inherited defect with ten cases and 173 verified captures;
 CSEM-12's GNU propagation issues remain separate. Both Sol slots are active:
 injected bindings and physical-origin maps. No third worker or external report.
 
+Generator repair (2026-10-28): unary minus now parenthesizes its operand,
+avoiding accidental decrement tokens before negative floating literals. All
+1,200 newly generated sources pass GCC syntax checking and independent arena
+comparison with zero refusals/errors. The full gate passes with 3,577 frozen
+inputs; its missing-cache-link first attempt is retained. Historical 1,815
+sources and 463 refusal diagnostics are separately archived, and the historical
+1,345-success count is unchanged. See results/model/cgen-negation-2026-10-28.md.
+Main executables and base image were refreshed under the cap; no sum cuts moved.
+The raw Cabs mode compares parser construction on model-produced positioned
+tokens; it does not establish independent raw preprocessing. The queued
+binding-origin task requires an additional independent Raw.checked cfgTcc
+comparison. Intended multi-file corpus invocations are also queued. Both
+workers remain active; their next combined reviews are still required.
+
 ## Needs user
 
 None currently. Implementation defects and unfinished obligations are work
