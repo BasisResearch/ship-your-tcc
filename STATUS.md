@@ -248,6 +248,22 @@ The older pinned binaries were hash-verified in a recovery archive before
 replacement. This adds no Sail coverage or theorem; operational evidence is
 results/review/main-artifact-refresh-2026-10-28/.
 
+Current review (2026-10-28): slot 1 retains GNU attributes and injected asm
+bindings in the independent parser; aggregate alignment now has its own tag
+fields, separate from member alignment. Slot 2 extends model-owned macro
+origins and ordinary typed construction. Both candidates remain under review,
+with failed build attempts retained; neither changes the adopted counts above.
+Exact carrier agreement, include provenance and combined validation remain.
+The injected builtin aliases need an explicit runtime binding connection
+(tasks/f1-injected-bindings.md), not removal of header declarations or a
+Supported restriction. A fresh RV64 comparison also isolates lost typedef
+alignment in tcc's `_Alignof(T)` queries; physical layout is correct.
+tasks/f3-typedef-alignment.md queues the compiler/model repair. The independent
+GNU expression-alignof difference remains separate. Full `tcc -run` on Sail
+reproduces the query error after 13,481,097 compile steps; the two cross-program
+runs and this full-image run are separately pinned in
+results/review/gnu-typedef-alignment-2026-10-28.md. Static gate passes.
+
 ## Needs user
 
 None currently. Implementation defects and unfinished obligations are work

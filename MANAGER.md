@@ -45,6 +45,9 @@ replay and typed header construction. The typed checkpoint and CSEM-10 zero
 symbol repair are adopted after combined gates. General declaration constraints
 (tasks/f1-declaration-constraints.md, CSEM-11) and concrete bitfields
 (tasks/f1-bitfields.md) are queued. Pack/layout consumption remains required.
+The GNU review also queues tasks/f3-typedef-alignment.md for the compiler/model
+query mismatch and tasks/f1-injected-bindings.md for actual tccdefs aliases.
+Keep those separate from user asm exclusion and from the current checkpoints.
 
 Frozen build requests use the shared 12 GB lock. Changed inputs invalidate
 a request; freeze a new hash manifest before retrying. Infrastructure limits

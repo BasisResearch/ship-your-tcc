@@ -544,3 +544,19 @@ requested corrections until the lead surfaced them explicitly.
   reviewed sol-csem-repin cache at key 9e775864dfd595f06f61463e4ff16d6664b5aa7dea800e471cd821462c73602f
   through a local link, after its artifact/overlay manifest verifies; do not
   repin, rewrite or rebuild a shared oracle cache to bypass the check.
+
+- GNU layout review (2026-10-28): encoding aligned aggregate layout by raising
+  its first member's declared alignment conflates independently observable
+  properties. Use explicit aggregate fields and separate effective packing;
+  do not rely on currently missing expression-alignof to justify the shortcut.
+  GCC and tcc also differ on explicitly aligned member expression queries;
+  retain both observations instead of declaring GCC the target by assumption.
+- GNU typedef alignment: successful offsets/sizeof do not validate type
+  alignment queries. The RV64 Sail probe has correct 16/1 member offsets but
+  tcc reports 4/4 for `_Alignof(Up/Down)`; chained typedefs also report 4.
+  Preserve this failure separately from the GNU layout implementation tests.
+- Ghost provenance: physical-token byte equality does not establish an include
+  history. An unconditional empty SourceSite.includes list cannot be called
+  complete for nested/repeated includes; retain actual directive spans or an
+  explicit incomplete-provenance gap. Carrier-only Cabs construction is not
+  independent parser agreement or a semantic proof for injected asm aliases.

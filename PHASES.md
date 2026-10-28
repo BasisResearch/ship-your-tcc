@@ -368,3 +368,19 @@ open. Twenty-eight cross-tcc/GCC Sail program pairs and one full tcc-run probe
 are distinct pinned observations, not compiler proofs. CSEM-11 is a separate
 inherited incompatible function/object constraint bug, queued in
 tasks/f1-declaration-constraints.md. GNU attributes and bitfields remain work.
+
+Active review (2026-10-28): GNU syntax/layout and model macro origins are
+independent unadopted candidates. Aggregate alignment must remain distinct
+from declared member alignment. Complete ordinary-source parser agreement
+still owes the common located carrier, full include provenance and validation.
+Compiler-injected builtin asm aliases need the explicit runtime connection
+queued in tasks/f1-injected-bindings.md; excluding the injected header would
+make Supported vacuous. A fresh cross-program Sail comparison finds correct
+typedef-based offsets but incorrect `_Alignof(T)` values in patched tcc;
+tasks/f3-typedef-alignment.md queues its compiler/model repair. This is a
+GNU typedef extension discrepancy, separate from expression-alignof and from
+CSEM-11. Neither candidate nor a matching refusal closes an F1/F3 obligation.
+The typedef query discrepancy also reproduces in the full compiler on Sail
+(13,481,097 compile steps, 5,788 program steps); independent cross-program
+observations and the passing static gate are pinned in
+results/review/gnu-typedef-alignment-2026-10-28.md. No repair is adopted yet.
