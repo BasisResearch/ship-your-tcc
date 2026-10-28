@@ -283,4 +283,5 @@ six residual spec classifications and no token differences/harness failures.
 Evidence and pre-repair mismatch are retained in results/pre/once-cache-2026-10-28.md.
 All three F2 Statements remain open. Allocation's worker gate passes but its
 combined integration is pending; ghost Cabs is unfinished. Both Sol workers
-stopped at usage limit and their changes are retained for continuation.
+stopped at usage limit; their changes were preserved and both restarted on
+Oct 28 (library identity and ghost Cabs). The lead handles allocation integration.

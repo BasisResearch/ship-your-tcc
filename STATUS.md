@@ -39,10 +39,10 @@ removed. Patch 0004 fixes compiler literals using exact integer rounding;
 public libc `strtold` still needs correction in the library lane. Matching refusals likewise do not satisfy the F3 success criterion.
 
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
-two at a time, following MANAGER.md. Slot 1 is assigned bounded allocation recovery
-after its reviewed raw frontend checkpoint passed integrated validation. Slot 2
-is assigned ghost Cabs from modeled compiler parser actions. Both are stopped
-at usage limit; the latest continuation status is below. The anonymous-member repair is adopted with IEEE after its combined gate.
+two at a time, following MANAGER.md. Slot 1 now handles semantic library-source
+identity, while the lead integrates the reviewed allocation checkpoint. Slot 2
+continues ghost Cabs from modeled compiler parser actions. Both resumed after
+the interruption; the latest continuation status is below. The anonymous-member repair is adopted with IEEE after its combined gate.
 The pure IEEE implementation is integrated after the combined gate; the compiler/model
 anonymous-container qualifier repair is also adopted. Exact-token/pragma integration is now
 validated with the nested-designator repair: strengthened full gate, 147
@@ -172,11 +172,12 @@ eleven raw frontend and seven protocol methods pass, plus the full Sail once
 reproducer. See results/pre/once-cache-2026-10-28.md. Sum cuts remain frozen.
 
 Both external Sol processes stopped at their usage limit during the interruption;
-their source changes are preserved. Allocation has a passing frozen worker
-gate and native placement observation, pending final review/integration with
-raw and anonymous semantics. Ghost Cabs remains unbuilt work in progress after
-its first failed build; ordinary source mapping is still required. The lead
-will resume these lanes from preserved changes, not claim them completed.
+their source changes are preserved. Both slots restarted successfully on Oct 28:
+slot 1 handles library identity and slot 2 resumes ghost Cabs. Allocation
+checkpoint ccc00ed has a passing frozen worker gate and native placement
+observation; the lead is combining it with raw/anonymous/once semantics.
+Ghost Cabs remains work in progress; ordinary source mapping is required.
+No unfinished checkpoint is claimed as an adopted implementation.
 
 ## Needs user
 
