@@ -50,7 +50,7 @@ def consumerLocations (location : CerbLocation.Loc) : Json := Id.run do
   letI : CerbGlobal.Switches := ⟨CerbGlobal.defaultSwitches⟩
   let caller : CerbLocation.Loc := .point {
     file := "caller.c", line := 123, col := 4, lexingFile := "caller.c", lexingLine := 123,
-    sourceIdentity := some ⟨[bs "caller.c"], false⟩ }
+    sourceIdentity := some { resolved := [bs "caller.c"], runtimeLibrary := false } }
   let undef : pexpr := Pexpr [] () (PEundef location UB045a_division_by_zero)
   let mem := CerbMem.initialMemState 0x10000
   let file : generic_file Unit core_run_annotation := default
@@ -81,7 +81,12 @@ def consumerLocations (location : CerbLocation.Loc) : Json := Id.run do
 
 
 def resultJson (r : Tcc.CSem.Raw.Result) (probe : Bool := false) : Json :=
-  obj [("stage", toJson ("parse-audit" : String)), ("digest", toJson r.digest), ("cabs", CabsExport.translationUnit r.cabs),
+  obj [("stage", toJson ("parse-audit" : String)),
+    ("excluded", toJson ((Tcc.CSem.excluded r.cabs).map reprStr)),
+    ("bindings", .arr (r.bindings.toArray.map fun b => obj [
+      ("name", toJson b.identity.binding_name), ("target", toJson b.identity.binding_linker_name),
+      ("intrinsic", toJson (match b.identity.binding_kind with | .Function_allocation_intrinsic => true | _ => false)),
+      ("declaration", CabsExport.declaration b.declaration)])), ("digest", toJson r.digest), ("cabs", CabsExport.translationUnit r.cabs),
     ("phase4", ppJson r.preprocessing),
     ("sources", .arr (r.preprocessing.sources.toArray.map fun f => obj [
       ("openedAs", toJson (byteString f.openedAs)), ("identity", toJson (f.identity.map byteString)),
@@ -212,7 +217,8 @@ def main (args : List String) : IO UInt32 := do
   let pre := if opts.tcc then CSem.Pre.Tcc.cfgTcc else cfgIso
   let cfg : Tcc.CSem.Raw.Config := {
     pre := { pre with mainName := bs file, sysIncludePaths := opts.includes ++ pre.sysIncludePaths }, fs,
-    parser := { gnu := opts.gnu || opts.tcc }, libraryFiles := opts.library }
+    parser := { gnu := opts.gnu || opts.tcc }, libraryFiles := opts.library,
+    compilerEnvironment := if opts.tcc then some tccEnvironment else none }
   if opts.phase4 then
     match phases14WithOrigins cfg.pre fs src.toList with
     | .error e => IO.eprintln e.msg; return 1

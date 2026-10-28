@@ -11,6 +11,8 @@ cd "$_repo"
 # Shared semantic repairs only. Keep this list explicit: unrelated local FS
 # sources contain Lean-only seams and must not enter the OCaml overlay.
 shared_sources=(
+  csem/frontend/model/loc.lem
+  csem/frontend/model/symbol.lem
   csem/frontend/model/ctype.lem
   csem/frontend/model/cabs_to_ail.lem
   csem/frontend/model/cabs_to_ail_effect.lem
@@ -20,7 +22,7 @@ shared_sources=(
 # The shared Mem API already passes the complete layout table. Both
 # handwritten adapters must honor it even before the runtime table is set.
 adapter_sources=(csem/lean_frontend/CerbMem.lean csem/lean_frontend/CerberusImpl.lean)
-adapter_patches=(patches/csem/0001-union-layout-tags.patch patches/csem/0002-gnu-typedef-alignment.patch patches/csem/0003-gnu-aggregate-layout.patch patches/csem/0004-tag-layout-arity.patch)
+adapter_patches=(patches/csem/0001-union-layout-tags.patch patches/csem/0002-gnu-typedef-alignment.patch patches/csem/0003-gnu-aggregate-layout.patch patches/csem/0004-tag-layout-arity.patch patches/csem/0005-compiler-opening-witness.patch patches/csem/0006-symbol-proxy-identity.patch)
 # Pin every patched handwritten adapter, including arity-only non-concrete
 # shims. Their inclusion in the manifest does not claim layout support in
 # symbolic/CHERI backends; the differential engine is the concrete backend.

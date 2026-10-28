@@ -4,6 +4,7 @@ import LemLib
 
 import CerberusFresh
 import CerbDebug
+import CerbLocation
 import Debug
 import LemLib.Pervasives
 import Utils
@@ -73,6 +74,67 @@ instance : Show identifier where
       match ident with
       | Identifier _ str => str
 
+/- Compiler-supplied aliases are a finite environment, not a meaning for GNU
+   asm labels. Names enter this table only after resolved-opening authority. -/
+inductive compiler_binding_kind : Type where
+  | Runtime_alias : compiler_binding_kind
+  | Function_allocation_intrinsic : compiler_binding_kind
+  deriving BEq, Ord
+export compiler_binding_kind (Runtime_alias Function_allocation_intrinsic)
+instance : Inhabited compiler_binding_kind where
+  default := Runtime_alias
+instance (priority := 500) : Lem_Basic_classes.SetType compiler_binding_kind where
+  setElemCompare := defaultCompare
+instance (priority := 500) : Lem_Basic_classes.Eq0 compiler_binding_kind where
+  isEqual x y := x == y
+  isInequal x y := !(x == y)
+instance (priority := 500) : Lem_Basic_classes.Ord0 compiler_binding_kind where
+  compare := defaultCompare
+  isLess := defaultLess
+  isLessEqual := defaultLessEq
+  isGreater := defaultGreater
+  isGreaterEqual := defaultGreaterEq
+
+structure compiler_binding where
+  binding_name : String
+  binding_linker_name : String
+  binding_kind : compiler_binding_kind
+  deriving BEq, Ord
+instance : Inhabited compiler_binding where
+  default := { binding_name := default, binding_linker_name := default, binding_kind := default }
+instance (priority := 500) : Lem_Basic_classes.SetType compiler_binding where
+  setElemCompare := defaultCompare
+instance (priority := 500) : Lem_Basic_classes.Eq0 compiler_binding where
+  isEqual x y := x == y
+  isInequal x y := !(x == y)
+instance (priority := 500) : Lem_Basic_classes.Ord0 compiler_binding where
+  compare := defaultCompare
+  isLess := defaultLess
+  isLessEqual := defaultLessEq
+  isGreater := defaultGreater
+  isGreaterEqual := defaultGreaterEq
+
+def compiler_bindings : List compiler_binding :=
+  List.map
+    (fun (name1 : String) =>
+      (({ binding_name := (String.append "__builtin_" name1),
+          binding_linker_name := name1,
+          binding_kind := Runtime_alias } : compiler_binding)))
+    ["memcpy", "memmove", "memset", "memcmp", "strlen", "strcpy", "strncpy", "strcmp", "strncmp",
+      "strcat", "strncat", "strchr", "strrchr", "strdup", "malloc", "realloc", "calloc", "memalign",
+      "free", "abort"] ++
+    [(({ binding_name := "__builtin_alloca",
+         binding_linker_name := "alloca",
+         binding_kind := Function_allocation_intrinsic } : compiler_binding))]
+
+def compiler_binding_for (i : identifier) : Option compiler_binding :=
+  match i with
+  | (Identifier loc1 name1) =>
+    (lem_if CerbLocation.isCompilerInjected loc1 then
+      Lem_List.find (fun (binding : compiler_binding) => binding.binding_name == name1)
+        compiler_bindings
+    else
+      none)
 /- lem: replaced by its target representation: 
 
 abbrev  digest := String

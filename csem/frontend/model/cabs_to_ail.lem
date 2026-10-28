@@ -1615,6 +1615,14 @@ let desugar_gnu_attributes loc (Annot.Attrs attrs) =
           else if gnu_name_is name "format" then
             if List.length args <> 3 then E.fail attr_loc (Errors.Desugar_NotYetSupported "invalid GNU format expects three arguments")
             else E.return effects
+          else if name = "asm_label" && Loc.is_compiler_injected attr_loc then
+            match args with
+              | [(_, spelling, _)] ->
+                  if List.any (fun binding -> spelling = "\"" ^ binding.Symbol.binding_linker_name ^ "\"") Symbol.compiler_bindings then
+                    E.return effects
+                  else E.fail attr_loc (Errors.Desugar_NotYetSupported "compiler binding target differs from pinned environment")
+              | _ -> E.fail attr_loc (Errors.Desugar_NotYetSupported "compiler binding carrier differs from pinned environment")
+            end
           else if List.any (gnu_name_is name) ["section"; "visibility"; "weak"; "alias"; "asm_label"] then
             E.fail attr_loc (Errors.Desugar_NotYetSupported "GNU linker/binding effect (DESIGN section 5); retained separately from declaration layout")
           else
@@ -2161,7 +2169,20 @@ end
 
 (* TYPE: E.desugM (Symbol.identifier * (Ctype.qualifiers -> Ctype.ctype -> (Ctype.qualifiers * Ctype.ctype))) *)
 and desugar_direct_declarator fundef under_array = function
-  | DDecl_identifier attrs ident ->
+  | DDecl_identifier (Annot.Attrs attributes as attrs) ident ->
+      E.mapM_ (fun attr ->
+        match gnu_attribute_name attr with
+          | Just "asm_label" ->
+              match Symbol.compiler_binding_for ident with
+                | Just binding ->
+                    if Loc.is_compiler_injected (Loc.locOf attr.Annot.attr_id) &&
+                       List.map (fun (_, spelling, _) -> spelling) attr.Annot.attr_args =
+                         ["\"" ^ binding.Symbol.binding_linker_name ^ "\""] then E.return ()
+                    else E.fail (Loc.locOf ident) (Errors.Desugar_NotYetSupported "compiler binding name/target pair differs from pinned environment")
+                | Nothing -> E.fail (Loc.locOf ident) (Errors.Desugar_NotYetSupported "user asm label (DESIGN section 5)")
+              end
+          | _ -> E.return ()
+        end) attributes >>
       E.return ((attrs, ident), fun base_qs base_ty -> (base_qs, base_ty))
   
   | DDecl_declarator decltor ->

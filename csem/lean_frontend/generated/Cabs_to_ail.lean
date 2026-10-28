@@ -1477,6 +1477,27 @@ def desugar_gnu_attributes { a : Type } [CerbImplCfg.Impl] (loc1 : a) (a1 : attr
                      DESUGAR (Desugar_NotYetSupported "invalid GNU format expects three arguments"))
              else
                stExpect_return effects
+           else lem_if (name1 == "asm_label") && CerbLocation.isCompilerInjected attr_loc then
+             match args with
+             | [(_, spelling, _)] =>
+               (lem_if List.any compiler_bindings (fun (binding : compiler_binding) =>
+                   spelling == String.append "\""
+                     (String.append binding.binding_linker_name "\"")) then
+                 stExpect_return effects
+               else
+                 fun (_ : state_with_markers) =>
+                   fail0
+                     (attr_loc,
+                       DESUGAR
+                         (Desugar_NotYetSupported
+                           "compiler binding target differs from pinned environment")))
+             | _ =>
+               (fun (_ : state_with_markers) =>
+                 fail0
+                   (attr_loc,
+                     DESUGAR
+                       (Desugar_NotYetSupported
+                         "compiler binding carrier differs from pinned environment")))
            else lem_if List.any ["section", "visibility", "weak", "alias", "asm_label"]
                (gnu_name_is name1) then
              fun (_ : state_with_markers) =>
@@ -3746,9 +3767,51 @@ partial def desugar_direct_declarator [LemFuel] [CerberusFresh.Digest] [CerbImpl
   | fundef1, under_array1 =>
     (fun (x : direct_declarator) =>
       match x with
-      | DDecl_identifier attrs1 ident =>
-        stExpect_return
-          ((attrs1, ident), (fun (base_qs : qualifiers) (base_ty : ctype) => (base_qs, base_ty)))
+      | DDecl_identifier (attrs1@(Attrs attributes2)) ident =>
+        stExpect_bind
+          (lemListFoldr
+            (fun (m : state_with_markers → exceptM (Unit × state_with_markers)
+              (CerbLocation.Loc × cause))
+              (f : state_with_markers → exceptM (Unit × state_with_markers)
+                (CerbLocation.Loc × cause))=>
+              stExpect_bind m (fun (_ : Unit) => f)) (stExpect_return ())
+            (List.map
+              (fun (attr : attribute0) =>
+                match gnu_attribute_name attr with
+                | some "asm_label" =>
+                  (match compiler_binding_for ident with
+                   | some binding =>
+                     (lem_if CerbLocation.isCompilerInjected
+                         (match attr.attr_id with
+                          | (Identifier loc1 _) => loc1) &&
+                         (listEqualBy (fun x y => x == y)
+                           (List.map
+                             (fun (p :
+                               (CerbLocation.Loc × String × List (CerbLocation.Loc × String))) =>
+                               match p with
+                               | (_, spelling, _) => spelling) attr.attr_args)
+                           [String.append "\""
+                             (String.append binding.binding_linker_name "\"")]) then
+                       stExpect_return ()
+                     else
+                       fun (_ : state_with_markers) =>
+                         fail0
+                           ((match ident with
+                             | (Identifier loc1 _) => loc1),
+                             DESUGAR
+                               (Desugar_NotYetSupported
+                                 "compiler binding name/target pair differs from pinned environment")))
+                   | none =>
+                     (fun (_ : state_with_markers) =>
+                       fail0
+                         ((match ident with
+                           | (Identifier loc1 _) => loc1),
+                           DESUGAR (Desugar_NotYetSupported "user asm label (DESIGN section 5)"))))
+                | _ => stExpect_return ()) attributes2))
+          (fun (_ : Unit) =>
+            stExpect_return
+              ((attrs1, ident),
+                (fun (base_qs : qualifiers) (base_ty : ctype) => (base_qs, base_ty))))
       | DDecl_declarator decltor =>
         (desugar_declarator _lemReader_enum_definitions _lemReader_tagDefs) fundef1 decltor
       | DDecl_array ddecltor a_decltor =>

@@ -726,3 +726,11 @@ requested corrections until the lead surfaced them explicitly.
   correspondence. Normalize only physically adjacent CRLF: splice deletion
   must not create a second phase-one transformation. Keep lone CR, CR-at-EOF
   and synthesized terminal LF distinct from actual physical reads.
+
+- Injected bindings, capacity interruption (2026-10-28): bindings-lean-1/2/3
+  are failed build observations, not accepted semantics. Request3's exact
+  source hashes were verified after the worker stopped. Earlier Phase7
+  constructor-layout errors were repaired; request3 still fails in
+  Tcc/CSem/RawFrontEnd.lean, including unresolved BindingResolution. Preserve
+  the generated/source edits and receipts, then complete the typed interface
+  before testing. No oracle, semantic, whole-C or gate success is claimed.

@@ -37,6 +37,31 @@ instance (Show identifier)
     str
 end
 
+(* Compiler-supplied aliases are a finite environment, not a meaning for GNU
+   asm labels. Names enter this table only after resolved-opening authority. *)
+type compiler_binding_kind = Runtime_alias | Function_allocation_intrinsic
+
+type compiler_binding = <|
+  binding_name: string;
+  binding_linker_name: string;
+  binding_kind: compiler_binding_kind;
+|>
+
+let compiler_bindings =
+  List.map (fun name -> <| binding_name= "__builtin_" ^ name;
+    binding_linker_name= name; binding_kind= Runtime_alias |>)
+    ["memcpy"; "memmove"; "memset"; "memcmp"; "strlen"; "strcpy";
+     "strncpy"; "strcmp"; "strncmp"; "strcat"; "strncat"; "strchr";
+     "strrchr"; "strdup"; "malloc"; "realloc"; "calloc"; "memalign";
+     "free"; "abort"] ++
+  [<| binding_name= "__builtin_alloca"; binding_linker_name= "alloca";
+      binding_kind= Function_allocation_intrinsic |>]
+
+let compiler_binding_for (Identifier loc name) =
+  if Loc.is_compiler_injected loc then
+    List.find (fun binding -> binding.binding_name = name) compiler_bindings
+  else Nothing
+
 type digest
 declare ocaml target_rep type digest = `Digest.t`
 declare lean target_rep type digest = `String`

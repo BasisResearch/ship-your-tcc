@@ -605,6 +605,9 @@ structure state where
      the execution driver share ONE value by construction. -/
   address_space_top : Int
   /- table (with stacked scopes) associating C identifiers to symbols -/
+  /- Canonical external function identities, keyed by linker name. C name
+     scopes remain separate, preserving ordinary declaration constraints. -/
+  linker_function_symbols : Fmap String ail_identifier
   registered_external_identifiers :
       Fmap (identifier × namespace0) (scope × (ail_identifier × identifier_kind × Option linkage))
   registered_identifiers : t3 scope (identifier × namespace0) registration
@@ -664,6 +667,7 @@ instance : Inhabited state where
       scope_id_supply := default,
       fresh_sym_supply := default,
       address_space_top := default,
+      linker_function_symbols := default,
       registered_external_identifiers := default,
       registered_identifiers := default,
       tag_definitions0 := default,
@@ -973,6 +977,7 @@ def initial_state (fresh_sym_supply_seed : Nat) (address_space_top1 : Int)
             scope_id_supply := 0,
             fresh_sym_supply := fresh_sym_supply_seed,
             address_space_top := address_space_top1,
+            linker_function_symbols := fmapEmpty,
             registered_external_identifiers := fmapEmpty,
             registered_identifiers :=
               (([] : List (scope × Fmap (identifier × namespace0) registration))),
@@ -1203,9 +1208,29 @@ def internal_register_identifier [CerberusFresh.Digest]
                   match ident with
                   | Identifier _ str =>
                     stExpect_bind
-                      (match kind1 with
-                       | Kind_ordinary (OK_object _) => fresh_sym_object_address str
-                       | _ => fresh_sym_pretty str)
+                      (match kind1, link_opt with
+                       | Kind_ordinary OK_function, some Linkage_external =>
+                         (let linker_name :=
+                            match compiler_binding_for ident with
+                            | some binding => binding.binding_linker_name
+                            | none => str;
+                          stExpect_bind
+                            (read_inner (fun (st : state) =>
+                              (fmapLookupBy defaultCompare linker_name st.linker_function_symbols)))
+                            (fun (x : Option sym) =>
+                              match x with
+                              | some sym1 => stExpect_return sym1
+                              | none =>
+                                stExpect_bind (fresh_sym_pretty linker_name) (fun (sym1 : sym) =>
+                                  stExpect_bind
+                                    (update_inner (fun (st : state) =>
+                                      { st with
+                                        linker_function_symbols :=
+                                          (fmapAddBy defaultCompare linker_name sym1
+                                            st.linker_function_symbols) }))
+                                    (fun (_ : Unit) => stExpect_return sym1))))
+                       | Kind_ordinary (OK_object _), _ => fresh_sym_object_address str
+                       | _, _ => fresh_sym_pretty str)
                       (fun (sym1 : sym) =>
                         stExpect_bind
                           (/- associates it to the identifier -/ update_inner (fun (st : state) =>

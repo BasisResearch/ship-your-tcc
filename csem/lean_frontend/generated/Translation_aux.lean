@@ -327,6 +327,7 @@ def combine_params_args [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap s
 
 /- TODO: I need functors ... -/
 structure translation_stdlib where
+  defined_functions : List sym
   ailnames : Fmap String sym
   mkcall_bitwise_AND : ctype → pexpr → pexpr → pexpr
   mkcall_bitwise_XOR : ctype → pexpr → pexpr → pexpr
@@ -350,7 +351,8 @@ structure translation_stdlib where
   mkproc_create_and_store : pexpr → pexpr → expr Unit
 instance : Inhabited translation_stdlib where
   default :=
-    { ailnames := default,
+    { defined_functions := default,
+      ailnames := default,
       mkcall_bitwise_AND := (fun (x36 : ctype) =>
         (fun (x37 : pexpr) => (fun (x38 : pexpr) => default))),
       mkcall_bitwise_XOR := (fun (x39 : ctype) =>
@@ -381,25 +383,25 @@ instance : Inhabited translation_stdlib where
 mutual
 def translation_stdlib.beq_derived (cmpx_ cmpy_ : translation_stdlib) : Bool :=
   match cmpx_, cmpy_ with
-  | .mk x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21,
-    .mk y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12 y13 y14 y15 y16 y17 y18 y19 y20 y21 =>
-    x1 == y1 && lemFunctionalBeq x2 y2 && lemFunctionalBeq x3 y3 && lemFunctionalBeq x4 y4 &&
-      lemFunctionalBeq x5 y5 && lemFunctionalBeq x6 y6 && lemFunctionalBeq x7 y7 && lemFunctionalBeq
-      x8 y8 && lemFunctionalBeq x9 y9 && lemFunctionalBeq x10 y10 && lemFunctionalBeq x11 y11 &&
+  | .mk x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22,
+    .mk y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12 y13 y14 y15 y16 y17 y18 y19 y20 y21 y22 =>
+    x1 == y1 && x2 == y2 && lemFunctionalBeq x3 y3 && lemFunctionalBeq x4 y4 && lemFunctionalBeq x5
+      y5 && lemFunctionalBeq x6 y6 && lemFunctionalBeq x7 y7 && lemFunctionalBeq x8 y8 &&
+      lemFunctionalBeq x9 y9 && lemFunctionalBeq x10 y10 && lemFunctionalBeq x11 y11 &&
       lemFunctionalBeq x12 y12 && lemFunctionalBeq x13 y13 && lemFunctionalBeq x14 y14 &&
       lemFunctionalBeq x15 y15 && lemFunctionalBeq x16 y16 && lemFunctionalBeq x17 y17 &&
       lemFunctionalBeq x18 y18 && lemFunctionalBeq x19 y19 && lemFunctionalBeq x20 y20 &&
-      lemFunctionalBeq x21 y21
+      lemFunctionalBeq x21 y21 && lemFunctionalBeq x22 y22
 termination_by structural cmpx_
 def translation_stdlib.compare_derived (cmpx_ cmpy_ : translation_stdlib) : Ordering :=
   match cmpx_, cmpy_ with
-  | .mk x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21,
-    .mk y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12 y13 y14 y15 y16 y17 y18 y19 y20 y21 =>
+  | .mk x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22,
+    .mk y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12 y13 y14 y15 y16 y17 y18 y19 y20 y21 y22 =>
     (match Ord.compare x1 y1 with
      | .lt => Ordering.lt
      | .gt => Ordering.gt
      | .eq =>
-       (match lemFunctionalCompare x2 y2 with
+       (match Ord.compare x2 y2 with
         | .lt => Ordering.lt
         | .gt => Ordering.gt
         | .eq =>
@@ -476,8 +478,13 @@ def translation_stdlib.compare_derived (cmpx_ cmpy_ : translation_stdlib) : Orde
                                                               | .lt => Ordering.lt
                                                               | .gt => Ordering.gt
                                                               | .eq =>
-                                                                lemFunctionalCompare x21
-                                                                  y21))))))))))))))))))))
+                                                                (match lemFunctionalCompare x21
+                                                                     y21 with
+                                                                 | .lt => Ordering.lt
+                                                                 | .gt => Ordering.gt
+                                                                 | .eq =>
+                                                                   lemFunctionalCompare x22
+                                                                     y22)))))))))))))))))))))
 termination_by structural cmpx_
 end
 
@@ -529,7 +536,8 @@ def mk_translation_stdlib (p : (Fmap String sym × Fmap sym (generic_fun_map_dec
      let mk_proc : String → List (generic_pexpr Unit sym) → generic_expr Unit Unit sym :=
        (fun (str : String) (pes : List (generic_pexpr Unit sym)) =>
          Expr ([] : List annot) (Eproc () (Sym (fetch_stdlib_symbol std_syms str)) pes));
-     (({ ailnames := ailnames1,
+     (({ defined_functions := ([] : List sym),
+         ailnames := ailnames1,
          mkcall_bitwise_AND :=
            (fun (ty1 : ctype) (pe1 : generic_pexpr Unit sym) (pe2 : generic_pexpr Unit sym) =>
              mk_call "bitwise_AND" [mk_ail_ctype_pe ty1, pe1, pe2]),
@@ -599,7 +607,17 @@ def mk_translation_stdlib (p : (Fmap String sym × Fmap sym (generic_fun_map_dec
          mkproc_create_and_store :=
            (fun (pe1 : generic_pexpr Unit sym) (pe2 : generic_pexpr Unit sym) =>
              mk_proc "create_and_store" [pe1, pe2]) } : translation_stdlib)))
+
 /- ASSUMES: is_arithmetic ty_src && is_arithmetic ty_dst -/
+/- Definition membership is symbol identity, never a test of SD_Id spelling.
+   A static function and an injected external target may share a spelling. -/
+def function_proxy (stdlib1 : translation_stdlib) (fid : sym) : Option sym :=
+  lem_if Lem_List.elem fid stdlib1.defined_functions then
+    none
+  else
+    match fid with
+    | Symbol _ _ (SD_Id name1) => (fmapLookupBy defaultCompare name1 stdlib1.ailnames)
+    | _ => none
 
 def conv_loaded_arith (stdlib1 : translation_stdlib) (ty_src : ctype) (ty_dst : ctype)
     (pe : generic_pexpr Unit sym) :

@@ -1,6 +1,8 @@
 import Tcc.CSem.Statement
 import CSemCParser.Phase7
 import Tcc.CSem.PackLayout
+import Spec.Pre.Tcc.Cfg
+import Spec.Pre.Tcc.ImageFS
 
 /-! Candidate raw-source frontend. This module supplies a concrete pure
 `FrontEnd`; it does not replace the parameter of every existing F0 theorem.
@@ -12,10 +14,27 @@ namespace Tcc.CSem.Raw
 open CSem.Pre
 open CSemCParser
 
+/-- Supplied compiler environment. These are complete physical input bytes,
+not filenames or hashes inferred from declarations. The image connection is
+stated separately; the default pins come from the generated image table. -/
+structure CompilerEnvironment where
+  predefined : Bytes
+  root : List Bytes
+  header : List Bytes
+  headerContents : Bytes
+  deriving Repr
+
+def tccEnvironment : CompilerEnvironment where
+  predefined := bs _root_.CSem.Pre.Tcc.predefsRun
+  root := FileSys.normComponents _root_.CSem.Pre.Tcc.cfgTcc.predefsName
+  header := FileSys.normComponents (bs "/lib/tcc/include/tccdefs.h")
+  headerContents := (FileSys.lookup _root_.CSem.Pre.Tcc.imageFS (bs "/lib/tcc/include/tccdefs.h")).getD []
+
 structure Config where
   pre : PreCfg
   fs : FileSys
   parser : ParseCfg := {}
+  compilerEnvironment : Option CompilerEnvironment := none
   /-- Explicit resolved image identities admitted as runtime library files.
   Neither suffixes nor #line labels establish this membership. -/
   libraryFiles : List (List Bytes) := []
@@ -44,9 +63,49 @@ def presumedLibrary (path : Bytes) : Bool :=
 
 /-- Keep both answers visible even when they disagree. This is an audit, not
 an extra Supported restriction or a successful classification by refusal. -/
-def libraryOrigin (cfg : Config) (site identitySite : SourceSite) : LibraryOrigin :=
-  ⟨site, identitySite, cfg.libraryFiles.contains identitySite.physical.identity,
+def libraryOrigin (cfg : Config) (site identitySite : SourceSite)
+    (injected : Bool := false) : LibraryOrigin :=
+  ⟨site, identitySite, cfg.libraryFiles.contains identitySite.physical.identity || injected,
     presumedLibrary site.presumed⟩
+
+/-- Preserve each complete parsed signature, original binding carrier and
+locations. This is environment data, never a replacement Cabs specification. -/
+structure InjectedBinding where
+  identity : compiler_binding
+  declaration : cabs_declaration
+  identifier : identifier
+  carrier : attribute0
+
+/-- Authenticate the actual initial source opening. A user include of the
+same physical header has a different directive/root. Ambiguous configured
+root/main identities have no authority. No #line field is consulted. -/
+def compilerOpening (cfg : Config) (pp : PreprocessingResult) : Option Phase7.CompilerOpening := do
+  let env ← cfg.compilerEnvironment
+  if cfg.pre.predefs != env.predefined || FileSys.normComponents cfg.pre.predefsName != env.root ||
+      FileSys.normComponents cfg.pre.mainName == env.root ||
+      FileSys.normComponents cfg.pre.mainName == env.header then none else do
+    let root ← pp.sources.head?
+    if root.identity != env.root || root.contents != env.predefined || root.includedAt.isSome then none else do
+      let header ← pp.sources.find? (fun f => f.identity == env.header &&
+        f.contents == env.headerContents && f.includedAt.any (fun edge => edge.identity == env.root))
+      let directive ← header.includedAt
+      some ⟨env.root, env.header, directive⟩
+
+def bindingIdentifier : direct_declarator → Option (attributes × identifier)
+  | .DDecl_identifier attrs ident => some (attrs, ident)
+  | .DDecl_declarator (.Declarator _ d) => bindingIdentifier d
+  | .DDecl_array d _ | .DDecl_function d _ => bindingIdentifier d
+
+def injectedBindings : translation_unit → List InjectedBinding
+  | .TUnit declarations => declarations.flatMap fun ext => match ext with
+    | .EDecl_decl declaration@(.Declaration_base _ _ initDecls) =>
+        initDecls.filterMap fun (.InitDecl _ (.Declarator _ d) _) => do
+          let (.Attrs attrs, ident) ← bindingIdentifier d
+          let binding ← compiler_binding_for ident
+          let carrier ← attrs.find? (fun a => match a.attr_id with
+            | .Identifier loc name => name == "asm_label" && CerbLocation.isCompilerInjected loc)
+          some ⟨binding, declaration, ident, carrier⟩
+    | _ => []
 
 structure Result where
   digest : String
@@ -54,6 +113,7 @@ structure Result where
   input : Phase7.Input
   cabs : translation_unit
   libraryOrigins : Array LibraryOrigin
+  bindings : List InjectedBinding
 
 /-- Raw bytes, including non-UTF-8 bytes, are digested directly, as the OCaml
 Digest.file oracle does. No conversion to String precedes MD5. -/
@@ -72,15 +132,15 @@ def run (cfg : Config) (src : Bytes) : Except String Result := do
     | .ok p => pure p
   let fname := (String.fromUTF8? (Phase7.bytes cfg.pre.mainName)).getD
     (Lex.slice (Phase7.bytes cfg.pre.mainName) 0 cfg.pre.mainName.length)
-  let input ← Phase7.convertWithIdentity (some ⟨cfg.libraryFiles⟩) cfg.parser fname pp
+  let input ← Phase7.convertWithIdentity (some ⟨cfg.libraryFiles⟩) cfg.parser fname pp (compilerOpening cfg pp)
   let tu ← match parsePositioned cfg.parser input.positioned with
     | .error e => throw s!"{showPos e.pos}: {e.msg}"
     | .ok tu => pure tu
   let libraries := input.origins.filterMap (fun o => do
     let site ← o.site
     let identity ← o.identitySite
-    pure (libraryOrigin cfg site identity))
-  pure ⟨digest src, pp, input, tu, libraries⟩
+    pure (libraryOrigin cfg site identity ((compilerOpening cfg pp).any (·.contains identity))))
+  pure ⟨digest src, pp, input, tu, libraries, injectedBindings tu⟩
 
 /-- Errors of the checked semantic entry are named obligations, never
 Supported exclusions. The audit/parse entry `run` still retains full evidence. -/
@@ -120,6 +180,42 @@ def semanticConfig (cfg : Config) (base : Tcc.CSem.Config)
     frontEnd := frontEnd cfg
     identity := some ⟨⟨cfg.libraryFiles⟩, runtime⟩ }
 
+/-- F1/F6 must connect the supplied environment to the actual image. These
+are full byte pins and an explicit resolved opening identity, not a membership
+claim inferred from the header's presumed name. -/
+structure CompilerEnvironmentImage_Statement (cfg : Config) (image : FileSys) : Prop where
+  environment : cfg.compilerEnvironment = some tccEnvironment
+  predefined : cfg.pre.predefs = tccEnvironment.predefined
+  root : FileSys.normComponents cfg.pre.predefsName = tccEnvironment.root
+  header : FileSys.lookup image (bs "/lib/tcc/include/tccdefs.h") = some tccEnvironment.headerContents
+
+/-- A Core external binding retains the C spellings, but all declarations of
+one linker function must name exactly the same canonical symbols. Consequently
+function-pointer creation, storage and equality use the existing single
+`Mem.fun_ptrval` identity; there is no call-only alias rewrite. -/
+structure BindingResolution (binding : InjectedBinding) (core : file Unit) : Prop where
+  symbols : List sym
+  nonempty : symbols ≠ []
+  kind : linking_kind
+  alias : fmapLookup (.Identifier .unknown binding.identity.binding_name) core.extern = some (symbols, kind)
+  target : ∀ targets k,
+    fmapLookup (.Identifier .unknown binding.identity.binding_linker_name) core.extern = some (targets, k) →
+      targets = symbols
+
+/-- OPEN F1/F3/F7 transport: actual raw elaboration must supply canonical
+binding resolution. The checked executions are finite evidence; no generic
+compiler, linking or function-address refinement proof is asserted here. -/
+def BindingResolution_Statement (raw : Config) (base : Tcc.CSem.Config)
+    (runtime : RuntimeIdentities) : Prop :=
+  ∀ src r n, checked raw src = .ok r →
+    let cfg := semanticConfig raw base runtime
+    letI : CerbImplCfg.Impl := ⟨cfg.implementation⟩
+    letI : LemFuel := ⟨n⟩
+    letI : CerbGlobal.Switches := ⟨CerbGlobal.defaultSwitches⟩
+    letI : CerberusFresh.Digest := ⟨r.digest⟩
+    ∀ std core supply, stdlib cfg = .ok std → elaborate cfg std r.cabs = .ok (core, supply) →
+      ∀ binding ∈ r.bindings, Nonempty (BindingResolution binding core)
+
 /-- Phase-7 language-token agreement is checked on shared fully positioned
 inputs, not on ASTs with their locations erased. A future proof of the
 preprocessor and lexer, plus the grammar proof, supplies this premise. -/
@@ -136,10 +232,10 @@ def LibraryClassifier_Statement : Prop :=
 
 /-- Named transport witness at the concrete phase-7 boundary. Positions retain
 presumed labels while membership follows the token's identity derivation. -/
-structure TokenIdentityConnection (cfg : Config) (origin : Origin) (p : PTok) where
+structure TokenIdentityConnection (cfg : Config) (pp : PreprocessingResult) (origin : Origin) (p : PTok) where
   site : SourceSite
   originSite : origin.identitySite = some site
-  identity : p.sp.sourceIdentity = some ((CerbLocation.LibraryConfig.mk cfg.libraryFiles).identify site.physical.identity)
+  identity : p.sp.sourceIdentity = some (Phase7.identify ⟨cfg.libraryFiles⟩ (compilerOpening cfg pp) site)
   endpoint : p.ep.sourceIdentity = p.sp.sourceIdentity
 
 /-- Full proof of phase-7 identity transport remains open. This fixed relation
@@ -148,7 +244,7 @@ Grammar/Ail/Core preservation beyond this boundary remains a separate proof duty
 def LibraryConnection_Statement (cfg : Config) : Prop :=
   ∀ src r, run cfg src = .ok r → ∀ (i : Nat) (origin : Origin) (p : PTok),
     r.input.origins[i]? = some origin → r.input.positioned.tokens[i]? = some p →
-      Nonempty (TokenIdentityConnection cfg origin p)
+      Nonempty (TokenIdentityConnection cfg r.preprocessing origin p)
 
 /-- A real semantic layout consumer must answer every field-layout query
 with the fixed `layoutReference` offsets/size/alignment. Its reference cannot

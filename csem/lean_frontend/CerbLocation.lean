@@ -15,6 +15,9 @@ Only a source-opening adapter supplies this metadata; line markers cannot. -/
 structure SourceIdentity where
   resolved : List (List UInt8)
   runtimeLibrary : Bool
+  /-- Authenticated compiler-supplied opening; independent of presumed names.
+  The raw adapter checks the complete environment bytes and include ancestry. -/
+  compilerInjected : Bool := false
   deriving BEq, Ord, Inhabited, Repr
 
 /-- Pure image membership configuration. No path suffix or presumed label is
@@ -24,7 +27,7 @@ structure LibraryConfig where
   deriving Inhabited
 
 def LibraryConfig.identify (cfg : LibraryConfig) (resolved : List (List UInt8)) : SourceIdentity :=
-  ⟨resolved, cfg.files.any (· == resolved)⟩
+  { resolved, runtimeLibrary := cfg.files.any (· == resolved) }
 
 /-- Source position. Corresponds to: `Cerb_position.t` (util/cerb_position.ml:7-11),
     a record of the LEXING position `file : Lexing.position` — the position in
@@ -338,6 +341,11 @@ def isLibraryLocation (loc : Loc) : Bool :=
   | some source => source.runtimeLibrary
   | none => historicalLibraryLocation loc
 
+
+/-- Only the raw opening adapter can supply this flag; historical locations
+carry no compiler-environment authority. -/
+def isCompilerInjected (loc : Loc) : Bool :=
+  (sourceIdentity loc).map (·.compilerInjected) |>.getD false
 
 /-! ## String conversion
     Corresponds to: cerb_location.ml:188-237 (location_to_string) and

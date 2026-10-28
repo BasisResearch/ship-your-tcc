@@ -83,7 +83,7 @@ partial def view8 (x : Option CerbLocation.SourceIdentity) : Shape :=
   | .some a0 => .node "Option.some" #[(view9 a0)]
 partial def view9 (x : CerbLocation.SourceIdentity) : Shape :=
   match x with
-  | .mk a0 a1 => .node "CerbLocation.SourceIdentity.mk" #[(view10 a0), (view13 a1)]
+  | .mk a0 a1 a2 => .node "CerbLocation.SourceIdentity.mk" #[(view10 a0), (view13 a1), (view13 a2)]
 partial def view10 (x : List (List UInt8)) : Shape :=
   .node "List" (x.toArray.map view11)
 partial def view11 (x : List UInt8) : Shape :=
