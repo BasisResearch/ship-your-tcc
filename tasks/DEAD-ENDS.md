@@ -1298,3 +1298,10 @@ ancestry first and preserves existing reviewed merges; an actual update uses
 used a multiline-greedy marker pattern; restore both append-only sides from
 the original merge parents with newline-bounded markers. All enum, upstream,
 physical-proof and earlier dead-end sections are retained after that correction.
+
+- Pack boundary host review: `-B` alone selects the runtime but does not find
+  this build's local stddef.h. Retain the initial compile failures; corrected
+  harness also passes `-Ibuild/test-c11/src/include`. Do not count post-brace
+  pragma placements rejected by GCC as successful C11 agreements. More
+  importantly, never bind a pack cap to the opening struct token: push/pop
+  inside the body changes the completed layout in both measured compilers.

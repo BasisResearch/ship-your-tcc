@@ -652,6 +652,12 @@ retained failed harness is followed by a hash-identical relink, fresh capture
 and execution of each retained ELF. Those executions remain pending.
 All three candidates remain separate from main adoption; no user decision.
 
+The next pack-layout consumption task is prepared at
+tasks/f2-pack-layout-consumption.md. Host boundary evidence retains six
+matching layout controls and two separate post-brace GCC diagnostics; tcc
+samples the active cap when laying out the completed aggregate. No semantic
+implementation or native proof is claimed by this planning evidence.
+
 ## Needs user
 
 None currently. Implementation defects and unfinished obligations are work
