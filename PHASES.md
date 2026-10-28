@@ -752,7 +752,7 @@ After multi-TU/physical adoption, main image/symbols and seven executable
 targets refresh successfully on the same4,162 source paths, with the exact
 post-gate launcher-only change separately pinned. Slot1 now runs enum-colon
 compiler/model repair; slot2 GNU conditional semantics. The include-guard
-opening mismatch is queued as tasks/f2-include-guard-openings.md. No new user
+opening repair is in validation under tasks/f2-include-guard-openings.md. No new user
 decision or universal theorem is claimed.
 
 Lead include-guard candidate (not adopted): independent target preprocessing
@@ -765,6 +765,14 @@ Full guard-openings-full-1 is running on4,163 pinned inputs, with complete nativ
 arena/same-ELF execution observations pending. Broad before/after uses identical
 846 source inputs:838exact tcc/833exact GCC, unchanged diagnostic classifications
 and token counts; five temporary paths and one clock context differ explicitly.
-Enum-colon work has14/14 complete native arenas; its corrected ghost observer
-and full gate are still pending. GNU conditional full gate is still running.
+Enum-colon work has14/14 complete native arenas; its final corrected observer
+passes the focused59-case matrix, and its full gate is running. GNU conditional
+full gate passes on4,227 pinned inputs. Independent review verifies its first
+portable package (19,610 members/10 frozen receipts); complete inherited native
+capture exports are being added before its scoped checkpoint commit. The
+49/50 native batch retains the bitfield-promotion defect as a separate task.
+The three guard native arena comparisons pass. Their full-execution follow-up
+initially failed because model_diff deliberately deletes successful ELFs; the
+retained failed harness is followed by a hash-identical relink, fresh capture
+and execution of each retained ELF. Those executions remain pending.
 All three candidates remain separate from main adoption; no user decision.
