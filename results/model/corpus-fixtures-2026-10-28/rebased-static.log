@@ -1,0 +1,28 @@
+== (1) ISA
+NOTE c/build/base.elf(c/build/base.elf) .text 8001efe0: 00100073 ebreak 
+NOTE c/build/base.elf(c/build/base.elf) .text 800223bc: 00100073 ebreak 
+NOTE c/build/base.elf(c/build/base.elf) .text 8002b3ac: 00100073 ebreak 
+NOTE c/build/base.elf(c/build/base.elf) .text 8003fcd8: 00100073 ebreak 
+NOTE c/build/base.elf(c/build/base.elf) .text 80040b4c: 00100073 ebreak 
+OK   c/build/base.elf insns=105472 bad=0 notes=5 zero-pad=0
+== (2) forbidden tokens
+== (2b) generator drift
+port_closure: 180 modules, 70177 lines
+gen_tcc_cut: up to date (Elf*.lean skipped: no ELF with sha256 5c7faf78b00f2657… at /data/home/kirancodes/Documents/code/ship-your-tcc/build/p3/sum.elf)
+gen_tcc_segs: up to date
+gen_printf_layout: skipped (no ELF at /data/home/kirancodes/Documents/code/ship-your-tcc/build/p3/sum.elf)
+code: 19515 instrs, range 0x80000000..0x80066d24; pages 8218; pins 701581
+gen_ccp: up to date (899 files; checkpoint states by hash)
+== (2c) CSem text gates
+check_exec_totality: CLEAN (22 generated modules + hand-written CerbND, 0 allowlisted)
+check_exec_purity: CLEAN (11 modules)
+check_sorry_token: OK (364 files scanned comment-stripped — generated 235, hand-written+test 94, LemLib 35; 0 sorry tokens)
+== (3b) discipline
+discipline: OK (8 rules, 1053 files scanned)
+== (3c) abstraction gate
+p3-codegen-segment: 877 cases — ok (first 0.0, last 0.0)
+p3-capture-witness: 3 cases — ok; open named premises in its files: 2
+p3-libc-spec: 1 cases — ok
+abstraction gate: ok
+== (4) generated files
+check: static stages OK

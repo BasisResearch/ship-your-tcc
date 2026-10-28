@@ -22,9 +22,11 @@ refusal disjunct. The existing per-program theorem is its non-vacuity witness;
 STATUS.md records the active F0–F3 work.
 
 Current F0–F3 validation: exact phase-4 observation and nested designators are
-integrated; the latest compiler comparison has 1,342 matching arenas out of
-1,815 inputs, with refusals/assembly gaps separate. Complete native Sail
-observations include the repaired 78-case anonymous-member batch. CSem now uses pure binary32/64/128 values, with
+integrated; the latest compiler comparison has 1,345 matching arenas out of
+1,815 inputs, with 463 refusals and seven assembly gaps separate. The shared
+fixture repair recovers three former refusals, each matching a complete native
+Sail arena (results/model/corpus-fixtures-2026-10-28.md). Native observations
+also include the repaired 78-case anonymous-member batch. CSem now uses pure binary32/64/128 values, with
 zero native floating in its checked cones. Its anonymous-member repair passes
 92 focused checks and the combined full gate; bitfields and aggregate-value
 initialization remain open. The raw-source frontend reaches

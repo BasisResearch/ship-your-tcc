@@ -31,7 +31,7 @@ external bug reporting; no external contact is authorized or planned.
 | F1 ABI/allocation | `agent-a4ab6bbd8c0be5325` | RV64 reader and bounded allocation oracle adopted after full gates; fresh p04/p09/p10 checks close the earlier IEEE/stdin probe failures; bitfields and GNU enum coverage remain |
 | F1 filesystem | `agent-ad868c434f5f27398` | integrated after full gate: descriptor fstat, structural state ordering and link proxy repaired; eight exact Sail byte/exit agreements, repeated with RV64 config; mkdir remains a separate missing-library gap |
 | F1 IEEE | `agent-a45cb08cf87ce958c` | integrated after worker and combined full gates: pure 32/64/128 bits, zero native floating in both cones, unchanged 113-case baseline; literal/printf/sqrtl gaps and connection Statements remain open |
-| F3 compiler model | `agent-a05464165befb7074` (recovery merged) | patched C11 model integrated after capped build and combined full gate; 1,670 independent fast arenas including 1,051 generated successes; four full Sail arenas now agree; all-corpus Sail equality remains open |
+| F3 compiler model | `agent-a05464165befb7074` (recovery merged) | patched C11 model integrated after capped build and combined full gate; 1,345 matching fast arenas / 1,815 inputs, including 1,082 C-generator and 80 mutant successes; all three repaired include fixtures and the 78-case anonymous-member batch have full Sail evidence; all-corpus Sail equality remains open |
 
 F3 review found reference-derived long-double bytes supplied to the model.
 Such runs cannot establish independent byte equality. That input is now
@@ -204,6 +204,15 @@ results/csem/library-identity.md. GNU declaration attributes in the actual
 injected tccdefs are queued next in tasks/f1-gnu-attributes.md; this independent
 spec work complements slot 2's model-owned macro provenance/ghost construction.
 The existing bitfield task remains queued. None is a Supported exclusion.
+
+F3 fixture adoption (2026-10-28): F2/F3 now share explicit source/header
+aliases. Three formerly matching refusals become successful compilations and
+complete native Sail arena matches. The final broad run has 1,345 successes,
+463 refusals and seven assembly gaps / 1,815 inputs, with no other differences
+or errors. Its exit 1 preserves the assembly gaps. The static gate and focused
+protocol checks pass; source/input/image pins and earlier timeout/overlap
+failures are retained in results/model/corpus-fixtures-2026-10-28.md.
+Whole-corpus native coverage and ghost/compiler proofs remain open.
 
 ## Needs user
 
