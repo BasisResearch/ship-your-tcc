@@ -1,0 +1,113 @@
+[
+  {
+    "case": "array-alias-decay",
+    "source": "build/array-decay-gate.NduKR6/comparison/inputs/array-alias-decay.c",
+    "directory": "6116cec385480c65a46a7b9e",
+    "comparison": {
+      "status": "equal",
+      "evidence": "native Sail observation; not a theorem",
+      "compared_bytes": 4194304,
+      "model_payload_bytes": 13052,
+      "arena_sha256": "3740b76d31c283db5f594404f985a7bb7dcd27dc27036566b224b06c2a4303d5",
+      "model_arena_sha256": "5200fb3ae9c12a9c458eec58770687408fda273ff1258c0efb00c72b977dafa9",
+      "trace_sha256": null,
+      "capture_manifest_sha256": "cb2ede0e5ab53a55e81d4ebb7b0c2e4b99b1db97da00522d7ede2da6897c9b79",
+      "elf_sha256": "37683a222a131ede253fa730009e04dff0c46785cb589f433e2503cb0c5bc814",
+      "source_sha256": "6cdf554582f9deee451b1013077991faa1650fb8d687df9a2c8192a70c7ccada",
+      "steps": 3380808,
+      "pc": 2147490632,
+      "handoff": {
+        "x10": 2252341288,
+        "x14": 2252341248,
+        "x15": 40
+      }
+    },
+    "files": {
+      "arena.bin.gz": "238f3bd89d34bb6647f7d3d0583b3c52efc786b97a3884840167a0aa6d175942",
+      "arena.present.bin.gz": "dbc3f57a7571abaffa0513666b4dcca3df0952ab6db87c61a8614591fd451575",
+      "console.repr.txt": "eb92a90a8fbc1020de59f62e527480dc5d396402edb88b6beddb89a663c207d2",
+      "console.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "cut.json": "cb2ede0e5ab53a55e81d4ebb7b0c2e4b99b1db97da00522d7ede2da6897c9b79",
+      "cut.tsv": "b78647ced153ccceb043dca11412a61fd767bb20e47372c646a1244c1672afaf",
+      "model.arena.gz": "a6a1ec1bb58087ddec32a3e18398a8ac96672e5b6ae4a85345794c2d6b14f585",
+      "native.stderr": "9b5abdd2c54053e5bda600e68b1d9213c19f6b77013130366d7ab27ddd6278f6",
+      "native.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "registers.txt": "39c602466e2fc21a773bf5fe888107c342b8c424fea1082b2711cb5ad6577280",
+      "source.c": "6cdf554582f9deee451b1013077991faa1650fb8d687df9a2c8192a70c7ccada"
+    }
+  },
+  {
+    "case": "calls-spill",
+    "source": "build/array-decay-gate.NduKR6/comparison/inputs/calls-spill.c",
+    "directory": "6338915100a74801177ef35b",
+    "comparison": {
+      "status": "equal",
+      "evidence": "native Sail observation; not a theorem",
+      "compared_bytes": 4194304,
+      "model_payload_bytes": 13620,
+      "arena_sha256": "5dba8fbc3a29abb518414f144da381f2ae57120c25a3e25eee6f6c66930e5daf",
+      "model_arena_sha256": "f0500a744949fbc50e82f241699be1784a61549eea51d489d9ada34125e0f80c",
+      "trace_sha256": null,
+      "capture_manifest_sha256": "899ef34e0b52e6e89f6dad2effea8b5791844541b8e39f03ba01760875a5b8cd",
+      "elf_sha256": "3b975634c9cac8555e30c1f44004c00bf59ece048c90534c420267e0ebe12a16",
+      "source_sha256": "6ad745c12723db33a74507d4557927d75acd9530c76806f5f5b098673c2109b4",
+      "steps": 3464585,
+      "pc": 2147490632,
+      "handoff": {
+        "x10": 2252341704,
+        "x14": 2252341248,
+        "x15": 456
+      }
+    },
+    "files": {
+      "arena.bin.gz": "e16d0ae4c5768ddcf7656c5ef57f71d4dd172211e2880847a007d1cacd4bec7c",
+      "arena.present.bin.gz": "01319474bc63500b26f2b4e088f3b4ed7ed1e340b8e007436f1994d59eec34b3",
+      "console.repr.txt": "eb92a90a8fbc1020de59f62e527480dc5d396402edb88b6beddb89a663c207d2",
+      "console.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "cut.json": "899ef34e0b52e6e89f6dad2effea8b5791844541b8e39f03ba01760875a5b8cd",
+      "cut.tsv": "6a320bcf7a43028a02516f27f69c1c8c12e421e3a63fa6e746c1955f64e8cb83",
+      "model.arena.gz": "cb5ee30f048d33e05cfc2e20c7dd047a46ec3ce49f34f8a3c264db091ad06677",
+      "native.stderr": "9b5abdd2c54053e5bda600e68b1d9213c19f6b77013130366d7ab27ddd6278f6",
+      "native.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "registers.txt": "8e3a7af3461912f7527afea22614157c90a7df392489c2be5c1452ca3ec18d89",
+      "source.c": "6ad745c12723db33a74507d4557927d75acd9530c76806f5f5b098673c2109b4"
+    }
+  },
+  {
+    "case": "element-referent",
+    "source": "build/array-decay-gate.NduKR6/comparison/inputs/element-referent.c",
+    "directory": "582ecd370917441ea9a3013c",
+    "comparison": {
+      "status": "equal",
+      "evidence": "native Sail observation; not a theorem",
+      "compared_bytes": 4194304,
+      "model_payload_bytes": 13108,
+      "arena_sha256": "c0b70db393a85a212ebb1c7897bc803bd971bd111fd7d9736492d1838b081934",
+      "model_arena_sha256": "2e48ea5c7ef4c192ed5071b3271647d8ee3474a62204296fd85d4d01761303e7",
+      "trace_sha256": null,
+      "capture_manifest_sha256": "5877c55c6a91a73a05ce5c88a7cfebac0fae492c47ffc204b08ca9ee2ce95dc6",
+      "elf_sha256": "9b558b9d687105da2128d0d8be48d02b4ae445f5f83e6615d8ccb91899ec5bd0",
+      "source_sha256": "a346ce953df7e1926974377aa9526066c8fbbf6413805f65cf2f47aae1466b1f",
+      "steps": 3392324,
+      "pc": 2147490632,
+      "handoff": {
+        "x10": 2252341288,
+        "x14": 2252341248,
+        "x15": 40
+      }
+    },
+    "files": {
+      "arena.bin.gz": "f80d5e4a0f93eea76804577b219994fb74987c9bc6c6eb1ef5619b2b385240e0",
+      "arena.present.bin.gz": "a42ff089f0115e5f9af86456cff949e24e7b758960485ee1511ed65826f1146d",
+      "console.repr.txt": "eb92a90a8fbc1020de59f62e527480dc5d396402edb88b6beddb89a663c207d2",
+      "console.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "cut.json": "5877c55c6a91a73a05ce5c88a7cfebac0fae492c47ffc204b08ca9ee2ce95dc6",
+      "cut.tsv": "2aeb5703f689a69032728cc3668fc8cc52e26594de5c8ab0f317b957647eaad0",
+      "model.arena.gz": "cf7b32281cd988163d4d3cdbce91f4f9e42339bbc5280714467b0d0a263ae4c1",
+      "native.stderr": "9b5abdd2c54053e5bda600e68b1d9213c19f6b77013130366d7ab27ddd6278f6",
+      "native.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "registers.txt": "4986c14a64e83d1edefaa0b1d28d0a260f9d5868da4bd94d48268f4d42548247",
+      "source.c": "a346ce953df7e1926974377aa9526066c8fbbf6413805f65cf2f47aae1466b1f"
+    }
+  }
+]

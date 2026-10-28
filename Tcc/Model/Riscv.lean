@@ -488,7 +488,7 @@ private def gfunc_call_classify (R : Rec) (nb_args : Int32) :
   let mut tempspace : Int32 := 0
   for i in [0:nb_args.toNat'] do
     let k : Int := 1 + (i : Int) - nb_args.toInt
-    modVt k fun v => { v with type := { v.type with t := v.type.t &&& ~~~VT_ARRAY } }
+    modVt k fun v => { v with type := { (array_decay_alignment v.type) with t := v.type.t &&& ~~~VT_ARRAY } }
     let sv ← vt k
     let (size0, align0) ← R.type_size sv.type
     let mut size := size0

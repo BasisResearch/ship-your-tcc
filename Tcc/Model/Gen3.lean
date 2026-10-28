@@ -750,7 +750,7 @@ def parse_btype (R : Rec) (_ad0 : AttributeDef) (ignore_label : Int32) : M (Bool
 def convert_parameter_type (R : Rec) (pt0 : CType) : M CType := do
   let pt := { pt0 with
     t := pt0.t &&& ~~~(VT_ARRAY ||| VT_VLA)
-    aligned := if pt0.t &&& (VT_ARRAY ||| VT_VLA) != 0 then 0 else pt0.aligned }
+    aligned := (array_decay_alignment pt0).aligned }
   if pt.t &&& VT_BTYPE == VT_FUNC then mk_pointer R pt else return pt
 
 /-- `convert_expression_type(pt)` -/

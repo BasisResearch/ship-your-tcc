@@ -203,6 +203,14 @@ if [ -f lakefile.toml ] || [ -f lakefile.lean ]; then
         || fail "unevaluated syntax native Sail batch (artifacts: $syntax_checks/native)"
     fi
     echo "unevaluated syntax artifacts: $syntax_checks"
+    decay_checks=$(mktemp -d build/array-decay-gate.XXXXXX)
+    decay_args=()
+    if [ -x build/unevaluated-native-tool/capture_cut ]; then
+      decay_args=(--sail-capture build/unevaluated-native-tool/capture_cut)
+    fi
+    python3 scripts/array_decay_cmp.py --out "$decay_checks/comparison" "${decay_args[@]}" \
+      || fail "array alias decay arenas/constraints (artifacts: $decay_checks/comparison)"
+    echo "array decay artifacts: $decay_checks"
   fi
   if [ "${1:-}" = "--compile-cut" ]; then
     # opt-in: the evaluator run of tcc's compile phase (TccCompileCut, ~2.5 CPU-hours

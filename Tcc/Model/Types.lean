@@ -354,6 +354,12 @@ structure CType where
   aligned : UInt32 := 0
   deriving Inhabited, BEq
 
+/-- Mirror of `array_decay_alignment`: clear only an array's outer alias
+alignment when the caller derives a pointer. The reference graph is untouched. -/
+def array_decay_alignment (type : CType) : CType :=
+  if type.t &&& (C.VT_ARRAY ||| C.VT_VLA) != 0 then { type with aligned := 0 }
+  else type
+
 /-- An expression type and its live GNU expression-alignment metadata.
 `typeof` consumes only `type`; the unary alignment query consumes `aligned`. -/
 structure TypeQuery where

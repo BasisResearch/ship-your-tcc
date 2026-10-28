@@ -724,7 +724,7 @@ def save_reg_upstack (R : Rec) (r0 : Int32) (n : Int32) : M Unit := do
           if sv.r.toInt32' &&& VT_LVAL != 0 then
             { sv with r := ((sv.r.toInt32' &&& ~~~(VT_VALMASK ||| VT_BOUNDED)) ||| VT_LLOCAL).toUInt16' }
           else
-            { sv with r := (VT_LVAL ||| VT_LOCAL).toUInt16', type := { sv.type with t := sv.type.t &&& ~~~VT_ARRAY } }
+            { sv with r := (VT_LVAL ||| VT_LOCAL).toUInt16', type := { (array_decay_alignment sv.type) with t := sv.type.t &&& ~~~VT_ARRAY } }
         let sv := (sv.setSym 0)
         let sv := { sv with r2 := r2.toUInt16', c := sv.c.setI l.toInt64.toUInt64 }
         modify fun s => { s with vstack := s.vstack.set! p sv }

@@ -631,7 +631,7 @@ def gen_op (R : Rec) (op0 : Int32) : M Unit := do
         modVt 0 fun v => { v with type := { v.type with t := v.type.t &&& ~~~VT_UNSIGNED } }
         R.gen_op 42
         gen_opic R op
-        let type1 := { type1 with t := type1.t &&& ~~~(VT_ARRAY ||| VT_VLA) }
+        let type1 := { (array_decay_alignment type1) with t := type1.t &&& ~~~(VT_ARRAY ||| VT_VLA) }
         setVtType 0 type1
     else
       if is_float combtype.t && op != 43 && op != 45 && op != 42 && op != 47 && op_class != CMP_OP then
@@ -798,7 +798,7 @@ def gen_cast (R : Rec) (type : CType) : M Unit := do
     R.gen_op TOK_SHR
     break
   -- done:
-  setVtType 0 { type with t := type.t &&& ~~~(VT_QUAL ||| VT_ARRAY ||| VT_TLS) }
+  setVtType 0 { (array_decay_alignment type) with t := type.t &&& ~~~(VT_QUAL ||| VT_ARRAY ||| VT_TLS) }
 
 /-- `verify_assign_cast(dt)` -/
 def verify_assign_cast (R : Rec) (dt : CType) : M Unit := do

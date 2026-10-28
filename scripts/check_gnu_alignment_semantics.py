@@ -133,10 +133,6 @@ def main():
             row['status']='CONSTRAINT_DIAGNOSTIC' if diagnostic(sem) and same and row['ocaml_constraint_diagnostic'] and native_ok else 'FAIL'
         elif name in FUNCTION_POLICY:
             row['status']='FUNCTION_TYPE_POLICY_OBSTRUCTION' if diagnostic(sem) and same and row['ocaml_constraint_diagnostic'] and native_ok else 'FAIL'
-        elif name=='array-alias-decay' and a.tcc:
-            # Independent extra probe: preserve the compiler's 32-vs-8
-            # decay discrepancy separately from repaired CSem semantics.
-            row['status']='COMPILER_ARRAY_DECAY_DISCREPANCY' if defined_zero(sem) and same and good_ocaml_zero(oc) and row['gcc_exit']==0 and row['tcc_exit']==1 else 'FAIL'
         elif name in PLACEMENT_LIMIT:
             row['status']='OCAML_PLACEMENT_LIMITATION' if defined_zero(sem) and ex.returncode>0 and native_ok else 'FAIL'
         else:

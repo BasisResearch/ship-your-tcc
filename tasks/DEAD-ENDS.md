@@ -897,3 +897,31 @@ an explicit follow-up, not established by arena equality.
   `.git/worktrees/sol-f2-tokens/index.lock` (read-only filesystem). Use the
   existing frozen lead commit handoff with scoped path hashes; no alternate
   index/object store or new semantic task is needed.
+
+## Array alignment decay, 2026-10-28
+
+- Array aliases can legally have alignment32 and size8; deriving `a+0` must
+  clear outer alignment while preserving `typeof(a)` and the referenced array
+  through `&a`. Never copy the old compiler's wrong32 result into CSem or
+  reject that valid source. The original full-compiler Sail32/cross-GCC8
+  captures remain unchanged in the GNU alignment evidence.
+- Reset only when ARRAY/VLA conversion occurs. Aligned pointer aliases retain
+  their own alignment through arithmetic; clearing every pointer result would
+  hide this bug by destroying independent pointer metadata.
+- The exploratory arraydecay-alignment-1 run used pre-checkpoint Lean
+  executables: raw parsing failed before emitting layout.pp, so downstream
+  Menhir commands also failed on the absent layout file. These are stale-tool
+  harness failures, not semantic differences. Rebuild current executables
+  before measuring; refreshed comparison has54 defined-zero/12 constraints,
+  two separate function-policy obstructions and three placement limitations.
+- The first C11 summary omitted five added negative fixtures from its printed
+  count despite executing each diagnostic. Include array_decay_invalid in both
+  iteration and summary; final lane is210positive/27negative. Preserve the
+  initial log instead of rewriting the old22 summary.
+- Reconstruct a patch workspace from the complete vendor tree plus preceding
+  patches: copying selected files omitted tccelf.c and failed before edits.
+  The local locked/capped build again hits the denied systemd user bus; use
+  frozen service receipts, never an uncapped build.
+- Array-decay staging again fails creating this worktree's index.lock on
+  read-only Git metadata. Use the existing frozen scoped lead commit handoff;
+  no alternate index/object store, push, main merge or semantic rerun is needed.
