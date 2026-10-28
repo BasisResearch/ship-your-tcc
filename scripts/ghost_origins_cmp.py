@@ -37,7 +37,7 @@ FILES={
  'include-alias':[('/dir/empty.h',''),('/leaf.h','#define VALUE 11\nextern int leaf;\n')],
 }
 # Retained, diagnosed coverage failures, never counted as exact controls.
-DIAGNOSTIC={'include-repeat','splice','trigraph'}
+DIAGNOSTIC={'splice','trigraph'}
 def source_view(s):
  return {k:s[k] for k in ['opened_as','identity','contents','included_at']}
 def compare(m,s):
