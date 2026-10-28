@@ -953,3 +953,35 @@ an explicit follow-up, not established by arena equality.
   alternate index/object store to address this environment limitation.
 
 - Completed physical-capture storage verification initially selected the XZ decoder for a gzip archive and stopped before unlinking anything. Rerun with gzip verified all 1,791 files before removing only duplicate loose captures; the committed archive is unchanged.
+
+## C11 assertion message encodings, 2026-10-28
+
+- Do not broaden `parse_mult_str`: asm labels and section/alias/visibility
+  names retain their existing char-string policy. Use the assertion-only
+  consumer after phase 6, and retain raw scanner spellings for Cabs. Reading
+  wide data as a C char string would truncate `before middle after` to `b`.
+- Mixed UTF-8/wide strings are constraint diagnostics; differently prefixed
+  wide strings are implementation-policy diagnostics. Neither, false
+  assertions, malformed inputs nor message-free C11 extensions add successful
+  coverage. The original valid-wide refusal remains unchanged in the prior
+  evidence archive and is separately reproduced by the pre-repair host build.
+- The direct root-locked, systemd-12GB Lean attempt again fails at the sandbox
+  user bus before Lean starts. The frozen build service supplies the identical
+  capped build; no uncapped fallback is used.
+- A diagnostic postcheck wrongly expected `same-refusal` in model_diff totals.
+  Totals contain n/successful same; inspect the 61 same-refusal rows and zero
+  successes. The original passing observations and failed postcheck remain;
+  correct only verification, without a semantic rerun.
+- The first fast-arena export included implicit `-std=c11` in the cache key.
+  The actual compare/ref_run key records explicit `['-w']` because both
+  entry points prepend the standard flag. Reuse that exact key; preserve the
+  missing-cache export failure and both independently generated arena files.
+- Regenerating a unified patch can reshuffle unchanged context hunks. Compare
+  complete reconstructed C trees: all 552 files match except tccgen.c, whose
+  exact old bytes return after reverting only the assertion helper/call.
+  Two new patch-context blank lines trigger git diff --check's whitespace
+  diagnostic; they are context markers, with no unrelated emitted C change.
+- Final staging again cannot create this worktree's read-only index.lock.
+  Preserve the exact stderr beside the evidence package and use the existing
+  frozen scoped lead commit handoff. No alternate index/object store, push,
+  main merge or repetition of semantic work addresses this infrastructure limit.

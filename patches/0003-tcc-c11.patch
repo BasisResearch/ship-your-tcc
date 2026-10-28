@@ -955,23 +955,23 @@ diff --git a/tccgen.c b/tccgen.c
 +    q->field = (value.t & VT_BTYPE) == VT_STRUCT ? value.ref->next : NULL;
 +    q->index = 0;
 +}
- 
--    elem_size = 0;
--    nb_elems = 1;
++
 +static CType *init_cursor_type(InitCursor *q)
 +{
 +    return q->type.t & VT_ARRAY ? pointed_type(&q->type) : &q->field->type;
 +}
  
--    if (flags & DIF_HAVE_ELEM)
--        goto no_designator;
+-    elem_size = 0;
+-    nb_elems = 1;
 +static unsigned long init_cursor_addr(InitCursor *q)
 +{
 +    int align;
 +    return q->addr + (q->type.t & VT_ARRAY
 +        ? q->index * type_size(pointed_type(&q->type), &align) : q->field->c);
 +}
-+
+ 
+-    if (flags & DIF_HAVE_ELEM)
+-        goto no_designator;
 +/* Unnamed integer bitfields occupy layout, not initializer positions. */
 +static Sym *init_skip_padding(Sym *f)
 +{
@@ -1377,7 +1377,53 @@ diff --git a/tccgen.c b/tccgen.c
      func_var = 0; /* for safety */
      ind = 0; /* for safety */
      func_ind = -1;
-@@ -8795,7 +9069,7 @@
+@@ -8749,6 +9023,36 @@
+     dynarray_reset(&s->inline_fns, &s->nb_inline_fns);
+ }
+ 
++/* C11 6.7.10 accepts every string-literal encoding. Phase 6 has already
++   checked prefix compatibility and decoded each literal. Keep this separate
++   from parse_mult_str: asm labels and attribute names still need char strings.
++   Diagnostics retain every basic character; other code units (including an
++   embedded zero) are shown as '?' rather than truncating the remaining text. */
++static CString *parse_assert_str(void)
++{
++    int i, width;
++    unsigned int ch;
++
++    if (!TOK_IS_STR(tok))
++        expect("string constant");
++    cstr_reset(&initstr);
++    while (TOK_IS_STR(tok)) {
++        width = TOK_STR_SIZE(tok);
++        for (i = 0; i < tokc.str.size / width - 1; ++i) {
++            if (width == 1)
++                ch = ((unsigned char *)tokc.str.data)[i];
++            else if (width == 2)
++                ch = ((uint16_t *)tokc.str.data)[i];
++            else
++                ch = ((uint32_t *)tokc.str.data)[i];
++            cstr_ccat(&initstr, ch && ch < 128 ? ch : '?');
++        }
++        next();
++    }
++    cstr_ccat(&initstr, '\0');
++    return &initstr;
++}
++
+ static void do_Static_assert(void)
+ {
+     int c;
+@@ -8760,7 +9064,7 @@
+     msg = "_Static_assert fail";
+     if (tok == ',') {
+         next();
+-        msg = parse_mult_str("string constant")->data;
++        msg = parse_assert_str()->data;
+     }
+     skip(')');
+     if (c == 0)
+@@ -8795,7 +9099,7 @@
  static int decl(int l)
  {
      int v, has_init, r, oldint;

@@ -1,0 +1,17 @@
+{
+  "files": {
+    "artifact-manifest.json": "3a0db61434345a02c8f09fe3c722ec885e1111ee61961513f02d04b2c7a98ae1",
+    "evidence.tar.xz": "fbf4dd07cc0c4f40fe1a0676c9bcfe06c03f72c126e07f6da8cdb636c5cacc3f",
+    "freeze.py": "0ac009f5ebd3c4d9c6ee4058b3c68dbc29eb87569838482a957b8be234f9ebb5",
+    "verify.py": "90517dc9b9f572961b37437e972150bf6f4014ad32e416baa0780e0aa33a59e2"
+  },
+  "members": 11712,
+  "base_revision": "fc1e768897405791ddd2cc481d09e07fc07515b8",
+  "explicit_build": "assert-messages-lean-1",
+  "full_gate": "assert-messages-full-1",
+  "source_pins": 3379,
+  "prior_evidence": {
+    "results/model/unevaluated-syntax/evidence.tar.xz": "515c4052b0ad7a95dd21ea72c2939f8c7fd14ae8bee51a587f2f5a504e2c3b73",
+    "results/model/unevaluated-syntax/pins.json": "c61905e237203b47634c097b9c74dd71f8c93859d5f9cd5ce962d44053db9d79"
+  }
+}

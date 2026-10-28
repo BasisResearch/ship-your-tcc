@@ -26,9 +26,9 @@ VALID = {
  'generic-declarations': 'int a[_Generic(0,int:2,default:3)]; int f(void){int n=_Generic(0,int:1,default:2); return n;}',
  'macro-origins': '#define PICK(x) _Generic((x),int:(x)+1,default:(x)+2)\n#define ASSERT(e) _Static_assert((e),"macro" " msg")\n#line 70 "unevaluated.c"\nASSERT(PICK(0)==1); int f(int n){return PICK(n++);}',
  'include-origins': '#include "syntax.h"\n_Static_assert(SELECT(0)==1,"header"); int f(int n){return SELECT(n);}',
+ 'assert-wide': '_Static_assert(1,L"wide"); int x;',
 }
 RESIDUALS = {
- 'assert-wide': '_Static_assert(1,L"wide"); int x;',
 }
 INVALID = {
  'false-file': '_Static_assert(0,"false file");',
@@ -41,9 +41,9 @@ INVALID = {
  'empty-unselected': 'int f(void){return _Generic(0,int:1,default:);}',
  'malformed-unselected': 'int f(void){return _Generic(0,int:1,default:2+);}',
  'trailing-comma': 'int f(void){return _Generic(0,int:1,);}',
- 'assert-no-message': '_Static_assert(1);',
  'assert-nonstring': '_Static_assert(1,2);',
 }
+EXTENSIONS = {'assert-no-message': '_Static_assert(1);'}
 HEADER = '#define SELECT(x) _Generic((x),int:1,default:2)\nstruct Header {_Static_assert(1,"included"); int n;};\n'
 BATCH = '''typedef int Number;
 int called, effects;
@@ -63,12 +63,24 @@ int main(void){
 '''
 
 def main():
- ap=argparse.ArgumentParser(description=__doc__);a=ap.add_mutually_exclusive_group(required=True);a.add_argument('--build-id');a.add_argument('--gate-build',action='store_true');ap.add_argument('--out',type=Path,required=True);args=ap.parse_args()
+ ap=argparse.ArgumentParser(description=__doc__);a=ap.add_mutually_exclusive_group(required=True);a.add_argument('--build-id');a.add_argument('--gate-build',action='store_true');ap.add_argument('--messages',action='store_true');ap.add_argument('--out',type=Path,required=True);args=ap.parse_args()
+ valid_cases,invalid_cases,residual_cases,extension_cases=VALID,INVALID,RESIDUALS,EXTENSIONS
+ files_by_case={'include-origins':[['/syntax.h',HEADER]]}; batch=BATCH
+ categories={n:'valid' for n in valid_cases}|{n:'diagnostic' for n in invalid_cases}|{n:'residual' for n in residual_cases}|{n:'extension' for n in extension_cases}
+ if args.messages:
+  from gen_assert_message_fixtures import fixtures, HEADER as MESSAGE_HEADER, batch as message_batch
+  selected={n:(s,c) for n,(s,c) in fixtures().items() if c!='ordinary-consumer'}
+  valid_cases={n:s for n,(s,c) in selected.items() if c=='valid'}
+  valid_cases['batch']=message_batch()
+  invalid_cases={n:s for n,(s,c) in selected.items() if c not in ('valid','extension')}
+  extension_cases={n:s for n,(s,c) in selected.items() if c=='extension'};residual_cases={}
+  categories={n:c for n,(s,c) in selected.items()}|{'batch':'valid'}
+  files_by_case={'include':[['/messages.h',MESSAGE_HEADER]]};batch=message_batch()
  out=args.out.resolve();out.mkdir(parents=True,exist_ok=False)
  receipt=build_receipt(args.build_id) if args.build_id else {'scope':'preceding gate executable build; outer receipt required'}
  pins=source_pins();driver=sha(Path(__file__));exe=ROOT/'.lake/build/bin/tcc_ghost';binary=sha(exe);rows=[];inputs={}
- for name,source in (VALID|INVALID|RESIDUALS).items():
-  d=out/name;d.mkdir();p=d/'prog.c';p.write_text(source+'\n');files=d/'files.json';files.write_text(json.dumps([['/syntax.h',HEADER]] if name=='include-origins' else [])+'\n');inputs[str(p)]=sha(p);inputs[str(files)]=sha(files)
+ for name,source in (valid_cases|invalid_cases|residual_cases|extension_cases).items():
+  d=out/name;d.mkdir();p=d/'prog.c';p.write_text(source if source.endswith('\n') else source+'\n');files=d/'files.json';files.write_text(json.dumps(files_by_case.get(name,[]))+'\n');inputs[str(p)]=sha(p);inputs[str(files)]=sha(files)
   captures={}
   for mode in ['model','spec','raw-model','raw-spec','independent-raw']:
    cmd=[str(exe),mode,str(p),'--files',str(files)]
@@ -83,16 +95,16 @@ def main():
    scopes[label]=dict(model=m['status'],spec=s['status'],difference=diff)
   # Raw invalid controls are observations even when the grammar accepts them.
   # The compiler must reject, or syntax construction must explicitly diagnose.
-  valid=name in VALID
+  valid=name in valid_cases
   accepted=all(x['difference'] is None for x in scopes.values()) if valid else captures['raw-model']['status']!='ok'
-  if name in RESIDUALS:accepted=captures['raw-model']['status']=='model-rejected' and captures['independent-raw']['status']=='ok'
-  rows.append(dict(case=name,valid=valid,residual=name in RESIDUALS,accepted=accepted,comparisons=scopes))
-  print(name,'exact' if valid and accepted else ('known-valid-residual' if name in RESIDUALS and accepted else ('diagnostic' if not valid and accepted else 'FAILED')),flush=True)
- (out/'batch.c').write_text(BATCH);inputs[str(out/'batch.c')]=sha(out/'batch.c')
+  if name in residual_cases:accepted=captures['raw-model']['status']=='model-rejected' and captures['independent-raw']['status']=='ok'
+  rows.append(dict(case=name,category=categories[name],valid=valid,residual=name in residual_cases,accepted=accepted,comparisons=scopes))
+  print(name,'exact' if valid and accepted else (categories[name] if accepted else 'FAILED'),flush=True)
+ (out/'batch.c').write_text(batch);inputs[str(out/'batch.c')]=sha(out/'batch.c')
  assert source_pins()==pins and sha(exe)==binary and sha(Path(__file__))==driver
  assert all(sha(Path(p))==h for p,h in inputs.items())
  report=dict(build=receipt,driver_sha256=driver,binary_sha256=binary,source_hashes=pins,inputs=inputs,rows=rows,
-             exact_valid=sum(r['valid'] and r['accepted'] for r in rows),diagnostics=sum(not r['valid'] and not r['residual'] and r['accepted'] for r in rows),residuals=[r['case'] for r in rows if r['residual']])
+             exact_valid=sum(r['valid'] and r['accepted'] for r in rows),diagnostics=sum(not r['valid'] and not r['residual'] and r['category']!='extension' and r['accepted'] for r in rows),extensions=[r['case'] for r in rows if r['category']=='extension'],residuals=[r['case'] for r in rows if r['residual']])
  (out/'comparison.json').write_text(json.dumps(report,indent=2)+'\n')
  return int(not all(r['accepted'] for r in rows))
 if __name__=='__main__':raise SystemExit(main())

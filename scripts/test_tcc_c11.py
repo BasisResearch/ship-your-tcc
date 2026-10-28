@@ -23,6 +23,8 @@ from gen_designator_fixtures import generate as generate_designator_fixtures
 from gen_line_fixtures import generate as generate_line_fixtures
 from gen_typedef_alignment_fixtures import generate as generate_typedef_fixtures
 from gen_array_decay_fixtures import generate as generate_array_decay_fixtures
+from gen_assert_message_fixtures import generate as generate_assert_message_fixtures
+from assert_message_compilers import check as check_assert_message_compilers
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / 'build/test-c11'
@@ -86,6 +88,11 @@ def main():
     cases.update(typedef_cases)
     array_decay_cases, array_decay_invalid = generate_array_decay_fixtures(OUT / "array-decay")
     cases.update(array_decay_cases)
+    assert_messages = generate_assert_message_fixtures(OUT / 'assert-messages')
+    cases.update({p:'' for p,c in assert_messages.items() if c=='valid' and Path(p).stem!='assert-wide'})
+    message_observations = check_assert_message_compilers(assert_messages,
+        {'host':tcc, 'cross':cross, 'gcc':['gcc','-std=c11','-pedantic-errors']},run,OUT)
+    (OUT / 'assert-message-diagnostics.json').write_text(json.dumps(message_observations,indent=2)+'\n')
     cases.update(generate_line_fixtures(OUT / 'line'))
     # Raw nonprinting bytes must stay raw through each stringification.
     raw = OUT / 'stringize_raw.c'
@@ -128,7 +135,7 @@ def main():
         if actual != expected.encode():
             raise RuntimeError(f'{f}: host output {actual!r}, expected {expected!r}')
         exe = OUT / (name + '.gcc')
-        gcc_flags = ['-pedantic-errors'] if f in designator_cases or f in array_decay_cases else []
+        gcc_flags = ['-pedantic-errors'] if f in designator_cases or f in array_decay_cases or f in assert_messages else []
         run(['gcc', '-std=c11', '-w'] + gcc_flags + [f, '-o', exe])
         if run([exe]).stdout != actual:
             raise RuntimeError(f'{f}: gcc differs')
@@ -257,6 +264,7 @@ def main():
         with ThreadPoolExecutor(max_workers=3) as pool:
             list(pool.map(full_image, full))
     print(f'C11: {len(cases)} positive cases, {len(bad) + len(designator_invalid) + len(typedef_invalid) + len(array_decay_invalid) + 1} negative cases; all passed')
+    print('Assertion message diagnostics/policy/extensions: '+str({c:list(assert_messages.values()).count(c) for c in sorted(set(assert_messages.values())) if c!='valid'}))
 
 if __name__ == '__main__':
     OUT.mkdir(parents=True, exist_ok=True)

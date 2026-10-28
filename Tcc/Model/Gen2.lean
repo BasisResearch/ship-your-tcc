@@ -968,6 +968,29 @@ def parse_mult_str (R : Rec) (msg : String) : M ByteArray := do
   modify fun st => { st with initstr := s }
   return s
 
+/-- Assertion-only C11 string consumer. Phase 6 checks encoding compatibility.
+Render basic diagnostic characters from 1/2/4-byte code units; a nonbasic or
+embedded zero unit is '?' so later basic text is still included. The ghost
+scanner retains the original literal spellings independently of this buffer. -/
+def parse_assert_str (R : Rec) : M ByteArray := do
+  if !TOK_IS_STR (← getTok) then expect R "string constant"
+  let mut s := ByteArray.empty
+  let fuel ← fuelM
+  for _ in [0:fuel] do
+    let tk ← getTok
+    if !TOK_IS_STR tk then break
+    let tc := (← get).tokc
+    let width := (TOK_STR_SIZE tk).toNat'
+    for i in [0:tc.strSize.toNat' / width - 1] do
+      let ch := if width == 1 then (tc.sdata.get! i).toUInt32
+        else if width == 2 then (Bytes.r16 tc.sdata (2 * i)).toUInt32
+        else Bytes.r32 tc.sdata (4 * i)
+      s := s.push (if ch != 0 && ch < 128 then ch.toUInt8 else 63)
+    R.next
+  s := s.push 0
+  modify fun st => { st with initstr := s }
+  return s
+
 /-- `exact_log2p1(i)` -/
 def exact_log2p1 (i0 : Int32) : Int32 := Id.run do
   if i0 == 0 then return 0

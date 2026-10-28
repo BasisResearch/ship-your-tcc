@@ -203,6 +203,15 @@ if [ -f lakefile.toml ] || [ -f lakefile.lean ]; then
         || fail "unevaluated syntax native Sail batch (artifacts: $syntax_checks/native)"
     fi
     echo "unevaluated syntax artifacts: $syntax_checks"
+    message_checks=$(mktemp -d build/assert-messages-gate.XXXXXX)
+    python3 scripts/unevaluated_syntax_cmp.py --messages --gate-build --out "$message_checks/syntax" \
+      || fail "C11 assertion message syntax (artifacts: $message_checks/syntax)"
+    if [ -x build/unevaluated-native-tool/capture_cut ]; then
+      python3 scripts/unevaluated_native_check.py --source "$message_checks/syntax/batch.c" \
+        --sail-capture build/unevaluated-native-tool/capture_cut --out "$message_checks/native" \
+        || fail "C11 assertion message native Sail batch (artifacts: $message_checks/native)"
+    fi
+    echo "assertion message artifacts: $message_checks"
     decay_checks=$(mktemp -d build/array-decay-gate.XXXXXX)
     decay_args=()
     if [ -x build/unevaluated-native-tool/capture_cut ]; then

@@ -6,7 +6,7 @@ ROOT=Path(__file__).resolve().parents[1]
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('request_id');ap.add_argument('--gate',action='store_true');ap.add_argument('--verify',action='store_true');ap.add_argument('targets',nargs='*');a=ap.parse_args()
-    assert a.request_id.startswith('unevaluated-')
+    assert a.request_id.startswith(('unevaluated-','assert-messages-'))
     reqpath=ROOT/'build'/f'worker-build.{a.request_id}.request'
     if a.verify:
         req=json.loads(reqpath.read_text())
@@ -31,7 +31,7 @@ def main():
           (p.endswith(('.lean','.lem','.py','.sh','.patch','.tsv','.sha256','.manifest','.c','.h','.ml','.mli','.mly','.mll','.core','.impl')) or p in ['lakefile.toml','lake-manifest.json','lean-toolchain']) and not p.startswith(('results/','tasks/'))}
     req=dict(request_id=a.request_id,cwd=str(ROOT),source_revision=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
              targets=[] if a.gate else (a.targets or ['tcc_model','tcc_pre_tokens','pre_spec','tcc_ghost','Tcc.Model.PreAudit','Tcc.Model.GhostAudit','csem_cparse','csem_raw']),sha256=pins,
-             note='Complete generic/static-assert compiler-action syntax and independent Raw.checked comparison. Sources frozen until matching completed receipt; preserve all failed receipts/logs. No cut regeneration or semantic source changes.')
+             note='Complete compiler-action syntax and independent Raw.checked comparison. Assertion message lane repairs compiler/model C11 encodings while preserving ordinary-string-only consumers. Rebuild patched C image before native observations; strict C11 checks must run serially with image/cross rebuild. Sources frozen until matching completed receipt; preserve all failed receipts/logs. No cut regeneration or CSem changes.')
     if a.gate:req['kind']='full-gate-validation'
     reqpath.write_text(json.dumps(req,indent=2)+'\n');(ROOT/'build/worker-build.request').write_text(reqpath.read_text())
     print(f"submitted {a.request_id}; {len(pins)} inputs; targets={req['targets']}")

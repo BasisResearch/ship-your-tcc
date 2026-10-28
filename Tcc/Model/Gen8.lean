@@ -369,7 +369,7 @@ def do_Static_assert (R : Rec) : M Unit := do
   if (← getTok) == 44 then
     R.next
     let gs ← gmark
-    msg := Bytes.cstrAt (← parse_mult_str R "string constant") 0
+    msg := Bytes.cstrAt (← parse_assert_str R) 0
     gwrap gs .string
   skip R 41
   if c == 0 then tcc_error R (cfmt "%s" [.s msg])
