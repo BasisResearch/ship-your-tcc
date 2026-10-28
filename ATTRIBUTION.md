@@ -240,3 +240,10 @@ and constructor compatibility. Other Core/IEEE modules stay pristine there;
 this oracle is not claimed equivalent to the Lean IEEE semantics or to
 non-concrete memory backends. Exact provenance and patch inventories are in
 results/csem/gnu-attributes.md.
+
+GNU typedef/type-query alignment repair (patch 0003, model Types/Gen1–Gen5,
+Alignment/AlignmentAudit and scripts/gen_typedef_alignment_fixtures.py): local
+extension of the TinyCC 43c7708 translation, LGPL-2.1-or-later. It preserves
+separate declaration/type/expression alignment carriers and a named open RV64
+representation obligation. No new library or machine proof is reused; the
+existing Sail/build harness provenance above applies.

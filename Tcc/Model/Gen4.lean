@@ -174,6 +174,7 @@ def unary_postfix (R : Rec) : M Unit := do
       vpushi R field.offset
       R.gen_op 43
       setVtType 0 (← getSym field.field).type
+      modVt 0 fun v => { v with query_aligned := 0 }
       if qualifiers != 0 then
         setVtType 0 (← parse_btype_qualify R (← vt).type qualifiers)
       if (← vtt) &&& VT_ARRAY == 0 then
@@ -205,6 +206,12 @@ def unaryGhostKind (tok : Int32) : Ghost.Production :=
   else if tok == TOK___NAN__ || tok == TOK___SNAN__ || tok == TOK___INF__ then .constant
   else if (tok ≥ TOK_builtin_types_compatible_p && tok ≤ TOK___atomic_nand_fetch) || tok == TOK___riscv64_clear_cache then .builtin
   else .ident
+
+/-- Retain alias alignment if the unary operation did not promote its type. -/
+def unary_alignment (before : CType) : M Unit := do
+  let after := (← vt).type
+  if after.t &&& (VT_BTYPE ||| VT_UNSIGNED ||| VT_LONG) == before.t &&& (VT_BTYPE ||| VT_UNSIGNED ||| VT_LONG) then
+    setVtType 0 { after with aligned := before.aligned }
 
 /-- `unary()` -/
 def unary (R : Rec) : M Unit := do
@@ -266,6 +273,7 @@ def unary (R : Rec) : M Unit := do
       else
         R.unary
         R.gen_cast type
+        modVt 0 fun v => { v with type := { v.type with aligned := 0 } }
         gwrap gm .cast
       gwrapped := true
     else if (← getTok) == 123 then
@@ -305,32 +313,33 @@ def unary (R : Rec) : M Unit := do
   else if tok == 126 then
     R.next
     R.unary
+    let before := (← vt).type
     vpushi R (-1)
     R.gen_op 94
+    unary_alignment before
   else if tok == 43 then
     R.next
     R.unary
+    let before := (← vt).type
     if (← vtt) &&& VT_BTYPE == VT_PTR then tcc_error_s R "pointer not accepted for unary plus"
     if !is_float (← vtt) then
       vpushi R 0
       R.gen_op 43
+    unary_alignment before
   else if tok == TOK_SIZEOF || tok == TOK_ALIGNOF1 || tok == TOK_ALIGNOF2 || tok == TOK_ALIGNOF3 then
     let t := tok
     R.next
     if (← getTok) == 40 then setTok TOK_SOTYPE
-    let type ← expr_type R.unary
+    let query ← expr_type R R.unary
+    let type := query.type
     if t == TOK_SIZEOF then
       let _ ← R.vpush_type_size type
       R.gen_cast_s VT_SIZE_T
     else
       let (_, align0) ← R.type_size type
       let mut align := align0
-      -- hack: accessing previous vtop
-      let v1 ← vt 1
-      let s := if v1.r.toInt32' &&& VT_SYM != 0 then v1.sym else 0
-      if s != 0 then
-        let sx ← getSym s
-        if sx.a_aligned != 0 then align := (1 : Int32) <<< (sx.a_aligned.toInt32' - 1)
+      if query.aligned != 0 then
+        align := (1 : Int32) <<< (query.aligned.toInt32 - 1)
       vpushs R align.toInt64.toUInt64
   else if tok == TOK_builtin_expect then
     parse_builtin_params R false "ee"
@@ -414,11 +423,13 @@ def unary (R : Rec) : M Unit := do
   else if tok == 45 then
     R.next
     R.unary
+    let before := (← vt).type
     if is_float (← vtt) then gen_opif R TOK_NEG
     else
       vpushi R 0
       vswap R
       R.gen_op 45
+    unary_alignment before
   else if tok == TOK_LAND && (← get).gnu_ext != 0 then
     R.next
     let tk ← getTok
@@ -441,8 +452,8 @@ def unary (R : Rec) : M Unit := do
     modify fun s => { s with nocode_wanted := s.nocode_wanted &&& ~~~CONST_WANTED_MASK }
     R.next
     skip R 40
-    let ct0 ← expr_type R.expr_eq
-    let controlling_type ← convert_expression_type R ct0
+    let ct0 ← expr_type R R.expr_eq
+    let controlling_type ← convert_expression_type R ct0.type
     modify fun s => { s with nocode_wanted := saved_nocode_wanted }
     let mut has_default := false
     let mut has_match := false
@@ -502,7 +513,7 @@ def unary (R : Rec) : M Unit := do
     let mut r := sx.r.toInt32'
     if (r &&& VT_VALMASK) < VT_CONST then r := (r &&& ~~~VT_VALMASK) ||| VT_LOCAL
     vset R sx.type r sx.c
-    modVt 0 fun v => v.setSym s
+    modVt 0 fun v => { (v.setSym s) with query_aligned := sx.a_aligned.toUInt32 }
     if r &&& VT_SYM != 0 then
       setVtCi 0 0
     else if r == VT_CONST && IS_ENUM_VAL sx.type.t then

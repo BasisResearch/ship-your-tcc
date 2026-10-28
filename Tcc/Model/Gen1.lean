@@ -199,7 +199,7 @@ def sym_push (R : Rec) (v : Int32) (type : CType) (r c : Int32) : M SymId := do
   let top := if useLocal then st.local_stack else st.global_stack
   let s ← sym_push2 top v type.t c
   if useLocal then modify fun st => { st with local_stack := s } else modify fun st => { st with global_stack := s }
-  modSym s fun x => { x with type := { x.type with ref := type.ref }, r := r.toUInt16' }
+  modSym s fun x => { x with type := { x.type with ref := type.ref, aligned := type.aligned }, r := r.toUInt16' }
   if (v &&& ~~~SYM_STRUCT) < SYM_FIRST_ANOM then
     sym_link s true
     let pt := (← getSym s).prev_tok
@@ -481,12 +481,12 @@ def external_global_sym (v : Int32) (type : CType) : M SymId := do
   if s == 0 then
     s ← global_identifier_push v (type.t ||| VT_EXTERN) 0
     let s' := s
-    modSym s' fun x => { x with type := { x.type with ref := type.ref } }
+    modSym s' fun x => { x with type := { x.type with ref := type.ref, aligned := type.aligned } }
   else
     let x ← getSym s
     if IS_ASM_SYM x then
       let s' := s
-      modSym s' fun x => { x with type := { t := type.t ||| (x.type.t &&& VT_EXTERN), ref := type.ref } }
+      modSym s' fun x => { x with type := { t := type.t ||| (x.type.t &&& VT_EXTERN), ref := type.ref, aligned := type.aligned } }
       update_storage s
   return s
 
@@ -542,7 +542,7 @@ def patch_type (R : Rec) (sym : SymId) (type : CType) : M Unit := do
   let x ← getSym sym
   if IS_ASM_SYM x then
     modSym sym fun y =>
-      let y := { y with type := { t := type.t &&& (y.type.t ||| ~~~VT_STATIC), ref := type.ref } }
+      let y := { y with type := { t := type.t &&& (y.type.t ||| ~~~VT_STATIC), ref := type.ref, aligned := type.aligned } }
       if type.t &&& VT_BTYPE != VT_FUNC && type.t &&& VT_ARRAY == 0 then { y with r := y.r ||| VT_LVAL.toUInt16' } else y
   let x ← getSym sym
   if !(← R.is_compatible_types x.type type) then
@@ -563,13 +563,13 @@ def patch_type (R : Rec) (sym : SymId) (type : CType) : M Unit := do
       modSym sym fun y => { y with type := { y.type with t := (type.t &&& ~~~(VT_STATIC ||| VT_INLINE)) ||| sp } }
       if ft1 != FUNC_OLD then
         modSym type.ref fun y => { y with aux := setBits32 y.aux 3 2 ft1 }
-      modSym sym fun y => { y with type := { y.type with ref := type.ref } }
+      modSym sym fun y => { y with type := { y.type with ref := type.ref, aligned := type.aligned } }
       modSym type.ref fun y => { y with aux := merge_funcattr y.aux f }
     else
       let sp := static_proto
       modSym sym fun y => { y with type := { y.type with t := y.type.t &&& (~~~VT_INLINE ||| sp) } }
       if ft1 == FUNC_OLD && ft2 != FUNC_OLD then
-        modSym sym fun y => { y with type := { y.type with ref := type.ref } }
+        modSym sym fun y => { y with type := { y.type with ref := type.ref, aligned := type.aligned } }
   else
     if x.type.t &&& VT_ARRAY != 0 && (← symC type.ref) ≥ 0 then
       let c ← symC type.ref
@@ -656,7 +656,7 @@ def external_sym (R : Rec) (v : Int32) (type : CType) (r : Int32) (ad : Attribut
     s ← global_identifier_push v type.t 0
     let s' := s
     modSym s' fun x => { x with r := x.r ||| r.toUInt16', a := ad.a, next := ad.asm_label.toNat',
-                                 type := { x.type with ref := type.ref } }
+                                 type := { x.type with ref := type.ref, aligned := type.aligned } }
   else
     patch_storage R s ad (some type)
   if (← get).local_stack != 0 then
@@ -777,6 +777,7 @@ def move_reg (R : Rec) (r s t : Int32) : M Unit := do
 
 /-- `gaddrof()` -/
 def gaddrof : M Unit := do
+  modVt 0 fun v => { v with query_aligned := 0 }
   modVt 0 fun v =>
     let r := v.r.toInt32' &&& ~~~VT_LVAL
     let r := if r &&& VT_VALMASK == VT_LLOCAL then (r &&& ~~~VT_VALMASK) ||| VT_LOCAL ||| VT_LVAL else r

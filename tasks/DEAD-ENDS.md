@@ -650,3 +650,42 @@ requested corrections until the lead surfaced them explicitly.
   The GNU tcc matrix has 8,256,889 compile steps; retained metadata and command
   pins settle the classification. The initial lead prose was corrected without
   changing any captured observation or increasing a success count.
+- GNU typedef query repair (2026-10-28): transporting AttributeDef only to the
+  immediate query loses `typeof(*(Up *)0)`. Preserve alignment in nested CType
+  values, including sym_push and the partial reference-copy paths. A CType
+  field alone does not transport explicit object expression alignment.
+- VT_SYM survives address-taking and member address calculation. Even a live
+  symbol lookup wrongly gives `__alignof__(&x)` the object's alignment. Use a
+  separate initialized SValue expression carrier; reset it on address-taking,
+  indirection, casts, operations, comma expressions and member selection. Keep
+  the explicitly aligned-member expression discrepancy as its separate question.
+- New CType fields require a C constructor audit: Lean defaults do not initialize
+  C scratch values. Zero fresh partial SValues, including scalar structure-return
+  temporaries, copy the full type metadata, and reset backend gfunc_sret's new
+  field. Existing backend Sym labels already use `{0}`; origtype is a dominating
+  full copy. Source inventory and checked LP64 offsets accompany the result.
+- Function derivation must clear inherited alias alignment before storing the
+  function reference's attributes. Clearing it only afterwards makes
+  `_Alignof(typeof(F))` inherit the return type's alignment. Preserve return
+  CType alignment separately. The retained intermediate probe prints `1 16 1`
+  against GCC's `1 1 1`; the final function-typeof control repairs it.
+- GNU function-type alignment itself is an existing target policy: host GCC
+  and tcc return 1; RV64 GCC returns 4. Keep raw values separately and compare
+  typedef-derived functions with the same engine's ordinary function type.
+  The initial 65/66 Sail batch is retained as a failed observation, not renamed
+  to a pass. The final 76/76 batch uses explicit derivation controls.
+- Typedef build 1 failed on a multiline Lean record field's indentation. Its
+  matching failed receipt and log remain; do not raise budgets. Initial
+  __builtin_offsetof/phase4-only CSem probes were harness diagnostics: use
+  standard offsetof and inspect semantic verdicts, not the process exit alone.
+- The first typedef full gate stopped on the absent adopted oracle cache key
+  9e775864dfd595f06f61463e4ff16d6664b5aa7dea800e471cd821462c73602f. The
+  artifact/overlay-verified local link repairs setup; no shared cache was rebuilt
+  or modified. Optional native arena captures fail immediately on this worker's
+  denied systemd user bus. Preserve them as harness errors; full ordinary Sail
+  executions and independent fast arenas are separate successful observations.
+- The pinned GNU CSem checkpoint still disagrees on dereference/return typedef
+  types, unary/common type preservation and function queries; it also accepts
+  three invalid array constraints. Its OCaml parser rejects the GNU spellings.
+  These are separate required spec/constraint follow-ups, not permission to
+  narrow Supported/Fits, strip attributes or count refusals as successes.

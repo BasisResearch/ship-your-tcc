@@ -89,7 +89,7 @@ def parse_attribute_body (R : Rec) (ad0 : AttributeDef) : M AttributeDef := do
         else
           n := MAX_ALIGN
         let al := exact_log2p1 n
-        ad := setA ad 0 5 al.toUInt16'
+        ad := { (setA ad 0 5 al.toUInt16') with aligned_from_typedef := false }
         if n != ((1 : Int32) <<< ((ad.a &&& 0x1f).toInt32' - 1)) then
           tcc_error R (cfmt "alignment of %d is larger than implemented" [.i n.toInt])
       else if t == TOK_PACKED1 || t == TOK_PACKED2 then ad := setA ad 5 1 1
@@ -597,7 +597,7 @@ def parse_btype (R : Rec) (_ad0 : AttributeDef) (ignore_label : Int32) : M (Bool
         n ← R.expr_const
         if n < 0 || (n &&& (n - 1)) != 0 then tcc_error_s R "alignment must be a positive power of two"
       skip R 41
-      ad := setA ad 0 5 (exact_log2p1 n).toUInt16'
+      ad := { (setA ad 0 5 (exact_log2p1 n).toUInt16') with aligned_from_typedef := false }
       cont := true
     else if tok == TOK_LONG then
       if t &&& VT_BTYPE == VT_DOUBLE then
@@ -620,7 +620,9 @@ def parse_btype (R : Rec) (_ad0 : AttributeDef) (ignore_label : Int32) : M (Bool
     else if tok == TOK_ENUM || tok == TOK_STRUCT || tok == TOK_UNION then
       let type1 ← struct_decl R (if tok == TOK_ENUM then VT_ENUM else if tok == TOK_STRUCT then VT_STRUCT else VT_UNION)
       u := type1.t
-      type := { type with ref := type1.ref }
+      type := { type with ref := type1.ref, aligned := type1.aligned }
+      if ad.a &&& 0x1f == 0 && type1.aligned != 0 then
+        ad := { (setA ad 0 5 type1.aligned.toUInt16) with aligned_from_typedef := true }
       basic1' := true
     else if tok == TOK__Atomic then
       R.next
@@ -632,7 +634,9 @@ def parse_btype (R : Rec) (_ad0 : AttributeDef) (ignore_label : Int32) : M (Bool
         type1 := { type1 with t := type1.t &&& ~~~(VT_STORAGE &&& ~~~VT_TYPEDEF) }
         if type1.ref != 0 then ad := sym_to_attr ad (← getSym type1.ref)
         u := type1.t
-        type := { type with ref := type1.ref }
+        type := { type with ref := type1.ref, aligned := type1.aligned }
+        if ad.a &&& 0x1f == 0 && type1.aligned != 0 then
+          ad := { (setA ad 0 5 type1.aligned.toUInt16) with aligned_from_typedef := true }
         basic1' := true
     else if tok == TOK_CONST1 || tok == TOK_CONST2 || tok == TOK_CONST3 then
       type := { type with t := t }
@@ -687,7 +691,9 @@ def parse_btype (R : Rec) (_ad0 : AttributeDef) (ignore_label : Int32) : M (Bool
         ad := sym_to_attr ad (← getSym type1.ref)
         if type1.t &&& VT_ARRAY != 0 then type1 := { type1 with t := type1.t ||| VT_BT_ARRAY }
       u := type1.t
-      type := { type with ref := type1.ref }
+      type := { type with ref := type1.ref, aligned := type1.aligned }
+      if ad.a &&& 0x1f == 0 && type1.aligned != 0 then
+        ad := { (setA ad 0 5 type1.aligned.toUInt16) with aligned_from_typedef := true }
       basic1' := true
     else if tok == TOK_THREAD_LOCAL || tok == TOK___thread then
       if t &&& VT_TLS != 0 then tcc_error_s R "multiple thread-local storage specifiers"
@@ -711,10 +717,12 @@ def parse_btype (R : Rec) (_ad0 : AttributeDef) (ignore_label : Int32) : M (Bool
             t := t &&& ~~~(VT_BTYPE ||| VT_LONG)
             let uu := t &&& ~~~VT_QUAL
             t := t ^^^ uu
-            type := { t := (sx.type.t &&& ~~~VT_TYPEDEF) ||| uu, ref := sx.type.ref }
+            type := { t := (sx.type.t &&& ~~~VT_TYPEDEF) ||| uu, ref := sx.type.ref, aligned := sx.a_aligned.toUInt32 }
             if t != 0 then type ← parse_btype_qualify R type t
             t := type.t
             if t &&& VT_ARRAY != 0 then t := t ||| VT_BT_ARRAY
+            if ad.a &&& 0x1f == 0 && sx.a_aligned != 0 then
+              ad := { ad with aligned_from_typedef := true }
             ad := sym_to_attr ad sx
             typespec_found := true
             st := -2; bt := -2
@@ -740,7 +748,9 @@ def parse_btype (R : Rec) (_ad0 : AttributeDef) (ignore_label : Int32) : M (Bool
 
 /-- `convert_parameter_type(pt)` -/
 def convert_parameter_type (R : Rec) (pt0 : CType) : M CType := do
-  let pt := { pt0 with t := pt0.t &&& ~~~(VT_ARRAY ||| VT_VLA) }
+  let pt := { pt0 with
+    t := pt0.t &&& ~~~(VT_ARRAY ||| VT_VLA)
+    aligned := if pt0.t &&& (VT_ARRAY ||| VT_VLA) != 0 then 0 else pt0.aligned }
   if pt.t &&& VT_BTYPE == VT_FUNC then mk_pointer R pt else return pt
 
 /-- `convert_expression_type(pt)` -/
@@ -779,6 +789,12 @@ def locSet (top : CType) (l : CLoc) (v : CType) : M CType :=
   match l with
   | .top => pure v
   | .sym s => do modSym s fun y => { y with type := v }; return top
+
+/-- Clear only the alignment inherited from an alias on a new derivation. -/
+def derived_alignment (ad : AttributeDef) : AttributeDef :=
+  if ad.aligned_from_typedef then
+    { (setA ad 0 5 0) with aligned_from_typedef := false }
+  else ad
 
 /-- `post_type(type, ad, storage, td)`: (result, type, ad) -/
 def post_type : Nat → Rec → CType → AttributeDef → Int32 → Int32 → M (Bool × CType × AttributeDef)
@@ -857,6 +873,7 @@ def post_type : Nat → Rec → CType → AttributeDef → Int32 → Int32 → M
       ad := setF ad 8 8 arg_size.toUInt32
       ad := setF ad 3 2 l
       let ty := type
+      ad := derived_alignment ad
       let aa := ad.a
       let ff := ad.f
       let fs := first
@@ -920,6 +937,8 @@ def post_type : Nat → Rec → CType → AttributeDef → Int32 → Int32 → M
       if type.t &&& VT_BTYPE == VT_FUNC then tcc_error_s R "declaration of an array of functions"
       if type.t &&& VT_BTYPE == VT_VOID || (← R.type_size type).1 < 0 then
         tcc_error_s R "declaration of an array of incomplete type elements"
+      if type.aligned != 0 && (← R.type_size type).1.toUInt32 % ((1 : UInt32) <<< (type.aligned - 1)) != 0 then
+        tcc_error_s R "array element size is not a multiple of its alignment"
       t1 := t1 ||| (type.t &&& VT_VLA)
       if t1 &&& VT_VLA != 0 then
         if n < 0 then
@@ -936,7 +955,7 @@ def post_type : Nat → Rec → CType → AttributeDef → Int32 → Int32 → M
       if n != -1 then vpop R
       modify fun s => { s with nocode_wanted := saved_nocode_wanted }
       let s ← sym_push R SYM_FIELD type 0 n
-      type := { t := (if t1 != 0 then VT_VLA else VT_ARRAY) ||| VT_PTR, ref := s }
+      type := { t := (if t1 != 0 then VT_VLA else VT_ARRAY) ||| VT_PTR, ref := s, aligned := type.aligned }
       type := { type with t := type.t ||| array_qualifiers }
       match vla_array_str with
       | some vs =>
@@ -960,6 +979,7 @@ def type_decl_loc : Nat → Rec → CType → AttributeDef → Int32 → M (CTyp
     let lfuel ← fuelM
     for _ in [0:lfuel] do
       if (← getTok) != 42 then break
+      ad := derived_alignment ad
       let mut qualifiers : Int32 := 0
       for _ in [0:lfuel] do    -- redo:
         R.next
@@ -1003,6 +1023,8 @@ def type_decl_loc : Nat → Rec → CType → AttributeDef → Int32 → M (CTyp
     check_restrict_type R type
     ad ← parse_attribute R ad
     type := { type with t := type.t ||| storage }
+    if storage &&& VT_TYPEDEF != 0 || td &&& TYPE_ABSTRACT != 0 then
+      type := { type with aligned := (ad.a &&& 0x1f).toUInt32 }
     gwrap gm .declarator
     return (type, ad, v, ret)
 
@@ -1015,6 +1037,7 @@ def type_decl (R : Rec) (type : CType) (ad : AttributeDef) (td : Int32) : M (CTy
 
 /-- `indir()` -/
 def indir (R : Rec) : M Unit := do
+  modVt 0 fun v => { v with query_aligned := 0 }
   if (← vtt) &&& VT_BTYPE != VT_PTR then
     if (← vtt) &&& VT_BTYPE == VT_FUNC then return
     expect R "pointer"
@@ -1043,13 +1066,15 @@ def gfunc_param_typed (R : Rec) (func arg : SymId) : M Unit := do
     gen_assign_cast R { aty with t := aty.t &&& ~~~VT_CONSTANT }
 
 /-- `expr_type(type, expr_fn)` -/
-def expr_type (expr_fn : M Unit) : M CType := do
+def expr_type (R : Rec) (expr_fn : M Unit) : M TypeQuery := do
   modify fun s => { s with nocode_wanted := s.nocode_wanted + 1 }
   expr_fn
-  let t := (← vt).type
-  vtopDec  -- vpop() on a non-CMP value at nocode
+  let value ← vt
+  let mut aligned := value.type.aligned
+  if value.query_aligned != 0 then aligned := value.query_aligned
+  vpop R
   modify fun s => { s with nocode_wanted := s.nocode_wanted - 1 }
-  return t
+  return { type := value.type, aligned := aligned }
 
 /-- `parse_expr_type(type)` -/
 def parse_expr_type (R : Rec) : M CType := do
@@ -1060,11 +1085,7 @@ def parse_expr_type (R : Rec) : M CType := do
     let (t', _, _) ← R.type_decl type ad TYPE_ABSTRACT
     ty := t'
   else
-    modify fun s => { s with nocode_wanted := s.nocode_wanted + 1 }
-    R.gexpr
-    ty := (← vt).type
-    vpop R
-    modify fun s => { s with nocode_wanted := s.nocode_wanted - 1 }
+    ty := (← expr_type R R.gexpr).type
   skip R 41
   return ty
 

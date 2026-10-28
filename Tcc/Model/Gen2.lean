@@ -565,6 +565,11 @@ def combine_types (R : Rec) (op1v op2v0 : SValue) (op : Int32) : M (Bool × CTyp
           (t2 &&& VT_BITFIELD == 0 || BIT_SIZE t2 == 32)) then
       tt := tt ||| VT_UNSIGNED
     type := { t := tt }
+  if op == CMP_OP then type := { type with aligned := 0 }
+  else if type1.aligned == type2.aligned &&
+      type.t &&& (VT_BTYPE ||| VT_UNSIGNED ||| VT_LONG) == t1 &&& (VT_BTYPE ||| VT_UNSIGNED ||| VT_LONG) &&
+      type.t &&& (VT_BTYPE ||| VT_UNSIGNED ||| VT_LONG) == t2 &&& (VT_BTYPE ||| VT_UNSIGNED ||| VT_LONG) then
+    type := { type with aligned := type1.aligned }
   return (ret, type)
 
 /-! ## gen_op -/
@@ -648,7 +653,13 @@ def gen_op (R : Rec) (op0 : Int32) : M Unit := do
       vswap R
       R.gen_cast_s t2'
       if is_float t then gen_opif R op else gen_opic R op
-      if op_class == CMP_OP then setVtT 0 VT_INT else setVtT 0 t
+      if op_class == CMP_OP then
+        setVtT 0 VT_INT
+        modVt 0 fun v => { v with type := { v.type with aligned := 0 } }
+      else
+        setVtT 0 t
+        modVt 0 fun v => { v with type := { v.type with aligned := combtype.aligned } }
+    modVt 0 fun v => { v with query_aligned := 0 }
     if (← vtr) &&& VT_LVAL != 0 then
       let _ ← R.gv (RC_TYPE (← vtt))
     return
@@ -674,6 +685,7 @@ def cast_error (R : Rec) (st dt : CType) : M α :=
 
 /-- `gen_cast(type)` -/
 def gen_cast (R : Rec) (type : CType) : M Unit := do
+  modVt 0 fun v => { v with query_aligned := 0 }
   if (← vtr) &&& VT_MUSTCAST != 0 then force_charshort_cast R
   if (← vtt) &&& VT_BITFIELD != 0 then
     let _ ← R.gv RC_INT

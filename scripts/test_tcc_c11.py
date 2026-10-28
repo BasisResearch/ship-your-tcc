@@ -21,6 +21,7 @@ import time
 
 from gen_designator_fixtures import generate as generate_designator_fixtures
 from gen_line_fixtures import generate as generate_line_fixtures
+from gen_typedef_alignment_fixtures import generate as generate_typedef_fixtures
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / 'build/test-c11'
@@ -80,6 +81,8 @@ def main():
     cases = dict(CASES)
     designator_cases, designator_invalid = generate_designator_fixtures(OUT / "designator")
     cases.update(designator_cases)
+    typedef_cases, typedef_invalid = generate_typedef_fixtures(OUT / "typedef")
+    cases.update(typedef_cases)
     cases.update(generate_line_fixtures(OUT / 'line'))
     # Raw nonprinting bytes must stay raw through each stringification.
     raw = OUT / 'stringize_raw.c'
@@ -152,7 +155,7 @@ def main():
         for compiler in (tcc, cross):
             if run(compiler + ['-c', f, '-o', OUT / 'invalid.o'], expected=None).returncode == 0:
                 raise RuntimeError(f'accepted invalid identifier {ident}')
-    for f in designator_invalid:
+    for f in designator_invalid + typedef_invalid:
         for compiler in (tcc, cross, ['gcc', '-std=c11', '-pedantic-errors']):
             result = run(compiler + ['-c', f, '-o', OUT / 'invalid.o'], expected=None)
             if result.returncode == 0 or not result.stderr:
@@ -250,7 +253,7 @@ def main():
         # Leave room for the other worker; each Sail process is about 120 MB.
         with ThreadPoolExecutor(max_workers=3) as pool:
             list(pool.map(full_image, full))
-    print(f'C11: {len(cases)} positive cases, {len(bad) + len(designator_invalid) + 1} negative cases; all passed')
+    print(f'C11: {len(cases)} positive cases, {len(bad) + len(designator_invalid) + len(typedef_invalid) + 1} negative cases; all passed')
 
 if __name__ == '__main__':
     OUT.mkdir(parents=True, exist_ok=True)

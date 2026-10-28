@@ -209,6 +209,7 @@ def gexpr (R : Rec) : M Unit := do
       R.expr_eq
       if (← getTok) != 44 then break
     setVtType 0 (← convert_expression_type R (← vt).type)
+    modVt 0 fun v => { v with query_aligned := 0 }
     if ((← vtr) &&& VT_VALMASK) == VT_CONST && (← get).nocode_wanted != 0 && !(← CONST_WANTED) then
       let t ← vtt
       if t != VT_VOID && t &&& VT_BTYPE != VT_STRUCT then

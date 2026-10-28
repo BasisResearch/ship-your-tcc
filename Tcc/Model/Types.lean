@@ -350,7 +350,16 @@ end C
 structure CType where
   t : Int32 := 0
   ref : SymId := 0
+  /-- GNU typedef/type-query alignment (log2+1), independent of size. -/
+  aligned : UInt32 := 0
   deriving Inhabited, BEq
+
+/-- An expression type and its live GNU expression-alignment metadata.
+`typeof` consumes only `type`; the unary alignment query consumes `aligned`. -/
+structure TypeQuery where
+  type : CType := {}
+  aligned : UInt32 := 0
+  deriving Inhabited
 
 /-- `union CValue` (16 bytes on rv64): `i`/`d`/`f` share `lo`, `ld` is
 `lo`/`hi`, `tab[0..3]` are the four 32-bit words, `str.size` is the low
@@ -396,6 +405,8 @@ structure SValue where
   type : CType := {}
   r : UInt16 := 0
   r2 : UInt16 := 0
+  /-- Live expression alignment, separate from alias/type alignment. -/
+  query_aligned : UInt32 := 0
   c : CValue := {}
   u : UInt64 := 0
   deriving Inhabited
@@ -484,6 +495,7 @@ structure AttributeDef where
   asm_label : Int32 := 0
   attr_mode : Int32 := 0
   new_section : Int32 := 0
+  aligned_from_typedef : Bool := false
   deriving Inhabited
 
 /-! ## tokens and preprocessor -/
