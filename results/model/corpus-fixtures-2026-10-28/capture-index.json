@@ -1,0 +1,23 @@
+[
+  {
+    "source": "build/tcc-src/tests/tests2/18_include.c",
+    "steps": 13652355,
+    "arena_sha256": "8a374c5c4f8f29944763a7017f77e51781fbe73105cbffa85bf8f503ada31f57",
+    "elf_sha256": "884579b608e70da592fb97ca60d1597a182838842e0ae34960b71bcc6dd544e6",
+    "capture": "captures/18_include"
+  },
+  {
+    "source": "build/tcc-src/tests/tests2/95_bitfields_ms.c",
+    "steps": 34047039,
+    "arena_sha256": "35355b43dc9fa65d7f8923eec85a508bde64b75e822a3478b49452572c8f663e",
+    "elf_sha256": "d52d753b9be470affaf429fae9c4c778b3583294c1acf1b6ede20986330a2ea8",
+    "capture": "captures/95_bitfields_ms"
+  },
+  {
+    "source": "build/tcc-src/tests/tests2/95_bitfields.c",
+    "steps": 34581933,
+    "arena_sha256": "02e5a47a1fcf14ea71a2cba7dbf3521b15ce256561cfd3c65a808478c83772c4",
+    "elf_sha256": "f9edbb5891c8c173a0f58326903c2097899141b29dd2e69bf0546648a77ea8df",
+    "capture": "captures/95_bitfields"
+  }
+]

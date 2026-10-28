@@ -1,0 +1,4 @@
+
+corpus          total   same   diff   merr   skip   herr refusal    asm
+build/tcc-src/tests/tests2      2      2      0      0      0      0       0      0
+all                 2      2   (942 s wall)

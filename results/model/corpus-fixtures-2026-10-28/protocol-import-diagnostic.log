@@ -1,0 +1,23 @@
+E
+======================================================================
+ERROR: test_model_ref_protocol (unittest.loader._FailedTest.test_model_ref_protocol)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_model_ref_protocol
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/unittest/loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/usr/lib/python3.14/unittest/loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/data/home/kirancodes/Documents/code/ship-your-tcc/scripts/tests/test_model_ref_protocol.py", line 10, in <module>
+    spec.loader.exec_module(m)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/data/home/kirancodes/Documents/code/ship-your-tcc/scripts/model_diff.py", line 37, in <module>
+    from source_fixtures import fixture_files, fixture_entries
+ModuleNotFoundError: No module named 'source_fixtures'
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (errors=1)

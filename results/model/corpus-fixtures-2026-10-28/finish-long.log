@@ -1,0 +1,5 @@
+               total        used        free      shared  buff/cache   available
+Mem:             123          29          75           0          20          93
+Swap:              0           0           0
+broad 1 {'n': 1815, 'same': 1345}
+fixture checks complete

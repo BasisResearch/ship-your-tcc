@@ -1,0 +1,6 @@
+{
+  "scripts/model_diff.py": "b0edb4d6b4b483fadab731efd76efadb0d6ee107affb3b0e2b6de5f2ed3360e3",
+  "scripts/pre_tokens_diff.py": "29ba8a6b2d80525aa89bcf9efeb975c49875c87a8552635c99a520981386a270",
+  "scripts/source_fixtures.py": "eab86e70316d6eb01cea0ad3922a829167627da25b270a3ee4e7a49c65ad2e6f",
+  "scripts/tests/test_model_ref_protocol.py": "5da6ee2e3c04181ee2cdf677d78aabd3ff58c99dcbf06c0f7f45a7f25488f667"
+}

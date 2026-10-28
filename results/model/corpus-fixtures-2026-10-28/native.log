@@ -1,0 +1,7 @@
+harness-error build/tcc-src/tests/tests2/95_bitfields.c     Command '['systemd-run', '--user', '--scope', '--unit', 'syt-sail-4d4901d2b54a4f4599ab5ad1aa577b86.scope', '-p', 'MemoryMax=12G', '/usr/bin/python3', '/data/hom
+harness-error build/tcc-src/tests/tests2/95_bitfields_ms.c  Command '['systemd-run', '--user', '--scope', '--unit', 'syt-sail-a9f3dfb0a1b141a78c9ac181297137ce.scope', '-p', 'MemoryMax=12G', '/usr/bin/python3', '/data/hom
+required 3 identical successful arenas, got 1
+
+corpus          total   same   diff   merr   skip   herr refusal    asm
+build/tcc-src/tests/tests2      3      1      0      0      0      2       0      0
+all                 3      1   (901 s wall)

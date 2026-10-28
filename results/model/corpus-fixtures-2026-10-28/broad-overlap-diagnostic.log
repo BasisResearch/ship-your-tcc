@@ -1,0 +1,9 @@
+Running as unit: run-p1991146-i471175992.scope; invocation ID: 422ef88c4c854af3bdab8bff4a4d19e5
+harness-error build/tcc-src/tests/tests2/101_cleanup.c      reference harness failure (124) for /data/home/kirancodes/Documents/code/ship-your-tcc/build/tcc-src/tests/tests2/101_cleanup.c: rv64emu: steps=400000000 compil
+unsupported-asm build/tcc-src/tests/tests2/127_asm_goto.c     model-error unsupported: asm statement
+unsupported-asm build/tcc-src/tests/tests2/138_arm64_encoding.c model-error unsupported: asm statement
+unsupported-asm build/tcc-src/tests/tests2/140_arm64_extasm.c model-error unsupported: asm statement
+unsupported-asm build/tcc-src/tests/tests2/141_riscv_asm.c    model-error unsupported: asm statement
+unsupported-asm build/tcc-src/tests/tests2/85_asm-outside-function.c model-error unsupported: global asm block
+unsupported-asm build/tcc-src/tests/tests2/98_al_ax_extend.c  model-error unsupported: global asm block
+unsupported-asm build/tcc-src/tests/tests2/99_fastcall.c      model-error unsupported: global asm block

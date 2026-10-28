@@ -1,0 +1,1 @@
+Stopped own broad run to serialize overlapping model_diff scratch paths with the native fixture run. Never accepted as final comparison evidence.

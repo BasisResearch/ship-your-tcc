@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/data/home/kirancodes/Documents/code/ship-your-tcc/build/model-fixture-review/finish_checks.py", line 5, in <module>
+    assert (out/'native.exit').read_text().strip()=='0','native capture did not pass'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: native capture did not pass

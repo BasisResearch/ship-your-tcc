@@ -465,3 +465,13 @@ requested corrections until the lead surfaced them explicitly.
   `printf`. GCC accepts both. Direct redeclared calls and function pointers
   without the extra redeclarations pass. Retain both residuals independently;
   do not narrow Supported or claim all pointer initialization is broken.
+- F3 corpus fixtures (2026-10-28): matching compiler refusals can hide absent
+  harness inputs. Embed basename/self and parent-directory aliases consistently
+  across F2/F3; 18_include and both 95_bitfields cases then compile. Three full
+  native arenas confirm the repair; do not count the old refusals as coverage.
+- Do not run overlapping model_diff source sets concurrently in one worktree:
+  its source-derived scratch names collide. The stopped overlap is diagnostic
+  only; the accepted native and broad runs were serialized.
+- A 900-second native wall limit is too short for the 34-million-step bitfield
+  captures. Keep timeouts as harness errors and rerun with adequate wall time;
+  do not alter Lean budgets or classify a timeout as a compiler refusal.
