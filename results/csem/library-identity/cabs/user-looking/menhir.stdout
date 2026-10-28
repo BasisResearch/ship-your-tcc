@@ -1,0 +1,587 @@
+{
+  "tag": "TUnit",
+  "decls": [
+    {
+      "tag": "EDecl_func",
+      "def": {
+        "tag": "FunDef",
+        "loc": {
+          "tag": "Loc_region",
+          "begin": {
+            "file": "/user/runtime/libc/include/fault.h",
+            "line": 601,
+            "col": 1,
+            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+            "lexing_line": 2
+          },
+          "end": {
+            "file": "/user/runtime/libc/include/fault.h",
+            "line": 601,
+            "col": 40,
+            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+            "lexing_line": 28
+          },
+          "cursor": "NoCursor"
+        },
+        "attrs": { "tag": "Attrs", "attrs": [] },
+        "specifiers": {
+          "tag": "Specifiers",
+          "storage_classes": [ "SC_static" ],
+          "type_specifiers": [
+            {
+              "tag": "TSpec",
+              "loc": {
+                "tag": "Loc_region",
+                "begin": {
+                  "file": "/user/runtime/libc/include/fault.h",
+                  "line": 601,
+                  "col": 8,
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                  "lexing_line": 4
+                },
+                "end": {
+                  "file": "/user/runtime/libc/include/fault.h",
+                  "line": 601,
+                  "col": 11,
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                  "lexing_line": 4
+                },
+                "cursor": "NoCursor"
+              },
+              "spec": "TSpec_int"
+            }
+          ],
+          "type_qualifiers": [],
+          "function_specifiers": [],
+          "alignment_specifiers": []
+        },
+        "declarator": {
+          "tag": "Declarator",
+          "pointer": null,
+          "direct": {
+            "tag": "DDecl_function",
+            "direct": {
+              "tag": "DDecl_identifier",
+              "attrs": { "tag": "Attrs", "attrs": [] },
+              "id": {
+                "loc": {
+                  "tag": "Loc_region",
+                  "begin": {
+                    "file": "/user/runtime/libc/include/fault.h",
+                    "line": 601,
+                    "col": 12,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                    "lexing_line": 6
+                  },
+                  "end": {
+                    "file": "/user/runtime/libc/include/fault.h",
+                    "line": 601,
+                    "col": 20,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                    "lexing_line": 6
+                  },
+                  "cursor": "NoCursor"
+                },
+                "name": "userfail"
+              }
+            },
+            "params": {
+              "tag": "Params",
+              "params": [
+                {
+                  "tag": "PDeclaration_decl",
+                  "specifiers": {
+                    "tag": "Specifiers",
+                    "storage_classes": [],
+                    "type_specifiers": [
+                      {
+                        "tag": "TSpec",
+                        "loc": {
+                          "tag": "Loc_region",
+                          "begin": {
+                            "file": "/user/runtime/libc/include/fault.h",
+                            "line": 601,
+                            "col": 21,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                            "lexing_line": 10
+                          },
+                          "end": {
+                            "file": "/user/runtime/libc/include/fault.h",
+                            "line": 601,
+                            "col": 24,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                            "lexing_line": 10
+                          },
+                          "cursor": "NoCursor"
+                        },
+                        "spec": "TSpec_int"
+                      }
+                    ],
+                    "type_qualifiers": [],
+                    "function_specifiers": [],
+                    "alignment_specifiers": []
+                  },
+                  "declarator": {
+                    "tag": "Declarator",
+                    "pointer": null,
+                    "direct": {
+                      "tag": "DDecl_identifier",
+                      "attrs": { "tag": "Attrs", "attrs": [] },
+                      "id": {
+                        "loc": {
+                          "tag": "Loc_region",
+                          "begin": {
+                            "file": "/user/runtime/libc/include/fault.h",
+                            "line": 601,
+                            "col": 25,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                            "lexing_line": 12
+                          },
+                          "end": {
+                            "file": "/user/runtime/libc/include/fault.h",
+                            "line": 601,
+                            "col": 26,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                            "lexing_line": 12
+                          },
+                          "cursor": "NoCursor"
+                        },
+                        "name": "z"
+                      }
+                    }
+                  }
+                }
+              ],
+              "is_variadic": false
+            }
+          }
+        },
+        "body": {
+          "tag": "CabsStatement",
+          "loc": {
+            "tag": "Loc_region",
+            "begin": {
+              "file": "/user/runtime/libc/include/fault.h",
+              "line": 601,
+              "col": 27,
+              "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+              "lexing_line": 16
+            },
+            "end": {
+              "file": "/user/runtime/libc/include/fault.h",
+              "line": 601,
+              "col": 40,
+              "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+              "lexing_line": 28
+            },
+            "cursor": "NoCursor"
+          },
+          "attrs": { "tag": "Attrs", "attrs": [] },
+          "stmt": {
+            "tag": "CabsSblock",
+            "stmts": [
+              {
+                "tag": "CabsStatement",
+                "loc": {
+                  "tag": "Loc_region",
+                  "begin": {
+                    "file": "/user/runtime/libc/include/fault.h",
+                    "line": 601,
+                    "col": 28,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                    "lexing_line": 18
+                  },
+                  "end": {
+                    "file": "/user/runtime/libc/include/fault.h",
+                    "line": 601,
+                    "col": 39,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                    "lexing_line": 26
+                  },
+                  "cursor": "NoCursor"
+                },
+                "attrs": { "tag": "Attrs", "attrs": [] },
+                "stmt": {
+                  "tag": "CabsSreturn",
+                  "expr": {
+                    "tag": "CabsExpression",
+                    "loc": {
+                      "tag": "Loc_region",
+                      "begin": {
+                        "file": "/user/runtime/libc/include/fault.h",
+                        "line": 601,
+                        "col": 35,
+                        "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                        "lexing_line": 20
+                      },
+                      "end": {
+                        "file": "/user/runtime/libc/include/fault.h",
+                        "line": 601,
+                        "col": 38,
+                        "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                        "lexing_line": 24
+                      },
+                      "cursor": {
+                        "tag": "PointCursor",
+                        "pos": {
+                          "file": "/user/runtime/libc/include/fault.h",
+                          "line": 601,
+                          "col": 36,
+                          "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                          "lexing_line": 22
+                        }
+                      }
+                    },
+                    "expr": {
+                      "tag": "CabsEbinary",
+                      "op": "CabsDiv",
+                      "lhs": {
+                        "tag": "CabsExpression",
+                        "loc": {
+                          "tag": "Loc_region",
+                          "begin": {
+                            "file": "/user/runtime/libc/include/fault.h",
+                            "line": 601,
+                            "col": 35,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                            "lexing_line": 20
+                          },
+                          "end": {
+                            "file": "/user/runtime/libc/include/fault.h",
+                            "line": 601,
+                            "col": 36,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                            "lexing_line": 20
+                          },
+                          "cursor": "NoCursor"
+                        },
+                        "expr": {
+                          "tag": "CabsEconst",
+                          "val": {
+                            "tag": "CabsInteger_const",
+                            "val": [ "3", null ]
+                          }
+                        }
+                      },
+                      "rhs": {
+                        "tag": "CabsExpression",
+                        "loc": {
+                          "tag": "Loc_region",
+                          "begin": {
+                            "file": "/user/runtime/libc/include/fault.h",
+                            "line": 601,
+                            "col": 37,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                            "lexing_line": 24
+                          },
+                          "end": {
+                            "file": "/user/runtime/libc/include/fault.h",
+                            "line": 601,
+                            "col": 38,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                            "lexing_line": 24
+                          },
+                          "cursor": "NoCursor"
+                        },
+                        "expr": {
+                          "tag": "CabsEident",
+                          "id": {
+                            "loc": {
+                              "tag": "Loc_point",
+                              "pos": {
+                                "file": "/user/runtime/libc/include/fault.h",
+                                "line": 601,
+                                "col": 37,
+                                "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                                "lexing_line": 24
+                              }
+                            },
+                            "name": "z"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "tag": "EDecl_func",
+      "def": {
+        "tag": "FunDef",
+        "loc": {
+          "tag": "Loc_region",
+          "begin": {
+            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+            "line": 2,
+            "col": 1,
+            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+            "lexing_line": 30
+          },
+          "end": {
+            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+            "line": 2,
+            "col": 36,
+            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+            "lexing_line": 54
+          },
+          "cursor": "NoCursor"
+        },
+        "attrs": { "tag": "Attrs", "attrs": [] },
+        "specifiers": {
+          "tag": "Specifiers",
+          "storage_classes": [],
+          "type_specifiers": [
+            {
+              "tag": "TSpec",
+              "loc": {
+                "tag": "Loc_region",
+                "begin": {
+                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                  "line": 2,
+                  "col": 1,
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                  "lexing_line": 30
+                },
+                "end": {
+                  "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                  "line": 2,
+                  "col": 4,
+                  "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                  "lexing_line": 30
+                },
+                "cursor": "NoCursor"
+              },
+              "spec": "TSpec_int"
+            }
+          ],
+          "type_qualifiers": [],
+          "function_specifiers": [],
+          "alignment_specifiers": []
+        },
+        "declarator": {
+          "tag": "Declarator",
+          "pointer": null,
+          "direct": {
+            "tag": "DDecl_function",
+            "direct": {
+              "tag": "DDecl_identifier",
+              "attrs": { "tag": "Attrs", "attrs": [] },
+              "id": {
+                "loc": {
+                  "tag": "Loc_region",
+                  "begin": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                    "line": 2,
+                    "col": 5,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                    "lexing_line": 32
+                  },
+                  "end": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                    "line": 2,
+                    "col": 9,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                    "lexing_line": 32
+                  },
+                  "cursor": "NoCursor"
+                },
+                "name": "main"
+              }
+            },
+            "params": {
+              "tag": "Params",
+              "params": [
+                {
+                  "tag": "PDeclaration_abs_decl",
+                  "specifiers": {
+                    "tag": "Specifiers",
+                    "storage_classes": [],
+                    "type_specifiers": [
+                      {
+                        "tag": "TSpec",
+                        "loc": {
+                          "tag": "Loc_region",
+                          "begin": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                            "line": 2,
+                            "col": 10,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                            "lexing_line": 36
+                          },
+                          "end": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                            "line": 2,
+                            "col": 14,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                            "lexing_line": 36
+                          },
+                          "cursor": "NoCursor"
+                        },
+                        "spec": "TSpec_void"
+                      }
+                    ],
+                    "type_qualifiers": [],
+                    "function_specifiers": [],
+                    "alignment_specifiers": []
+                  },
+                  "abstract_declarator": null
+                }
+              ],
+              "is_variadic": false
+            }
+          }
+        },
+        "body": {
+          "tag": "CabsStatement",
+          "loc": {
+            "tag": "Loc_region",
+            "begin": {
+              "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+              "line": 2,
+              "col": 15,
+              "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+              "lexing_line": 40
+            },
+            "end": {
+              "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+              "line": 2,
+              "col": 36,
+              "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+              "lexing_line": 54
+            },
+            "cursor": "NoCursor"
+          },
+          "attrs": { "tag": "Attrs", "attrs": [] },
+          "stmt": {
+            "tag": "CabsSblock",
+            "stmts": [
+              {
+                "tag": "CabsStatement",
+                "loc": {
+                  "tag": "Loc_region",
+                  "begin": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                    "line": 2,
+                    "col": 16,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                    "lexing_line": 42
+                  },
+                  "end": {
+                    "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                    "line": 2,
+                    "col": 35,
+                    "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                    "lexing_line": 52
+                  },
+                  "cursor": "NoCursor"
+                },
+                "attrs": { "tag": "Attrs", "attrs": [] },
+                "stmt": {
+                  "tag": "CabsSreturn",
+                  "expr": {
+                    "tag": "CabsExpression",
+                    "loc": {
+                      "tag": "Loc_region",
+                      "begin": {
+                        "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                        "line": 2,
+                        "col": 23,
+                        "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                        "lexing_line": 44
+                      },
+                      "end": {
+                        "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                        "line": 2,
+                        "col": 34,
+                        "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                        "lexing_line": 50
+                      },
+                      "cursor": "NoCursor"
+                    },
+                    "expr": {
+                      "tag": "CabsEcall",
+                      "fun": {
+                        "tag": "CabsExpression",
+                        "loc": {
+                          "tag": "Loc_region",
+                          "begin": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                            "line": 2,
+                            "col": 23,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                            "lexing_line": 44
+                          },
+                          "end": {
+                            "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                            "line": 2,
+                            "col": 31,
+                            "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                            "lexing_line": 44
+                          },
+                          "cursor": "NoCursor"
+                        },
+                        "expr": {
+                          "tag": "CabsEident",
+                          "id": {
+                            "loc": {
+                              "tag": "Loc_point",
+                              "pos": {
+                                "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                                "line": 2,
+                                "col": 23,
+                                "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                                "lexing_line": 44
+                              }
+                            },
+                            "name": "userfail"
+                          }
+                        }
+                      },
+                      "args": [
+                        {
+                          "tag": "CabsExpression",
+                          "loc": {
+                            "tag": "Loc_region",
+                            "begin": {
+                              "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                              "line": 2,
+                              "col": 32,
+                              "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                              "lexing_line": 48
+                            },
+                            "end": {
+                              "file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                              "line": 2,
+                              "col": 33,
+                              "lexing_file": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+                              "lexing_line": 48
+                            },
+                            "cursor": "NoCursor"
+                          },
+                          "expr": {
+                            "tag": "CabsEconst",
+                            "val": {
+                              "tag": "CabsInteger_const",
+                              "val": [ "0", null ]
+                            }
+                          }
+                        }
+                      ],
+                      "attrs": null
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "digest": "591e5b7ec660b18ab7f3710d2dbb125a"
+}

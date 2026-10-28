@@ -2611,26 +2611,27 @@ preserve — a separate, recorded gap: UB raised inside a libc body prints
     and every remaining `unknown` becomes the file-only region. -/
 structure RelocCtx where
   lib : Option (String × (Nat → Nat × Nat))
+  identity : Option CerbLocation.SourceIdentity := none
 
 /-- Every Core-text position mirrors `Cerb_position.from_lexing` (the Core
     lexer/parser build all of theirs with it: parsers/core/core_lexer.mll:205,
     core_parser.mly:18, core_parser_driver.ml:19): the lexing file and line ARE
     the source file and line (no `#line` mapping on Core text). -/
-private def libLoc (file : String) : CerbLocation.Loc :=
-  let p : CerbLocation.Pos := { file := file, line := 0, col := 0, lexingFile := file, lexingLine := 0 }
+private def libLoc (file : String) (identity : Option CerbLocation.SourceIdentity) : CerbLocation.Loc :=
+  let p : CerbLocation.Pos := { file := file, line := 0, col := 0, lexingFile := file, lexingLine := 0, sourceIdentity := identity }
   .region p p .noCursor
 
 private def relocLoc (ctx : RelocCtx) : CerbLocation.Loc → CerbLocation.Loc
   | .unknown => match ctx.lib with
-    | some (file, _) => libLoc file
+    | some (file, _) => libLoc file ctx.identity
     | none => .unknown
-  | .region ⟨"", 0, b, "", 0⟩ ⟨"", 0, e, "", 0⟩ cur => match ctx.lib with
+  | .region ⟨"", 0, b, "", 0, none⟩ ⟨"", 0, e, "", 0, none⟩ cur => match ctx.lib with
     | some (file, resolve) =>
       let (l1, c1) := resolve b
       let (l2, c2) := resolve e
       -- `from_lexing` mirror (see `libLoc`): lexing (file, line) = source (file, line)
-      .region { file := file, line := l1, col := c1, lexingFile := file, lexingLine := l1 }
-              { file := file, line := l2, col := c2, lexingFile := file, lexingLine := l2 } cur
+      .region { file := file, line := l1, col := c1, lexingFile := file, lexingLine := l1, sourceIdentity := ctx.identity }
+              { file := file, line := l2, col := c2, lexingFile := file, lexingLine := l2, sourceIdentity := ctx.identity } cur
     | none => .unknown
   | l => l
 
@@ -2802,6 +2803,14 @@ def parseFile [CerbImplCfg.Impl] (input : String) : Except String CoreFile :=
     (the section comment). -/
 def parseLibraryFile [CerbImplCfg.Impl] (file : String) (input : String) : Except String CoreFile :=
   (parseRaw input).map (stampLibraryFile file input)
+
+/-- Identity-aware runtime loading. The resolved opening identity and policy
+are supplied by the image adapter, independently of the displayed Core path. -/
+def parseIdentityFile [CerbImplCfg.Impl] (policy : CerbLocation.LibraryConfig)
+    (resolved : List (List UInt8)) (label input : String) : Except String CoreFile :=
+  (parseRaw input).map (relocFile {
+    lib := some (label, resolveByte (lineTable input)),
+    identity := some (policy.identify resolved) })
 
 /-- Parse a .core file and return a human-readable summary. -/
 def parseFileSummary [CerbImplCfg.Impl] (input : String) : Except String String :=

@@ -1,0 +1,16 @@
+from pathlib import Path
+import sys,json,os
+sys.path.insert(0,str(Path.cwd()/'scripts'))
+from raw_frontend_cmp import compare,sha
+base=Path('build/library-focused-3').resolve();out=Path('build/library-cabs').resolve();out.mkdir(exist_ok=False)
+oracle,runtime=sys.argv[1:3]
+fs=base/'sources/fs.list';extra=['--fslist',str(fs),'--include','/runtime/libc/include']
+for line in fs.read_text().splitlines():
+ name,_=line.split('=',1)
+ if name.startswith('/runtime/') or name=='/libarg.h':extra+=['--library',name]
+rows=[]
+for row in json.loads((base/'results.json').read_text())['rows']:
+ name=row['case'];p=base/'sources'/(name+'.c');r=compare(p,out/name,oracle,runtime,extra);rows.append(r);print(r['status'],name,flush=True)
+pins={p:sha(p) for p in [oracle,str(Path('.lake/build/bin/csem_raw').resolve()),str(Path('.lake/build/bin/csem_cparse').resolve())]}
+(out/'results.json').write_text(json.dumps(dict(pins=pins,csem_rev=Path('vendor/CSEM_REV').read_text(),rows=rows),indent=2)+'\n')
+assert all(r['status']=='AGREE' for r in rows)

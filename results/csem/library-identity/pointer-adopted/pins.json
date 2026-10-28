@@ -1,0 +1,9 @@
+{
+  "main": "3a6852b99ea14e252bf2c7c0445174641708bd8f",
+  "binary": "/data/home/kirancodes/Documents/code/ship-your-tcc/.lake/build/bin/csem_run",
+  "sha256": "fd484135a1718099aef2eef8084f49b67108d22e49036182f235905202b1ec9f",
+  "source_sha256": "b8a7a9d32ed7551d5b015a5b1b53250e2d747122932a96c8299623cd181a185e",
+  "exit": 1,
+  "independent_existing_pin": "results/csem/anonymous-members/integration/focused.json",
+  "main_note": "main is the ref at measurement, not a claim that the old retained binary includes later allocation changes; binary hash matches the adopted anonymous-member integration record."
+}

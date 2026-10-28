@@ -1,0 +1,10 @@
+[
+  "gcc",
+  "-std=c11",
+  "-pedantic-errors",
+  "-fno-builtin",
+  "-O0",
+  "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/redecl-pointer-shadow.c",
+  "-o",
+  "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-pointer-baseline/redecl-pointer-shadow.exe"
+]

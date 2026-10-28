@@ -8,6 +8,7 @@ import scripts.csem_cone
 #print axioms CSemCParser.Phase7.convert
 #print axioms Tcc.CSem.Raw.run
 #print axioms Tcc.CSem.Raw.checked
+#print axioms Tcc.CSem.Raw.semanticConfig
 #print axioms Tcc.CSem.Raw.frontEnd
 #print axioms Tcc.CSem.Raw.ParserConnection_Statement
 #print axioms Tcc.CSem.Raw.LibraryClassifier_Statement

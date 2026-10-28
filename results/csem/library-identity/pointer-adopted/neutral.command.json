@@ -1,0 +1,8 @@
+[
+  "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-adopted-baseline/csem_run",
+  "--batch",
+  "--impl",
+  "tcc-rv64",
+  "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/build/upstream-cerberus/_build/install/default",
+  "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-adopted-baseline/neutral.json"
+]

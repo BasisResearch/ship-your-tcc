@@ -1,0 +1,7 @@
+[
+  "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/db28f95fedcb38cac435c74ab6ff3d264b9d597ef2b6182505feb7a76943e953/_build/default/backend/driver/main.exe",
+  "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/db28f95fedcb38cac435c74ab6ff3d264b9d597ef2b6182505feb7a76943e953/_build/install/default",
+  "--cpp=/usr/bin/python3 /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/scripts/raw_frontend_cat.py",
+  "--cabs-json",
+  "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/shadow-block.c"
+]

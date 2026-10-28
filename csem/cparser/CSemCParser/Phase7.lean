@@ -92,11 +92,12 @@ def position (fname : String) (i : Nat) (site : SourceSite) (width : Nat) :
   (sp, { sp with col := sp.col + width })
 
 def startPos (fname : String) : CerbLocation.Pos :=
-  ⟨fname, 1, 1, fname, 1⟩
+  { file := fname, line := 1, col := 1, lexingFile := fname, lexingLine := 1 }
 
 /-- Conversion preserves boundaries and spelling. Pragma payloads are opaque
 and zero width, including when they separate adjacent string literals. -/
-def convert (cfg : ParseCfg) (fname : String) (r : PreprocessingResult) : Except String Input := do
+def convertWithIdentity (identity : Option CerbLocation.LibraryConfig)
+    (cfg : ParseCfg) (fname : String) (r : PreprocessingResult) : Except String Input := do
   let mut toks : Array PTok := #[]
   let mut origins : Array Origin := #[]
   let mut pragmas : Array Pragma := #[]
@@ -119,6 +120,14 @@ def convert (cfg : ParseCfg) (fname : String) (r : PreprocessingResult) : Except
         let t ← token cfg p.token
         let spelling ← parserSpelling cfg p.token
         let (sp, ep) := position fname toks.size site spelling.length
+        let source ← match identity with
+          | none => pure none
+          | some policy =>
+            match p.origin.identitySite with
+            | none => throw "phase-four token has no source identity"
+            | some physical => pure (some (policy.identify physical.physical.identity))
+        let sp := { sp with sourceIdentity := source }
+        let ep := { ep with sourceIdentity := source }
         toks := toks.push ⟨t, sp, ep⟩
         origins := origins.push p.origin
   if pending.isSome then throw "unterminated phase-four pragma boundary"
@@ -129,6 +138,11 @@ def convert (cfg : ParseCfg) (fname : String) (r : PreprocessingResult) : Except
         lexingLine := 2 * toks.size + 1 }
   toks := toks.push ⟨.EOF, endPos, endPos⟩
   return ⟨⟨toks, startPos fname⟩, origins, pragmas⟩
+
+/-- Historical positioned comparison view: labels/positions alone, as the
+pinned text/JSON oracle can represent them. It carries no identity claim. -/
+def convert (cfg : ParseCfg) (fname : String) (r : PreprocessingResult) : Except String Input :=
+  convertWithIdentity none cfg fname r
 
 end Phase7
 end CSemCParser

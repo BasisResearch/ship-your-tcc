@@ -1,0 +1,21 @@
+from pathlib import Path
+import json,subprocess,os,sys,hashlib
+sys.path.insert(0,str(Path.cwd()/'scripts'))
+from raw_frontend_cmp import historical_positions,invoke,sha
+base=Path(sys.argv[1]).resolve();out=Path(sys.argv[2]).resolve();out.mkdir(parents=True,exist_ok=False)
+runtime=sys.argv[3]
+rows=[]
+for name in ['basic','manual-stdio','plant','user-looking','runtime-relabel','shadow-before','shadow-after','shadow-redeclare','shadow-close','shadow-block']:
+ bundle=json.loads((base/(name+'.stdout')).read_text())['parse'];tu=bundle['cabs'];historical=historical_positions(tu)
+ historical['digest']=bundle['digest']
+ path=out/(name+'.json');path.write_text(json.dumps(historical)+'\n')
+ p=invoke([Path.cwd()/'.lake/build/bin/csem_run','--batch','--impl','tcc-rv64','--fuel','50000','--runtime='+runtime,path],out/name,dict(os.environ,LEAN_ABORT_ON_PANIC='1'))
+ rows.append(dict(case=name,exit=p.returncode,stdout=p.stdout.decode(),stderr=p.stderr.decode(),interface='historical-projected-JSON; no image identity claim'))
+ print('historical',name,p.returncode)
+ # The enriched raw format must not silently become a historical Cabs input.
+ if name=='basic':
+  enriched=dict(tu,digest=bundle['digest']);path=out/'identity-is-not-json-baseline.json';path.write_text(json.dumps(enriched)+'\n')
+  p=invoke([Path.cwd()/'.lake/build/bin/csem_run','--batch','--runtime='+runtime,path],out/'identity-is-not-json-baseline',dict(os.environ,LEAN_ABORT_ON_PANIC='1'))
+  assert p.returncode and b'identity-bearing positions require the raw frontend' in p.stderr
+  rows.append(dict(case='identity-is-not-json-baseline',exit=p.returncode,stdout=p.stdout.decode(),stderr=p.stderr.decode()))
+(out/'results.json').write_text(json.dumps(dict(pins={'driver':sha('.lake/build/bin/csem_run'),'csem_rev':Path('vendor/CSEM_REV').read_text()},rows=rows),indent=2)+'\n')

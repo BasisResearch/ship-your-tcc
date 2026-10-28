@@ -159,8 +159,13 @@ private def qFmap {α β : Type} (keyType valueType : String) (allowed : List Co
 
 -- The model-constructor cases follow below. No wildcard constructor arm is used.
 
+private def q_SourceIdentity (s : CerbLocation.SourceIdentity) : Result :=
+  let qByte (b : UInt8) : Result := return node "UInt8.ofNat" [← qNat b.toNat]
+  return typedNode "CerbLocation.SourceIdentity" "CerbLocation.SourceIdentity.mk"
+    [← qList "(List UInt8)" (qList "UInt8" qByte) s.resolved, ← qBool s.runtimeLibrary]
+
 private def q_CerbLocation_Pos : (CerbLocation.Pos) → Result
-  | CerbLocation.Pos.mk x0 x1 x2 x3 x4 => return typedNode "(CerbLocation.Pos)" "CerbLocation.Pos.mk" [← qString x0, ← qNat x1, ← qNat x2, ← qString x3, ← qNat x4]
+  | CerbLocation.Pos.mk x0 x1 x2 x3 x4 x5 => return typedNode "(CerbLocation.Pos)" "CerbLocation.Pos.mk" [← qString x0, ← qNat x1, ← qNat x2, ← qString x3, ← qNat x4, ← qOption q_SourceIdentity x5]
 
 private def q_CerbLocation_Cursor : (CerbLocation.Cursor) → Result
   | CerbLocation.Cursor.noCursor => return typedNode "(CerbLocation.Cursor)" "CerbLocation.Cursor.noCursor" []

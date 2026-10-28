@@ -10,6 +10,22 @@ import LemLib
 
 namespace CerbLocation
 
+/-- Resolved image identity, separate from every C-visible filename/line.
+Only a source-opening adapter supplies this metadata; line markers cannot. -/
+structure SourceIdentity where
+  resolved : List (List UInt8)
+  runtimeLibrary : Bool
+  deriving BEq, Ord, Inhabited, Repr
+
+/-- Pure image membership configuration. No path suffix or presumed label is
+consulted. The image/configuration connection remains a separate obligation. -/
+structure LibraryConfig where
+  files : List (List (List UInt8)) := []
+  deriving Inhabited
+
+def LibraryConfig.identify (cfg : LibraryConfig) (resolved : List (List UInt8)) : SourceIdentity :=
+  ⟨resolved, cfg.files.any (· == resolved)⟩
+
 /-- Source position. Corresponds to: `Cerb_position.t` (util/cerb_position.ml:7-11),
     a record of the LEXING position `file : Lexing.position` — the position in
     the preprocessed stream the C lexer read; its `pos_fname` is the input path
@@ -56,6 +72,8 @@ structure Pos where
   col : Nat
   lexingFile : String
   lexingLine : Nat
+  /-- `none` belongs to the historical text/JSON interface only. -/
+  sourceIdentity : Option SourceIdentity := none
   deriving BEq, Ord, Inhabited, Repr
 
 /-- Cursor within a location region.
@@ -301,10 +319,25 @@ def isLibraryPathSuffix (path : String) : Bool :=
     `libcore`/`include`/`impls` — a user file under any `include/` directory
     was library-classified (wrong), and std.core itself was never classified
     because CoreParser stamped no file at all (Z-01). -/
-def isLibraryLocation (loc : Loc) : Bool :=
+def historicalLibraryLocation (loc : Loc) : Bool :=
   match getFilename loc with
   | none => false
   | some path => isLibraryPathSuffix path
+
+/-- Same starting-position selection as getFilename. Cursor labels do not
+replace the provenance of the located expression. -/
+def sourceIdentity : Loc → Option SourceIdentity
+  | .point p | .region p _ _ | .regions ((p, _) :: _) _ => p.sourceIdentity
+  | _ => none
+
+/-- Identity-bearing raw/Core locations use explicit image membership.
+The fallback is an explicitly historical text/JSON compatibility interface;
+raw phase 7 always attaches metadata, including an explicit user answer. -/
+def isLibraryLocation (loc : Loc) : Bool :=
+  match sourceIdentity loc with
+  | some source => source.runtimeLibrary
+  | none => historicalLibraryLocation loc
+
 
 /-! ## String conversion
     Corresponds to: cerb_location.ml:188-237 (location_to_string) and

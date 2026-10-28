@@ -1,0 +1,1 @@
+#error stale main contents must not be read

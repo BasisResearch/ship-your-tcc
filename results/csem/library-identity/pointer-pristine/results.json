@@ -1,0 +1,45 @@
+{
+  "pins": {
+    "oracle": "a71dd0968846b72196506a7ce78cd300cb39c6a8a8b10e87945a44c30517d091",
+    "csem_rev": "cerberus-lean 704c4e697845127bced66c93fa0763eb51527ca4\nlem-lean e6d8db5680962f49060257d6c2bcb13c284b910f\n# cerberus-lean: OathTech/cerberus-lean, branch mdd/cerberus-lean,\n# commit 2026-10-26 17:26:39 UTC (lead-fetched current snapshot 2026-10-27).\n# lem-lean: OathTech/lem-lean, branch mdd/lean-backend,\n# commit 2026-10-22 01:33:30 UTC; matching LemLib and generator.\n# Upstream targets Lean 4.35.0; this fork retains approved Lean 4.34.0.\n# Imported with scripts/csem_import.sh; local replay and validation recorded\n# in csem/PORT-4.34.md and results/csem/repin-2026-10-27.md.\n",
+    "gcc": "gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0"
+  },
+  "rows": [
+    {
+      "case": "redecl-pointer-neutral",
+      "source_sha256": "b8a7a9d32ed7551d5b015a5b1b53250e2d747122932a96c8299623cd181a185e",
+      "oracle_exit": 0,
+      "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+      "stderr": "Time spent: 0.043182 seconds\n",
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0
+    },
+    {
+      "case": "redecl-pointer-shadow",
+      "source_sha256": "7dea926b73691341168e603502a773c58a3b70d9b8c79d8557de750c9b870678",
+      "oracle_exit": 1,
+      "stdout": "Error {msg: \"ill-formed program: `/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/redecl-pointer-shadow.c:4:44-45: 'Symbol(36, SD_Id(\"printf_proxy\"))' does not point to a function (cfunction)'\"}\n",
+      "stderr": "Time spent: 0.032784 seconds\n",
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0
+    },
+    {
+      "case": "pointer-neutral",
+      "source_sha256": "ae0d191373550583dea656b4e2480a4f5aef3cded5c824460394ba8b9a2d62c6",
+      "oracle_exit": 0,
+      "stdout": "Defined {value: \"Specified(0)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+      "stderr": "Time spent: 0.032711 seconds\n",
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0
+    },
+    {
+      "case": "pointer-shadow",
+      "source_sha256": "0913beb6ccc1c356f9940fdf884099db3102e9c7103430f4c7a7458f97572b1f",
+      "oracle_exit": 1,
+      "stdout": "Error {msg: \"ill-formed program: `/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/pointer-shadow.c:2:44-45: 'Symbol(36, SD_Id(\"printf_proxy\"))' does not point to a function (cfunction)'\"}\n",
+      "stderr": "Time spent: 0.035441 seconds\n",
+      "gcc_compile_exit": 0,
+      "gcc_exit": 0
+    }
+  ]
+}

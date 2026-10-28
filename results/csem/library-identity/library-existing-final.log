@@ -1,0 +1,16 @@
+test_checked_semantic_entry_consumes_library_identity_and_diagnoses_pack (scripts.tests.test_raw_frontend.RawFrontend.test_checked_semantic_entry_consumes_library_identity_and_diagnoses_pack) ... ok
+test_include_identity_and_ancestry (scripts.tests.test_raw_frontend.RawFrontend.test_include_identity_and_ancestry) ... ok
+test_invalid_phase7_is_diagnosed (scripts.tests.test_raw_frontend.RawFrontend.test_invalid_phase7_is_diagnosed) ... ok
+test_library_identity_is_independent_of_line_names (scripts.tests.test_raw_frontend.RawFrontend.test_library_identity_is_independent_of_line_names) ... ok
+test_line_labels_leave_identity_unchanged (scripts.tests.test_raw_frontend.RawFrontend.test_line_labels_leave_identity_unchanged) ... ok
+test_macro_invocation_arguments_and_paste (scripts.tests.test_raw_frontend.RawFrontend.test_macro_invocation_arguments_and_paste) ... ok
+test_no_second_physical_translation (scripts.tests.test_raw_frontend.RawFrontend.test_no_second_physical_translation) ... ok
+test_positive_matrix_and_digest (scripts.tests.test_raw_frontend.RawFrontend.test_positive_matrix_and_digest) ... ok
+test_pragma_schedule_is_retained (scripts.tests.test_raw_frontend.RawFrontend.test_pragma_schedule_is_retained) ... ok
+test_trigraph_span_and_splice (scripts.tests.test_raw_frontend.RawFrontend.test_trigraph_span_and_splice) ... ok
+test_ucn_utf8_identity_and_typedef_feedback (scripts.tests.test_raw_frontend.RawFrontend.test_ucn_utf8_identity_and_typedef_feedback) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 1.865s
+
+OK

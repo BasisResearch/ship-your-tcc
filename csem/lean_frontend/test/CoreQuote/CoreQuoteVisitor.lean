@@ -10,7 +10,7 @@ import Core_run_aux
 open Lean Meta Elab Command
 namespace CoreQuoteVisitor
 
-private def leaves : List Name := [``Nat, ``Int, ``String, ``CerbIEEE.FVal, ``Bool, ``Unit, ``PUnit]
+private def leaves : List Name := [``Nat, ``Int, ``String, ``CerbIEEE.FVal, ``Bool, ``UInt8, ``Unit, ``PUnit]
 
 private def ctorFields (ty : Expr) (ctor : Name) : MetaM (Array Expr) := do
   let .const n levels := ty.getAppFn | throwError "unnamed type {ty}"
@@ -82,8 +82,8 @@ run_cmd liftTermElabM do
           let .str _ shortName := ctor | throwError "unexpected constructor name {ctor}"
           IO.println s!"  | .{shortName} {String.intercalate " " vars.toList} => .node \"{ctor}\" #[{String.intercalate ", " args.toList}]"
   IO.println "end\n-- END DATATYPE VISITOR"
-  unless ctors == 643 && heads.size == 81 do
+  unless ctors == 644 && heads.size == 82 do
     throwError "inventory drift: {ctors} model constructors, {heads.size} container/model heads"
-  IO.println s!"-- {ctors} model constructors; {types.size} instantiated types; 75 model + 6 container heads."
+  IO.println s!"-- {ctors} model constructors; {types.size} instantiated types; 76 model + 6 container heads."
 
 end CoreQuoteVisitor

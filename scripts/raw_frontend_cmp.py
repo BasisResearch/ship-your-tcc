@@ -31,6 +31,15 @@ def invoke(cmd, artifact, env=None):
     return p
 
 
+def historical_positions(value):
+    """Project only metadata absent in the historical oracle; keep all positions."""
+    if isinstance(value, dict):
+        return {k: historical_positions(v) for k,v in value.items() if k != 'source_identity'}
+    if isinstance(value, list):
+        return [historical_positions(v) for v in value]
+    return value
+
+
 def compare(source, directory, oracle, runtime, extra=()):
     source = Path(source).resolve()
     directory.mkdir(parents=True, exist_ok=False)
@@ -55,7 +64,7 @@ def compare(source, directory, oracle, runtime, extra=()):
     expected_digest = expected.pop('digest')
     if expected_digest != bundle['digest'] or expected_digest != hashlib.md5(source.read_bytes()).hexdigest():
         return dict(row, status='DIGEST_DIFF')
-    if expected != bundle['cabs']:
+    if expected != historical_positions(bundle['cabs']):
         return dict(row, status='CABS_DIFF')
     # Prove the unchanged text path sees precisely the same positioned input.
     # Cerberus's cpp reader drops exactly one terminal LF.
@@ -65,7 +74,7 @@ def compare(source, directory, oracle, runtime, extra=()):
     t = invoke([ROOT/'.lake/build/bin/csem_cparse', '--json', text_view, source], directory/'text')
     if t.returncode or json.loads(t.stdout) != expected:
         return dict(row, status='TEXT_CABS_DIFF')
-    return dict(row, status='AGREE')
+    return dict(row, status='AGREE', interface='historical-position-projection; identity checked separately')
 
 
 def main():

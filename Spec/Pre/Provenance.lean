@@ -49,6 +49,17 @@ def Origin.site : Origin → Option SourceSite
   | .argument _ _ a => a.site
   | .paste i _ _ => i.site
 
+/-- Identity of macro replacement text follows its definition; substituted
+argument text follows the operand. Constructed stringify/paste/builtin tokens
+belong to the invocation. Diagnostic positions still use Origin.site and the
+full derivation remains available, including both paste operands. -/
+def Origin.identitySite : Origin → Option SourceSite
+  | .unavailable => none
+  | .source s => some s
+  | .replacement _ d => d.identitySite
+  | .argument _ _ a => a.identitySite
+  | .stringify i _ | .paste i _ _ | .builtin i | .pragma i => i.identitySite
+
 structure LocatedPPToken where
   token : PPToken
   origin : Origin

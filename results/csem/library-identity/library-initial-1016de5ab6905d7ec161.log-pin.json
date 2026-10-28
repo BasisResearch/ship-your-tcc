@@ -1,0 +1,6 @@
+{
+  "original": "build/library-initial-1016de5ab6905d7ec161.log",
+  "sha256": "cf1bb18edfde2edea20d3d4a39beb6580fdf839735faacbacff1901704341a4d",
+  "bytes": 140072887,
+  "note": "Full failed log retained at build path; excerpt omits repeated visitor UInt8/Fin traversal stack."
+}

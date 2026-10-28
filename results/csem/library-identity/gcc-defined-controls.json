@@ -1,0 +1,58 @@
+[
+  {
+    "case": "basic",
+    "compile_exit": 0,
+    "expected": 7,
+    "exit": 7,
+    "stdout": ""
+  },
+  {
+    "case": "manual-stdio",
+    "compile_exit": 0,
+    "expected": 0,
+    "exit": 0,
+    "stdout": "id 7\n"
+  },
+  {
+    "case": "line-observables",
+    "compile_exit": 0,
+    "expected": 0,
+    "exit": 0,
+    "stdout": ""
+  },
+  {
+    "case": "shadow-before",
+    "compile_exit": 0,
+    "expected": 0,
+    "exit": 0,
+    "stdout": ""
+  },
+  {
+    "case": "shadow-after",
+    "compile_exit": 0,
+    "expected": 0,
+    "exit": 0,
+    "stdout": ""
+  },
+  {
+    "case": "shadow-redeclare",
+    "compile_exit": 0,
+    "expected": 0,
+    "exit": 0,
+    "stdout": ""
+  },
+  {
+    "case": "shadow-close",
+    "compile_exit": 0,
+    "expected": 0,
+    "exit": 0,
+    "stdout": ""
+  },
+  {
+    "case": "shadow-block",
+    "compile_exit": 0,
+    "expected": 0,
+    "exit": 0,
+    "stdout": ""
+  }
+]

@@ -445,3 +445,23 @@ requested corrections until the lead surfaced them explicitly.
 - Allocation gate scripts must write fresh observations to build/ (explicit
   --out), not rewrite prior frozen results. The combined check caught this
   evidence-management defect; final semantic sources are unchanged.
+- Library identity (2026-10-28): suffix/label agreement is not a connection
+  premise for raw semantics. Attach explicit resolved identity at phase 7 and
+  preserve it through Cabs/Ail/Core; keep historical JSON/text projection
+  separate and preserve every diagnostic coordinate. Core quotation has an
+  exhaustive Pos constructor match too. Extend its handwritten serializer and
+  regenerate the datatype visitor; treat UInt8 as a scalar or its dependent
+  representation creates unbounded instantiated visitor types.
+- The image initializer replaces earlier duplicate file contents with later
+  entries. Merely prepending raw main bytes leaves a stale self-include;
+  remove duplicate main identities before inserting the actual input. Keep
+  this distinct from presumed labels and opened-path pragma-once keys.
+- A runtime-header fixture must materialize nested `posix/` headers and set
+  the configured include directory. The initial stdio refusals were missing
+  harness inputs, not library-identity semantic failures.
+- Redeclaration/pointer residual: a static prototype, definition, second
+  prototype, then initialization of a function pointer produces the same
+  `null function pointer` driver error for ordinary `mine` and proxy-named
+  `printf`. GCC accepts both. Direct redeclared calls and function pointers
+  without the extra redeclarations pass. Retain both residuals independently;
+  do not narrow Supported or claim all pointer initialization is broken.

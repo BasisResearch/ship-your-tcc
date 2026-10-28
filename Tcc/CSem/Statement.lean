@@ -87,6 +87,16 @@ digest and its Cabs. **F0: a parameter** standing for the fork's OCaml parser
 by the Lean grammar (DESIGN §3.1) and F2 its phases 1–4 by `CSem.Pre`. -/
 abbrev FrontEnd := List UInt8 → Option (String × translation_unit)
 
+/-- Actual resolved identities of the two Core runtime source openings.
+The image adapter supplies these independently of their diagnostic labels. -/
+structure RuntimeIdentities where
+  stdCore : List (List UInt8)
+  implementation : List (List UInt8)
+
+structure IdentityConfig where
+  library : CerbLocation.LibraryConfig
+  runtime : RuntimeIdentities
+
 /-- The configuration of the semantics (DESIGN §3.3): the parameters the
 fork's driver takes, as data. -/
 structure Config where
@@ -112,6 +122,9 @@ structure Config where
   `CerbFS.fs_initial_state_of` of this table with `/prog.c` = the source put first, as
   run_tcc_sail.sh's gen_embed.sh call orders it -/
   fsFiles : List (String × List UInt8)
+  /-- Absent only for the historical text/JSON F0 interface. Raw configurations
+  install explicit membership for Cabs and both Core runtime files. -/
+  identity : Option IdentityConfig := none
 
 /-- What one execution (one branch of the ND tree) ends in. -/
 inductive Verdict where
@@ -133,8 +146,12 @@ them (`runPipeline`: `CoreParser.parseLibraryFile`, `loadCoreStdlib`,
 `loadCoreImpl`). -/
 def stdlib (cfg : Config) : Except String ((Fmap String sym × fun_map Unit) × impl) := do
   let lib := filenameConcat cfg.runtime "libcore"
-  let std ← @CoreParser.parseLibraryFile ⟨cfg.implementation⟩ (filenameConcat lib "std.core") cfg.stdCore
-  let imp ← @CoreParser.parseLibraryFile ⟨cfg.implementation⟩
+  let parse (resolved : IdentityConfig → List (List UInt8)) (label text : String) :=
+    match cfg.identity with
+    | none => @CoreParser.parseLibraryFile ⟨cfg.implementation⟩ label text
+    | some c => @CoreParser.parseIdentityFile ⟨cfg.implementation⟩ c.library (resolved c) label text
+  let std ← parse (·.runtime.stdCore) (filenameConcat lib "std.core") cfg.stdCore
+  let imp ← parse (·.runtime.implementation)
     (filenameConcat (filenameConcat lib "impls") cfg.implFileName) cfg.implFile
   pure (loadCoreStdlib std, loadCoreImpl imp)
 
@@ -143,6 +160,20 @@ refusal. -/
 def elabFailure (loc : CerbLocation.Loc) (ub : Bool) : Verdict :=
   if loc == CerbFuel.fuelExhaustedLoc then .outOfFuel ""
   else if ub then .undef else .refused
+
+/-- Identity-aware programs retain their own function definitions. A Core
+proxy is used for an unresolved external library declaration, never for a
+same-named definition in this TU. The historical oracle interface is unchanged.
+Filtering by definition symbols also handles user redeclarations and calls
+before the definition, without requiring a standard header for valid forward
+library declarations (C11 7.1.4). -/
+def identityProxyNames (names : Fmap String sym)
+    (prog : ail_program genTypeCategory) : Fmap String sym :=
+  Lem_Map.fromList ((fmapElements names).filter fun (name, _) =>
+    !prog.2.function_definitions.any (fun (symbol, _) =>
+      match symbol with
+      | Symbol _ _ (SD_Id declared) => declared == name
+      | _ => false))
 
 /-- Cabs → Core for one TU: the fork driver's `frontendTU` without its IO
 (same calls, same arguments; the supply starts at 0 as in `runPipeline`). -/
@@ -165,6 +196,7 @@ def elaborate [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] [CerberusFresh.
         | .AIL_TYPING (.TError_UndefinedBehaviour _) => true
         | _ => false))
     | .Result (typedProg, _annots) =>
+      let ailnames := if cfg.identity.isSome then identityProxyNames ailnames typedProg else ailnames
       .ok (translate enumDefs fmapEmpty supplyAfterDesugar (ailnames, stdFunMap) Normal_callconv
         coreImpl typedProg)
 

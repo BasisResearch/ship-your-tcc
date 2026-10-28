@@ -1,0 +1,10 @@
+error: csem/lean_frontend/generated/CerbQuote.lean:163:4: Invalid pattern: Not enough arguments to `CerbLocation.Pos.mk`; expected 6 explicit arguments
+error: Lean exited with code 134
+error: build failed
+#1342000 _private.CoreQuoteVisitor.0._eval
+#1342001 _private.CoreQuoteVisitor.0._eval._boxed
+error: Lean exited with code 134
+Some required targets logged failures:
+- CerbQuote
+- CoreQuoteVisitor
+error: build failed

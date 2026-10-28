@@ -1,0 +1,6 @@
+[
+  "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_run",
+  "--batch",
+  "--runtime=/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/db28f95fedcb38cac435c74ab6ff3d264b9d597ef2b6182505feb7a76943e953/_build/install/default",
+  "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-historical/identity-is-not-json-baseline.json"
+]

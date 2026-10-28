@@ -159,6 +159,8 @@ def getList (f : Json → Except String α) (j : Json) : Except String (List α)
     `lexing_line` is a stale bridge artefact (exported by an older oracle) and is
     refused — never defaulted from the source values. -/
 def jsonToPos (j : Json) : Except String CerbLocation.Pos := do
+  if (j.getObjVal? "source_identity").isOk then
+    throw "identity-bearing positions require the raw frontend; historical JSON cannot supply image membership"
   let file ← getStr (← getField j "file")
   let line ← getNat (← getField j "line")
   let col ← getNat (← getField j "col")

@@ -1,0 +1,274 @@
+{
+  "pins": {
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/fork-oracle/db28f95fedcb38cac435c74ab6ff3d264b9d597ef2b6182505feb7a76943e953/_build/default/backend/driver/main.exe": "65e6c88543be93d0759db124f6aa0ecf0e616e97303f387be628f5442c47568e",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_raw": "2a364b7249fefba96f3d23cbd20c89b1f482559ab35b30052913d4abf3c0ab01",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/csem_cparse": "2cfe0c6e13d85542492eaa92aa722ee0f0277d22bde80a402958d84a2902c7c0"
+  },
+  "csem_rev": "cerberus-lean 704c4e697845127bced66c93fa0763eb51527ca4\nlem-lean e6d8db5680962f49060257d6c2bcb13c284b910f\n# cerberus-lean: OathTech/cerberus-lean, branch mdd/cerberus-lean,\n# commit 2026-10-26 17:26:39 UTC (lead-fetched current snapshot 2026-10-27).\n# lem-lean: OathTech/lem-lean, branch mdd/lean-backend,\n# commit 2026-10-22 01:33:30 UTC; matching LemLib and generator.\n# Upstream targets Lean 4.35.0; this fork retains approved Lean 4.34.0.\n# Imported with scripts/csem_import.sh; local replay and validation recorded\n# in csem/PORT-4.34.md and results/csem/repin-2026-10-27.md.\n",
+  "rows": [
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/basic.c",
+      "source_sha256": "8675c27347ea84e3c65730b611864894536f5254b16ad58d045003a7b03107f0",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "4c2ca5e5ca59003aaa57f71288e8a6f948eaca4b4dbcbab84d78f0e6d3d792cc",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE",
+      "interface": "historical-position-projection; identity checked separately"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/stdio.c",
+      "source_sha256": "06334cdeb543435a1e14481c937bb44bf0b91f64afba7f17717cb9179f5737ac",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "a0ee5da520ea5f00130a9a78408709d81a1c3410463b3c219962d1dd4ac0fad1",
+      "library_disagreements": 18,
+      "pragma_events": 0,
+      "status": "AGREE",
+      "interface": "historical-position-projection; identity checked separately"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/manual-stdio.c",
+      "source_sha256": "9afab4b7308e4454d824f6168cc95234c0902f2e3dce6eb3663c1ee643c37e1a",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "21e44518d7d93acfff5a3eda79378113e28d664500f27f3c97743f1386faa8ab",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE",
+      "interface": "historical-position-projection; identity checked separately"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/stdbool.c",
+      "source_sha256": "940a243fe7d13df073d2ac529afa46636eb68850f334bd0c8489907decc45b21",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "a2c45a91a1b2361dd3f0031ee7f256420ce71f1ad12098e7ba119da904100936",
+      "library_disagreements": 2,
+      "pragma_events": 0,
+      "status": "AGREE",
+      "interface": "historical-position-projection; identity checked separately"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/line-observables.c",
+      "source_sha256": "b8ed87c6fcc967d37126472aa2edadf7b7831add4c005fca1ff2042cc7bc6bc7",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "f1fc1e423eb28c21b902dc689bdef4d47e9c951ed4f35f29696e55f5b8fb81aa",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE",
+      "interface": "historical-position-projection; identity checked separately"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/plant.c",
+      "source_sha256": "a82a09ec78fa7d1ae8b80eb0076a631eff745280be3584f145f29a8dd51dc14e",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "3180b45ce402c87160489ac09ea742952cc0d6dd39db6ec0c4955906fa893749",
+      "library_disagreements": 17,
+      "pragma_events": 0,
+      "status": "AGREE",
+      "interface": "historical-position-projection; identity checked separately"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-looking.c",
+      "source_sha256": "cc8030fb50d7d9a6fa5bee6145b3a2b868934c54f78991ca815718a75ecff5ea",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "c9f4b6209a6588e39899f453cb2319bedf9023f6408f4c7c1be0bcaca2844d9c",
+      "library_disagreements": 14,
+      "pragma_events": 0,
+      "status": "AGREE",
+      "interface": "historical-position-projection; identity checked separately"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/runtime-relabel.c",
+      "source_sha256": "4f6452f9c20f5f459db357143c599577cd92212defb24b16d379850e73016cc7",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "b7001dd6e206f0ff141dd0ecf51d7fcd4dd054b6712765dfb5e8f765fc1fb09e",
+      "library_disagreements": 14,
+      "pragma_events": 0,
+      "status": "AGREE",
+      "interface": "historical-position-projection; identity checked separately"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/include-alias.c",
+      "source_sha256": "85af0e18209c37505ca9e9c0efb6e63a2cce36f046b806cf6275dec2b21300e8",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "be4d36287671a297499bc76cc7f2407a740f32f2384c280562650654d7c8d500",
+      "library_disagreements": 14,
+      "pragma_events": 0,
+      "status": "AGREE",
+      "interface": "historical-position-projection; identity checked separately"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/replacement.c",
+      "source_sha256": "a98792863ea701ee61ccae6cab0977fe9034946c1bdc13bfc87c27e7641957eb",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "282b61e5ddc46656ddba9e9d61ffb1b7ea2cb3e28f94fd1ddfb0a6917f1f6ac0",
+      "library_disagreements": 20,
+      "pragma_events": 0,
+      "status": "AGREE",
+      "interface": "historical-position-projection; identity checked separately"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/argument.c",
+      "source_sha256": "57408ba9e66be2ee8934caeb7ae218e272e47743c9e4ece5588774caca36dad4",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "c2c213f480ab168cd9d2874b08fc8cf417783c05d62f16d807ddca5946d0ee05",
+      "library_disagreements": 16,
+      "pragma_events": 0,
+      "status": "AGREE",
+      "interface": "historical-position-projection; identity checked separately"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/user-replacement.c",
+      "source_sha256": "c557c25ab7fddf953a737322b4053b61215b9a10b7dbd34235b3ba7e8aabed0c",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "903c3bf11c68af307cb03aa70a1029e1a01f6fe04b1806be140aa7c612d538c0",
+      "library_disagreements": 1,
+      "pragma_events": 0,
+      "status": "AGREE",
+      "interface": "historical-position-projection; identity checked separately"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/paste.c",
+      "source_sha256": "8bdbc194af94bbf5871156c2c8020e7e3b9d8a52b68e64876c050ecd3d2b0966",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "e6b43ce940652f798bc3a5c18360c2c8c4052a541602683b7408e374bf981f28",
+      "library_disagreements": 14,
+      "pragma_events": 0,
+      "status": "AGREE",
+      "interface": "historical-position-projection; identity checked separately"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/stringify.c",
+      "source_sha256": "7f0700f116c448275e9964d01742dc54be98e2cf0514ac320bc61e10595446ba",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "246dcd48ad9dfe8e3c78e13060c24e970c6d3ca1778ad8d8d4529373ab893500",
+      "library_disagreements": 14,
+      "pragma_events": 0,
+      "status": "AGREE",
+      "interface": "historical-position-projection; identity checked separately"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/shadow-before.c",
+      "source_sha256": "6f1694a0660efdf5e29f38b84250f5ec57f2816668160ecbeeb420bab48920e3",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "9f10f6131f1856a4e0a486f6e698e334be352ff572677bb81fb707320a00cfb4",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE",
+      "interface": "historical-position-projection; identity checked separately"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/shadow-after.c",
+      "source_sha256": "8a9c5341c355450b6c506c13f31e5afcce89f32bb8d348aa01d4bca8eabf8961",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "4b0c9a99303fccc7679b902c22b4b1877163627d8b34b9a98a925e133c103d93",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE",
+      "interface": "historical-position-projection; identity checked separately"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/shadow-redeclare.c",
+      "source_sha256": "972e4a622f9e3d29709d79a6b9caa167fac167dd51f5fd98dc279e74fa3a61c6",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "1c447c7693244aa91b16bd1ccdba1f875c6cd6befd2c543e7e9d2fbd246ea401",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE",
+      "interface": "historical-position-projection; identity checked separately"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/pointer-shadow.c",
+      "source_sha256": "0913beb6ccc1c356f9940fdf884099db3102e9c7103430f4c7a7458f97572b1f",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "9352abebd8b34c33133538bdbf7107b25438b960c36374fb28c6f5f3c3afa755",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE",
+      "interface": "historical-position-projection; identity checked separately"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/pointer-neutral.c",
+      "source_sha256": "ae0d191373550583dea656b4e2480a4f5aef3cded5c824460394ba8b9a2d62c6",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "3f970c45149b2f5c17e6cd466c38b3037208087c4bb3d15d1601430387a93ae4",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE",
+      "interface": "historical-position-projection; identity checked separately"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/redecl-pointer-shadow.c",
+      "source_sha256": "7dea926b73691341168e603502a773c58a3b70d9b8c79d8557de750c9b870678",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "8ba98fd9426ed7823606ce47379ff7a97814554cd277a63d02ee218ccf85e0d8",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE",
+      "interface": "historical-position-projection; identity checked separately"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/redecl-pointer-neutral.c",
+      "source_sha256": "b8a7a9d32ed7551d5b015a5b1b53250e2d747122932a96c8299623cd181a185e",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "f6539c09ec4a1edb9cb9832775ac34b24507c1037f131fa80ecff13a9bbfe167",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE",
+      "interface": "historical-position-projection; identity checked separately"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/shadow-close.c",
+      "source_sha256": "a962780dae1060ee67b9652fbd33b3218a27176fc169d686e30261869b510ca5",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "5f725de0c0bb00352e5960df99f9e99d854fa2e9bbb0413d9a798a708a58f9ad",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE",
+      "interface": "historical-position-projection; identity checked separately"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/shadow-block.c",
+      "source_sha256": "1ee1449a7278a8dd52c99846a5057f6fe88a75bb553dc0073b6846b1c7b291d5",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "3dcdf0a62a427fb95d844b86d29bfb6c0e73455eccce6be9161f3aadc51e324b",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE",
+      "interface": "historical-position-projection; identity checked separately"
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-focused-3/sources/self-include.c",
+      "source_sha256": "40f1f99d7833bd0b0c969927ef058f83534987f6970d91f78d78ed97722e4f73",
+      "raw_exit": 0,
+      "oracle_exit": 0,
+      "layout_sha256": "e5469fcaa705c076b9a38e63a12cd005a9f3d047feac2e89bd8f970cca4aafca",
+      "library_disagreements": 0,
+      "pragma_events": 0,
+      "status": "AGREE",
+      "interface": "historical-position-projection; identity checked separately"
+    }
+  ]
+}

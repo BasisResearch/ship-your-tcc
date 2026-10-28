@@ -245,3 +245,17 @@ This is a compiler-verification interface extension, not a claim that the
 upstream deterministic allocator violates its documented baseline. Frontend
 mini-runs and machine-memory simulation remain separate obligations. No report
 has been sent externally.
+**CSEM-10 — local Lean fork: redeclaration loses a function pointer.** The valid
+neutral reproducer is `static int mine(int); static int mine(int x){return
+x+10;} static int mine(int); int main(void){int (*f)(int)=mine;return
+f(7)!=17;}`. The identity candidate and an independently pinned adopted
+anonymous-member integration Lean binary both report exactly
+``ill-formed program: `null function pointer'``. The pristine pinned OCaml
+engine and strict C11 GCC return zero on the identical source. A direct call
+after those declarations, and a function pointer without the extra
+redeclarations, both return zero in the candidate. This is a local Lean-fork
+defect, not established as an upstream OCaml defect or a library-name rule.
+The proxy-named internal-linkage control is retained separately. See
+`results/csem/library-identity.md` and its pointer baseline artifacts; Kiran
+can inspect the minimal neutral source before reporting. No Supported/Fits
+restriction or semantic-success count retires it.

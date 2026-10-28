@@ -154,6 +154,10 @@ if [ -f lakefile.toml ] || [ -f lakefile.lean ]; then
     flock "$lock" systemd-run --user --scope -q -p MemoryMax=12G lake build csem_raw CSemConeReport \
       || fail "raw frontend build"
     audit scripts/raw_frontend_audit.lean "$std"
+    identity_checks=$(mktemp -d build/library-identity-gate.XXXXXX)
+    python3 scripts/check_library_identity.py --artifacts "$identity_checks/run" \
+      || fail "resolved library identity (artifacts: $identity_checks/run)"
+    echo "resolved library identity artifacts: $identity_checks/run"
   fi
   if [ "${1:-}" = "--compile-cut" ]; then
     # opt-in: the evaluator run of tcc's compile phase (TccCompileCut, ~2.5 CPU-hours

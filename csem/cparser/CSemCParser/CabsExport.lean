@@ -29,9 +29,15 @@ def list {α : Type} (f : α → Json) (xs : List α) : Json := Json.arr (xs.map
 
 def nat (n : Nat) : Json := Json.num (n : Int)
 
+/-- Additional raw-interface metadata; not part of the historical JSON schema. -/
+def identity (s : SourceIdentity) : Json :=
+  Json.mkObj [("resolved", Lean.toJson (s.resolved.map (fun c => c.map UInt8.toNat))),
+    ("runtimeLibrary", Lean.toJson s.runtimeLibrary)]
+
 def pos (p : Pos) : Json :=
-  Json.mkObj [("file", Json.str p.file), ("line", nat p.line), ("col", nat p.col),
-              ("lexing_file", Json.str p.lexingFile), ("lexing_line", nat p.lexingLine)]
+  Json.mkObj ([("file", Json.str p.file), ("line", nat p.line), ("col", nat p.col),
+              ("lexing_file", Json.str p.lexingFile), ("lexing_line", nat p.lexingLine)] ++
+    (match p.sourceIdentity with | none => [] | some s => [("source_identity", identity s)]))
 
 def cursor : Cursor → Json
   | .noCursor => Json.str "NoCursor"

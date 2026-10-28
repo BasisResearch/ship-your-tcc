@@ -1,0 +1,22 @@
+{
+  "request": "library-leaves-3673c3f3d1aa286136a2",
+  "request_id": "library-leaves-3673c3f3d1aa286136a2",
+  "exit": 1,
+  "log": "build/worker-build-library-leaves-3673c3f3d1aa286136a2.log",
+  "command": [
+    "flock",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/build/lake.lock",
+    "systemd-run",
+    "--user",
+    "--scope",
+    "-p",
+    "MemoryMax=12G",
+    "lake",
+    "build",
+    "csem_raw",
+    "TccCSem",
+    "CSemConeReport"
+  ],
+  "source_hashes_verified": true,
+  "lead_review_required": "Library identity task, base main 2c8599a (2026-10-28). Previous anonymous-member candidate is adopted with raw/IEEE and full evidence. Read task and current RawFrontEnd API before design. Existing toolchain/opam/pristine and fork-oracle caches are READ ONLY; root main references the adopted anonymous oracle here by symlink. Build any changed oracle under a new content key; do not delete or rewrite an existing cache. Other slot handles ghost Cabs; lead integrates allocation policy. Avoid allocator edits unless strictly required for identity, and explain overlap.\nBuild service accepts frozen build/worker-build.request with unique library-* ID, explicit targets, exact source hashes; kind full-gate-validation for full gate. Wait for matching completed receipt before edits. Lead services systemd bus/Git metadata restrictions under root shared lock and 12GB; never fallback uncapped. Old anonymous requests are historical/stale. Toolchain requests need manually reviewed frozen exact inputs. No sum regeneration. No external messages.\nAdditional raw-source connection issue noticed by lead: Raw.run currently reads src but does not automatically overlay cfg.pre.mainName with those bytes in cfg.fs. Actual image always embeds input at /prog.c. Consider a focused self-include control; do not conflate physical identity with #line or once-cache keys. Keep any unrelated change separate and report required remaining connection.\nLead integration update: reviewed allocation checkpoint is now rebased onto main and under combined gate in sol-csem-repin. Its CerbDriver adds withAllocationPolicy and optional runPipeline allocPolicy plus --alloc-addresses; CerbMem has allocPolicy/allocationRejected fields, checked oracle dispatch and reuse clearing. Preserve this separate feature at eventual integration; no need to rebase midtask. Main C11/IEEE/anonymous+once sources remain your baseline. Initial old p04/p09/p10 config probes now all execute defined in root CSem; fresh Sail confirmation underway.\nInterim design review: identity-bearing Pos + explicit Core runtime identities is the right boundary to examine. Please verify every semantic isLibraryLocation call and every location constructor/copy on raw -> Cabs -> Ail -> Core, so metadata loss cannot silently trigger the historical suffix fallback. Keep ordinary text/JSON comparisons separately labeled; exact Cabs comparisons should explicitly account for the new metadata without erasing diagnostic positions. Your replacement-vs-argument-vs-paste identitySite policy needs mixed-provenance semantic controls, not only Boolean tests. Test user same-name definitions/redeclarations before and after calls against identityProxyNames, including genuine library declarations (C11 7.1.4). Freeze requests only after generation and all source edits; avoid stale receipts.\nFor name-shadowing controls, distinguish C11-defined internal-linkage functions (without including the header that reserves their ordinary name) from forbidden redefinitions of externally reserved library identifiers. Use a static local implementation as the positive control; don't advertise a defined-C counterexample based on an externally reserved function definition. Explicit compatible library forward declarations without a header remain a positive library-call case under 7.1.4.\n"
+}

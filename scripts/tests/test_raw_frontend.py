@@ -74,14 +74,13 @@ class RawFrontend(unittest.TestCase):
                   for t in r['phase4'] if t['spelling'] in ['\\u00E9','\\U000000E9','é'.encode().decode('latin1')]}
         self.assertEqual(widths, {2,6,10})
 
-    def test_checked_semantic_entry_diagnoses_pending_pack_and_library(self):
+    def test_checked_semantic_entry_consumes_library_identity_and_diagnoses_pack(self):
         for name in ['pack', 'pack-active']:
             p = self.invoke(name, '--tcc', '--checked')
             self.assertEqual(p.returncode, 1)
             self.assertIn('unimplemented-pack-layout', p.stderr)
         p = self.invoke('line-library-plant', '--checked')
-        self.assertEqual(p.returncode, 1)
-        self.assertIn('library-identity-mismatch', p.stderr)
+        self.assertEqual(p.returncode, 0, p.stderr)
         p = self.invoke('basic', '--checked')
         self.assertEqual(p.returncode, 0, p.stderr)
 

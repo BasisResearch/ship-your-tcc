@@ -1,0 +1,84 @@
+{
+  "pins": {
+    "driver": "8c33c3d9caa6f2e403ef49f37edd84055328ce4d09261bf42ae28174069acfad",
+    "csem_rev": "cerberus-lean 704c4e697845127bced66c93fa0763eb51527ca4\nlem-lean e6d8db5680962f49060257d6c2bcb13c284b910f\n# cerberus-lean: OathTech/cerberus-lean, branch mdd/cerberus-lean,\n# commit 2026-10-26 17:26:39 UTC (lead-fetched current snapshot 2026-10-27).\n# lem-lean: OathTech/lem-lean, branch mdd/lean-backend,\n# commit 2026-10-22 01:33:30 UTC; matching LemLib and generator.\n# Upstream targets Lean 4.35.0; this fork retains approved Lean 4.34.0.\n# Imported with scripts/csem_import.sh; local replay and validation recorded\n# in csem/PORT-4.34.md and results/csem/repin-2026-10-27.md.\n"
+  },
+  "rows": [
+    {
+      "case": "basic",
+      "exit": 0,
+      "stdout": "Defined {value: \"Specified(7)\", stdout: \"\", stderr: \"\", blocked: \"false\"}\n",
+      "stderr": "cerberus-lean switches: []\n",
+      "interface": "historical-projected-JSON; no image identity claim"
+    },
+    {
+      "case": "identity-is-not-json-baseline",
+      "exit": 1,
+      "stdout": "Error {msg: \"cabs-json parse error: identity-bearing positions require the raw frontend; historical JSON cannot supply image membership\"}\n",
+      "stderr": "cerberus-lean: parse error: identity-bearing positions require the raw frontend; historical JSON cannot supply image membership\n"
+    },
+    {
+      "case": "manual-stdio",
+      "exit": 0,
+      "stdout": "Defined {value: \"Specified(0)\", stdout: \"id 7\\n\", stderr: \"\", blocked: \"false\"}\n",
+      "stderr": "cerberus-lean switches: []\n",
+      "interface": "historical-projected-JSON; no image identity claim"
+    },
+    {
+      "case": "plant",
+      "exit": 2,
+      "stdout": "",
+      "stderr": "cerberus-lean stop [\"1\",\"REFUSAL\",\"library-location\",\"the input /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-historical/plant.json\",\"Refused: cerberus-lean: refused \u2014 library-location classification: the input /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-historical/plant.json: cannot resolve the source directory of `/fake/runtime/libcore/std.core`: no such file or directory (error code: 2)\\n  file: /fake/runtime/libcore. Canonical Core quotation convention: export metadata and run with --runtime=_build/install/default from the project root, or a directory with that fixed relative runtime link; preserve all stored labels (see VALIDATION.md, bug hunt BUG-3 and Core quotation D2b)\",\"exact resolved runtime-directory classification through the location seam\",null,\"CONTRACT.md \u00a72/\u00a73; VALIDATION.md\"]\n",
+      "interface": "historical-projected-JSON; no image identity claim"
+    },
+    {
+      "case": "user-looking",
+      "exit": 2,
+      "stdout": "",
+      "stderr": "cerberus-lean stop [\"1\",\"REFUSAL\",\"library-location\",\"the input /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-historical/user-looking.json\",\"Refused: cerberus-lean: refused \u2014 library-location classification: the input /data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/library-historical/user-looking.json: cannot resolve the source directory of `/user/runtime/libc/include/fault.h`: no such file or directory (error code: 2)\\n  file: /user/runtime/libc/include. Canonical Core quotation convention: export metadata and run with --runtime=_build/install/default from the project root, or a directory with that fixed relative runtime link; preserve all stored labels (see VALIDATION.md, bug hunt BUG-3 and Core quotation D2b)\",\"exact resolved runtime-directory classification through the location seam\",null,\"CONTRACT.md \u00a72/\u00a73; VALIDATION.md\"]\n",
+      "interface": "historical-projected-JSON; no image identity claim"
+    },
+    {
+      "case": "runtime-relabel",
+      "exit": 1,
+      "stdout": "Undefined {ub: \"UB045a_division_by_zero\", stderr: \"\", loc: \"<501:34--501:37>\"}\n",
+      "stderr": "cerberus-lean switches: []\n",
+      "interface": "historical-projected-JSON; no image identity claim"
+    },
+    {
+      "case": "shadow-before",
+      "exit": 1,
+      "stdout": "Error {msg: \"ill-formed program: `other_location(Driver.drive): 'Symbol(17096408249463498481, SD_Id(\"printf_proxy\"))' does not point to a function (cfunction)'\"}\n",
+      "stderr": "cerberus-lean switches: []\n",
+      "interface": "historical-projected-JSON; no image identity claim"
+    },
+    {
+      "case": "shadow-after",
+      "exit": 1,
+      "stdout": "Error {msg: \"ill-formed program: `other_location(Driver.drive): 'Symbol(17096408249463498481, SD_Id(\"printf_proxy\"))' does not point to a function (cfunction)'\"}\n",
+      "stderr": "cerberus-lean switches: []\n",
+      "interface": "historical-projected-JSON; no image identity claim"
+    },
+    {
+      "case": "shadow-redeclare",
+      "exit": 1,
+      "stdout": "Error {msg: \"ill-formed program: `other_location(Driver.drive): 'Symbol(17096408249463498481, SD_Id(\"printf_proxy\"))' does not point to a function (cfunction)'\"}\n",
+      "stderr": "cerberus-lean switches: []\n",
+      "interface": "historical-projected-JSON; no image identity claim"
+    },
+    {
+      "case": "shadow-close",
+      "exit": 1,
+      "stdout": "Error {msg: \"ill-formed program: `other_location(Driver.drive): 'Symbol(4446956825707617305, SD_Id(\"close_proxy\"))' does not point to a function (cfunction)'\"}\n",
+      "stderr": "cerberus-lean switches: []\n",
+      "interface": "historical-projected-JSON; no image identity claim"
+    },
+    {
+      "case": "shadow-block",
+      "exit": 1,
+      "stdout": "Error {msg: \"ill-formed program: `other_location(Driver.drive): 'Symbol(17096408249463498481, SD_Id(\"printf_proxy\"))' does not point to a function (cfunction)'\"}\n",
+      "stderr": "cerberus-lean switches: []\n",
+      "interface": "historical-projected-JSON; no image identity claim"
+    }
+  ]
+}

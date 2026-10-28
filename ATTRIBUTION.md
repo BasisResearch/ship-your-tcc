@@ -208,3 +208,10 @@ RV64 acceptance, explicit rejection, reuse byte reset, outcome quantification,
 proofs and focused tests are new. Lua `scripts/abs_inventory.sh` and its mandatory
 tool table were consulted; no machine library routine proof is reused, so no
 instruction-identity claim is made. No generated recovery files were imported.
+- Resolved library identity (2026-10-28): reuse the fork's `CerbLocation`,
+  positioned Cabs parser, Ail/Core location transport and generated semantic
+  consumers, plus this project's `Spec.Pre.Provenance` and shared image path
+  resolution. `LibraryConfig`/`SourceIdentity` add pure image membership data;
+  C-visible labels remain intact. Generated copies use the pinned Lem recipe.
+  Lua's abstraction inventory and mandatory task table were read before this
+  work; no machine routine summary was reused or claimed instruction-identical.
