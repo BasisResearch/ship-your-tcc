@@ -1,0 +1,395 @@
+{
+  "command": [
+    "scripts/model_diff.py",
+    "--no-report",
+    "--require-success",
+    "29",
+    "--json-out",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/fast.json",
+    "-j",
+    "4",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/array-alias-decay.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/arithmetic-auto.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/queries-auto.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/address-auto.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/conditional-auto.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/conditional-address-auto.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/qualifiers-auto.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/volatile-auto.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/indirect-auto.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/comma-auto.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/nested-auto.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/initialize-auto.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/arithmetic-static.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/queries-static.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/address-static.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/conditional-static.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/conditional-address-static.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/qualifiers-static.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/volatile-static.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/indirect-static.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/comma-static.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/nested-static.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/initialize-static.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/parameters.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/parameter-qualifiers.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/calls-spill.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/element-referent.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/vla.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/pointer-alias.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/invalid-element.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/invalid-array-alias.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/invalid-pointer-array.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/invalid-parameter-array.c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/invalid-typename.c"
+  ],
+  "runtime_key": "5daaf8efaa01a7bedbcaaea29c794938ac80eec35258b577b8cee268f37befb2",
+  "pins": {
+    "vendor/TINYCC_REV": "76ca376f1f96cf1b316713d8f94d91c8629445929d1e7474792fd76610bce1c0",
+    "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+    "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+    "patches/0003-tcc-c11.patch": "4e734a116c2e500b68f97529a7d4f1bbc5239e4582e234020116769a601eee87",
+    "patches/0004-tcc-binary128-literals.patch": "15d4a95ec667c9ec18ea2be3fc1475c1178668853fea28213c3061afa0f863ff",
+    "c/build/base.elf": "c897326af963d08f8516bdbe98eb4755f79d48033cef95009cea14e01d793a4f",
+    "c/src/gen_embed.sh": "68534ee3a238c143bf4e749fcb0ea43e8b53933c4a9d6843422d995c879d7d76",
+    "scripts/model_diff.py": "ab13368709839e61bfd015dcf3fb1ce21e6d7b52b38384e603f6ffe5e3f295db",
+    "scripts/source_fixtures.py": "8bd91c7d988bcd2af43dfc8c2b8f435376b842e7a3ceeb988bba439baecb609e",
+    ".lake/build/bin/tcc_model": "74ac07b2c2be006b2f9554fa64e58db80c3fb6952d0b8e2efc101af98504044e",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/array-alias-decay.c": "6cdf554582f9deee451b1013077991faa1650fb8d687df9a2c8192a70c7ccada",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/arithmetic-auto.c": "436bc9073ef0c35cdccd4252481db4a073489c673f3546d01adce8b8405eb7e3",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/queries-auto.c": "ccfbd81dda74fa2d246cb2e481531921816370a5068adad0406d91aed1573ec2",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/address-auto.c": "5486cbfb834dc815490e4c61898dc9ff8ed3aa92318ef9e303aa9f4b5830d354",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/conditional-auto.c": "e3e8e827c47e9a5f601a92c27a86998a04e66de2a74140b4b3e1462a44d85b99",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/conditional-address-auto.c": "8cb90c2a85c75a935d21d3f92e0d13410e9c6fa60d5d6474ff31cb8cda2911d7",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/qualifiers-auto.c": "872722deac0fd61b658902a96e8e8947b9e6bb16f15dceb801f69137eeecb214",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/volatile-auto.c": "01afbda019ef6ae4ec32d5b928d84117794feb585b144cbb9b4802755674587f",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/indirect-auto.c": "30be4bee91005b309f7d4231ac3dabf744fb50c3ef021f85a160e4b9787a1983",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/comma-auto.c": "c1b98eba33a315ea637282b354dbda44b29f3e5e0bce7e17f8b09466261a90ea",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/nested-auto.c": "23fb39367e0d14b69ee0f5f5260702640d493223717adcb31cb79cd1608e2365",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/initialize-auto.c": "90bc39de42eb375a3a95b1b37769a13ac7fc1a54f92a0a3fc944714bafc7d50a",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/arithmetic-static.c": "c113058216c0984318f9fca37cf0ec5c76ef5da414eae5d8bec891b2f9f21399",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/queries-static.c": "3078a08967813250dd987f442249336fc9a4116f4ecbc47701fd269ac3190858",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/address-static.c": "107d0e1ae704e555c2684ea47c60593dd8e72d848ce9e777c3f22803efdd33b8",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/conditional-static.c": "0f5711996809eb3312277384aab2c54c607c5f7fc34d99867962df82be9e78ca",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/conditional-address-static.c": "fdaab0c4b1fb87e217f36ad4398501e40d0919cfcb44dc0ea1bfd60bb7ce4a90",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/qualifiers-static.c": "e45bb23d5b9320620335a99779c38d4f4634cb117f1ce631f5171524329ed0f1",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/volatile-static.c": "d761e6a6393970eaa63071edcdbdbefcb4c4faf449aed9b80be8cf51d0fb93fd",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/indirect-static.c": "57a4518e2dd9bbb39c0e08e786d441bb9f7808c144c3628e2c3a2509bbd6a02e",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/comma-static.c": "c828427b8c8ad0de8cb008cbb76123ce48c88265ec8d94a01030883c1b7b4ba5",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/nested-static.c": "8b4a91a8f0fa2c1756c7a095f9555cf01a0ef880c3f6a642cde2f05c9dfb5c57",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/initialize-static.c": "6ae730b1e7d7898d2671a8fab8ce8745678bb96b2a6b76e254fc7e647bec01ec",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/parameters.c": "e4024a572261673f41fb3ebb0900b93e01a60b02b2f1e2ce37323444d8ff0199",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/parameter-qualifiers.c": "c1e0b709c0d275db5508363259217faa177b41e048def50e8e606405bf0fb07e",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/calls-spill.c": "6ad745c12723db33a74507d4557927d75acd9530c76806f5f5b098673c2109b4",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/element-referent.c": "a346ce953df7e1926974377aa9526066c8fbbf6413805f65cf2f47aae1466b1f",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/vla.c": "8d930af83786ddb8c42da3bc48b83e7127d5fd4d8dc67782a0c4ad5cc7367f95",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/pointer-alias.c": "2ca56ff43f02468c20b70fb5eacb8d0b423b62059ccef6fabf004e24aa3268ac",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/invalid-element.c": "c3942e6f757b0e99c799da489aef8bfab3271e3bfd507a5fd9c2138d2ac27d61",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/invalid-array-alias.c": "fbe21ec88595cdaa8f6d1fda9ce2c30a722fc06fcecc5f920b9513ff4209d6bc",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/invalid-pointer-array.c": "d0c0070d2f6f21630058069c855f4b5fccd02d35e2bd83a98af8df23fb7d45bd",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/invalid-parameter-array.c": "8224327924b133c436136a901f119640a8c70a419429ee7632b283a7ab8b5b61",
+    "build/array-decay-gate.SvGSeE/comparison/inputs/invalid-typename.c": "410b6e20e21345a4c450058bff9a5a75fa98a9e22c1f2cf77cb9a1bdae13b3f0"
+  },
+  "results": {
+    "build/array-decay-gate.SvGSeE/comparison/inputs": [
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/arithmetic-auto.c",
+        "model_s": 0.07292604446411133,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13084 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/array-alias-decay.c",
+        "model_s": 0.0726771354675293,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13052 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/queries-auto.c",
+        "model_s": 0.07234692573547363,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13060 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/address-auto.c",
+        "model_s": 0.07440972328186035,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13060 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/conditional-auto.c",
+        "model_s": 0.07531213760375977,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13060 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/conditional-address-auto.c",
+        "model_s": 0.07605147361755371,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13060 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/volatile-auto.c",
+        "model_s": 0.07208752632141113,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13060 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/qualifiers-auto.c",
+        "model_s": 0.07334613800048828,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13060 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/indirect-auto.c",
+        "model_s": 0.0732719898223877,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13060 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/comma-auto.c",
+        "model_s": 0.07561588287353516,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13060 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/nested-auto.c",
+        "model_s": 0.07519054412841797,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13076 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/initialize-auto.c",
+        "model_s": 0.07410860061645508,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13116 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/arithmetic-static.c",
+        "model_s": 0.07263660430908203,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13084 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/queries-static.c",
+        "model_s": 0.0763390064239502,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13052 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/address-static.c",
+        "model_s": 0.07469487190246582,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13052 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/conditional-static.c",
+        "model_s": 0.07341909408569336,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13052 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/conditional-address-static.c",
+        "model_s": 0.07620477676391602,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13052 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/qualifiers-static.c",
+        "model_s": 0.07549667358398438,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13060 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/volatile-static.c",
+        "model_s": 0.07479071617126465,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13052 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/indirect-static.c",
+        "model_s": 0.07338953018188477,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13052 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/comma-static.c",
+        "model_s": 0.07435202598571777,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13052 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/nested-static.c",
+        "model_s": 0.07637262344360352,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13052 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/initialize-static.c",
+        "model_s": 0.07272148132324219,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13116 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/parameters.c",
+        "model_s": 0.07407045364379883,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13268 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/parameter-qualifiers.c",
+        "model_s": 0.07404422760009766,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13172 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/calls-spill.c",
+        "model_s": 0.07782316207885742,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13620 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/vla.c",
+        "model_s": 0.08097171783447266,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13196 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/element-referent.c",
+        "model_s": 0.07510566711425781,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13108 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/invalid-element.c",
+        "model_s": 0.06529426574707031,
+        "ref": "exit",
+        "model": "exit",
+        "result": "same-refusal",
+        "why": "both stop: exit 1"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/pointer-alias.c",
+        "model_s": 0.07186675071716309,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13036 bytes"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/invalid-array-alias.c",
+        "model_s": 0.06749224662780762,
+        "ref": "exit",
+        "model": "exit",
+        "result": "same-refusal",
+        "why": "both stop: exit 1"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/invalid-pointer-array.c",
+        "model_s": 0.06586003303527832,
+        "ref": "exit",
+        "model": "exit",
+        "result": "same-refusal",
+        "why": "both stop: exit 1"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/invalid-parameter-array.c",
+        "model_s": 0.07184243202209473,
+        "ref": "exit",
+        "model": "exit",
+        "result": "same-refusal",
+        "why": "both stop: exit 1"
+      },
+      {
+        "name": "build/array-decay-gate.SvGSeE/comparison/inputs/invalid-typename.c",
+        "model_s": 0.06821537017822266,
+        "ref": "exit",
+        "model": "exit",
+        "result": "same-refusal",
+        "why": "both stop: exit 1"
+      }
+    ]
+  },
+  "rows": [
+    [
+      "build/array-decay-gate.SvGSeE/comparison/inputs",
+      34,
+      29,
+      0,
+      0,
+      0,
+      0,
+      5,
+      0,
+      0.07353964272667379
+    ]
+  ],
+  "totals": {
+    "n": 34,
+    "same": 29
+  },
+  "wall_seconds": 3.7473721504211426,
+  "reference": "rv64emu diagnostic; Sail arena equality pending",
+  "sail_settings": null,
+  "compiler_args": [
+    "-std=c11",
+    "-w"
+  ],
+  "invocations": {}
+}

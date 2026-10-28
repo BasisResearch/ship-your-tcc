@@ -39,8 +39,8 @@ The launcher follows 4ct-digest's MANAGER.md/codexwork.sh workflow, adapted
 to this project's two-worker limit and shared Lean build lock.
 
 Current assignments, 2026-10-28: slot 1 runs tasks/f1-bitfields.md in
-sol-csem-repin. Slot 2 runs tasks/f3-array-alignment-decay.md in sol-f2-tokens,
-repairing the compiler's leaked array-alias alignment and its model. Both use
+sol-csem-repin. Slot 2 runs tasks/f3-ghost-replay-erasure.md in sol-f2-tokens,
+proving the local universal snapshot-erasure law. Both use
 reviewed alignment/binding bases; slot 2 also includes the reviewed generic/
 static-assert checkpoint. The lead independently gates each combination before
 main adoption. Original worker branches and all evidence remain preserved.
@@ -61,9 +61,9 @@ requested corrections must be resolved or returned as an explicit obstruction.
 Keep build receipts compact: inspect ID/status/lead notes, and verify large
 hash manifests with scripts. Do not repeatedly print whole manifests or logs.
 
-Next integration duty: review the array-decay compiler/model repair against
-adopted alignment and generic syntax. Keep shared-token, model-token parser
-and independent Raw.checked comparisons separately labeled. Turn the precise
-decay failure into a positive regression without changing CSem to match the
-bug. The local universal replay-erasure proof is queued after that repair in
-tasks/f3-ghost-replay-erasure.md; wide assertion messages remain a separate task.
+Next integration duty: review the replay-erasure theorem against the adopted
+array/alignment/generic combination. Its proof must inhabit the unchanged
+statement, include success and diagnostic branches, and introduce no premises.
+Keep full construction/whole-run erasure and binary refinement obligations
+separate. Slot 1 must also repair shared compound-lvalue single evaluation
+(CSEM-14) alongside bitfields. Wide assertion messages remain a later task.

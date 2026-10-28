@@ -1,0 +1,270 @@
+{
+  "pins": {
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/scripts/array_decay_cmp.py": "7385ccef319a7d49bad400caacb00290371c9129da569341675983352126424f",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/scripts/gen_array_decay_fixtures.py": "1f01191df6f9e928e853982e13648f0edec78ce1207294282992a53d05e9299c",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/scripts/model_diff.py": "ab13368709839e61bfd015dcf3fb1ce21e6d7b52b38384e603f6ffe5e3f295db",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/tcc_model": "74ac07b2c2be006b2f9554fa64e58db80c3fb6952d0b8e2efc101af98504044e",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/patches/0003-tcc-c11.patch": "4e734a116c2e500b68f97529a7d4f1bbc5239e4582e234020116769a601eee87",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/array-alias-decay.c": "6cdf554582f9deee451b1013077991faa1650fb8d687df9a2c8192a70c7ccada",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/arithmetic-auto.c": "436bc9073ef0c35cdccd4252481db4a073489c673f3546d01adce8b8405eb7e3",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/queries-auto.c": "ccfbd81dda74fa2d246cb2e481531921816370a5068adad0406d91aed1573ec2",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/address-auto.c": "5486cbfb834dc815490e4c61898dc9ff8ed3aa92318ef9e303aa9f4b5830d354",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/conditional-auto.c": "e3e8e827c47e9a5f601a92c27a86998a04e66de2a74140b4b3e1462a44d85b99",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/conditional-address-auto.c": "8cb90c2a85c75a935d21d3f92e0d13410e9c6fa60d5d6474ff31cb8cda2911d7",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/qualifiers-auto.c": "872722deac0fd61b658902a96e8e8947b9e6bb16f15dceb801f69137eeecb214",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/volatile-auto.c": "01afbda019ef6ae4ec32d5b928d84117794feb585b144cbb9b4802755674587f",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/indirect-auto.c": "30be4bee91005b309f7d4231ac3dabf744fb50c3ef021f85a160e4b9787a1983",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/comma-auto.c": "c1b98eba33a315ea637282b354dbda44b29f3e5e0bce7e17f8b09466261a90ea",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/nested-auto.c": "23fb39367e0d14b69ee0f5f5260702640d493223717adcb31cb79cd1608e2365",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/initialize-auto.c": "90bc39de42eb375a3a95b1b37769a13ac7fc1a54f92a0a3fc944714bafc7d50a",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/arithmetic-static.c": "c113058216c0984318f9fca37cf0ec5c76ef5da414eae5d8bec891b2f9f21399",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/queries-static.c": "3078a08967813250dd987f442249336fc9a4116f4ecbc47701fd269ac3190858",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/address-static.c": "107d0e1ae704e555c2684ea47c60593dd8e72d848ce9e777c3f22803efdd33b8",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/conditional-static.c": "0f5711996809eb3312277384aab2c54c607c5f7fc34d99867962df82be9e78ca",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/conditional-address-static.c": "fdaab0c4b1fb87e217f36ad4398501e40d0919cfcb44dc0ea1bfd60bb7ce4a90",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/qualifiers-static.c": "e45bb23d5b9320620335a99779c38d4f4634cb117f1ce631f5171524329ed0f1",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/volatile-static.c": "d761e6a6393970eaa63071edcdbdbefcb4c4faf449aed9b80be8cf51d0fb93fd",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/indirect-static.c": "57a4518e2dd9bbb39c0e08e786d441bb9f7808c144c3628e2c3a2509bbd6a02e",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/comma-static.c": "c828427b8c8ad0de8cb008cbb76123ce48c88265ec8d94a01030883c1b7b4ba5",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/nested-static.c": "8b4a91a8f0fa2c1756c7a095f9555cf01a0ef880c3f6a642cde2f05c9dfb5c57",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/initialize-static.c": "6ae730b1e7d7898d2671a8fab8ce8745678bb96b2a6b76e254fc7e647bec01ec",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/parameters.c": "e4024a572261673f41fb3ebb0900b93e01a60b02b2f1e2ce37323444d8ff0199",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/parameter-qualifiers.c": "c1e0b709c0d275db5508363259217faa177b41e048def50e8e606405bf0fb07e",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/calls-spill.c": "6ad745c12723db33a74507d4557927d75acd9530c76806f5f5b098673c2109b4",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/element-referent.c": "a346ce953df7e1926974377aa9526066c8fbbf6413805f65cf2f47aae1466b1f",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/vla.c": "8d930af83786ddb8c42da3bc48b83e7127d5fd4d8dc67782a0c4ad5cc7367f95",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/pointer-alias.c": "2ca56ff43f02468c20b70fb5eacb8d0b423b62059ccef6fabf004e24aa3268ac",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/invalid-element.c": "c3942e6f757b0e99c799da489aef8bfab3271e3bfd507a5fd9c2138d2ac27d61",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/invalid-array-alias.c": "fbe21ec88595cdaa8f6d1fda9ce2c30a722fc06fcecc5f920b9513ff4209d6bc",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/invalid-pointer-array.c": "d0c0070d2f6f21630058069c855f4b5fccd02d35e2bd83a98af8df23fb7d45bd",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/invalid-parameter-array.c": "8224327924b133c436136a901f119640a8c70a419429ee7632b283a7ab8b5b61",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/invalid-typename.c": "410b6e20e21345a4c450058bff9a5a75fa98a9e22c1f2cf77cb9a1bdae13b3f0"
+  },
+  "gcc": [
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/array-alias-decay.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/arithmetic-auto.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/queries-auto.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/address-auto.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/conditional-auto.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/conditional-address-auto.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/qualifiers-auto.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/volatile-auto.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/indirect-auto.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/comma-auto.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/nested-auto.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/initialize-auto.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/arithmetic-static.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/queries-static.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/address-static.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/conditional-static.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/conditional-address-static.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/qualifiers-static.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/volatile-static.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/indirect-static.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/comma-static.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/nested-static.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/initialize-static.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/parameters.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/parameter-qualifiers.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/calls-spill.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/element-referent.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/vla.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/pointer-alias.c",
+      "invalid": false,
+      "exit": 0,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/invalid-element.c",
+      "invalid": true,
+      "exit": 1,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/invalid-array-alias.c",
+      "invalid": true,
+      "exit": 1,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/invalid-pointer-array.c",
+      "invalid": true,
+      "exit": 1,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/invalid-parameter-array.c",
+      "invalid": true,
+      "exit": 1,
+      "accepted": true
+    },
+    {
+      "source": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/invalid-typename.c",
+      "invalid": true,
+      "exit": 1,
+      "accepted": true
+    }
+  ],
+  "fast_totals": {
+    "n": 34,
+    "same": 29
+  },
+  "native": [
+    {
+      "case": "array-alias-decay",
+      "exit": 0,
+      "report": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/array-alias-decay-native/comparison.json"
+    },
+    {
+      "case": "calls-spill",
+      "exit": 0,
+      "report": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/calls-spill-native/comparison.json"
+    },
+    {
+      "case": "element-referent",
+      "exit": 0,
+      "report": "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/element-referent-native/comparison.json"
+    }
+  ]
+}

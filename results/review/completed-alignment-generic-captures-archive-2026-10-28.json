@@ -1,0 +1,93 @@
+{
+  "reason": "Completed lead alignment/generic captures already retained in committed archives. Every loose file verified before unlink; current array/proof/bitfield work and native captures/source checkouts untouched.",
+  "entries": [
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/alignment-integrated/authority",
+      "archive": ".claude/worktrees/sol-c11-line/results/model/alignment-integration-2026-10-28/captures.tar.xz",
+      "archive_sha256": "f1839ca947160a586297ce6a0d8f756494c976945e38b0e73e0e4cfecc2d3ebc",
+      "member_prefix": "combined/authority",
+      "files": 145,
+      "bytes": 3365903
+    },
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/alignment-integrated/physical",
+      "archive": ".claude/worktrees/sol-c11-line/results/model/alignment-integration-2026-10-28/captures.tar.xz",
+      "archive_sha256": "f1839ca947160a586297ce6a0d8f756494c976945e38b0e73e0e4cfecc2d3ebc",
+      "member_prefix": "combined/physical",
+      "files": 349,
+      "bytes": 260626619
+    },
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/alignment-integrated/shared",
+      "archive": ".claude/worktrees/sol-c11-line/results/model/alignment-integration-2026-10-28/captures.tar.xz",
+      "archive_sha256": "f1839ca947160a586297ce6a0d8f756494c976945e38b0e73e0e4cfecc2d3ebc",
+      "member_prefix": "combined/shared",
+      "files": 281,
+      "bytes": 2446373
+    },
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/alignment-integrated/raw-component",
+      "archive": ".claude/worktrees/sol-c11-line/results/model/alignment-integration-2026-10-28/captures.tar.xz",
+      "archive_sha256": "f1839ca947160a586297ce6a0d8f756494c976945e38b0e73e0e4cfecc2d3ebc",
+      "member_prefix": "combined/raw-component",
+      "files": 281,
+      "bytes": 476242774
+    },
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/alignment-integrated/independent",
+      "archive": ".claude/worktrees/sol-c11-line/results/model/alignment-integration-2026-10-28/captures.tar.xz",
+      "archive_sha256": "f1839ca947160a586297ce6a0d8f756494c976945e38b0e73e0e4cfecc2d3ebc",
+      "member_prefix": "combined/independent",
+      "files": 281,
+      "bytes": 373389968
+    },
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/unevaluated-integrated/authority",
+      "archive": ".claude/worktrees/sol-c11-line/results/model/unevaluated-integration-2026-10-28/captures.tar.xz",
+      "archive_sha256": "b228983bac587a010deb1a3473252950dbce8e3e36fa4de722a288607f6f6890",
+      "member_prefix": "combined/authority",
+      "files": 145,
+      "bytes": 3366453
+    },
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/unevaluated-integrated/physical",
+      "archive": ".claude/worktrees/sol-c11-line/results/model/unevaluated-integration-2026-10-28/captures.tar.xz",
+      "archive_sha256": "b228983bac587a010deb1a3473252950dbce8e3e36fa4de722a288607f6f6890",
+      "member_prefix": "combined/physical",
+      "files": 349,
+      "bytes": 260626953
+    },
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/unevaluated-integrated/shared",
+      "archive": ".claude/worktrees/sol-c11-line/results/model/unevaluated-integration-2026-10-28/captures.tar.xz",
+      "archive_sha256": "b228983bac587a010deb1a3473252950dbce8e3e36fa4de722a288607f6f6890",
+      "member_prefix": "combined/shared",
+      "files": 281,
+      "bytes": 2479777
+    },
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/unevaluated-integrated/raw-component",
+      "archive": ".claude/worktrees/sol-c11-line/results/model/unevaluated-integration-2026-10-28/captures.tar.xz",
+      "archive_sha256": "b228983bac587a010deb1a3473252950dbce8e3e36fa4de722a288607f6f6890",
+      "member_prefix": "combined/raw-component",
+      "files": 281,
+      "bytes": 478677330
+    },
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/unevaluated-integrated/independent",
+      "archive": ".claude/worktrees/sol-c11-line/results/model/unevaluated-integration-2026-10-28/captures.tar.xz",
+      "archive_sha256": "b228983bac587a010deb1a3473252950dbce8e3e36fa4de722a288607f6f6890",
+      "member_prefix": "combined/independent",
+      "files": 281,
+      "bytes": 374825933
+    },
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/unevaluated-integrated/focused",
+      "archive": ".claude/worktrees/sol-c11-line/results/model/unevaluated-integration-2026-10-28/captures.tar.xz",
+      "archive_sha256": "b228983bac587a010deb1a3473252950dbce8e3e36fa4de722a288607f6f6890",
+      "member_prefix": "combined/focused",
+      "files": 580,
+      "bytes": 9595590
+    }
+  ]
+}

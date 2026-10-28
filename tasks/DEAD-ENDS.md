@@ -925,3 +925,12 @@ an explicit follow-up, not established by arena equality.
 - Array-decay staging again fails creating this worktree's index.lock on
   read-only Git metadata. Use the existing frozen scoped lead commit handoff;
   no alternate index/object store, push, main merge or semantic rerun is needed.
+
+- Array integration lead setup: base-image rebuild and strict C11 checks both
+  rebuild build/cross/riscv64-tcc. Running those commands concurrently caused
+  PermissionError while the checker tried to execute the cross compiler being
+  replaced. The first failure log remains build/array-integrated-c11.log;
+  image creation completes before the checker is rerun serially. An attempted
+  output-tree move used a root-relative path inside the worktree and failed,
+  so the checker reused its build directory; no unchanged first output-tree
+  archive is claimed. This setup failure supplies no valid coverage.

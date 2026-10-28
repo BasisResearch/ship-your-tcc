@@ -1,0 +1,263 @@
+{
+  "command": [
+    "scripts/model_diff.py",
+    "--no-report",
+    "--json-out",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-integrated/arenas.json",
+    "--require-success",
+    "18",
+    "-j",
+    "4",
+    "build/ghost-byte-inputs/ghost-control.c",
+    "build/ghost-byte-inputs/ghost-declarations.c",
+    "build/ghost-byte-inputs/ghost-designators.c",
+    "build/ghost-byte-inputs/ghost-gnu.c",
+    "build/ghost-byte-inputs/ghost-pragmas.c",
+    "build/ghost-byte-inputs/ghost-spellings.c",
+    "build/ghost-byte-inputs/ghost-typedef.c",
+    "build/array-integrated/onoff/physical-lf.c",
+    "build/array-integrated/onoff/physical-crlf.c",
+    "build/array-integrated/onoff/physical-literal.c",
+    "build/array-integrated/onoff/physical-trigraphs.c",
+    "build/array-integrated/onoff/physical-trisplice.c",
+    "build/array-integrated/onoff/physical-boundary-lf.c",
+    "build/array-integrated/onoff/physical-boundary-crlf.c",
+    "build/array-integrated/onoff/physical-tail.c",
+    "build/array-integrated/arena-inputs/pointer-malloc.c",
+    "build/array-integrated/arena-inputs/pointer-memcpy.c",
+    "build/array-integrated/arena-inputs/static-pointers.c"
+  ],
+  "runtime_key": "5daaf8efaa01a7bedbcaaea29c794938ac80eec35258b577b8cee268f37befb2",
+  "pins": {
+    "vendor/TINYCC_REV": "76ca376f1f96cf1b316713d8f94d91c8629445929d1e7474792fd76610bce1c0",
+    "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+    "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+    "patches/0003-tcc-c11.patch": "4e734a116c2e500b68f97529a7d4f1bbc5239e4582e234020116769a601eee87",
+    "patches/0004-tcc-binary128-literals.patch": "15d4a95ec667c9ec18ea2be3fc1475c1178668853fea28213c3061afa0f863ff",
+    "c/build/base.elf": "c897326af963d08f8516bdbe98eb4755f79d48033cef95009cea14e01d793a4f",
+    "c/src/gen_embed.sh": "68534ee3a238c143bf4e749fcb0ea43e8b53933c4a9d6843422d995c879d7d76",
+    "scripts/model_diff.py": "ab13368709839e61bfd015dcf3fb1ce21e6d7b52b38384e603f6ffe5e3f295db",
+    "scripts/source_fixtures.py": "8bd91c7d988bcd2af43dfc8c2b8f435376b842e7a3ceeb988bba439baecb609e",
+    ".lake/build/bin/tcc_model": "74ac07b2c2be006b2f9554fa64e58db80c3fb6952d0b8e2efc101af98504044e",
+    "build/ghost-byte-inputs/ghost-control.c": "597e3c364acd27cdef4e8010910e0fd9b2f02ba0aa5138672f9bac2d49ff28e5",
+    "build/ghost-byte-inputs/ghost-declarations.c": "3eb8902e4d689330669d5ea677aa5884573960190a2a95a181ad0661ebad3fcf",
+    "build/ghost-byte-inputs/ghost-designators.c": "d073adcac1874e726dfc4b2ef60ea7a361d5eebdb01d3b58e82355689eb5d5ad",
+    "build/ghost-byte-inputs/ghost-gnu.c": "4de0d95045aedad4a0774cc1ffa84705b8d4825461c8b089f9e6723fc2267873",
+    "build/ghost-byte-inputs/ghost-pragmas.c": "98b63abddb45b414bc0fc8dbcc10beae095b2b17860d008f9e094998c47d0ca7",
+    "build/ghost-byte-inputs/ghost-spellings.c": "b6204cbdd9dc454b1200731113ff7bdd22f576888a3ac235b48a3afa82036028",
+    "build/ghost-byte-inputs/ghost-typedef.c": "ea706af04b67ff2d04b8c48864d152fc5535dba47f4b07b7730df2725937423e",
+    "build/array-integrated/onoff/physical-lf.c": "c2ef0d56e626795741e8ca69bd1c4294df432cf68bd29b8bf40e3ab69b365ef5",
+    "build/array-integrated/onoff/physical-crlf.c": "2cba2491e7cac266f7ffedb58c37abcba505398a7596a0facd4571c5169272d6",
+    "build/array-integrated/onoff/physical-literal.c": "0fb5925857efb16892b68bea156c829084dedcafe814a16fd1517d0a5332865e",
+    "build/array-integrated/onoff/physical-trigraphs.c": "4af8aea772fdb8dc16fa95e1e3f45735bbd11de014d3251a3efe03725d91f2ff",
+    "build/array-integrated/onoff/physical-trisplice.c": "81d3d87090146dacf4fd003fec888e3c4556a03057dde02e0fb059ae2fb643c8",
+    "build/array-integrated/onoff/physical-boundary-lf.c": "537561d589c8d5f5a3bcd442fcae2998ff48b7e81ee65839211e9cd05b9840f1",
+    "build/array-integrated/onoff/physical-boundary-crlf.c": "9940a9aa3a427325adf4e45c9350a5cd299531ede0ac810ce34cfd8d082cddfc",
+    "build/array-integrated/onoff/physical-tail.c": "a2e53a2e7809b8942e940b11ebd9c4df44993348c8768111a2fa0762e4883fba",
+    "build/array-integrated/arena-inputs/pointer-malloc.c": "ad2f323973e97820e183c0da3ad438b132fb0bf9c26fe09f7b51abd86cb0ea14",
+    "build/array-integrated/arena-inputs/pointer-memcpy.c": "ac885e17483b9bc01b019f70211f70ee055f2278dac7bbaff1a3d37544c5b984",
+    "build/array-integrated/arena-inputs/static-pointers.c": "da470ed26794384cc7ffc8b33815436bc4ac99988e1139c2541d2b47c63647b7"
+  },
+  "results": {
+    "build/ghost-byte-inputs": [
+      {
+        "name": "build/ghost-byte-inputs/ghost-control.c",
+        "model_s": 0.07752108573913574,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13284 bytes"
+      },
+      {
+        "name": "build/ghost-byte-inputs/ghost-designators.c",
+        "model_s": 0.07515859603881836,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13124 bytes"
+      },
+      {
+        "name": "build/ghost-byte-inputs/ghost-gnu.c",
+        "model_s": 0.0760807991027832,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13148 bytes"
+      },
+      {
+        "name": "build/ghost-byte-inputs/ghost-declarations.c",
+        "model_s": 0.07689070701599121,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13180 bytes"
+      },
+      {
+        "name": "build/ghost-byte-inputs/ghost-pragmas.c",
+        "model_s": 0.07548165321350098,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13028 bytes"
+      },
+      {
+        "name": "build/ghost-byte-inputs/ghost-spellings.c",
+        "model_s": 0.07572579383850098,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13420 bytes"
+      },
+      {
+        "name": "build/ghost-byte-inputs/ghost-typedef.c",
+        "model_s": 0.07537579536437988,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13156 bytes"
+      }
+    ],
+    "build/array-integrated/onoff": [
+      {
+        "name": "build/array-integrated/onoff/physical-lf.c",
+        "model_s": 0.07719659805297852,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13060 bytes"
+      },
+      {
+        "name": "build/array-integrated/onoff/physical-crlf.c",
+        "model_s": 0.0745842456817627,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13052 bytes"
+      },
+      {
+        "name": "build/array-integrated/onoff/physical-literal.c",
+        "model_s": 0.07590103149414062,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13068 bytes"
+      },
+      {
+        "name": "build/array-integrated/onoff/physical-trigraphs.c",
+        "model_s": 0.07616615295410156,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13036 bytes"
+      },
+      {
+        "name": "build/array-integrated/onoff/physical-trisplice.c",
+        "model_s": 0.07596755027770996,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13052 bytes"
+      },
+      {
+        "name": "build/array-integrated/onoff/physical-boundary-lf.c",
+        "model_s": 0.07910871505737305,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13052 bytes"
+      },
+      {
+        "name": "build/array-integrated/onoff/physical-boundary-crlf.c",
+        "model_s": 0.07509136199951172,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13052 bytes"
+      },
+      {
+        "name": "build/array-integrated/onoff/physical-tail.c",
+        "model_s": 0.07412385940551758,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13028 bytes"
+      }
+    ],
+    "build/array-integrated/arena-inputs": [
+      {
+        "name": "build/array-integrated/arena-inputs/pointer-malloc.c",
+        "model_s": 0.07414746284484863,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13180 bytes"
+      },
+      {
+        "name": "build/array-integrated/arena-inputs/pointer-memcpy.c",
+        "model_s": 0.0744943618774414,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13476 bytes"
+      },
+      {
+        "name": "build/array-integrated/arena-inputs/static-pointers.c",
+        "model_s": 0.0694432258605957,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13588 bytes"
+      }
+    ]
+  },
+  "rows": [
+    [
+      "build/ghost-byte-inputs",
+      7,
+      7,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.07603349004473005
+    ],
+    [
+      "build/array-integrated/onoff",
+      8,
+      8,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.07601743936538696
+    ],
+    [
+      "build/array-integrated/arena-inputs",
+      3,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.07269501686096191
+    ]
+  ],
+  "totals": {
+    "n": 18,
+    "same": 18
+  },
+  "wall_seconds": 2.1834988594055176,
+  "reference": "rv64emu diagnostic; Sail arena equality pending",
+  "sail_settings": null,
+  "compiler_args": [
+    "-std=c11",
+    "-w"
+  ],
+  "invocations": {}
+}

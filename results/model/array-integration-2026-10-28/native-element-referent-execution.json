@@ -1,0 +1,88 @@
+{
+  "input_pins": {
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/element-referent.c": "a346ce953df7e1926974377aa9526066c8fbbf6413805f65cf2f47aae1466b1f",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/tcc_model": "74ac07b2c2be006b2f9554fa64e58db80c3fb6952d0b8e2efc101af98504044e",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/unevaluated-native-tool/capture_cut": "2fe637d6e77e2741606bb67e5f7f07751a1a90dd1d5467f75aca3288cf5663bf",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/unevaluated-native-tool/build.json": "6f829539787d74997a6fa542d9d4cd04b9a62dca3950f50b237458694bf571e6",
+    "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/scripts/unevaluated_native_check.py": "90f78a3a022db3cc579f02e54c2e6ad256c3040c087c194228ffb37f342a266e"
+  },
+  "erasure": true,
+  "model_runs": [
+    {
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/tcc_model",
+        "--prog",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/element-referent.c",
+        "--arg",
+        "-w",
+        "--arg",
+        "-std=c11",
+        "--arena-out",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/element-referent-native/off.arena",
+        "--console-out",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/element-referent-native/off.console"
+      ],
+      "exit": 0,
+      "stdout_sha256": "f4472a14b6160e58b35bfeb710d23d240ab59402cc84bc7b5a579c7373849295",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "arena": "2e48ea5c7ef4c192ed5071b3271647d8ee3474a62204296fd85d4d01761303e7",
+      "console": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/tcc_model",
+        "--prog",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/element-referent.c",
+        "--arg",
+        "-w",
+        "--arg",
+        "-std=c11",
+        "--arena-out",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/element-referent-native/on.arena",
+        "--console-out",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/element-referent-native/on.console",
+        "--ghost-out",
+        "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/element-referent-native/on.ghost.json"
+      ],
+      "exit": 0,
+      "stdout_sha256": "f4472a14b6160e58b35bfeb710d23d240ab59402cc84bc7b5a579c7373849295",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "arena": "2e48ea5c7ef4c192ed5071b3271647d8ee3474a62204296fd85d4d01761303e7",
+      "console": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "native_arena": {
+    "command": [
+      "python3",
+      "scripts/model_diff.py",
+      "--no-report",
+      "--require-success",
+      "1",
+      "--json-out",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/element-referent-native/arenas.json",
+      "--sail-capture",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/unevaluated-native-tool/capture_cut",
+      "-j",
+      "1",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/element-referent.c"
+    ],
+    "exit": 0,
+    "stdout_sha256": "bedcae6c61d87f24814967502036f81ade8c741197e1b5b1aa65646025c8d92c",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "execution": {
+    "command": [
+      "systemd-run",
+      "--user",
+      "--scope",
+      "-p",
+      "MemoryMax=12G",
+      "bash",
+      "scripts/run_tcc_sail.sh",
+      "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/array-decay-gate.SvGSeE/comparison/inputs/element-referent.c"
+    ],
+    "exit": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3a3d867040f3c16f06df0a192f802d3870a5862b2b9b03314c5d629e2aa2e7d"
+  }
+}

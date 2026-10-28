@@ -564,3 +564,18 @@ assignment is a successful control. The 140-file evidence is
 results/csem/compound-lvalue-2026-10-28.md. Slot 1's bitfield work must repair
 shared lvalue single-evaluation, not only new bitfield cases. No source-scope
 restriction, native observation, changed pin or external contact is claimed.
+
+Array-decay adoption (2026-10-28): the combined full gate passes with 3,646
+frozen inputs. The compiler/model now clear outer array-alias alignment only
+when deriving a pointer, preserving referent and pointer-alias metadata. C11
+checks pass 210 positives and 27 negatives; 29 new fast arenas succeed with
+five separate constraint refusals. The 71-case semantic matrix now has 54
+defined agreements, 12 diagnostics, two policy and three placement gaps. All
+legacy independent provenance/erasure/arena controls pass. Three dedicated
+native cases plus the inherited generic batch each match all 4 MiB and execute
+to zero on the rebuilt image. Their distinct step counts and 52 retained arena
+pairs are in results/model/array-integration-2026-10-28.md. The setup race and
+serialized retry are preserved honestly. TypeAlignmentRepr and all twelve
+ghost contracts remain open here; the local replay-erasure proof is in review.
+Slot 1 continues bitfields/shared CSEM14 lowering; slot 2 proves replay erasure.
+No scope reduction, broad-count pooling, sum regeneration or user decision.

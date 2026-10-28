@@ -40,7 +40,8 @@ public libc `strtold` still needs correction in the library lane. Matching refus
 
 The lead runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most two
 at a time, following MANAGER.md. Slot 1 now handles C11 bitfield semantics;
-slot 2 repairs compiler/model array-to-pointer alignment decay. Complete _Generic/_Static_assert syntax is adopted after its combined gate
+slot 2 proves local generic-association replay erasure. Array-to-pointer
+alignment decay is adopted after the combined image/gate validation. Complete _Generic/_Static_assert syntax is adopted after its combined gate
 and independent raw/native checks. Binding meaning and actual model-owned compiler-injected
 opening authority are adopted after their combined gate and independent raw
 comparison below. Physical-origin maps remain adopted with separate evidence.
@@ -441,6 +442,21 @@ assignment is a successful control. The 140-file evidence is
 results/csem/compound-lvalue-2026-10-28.md. Slot 1's bitfield work must repair
 shared lvalue single-evaluation, not only new bitfield cases. No source-scope
 restriction, native observation, changed pin or external contact is claimed.
+
+Array-decay adoption (2026-10-28): the combined full gate passes with 3,646
+frozen inputs. The compiler/model now clear outer array-alias alignment only
+when deriving a pointer, preserving referent and pointer-alias metadata. C11
+checks pass 210 positives and 27 negatives; 29 new fast arenas succeed with
+five separate constraint refusals. The 71-case semantic matrix now has 54
+defined agreements, 12 diagnostics, two policy and three placement gaps. All
+legacy independent provenance/erasure/arena controls pass. Three dedicated
+native cases plus the inherited generic batch each match all 4 MiB and execute
+to zero on the rebuilt image. Their distinct step counts and 52 retained arena
+pairs are in results/model/array-integration-2026-10-28.md. The setup race and
+serialized retry are preserved honestly. TypeAlignmentRepr and all twelve
+ghost contracts remain open here; the local replay-erasure proof is in review.
+Slot 1 continues bitfields/shared CSEM14 lowering; slot 2 proves replay erasure.
+No scope reduction, broad-count pooling, sum regeneration or user decision.
 
 ## Needs user
 

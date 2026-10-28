@@ -22,7 +22,7 @@ refusal disjunct. The existing per-program theorem is its non-vacuity witness;
 STATUS.md records the active F0–F3 work.
 
 Current F0–F3 validation: exact phase-4 observation and nested designators are
-integrated; the latest compiler comparison has 1,345 matching arenas out of
+integrated; the frozen broad compiler comparison records 1,345 matching arenas out of
 1,815 inputs, with 463 refusals and seven assembly gaps separate. The shared
 fixture repair recovers three former refusals, each matching a complete native
 Sail arena (results/model/corpus-fixtures-2026-10-28.md). Native observations
@@ -71,10 +71,17 @@ separate standalone refusals retained; multi-unit ghost provenance stays open
 CSem typedef alignment and early array constraints are now repaired through
 shared Lem typing and a distinct GNU expression-alignof constructor. The
 combined gate and 71-case matrix pass, keeping 53 defined agreements separate
-from invalid constraints, function-policy/parser gaps and an array-decay
-compiler discrepancy. The three original wrong results have independent full
-compiler and cross-GCC Sail observations; the compiler decay repair is next
+from invalid constraints, function-policy/parser gaps and the then-open
+array-decay compiler discrepancy. The three original wrong results have independent full
+compiler and cross-GCC Sail observations; the compiler decay repair is now adopted
 ([alignment integration](results/model/alignment-integration-2026-10-28.md)).
+
+The array-decay repair passes the combined gate, 210 positive/27 negative C11
+checks and 29 successful focused fast arenas. Three dedicated native cases
+and the inherited generic batch each match all 4 MiB and execute to zero on
+the rebuilt compiler image. Alignment now has 54 defined agreements; the
+original wrong result remains retained separately
+([array integration](results/model/array-integration-2026-10-28.md)).
 
 The latest preprocessing corpus has 618 exact model/reference and 616 exact
 spec/reference agreements across 622 inputs. The image's opened-path once
