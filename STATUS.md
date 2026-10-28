@@ -41,7 +41,8 @@ public libc `strtold` still needs correction in the library lane. Matching refus
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
 two at a time, following MANAGER.md. Slot 1 now handles GNU declaration attributes in sol-csem-repin;
 CSEM-10, library identity and bounded allocation are adopted. Slot 2
-continues ghost Cabs from modeled compiler parser actions. Both resumed after
+repairs GNU typedef alignment in the compiler/model; the model-origin
+continuation is adopted after combined validation. Both resumed after
 the interruption; the latest continuation status is below. The anonymous-member repair is adopted with IEEE after its combined gate.
 The pure IEEE implementation is integrated after the combined gate; the compiler/model
 anonymous-container qualifier repair is also adopted. Exact-token/pragma integration is now
@@ -272,6 +273,21 @@ ancestry. The full gate passes with 2,297 unchanged input hashes, 12 raw methods
 captures and the failed initial build command are retained in
 results/pre/macro-redefinition-2026-10-28.md. The model-origin checkpoint
 291bbb2 is committed for combined review; its main adoption is still pending.
+
+
+Model-origin adoption (2026-10-28): the combined full gate passes with 2,722
+unchanged source pins, 17 exact origin/opening controls plus three omission
+guards, 44 exact shared-token Cabs controls, seven finite ghost-on/off checks
+and 1,345/1,815 matching fast arenas. The 463 refusals and seven assembly gaps
+remain separate; no other broad errors occur. Three fresh model comparisons
+match retained complete Sail captures; no new Sail runs are claimed. Strict
+ordinary model/spec Cabs remains 0/3 because the independent GNU header parser
+is not yet adopted. Trigraph/splice physical maps and all six typed proof
+Statements remain open. Failed setup runs and final exact captures are in
+results/model/ghost-origins-integration-2026-10-28.md. Slot 1 finishes GNU
+attributes/layout; slot 2 repairs compiler/model typedef alignment. Sum cuts
+remain frozen. The old parser captures were archived only after every member
+was hash-verified; the storage record is results/review/parser-ghost-capture-archive-2026-10-28.json.
 
 ## Needs user
 

@@ -1,0 +1,25 @@
+{
+  "rows": [
+    {
+      "original": ".claude/worktrees/sol-f2-tokens/build/f1a/run-3fj2v9lf",
+      "archive": "build/recovery/parser-captures-ghost-2026-10-28/run-3fj2v9lf.tar.gz",
+      "sha256": "ae7390eb4043434251402287d4b8aec13a70d4a4cf083ca4ce622880f37432ae",
+      "manifest": "build/recovery/parser-captures-ghost-2026-10-28/run-3fj2v9lf.json",
+      "manifest_sha256": "4a20e459a636b461c60e4bb177d64be38f3eb3080dd384ef2a7d0eaf82f12151",
+      "files": 7191,
+      "uncompressed_bytes": 2318691098,
+      "compressed_bytes": 129934741
+    },
+    {
+      "original": ".claude/worktrees/sol-f2-tokens/build/f1a/run-bg0fpw_s",
+      "archive": "build/recovery/parser-captures-ghost-2026-10-28/run-bg0fpw_s.tar.gz",
+      "sha256": "45b2ffe8222b316ca11a4620454bb51079ebc281c30f905085ec3f8ebba34e05",
+      "manifest": "build/recovery/parser-captures-ghost-2026-10-28/run-bg0fpw_s.json",
+      "manifest_sha256": "4a20e459a636b461c60e4bb177d64be38f3eb3080dd384ef2a7d0eaf82f12151",
+      "files": 7191,
+      "uncompressed_bytes": 2318691098,
+      "compressed_bytes": 129932800
+    }
+  ],
+  "scope": "Two completed Oct 27 parser-capture directories only; full file contents archived and independently rehashed before removing loose copies. Sources, toolchains, executables and active captures untouched."
+}

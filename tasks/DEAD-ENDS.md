@@ -599,3 +599,12 @@ requested corrections until the lead surfaced them explicitly.
   and compare all remaining opening records. Actual-capture perturbations now
   verify unmatched openings/prefix tokens and missing opening graphs fail.
   These harness controls do not count as successful source fixtures.
+
+- 2026-10-28, ghost-origin integration: `TCC_MODEL_REF_MAX_STEPS` is not a
+  recognized runner variable; use `MAX_STEPS=600000000` for the known cleanup
+  fixture. The first broad run also used different regenerated mutant inputs
+  (400/400 hashes differed), so its counts could not be compared to main.
+  Preserve that capture; restore exact hash-pinned corpus inputs for a
+  regression claim. The corrected run gives 1,345/1,815, no harness failures.
+  A first erasure run lacked the source manifest; restoring the verified
+  seven fixtures plus manifest allowed the unchanged driver to pass.

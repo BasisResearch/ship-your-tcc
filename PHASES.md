@@ -394,3 +394,18 @@ The full gate passes with 2,297 unchanged hashes, 12 raw and 21 token methods,
 Sail runs are claimed. The model-origin checkpoint's combined gate and all
 preprocessing/provenance proofs remain open. Evidence:
 results/pre/macro-redefinition-2026-10-28.md.
+
+F3 model-origin adoption (2026-10-28): the independent continuation passes
+its combined full gate with 2,722 frozen source pins. Seventeen exact recursive
+origin/opening controls and three omission guards pass; repeated identical
+macro definitions now agree after the separate spec repair. Forty-four exact
+Cabs fixtures, seven on/off checks and 1,345/1,815 broad fast arenas pass;
+463 refusals, seven assembly gaps and two physical-transformation origin gaps
+remain explicit. Three fresh model runs match retained full Sail captures,
+without new native executions. Ordinary strict Cabs remains 0/3 pending GNU
+header grammar. Six open obligations now include
+Ghost.NormalizationAgreement_Statement alongside the five previously listed
+statements. Whole-C construction, runtime alias meaning, fuel adequacy and
+binary refinement remain open. Failed setup runs are retained in
+results/model/ghost-origins-integration-2026-10-28.md. Slot 2 proceeds with the
+separate typedef-alignment compiler/model repair; no sum cuts are regenerated.

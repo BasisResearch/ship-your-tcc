@@ -1,0 +1,124 @@
+{
+  "command": [
+    "scripts/model_diff.py",
+    "--no-report",
+    "--json-out",
+    "build/ghost-origins-integrated/arenas.json",
+    "--require-success",
+    "7",
+    "-j",
+    "4",
+    "build/ghost-byte-inputs/ghost-control.c",
+    "build/ghost-byte-inputs/ghost-declarations.c",
+    "build/ghost-byte-inputs/ghost-designators.c",
+    "build/ghost-byte-inputs/ghost-gnu.c",
+    "build/ghost-byte-inputs/ghost-pragmas.c",
+    "build/ghost-byte-inputs/ghost-spellings.c",
+    "build/ghost-byte-inputs/ghost-typedef.c"
+  ],
+  "runtime_key": "353e3d2e95da80bdc957ab64c7fa6be8bacb16f18166451299a089ff23e4130b",
+  "pins": {
+    "vendor/TINYCC_REV": "76ca376f1f96cf1b316713d8f94d91c8629445929d1e7474792fd76610bce1c0",
+    "patches/0001-tcc-rv64i-soft.patch": "5afa37bbab2e6d1767237fc73457a7e7ca510705ebbba571a5790cac76e10217",
+    "patches/0002-tcc-baremetal-run.patch": "e27049337b7cf1944dec01b1f594c02c017b55cbea1c8d73c29746e07064cc23",
+    "patches/0003-tcc-c11.patch": "c0ea34110e1a26fea8296fc2022d918c7bf02215c6269f2a6c389379056e14ba",
+    "patches/0004-tcc-binary128-literals.patch": "15d4a95ec667c9ec18ea2be3fc1475c1178668853fea28213c3061afa0f863ff",
+    "c/build/base.elf": "d8c6ad02646237fe06fc1e613df63045c112188b8e96e7c418bdda3a8b4e13de",
+    "c/src/gen_embed.sh": "68534ee3a238c143bf4e749fcb0ea43e8b53933c4a9d6843422d995c879d7d76",
+    "scripts/model_diff.py": "ff47a137f779e4812d4ebc42624262e079732af365153f7ba2fe237400880548",
+    "scripts/source_fixtures.py": "eab86e70316d6eb01cea0ad3922a829167627da25b270a3ee4e7a49c65ad2e6f",
+    ".lake/build/bin/tcc_model": "0d2984d64cdcaf93b6952f05b266a1aa08456ed31ed8ade0570f2fdf36dcae6a",
+    "build/ghost-byte-inputs/ghost-control.c": "597e3c364acd27cdef4e8010910e0fd9b2f02ba0aa5138672f9bac2d49ff28e5",
+    "build/ghost-byte-inputs/ghost-declarations.c": "3eb8902e4d689330669d5ea677aa5884573960190a2a95a181ad0661ebad3fcf",
+    "build/ghost-byte-inputs/ghost-designators.c": "d073adcac1874e726dfc4b2ef60ea7a361d5eebdb01d3b58e82355689eb5d5ad",
+    "build/ghost-byte-inputs/ghost-gnu.c": "4de0d95045aedad4a0774cc1ffa84705b8d4825461c8b089f9e6723fc2267873",
+    "build/ghost-byte-inputs/ghost-pragmas.c": "98b63abddb45b414bc0fc8dbcc10beae095b2b17860d008f9e094998c47d0ca7",
+    "build/ghost-byte-inputs/ghost-spellings.c": "b6204cbdd9dc454b1200731113ff7bdd22f576888a3ac235b48a3afa82036028",
+    "build/ghost-byte-inputs/ghost-typedef.c": "ea706af04b67ff2d04b8c48864d152fc5535dba47f4b07b7730df2725937423e"
+  },
+  "results": {
+    "build/ghost-byte-inputs": [
+      {
+        "name": "build/ghost-byte-inputs/ghost-control.c",
+        "model_s": 0.07093477249145508,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13284 bytes"
+      },
+      {
+        "name": "build/ghost-byte-inputs/ghost-declarations.c",
+        "model_s": 0.07022738456726074,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13180 bytes"
+      },
+      {
+        "name": "build/ghost-byte-inputs/ghost-designators.c",
+        "model_s": 0.07088041305541992,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13124 bytes"
+      },
+      {
+        "name": "build/ghost-byte-inputs/ghost-gnu.c",
+        "model_s": 0.07179832458496094,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13148 bytes"
+      },
+      {
+        "name": "build/ghost-byte-inputs/ghost-pragmas.c",
+        "model_s": 0.07172107696533203,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13028 bytes"
+      },
+      {
+        "name": "build/ghost-byte-inputs/ghost-spellings.c",
+        "model_s": 0.07044029235839844,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13420 bytes"
+      },
+      {
+        "name": "build/ghost-byte-inputs/ghost-typedef.c",
+        "model_s": 0.0727081298828125,
+        "ref": "ran",
+        "model": "ran",
+        "result": "same",
+        "why": "arena 13156 bytes"
+      }
+    ]
+  },
+  "rows": [
+    [
+      "build/ghost-byte-inputs",
+      7,
+      7,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.07124434198651995
+    ]
+  ],
+  "totals": {
+    "n": 7,
+    "same": 7
+  },
+  "wall_seconds": 0.8528006076812744,
+  "reference": "rv64emu diagnostic; Sail arena equality pending",
+  "sail_settings": null,
+  "compiler_args": [
+    "-std=c11",
+    "-w"
+  ]
+}

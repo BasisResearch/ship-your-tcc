@@ -1,0 +1,378 @@
+{
+  "model_sha256": "0d2984d64cdcaf93b6952f05b266a1aa08456ed31ed8ade0570f2fdf36dcae6a",
+  "driver_sha256": "5dacc4de35c8eef7afa4c522b1902493c8c4a0493ff39781743b9b4ada1356bf",
+  "source_manifest_sha256": "4da6bcf13aade6d9f37e406c920f197b2f4050bd17f0e4441a05c864c878e5fe",
+  "rows": [
+    {
+      "source": "build/ghost-byte-inputs/ghost-control.c",
+      "source_sha256": "597e3c364acd27cdef4e8010910e0fd9b2f02ba0aa5138672f9bac2d49ff28e5",
+      "equal": true,
+      "captures": {
+        "false": {
+          "arena_sha256": "76c80b82bba7e9d557b4cd9d38e82e2f099e5c4f307b726740f2172cbdcaef81",
+          "console_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "ran\n",
+          "stderr": ""
+        },
+        "true": {
+          "arena_sha256": "76c80b82bba7e9d557b4cd9d38e82e2f099e5c4f307b726740f2172cbdcaef81",
+          "console_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "ran\n",
+          "stderr": ""
+        }
+      },
+      "commands": [
+        [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/tcc_model",
+          "--fs",
+          "c/build/fs.list",
+          "--syms",
+          "build/image.syms",
+          "--prog",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-byte-inputs/ghost-control.c",
+          "--arena-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-control.off.arena",
+          "--console-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-control.off.console"
+        ],
+        [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/tcc_model",
+          "--fs",
+          "c/build/fs.list",
+          "--syms",
+          "build/image.syms",
+          "--prog",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-byte-inputs/ghost-control.c",
+          "--arena-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-control.on.arena",
+          "--console-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-control.on.console",
+          "--ghost-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-control.on.ghost.json"
+        ]
+      ],
+      "ghost_status": "ok",
+      "typed_fragments": 443,
+      "token_errors": 0,
+      "pragma_effects": 0
+    },
+    {
+      "source": "build/ghost-byte-inputs/ghost-declarations.c",
+      "source_sha256": "3eb8902e4d689330669d5ea677aa5884573960190a2a95a181ad0661ebad3fcf",
+      "equal": true,
+      "captures": {
+        "false": {
+          "arena_sha256": "ca2f8204b63b3d1a8b6677d8ff637436f8256a7496bac888ee73828bf377767b",
+          "console_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "ran\n",
+          "stderr": ""
+        },
+        "true": {
+          "arena_sha256": "ca2f8204b63b3d1a8b6677d8ff637436f8256a7496bac888ee73828bf377767b",
+          "console_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "ran\n",
+          "stderr": ""
+        }
+      },
+      "commands": [
+        [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/tcc_model",
+          "--fs",
+          "c/build/fs.list",
+          "--syms",
+          "build/image.syms",
+          "--prog",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-byte-inputs/ghost-declarations.c",
+          "--arena-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-declarations.off.arena",
+          "--console-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-declarations.off.console"
+        ],
+        [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/tcc_model",
+          "--fs",
+          "c/build/fs.list",
+          "--syms",
+          "build/image.syms",
+          "--prog",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-byte-inputs/ghost-declarations.c",
+          "--arena-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-declarations.on.arena",
+          "--console-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-declarations.on.console",
+          "--ghost-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-declarations.on.ghost.json"
+        ]
+      ],
+      "ghost_status": "ok",
+      "typed_fragments": 434,
+      "token_errors": 0,
+      "pragma_effects": 0
+    },
+    {
+      "source": "build/ghost-byte-inputs/ghost-designators.c",
+      "source_sha256": "d073adcac1874e726dfc4b2ef60ea7a361d5eebdb01d3b58e82355689eb5d5ad",
+      "equal": true,
+      "captures": {
+        "false": {
+          "arena_sha256": "09efa64f6f1f60a10dfc85a15d76876224b8f546437d26f378073380fa63d6c0",
+          "console_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "ran\n",
+          "stderr": ""
+        },
+        "true": {
+          "arena_sha256": "09efa64f6f1f60a10dfc85a15d76876224b8f546437d26f378073380fa63d6c0",
+          "console_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "ran\n",
+          "stderr": ""
+        }
+      },
+      "commands": [
+        [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/tcc_model",
+          "--fs",
+          "c/build/fs.list",
+          "--syms",
+          "build/image.syms",
+          "--prog",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-byte-inputs/ghost-designators.c",
+          "--arena-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-designators.off.arena",
+          "--console-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-designators.off.console"
+        ],
+        [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/tcc_model",
+          "--fs",
+          "c/build/fs.list",
+          "--syms",
+          "build/image.syms",
+          "--prog",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-byte-inputs/ghost-designators.c",
+          "--arena-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-designators.on.arena",
+          "--console-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-designators.on.console",
+          "--ghost-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-designators.on.ghost.json"
+        ]
+      ],
+      "ghost_status": "ok",
+      "typed_fragments": 416,
+      "token_errors": 0,
+      "pragma_effects": 0
+    },
+    {
+      "source": "build/ghost-byte-inputs/ghost-gnu.c",
+      "source_sha256": "4de0d95045aedad4a0774cc1ffa84705b8d4825461c8b089f9e6723fc2267873",
+      "equal": true,
+      "captures": {
+        "false": {
+          "arena_sha256": "18945c56cf28fbc806d246033fd9ce74ce4388e67e7ce6ee9d29f70d9d0f4403",
+          "console_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "ran\n",
+          "stderr": ""
+        },
+        "true": {
+          "arena_sha256": "18945c56cf28fbc806d246033fd9ce74ce4388e67e7ce6ee9d29f70d9d0f4403",
+          "console_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "ran\n",
+          "stderr": ""
+        }
+      },
+      "commands": [
+        [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/tcc_model",
+          "--fs",
+          "c/build/fs.list",
+          "--syms",
+          "build/image.syms",
+          "--prog",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-byte-inputs/ghost-gnu.c",
+          "--arena-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-gnu.off.arena",
+          "--console-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-gnu.off.console"
+        ],
+        [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/tcc_model",
+          "--fs",
+          "c/build/fs.list",
+          "--syms",
+          "build/image.syms",
+          "--prog",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-byte-inputs/ghost-gnu.c",
+          "--arena-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-gnu.on.arena",
+          "--console-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-gnu.on.console",
+          "--ghost-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-gnu.on.ghost.json"
+        ]
+      ],
+      "ghost_status": "ok",
+      "typed_fragments": 421,
+      "token_errors": 0,
+      "pragma_effects": 0
+    },
+    {
+      "source": "build/ghost-byte-inputs/ghost-pragmas.c",
+      "source_sha256": "98b63abddb45b414bc0fc8dbcc10beae095b2b17860d008f9e094998c47d0ca7",
+      "equal": true,
+      "captures": {
+        "false": {
+          "arena_sha256": "33b2bc59d34c2806ce261a8e6261759b47c1b59e9b24ca9540119f0d8542f028",
+          "console_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "ran\n",
+          "stderr": ""
+        },
+        "true": {
+          "arena_sha256": "33b2bc59d34c2806ce261a8e6261759b47c1b59e9b24ca9540119f0d8542f028",
+          "console_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "ran\n",
+          "stderr": ""
+        }
+      },
+      "commands": [
+        [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/tcc_model",
+          "--fs",
+          "c/build/fs.list",
+          "--syms",
+          "build/image.syms",
+          "--prog",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-byte-inputs/ghost-pragmas.c",
+          "--arena-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-pragmas.off.arena",
+          "--console-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-pragmas.off.console"
+        ],
+        [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/tcc_model",
+          "--fs",
+          "c/build/fs.list",
+          "--syms",
+          "build/image.syms",
+          "--prog",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-byte-inputs/ghost-pragmas.c",
+          "--arena-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-pragmas.on.arena",
+          "--console-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-pragmas.on.console",
+          "--ghost-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-pragmas.on.ghost.json"
+        ]
+      ],
+      "ghost_status": "ok",
+      "typed_fragments": 383,
+      "token_errors": 0,
+      "pragma_effects": 4
+    },
+    {
+      "source": "build/ghost-byte-inputs/ghost-spellings.c",
+      "source_sha256": "b6204cbdd9dc454b1200731113ff7bdd22f576888a3ac235b48a3afa82036028",
+      "equal": true,
+      "captures": {
+        "false": {
+          "arena_sha256": "b328fc227afa12966b1c7116db531b35260af4c231800fbbc37f0aae5ee9f2b8",
+          "console_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "ran\n",
+          "stderr": ""
+        },
+        "true": {
+          "arena_sha256": "b328fc227afa12966b1c7116db531b35260af4c231800fbbc37f0aae5ee9f2b8",
+          "console_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "ran\n",
+          "stderr": ""
+        }
+      },
+      "commands": [
+        [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/tcc_model",
+          "--fs",
+          "c/build/fs.list",
+          "--syms",
+          "build/image.syms",
+          "--prog",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-byte-inputs/ghost-spellings.c",
+          "--arena-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-spellings.off.arena",
+          "--console-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-spellings.off.console"
+        ],
+        [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/tcc_model",
+          "--fs",
+          "c/build/fs.list",
+          "--syms",
+          "build/image.syms",
+          "--prog",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-byte-inputs/ghost-spellings.c",
+          "--arena-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-spellings.on.arena",
+          "--console-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-spellings.on.console",
+          "--ghost-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-spellings.on.ghost.json"
+        ]
+      ],
+      "ghost_status": "ok",
+      "typed_fragments": 418,
+      "token_errors": 0,
+      "pragma_effects": 0
+    },
+    {
+      "source": "build/ghost-byte-inputs/ghost-typedef.c",
+      "source_sha256": "ea706af04b67ff2d04b8c48864d152fc5535dba47f4b07b7730df2725937423e",
+      "equal": true,
+      "captures": {
+        "false": {
+          "arena_sha256": "b04f8ac1872b05eb9819cef085f9698f09d7d85e7d25145708bf1042edf5c85e",
+          "console_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "ran\n",
+          "stderr": ""
+        },
+        "true": {
+          "arena_sha256": "b04f8ac1872b05eb9819cef085f9698f09d7d85e7d25145708bf1042edf5c85e",
+          "console_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "ran\n",
+          "stderr": ""
+        }
+      },
+      "commands": [
+        [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/tcc_model",
+          "--fs",
+          "c/build/fs.list",
+          "--syms",
+          "build/image.syms",
+          "--prog",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-byte-inputs/ghost-typedef.c",
+          "--arena-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-typedef.off.arena",
+          "--console-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-typedef.off.console"
+        ],
+        [
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/.lake/build/bin/tcc_model",
+          "--fs",
+          "c/build/fs.list",
+          "--syms",
+          "build/image.syms",
+          "--prog",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-byte-inputs/ghost-typedef.c",
+          "--arena-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-typedef.on.arena",
+          "--console-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-typedef.on.console",
+          "--ghost-out",
+          "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-c11-line/build/ghost-erasure-final/ghost-typedef.on.ghost.json"
+        ]
+      ],
+      "ghost_status": "ok",
+      "typed_fragments": 411,
+      "token_errors": 0,
+      "pragma_effects": 0
+    }
+  ]
+}

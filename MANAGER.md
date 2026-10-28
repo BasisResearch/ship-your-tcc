@@ -40,14 +40,13 @@ to this project's two-worker limit and shared Lean build lock.
 
 Current assignments, 2026-10-28: slot 1 runs tasks/f1-gnu-attributes.md in
 sol-csem-repin, providing independent F1 syntax and attribute meaning. Slot 2
-continues tasks/f3-ghost-cabs.md in sol-f2-tokens, now model-owned macro origins,
-replay and typed header construction. The typed checkpoint and CSEM-10 zero
-symbol repair are adopted after combined gates. General declaration constraints
-(tasks/f1-declaration-constraints.md, CSEM-11) and concrete bitfields
-(tasks/f1-bitfields.md) are queued. Pack/layout consumption remains required.
-The GNU review also queues tasks/f3-typedef-alignment.md for the compiler/model
-query mismatch and tasks/f1-injected-bindings.md for actual tccdefs aliases.
-Keep those separate from user asm exclusion and from the current checkpoints.
+runs tasks/f3-typedef-alignment.md in sol-f2-tokens, repairing the observed
+compiler query mismatch and its executable model. The model-origin continuation
+is adopted after its combined gate. General declaration constraints
+(tasks/f1-declaration-constraints.md, CSEM-11), concrete bitfields
+(tasks/f1-bitfields.md), physical transformation provenance and actual tccdefs
+alias meaning (tasks/f1-injected-bindings.md) remain queued. Pack/layout
+consumption remains required. Keep these separate from user asm exclusions.
 
 Frozen build requests use the shared 12 GB lock. Changed inputs invalidate
 a request; freeze a new hash manifest before retrying. Infrastructure limits
