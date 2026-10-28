@@ -13,6 +13,8 @@ cd "$_repo"
 shared_sources=(
   csem/frontend/model/loc.lem
   csem/frontend/model/symbol.lem
+  csem/frontend/model/cabs.lem
+  csem/frontend/model/constraint.lem
   csem/frontend/model/ctype.lem
   csem/frontend/model/cabs_to_ail.lem
   csem/frontend/model/cabs_to_ail_effect.lem
@@ -21,14 +23,17 @@ shared_sources=(
 )
 # The shared Mem API already passes the complete layout table. Both
 # handwritten adapters must honor it even before the runtime table is set.
+# Project these exact shared definitions after compatibility patches. Copying
+# unrelated local translation_aux IEEE seams would change the oracle's ABI.
+projected_sources=(csem/frontend/model/translation_aux.lem scripts/project_csem_alignment.py)
 adapter_sources=(csem/lean_frontend/CerbMem.lean csem/lean_frontend/CerberusImpl.lean)
-adapter_patches=(patches/csem/0001-union-layout-tags.patch patches/csem/0002-gnu-typedef-alignment.patch patches/csem/0003-gnu-aggregate-layout.patch patches/csem/0004-tag-layout-arity.patch patches/csem/0005-compiler-opening-witness.patch patches/csem/0006-symbol-proxy-identity.patch patches/csem/0007-injected-syntax-carriers.patch)
+adapter_patches=(patches/csem/0001-union-layout-tags.patch patches/csem/0002-gnu-typedef-alignment.patch patches/csem/0003-gnu-aggregate-layout.patch patches/csem/0004-tag-layout-arity.patch patches/csem/0005-compiler-opening-witness.patch patches/csem/0006-symbol-proxy-identity.patch patches/csem/0007-injected-syntax-carriers.patch patches/csem/0008-gnu-expression-alignof.patch)
 # Pin every patched handwritten adapter, including arity-only non-concrete
 # shims. Their inclusion in the manifest does not claim layout support in
 # symbolic/CHERI backends; the differential engine is the concrete backend.
 mapfile -t patched_adapter_paths < <(sed -n 's#^+++ b/##p' "${adapter_patches[@]}" | sort -u)
 key() {
-  python3 - "${shared_sources[@]}" "${adapter_sources[@]}" "${adapter_patches[@]}" <<'PY'
+  python3 - "${shared_sources[@]}" "${adapter_sources[@]}" "${adapter_patches[@]}" "${projected_sources[@]}" <<'PY'
 import hashlib, sys
 from pathlib import Path
 h = hashlib.sha256()
@@ -60,12 +65,13 @@ done
 for adapter_patch in "${adapter_patches[@]}"; do
   patch -d "$fork" -p1 --fuzz=0 < "$adapter_patch" >&2
 done
+python3 scripts/project_csem_alignment.py csem/frontend/model/translation_aux.lem "$fork/frontend/model/translation_aux.lem"
 # Grammar error tables are generated from this overlay, never hand edited.
 # Use per-engine files: Makefile.messages uses shared /tmp names.
 (cd "$fork/parsers/c" && csem_opam menhir c_parser.mly --list-errors > c_parser_error.binding.messages
  python3 err_msg.py c_parser_error.binding.messages > c_parser_error.messages)
 printf '%s\n' "${shared_sources[@]}" > "$fork/.shared-sources"
-sha256sum "${adapter_sources[@]}" "${adapter_patches[@]}" > "$fork/.adapter-inputs.sha256"
+sha256sum "${adapter_sources[@]}" "${adapter_patches[@]}" "${projected_sources[@]}" > "$fork/.adapter-inputs.sha256"
 sha256sum "${shared_sources[@]}" > "$fork/.shared-sources.sha256"
 (cd "$fork" && for source in "${shared_sources[@]}"; do sha256sum "${source#csem/}"; done > .overlay.sha256
  sha256sum "${patched_adapter_paths[@]}" parsers/c/c_parser_error.messages >> .overlay.sha256)

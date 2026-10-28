@@ -99,6 +99,7 @@ def exclExpr_ : cabs_expression_ → List Excluded
   | .CabsEsizeof_expr e => exclExpr e
   | .CabsEsizeof_type t => exclTname t
   | .CabsEalignof t => exclTname t
+  | .CabsEalignof_expr e => exclExpr e
   | .CabsEcast t e => exclTname t ++ exclExpr e
   | .CabsEbinary _ e1 e2 => exclExpr e1 ++ exclExpr e2
   | .CabsEcond e1 e2 e3 => exclExpr e1 ++ exclExpr e2 ++ exclExpr e3

@@ -2875,8 +2875,8 @@ let get_sigma_sofar =
           ) st.function_declarations
         end
         begin
-          Map.map (fun (_, loc, attrs, dur, isRegister, _, qs, ty) ->
-            (loc, attrs, A.Decl_object ((dur, isRegister)) Nothing qs ty)
+          Map.map (fun (_, loc, attrs, dur, isRegister, align_opt, qs, ty) ->
+            (loc, attrs, A.Decl_object ((dur, isRegister)) align_opt qs ty)
           ) st.external_object_declarations
         end
     ) in

@@ -899,6 +899,22 @@ def gnu_typedef_alignment (annots1 : List annot) : Option Int :=
                 acc)) acc xs
       | _ => acc) none annots1
 
+/- Deriving a pointer from an array/function expression resets its outer
+   alias alignment, while preserving every other annotation and the referent. -/
+def gnu_clear_typedef_alignment (annots1 : List annot) : List annot :=
+  List.map
+    (fun (x : annot) =>
+      match x with
+      | Aattrs (Attrs attrs1) =>
+        Aattrs
+          (Attrs
+            (List.filter
+              (fun (attr : attribute0) =>
+                match attr.attr_id with
+                | Identifier _ name1 =>
+                  not ((name1 == ":gnu-typedef-alignment:") && isNothing attr.attr_ns)) attrs1))
+      | annot1 => annot1) annots1
+
 /- The tag owns these effects. Member alignments are kept independently: GNU
    expression-alignof can observe the distinction. Validation is performed by
    the shared Cabs elaborator before the attributes reach this projection. -/

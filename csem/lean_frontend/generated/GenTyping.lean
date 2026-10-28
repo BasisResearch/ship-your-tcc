@@ -278,15 +278,165 @@ def gen_typing_type_of_constant [CerbImplCfg.Impl]
     | IConstantMax ity => ErrorM (fun (ts : List (List String)) => Sum.inr ((Concrete ity), ts))
     | IConstantMin ity => ErrorM (fun (ts : List (List String)) => Sum.inr ((Concrete ity), ts))
 
-/- the GCC documentation says "he compound statement should be an expression followed by a semicolon", otherwise the type is void -/
+/- Expression-type metadata is separate from declaration/object alignment.
+   Only a type-preserving operation copies an alias annotation. -/
+def category_type [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
+    (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
+    (cat : genTypeCategory) :
+    Option ctype :=
+  match runErrorMonad
+      ((interpret_genTypeCategory _lemReader_enum_definitions _lemReader_tagDefs) loc1
+        ((integerImpl _lemReader_enum_definitions _lemReader_tagDefs) ()) cat) with
+  | Sum.inr (LValueType _ ty1 _) => some ty1
+  | Sum.inr (RValueType ty1) => some ty1
+  | _ => none
 
-partial def typeof_statement_as_expression (stmt : statement genTypeCategory) : genTypeCategory :=
-  let void_gtc := GenRValueType GenVoid;
+def expression_alignment (e : expression genTypeCategory) : Option Int :=
+  match e with
+  | (AnnotatedExpression cat annots1 _ _) =>
+    (match cat with
+     | GenLValueType _ (Ctype type_annots _) _ => gnu_typedef_alignment type_annots
+     | GenRValueType _ => gnu_typedef_alignment annots1)
+
+def same_type_alignment { a : Type } [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
+    (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
+    (result : genTypeCategory) (source_cat : genTypeCategory) (al : Option a) :
+    Option a :=
+  match al with
+  | none => none
+  | some _ =>
+    (match (category_type _lemReader_enum_definitions _lemReader_tagDefs) loc1 result,
+         (category_type _lemReader_enum_definitions _lemReader_tagDefs) loc1 source_cat with
+     | some ty1, some ty2 => (lem_if ctypeEqual ty1 ty2 then al else none)
+     | _, _ => none)
+
+def operand_alignment [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
+    (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
+    (result : genTypeCategory) (e0 : expression genTypeCategory) :
+    Option Int :=
+  match loc1, result, e0 with
+  | loc1, result, e@(AnnotatedExpression cat _ _ _) =>
+    (same_type_alignment _lemReader_enum_definitions _lemReader_tagDefs) loc1 result cat
+      (expression_alignment e)
+
+def common_alignment [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
+    (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (loc1 : CerbLocation.Loc)
+    (result : genTypeCategory) (e : expression genTypeCategory) (e0 : expression genTypeCategory) :
+    Option Int :=
+  match loc1, result, e, e0 with
+  | loc1, result, e1@(AnnotatedExpression cat1 _ _ _), e2@(AnnotatedExpression cat2 _ _ _) =>
+    (let al1 := expression_alignment e1;
+     let al2 := expression_alignment e2;
+     lem_if (maybeEqualBy (fun x y => x == y) al1 al2) then
+       match (operand_alignment _lemReader_enum_definitions _lemReader_tagDefs) loc1 result e1,
+           (operand_alignment _lemReader_enum_definitions _lemReader_tagDefs) loc1 result e2 with
+       | some n1, some n2 => (lem_if n1 == n2 then some n1 else none)
+       | _, _ => none
+     else
+       none)
+
+structure statement_expression_type where
+  statement_category : genTypeCategory
+  statement_alignment : Option Int
+  deriving BEq, Ord
+instance : Inhabited statement_expression_type where
+  default := { statement_category := default, statement_alignment := default }
+instance (priority := 500) : Lem_Basic_classes.SetType statement_expression_type where
+  setElemCompare := defaultCompare
+instance (priority := 500) : Lem_Basic_classes.Eq0 statement_expression_type where
+  isEqual x y := x == y
+  isInequal x y := !(x == y)
+instance (priority := 500) : Lem_Basic_classes.Ord0 statement_expression_type where
+  compare := defaultCompare
+  isLess := defaultLess
+  isLessEqual := defaultLessEq
+  isGreater := defaultGreater
+  isGreaterEqual := defaultGreaterEq
+
+/- Keep the original statement selection, including labels/markers. Both the
+   category and its alias annotation come from the selected typed expression. -/
+partial def typeof_statement_as_expression (stmt : statement genTypeCategory) :
+    statement_expression_type :=
   match stmt.node with
-  | AilSexpr (AnnotatedExpression gtc _ _ _) => gtc
+  | AilSexpr (e@(AnnotatedExpression gtc _ _ _)) =>
+    (({ statement_category := gtc, statement_alignment := (expression_alignment e) } :
+      statement_expression_type))
   | AilSlabel _ s _ => typeof_statement_as_expression s
   | AilSmarker _ s => typeof_statement_as_expression s
-  | _ => void_gtc
+  | _ =>
+    (({ statement_category := (GenRValueType GenVoid), statement_alignment := none } :
+      statement_expression_type))
+
+def result_type_alignment { a : Type } [CerbImplCfg.Impl]
+    (_lemReader_enum_definitions : Fmap sym integerType)
+    (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (sigm : sigma a)
+    (loc1 : CerbLocation.Loc) (result : genTypeCategory) (expr1 : expression_ genTypeCategory) :
+    Option Int :=
+  match result with
+  | GenLValueType _ (Ctype annots1 _) _ => gnu_typedef_alignment annots1
+  | GenRValueType _ =>
+    (match expr1 with
+     | AilEunary Plus e =>
+       (operand_alignment _lemReader_enum_definitions _lemReader_tagDefs) loc1 result e
+     | AilEunary Minus e =>
+       (operand_alignment _lemReader_enum_definitions _lemReader_tagDefs) loc1 result e
+     | AilEunary Bnot e =>
+       (operand_alignment _lemReader_enum_definitions _lemReader_tagDefs) loc1 result e
+     | AilEunary PostfixIncr e =>
+       (operand_alignment _lemReader_enum_definitions _lemReader_tagDefs) loc1 result e
+     | AilEunary PostfixDecr e =>
+       (operand_alignment _lemReader_enum_definitions _lemReader_tagDefs) loc1 result e
+     | AilEassign e _ =>
+       (operand_alignment _lemReader_enum_definitions _lemReader_tagDefs) loc1 result e
+     | AilEcompoundAssign e _ _ =>
+       (operand_alignment _lemReader_enum_definitions _lemReader_tagDefs) loc1 result e
+     | AilEbinary e (Arithmetic Shl) _ =>
+       (operand_alignment _lemReader_enum_definitions _lemReader_tagDefs) loc1 result e
+     | AilEbinary e (Arithmetic Shr) _ =>
+       (operand_alignment _lemReader_enum_definitions _lemReader_tagDefs) loc1 result e
+     | AilEbinary e1 (Arithmetic _) e2 =>
+       (common_alignment _lemReader_enum_definitions _lemReader_tagDefs) loc1 result e1 e2
+     | AilEbinary _ Comma e =>
+       (operand_alignment _lemReader_enum_definitions _lemReader_tagDefs) loc1 result e
+     | AilEcond e1 none e3 =>
+       (common_alignment _lemReader_enum_definitions _lemReader_tagDefs) loc1 result e1 e3
+     | AilEcond _ (some e2) e3 =>
+       (common_alignment _lemReader_enum_definitions _lemReader_tagDefs) loc1 result e2 e3
+     | AilEcall (AnnotatedExpression (GenRValueType (GenPointer _ (Ctype _ fun_ty))) _ _ _) _ =>
+       (match fun_ty with
+        | Function (_, Ctype annots1 _) _ _ => gnu_typedef_alignment annots1
+        | FunctionNoParams (_, Ctype annots1 _) => gnu_typedef_alignment annots1
+        | _ => none)
+     | AilEva_arg _ (Ctype annots1 _) => gnu_typedef_alignment annots1
+     | AilEgeneric _ (some idx) gas =>
+       (match listGetOpt gas idx with
+        | some (AilGAtype _ _ e) =>
+          (operand_alignment _lemReader_enum_definitions _lemReader_tagDefs) loc1 result e
+        | some (AilGAdefault e) =>
+          (operand_alignment _lemReader_enum_definitions _lemReader_tagDefs) loc1 result e
+        | _ => none)
+     | AilEgcc_statement _ ss =>
+       (match Lem_List.dest_init ss with
+        | some (_, last1) =>
+          (let info := typeof_statement_as_expression last1;
+           (same_type_alignment _lemReader_enum_definitions _lemReader_tagDefs) loc1 result
+             info.statement_category info.statement_alignment)
+        | _ => none)
+     | AilEmemberof (AnnotatedExpression cat _ _ _) ident =>
+       (match (category_type _lemReader_enum_definitions _lemReader_tagDefs) loc1 cat with
+        | some parent_ty =>
+          (match source_member_path sigm parent_ty ident with
+           | some path =>
+             List.foldl
+               (fun (m : Option Int) (p : (identifier × qualifiers × ctype)) =>
+                 match m, p with
+                 | _, (_, _, Ctype annots1 _) => gnu_typedef_alignment annots1) none path
+           | _ => none)
+        | _ => none)
+     /- Casts, comparisons, logical operations, and new pointer derivations
+           deliberately produce ordinary outer types. Referents stay intact. -/
+     | _ => none)
 
 /- STD §6.5.16.1#1 -/
 
@@ -3012,7 +3162,7 @@ partial def annotate_expression [CerbImplCfg.Impl]
                             GenRValueType GenVoid), ts))
                     | some (ss', last_s') =>
                       (/- if last_s is of the form l1: ... ln: E; then we use the type of E otherwise void -/
-                      let gtc := typeof_statement_as_expression last_s';
+                      let gtc := (typeof_statement_as_expression last_s').statement_category;
                       ErrorM (fun (ts : List (List String)) =>
                         Sum.inr ((AilEgcc_statement bs (ss' ++ [last_s']), gtc), ts))))
               else
@@ -3026,8 +3176,12 @@ partial def annotate_expression [CerbImplCfg.Impl]
          | (expr_', gtc) =>
            bind3 unpack (fun (annots1 : List String) =>
              let annots1 := (fun x y => x ++ y) std_annots (List.map Astd annots1);
-             (perform_decays _lemReader_enum_definitions _lemReader_tagDefs) sigm ctx
-               (AnnotatedExpression gtc annots1 loc1 expr_'))))
+             match gnu_align_typedef
+                 ((result_type_alignment _lemReader_enum_definitions _lemReader_tagDefs) sigm loc1
+                   gtc expr_') (Ctype annots1 Void0) with
+             | Ctype type_annots _ =>
+               (perform_decays _lemReader_enum_definitions _lemReader_tagDefs) sigm ctx
+                 (AnnotatedExpression gtc type_annots loc1 expr_'))))
 partial def perform_decays [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fmap sym integerType)
     (_lemReader_tagDefs : Fmap sym (CerbLocation.Loc × tag_definition)) (sigm : sigma Unit)
     (ctx : annotation_context) (a_expr : expression genTypeCategory) :
@@ -3086,7 +3240,7 @@ partial def perform_decays [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fma
                    ErrorM (fun (ts : List (List String)) =>
                      Sum.inr
                        ((AnnotatedExpression (GenRValueType (inject_type (array_coercion ty1)))
-                         std_annots
+                         (gnu_clear_typedef_alignment std_annots)
                          (match a_expr with
                           | (AnnotatedExpression _ _ loc1 _) => loc1) (AilEarray_decay a_expr)),
                          ts))))
@@ -3103,7 +3257,8 @@ partial def perform_decays [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fma
                 AnnotatedExpression
                   (GenRValueType
                     (GenPointer no_qualifiers
-                      (Ctype ([] : List annot) (Function ty1 params isVariadic)))) std_annots
+                      (Ctype ([] : List annot) (Function ty1 params isVariadic))))
+                  (gnu_clear_typedef_alignment std_annots)
                   (match a_expr with
                    | (AnnotatedExpression _ _ loc1 _) => loc1) (AilEfunction_decay a_expr)
               | GenArray elem_ty sz_opt =>
@@ -3120,7 +3275,8 @@ partial def perform_decays [CerbImplCfg.Impl] (_lemReader_enum_definitions : Fma
                    (lem_if not (Lem_List.elem ctx [CTXarray_init] && is_literal) then
                      let ty1 := Ctype ([] : List annot) (Array0 elem_ty sz_opt);
                      /- STD §6.3.2.1#3 -/ /- performing the array decay -/ AnnotatedExpression
-                       (GenRValueType (inject_type (array_coercion ty1))) std_annots
+                       (GenRValueType (inject_type (array_coercion ty1)))
+                       (gnu_clear_typedef_alignment std_annots)
                        (match a_expr with
                         | (AnnotatedExpression _ _ loc1 _) => loc1) (AilEarray_decay a_expr)
                    else

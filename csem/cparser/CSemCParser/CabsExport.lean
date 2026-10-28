@@ -150,6 +150,7 @@ def expr_ : cabs_expression_ → Json
   | .CabsEsizeof_expr e => tag "CabsEsizeof_expr" [("expr", expr e)]
   | .CabsEsizeof_type ty => tag "CabsEsizeof_type" [("type", typeName ty)]
   | .CabsEalignof ty => tag "CabsEalignof" [("type", typeName ty)]
+  | .CabsEalignof_expr e => tag "CabsEalignof_expr" [("expr", expr e)]
   | .CabsEcast ty e => tag "CabsEcast" [("type", typeName ty), ("expr", expr e)]
   | .CabsEbinary op l r => tag "CabsEbinary" [("op", binaryOp op), ("lhs", expr l), ("rhs", expr r)]
   | .CabsEcond c t e => tag "CabsEcond" [("cond", expr c), ("then_", expr t), ("else_", expr e)]

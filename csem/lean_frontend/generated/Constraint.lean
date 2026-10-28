@@ -319,6 +319,7 @@ inductive violation : Type where
   /- 6.7.6 Declarators -/
   | ArrayDeclarationNegativeSize : violation /- §6.7.6.2#1, sentence 3 -/
   | ArrayDeclarationIncompleteType : violation /- §6.7.6.2#1, sentence 4 -/
+  | ArrayElementSizeAlignment : violation /- GNU: size must be a multiple of alignment -/
   | ArrayDeclarationFunctionType : violation /- §6.7.6.2#1, sentence 4 -/
   | ArrayDeclarationQsAndStaticOnlyOutmost : violation /- §6.7.6.2#1, sentence 5 -/
   | ArrayDeclarationQsAndStaticOutsideFunctionProto : violation /- §6.7.6.2#1, sentence 5 -/
@@ -412,13 +413,14 @@ export violation (GenericSelectionMultipleDefault GenericSelectionIncorrectType
     WrongTypeEnumConstant TagRedefinition TagRedeclaration EnumTagIncomplete AtomicTypeConstraint
     RestrictQualifiedTypeConstraint RestrictQualifiedPointedTypeConstraint IllegalAlignas
     AlignasNotIntegerConstant AlignasInvalidIntegerConstant AlignasLessThanRequired
-    ArrayDeclarationNegativeSize ArrayDeclarationIncompleteType ArrayDeclarationFunctionType
-    ArrayDeclarationQsAndStaticOnlyOutmost ArrayDeclarationQsAndStaticOutsideFunctionProto
-    IllegalReturnTypeFunctionDeclarator IllegalStorageClassFunctionDeclarator
-    IncompleteParameterTypeFunctionDeclarator IllegalInitialisation
-    IllegalStorageClassStaticOrThreadInitializer IllegalLinkageAndInitialization
-    IllegalArrayDesignatorUsage IllegalTypeArrayDesignator IllegalSizeArrayDesignator
-    IllegalMemberDesignatorUsage IllegalMemberDesignatorFlexibleArrayMember IllegalMemberDesignator
+    ArrayDeclarationNegativeSize ArrayDeclarationIncompleteType ArrayElementSizeAlignment
+    ArrayDeclarationFunctionType ArrayDeclarationQsAndStaticOnlyOutmost
+    ArrayDeclarationQsAndStaticOutsideFunctionProto IllegalReturnTypeFunctionDeclarator
+    IllegalStorageClassFunctionDeclarator IncompleteParameterTypeFunctionDeclarator
+    IllegalInitialisation IllegalStorageClassStaticOrThreadInitializer
+    IllegalLinkageAndInitialization IllegalArrayDesignatorUsage IllegalTypeArrayDesignator
+    IllegalSizeArrayDesignator IllegalMemberDesignatorUsage
+    IllegalMemberDesignatorFlexibleArrayMember IllegalMemberDesignator
     InitializationAsSimpleAssignment StaticAssertFailed LabelStatementOutsideSwitch
     LabelRedefinition IfStatementControllingExpressionNotScalar
     SwitchStatementControllingExpressionNotInteger CaseStatementOverlap MutipleDefaultStatement
@@ -442,51 +444,51 @@ instance : Inhabited violation where
    declaration order within each group. -/
 def violation.ctor_rank_ocaml : violation → Nat
   | .GenericSelectionMultipleDefault => 0
-  | .GenericSelectionIncorrectType _ _ => 60
-  | .GenericSelectionOverlapping _ _ => 61
-  | .GenericSelectionMultipleMatch _ => 62
-  | .GenericSelectionNoMatch _ => 63
-  | .FunctionCallIncompleteReturnType _ => 64
-  | .FunctionCallArrayReturnType _ => 65
+  | .GenericSelectionIncorrectType _ _ => 61
+  | .GenericSelectionOverlapping _ _ => 62
+  | .GenericSelectionMultipleMatch _ => 63
+  | .GenericSelectionNoMatch _ => 64
+  | .FunctionCallIncompleteReturnType _ => 65
+  | .FunctionCallArrayReturnType _ => 66
   | .FunctionCallIncorrectType => 1
-  | .FunctionCallTooManyArguments _ _ => 66
-  | .FunctionCallTooFewArguments _ _ => 67
-  | .MemberofReferenceBaseTypeLvalue _ _ => 68
-  | .MemberofReferenceBaseTypeRvalue _ => 69
-  | .MemberofNoMemberLvalue _ _ _ => 70
-  | .MemberofNoMemberRvalue _ _ => 71
-  | .MemberofIncompleteLvalue _ _ => 72
-  | .MemberofIncompleteRvalue _ => 73
-  | .MemberofptrReferenceBaseType _ _ => 74
-  | .MemberofptrReferenceTypeNotPointer _ => 75
-  | .MemberofptrNoMember _ _ _ => 76
-  | .MemberofptrIncomplete _ _ => 77
+  | .FunctionCallTooManyArguments _ _ => 67
+  | .FunctionCallTooFewArguments _ _ => 68
+  | .MemberofReferenceBaseTypeLvalue _ _ => 69
+  | .MemberofReferenceBaseTypeRvalue _ => 70
+  | .MemberofNoMemberLvalue _ _ _ => 71
+  | .MemberofNoMemberRvalue _ _ => 72
+  | .MemberofIncompleteLvalue _ _ => 73
+  | .MemberofIncompleteRvalue _ => 74
+  | .MemberofptrReferenceBaseType _ _ => 75
+  | .MemberofptrReferenceTypeNotPointer _ => 76
+  | .MemberofptrNoMember _ _ _ => 77
+  | .MemberofptrIncomplete _ _ => 78
   | .InvalidTypeCompoundLiteral => 2
   | .UnaryExpressionNotLvalue => 3
-  | .InvalidArgumentTypeUnaryIncrement _ => 78
-  | .InvalidArgumentTypeUnaryDecrement _ => 79
-  | .UnaryAddressNotRvalue _ => 80
+  | .InvalidArgumentTypeUnaryIncrement _ => 79
+  | .InvalidArgumentTypeUnaryDecrement _ => 80
+  | .UnaryAddressNotRvalue _ => 81
   | .UnaryAddressRegisterLvalue => 4
   | .IndirectionNotPointer => 5
-  | .InvalidArgumentTypeUnaryExpression _ => 81
-  | .SizeofInvalidApplication _ => 82
-  | .AlignofInvalidApplication _ _ => 83
-  | .CastInvalidType _ _ => 84
+  | .InvalidArgumentTypeUnaryExpression _ => 82
+  | .SizeofInvalidApplication _ => 83
+  | .AlignofInvalidApplication _ _ => 84
+  | .CastInvalidType _ _ => 85
   | .CastPointerToFloat => 6
   | .CastFloatToPointer => 7
-  | .ArithBinopOperandsType _ _ _ => 85
-  | .RelationalInvalidOperandsType _ _ => 86
-  | .EqualityInvalidOperandsType _ _ => 87
-  | .AndInvalidOperandsType _ _ => 88
-  | .OrInvalidOperandsType _ _ => 89
-  | .ConditionalOperatorControlType _ => 90
-  | .ConditionalOperatorInvalidOperandTypes _ _ => 91
+  | .ArithBinopOperandsType _ _ _ => 86
+  | .RelationalInvalidOperandsType _ _ => 87
+  | .EqualityInvalidOperandsType _ _ => 88
+  | .AndInvalidOperandsType _ _ => 89
+  | .OrInvalidOperandsType _ _ => 90
+  | .ConditionalOperatorControlType _ => 91
+  | .ConditionalOperatorInvalidOperandTypes _ _ => 92
   | .AssignmentModifiableLvalue => 8
-  | .SimpleAssignmentViolation _ _ _ => 92
-  | .CompoundAssignmentAddSubOperandTypes _ _ => 93
-  | .CompoundAssignmentOthersOperandTypes _ _ _ => 94
+  | .SimpleAssignmentViolation _ _ _ => 93
+  | .CompoundAssignmentAddSubOperandTypes _ _ => 94
+  | .CompoundAssignmentOthersOperandTypes _ _ _ => 95
   | .IntegerConstantOutRange => 9
-  | .NoLinkageMultipleDeclaration _ => 95
+  | .NoLinkageMultipleDeclaration _ => 96
   | .TypedefRedefinition => 10
   | .TypedefRedefinitionVariablyModifiedType => 11
   | .SameScopeIncompatibleDeclarations => 12
@@ -497,70 +499,71 @@ def violation.ctor_rank_ocaml : violation → Nat
   | .NoTypeSpecifierInDeclaration => 17
   | .IllegalTypeSpecifierInDeclaration => 18
   | .StructDeclarationLacksDeclaratorList => 19
-  | .StructMemberIncompleteType _ _ => 96
-  | .StructMemberFunctionType _ => 97
+  | .StructMemberIncompleteType _ _ => 97
+  | .StructMemberFunctionType _ => 98
   | .StructMemberFlexibleArray => 20
   | .StructMemberFlexibleArrayInArray => 21
-  | .IllegalFlexibleArrayMember _ => 98
+  | .IllegalFlexibleArrayMember _ => 99
   | .WrongTypeEnumConstant => 22
-  | .TagRedefinition _ => 99
-  | .TagRedeclaration _ => 100
+  | .TagRedefinition _ => 100
+  | .TagRedeclaration _ => 101
   | .EnumTagIncomplete => 23
   | .AtomicTypeConstraint => 24
   | .RestrictQualifiedTypeConstraint => 25
-  | .RestrictQualifiedPointedTypeConstraint _ => 101
-  | .IllegalAlignas _ => 102
+  | .RestrictQualifiedPointedTypeConstraint _ => 102
+  | .IllegalAlignas _ => 103
   | .AlignasNotIntegerConstant => 26
   | .AlignasInvalidIntegerConstant => 27
-  | .AlignasLessThanRequired _ => 103
+  | .AlignasLessThanRequired _ => 104
   | .ArrayDeclarationNegativeSize => 28
   | .ArrayDeclarationIncompleteType => 29
-  | .ArrayDeclarationFunctionType => 30
-  | .ArrayDeclarationQsAndStaticOnlyOutmost => 31
-  | .ArrayDeclarationQsAndStaticOutsideFunctionProto => 32
-  | .IllegalReturnTypeFunctionDeclarator => 33
-  | .IllegalStorageClassFunctionDeclarator => 34
-  | .IncompleteParameterTypeFunctionDeclarator => 35
-  | .IllegalInitialisation _ => 104
-  | .IllegalStorageClassStaticOrThreadInitializer => 36
-  | .IllegalLinkageAndInitialization => 37
-  | .IllegalArrayDesignatorUsage => 38
-  | .IllegalTypeArrayDesignator => 39
-  | .IllegalSizeArrayDesignator => 40
-  | .IllegalMemberDesignatorUsage => 41
-  | .IllegalMemberDesignatorFlexibleArrayMember _ => 105
-  | .IllegalMemberDesignator _ _ => 106
-  | .InitializationAsSimpleAssignment _ _ _ => 107
-  | .StaticAssertFailed _ => 108
-  | .LabelStatementOutsideSwitch => 42
-  | .LabelRedefinition _ => 109
-  | .IfStatementControllingExpressionNotScalar => 43
-  | .SwitchStatementControllingExpressionNotInteger => 44
-  | .CaseStatementOverlap _ => 110
-  | .MutipleDefaultStatement _ => 111
-  | .IterationStatementControllingExpressionNotScalar => 45
-  | .IllegalStorageClassIterationStatement => 46
-  | .UndeclaredLabel _ => 112
-  | .ContinueOutsideLoop => 47
-  | .BreakOutsideSwitchOrLoop => 48
-  | .NonVoidReturnVoidFunction => 49
-  | .VoidReturnNonVoidFunction => 50
-  | .ReturnAsSimpleAssignment _ _ _ => 113
-  | .IllegalStorageClassFileScoped => 51
-  | .ExternalRedefinition _ => 114
-  | .WrongTypeFunctionIdentifier => 52
-  | .IllegalStorageClassFunctionDefinition => 53
-  | .IllegalIdentifierTypeVoidInFunctionDefinition => 54
-  | .UniqueVoidParameterInFunctionDefinition => 55
-  | .FunctionParameterAsSimpleAssignment _ _ _ => 115
-  | .TentativeNotCompleted _ => 116
-  | .AssertMacroExpressionScalarType => 56
-  | .AtomicAddressArgumentMustBeAtomic _ _ => 117
-  | .AtomicAddressArgumentMustBePointer _ _ => 118
-  | .GNUConditionalOperatorInvalidOperandType _ => 119
-  | .GNUBuiltinChooseExprNotIntegerConstant => 57
-  | .TypedefBytesAreUnsignedCharsOnly => 58
-  | .CastToFromByte => 59
+  | .ArrayElementSizeAlignment => 30
+  | .ArrayDeclarationFunctionType => 31
+  | .ArrayDeclarationQsAndStaticOnlyOutmost => 32
+  | .ArrayDeclarationQsAndStaticOutsideFunctionProto => 33
+  | .IllegalReturnTypeFunctionDeclarator => 34
+  | .IllegalStorageClassFunctionDeclarator => 35
+  | .IncompleteParameterTypeFunctionDeclarator => 36
+  | .IllegalInitialisation _ => 105
+  | .IllegalStorageClassStaticOrThreadInitializer => 37
+  | .IllegalLinkageAndInitialization => 38
+  | .IllegalArrayDesignatorUsage => 39
+  | .IllegalTypeArrayDesignator => 40
+  | .IllegalSizeArrayDesignator => 41
+  | .IllegalMemberDesignatorUsage => 42
+  | .IllegalMemberDesignatorFlexibleArrayMember _ => 106
+  | .IllegalMemberDesignator _ _ => 107
+  | .InitializationAsSimpleAssignment _ _ _ => 108
+  | .StaticAssertFailed _ => 109
+  | .LabelStatementOutsideSwitch => 43
+  | .LabelRedefinition _ => 110
+  | .IfStatementControllingExpressionNotScalar => 44
+  | .SwitchStatementControllingExpressionNotInteger => 45
+  | .CaseStatementOverlap _ => 111
+  | .MutipleDefaultStatement _ => 112
+  | .IterationStatementControllingExpressionNotScalar => 46
+  | .IllegalStorageClassIterationStatement => 47
+  | .UndeclaredLabel _ => 113
+  | .ContinueOutsideLoop => 48
+  | .BreakOutsideSwitchOrLoop => 49
+  | .NonVoidReturnVoidFunction => 50
+  | .VoidReturnNonVoidFunction => 51
+  | .ReturnAsSimpleAssignment _ _ _ => 114
+  | .IllegalStorageClassFileScoped => 52
+  | .ExternalRedefinition _ => 115
+  | .WrongTypeFunctionIdentifier => 53
+  | .IllegalStorageClassFunctionDefinition => 54
+  | .IllegalIdentifierTypeVoidInFunctionDefinition => 55
+  | .UniqueVoidParameterInFunctionDefinition => 56
+  | .FunctionParameterAsSimpleAssignment _ _ _ => 116
+  | .TentativeNotCompleted _ => 117
+  | .AssertMacroExpressionScalarType => 57
+  | .AtomicAddressArgumentMustBeAtomic _ _ => 118
+  | .AtomicAddressArgumentMustBePointer _ _ => 119
+  | .GNUConditionalOperatorInvalidOperandType _ => 120
+  | .GNUBuiltinChooseExprNotIntegerConstant => 58
+  | .TypedefBytesAreUnsignedCharsOnly => 59
+  | .CastToFromByte => 60
 mutual
 def violation.beq_derived (cmpx_ cmpy_ : violation) : Bool :=
   match cmpx_, cmpy_ with
@@ -649,6 +652,7 @@ def violation.beq_derived (cmpx_ cmpy_ : violation) : Bool :=
   | .AlignasLessThanRequired x1, .AlignasLessThanRequired y1 => x1 == y1
   | .ArrayDeclarationNegativeSize, .ArrayDeclarationNegativeSize => true
   | .ArrayDeclarationIncompleteType, .ArrayDeclarationIncompleteType => true
+  | .ArrayElementSizeAlignment, .ArrayElementSizeAlignment => true
   | .ArrayDeclarationFunctionType, .ArrayDeclarationFunctionType => true
   | .ArrayDeclarationQsAndStaticOnlyOutmost, .ArrayDeclarationQsAndStaticOnlyOutmost => true
   | .ArrayDeclarationQsAndStaticOutsideFunctionProto,
@@ -1081,6 +1085,8 @@ def std_of_violation : violation → List String :=
     | AlignasLessThanRequired _ => ["§6.7.5#4"]
     | ArrayDeclarationNegativeSize => ["§6.7.6.2#1, sentence 3"]
     | ArrayDeclarationIncompleteType => ["§6.7.6.2#1, sentence 4"]
+    | ArrayElementSizeAlignment =>
+      ["array element size is not a multiple of its declared alignment"]
     | ArrayDeclarationFunctionType => ["§6.7.6.2#1, sentence 4"]
     | ArrayDeclarationQsAndStaticOnlyOutmost => ["§6.7.6.2#1, sentence 5"]
     | ArrayDeclarationQsAndStaticOutsideFunctionProto => ["§6.7.6.2#1, sentence 5"]

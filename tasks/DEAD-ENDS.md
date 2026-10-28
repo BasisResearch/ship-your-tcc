@@ -800,3 +800,52 @@ an explicit follow-up, not established by arena equality.
   captures and source snapshots as xz, verify every member hash, and remove
   only the verified redundant gzip encoding. Do not prune observations or put
   an oversized encoding into commit history to solve an encoding problem.
+
+- GNU alignment semantics build alignsem-lean-1: submitted while Lem regeneration
+  was still completing. The generated Translation_aux and lem-sync stamp changed
+  after the freeze, so the receipt is failed despite successful Lean compilation.
+  Retain it; wait for generator completion before freezing any subsequent request.
+  No executable from that request supplies accepted semantic evidence.
+
+- GNU alignment semantics alignsem-lean-2 verifies all3366 frozen inputs but
+  fails automatic mutual termination inference for expression/statement/generic
+  type reification. Match record constructors directly and expose structural
+  parameters; do not raise budgets or restore opaque partial recursion.
+  The explicit local locked/capped oracle1 attempt fails on the systemd bus
+  before building and has its own verified local-result; it certifies no engine.
+
+- GNU type transport: generator structural analysis also rejects the mutual
+  statement-record walker (record patterns become field projections). Reuse
+  bottom-up shared GenTyping annotations instead: it already has the selected
+  typed children and the statement selector. Generic width/sign categories
+  should not reconstruct and then rediscover expression type metadata.
+
+- GNU alignment oracle2: copying the now-shared translation_aux.lem and then
+  applying its adopted symbol-proxy hunks from patch0006 duplicates the same
+  change. Its receipt verifies all3366 inputs and fails honestly. The shared
+  source supplies those exact records/helper now; retain only patch0006's
+  unrelated translation.lem hunks, with every overlay still hash-pinned.
+- Extra GNU array-alias decay probe: GCC returns8 for typeof(a+0), but current
+  patched tcc returns32 for an array typedef aligned32. Full compiler Sail
+  reproduces32, cross-GCC Sail8 on identical bytes. Preserve as a separate
+  compiler discrepancy; do not copy the leaked array alignment into CSem.
+
+- Oracle3: wholesale local translation_aux.lem also imports Lean-only typed
+  IEEE constructors (CfvfromintTypedLoaded). Preserve its failed receipt/key.
+  Project only the two exact shared type-query definitions after the adopted
+  proxy patch; do not pull in unrelated Core or stub floating operations.
+- The first repaired raw run fixes deref/unary/common but exposes three
+  direct global-object query failures. get_sigma_sofar drops stored alignment
+  even though final extraction preserves it. Carry the actual declaration
+  alignment there; do not infer it from a containing aggregate or type.
+
+- Oracle4 reaches OCaml compilation with the exact projected type queries,
+  but fails its exhaustive pp_errors match for ArrayElementSizeAlignment.
+  Extend the handwritten error printer in the isolated patch, not a generated
+  output. All3367inputs verify; the failed receipt/key remain diagnostic.
+
+- Final alignment oracle boundary: retain the full adopted proxy patch0006.
+  Its intermediate hunk removal was superseded by the IEEE obstruction. Only
+  ctype_of/qualified_ctype_of are projected verbatim from shared source; all
+  unrelated translation_aux code stays pristine after the adopted patches.
+  Oracle5 and the full gate pass; no stale or failed oracle counts as evidence.

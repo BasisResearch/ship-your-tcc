@@ -1982,6 +1982,38 @@ int ( * const [])(unsigned int, ...)    array of an unspecified number of consta
 
 
 
+(* Check every constructed array, including unused typedefs and arrays hidden
+   behind pointers or function parameters. Function elements must be diagnosed
+   before calling is_incomplete, whose domain excludes functions. *)
+and check_array_constraints (Ctype.Ctype _ ty as cty) =
+  let loc = Loc.locOf cty in
+  match ty with
+    | Ctype.Array elem_ty _ ->
+        if AilTypesAux.is_function elem_ty then
+          E.constraint_violation loc ArrayDeclarationFunctionType
+        else
+          check_array_constraints elem_ty >>
+          E.is_incomplete elem_ty >>= fun incomplete ->
+          if incomplete then E.constraint_violation loc ArrayDeclarationIncompleteType
+          else
+            let Ctype.Ctype annots _ = elem_ty in
+            match Ctype.gnu_typedef_alignment annots with
+              | Nothing -> E.return ()
+              | Just al ->
+                  evaluate_integer_constant_expression loc Nothing
+                    (AnnotatedExpression () [] loc (AilEsizeof Ctype.no_qualifiers elem_ty)) >>= fun sz ->
+                  if al > 0 && sz mod al = 0 then E.return ()
+                  else E.constraint_violation loc ArrayElementSizeAlignment
+            end
+    | Ctype.Pointer _ ref_ty -> check_array_constraints ref_ty
+    | Ctype.Atomic inner -> check_array_constraints inner
+    | Ctype.Function (_, ret_ty) params _ ->
+        check_array_constraints ret_ty >>
+        E.mapM_ (fun (_, param_ty, _) -> check_array_constraints param_ty) params
+    | Ctype.FunctionNoParams (_, ret_ty) -> check_array_constraints ret_ty
+    | _ -> E.return ()
+  end
+
 and desugar_array_declarator under_array (ADecl loc tquals is_static a_decltor_size_opt) =
   let (isAtomic, tquals_qs) = translate_type_qualifiers tquals in
   (* NOTE: if we are in prototype scope, then we are dealing with
@@ -2294,6 +2326,7 @@ and desugar_parameter_declaration is_first fundef param_decl =
           (* STD §6.9.1#7, sentence 4 *)
           let (_qs, _ty) =
             mk_qs_ctype (Ctype.combine_qualifiers specs_qs tquals_qs) base_ty in
+          check_array_constraints _ty >>
           
           if AilTypesAux.is_void _ty then
             match fundef with
@@ -2353,6 +2386,7 @@ and desugar_parameter_declaration is_first fundef param_decl =
           (* STD §6.9.1#7, sentence 4 *)
           let (_qs, _ty) =
             mk_qs_ctype (Ctype.combine_qualifiers specs_qs tquals_qs) base_ty in
+          check_array_constraints _ty >>
           let (qs, ty) = AilTypesAux.adjust _qs _ty in
           let ret = (Nothing, ( qs
                               , if isAtomic then Ctype.mk_ctype_atomic ty else ty
@@ -2579,6 +2613,34 @@ STD_ "§6.5.2.1#2, sentence 2" $
         AnnotatedExpression () [] loc <$>
           (desugar_type_name tyname >>= fun (qs, ty) ->
           E.return $ AilEalignof qs ty)
+    | CabsEalignof_expr e ->
+        desugar_expression e >>= fun d_e ->
+        E.get_sigma_sofar >>= fun sigm ->
+        E.get_gamma_sofar >>= fun gamm ->
+        E.get_current_return_type >>= fun ret_ty ->
+        match ErrorMonad.runErrorMonad (Mini_pipeline.annotate_expression_seeded
+          (Map.fromList sigm.enum_definitions) E.desugar_time_tagDefs (Just ret_ty)
+          sigm gamm GenTyping.CTXsizeof d_e) with
+          | Left (at, err) -> E.fail_ailtyping at err
+          | Right a_e ->
+              let (qs, ty) = Mini_pipeline.qualified_ctype_of_seeded
+                (Map.fromList sigm.enum_definitions) E.desugar_time_tagDefs a_e in
+              let object_align = match d_e with
+                | AnnotatedExpression _ _ _ (AilEident sym) ->
+                    match (List.lookup sym gamm, List.lookup sym sigm.declarations) with
+                      | (Just (_, al, _, _), _) -> al
+                      | (_, Just (_, _, Decl_object _ al _ _)) -> al
+                      | _ -> Nothing
+                    end
+                | _ -> Nothing
+              end in
+              let query_ty = match object_align with
+                | Nothing -> ty
+                | Just (Ctype.AlignType al_ty) -> al_ty
+                | Just (Ctype.AlignInteger n) -> Ctype.gnu_align_typedef (Just n) ty
+              end in
+              E.return (AnnotatedExpression () [] loc (AilEalignof qs query_ty))
+        end
     | CabsEcast tyname e ->
         AnnotatedExpression () [] loc <$>
           (* TODO: check *)
@@ -2749,6 +2811,7 @@ and desugar_init_declarator_BROKEN base_qs base_ty (scs: list storage_class_spec
     | InitDecl _ decltor Nothing ->
         desugar_declarator NotFunDef decltor >>= fun ((ident_attrs, ident), mk_qs_ctype) ->
         let (qs, ty) = mk_qs_ctype base_qs base_ty in
+        check_array_constraints ty >>
         let mk_desug_init =
           fun () -> E.return Nothing in
         (* STD §6.9.2#2, sentence 1 *)
@@ -2763,6 +2826,7 @@ and desugar_init_declarator_BROKEN base_qs base_ty (scs: list storage_class_spec
     | InitDecl loc decltor (Just init) ->
         desugar_declarator NotFunDef decltor >>= fun ((ident_attrs, ident), mk_qs_ctype) ->
         let (qs, ty) = mk_qs_ctype base_qs base_ty in
+        check_array_constraints ty >>
         
         (* TODO: check that we really never have parameter objects here *)
         let kind = if AilTypesAux.is_function ty then E.OK_function else E.OK_object false in
@@ -2797,6 +2861,7 @@ and desugar_init_declarator attrs isAtomic has_alignment base_qs base_ty (scs: l
         desugar_gnu_attributes loc all_attrs >>= fun _ ->
         let (qs, _ty) = mk_qs_ctype base_qs base_ty in
         let ty = if isAtomic then wrap_atomic _ty else _ty in
+        check_array_constraints ty >>
         let mk_desug_init =
           fun () -> E.return Nothing in
         (* STD §6.9.2#2, sentence 1 *)
@@ -2833,6 +2898,7 @@ and desugar_init_declarator attrs isAtomic has_alignment base_qs base_ty (scs: l
           desugar_declarator NotFunDef decltor >>= fun ((ident_attrs, ident), mk_qs_ctype) ->
           let (qs, _ty) = mk_qs_ctype base_qs base_ty in
           let ty = if isAtomic then wrap_atomic _ty else _ty in
+        check_array_constraints ty >>
           (* TODO: check that we really never have parameter objects here *)
           let kind = if AilTypesAux.is_function ty then E.OK_function else E.OK_object false in
           (* TODO: I don't like the fact that we are using this function directly here *)
@@ -2887,6 +2953,7 @@ and desugar_struct_declaration struct_decl =
                we need to special case the last member. *)
             let (qs, ty) =
               mk_qs_ctype (Ctype.combine_qualifiers tquals_qs specs_qs) base_ty in
+            check_array_constraints ty >>
             desugar_alignment_specifiers (Loc.locOf ident) ty align_specs >>= fun align_opt ->
             let attrs = Annot.combine_attributes outer_attrs attrs in
             desugar_gnu_alignment (Loc.locOf ident) attrs ty align_opt true >>= fun align_opt ->
@@ -3112,6 +3179,7 @@ and desugar_type_name (Type_name specs tquals align_specs abs_decltor_opt) =
   
   let (qs, ty) =
     mk_qs_ctype (Ctype.combine_qualifiers specs_qs tquals_qs) base_ty in
+  check_array_constraints ty >>
   E.return (qs, (if isAtomic then wrap_atomic ty else ty))
 
 

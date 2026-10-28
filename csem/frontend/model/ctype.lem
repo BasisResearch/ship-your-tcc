@@ -567,6 +567,18 @@ let gnu_typedef_alignment annots =
     end
   ) Nothing annots
 
+(* Deriving a pointer from an array/function expression resets its outer
+   alias alignment, while preserving every other annotation and the referent. *)
+let gnu_clear_typedef_alignment annots =
+  List.map (function
+    | Annot.Aattrs (Annot.Attrs attrs) ->
+        Annot.Aattrs (Annot.Attrs (List.filter (fun attr ->
+          let Identifier _ name = attr.Annot.attr_id in
+          not (name = ":gnu-typedef-alignment:" && isNothing attr.Annot.attr_ns)
+        ) attrs))
+    | annot -> annot
+  end) annots
+
 (* The tag owns these effects. Member alignments are kept independently: GNU
    expression-alignof can observe the distinction. Validation is performed by
    the shared Cabs elaborator before the attributes reach this projection. *)

@@ -150,6 +150,7 @@ type violation =
   (* 6.7.6 Declarators *)
   | ArrayDeclarationNegativeSize (* §6.7.6.2#1, sentence 3 *)
   | ArrayDeclarationIncompleteType (* §6.7.6.2#1, sentence 4 *)
+  | ArrayElementSizeAlignment (* GNU: size must be a multiple of alignment *)
   | ArrayDeclarationFunctionType (* §6.7.6.2#1, sentence 4 *)
   | ArrayDeclarationQsAndStaticOnlyOutmost (* §6.7.6.2#1, sentence 5 *)
   | ArrayDeclarationQsAndStaticOutsideFunctionProto (* §6.7.6.2#1, sentence 5 *)
@@ -409,6 +410,8 @@ let std_of_violation = function
       ["§6.7.6.2#1, sentence 3"]
   | ArrayDeclarationIncompleteType ->
       ["§6.7.6.2#1, sentence 4"]
+  | ArrayElementSizeAlignment ->
+      ["array element size is not a multiple of its declared alignment"]
   | ArrayDeclarationFunctionType ->
       ["§6.7.6.2#1, sentence 4"]
   | ArrayDeclarationQsAndStaticOnlyOutmost ->
