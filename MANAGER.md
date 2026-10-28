@@ -39,7 +39,8 @@ The launcher follows 4ct-digest's MANAGER.md/codexwork.sh workflow, adapted
 to this project's two-worker limit and shared Lean build lock.
 
 Current assignments, 2026-10-28: slot 1 runs tasks/f1-enum-bitfields.md in
-sol-csem-repin. Slot 2 runs tasks/f3-multitu-ghost.md in sol-f2-tokens.
+sol-csem-repin. Slot 2 now runs tasks/f3-physical-transform-proofs.md in sol-f2-tokens;
+reviewed multi-TU checkpoint96c520e awaits combined main integration.
 Bitfields and GNU expression syntax are adopted after their combined gates.
 Reviewed member attributes await rebuilt-image integration.
 The local replay-erasure theorem is adopted after its combined gate; eleven
@@ -72,9 +73,14 @@ profiles. Keep GNU trailing-attribute parser failures and compiler constraint
 diagnostic gaps explicit; their follow-up tasks remain queued. The local replay theorem changes no runtime
 behavior and proves no whole-run construction or binary refinement duty.
 
-After the active per-TU collection task, queue the pure physical-transform
-proofs in tasks/f3-physical-transform-proofs.md. Retain the unchanged named
+The active pure physical-transform proof task is
+tasks/f3-physical-transform-proofs.md. Retain the unchanged named
 Statements, arbitrary-byte scope and standard-axiom audit; a checked obstruction
 is preferable to silently weakening a statement. Slot 1 handles enum bitfield policy. Subsequent F1 tasks include general
 declaration constraints, GNU conditional lowering and VLA types/storage. Compiler diagnostic and declaration constraints remain
 separate tasks. Keep at most two external workers active.
+
+After the enum semantic checkpoint, prioritize tasks/f3-enum-colon-forms.md:
+valid unnamed enum fields/direct enum generic associations currently refuse.
+Preserve GCC expression-type policy differences as a separate axis. Invalid
+bitfield diagnostics, GNU conditional semantics and VLA storage remain queued.
