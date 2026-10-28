@@ -32,7 +32,8 @@ def nat (n : Nat) : Json := Json.num (n : Int)
 /-- Additional raw-interface metadata; not part of the historical JSON schema. -/
 def identity (s : SourceIdentity) : Json :=
   Json.mkObj [("resolved", Lean.toJson (s.resolved.map (fun c => c.map UInt8.toNat))),
-    ("runtimeLibrary", Lean.toJson s.runtimeLibrary)]
+    ("runtimeLibrary", Lean.toJson s.runtimeLibrary),
+    ("compilerInjected", Lean.toJson s.compilerInjected)]
 
 def pos (p : Pos) : Json :=
   Json.mkObj ([("file", Json.str p.file), ("line", nat p.line), ("col", nat p.col),

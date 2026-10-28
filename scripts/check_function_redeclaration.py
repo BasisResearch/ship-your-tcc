@@ -116,9 +116,10 @@ def main():
             # object/function conflict. Keep this outside the success count.
             row['status']='INHERITED_CONSTRAINT_GAP'
             row['expected_gap']=same_cabs and oc.returncode==0 and gcc.returncode!=0 and historical is not None and historical.returncode==0 and isinstance(sem,list) and all(x.get('status')=='defined' for x in sem)
-        elif name=='proxy-name':
-            # Historical name proxying is independently retained; the raw path
-            # has identityProxyNames. Require the repaired raw outcome here.
+        elif name=='proxy-name' and not row['pass']:
+            # A pristine historical oracle may still proxy by spelling. The
+            # current shared overlay must pass; only exact old failures are
+            # retained separately when explicitly running that engine.
             row['status']='HISTORICAL_PROXY_GAP'
             row['expected_gap']=same_cabs and good_raw and gcc.returncode==0 and run.returncode==0 and oc.returncode!=0 and historical is not None and historical.returncode!=0 and b'printf_proxy' in oc.stdout+oc.stderr and b'printf_proxy' in historical.stdout+historical.stderr
         else:

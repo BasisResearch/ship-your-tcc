@@ -1,0 +1,10 @@
+{
+  "files": {
+    "artifact-manifest.json": "70a947c29e2352e9de6f65dd8e5388c10e64ed02a80544fedbc1470e8ab9ea79",
+    "verify.py": "ce0dc05b10ea0cc274236e8cad1de4bde9cede27ea16c69edc16be448e34982b",
+    "evidence.tar.xz": "b20b388ac57ecf078a1f42bc903fc8d5c5df58068be5fb200173dedfbfe534cd"
+  },
+  "artifacts": 6046,
+  "full_gate": "binding-origin-full-1",
+  "source_pins": 3327
+}

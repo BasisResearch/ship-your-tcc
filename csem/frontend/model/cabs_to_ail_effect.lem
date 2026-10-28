@@ -246,6 +246,9 @@ type state = <|
   address_space_top: integer;
   (* table (with stacked scopes) associating C identifiers to symbols *)
   
+  (* Canonical external function identities, keyed by linker name. C name
+     scopes remain separate, preserving ordinary declaration constraints. *)
+  linker_function_symbols: map string A.ail_identifier;
   registered_external_identifiers: map (Symbol.identifier * namespace) (scope * (A.ail_identifier * identifier_kind * maybe linkage));
   registered_identifiers: Scope_table.t scope (Symbol.identifier * namespace) registration;
   
@@ -588,6 +591,7 @@ let initial_state fresh_sym_supply_seed address_space_top core_eval_stuff cn_eva
     fresh_sym_supply= fresh_sym_supply_seed;
     address_space_top= address_space_top;
     
+    linker_function_symbols= Map.empty;
     registered_external_identifiers= Map.empty;
     registered_identifiers=      Scope_table.empty;
     
@@ -800,8 +804,25 @@ let internal_register_identifier if_found ident namespace kind link_opt =
   let do_fresh () =
     (* generates a fresh symbol (state-threaded so Lean's CSE doesn't collapse IDs) *)
     let Symbol.Identifier _ str = ident in
-    (match kind with
-      | Kind_ordinary (OK_object _) -> fresh_sym_object_address str
+    (match (kind, link_opt) with
+      | (Kind_ordinary OK_function, Just Linkage_external) ->
+          let linker_name = match Symbol.compiler_binding_for ident with
+            | Just binding ->
+                (match binding.Symbol.binding_kind with
+                  | Symbol.Runtime_alias -> binding.Symbol.binding_linker_name
+                  | Symbol.Function_allocation_intrinsic -> str
+                end)
+            | Nothing -> str
+          end in
+          read_inner (fun st -> Map.lookup linker_name st.linker_function_symbols) >>= function
+            | Just sym -> return sym
+            | Nothing ->
+                fresh_sym_pretty linker_name >>= fun sym ->
+                update_inner (fun st -> <| st with linker_function_symbols=
+                  Map.insert linker_name sym st.linker_function_symbols |>) >>
+                return sym
+          end
+      | (Kind_ordinary (OK_object _), _) -> fresh_sym_object_address str
       | _ -> fresh_sym_pretty str
     end) >>= fun sym ->
     (* associates it to the identifier *)

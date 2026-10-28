@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Exact independent model/spec Cabs comparison; never erase locations/AST fields.
 
-Each process receives only source bytes. Its model path runs the modeled
-compiler parser; its spec path runs parsePositioned on the same phase-4 view.
+Each process receives only source bytes. The --raw spec path runs
+parsePositioned on model tokens: a parser-construction component check.
+--independent-raw instead calls Raw.checked cfgTcc on source bytes/files.
 Non-successes remain separate from exact successes, with complete artifacts.
 """
 import argparse
@@ -85,6 +86,7 @@ def source_pins():
         'Spec/Pre/Tcc/Cfg.lean','Spec/Pre/Tcc/ImageFS.lean',
         'scripts/ghost_cabs_cmp.py','scripts/ghost_build_request.py',
         'scripts/ghost_origins_cmp.py','scripts/physical_build_request.py','scripts/physical_onoff_cmp.py',
+        'scripts/injected_origins_cmp.py','scripts/binding_origin_build_request.py','Tcc/CSem/RawFrontEnd.lean',
         'lakefile.toml','lake-manifest.json','lean-toolchain','vendor/TINYCC_REV',
         'vendor/CSEM_REV']}
     paths |= set(ROOT.glob('patches/*.patch'))
@@ -112,7 +114,7 @@ def first_diff(a,b,path='$'):
     return None if a==b else path
 
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument('--out',type=Path,default=ROOT/'build/ghost-cabs');ap.add_argument('--case',action='append');ap.add_argument('--raw',action='store_true');ap.add_argument('--diagnostic',action='store_true');ap.add_argument('--min-exact',type=int);ap.add_argument('--build-id');a=ap.parse_args()
+    ap=argparse.ArgumentParser();ap.add_argument('--out',type=Path,default=ROOT/'build/ghost-cabs');ap.add_argument('--case',action='append');mode_group=ap.add_mutually_exclusive_group();mode_group.add_argument('--raw',action='store_true');mode_group.add_argument('--independent-raw',action='store_true');ap.add_argument('--diagnostic',action='store_true');ap.add_argument('--min-exact',type=int);ap.add_argument('--build-id');a=ap.parse_args()
     if a.min_exact is not None and a.min_exact<1:ap.error('--min-exact must be positive; use --diagnostic for omission exploration')
     if not a.diagnostic and not a.build_id:ap.error('strict comparison requires --build-id from a passing frozen build')
     if a.case and set(a.case)-set(CASES):ap.error('unknown fixture')
@@ -125,7 +127,9 @@ def main():
         path=dest/(name+'.c');path.write_text(source+'\n');source_hash=sha(path);objects={}
         for mode in ['model','spec']:
             try:
-                p=subprocess.run([str(exe),('raw-'+mode) if a.raw else mode,str(path)],capture_output=True,text=True,timeout=90,env={**os.environ,'LEAN_ABORT_ON_PANIC':'1'})
+                selected=('raw-'+mode) if a.raw or a.independent_raw else mode
+                if a.independent_raw and mode=='spec':selected='independent-raw'
+                p=subprocess.run([str(exe),selected,str(path)],capture_output=True,text=True,timeout=90,env={**os.environ,'LEAN_ABORT_ON_PANIC':'1'})
                 (dest/f'{name}.{mode}.stderr').write_text(p.stderr)
                 (dest/f'{name}.{mode}.json').write_text(p.stdout)
                 if p.returncode:raise RuntimeError(f'exit {p.returncode}')
@@ -141,6 +145,8 @@ def main():
         if m.get('section_bytes_equal') is False:row['status']='erasure-byte-difference'
         if 'harness-error' in [m['status'],s['status']]:row['status']='harness-error'
         if 'gap' in m:row['gap']=m['gap']
+        if 'error' in m:row['model_error']=m['error']
+        if 'error' in s:row['spec_error']=s['error']
         rows.append(row);print(name,row['status'],row.get('first_difference') or row.get('gap',{}).get('reason',''),flush=True)
     assert sha(exe)==binary,'binary changed during comparison'
     required=EXPECTED_EXACT & {r['case'] for r in rows}
@@ -149,7 +155,7 @@ def main():
     exact=sum(r['status']=='exact' for r in rows)
     assert source_pins()==pins,'source changed during comparison'
     accepted=not unexpected and exact>=minimum
-    report=dict(acceptance=dict(mode='diagnostic' if a.diagnostic else 'strict',accepted=accepted,minimum_exact=minimum,required_exact=sorted(required),failed_controls=unexpected),source_hashes=pins,build=receipt,input_mode='model-raw-source' if a.raw else 'shared-tokens-without-predefined-text',binary_sha256=binary,source_revision=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
+    report=dict(acceptance=dict(mode='diagnostic' if a.diagnostic else 'strict',accepted=accepted,minimum_exact=minimum,required_exact=sorted(required),failed_controls=unexpected),source_hashes=pins,build=receipt,input_mode='independent-Raw.checked-cfgTcc-source-preprocessing-and-parsing' if a.independent_raw else ('parser-construction-on-model-positioned-tokens' if a.raw else 'shared-tokens-without-predefined-text'),binary_sha256=binary,source_revision=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
                 driver_sha256=sha(Path(__file__)),summary=dict(Counter(r['status'] for r in rows)),rows=rows)
     (dest/'comparison.json').write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps(report['summary']))

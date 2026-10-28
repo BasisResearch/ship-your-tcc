@@ -254,3 +254,14 @@ both pristine test sources. Its manifest pins all three upstream files; the
 wrapper, input guards and evidence packaging are project work. See
 results/model/corpus-invocations.md. TinyCC's existing license/provenance row
 continues to cover the unmodified upstream sources.
+
+Compiler-injected binding continuation (2026-10-28): the named alias records,
+canonical external-symbol map and symbol-aware proxy transport extend the
+already vendored Cerberus shared Lem desugaring/translation sources. Generated
+Lean is regenerated with the pinned Lem recipe; isolated OCaml uses the same
+shared sources plus patches/csem/0005–0007 for explicit test-boundary opening
+witnesses, symbol-aware proxies and located header syntax carriers. The
+runtime meanings remain the existing Cerberus Core/memory operations. No Lua
+or newlib machine proof is copied or asserted byte-identical by this work.
+The actual TinyCC header/image inputs remain at the existing licensed pin;
+results/csem/injected-bindings.md records their provenance and open duties.

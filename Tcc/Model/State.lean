@@ -238,6 +238,11 @@ structure TccSt where
   ghostReplay : Std.HashMap Nat (Array (Nat × Nat)) := {}
   ghostFdSources : Std.HashMap Nat Ghost.OpenedFile := {}
   ghostDirective : Option CSem.Pre.SourceSpan := none
+  ghostImplicitOffset : Option Nat := none
+  ghostCompilerRoot : Option Ghost.CompilerRoot := none
+  ghostCompilerEvent : Option Ghost.CompilerEvent := none
+  /-- Independently configured runtime membership; injection is a separate bit. -/
+  ghostLibraryFiles : List (List CSem.Pre.Bytes) := []
   ghostSources : Array Ghost.ModelSource := #[]
   ghostClosedPhysical : Std.HashMap Nat (Array Ghost.PhysicalChar) := {}
   ghostOrigins : Array Ghost.ModelOrigin := #[]

@@ -94,10 +94,34 @@ def position (fname : String) (i : Nat) (site : SourceSite) (width : Nat) :
 def startPos (fname : String) : CerbLocation.Pos :=
   { file := fname, line := 1, col := 1, lexingFile := fname, lexingLine := 1 }
 
+/-- Authenticated opening pair supplied by the raw adapter after checking full
+predefined/header bytes. The include edge identifies the compiler opening,
+not a user include of a same-named file or a presumed #line label. -/
+structure CompilerOpening where
+  root : List Bytes
+  header : List Bytes
+  directive : SourceSpan
+
+def CompilerOpening.contains (opening : CompilerOpening) (site : SourceSite) : Bool :=
+  site.physical.identity == opening.header && site.includes == [opening.directive] &&
+    opening.directive.identity == opening.root
+
+/-- One fixed identity computation shared by the converter and its transport
+obligation. Injection authority also marks these locations as supplied runtime
+context for the five existing library-location consumers. -/
+def identify (policy : CerbLocation.LibraryConfig) (injected : Option CompilerOpening)
+    (site : SourceSite) : CerbLocation.SourceIdentity :=
+  let supplied := injected.any (·.contains site)
+  let identity := policy.identify site.physical.identity
+  { identity with
+    compilerInjected := supplied
+    runtimeLibrary := identity.runtimeLibrary || supplied }
+
 /-- Conversion preserves boundaries and spelling. Pragma payloads are opaque
 and zero width, including when they separate adjacent string literals. -/
 def convertWithIdentity (identity : Option CerbLocation.LibraryConfig)
-    (cfg : ParseCfg) (fname : String) (r : PreprocessingResult) : Except String Input := do
+    (cfg : ParseCfg) (fname : String) (r : PreprocessingResult)
+    (injected : Option CompilerOpening := none) : Except String Input := do
   let mut toks : Array PTok := #[]
   let mut origins : Array Origin := #[]
   let mut pragmas : Array Pragma := #[]
@@ -125,7 +149,7 @@ def convertWithIdentity (identity : Option CerbLocation.LibraryConfig)
           | some policy =>
             match p.origin.identitySite with
             | none => throw "phase-four token has no source identity"
-            | some physical => pure (some (policy.identify physical.physical.identity))
+            | some physical => pure (some (identify policy injected physical))
         let sp := { sp with sourceIdentity := source }
         let ep := { ep with sourceIdentity := source }
         toks := toks.push ⟨t, sp, ep, Lex.slice (bytes p.token.spell) 0 p.token.spell.length⟩

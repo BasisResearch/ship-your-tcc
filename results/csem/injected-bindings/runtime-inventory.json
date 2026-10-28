@@ -1,0 +1,107 @@
+[
+  {
+    "name": "__builtin_memcpy",
+    "status": "loaded",
+    "target": "memcpy"
+  },
+  {
+    "name": "__builtin_memmove",
+    "status": "missing-body",
+    "target": "memmove"
+  },
+  {
+    "name": "__builtin_memset",
+    "status": "missing-body",
+    "target": "memset"
+  },
+  {
+    "name": "__builtin_memcmp",
+    "status": "loaded",
+    "target": "memcmp"
+  },
+  {
+    "name": "__builtin_strlen",
+    "status": "missing-body",
+    "target": "strlen"
+  },
+  {
+    "name": "__builtin_strcpy",
+    "status": "missing-body",
+    "target": "strcpy"
+  },
+  {
+    "name": "__builtin_strncpy",
+    "status": "missing-body",
+    "target": "strncpy"
+  },
+  {
+    "name": "__builtin_strcmp",
+    "status": "missing-body",
+    "target": "strcmp"
+  },
+  {
+    "name": "__builtin_strncmp",
+    "status": "missing-body",
+    "target": "strncmp"
+  },
+  {
+    "name": "__builtin_strcat",
+    "status": "missing-body",
+    "target": "strcat"
+  },
+  {
+    "name": "__builtin_strncat",
+    "status": "missing-body",
+    "target": "strncat"
+  },
+  {
+    "name": "__builtin_strchr",
+    "status": "missing-body",
+    "target": "strchr"
+  },
+  {
+    "name": "__builtin_strrchr",
+    "status": "missing-body",
+    "target": "strrchr"
+  },
+  {
+    "name": "__builtin_strdup",
+    "status": "missing-body",
+    "target": "strdup"
+  },
+  {
+    "name": "__builtin_malloc",
+    "status": "loaded",
+    "target": "malloc"
+  },
+  {
+    "name": "__builtin_realloc",
+    "status": "loaded",
+    "target": "realloc"
+  },
+  {
+    "name": "__builtin_calloc",
+    "status": "missing-body",
+    "target": "calloc"
+  },
+  {
+    "name": "__builtin_memalign",
+    "status": "missing-body",
+    "target": "memalign"
+  },
+  {
+    "name": "__builtin_free",
+    "status": "loaded",
+    "target": "free"
+  },
+  {
+    "name": "__builtin_abort",
+    "status": "missing-body",
+    "target": "abort"
+  },
+  {
+    "name": "__builtin_alloca",
+    "status": "intrinsic-pending",
+    "target": "alloca"
+  }
+]

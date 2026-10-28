@@ -161,20 +161,6 @@ def elabFailure (loc : CerbLocation.Loc) (ub : Bool) : Verdict :=
   if loc == CerbFuel.fuelExhaustedLoc then .outOfFuel ""
   else if ub then .undef else .refused
 
-/-- Identity-aware programs retain their own function definitions. A Core
-proxy is used for an unresolved external library declaration, never for a
-same-named definition in this TU. The historical oracle interface is unchanged.
-Filtering by definition symbols also handles user redeclarations and calls
-before the definition, without requiring a standard header for valid forward
-library declarations (C11 7.1.4). -/
-def identityProxyNames (names : Fmap String sym)
-    (prog : ail_program genTypeCategory) : Fmap String sym :=
-  Lem_Map.fromList ((fmapElements names).filter fun (name, _) =>
-    !prog.2.function_definitions.any (fun (symbol, _) =>
-      match symbol with
-      | Symbol _ _ (SD_Id declared) => declared == name
-      | _ => false))
-
 /-- Cabs → Core for one TU: the fork driver's `frontendTU` without its IO
 (same calls, same arguments; zero is reserved as in `runPipeline`). -/
 def elaborate [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] [CerberusFresh.Digest] (cfg : Config)
@@ -196,7 +182,6 @@ def elaborate [CerbImplCfg.Impl] [LemFuel] [CerbGlobal.Switches] [CerberusFresh.
         | .AIL_TYPING (.TError_UndefinedBehaviour _) => true
         | _ => false))
     | .Result (typedProg, _annots) =>
-      let ailnames := if cfg.identity.isSome then identityProxyNames ailnames typedProg else ailnames
       .ok (translate enumDefs fmapEmpty supplyAfterDesugar (ailnames, stdFunMap) Normal_callconv
         coreImpl typedProg)
 

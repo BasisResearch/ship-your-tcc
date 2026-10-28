@@ -296,14 +296,9 @@ def translate_function_designator [CerberusFresh.Digest] [CerbImplCfg.Impl]
             bind1 (translate_expr e) (fun (core_e : generic_expr Unit Unit sym) =>
               return0 (mk_sseq_e fun_wrp.sym_pat core_e (mk_pure_e fun_wrp.sym_pe))))
         | Function _ params is_variadic, AilEident fid =>
-          (let fid_pe :=
-             match fid with
-             | Symbol _ _ (SD_Id str) =>
-               (match (fmapLookupBy defaultCompare str stdlib1.ailnames) with
-                | some sym1 =>
-                  mk_value_pe (Vloaded (LVspecified (OVpointer (CerbMem.funPtrval sym1))))
-                | none => mk_value_pe (Vloaded (LVspecified (OVpointer (CerbMem.funPtrval fid)))))
-             | _ => mk_value_pe (Vloaded (LVspecified (OVpointer (CerbMem.funPtrval fid))));
+          (let canonical := maybe0 fid (fun (proxy : sym) => proxy) (function_proxy stdlib1 fid);
+           let fid_pe :=
+             mk_value_pe (Vloaded (LVspecified (OVpointer (CerbMem.funPtrval canonical))));
            return0 (mk_pure_e fid_pe))
         | _, _ =>
           (failwithI
@@ -6425,7 +6420,9 @@ def translate [LemFuel] [CerberusFresh.Digest] [CerbImplCfg.Impl] [CerbGlobal.Sw
     (generic_file Unit Unit × Nat) :=
   match sup, p, callconv, impl2, prog with
   | sup, (ailnames1, stdlib_fun_map), callconv, impl2, prog =>
-    (let translation_stdlib1 := mk_translation_stdlib (ailnames1, stdlib_fun_map);
+    (let translation_stdlib1 :=
+       { (mk_translation_stdlib (ailnames1, stdlib_fun_map)) with
+         defined_functions := List.map Prod.fst (Prod.snd prog).function_definitions };
      match runStateM_errors
          ((translate_program _lemReader_enum_definitions _lemReader_tagDefs) translation_stdlib1
            prog) (elab_init sup callconv) with

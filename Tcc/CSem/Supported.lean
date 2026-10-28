@@ -1,4 +1,5 @@
 import Cabs
+import Symbol
 
 /-!
 # The constructs `Supported` excludes, found in a Cabs translation unit (F0)
@@ -11,7 +12,7 @@ and how each shows in Cabs:
 
 | §5 row | in Cabs |
 |---|---|
-| inline assembly (statements, top level, asm labels) | `CabsSasm`; top-level `asm` and asm labels have no Cabs form: the fork's parser refuses them, so the front end fails |
+| inline assembly (statements, top level, asm labels) | `CabsSasm`; retained declarator `asm_label` carriers are excluded unless authenticated as the fixed compiler environment; top-level `asm` is refused |
 | labels as values, computed `goto` | no Cabs form (the parser refuses `&&l` and `goto *e`) |
 | `__builtin_frame_address`, `__builtin_return_address` | an identifier of that name |
 | `_Atomic`, `__atomic_*` | `TSpec_Atomic`, `Q_Atomic`, an identifier starting `__atomic_` or `__sync_` |
@@ -43,9 +44,26 @@ def excludedIdent (name : String) : List Excluded :=
 def excludedAttrName (name : String) : Bool :=
   ["section", "visibility", "weak", "alias"].any fun a => name == a || name == s!"__{a}__"
 
+/-- Only authenticated compiler-opening carriers have runtime bindings.
+No presumed path, source spelling prefix or ordinary library membership grants
+this exception. Full declarations remain in the frontend's binding records. -/
+def suppliedAsmBinding (ident : identifier) (a : attribute0) : Bool :=
+  match a.attr_id, a.attr_ns, a.attr_args with
+  | .Identifier loc "asm_label", some (.Identifier _ ns), [(_, spelling, _)] =>
+      CerbLocation.isCompilerInjected loc && ["asm", "__asm", "__asm__"].contains ns &&
+        (compiler_binding_for ident).any (fun b => spelling == "\"" ++ b.binding_linker_name ++ "\"")
+  | _, _, _ => false
+
 def exclAttrs : attributes → List Excluded
   | .Attrs as => as.filterMap fun a => match a.attr_id with
-    | .Identifier _ n => if excludedAttrName n then some (.attribute n) else none
+    | .Identifier _ n => if n == "asm_label" then some .asm
+      else if excludedAttrName n then some (.attribute n) else none
+
+/-- The exception belongs only to a declarator's authenticated name/target
+pair. A similarly located generic attribute has no binding authority. -/
+def exclBindingAttrs (ident : identifier) : attributes → List Excluded
+  | .Attrs as => as.flatMap fun a =>
+      if suppliedAsmBinding ident a then [] else exclAttrs (.Attrs [a])
 
 def exclOptAttrs : Option attributes → List Excluded
   | none => []
@@ -135,7 +153,7 @@ def exclAspec : alignment_specifier → List Excluded
 def exclDeclr : declarator → List Excluded
   | .Declarator p dd => exclOptPdecl p ++ exclDdeclr dd
 def exclDdeclr : direct_declarator → List Excluded
-  | .DDecl_identifier a _ => exclAttrs a
+  | .DDecl_identifier a ident => exclBindingAttrs ident a
   | .DDecl_declarator d => exclDeclr d
   | .DDecl_array dd ad => exclDdeclr dd ++ exclAdecl ad
   | .DDecl_function dd ps => exclDdeclr dd ++ exclPtl ps

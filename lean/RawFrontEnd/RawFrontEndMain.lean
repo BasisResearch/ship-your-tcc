@@ -50,7 +50,7 @@ def consumerLocations (location : CerbLocation.Loc) : Json := Id.run do
   letI : CerbGlobal.Switches := ⟨CerbGlobal.defaultSwitches⟩
   let caller : CerbLocation.Loc := .point {
     file := "caller.c", line := 123, col := 4, lexingFile := "caller.c", lexingLine := 123,
-    sourceIdentity := some ⟨[bs "caller.c"], false⟩ }
+    sourceIdentity := some { resolved := [bs "caller.c"], runtimeLibrary := false } }
   let undef : pexpr := Pexpr [] () (PEundef location UB045a_division_by_zero)
   let mem := CerbMem.initialMemState 0x10000
   let file : generic_file Unit core_run_annotation := default
@@ -81,7 +81,12 @@ def consumerLocations (location : CerbLocation.Loc) : Json := Id.run do
 
 
 def resultJson (r : Tcc.CSem.Raw.Result) (probe : Bool := false) : Json :=
-  obj [("stage", toJson ("parse-audit" : String)), ("digest", toJson r.digest), ("cabs", CabsExport.translationUnit r.cabs),
+  obj [("stage", toJson ("parse-audit" : String)),
+    ("excluded", toJson ((Tcc.CSem.excluded r.cabs).map reprStr)),
+    ("bindings", .arr (r.bindings.toArray.map fun b => obj [
+      ("name", toJson b.identity.binding_name), ("target", toJson b.identity.binding_linker_name),
+      ("intrinsic", toJson (match b.identity.binding_kind with | .Function_allocation_intrinsic => true | _ => false)),
+      ("declaration", CabsExport.declaration b.declaration)])), ("digest", toJson r.digest), ("cabs", CabsExport.translationUnit r.cabs),
     ("phase4", ppJson r.preprocessing),
     ("sources", .arr (r.preprocessing.sources.toArray.map fun f => obj [
       ("openedAs", toJson (byteString f.openedAs)), ("identity", toJson (f.identity.map byteString)),
@@ -119,12 +124,27 @@ def layout (cfg : ParseCfg) (pp : PreprocessingResult) : Except String String :=
 
 /-- Diagnostic execution of the actual raw -> Cabs -> Ail -> Core -> driver
 path. Finite executions are tests, not frontend/compiler correctness proofs. -/
-def semanticJson (raw : Tcc.CSem.Raw.Config) (src : Bytes) : Json :=
+def semanticContext (raw : Tcc.CSem.Raw.Config) : Tcc.CSem.Raw.Config × Tcc.CSem.Config :=
   let base := { (Tcc.cfgTcc (Tcc.CSem.Raw.frontEnd raw) []) with runtime := "/neutral-core-labels" }
   let std := FileSys.normComponents (bs "/csem/runtime/libcore/std.core")
   let imp := FileSys.normComponents (bs ("/csem/runtime/libcore/impls/" ++ base.implFileName))
   let raw := { raw with libraryFiles := std :: imp :: raw.libraryFiles }
   let cfg := Tcc.CSem.Raw.semanticConfig raw base ⟨std, imp⟩
+  (raw, cfg)
+
+def runtimeInventoryJson (raw : Tcc.CSem.Raw.Config) : Json :=
+  match Tcc.CSem.Raw.runtimeBindingInventory (semanticContext raw).2 with
+  | .error message => obj [("error", toJson message)]
+  | .ok entries => .arr (entries.toArray.map fun entry => obj [
+      ("name", toJson entry.identity.binding_name),
+      ("target", toJson entry.identity.binding_linker_name),
+      ("status", toJson (match entry.coreBody with
+        | none => "intrinsic-pending"
+        | some true => "loaded"
+        | some false => "missing-body"))])
+
+def semanticJson (raw : Tcc.CSem.Raw.Config) (src : Bytes) : Json :=
+  let (raw, cfg) := semanticContext raw
   letI : CerbImplCfg.Impl := ⟨cfg.implementation⟩
   letI : LemFuel := ⟨50000⟩
   letI : CerbGlobal.Switches := ⟨CerbGlobal.defaultSwitches⟩
@@ -212,7 +232,8 @@ def main (args : List String) : IO UInt32 := do
   let pre := if opts.tcc then CSem.Pre.Tcc.cfgTcc else cfgIso
   let cfg : Tcc.CSem.Raw.Config := {
     pre := { pre with mainName := bs file, sysIncludePaths := opts.includes ++ pre.sysIncludePaths }, fs,
-    parser := { gnu := opts.gnu || opts.tcc }, libraryFiles := opts.library }
+    parser := { gnu := opts.gnu || opts.tcc }, libraryFiles := opts.library,
+    compilerEnvironment := if opts.tcc then some tccEnvironment else none }
   if opts.phase4 then
     match phases14WithOrigins cfg.pre fs src.toList with
     | .error e => IO.eprintln e.msg; return 1
@@ -230,7 +251,8 @@ def main (args : List String) : IO UInt32 := do
       | .ok text => IO.FS.writeFile path text
     let result := RawRunner.resultJson r opts.semantic
     let result := if opts.semantic then
-      Json.mkObj [("parse", result), ("semantics", RawRunner.semanticJson cfg src.toList)]
+      Json.mkObj [("parse", result), ("semantics", RawRunner.semanticJson cfg src.toList),
+        ("runtimeBindings", RawRunner.runtimeInventoryJson cfg)]
       else result
     IO.println result.compress
     return 0

@@ -1,0 +1,68 @@
+--- a/frontend/model/translation_aux.lem
++++ b/frontend/model/translation_aux.lem
+@@ -292,6 +292,7 @@
+ 
+ (* TODO: I need functors ... *)
+ type translation_stdlib = <|
++  defined_functions: list Symbol.sym;
+   ailnames:                           map string Symbol.sym;
+   mkcall_bitwise_AND:                 Ctype.ctype -> C.pexpr -> C.pexpr -> C.pexpr;
+   mkcall_bitwise_XOR:                 Ctype.ctype -> C.pexpr -> C.pexpr -> C.pexpr;
+@@ -320,7 +321,7 @@
+   let std_syms = Set_extra.toList (Map.domain stdlib_fun_map) in
+   let mk_call str pes = Core.Pexpr [] () (Core.PEcall (Core.Sym (fetch_stdlib_symbol std_syms str)) pes) in
+   let mk_proc str pes = Core.Expr [] (Core.Eproc () (Core.Sym (fetch_stdlib_symbol std_syms str)) pes) in
+-  <| ailnames=                           ailnames
++  <| defined_functions= []; ailnames=                           ailnames
+    ; mkcall_bitwise_AND=                 fun ty pe1 pe2 -> mk_call "bitwise_AND"                [Caux.mk_ail_ctype_pe ty; pe1; pe2]
+    ; mkcall_bitwise_XOR=                 fun ty pe1 pe2 -> mk_call "bitwise_XOR"                [Caux.mk_ail_ctype_pe ty; pe1; pe2]
+    ; mkcall_bitwise_OR=                  fun ty pe1 pe2 -> mk_call "bitwise_OR"                 [Caux.mk_ail_ctype_pe ty; pe1; pe2]
+@@ -380,6 +381,16 @@
+ 
+ 
+ (* ASSUMES: is_arithmetic ty_src && is_arithmetic ty_dst *)
++(* Definition membership is symbol identity, never a test of SD_Id spelling.
++   A static function and an injected external target may share a spelling. *)
++let function_proxy stdlib fid =
++  if List.elem fid stdlib.defined_functions then Nothing
++  else match fid with
++    | Symbol.Symbol _ _ (Symbol.SD_Id name) -> Map.lookup name stdlib.ailnames
++    | _ -> Nothing
++  end
++
++
+ val conv_loaded_arith: translation_stdlib -> Ctype.ctype -> Ctype.ctype -> C.pexpr -> C.pexpr
+ let conv_loaded_arith stdlib ty_src ty_dst pe =
+   if AilTypesAux.is_integer ty_src then
+--- a/frontend/model/translation.lem
++++ b/frontend/model/translation.lem
+@@ -242,17 +242,8 @@
+         translate_expr e                                    >>= fun core_e  ->
+         E.return (Caux.mk_sseq_e fun_wrp.E.sym_pat core_e (Caux.mk_pure_e fun_wrp.E.sym_pe))
+     | (Ctype.Function _ params is_variadic, A.AilEident fid) ->
+-        let fid_pe = match fid with
+-          | Symbol.Symbol _ _ (Symbol.SD_Id str) ->
+-              match Map.lookup str stdlib.ailnames with
+-                | Just sym ->
+-                    Caux.mk_value_pe (Core.Vloaded (C.LVspecified (Core.OVpointer (Mem.fun_ptrval sym))))
+-                | Nothing ->
+-                    Caux.mk_value_pe (Core.Vloaded (C.LVspecified (Core.OVpointer (Mem.fun_ptrval fid))))
+-              end
+-          | _ ->
+-              Caux.mk_value_pe (Core.Vloaded (C.LVspecified (Core.OVpointer (Mem.fun_ptrval fid))))
+-        end in
++        let canonical = maybe fid (fun proxy -> proxy) (function_proxy stdlib fid) in
++        let fid_pe = Caux.mk_value_pe (Core.Vloaded (C.LVspecified (Core.OVpointer (Mem.fun_ptrval canonical)))) in
+         E.return (Caux.mk_pure_e fid_pe)
+     | (*BISECT-IGNORE*) _ ->
+         error ("[Translation.translate_function_designator] wildcard case ==> " ^
+@@ -4568,7 +4559,8 @@
+     A.ail_program GenTypes.genTypeCategory ->
+     (C.file unit * nat)
+ let translate sup (ailnames, stdlib_fun_map) callconv impl prog =
+-  let translation_stdlib = mk_translation_stdlib (ailnames, stdlib_fun_map) in
++  let translation_stdlib = <| (mk_translation_stdlib (ailnames, stdlib_fun_map)) with
++    defined_functions= List.map fst (snd prog).A.function_definitions |> in
+   let ((core_tagDefs, core_enumDefs, cglobs, (*cdecls, *) cfuns, funinfo), st) =
+     E.runStateM_errors (translate_program translation_stdlib prog) (E.elab_init sup callconv)
+   in

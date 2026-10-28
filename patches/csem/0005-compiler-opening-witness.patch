@@ -1,0 +1,61 @@
+--- a/util/cerb_location.ml
++++ b/util/cerb_location.ml
+@@ -509,6 +509,40 @@
+   | Loc_other str -> Some str
+   | _ -> None
+ 
++(* Explicit positioned-token test boundary. The witness is supplied by the
++   raw opening adapter, with exact source/layout content pins. Presumed #line
++   labels and builtin spellings never authorize a compiler opening. No witness
++   means the historical text frontend has no injection authority. *)
++let compiler_opening_witness = lazy (
++  match Sys.getenv_opt "SYT_COMPILER_OPENING_WITNESS" with
++  | None -> None
++  | Some path ->
++      let channel = open_in path in
++      let rec lines acc =
++        match input_line channel with
++        | line -> lines (line :: acc)
++        | exception End_of_file -> close_in channel; List.rev acc in
++      match List.map (String.split_on_char '\t') (lines []) with
++      | ["source"; source; source_digest] :: ["layout"; layout; layout_digest] :: rows ->
++          if Digest.to_hex (Digest.file source) <> source_digest ||
++             Digest.to_hex (Digest.file layout) <> layout_digest then
++            failwith "compiler opening witness: changed source/layout";
++          let tokens = List.map (function
++            | ["token"; line] -> int_of_string line
++            | _ -> failwith "compiler opening witness: malformed token") rows in
++          Some (source, tokens)
++      | _ -> failwith "compiler opening witness: malformed pins")
++
++let is_compiler_injected loc =
++  let start = match loc with
++    | Loc_point p | Loc_region (p, _, _) | Loc_regions ((p, _) :: _, _) -> Some p
++    | _ -> None in
++  match start, Lazy.force compiler_opening_witness with
++  | Some p, Some (source, tokens) ->
++      let actual = Cerb_position.to_file_lexing p in
++      actual.pos_fname = source && List.mem actual.pos_lnum tokens
++  | _ -> false
++
+ let is_library_location loc =
+   let excluded =
+     let tbl = Hashtbl.create 3 in
+@@ -516,7 +550,7 @@
+     Hashtbl.add tbl (Cerb_runtime.in_runtime "libcore") ();
+     Hashtbl.add tbl (Cerb_runtime.in_runtime "libcore/impls") ();
+     tbl in
+-  match get_filename loc with
++  is_compiler_injected loc || match get_filename loc with
+     | Some path ->
+         Hashtbl.mem excluded (Filename.dirname path)
+     | None ->
+--- a/util/cerb_location.mli
++++ b/util/cerb_location.mli
+@@ -57,3 +57,6 @@
+ val is_library_location: t -> bool
+ 
+ val line_numbers : t -> (int * int) option
++
++(** Explicit raw-adapter opening witness; independent of presumed labels. *)
++val is_compiler_injected: t -> bool

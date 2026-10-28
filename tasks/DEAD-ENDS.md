@@ -737,3 +737,66 @@ capture overlapped a manifest-reader cleanup, so a second frozen capture is
 the adopted evidence. The temporary-path test failure was canonical path
 comparison, not compiler behavior. Complete multi-TU ghost provenance remains
 an explicit follow-up, not established by arena equality.
+
+## Injected binding and authority continuation, 2026-10-28
+
+- Injected bindings, capacity interruption (2026-10-28): bindings-lean-1/2/3
+  are failed build observations, not accepted semantics. Request3's exact
+  source hashes were verified after the worker stopped. Earlier Phase7
+  constructor-layout errors were repaired; request3 still fails in
+  Tcc/CSem/RawFrontEnd.lean, including unresolved BindingResolution. Preserve
+  the generated/source edits and receipts, then complete the typed interface
+  before testing. No oracle, semantic, whole-C or gate success is claimed.
+
+- Injected-binding continuation: the historical OCaml parser still rejected
+  the actual stripped image header's `__attribute` and declarator asm labels.
+  Preserve both the wrong-runtime-prefix harness error and the corrected GNU
+  rejection. An isolated, pinned carrier overlay now parses the full stream;
+  never remove these declarations to manufacture raw-source agreement.
+- Injected runtime coverage: memmove/strlen/alloca missing-body errors in both
+  engines are not execution agreement. Inventory all loaded targets; 15
+  ordinary alias bodies and function-lifetime alloca remain F1/F7 duties.
+  Alloca must not join the ordinary external-symbol alias map.
+- Consumer JSON tests must expect the new explicit compilerInjected false
+  field. Mixing current Lean's symbol-aware proxies with pristine OCaml's old
+  spelling proxy also creates an honest difference; select the exact shared
+  overlay in the gate, preserving the failed mixed-engine observation.
+- Binding inventory build bindings-next-lean-4 failed on `letI` before a
+  monadic bind: establish the instance outside the `do` block. Its failed
+  matching receipt and exact sources are retained. bindings-next-lean-5
+  passes at ordinary budgets; no old executable substitutes for that build.
+
+- Injected model authority: binding-origin-lean-2 failed at the new typed
+  transport contract because Lean could not infer quantified PTok/Origin
+  types before field projection. Its matching receipt verifies 3,327 inputs;
+  retain it as a failed build. Add the explicit types, without raising budgets.
+- Full injected-origin comparison first found chained `##` losing its left
+  ghost derivation: TOK_PLCHLDR also represents a nonempty paste accumulator.
+  Preserve that accumulator's origin on the second paste. The initial direct
+  Cabs match retained all21 aliases but was not full recursive-origin equality.
+- Independent opening comparison must name the compiler's eager main opening
+  and the spec's predefine/header-first schedule explicitly. The first full
+  comparison retained equal Cabs/tokens/origins but put main before the implicit
+  header in its SourceFile projection. Map designated control IDs to the named
+  predefine/header stages and retain every other actual opening. Do not choose
+  model sources from the spec's source set or sort away repeated openings.
+- A bare second tccdefs include repeats `struct __uint128__` and is rejected
+  by the model compiler. Preserve that discovery as a nonsuccess, not an
+  opening-authority test success. The valid same-byte repeated-header control
+  defines `__uint128__` to a fresh user tag before inclusion; it retains all21
+  original alias declarations and the actual same-path header bytes unchanged.
+- Injected-origin spoof controls caught the inherited GhostMain --files loader
+  prepending overrides before default image entries. The shared initializer's
+  later entry replaces earlier contents, so both independent engines silently
+  saw the original header. The retained controls-4 report correctly fails its
+  expected inventory. Append explicit overrides and check actual retained
+  opening bytes against each fixture; do not count that run as spoof coverage.
+- Identity-role assertions must use CabsExport.ident's actual {loc,name}
+  object; identifiers have no `Identifier` JSON tag. The full model/spec Cabs
+  equality already passed; retain the failed role assertions and repair only
+  their selector, without projecting away identity metadata.
+- Injected-origin evidence packaging: the complete gzip encoding exceeded
+  GitHub's ordinary per-file limit. Re-encode the same final/failed/superseded
+  captures and source snapshots as xz, verify every member hash, and remove
+  only the verified redundant gzip encoding. Do not prune observations or put
+  an oversized encoding into commit history to solve an encoding problem.

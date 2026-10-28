@@ -1,0 +1,15 @@
+{
+  "/usr/bin/gcc": "864711037b900acdb7a449cf48d912cefa935b527fb60c767ccb956779e66136",
+  "/Users/kirancodes/Documents/code/ship-your-lua/riscv-lean/lean_emulator/.lake/build/bin/lean_riscv_emulator": "8989bde8a95345de658fb9c9111e15ce4a5561bc747dab28f798080f0778120b",
+  "/Users/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin/riscv-none-elf-gcc": "f0aeb21d7c8aeac5dbbccbcdc2b3c80ecff615a1d7f7f3db3b507836b1c1c398",
+  "/Users/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin/riscv-none-elf-as": "55ecd2e8859aed135935a62fec7f58558873d29c123884e2f761c77770ae65d5",
+  "/Users/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin/riscv-none-elf-ld": "6d5a22d59eaf4bfba6bd803188633a8af6d093cdd9cd94235eb29539812734ca",
+  "/Users/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin/riscv-none-elf-nm": "161c8e5fa3ed259b538048dfcd842a765a078c5286c4269ee74d8bcc746fc965",
+  "/Users/kirancodes/toolchains/xpack-riscv-none-elf-gcc-15.2.0-1/bin/riscv-none-elf-objdump": "b67ab572f7c3806067447dfaca085407b53e7ac51cabed4ba9b7127c1b6d8944",
+  "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/run_tcc_sail.sh": "9a7737b4ac7a3578db6d1597a1c8224800e912cae30592e95c772f7637737ac8",
+  "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/scripts/sail_console.py": "7ed4fceae118690184500b7cfa133387905c33ea2ae0e40a61283806f095dbd5",
+  "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/src/gen_embed.sh": "68534ee3a238c143bf4e749fcb0ea43e8b53933c4a9d6843422d995c879d7d76",
+  "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/src/link.ld": "d05d111da0b8378c3fd0a34253dc3434a79f158ec7f2265615fa9016fd19c06e",
+  "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/Makefile": "da471980111e20621fab6e8bd18e2cc163e818b6b2f2accbd7b63255a235ad02",
+  "/data/home/kirancodes/Documents/code/ship-your-tcc/.claude/worktrees/sol-csem-repin/c/src/strip_headers.py": "5242b2e21e3adc7745c3e532f86898dab4a5aecd1553e0a2b7e756d78e77ea3f"
+}

@@ -42,7 +42,9 @@ def erase (s : TccSt) : TccSt :=
     pragma_emitted := s.pragma_emitted.eraseGhost,
     tokstr_buf := s.tokstr_buf.eraseGhost,
     unget_buf := s.unget_buf.eraseGhost,
-    ghostSaved := #[], ghostReplay := {}, ghostFdSources := {}, ghostDirective := none, ghostSources := #[], ghostClosedPhysical := {}, ghostOrigins := #[], ghostPragmas := #[],
+    ghostSaved := #[], ghostReplay := {}, ghostFdSources := {}, ghostDirective := none,
+    ghostImplicitOffset := none, ghostCompilerRoot := none, ghostCompilerEvent := none, ghostLibraryFiles := [],
+    ghostSources := #[], ghostClosedPhysical := {}, ghostOrigins := #[], ghostPragmas := #[],
     ghostInput := none, ghostCurrent := 0, ghostPrior := 0,
     ghost := #[], ghostAudit := #[], ghostNormalizations := #[], ghostDrops := #[], ghostTokenErrors := #[] }
 
@@ -118,10 +120,11 @@ def rawAction (R : Rec) : M Unit := do
   let _ ← tccgen_compile R
 
 def runRaw (src : ByteArray) (fs : List (CSem.Pre.Bytes × CSem.Pre.Bytes))
-    (observe : Bool := true) : EStateM.Result Err TccSt Unit :=
+    (observe : Bool := true) (libraries : List (List CSem.Pre.Bytes) := []) : EStateM.Result Err TccSt Unit :=
   let base := preprocessState src fs
   let initial := { base with
     ghostEnabled := observe, cversion := 201112, warn_none := 1,
+    ghostLibraryFiles := if observe then libraries else [],
     error_set_jmp_enabled := 1, output_type := TCC_OUTPUT_MEMORY,
     tcc_lib_path := "/lib/tcc".toUTF8,
     sysinclude_paths := #["/lib/tcc/include".toUTF8, "/include".toUTF8] }

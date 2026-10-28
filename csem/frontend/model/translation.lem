@@ -238,17 +238,8 @@ let translate_function_designator translate_expr stdlib (A.AnnotatedExpression _
         translate_expr e                                    >>= fun core_e  ->
         E.return (Caux.mk_sseq_e fun_wrp.E.sym_pat core_e (Caux.mk_pure_e fun_wrp.E.sym_pe))
     | (Ctype.Function _ params is_variadic, A.AilEident fid) ->
-        let fid_pe = match fid with
-          | Symbol.Symbol _ _ (Symbol.SD_Id str) ->
-              match Map.lookup str stdlib.ailnames with
-                | Just sym ->
-                    Caux.mk_value_pe (Core.Vloaded (C.LVspecified (Core.OVpointer (Mem.fun_ptrval sym))))
-                | Nothing ->
-                    Caux.mk_value_pe (Core.Vloaded (C.LVspecified (Core.OVpointer (Mem.fun_ptrval fid))))
-              end
-          | _ ->
-              Caux.mk_value_pe (Core.Vloaded (C.LVspecified (Core.OVpointer (Mem.fun_ptrval fid))))
-        end in
+        let canonical = maybe fid (fun proxy -> proxy) (function_proxy stdlib fid) in
+        let fid_pe = Caux.mk_value_pe (Core.Vloaded (C.LVspecified (Core.OVpointer (Mem.fun_ptrval canonical)))) in
         E.return (Caux.mk_pure_e fid_pe)
     | (*BISECT-IGNORE*) _ ->
         error ("[Translation.translate_function_designator] wildcard case ==> " ^
@@ -4578,7 +4569,8 @@ val translate:
     A.ail_program GenTypes.genTypeCategory ->
     (C.file unit * nat)
 let translate sup (ailnames, stdlib_fun_map) callconv impl prog =
-  let translation_stdlib = mk_translation_stdlib (ailnames, stdlib_fun_map) in
+  let translation_stdlib = <| (mk_translation_stdlib (ailnames, stdlib_fun_map)) with
+    defined_functions= List.map fst (snd prog).A.function_definitions |> in
   let ((core_tagDefs, core_enumDefs, cglobs, (*cdecls, *) cfuns, funinfo), st) =
     E.runStateM_errors (translate_program translation_stdlib prog) (E.elab_init sup callconv)
   in
