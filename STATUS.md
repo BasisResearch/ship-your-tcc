@@ -39,7 +39,8 @@ removed. Patch 0004 fixes compiler literals using exact integer rounding;
 public libc `strtold` still needs correction in the library lane. Matching refusals likewise do not satisfy the F3 success criterion.
 
 The lead now runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most
-two at a time, following MANAGER.md. Slot 1 now handles GNU declaration attributes in sol-csem-repin;
+two at a time, following MANAGER.md. Slot 1 now handles injected runtime bindings in sol-csem-repin; the GNU
+syntax/layout checkpoint is under combined integration review;
 CSEM-10, library identity and bounded allocation are adopted. Slot 2
 repairs GNU typedef alignment in the compiler/model; the model-origin
 continuation is adopted after combined validation. Both resumed after
@@ -284,8 +285,9 @@ match retained complete Sail captures; no new Sail runs are claimed. Strict
 ordinary model/spec Cabs remains 0/3 because the independent GNU header parser
 is not yet adopted. Trigraph/splice physical maps and all six typed proof
 Statements remain open. Failed setup runs and final exact captures are in
-results/model/ghost-origins-integration-2026-10-28.md. Slot 1 finishes GNU
-attributes/layout; slot 2 repairs compiler/model typedef alignment. Sum cuts
+results/model/ghost-origins-integration-2026-10-28.md. Slot 1 has handed off GNU
+attributes/layout and proceeds to injected bindings; slot 2 repairs
+compiler/model typedef alignment. Sum cuts
 remain frozen. The physical shadow-map follow-up is queued as
 tasks/f3-physical-origin-maps.md; no third worker is running. The old parser
 captures were archived only after every member
@@ -298,6 +300,16 @@ bindings through resolved identity/content, with actual runtime meaning.
 Blanket exclusion would make ordinary raw Supported vacuous; blanket inclusion
 would admit DESIGN section 5 constructs. This is required implementation work
 in tasks/f1-injected-bindings.md, not a request to change the user-approved scope.
+
+GNU handoff (2026-10-28): the external Sol worker hit a model-capacity error
+after its full gate passed. Lead packaging verifies all 2,190 source pins and
+746 capture members; checkpoint 44dc780 is retained. Its 23 focused semantic
+agreements, six actual-header parses and concrete oracle results are recorded
+in results/csem/gnu-attributes.md on the review branch. The combined main/origin/
+GNU gate is running with 3,573 frozen inputs in sol-c11-line. Slot 1 restarts
+on tasks/f1-injected-bindings.md from that reviewed combination; slot 2 still
+owns typedef alignment. GNU adoption and ordinary raw semantic support are
+not claimed yet. No model substitution or new user decision was needed.
 
 ## Needs user
 
