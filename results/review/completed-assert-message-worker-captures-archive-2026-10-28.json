@@ -1,0 +1,43 @@
+{
+  "archive": "results/model/static-assert-messages/evidence.tar.xz",
+  "archive_sha256": "fbf4dd07cc0c4f40fe1a0676c9bcfe06c03f72c126e07f6da8cdb636c5cacc3f",
+  "reason": "Completed adopted assertion-message observations; every loose file verified against committed archive before unlink. Current GNU expression work, input fixtures, toolchains and native caches retained.",
+  "entries": [
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/assert-messages-component-1",
+      "member_prefix": "build/assert-messages-component-1",
+      "files": 281,
+      "bytes": 478677328
+    },
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/assert-messages-independent-1",
+      "member_prefix": "build/assert-messages-independent-1",
+      "files": 281,
+      "bytes": 374825931
+    },
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/assert-messages-physical-1",
+      "member_prefix": "build/assert-messages-physical-1",
+      "files": 349,
+      "bytes": 260626951
+    },
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/assert-messages-onoff-1",
+      "member_prefix": "build/assert-messages-onoff-1",
+      "files": 145,
+      "bytes": 56692849
+    },
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/assert-messages-focused-1",
+      "member_prefix": "build/assert-messages-focused-1",
+      "files": 2161,
+      "bytes": 35365501
+    },
+    {
+      "source": ".claude/worktrees/sol-f2-tokens/build/assert-messages-shared-1",
+      "member_prefix": "build/assert-messages-shared-1",
+      "files": 281,
+      "bytes": 2479775
+    }
+  ]
+}
