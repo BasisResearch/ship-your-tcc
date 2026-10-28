@@ -28,8 +28,12 @@ fixture repair recovers three former refusals, each matching a complete native
 Sail arena (results/model/corpus-fixtures-2026-10-28.md). Native observations
 also include the repaired 78-case anonymous-member batch. CSem now uses pure binary32/64/128 values, with
 zero native floating in its checked cones. Its anonymous-member repair passes
-92 focused checks and the combined full gate; bitfields and aggregate-value
-initialization remain open. The raw-source frontend reaches
+92 focused checks and the combined full gate. C11 bitfield representation and
+single-evaluation compound lowering are now adopted after the full combined
+gate: 82 required semantic checks and a fresh 80-case native batch pass. GNU
+member attributes, enum bitfield policy, aggregate-value initialization and
+concrete memory/volatile-event transport remain open
+([bitfield integration](results/csem/bitfields-integration-2026-10-28.md)). The raw-source frontend reaches
 positioned Cabs with retained provenance; its 18 independent comparisons and
 combined gate pass. Runtime-library identity now reaches the semantic consumers
 with preserved C-visible labels: all 24 checks and 5,580 consumer probes pass

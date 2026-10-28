@@ -1,0 +1,12 @@
+{
+  "scope": "inactive original compiler recovery and completed reference-integration model caches",
+  "archive": "build/recovery/inactive-model-caches-2026-10-28/captures.tar.xz",
+  "archive_sha256": "c92c824aef4c16b134e88e48ff7659cb3414d541ade51353e5c82382a1ca8531",
+  "archive_bytes": 128747864,
+  "manifest": "build/recovery/inactive-model-caches-2026-10-28/manifest.json",
+  "manifest_sha256": "0c5761c16b041388577cd4c060e1638753f465a4a9345ce0ae6c22e883346b43",
+  "files": 50793,
+  "original_bytes": 1630112690,
+  "verified_before_unlink": true,
+  "source_trees_and_tools_retained": true
+}

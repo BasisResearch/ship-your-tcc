@@ -1,0 +1,45 @@
+{
+  "reason": "Completed adopted lead physical/typedef syntax captures only; every file verified in committed archives before unlink. On/off fixture inputs, current integrations, toolchains and native caches retained.",
+  "entries": [
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/physical-integrated/origins",
+      "archive": "results/model/physical-integration-2026-10-28/captures.tar.xz",
+      "archive_sha256": "037dc108f199aaecd9b04bbb8ab5120a28b32425dfc756366fc5655414d7cd03",
+      "member_prefix": "observations/origins",
+      "files": 349,
+      "bytes": 200326611
+    },
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/physical-integrated/raw",
+      "archive": "results/model/physical-integration-2026-10-28/captures.tar.xz",
+      "archive_sha256": "037dc108f199aaecd9b04bbb8ab5120a28b32425dfc756366fc5655414d7cd03",
+      "member_prefix": "observations/raw",
+      "files": 281,
+      "bytes": 366009437
+    },
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/typedef-integrated/fixtures",
+      "archive": "results/model/typedef-integration-2026-10-28/captures.tar.gz",
+      "archive_sha256": "788ef7b7269fcb70d9f7abd6ca4d088f84b7f28e49e98cf1da716a6bcce54283",
+      "member_prefix": "combined/build/typedef-integrated/fixtures",
+      "files": 281,
+      "bytes": 2445193
+    },
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/typedef-integrated/raw-ghost",
+      "archive": "results/model/typedef-integration-2026-10-28/captures.tar.gz",
+      "archive_sha256": "788ef7b7269fcb70d9f7abd6ca4d088f84b7f28e49e98cf1da716a6bcce54283",
+      "member_prefix": "combined/build/typedef-integrated/raw-ghost",
+      "files": 281,
+      "bytes": 330272236
+    },
+    {
+      "source": ".claude/worktrees/sol-c11-line/build/typedef-integrated/origins",
+      "archive": "results/model/typedef-integration-2026-10-28/captures.tar.gz",
+      "archive_sha256": "788ef7b7269fcb70d9f7abd6ca4d088f84b7f28e49e98cf1da716a6bcce54283",
+      "member_prefix": "combined/build/typedef-integrated/origins",
+      "files": 115,
+      "bytes": 56371119
+    }
+  ]
+}

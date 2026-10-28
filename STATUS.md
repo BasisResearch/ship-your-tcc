@@ -28,7 +28,7 @@ external bug reporting; no external contact is authorized or planned.
 | C11 patches | new `codex-c11` worktree; existing F2 reproducers | patch 0003 integrated: 7/7 full compiler Sail reproducers; combined 0003/0004 host/cross tests and main gate pass |
 | F1 grammar | `agent-a31b97b8f1c090141` | integrated: main capped build and full comparison pass, 614 exact Cabs agreements / 664 inputs; 41 joint rejections, 9 preprocessing failures |
 | F1 pure seams | `agent-a249bbaa5b1df80ec` | digest retirement integrated; main's full CSem gate passes: 19 unit executables, 113 baseline oracle results; remaining partial/native seams inventoried |
-| F1 ABI/allocation | `agent-a4ab6bbd8c0be5325` | RV64 reader and bounded allocation oracle adopted after full gates; fresh p04/p09/p10 checks close the earlier IEEE/stdin probe failures; bitfields and GNU enum coverage remain |
+| F1 ABI/allocation | `agent-a4ab6bbd8c0be5325` | RV64 reader and bounded allocation oracle adopted after full gates; fresh p04/p09/p10 checks close the earlier IEEE/stdin probe failures; bitfield representation is adopted; enum coverage and memory connections remain |
 | F1 filesystem | `agent-ad868c434f5f27398` | integrated after full gate: descriptor fstat, structural state ordering and link proxy repaired; eight exact Sail byte/exit agreements, repeated with RV64 config; mkdir remains a separate missing-library gap |
 | F1 IEEE | `agent-a45cb08cf87ce958c` | integrated after worker and combined full gates: pure 32/64/128 bits, zero native floating in both cones, unchanged 113-case baseline; literal/printf/sqrtl gaps and connection Statements remain open |
 | F3 compiler model | `agent-a05464165befb7074` (recovery merged) | patched C11 model integrated after capped build and combined full gate; 1,345 matching fast arenas / 1,815 inputs, including 1,082 C-generator and 80 mutant successes; all three repaired include fixtures and the 78-case anonymous-member batch have full Sail evidence; all-corpus Sail equality remains open |
@@ -40,8 +40,8 @@ public libc `strtold` still needs correction in the library lane. Matching refus
 
 The lead runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most two
 at a time, following MANAGER.md. Slot 1 now handles per-member GNU bitfield attributes;
-slot 2 retains complete multi-translation-unit ghost records. The reviewed
-C11 bitfield and GNU expression checkpoints are awaiting combined adoption. Assertion-message encodings are adopted. Local replay erasure is proved
+slot 2 retains complete multi-translation-unit ghost records. C11 bitfields are adopted after the combined full gate; the reviewed GNU
+expression checkpoint awaits combined adoption. Assertion-message encodings are adopted. Local replay erasure is proved
 and adopted. Array-to-pointer alignment decay is adopted after the combined image/gate validation. Complete _Generic/_Static_assert syntax is adopted after its combined gate
 and independent raw/native checks. Binding meaning and actual model-owned compiler-injected
 opening authority are adopted after their combined gate and independent raw
@@ -505,6 +505,26 @@ archive members, including six complete native arena exports. Its main adoption
 also awaits combination. Slots now handle per-member bitfield attributes and
 ordered per-TU ghost records. Enum bitfields and four compiler bitfield diagnostic
 deviations remain separate follow-ups. No sum cuts have been regenerated.
+
+C11 bitfield adoption (2026-10-28): cfgTcc now retains field widths, layout,
+promotions, known bits through character copies and abstract volatile access
+receipts. Shared compound-assignment lowering evaluates ordinary and bitfield
+lvalues once, repairing CSEM-14. The fresh combined full CSem gate passes with
+3,478 frozen inputs plus 269 separately verified unchanged prior-main pins.
+Its stale-raw-executable failure and gate-order repair remain archived. All 82
+required semantic cases, eight raw layout rows, eleven control/negative cases
+and all 58 continuation cases pass. A fresh 80-case full compiler/program Sail
+batch matches GCC; five separate inherited controls match complete 4 MiB native
+arenas and execute successfully. See results/csem/bitfields-integration-2026-10-28.md.
+GNU member attributes remain slot 1's task; implementation-defined enum field
+policy is queued in tasks/f1-enum-bitfields.md. Four compiler bitfield diagnostic
+defects await their F3 repair. Original p05 retains UB153b at its uncast percent-x
+arguments; the separately named unsigned-print variant is defined and matches
+GCC. Concrete memory/access and volatile-event transport proofs remain open,
+as do F1-F3 and eleven ghost contracts. No Supported/Fits exclusions or sum-cut
+regeneration. GNU expression syntax is reviewed, awaiting combination; slot 2
+retains per-TU ghost records. Pure physical-transform proofs are the next queued
+proof task, tasks/f3-physical-transform-proofs.md; no third worker runs.
 
 ## Needs user
 

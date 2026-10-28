@@ -424,3 +424,15 @@ failures and candidate OCaml controls remain separately pinned. Default OCaml
 bitfield execution stays unsupported. GNU trailing bitfield attributes, original
 p05 libc/format behavior, and four native constraint-acceptance deviations are
 separate residuals. Do not weaken C11 or Supported/Fits to classify them away.
+
+CSEM-08/CSEM-14 integration (2026-10-28): the shared bitfield implementation
+and ordinary/bitfield compound lvalue single-evaluation repair are adopted
+after the fresh combined full gate, with separately retained pristine failure
+evidence. See results/csem/bitfields-integration-2026-10-28.md. Partially known
+bytes preserve known field bits through character copies; volatile accesses
+have abstract semantic receipts, with concrete machine transport still open.
+Default OCaml bitfield execution remains unsupported. GNU member attributes,
+implementation-defined enum fields and four tcc constraint defects remain
+separate work items; the latter are not Cerberus bugs. Original p05's percent-x
+argument mismatch is not established as a libc defect; its corrected-print
+variant is a separate probe. Kiran owns external reporting; none was sent.

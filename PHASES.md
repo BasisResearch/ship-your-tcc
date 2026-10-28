@@ -100,7 +100,7 @@ The F0 statement (`Tcc/CSem/Statement.lean`, lib `TccCSem`, built under
 | static limits (`F0Params.staticLimits`) | a parameter (arena, `VSTACK_SIZE`, tcc heap, include/macro depth) | F3 (from `TccModel`) |
 | dynamic limits (`F0Params.dynamicLimits`) | a parameter (stack, heap of CSem's executions) | F4/F5 |
 | image (`F0Params.image`) | a parameter "`elf` is the image with `/prog.c = src`" | F6 (an `ElfPin` of the base image) |
-| `cfgTcc` | explicit `CerbImplCfg.tccRV64` reader: unsigned char, LP64 widths/alignments, binary32/64/128 layout, RV64 `.impl`, 64-bit address space, newlib errno and uint32 HTIF exit; pure IEEE execution, runtime allocation oracle and image FS are integrated; bitfields and their machine connections remain (results/csem/f1-config.md and later follow-ups) | F1 (§3.3 table, allocation oracle) |
+| `cfgTcc` | explicit `CerbImplCfg.tccRV64` reader: unsigned char, LP64 widths/alignments, binary32/64/128 layout, RV64 `.impl`, 64-bit address space, newlib errno and uint32 HTIF exit; pure IEEE execution, runtime allocation oracle and image FS are integrated; bitfield representation/access is adopted; enum policy and machine connections remain (results/csem/f1-config.md and later follow-ups) | F1 (§3.3 table, allocation oracle) |
 | native seams in `CSem.verdicts`' cone | **digest seam closed**: pure Lean MD5 plus explicit per-TU `Digest` reader; native object/global/barrier removed, 19 unit executables and 113 baseline oracle results pass (results/csem/f1b-seams.md). Pure IEEE removes native floating from both checked cones. Partial frontend/Core parsers and LemLib runtime implementations remain; the cone census is diagnostic, not a purity certificate | F1 (§3.4) |
 | divergence in `CSem.outcomes` | a fuel-exhausted branch printed a prefix of `o` for all large fuel; not yet "o is one branch's limit" | F4 (relational outcome set) |
 | `TccppCorrect_Statement` | over `TccppParams` (placeholder `Token`, `phases14`, `preprocess`) | F2, F3 |
@@ -626,3 +626,23 @@ archive members, including six complete native arena exports. Its main adoption
 also awaits combination. Slots now handle per-member bitfield attributes and
 ordered per-TU ghost records. Enum bitfields and four compiler bitfield diagnostic
 deviations remain separate follow-ups. No sum cuts have been regenerated.
+
+C11 bitfield adoption (2026-10-28): cfgTcc now retains field widths, layout,
+promotions, known bits through character copies and abstract volatile access
+receipts. Shared compound-assignment lowering evaluates ordinary and bitfield
+lvalues once, repairing CSEM-14. The fresh combined full CSem gate passes with
+3,478 frozen inputs plus 269 separately verified unchanged prior-main pins.
+Its stale-raw-executable failure and gate-order repair remain archived. All 82
+required semantic cases, eight raw layout rows, eleven control/negative cases
+and all 58 continuation cases pass. A fresh 80-case full compiler/program Sail
+batch matches GCC; five separate inherited controls match complete 4 MiB native
+arenas and execute successfully. See results/csem/bitfields-integration-2026-10-28.md.
+GNU member attributes remain slot 1's task; implementation-defined enum field
+policy is queued in tasks/f1-enum-bitfields.md. Four compiler bitfield diagnostic
+defects await their F3 repair. Original p05 retains UB153b at its uncast percent-x
+arguments; the separately named unsigned-print variant is defined and matches
+GCC. Concrete memory/access and volatile-event transport proofs remain open,
+as do F1-F3 and eleven ghost contracts. No Supported/Fits exclusions or sum-cut
+regeneration. GNU expression syntax is reviewed, awaiting combination; slot 2
+retains per-TU ghost records. Pure physical-transform proofs are the next queued
+proof task, tasks/f3-physical-transform-proofs.md; no third worker runs.
