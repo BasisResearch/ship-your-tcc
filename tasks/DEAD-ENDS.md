@@ -1332,3 +1332,12 @@ must be archived; they are not retroactively part of earlier build manifests.
   pragma placements rejected by GCC as successful C11 agreements. More
   importantly, never bind a pack cap to the opening struct token: push/pop
   inside the body changes the completed layout in both measured compilers.
+
+- GNU promotion lead ELF retention: the first watcher scanned build/model_diff,
+  while model_diff.CACHE is build/model_diff/cache. It retained zero ELFs. The
+  corrected late watcher retains one successful cut-hash-equal GNU batch ELF
+  and the failed new-batch ELF; earlier successful images may already be deleted.
+  Preserve both helpers/reports. For missing images require a hash-identical
+  relink before fresh execution; never describe reconstructed bytes as an
+  earlier retained execution. The original native request remains 7/8 with
+  one generator-induced refusal, not a successful eight-case request.

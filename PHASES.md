@@ -837,3 +837,14 @@ are not five successful-source failures. The new runtime review reproduces
 CSEM-18's imported strncpy/strncmp n=0 errors using exact C bodies, with
 provenance and host/Lean distinction in CSEM-UPSTREAM.md. No source repair or
 runtime-body coverage is claimed by that review. No user decision is needed.
+
+GNU promotion candidate (not adopted): focused Lean build passes on 4,852
+frozen inputs, and its new combined immutable OCaml engine builds. The first
+native request has seven complete arena agreements: six unchanged original
+controls and the original GNU batch. Its sole refusal is a new test-batch
+generator's duplicate struct tag, retained as a failed validation attempt.
+The repaired generator now yields 63 tcc zero rows; six GCC extension-policy
+differences stay separate. Fresh full program executions and the combined
+full gate remain required. VLA focused build 7 is running after parameter,
+qualifier, lifetime and scope-jump changes; no VLA adoption is claimed.
+The local-label construction task is now explicit alongside K&R and pack.
