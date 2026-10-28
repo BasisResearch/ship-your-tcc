@@ -934,3 +934,20 @@ an explicit follow-up, not established by arena equality.
   output-tree move used a root-relative path inside the worktree and failed,
   so the checker reused its build directory; no unchanged first output-tree
   archive is claimed. This setup failure supplies no valid coverage.
+
+## Local association replay erasure, 2026-10-28
+
+- `replay-erasure-lean-1` fails because a bare `split` chooses the outer
+  wrapper-result match, leaving the internal parser-result match in an
+  equality hypothesis. Split that hypothesis, including its shape check,
+  before eliminating result equalities. The shared `erase_syntaxFields`
+  record-update law already compiles; no parser-success premise, execution
+  unrolling or budget increase is needed. The failed receipt/log/source
+  snapshot are retained in the replay-erasure evidence.
+- The direct root-locked, systemd-12GB focused attempt fails on the sandbox's
+  user scope bus before Lean starts. The existing frozen lead-build service
+  compiles the identical proof under the same lock/cap; no uncapped fallback.
+- Ordinary staging again fails creating this worktree's read-only
+  `.git/worktrees/sol-f2-tokens/index.lock`. The existing scoped lead commit
+  handoff supplies the commit; do not resend semantic/proof work or create an
+  alternate index/object store to address this environment limitation.

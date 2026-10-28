@@ -48,8 +48,19 @@ def erase (s : TccSt) : TccSt :=
     ghostInput := none, ghostCurrent := 0, ghostPrior := 0,
     ghost := #[], ghostAudit := #[], ghostNormalizations := #[], ghostDrops := #[], ghostTokenErrors := #[] }
 
-/-- OPEN F3/F6 local replay noninterference, including diagnostics. The
-snapshot implementation supplies this erasure law; saved-word coverage and
+/-- Updating syntax observations cannot change the erased compiler state.
+This law covers any fragments, audits, normalizations, drops and token errors,
+including partial observations returned by a failed isolated parser. -/
+theorem erase_syntaxFields (st : TccSt) (fragments audit : Array Fragment)
+    (normalizations : Array NormalizationUse) (drops : Array Drop)
+    (tokenErrors : Array String) :
+    erase { st with
+      ghost := fragments, ghostAudit := audit,
+      ghostNormalizations := normalizations, ghostDrops := drops,
+      ghostTokenErrors := tokenErrors } = erase st := rfl
+
+/-- Local replay noninterference, including diagnostics. Proved below from
+snapshot restoration; saved-word coverage and
 complete typed expression construction additionally require the scanner/parser
 induction in RawConstruction_Statement and InjectedAuthorityTransport_Statement. -/
 def AssociationReplayErasure_Statement : Prop :=
@@ -57,6 +68,19 @@ def AssociationReplayErasure_Statement : Prop :=
     match (genericAssociationSyntax R saved).run st with
     | .ok _ after => erase after = erase st
     | .error _ _ => False
+
+/-- The actual replay restores the snapshot's entire compiler state on
+parser success, appended-source detection and parser diagnostics. The parser
+result is arbitrary: no construction, coverage or parser-success premise is
+needed for this local law. -/
+theorem associationReplayErasure : AssociationReplayErasure_Statement := by
+  intro R saved st
+  simp only [genericAssociationSyntax, EStateM.run]
+  split <;> rename_i _ _ _ hresult
+  all_goals
+    split at hresult
+    · split at hresult <;> cases hresult <;> exact erase_syntaxFields _ _ _ _ _ _
+    · cases hresult <;> exact erase_syntaxFields _ _ _ _ _ _
 
 /-- Supplied by the F3/F6 induction over actual reads, trigraph replacement,
 held-byte refill, ungets and successful splice branches. Finite comparisons
