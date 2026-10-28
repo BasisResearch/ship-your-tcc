@@ -664,3 +664,12 @@ GNU member attributes checkpoint5c2f70f is reviewed, awaiting rebuilt-image
 combination; slot1 now handles enum fields and slot2 per-TU ghost records.
 Physical-transform proofs remain queued after the per-TU task. Eleven ghost
 contracts, F1-F3 and the headline theorem remain open. Sum cuts stay frozen.
+
+Review update 2026-10-28: multi-TU checkpoint96c520e is reviewed, not yet
+adopted. Its frozen full gate passed3386 inputs; independent archive verification
+checks13135 members,15 records,four exact bundles and six complete fast arenas.
+MultiTUConstruction/MultiTUErasure and the existing eleven ghost contracts stay
+open; cached-opening/pack-layout residuals and absence of new native multi-TU
+evidence are explicit. Slot2 now attempts the unchanged PhysicalOriginMap and
+PhysicalReadView Statements with generic proofs or a checked counterexample.
+Member-attribute integration3577 and fresh native42-layout checks are in progress.

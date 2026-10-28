@@ -40,7 +40,8 @@ public libc `strtold` still needs correction in the library lane. Matching refus
 
 The lead runs external `gpt-6.1-sol` workers via `codexwork.sh`, at most two
 at a time, following MANAGER.md. Slot 1 now handles implementation-defined enum bitfields;
-slot 2 retains complete multi-translation-unit ghost records. C11 bitfields and GNU expression syntax are adopted after their combined full
+slot 2 proves the pure physical-transform correspondence after submitting
+reviewed multi-translation-unit checkpoint96c520e. C11 bitfields and GNU expression syntax are adopted after their combined full
 gates; the reviewed member-attribute checkpoint awaits rebuilt-image integration. Assertion-message encodings are adopted. Local replay erasure is proved
 and adopted. Array-to-pointer alignment decay is adopted after the combined image/gate validation. Complete _Generic/_Static_assert syntax is adopted after its combined gate
 and independent raw/native checks. Binding meaning and actual model-owned compiler-injected
@@ -543,6 +544,16 @@ GNU member attributes checkpoint5c2f70f is reviewed, awaiting rebuilt-image
 combination; slot1 now handles enum fields and slot2 per-TU ghost records.
 Physical-transform proofs remain queued after the per-TU task. Eleven ghost
 contracts, F1-F3 and the headline theorem remain open. Sum cuts stay frozen.
+
+Latest review (2026-10-28): multi-TU checkpoint96c520e independently verifies
+13,135 archived members, 15 retained unit records, four exact checked bundles
+and six matching fast-reference arenas. Pack-layout and cached-opening
+residuals remain explicit. No fresh native multi-TU observation is claimed.
+Its combined main integration follows member attributes. Slot 2 now tackles
+the unchanged pure physical-transform Statements; slot 1 continues enum fields.
+The lead has rebuilt patch0005 and passed its host/cross C11 controls; the
+3,577-input combined gate and a fresh 42-row native layout batch are running.
+No new user decision or change to Supported/Fits.
 
 ## Needs user
 
